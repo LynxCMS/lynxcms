@@ -17,8 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         # The same suites as composer test:all: SQLite, PostgreSQL, and SQLite with a table prefix.
-        suite: [test, 'test:pgsql', 'test:prefix']
-    name: Tests (${{ matrix.suite }})
+        # PostgreSQL is the slowest, so it runs in three shards at the same time.
+        include:
+          - { suite: test, shard: '1/1' }
+          - { suite: 'test:prefix', shard: '1/1' }
+          - { suite: 'test:pgsql', shard: '1/3' }
+          - { suite: 'test:pgsql', shard: '2/3' }
+          - { suite: 'test:pgsql', shard: '3/3' }
+    name: Tests (${{ matrix.suite }} ${{ matrix.shard }})
 
     services:
       postgres:
@@ -48,7 +54,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
       # In parallel, one process per core, as locally; PostgreSQL gets a database per process.
-      - run: composer ${{ matrix.suite }} -- --ci
+      - run: composer ${{ matrix.suite }} -- --ci --shard=${{ matrix.shard }}
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
