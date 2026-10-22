@@ -110,38 +110,13 @@ Opening the admin signs you in as the demo superuser. `/demo/sign-in/editor` and
 
 ### In your own Laravel app
 
-Lynx is not on Packagist yet. Clone this repository next to your app and point Composer at its packages:
-
-```json
-{
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../lynxcms/packages/*",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "lynxcms/contracts": "dev-main",
-                    "lynxcms/core": "dev-main",
-                    "lynxcms/admin": "dev-main",
-                    "lynxcms/media": "dev-main",
-                    "lynxcms/menus": "dev-main"
-                }
-            }
-        }
-    ]
-}
-```
-
 ```bash
-composer require lynxcms/core:@dev lynxcms/admin:@dev lynxcms/media:@dev lynxcms/menus:@dev
+composer require lynxcms/core lynxcms/admin lynxcms/media lynxcms/menus
 php artisan migrate
 php artisan lynx:install --user=1   # your user id becomes a superuser
 ```
 
-Every package you require, and every Lynx package it requires, needs a version in `options.versions`. The [installation guide](docs/getting-started/installation.md) covers the user model, the scheduler and shared hosting.
+Add the other packages you need from the table above. The [installation guide](docs/getting-started/installation.md) covers the user model, the scheduler, shared hosting and developing against a local clone of this repository.
 
 ## Documentation
 
