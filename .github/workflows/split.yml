@@ -25,6 +25,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # Otherwise git sends the workflow's own token, which cannot push to other repositories.
+          persist-credentials: false
 
       - name: Split packages/${{ matrix.package }}
         run: git subtree split --prefix="packages/${PACKAGE}" -b split
