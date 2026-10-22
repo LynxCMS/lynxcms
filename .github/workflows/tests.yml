@@ -37,14 +37,14 @@ jobs:
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           extensions: pdo_sqlite, pdo_pgsql, intl, mbstring, zip
           coverage: none
       # vendor/ from the last run with the same composer.json files, so composer update only checks.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: vendor
           key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
@@ -65,18 +65,18 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           coverage: none
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: vendor
           key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
           restore-keys: vendor-${{ runner.os }}-
       # PHPStan's and Rector's result caches (build/): only changed files are analysed again.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: build
           key: build-${{ runner.os }}-${{ github.sha }}
@@ -95,8 +95,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Admin CSS is up to date
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
