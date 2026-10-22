@@ -1,0 +1,44 @@
+# Copies every package in packages/ into its read-only repository (LynxCMS/core, LynxCMS/admin...),
+# with its history, on each push to main and each tag, so Packagist can list them one by one.
+# Needs SPLIT_TOKEN: a fine-grained token for the LynxCMS organization with Contents read and
+# write on the package repositories only.
+name: Split packages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: split
+  cancel-in-progress: false
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [admin, ai, cache, contracts, core, forms, mcp, media, menus, page-password, seo, sitemap, static-site]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Split packages/${{ matrix.package }}
+        run: git subtree split --prefix="packages/${PACKAGE}" -b split
+        env:
+          PACKAGE: ${{ matrix.package }}
+
+      - name: Push to LynxCMS/${{ matrix.package }}
+        run: |
+          remote="https://x-access-token:${SPLIT_TOKEN}@github.com/LynxCMS/${PACKAGE}.git"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            git push "${remote}" "split:refs/tags/${GITHUB_REF_NAME}"
+          else
+            git push --force "${remote}" split:main
+          fi
+        env:
+          PACKAGE: ${{ matrix.package }}
+          SPLIT_TOKEN: ${{ secrets.SPLIT_TOKEN }}

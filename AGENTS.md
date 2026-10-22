@@ -4,7 +4,7 @@ Guidance for AI coding agents and contributors working in this repository.
 
 ## What this is
 
-Lynx is a multilingual CMS packaged for Laravel 13 / PHP 8.5. This is a monorepo: one Composer root (`lynxcms/monorepo`) with packages that will be split for release:
+Lynx is a multilingual CMS packaged for Laravel 13 / PHP 8.5. This is a monorepo: one Composer root (`lynxcms/monorepo`) with packages that `.github/workflows/split.yml` copies into read-only repositories (`LynxCMS/core`, `LynxCMS/admin`...) on every push to `main` and every tag. Changes are made here only; pull requests to the split repositories are closed automatically:
 
 | Package | Namespace | Role |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ The design and the decisions behind it live in the plan document and its ADRs. D
 7. **Paths are never deleted on rename or move.** The previous row becomes inactive and redirects.
 8. **Eloquent only for system tables** (`Language`, `Field`, `Template`, `ActivityEvent`, `Setting`, `Role`, `RoleGrant`, `RoleAssignment`). Pages are domain objects hydrated by `PageLoader`.
 9. **The core must not depend on** `laravel/mcp`, `laravel/ai`, Livewire (except the optional `Livewire\UsesLynxPage` trait) or the admin. Architecture tests enforce this.
-10. **Public API is explicit.** Mark classes `@api` or `@internal`. Paid modules may only use `@api` code.
+10. **Public API is explicit.** Mark classes `@api` or `@internal`. Paid modules may only use `@api` code, and they live in their own private repositories, never in this monorepo.
 
 ## Conventions
 

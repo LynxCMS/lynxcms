@@ -1,6 +1,9 @@
 # lynxcms/admin
 
-Livewire admin for Lynx CMS (phase 11 of the implementation plan). It calls the same API and actions as every other caller and never touches the database directly. The first screen is the page tree at `/lynx/pages`.
+> [!NOTE]
+> This is a read-only split of [`packages/admin`](https://github.com/LynxCMS/lynxcms/tree/main/packages/admin) in the [Lynx CMS monorepo](https://github.com/LynxCMS/lynxcms). Open issues and pull requests there. Lynx is not ready for production yet: see its README.
+
+Livewire admin for Lynx CMS. It calls the same API and actions as every other caller and never touches the database directly. The first screen is the page tree at `/lynx/pages`.
 
 ## Page tree
 

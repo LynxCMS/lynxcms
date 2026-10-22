@@ -1,5 +1,8 @@
 # lynxcms/menus
 
+> [!NOTE]
+> This is a read-only split of [`packages/menus`](https://github.com/LynxCMS/lynxcms/tree/main/packages/menus) in the [Lynx CMS monorepo](https://github.com/LynxCMS/lynxcms). Open issues and pull requests there. Lynx is not ready for production yet: see its README.
+
 Multilingual menus for Lynx CMS. Build as many menus as you need (a top bar, a footer, a legal strip) and render each one with the Blade view you want: a hover dropdown, a click accordion, or markup of your own.
 
 Menus are stored as pages (ADR-0008, ADR-0025), so they get translations, fallback, ordering, the activity log and MCP and AI tools for free.

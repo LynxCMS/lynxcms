@@ -73,7 +73,7 @@ A page on template `course` renders `resources/views/templates/course.blade.php`
 
 ## Packages
 
-This repository is a monorepo. Every package lives in `packages/` and will be split into its own Composer package for release.
+This repository is a monorepo: every package lives in `packages/`, and changes are made here. Each package is also copied to its own read-only repository ([LynxCMS/core](https://github.com/LynxCMS/core), [LynxCMS/admin](https://github.com/LynxCMS/admin)...) on every push, ready for Packagist.
 
 | Package | What it adds |
 | --- | --- |
@@ -153,12 +153,7 @@ The documentation is Markdown in [`docs/`](docs/index.md):
 - [Publishing](docs/publishing/_index.md), [Admin](docs/admin/_index.md) and [AI](docs/ai/_index.md).
 - [Reference](docs/reference/_index.md): Artisan commands, configuration, actions and hooks, field types.
 
-`docs-site/` serves them as a website:
-
-```bash
-cd docs-site && composer install && cp .env.example .env && php artisan key:generate
-php artisan serve   # http://127.0.0.1:8000/docs
-```
+[LynxCMS/docs-site](https://github.com/LynxCMS/docs-site) serves them as a website.
 
 The design decisions are recorded as ADRs in [`documentation/ADRs.md`](documentation/ADRs.md), and [`AGENTS.md`](AGENTS.md) describes the architecture and the rules for contributors, people and coding agents alike.
 
