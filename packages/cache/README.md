@@ -7,7 +7,11 @@ Page cache for Lynx CMS: guest pages stored as HTML, served by the web server or
 
 ## Installing
 
-Lynx is not on Packagist yet: see [Trying it](https://github.com/LynxCMS/lynxcms#trying-it) in the monorepo's README.
+```bash
+composer require lynxcms/cache
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
 ## Documentation
 

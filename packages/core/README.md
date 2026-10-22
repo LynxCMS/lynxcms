@@ -7,7 +7,11 @@ Lynx CMS core: languages, fields, templates, pages, selectors and actions.
 
 ## Installing
 
-Lynx is not on Packagist yet: see [Trying it](https://github.com/LynxCMS/lynxcms#trying-it) in the monorepo's README.
+```bash
+composer require lynxcms/core
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
 ## Documentation
 

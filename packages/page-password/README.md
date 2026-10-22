@@ -7,7 +7,11 @@ Password-protected pages for Lynx CMS (pagePassword): a password set on a page l
 
 ## Installing
 
-Lynx is not on Packagist yet: see [Trying it](https://github.com/LynxCMS/lynxcms#trying-it) in the monorepo's README.
+```bash
+composer require lynxcms/page-password
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
 ## Documentation
 

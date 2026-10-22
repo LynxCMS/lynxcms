@@ -7,7 +7,11 @@ MCP server for Lynx CMS, generated from the action registry.
 
 ## Installing
 
-Lynx is not on Packagist yet: see [Trying it](https://github.com/LynxCMS/lynxcms#trying-it) in the monorepo's README.
+```bash
+composer require lynxcms/mcp
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
 ## Documentation
 

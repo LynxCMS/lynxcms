@@ -7,7 +7,11 @@ SEO for Lynx CMS: meta and social tags, canonical links, robots rules and robots
 
 ## Installing
 
-Lynx is not on Packagist yet: see [Trying it](https://github.com/LynxCMS/lynxcms#trying-it) in the monorepo's README.
+```bash
+composer require lynxcms/seo
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
 ## Documentation
 
