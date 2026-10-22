@@ -2,7 +2,13 @@ name: tests
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+# A new push to a pull request cancels its run in progress.
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tests:
@@ -10,8 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        db: [sqlite, pgsql]
-    name: PHP 8.5 / ${{ matrix.db }}
+        # The same suites as composer test:all: SQLite, PostgreSQL, and SQLite with a table prefix.
+        # PostgreSQL is the slowest, so it runs in three shards at the same time.
+        include:
+          - { suite: test, shard: '1/1' }
+          - { suite: 'test:prefix', shard: '1/1' }
+          - { suite: 'test:pgsql', shard: '1/3' }
+          - { suite: 'test:pgsql', shard: '2/3' }
+          - { suite: 'test:pgsql', shard: '3/3' }
+    name: Tests (${{ matrix.suite }} ${{ matrix.shard }})
 
     services:
       postgres:
@@ -24,30 +37,27 @@ jobs:
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           extensions: pdo_sqlite, pdo_pgsql, intl, mbstring, zip
           coverage: none
-      # Composer's download cache survives between runs, so most packages are not downloaded again.
-      - name: Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
+      # vendor/ from the last run with the same composer.json files, so composer update only checks.
+      - uses: actions/cache@v6
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
-          restore-keys: composer-${{ runner.os }}-
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: vendor-${{ runner.os }}-
       # Authenticated downloads from GitHub have a much higher rate limit than anonymous ones.
       - run: composer update --prefer-dist --no-interaction --no-progress
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
-      - name: Tests
-        run: vendor/bin/pest --ci
+      # In parallel, one process per core, as locally; PostgreSQL gets a database per process.
+      - run: composer ${{ matrix.suite }} -- --ci --shard=${{ matrix.shard }}
         env:
-          DB_CONNECTION: ${{ matrix.db }}
           DB_HOST: 127.0.0.1
+          DB_PORT: 5432
           DB_DATABASE: lynx_test
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
@@ -55,21 +65,22 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           coverage: none
-      # Composer's download cache survives between runs, so most packages are not downloaded again.
-      - name: Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
-          restore-keys: composer-${{ runner.os }}-
-      # Authenticated downloads from GitHub have a much higher rate limit than anonymous ones.
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: vendor-${{ runner.os }}-
+      # PHPStan's and Rector's result caches (build/): only changed files are analysed again.
+      - uses: actions/cache@v6
+        with:
+          path: build
+          key: build-${{ runner.os }}-${{ github.sha }}
+          restore-keys: build-${{ runner.os }}-
       - run: composer update --prefer-dist --no-interaction --no-progress
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
@@ -84,8 +95,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Admin CSS is up to date
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -95,4 +106,3 @@ jobs:
       # Rebuilds dist/admin.css from the views and CSS sources and fails if the committed file differs.
       - run: npm run check
         working-directory: packages/admin
-

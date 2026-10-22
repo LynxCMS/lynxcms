@@ -22,7 +22,7 @@ jobs:
       matrix:
         package: [admin, ai, cache, contracts, core, forms, mcp, media, menus, page-password, seo, sitemap, static-site]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           # Otherwise git sends the workflow's own token, which cannot push to other repositories.
