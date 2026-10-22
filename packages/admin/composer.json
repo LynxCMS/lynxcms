@@ -1,6 +1,6 @@
 {
     "name": "lynxcms/admin",
-    "description": "Livewire admin for Lynx CMS (phase 11).",
+    "description": "Livewire admin for Lynx CMS.",
     "license": "MIT",
     "require": {
         "php": "^8.5",

@@ -8,4 +8,6 @@ composer.lock
 .DS_Store
 .idea
 /workbench/database/database.sqlite
-!docs-site/composer.lock
+
+# The documentation site moved to LynxCMS/docs-site; an old local copy may still be here.
+/docs-site/

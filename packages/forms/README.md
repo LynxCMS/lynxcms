@@ -1,5 +1,8 @@
 # lynxcms/forms
 
+> [!NOTE]
+> This is a read-only split of [`packages/forms`](https://github.com/LynxCMS/lynxcms/tree/main/packages/forms) in the [Lynx CMS monorepo](https://github.com/LynxCMS/lynxcms). Open issues and pull requests there. Lynx is not ready for production yet: see its README.
+
 Forms for Lynx CMS. Define a form in PHP, place it on any page, and find what visitors sent in the admin. The people who handle submissions get an email.
 
 - Fields, steps, conditional fields, repeating groups and file uploads, with validation in the visitor's language.
