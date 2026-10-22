@@ -1,0 +1,21 @@
+{
+    "name": "lynxcms/seo",
+    "description": "SEO for Lynx CMS: meta and social tags, canonical links, robots rules and robots.txt, per template SEO fields.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the SEO screens and previews to the Livewire admin.",
+        "lynxcms/media": "Adds share images (og:image) per page and a default one."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Seo\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Seo\\SeoServiceProvider"]
+        }
+    }
+}

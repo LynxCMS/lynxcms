@@ -1,0 +1,1 @@
+<textarea id="{{ $id }}" class="lynx-form-input" rows="5" wire:model.live.blur="{{ $path }}" @if ($field->max) maxlength="{{ $field->max }}" @endif @if ($field->isRequired) required @endif @if ($field->help) aria-describedby="{{ $id }}-help" @endif aria-invalid="{{ $errors->has($path) ? 'true' : 'false' }}"></textarea>

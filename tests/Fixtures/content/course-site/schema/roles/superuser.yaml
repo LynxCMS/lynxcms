@@ -1,0 +1,4 @@
+name: superuser
+label: Superuser
+superuser: true
+grants: {}

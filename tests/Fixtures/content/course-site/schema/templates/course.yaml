@@ -1,0 +1,12 @@
+uuid: df8599d7-2af8-4921-a0a7-4bd9f5d2a3b1
+name: course
+label: Course
+settings: {}
+fields:
+  -
+    name: title
+    required: true
+  - summary
+  - body
+  - price
+  - related

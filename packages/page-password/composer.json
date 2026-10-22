@@ -1,0 +1,20 @@
+{
+    "name": "lynxcms/page-password",
+    "description": "Password-protected pages for Lynx CMS (pagePassword): a password set on a page locks it and the pages below it for visitors.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the password input to the page editor."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\PagePassword\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\PagePassword\\PagePasswordServiceProvider"]
+        }
+    }
+}

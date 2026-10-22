@@ -1,0 +1,87 @@
+/*
+ * Default look of Lynx forms (lynxcms/forms). Import it into your stylesheet and set the
+ * variables to match your site, or publish the views (lynx-forms-views) and style them yourself.
+ */
+.lynx-form {
+    --lynx-form-text: currentColor;
+    --lynx-form-muted: color-mix(in oklab, currentColor 62%, transparent);
+    --lynx-form-line: color-mix(in oklab, currentColor 22%, transparent);
+    --lynx-form-field: transparent;
+    --lynx-form-accent: #1d4ed8;
+    --lynx-form-accent-text: #fff;
+    --lynx-form-error: #dc2626;
+    --lynx-form-radius: 0.375rem;
+    --lynx-form-gap: 1.25rem;
+
+    color: var(--lynx-form-text);
+}
+
+.lynx-form-layout { display: grid; gap: calc(var(--lynx-form-gap) * 2); }
+@media (min-width: 64rem) { .lynx-form-layout.has-aside { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; } }
+
+.lynx-form-body, .lynx-form-fields { display: flex; flex-wrap: wrap; gap: var(--lynx-form-gap); }
+.lynx-form-body { flex-direction: column; flex-wrap: nowrap; }
+
+.lynx-form-field { flex: 1 1 100%; min-width: 0; display: grid; gap: 0.375rem; }
+.lynx-form-field.w-50 { flex-basis: calc(50% - var(--lynx-form-gap)); min-width: 12rem; }
+.lynx-form-field.w-33 { flex-basis: calc(33.333% - var(--lynx-form-gap)); min-width: 10rem; }
+.lynx-form-field.w-25 { flex-basis: calc(25% - var(--lynx-form-gap)); min-width: 7rem; }
+
+.lynx-form-label { font-size: 0.875rem; font-weight: 500; }
+.lynx-form-required { color: var(--lynx-form-error); }
+.lynx-form-help, .lynx-form-step-count, .lynx-form-file-name { font-size: 0.8125rem; color: var(--lynx-form-muted); }
+
+.lynx-form-input {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    font: inherit;
+    color: inherit;
+    background: var(--lynx-form-field);
+    border: 1px solid var(--lynx-form-line);
+    border-radius: var(--lynx-form-radius);
+}
+.lynx-form-input:focus-visible { outline: 2px solid var(--lynx-form-accent); outline-offset: 1px; }
+.lynx-form-input[aria-invalid="true"] { border-color: var(--lynx-form-error); }
+
+.lynx-form-choices { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+.lynx-form-check { display: inline-flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; }
+.lynx-form-check input { margin-top: 0.25rem; accent-color: var(--lynx-form-accent); }
+
+.lynx-form-error { font-size: 0.8125rem; color: var(--lynx-form-error); }
+.lynx-form-problem { padding: 0.75rem 1rem; color: var(--lynx-form-error); border: 1px solid var(--lynx-form-error); border-radius: var(--lynx-form-radius); }
+.lynx-form-sent { padding: 1.5rem; font-size: 1.125rem; border: 1px solid var(--lynx-form-line); border-radius: var(--lynx-form-radius); }
+
+.lynx-form-steps { display: grid; gap: 0.5rem; }
+.lynx-form-step-list { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; padding: 0; margin: 0; list-style: none; font-size: 0.875rem; color: var(--lynx-form-muted); }
+.lynx-form-step-list .is-current { color: var(--lynx-form-text); font-weight: 600; }
+.lynx-form-step-list .is-done::before { content: "✓ "; color: var(--lynx-form-accent); }
+
+.lynx-form-group { display: grid; gap: 0.75rem; padding: 0; margin: 0; border: 0; flex: 1 1 100%; }
+.lynx-form-rows { display: grid; gap: 0.75rem; }
+.lynx-form-row { display: flex; gap: 0.75rem; align-items: start; padding: 0.75rem; border: 1px solid var(--lynx-form-line); border-radius: var(--lynx-form-radius); }
+.lynx-form-row > .lynx-form-fields { flex: 1; }
+.lynx-form-handle { cursor: grab; padding-top: 0.5rem; color: var(--lynx-form-muted); user-select: none; }
+
+.lynx-form-progress { height: 0.25rem; background: var(--lynx-form-line); border-radius: 999px; overflow: hidden; }
+.lynx-form-progress span { display: block; height: 100%; background: var(--lynx-form-accent); transition: width 150ms; }
+
+.lynx-form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.lynx-form-button {
+    padding: 0.625rem 1.25rem;
+    font: inherit;
+    font-weight: 500;
+    color: var(--lynx-form-accent-text);
+    background: var(--lynx-form-accent);
+    border: 1px solid var(--lynx-form-accent);
+    border-radius: var(--lynx-form-radius);
+    cursor: pointer;
+}
+.lynx-form-button:disabled { opacity: 0.6; cursor: wait; }
+.lynx-form-button.is-secondary { color: inherit; background: transparent; border-color: var(--lynx-form-line); }
+.lynx-form-button.is-link { padding: 0.25rem; color: var(--lynx-form-muted); background: none; border: 0; text-decoration: underline; }
+
+.lynx-form-summary { display: grid; gap: 0.5rem; padding: 1rem; border: 1px solid var(--lynx-form-line); border-radius: var(--lynx-form-radius); }
+.lynx-form-summary dl { display: grid; gap: 0.375rem; margin: 0; }
+.lynx-form-summary dl > div { display: grid; grid-template-columns: minmax(8rem, 1fr) 2fr; gap: 1rem; }
+.lynx-form-summary dt { color: var(--lynx-form-muted); }
+.lynx-form-summary dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }

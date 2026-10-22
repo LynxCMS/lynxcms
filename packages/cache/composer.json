@@ -1,0 +1,20 @@
+{
+    "name": "lynxcms/cache",
+    "description": "Page cache for Lynx CMS: guest pages stored as HTML, served by the web server or before Laravel's session starts, and cleared when content changes.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the page cache screen to the Livewire admin."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Cache\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Cache\\CacheServiceProvider"]
+        }
+    }
+}

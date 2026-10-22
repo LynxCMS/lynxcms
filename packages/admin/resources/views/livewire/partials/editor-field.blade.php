@@ -1,0 +1,3 @@
+{{-- One field of the page editor; show_if hides it while its condition does not match, required_if marks it required (ADR-0030); locked fields show their value read only (ADR-0063). --}}
+<x-lynx-admin::editor.field :field="$field" :languages="$languages" :input="$field->display->isEditable() ? $inputs->for($field->type) : null" :disabled="$isLocked || ! $canEdit" :current="$values[$field->name] ?? []"
+    :live="in_array($field->name, $watched, true) || ($field->settings['formatters'] ?? []) !== []" :required="$states[$field->name]['required'] ?? null" :show-type="$isSuperuser" :stacked="$stacked ?? false" :cell="true" />

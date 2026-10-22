@@ -1,0 +1,16 @@
+{
+    "name": "lynxcms/mcp",
+    "description": "MCP server for Lynx CMS, generated from the action registry.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "laravel/mcp": "^1.0",
+        "lynxcms/core": "self.version"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Mcp\\": "src/" }
+    },
+    "extra": {
+        "laravel": { "providers": ["LynxCms\\Mcp\\McpServiceProvider"] }
+    }
+}

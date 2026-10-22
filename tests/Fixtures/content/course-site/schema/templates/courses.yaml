@@ -1,0 +1,8 @@
+uuid: 40a130b0-5729-43c5-9758-473b918d0bc3
+name: courses
+label: Courses
+settings: {}
+fields:
+  -
+    name: title
+    required: true

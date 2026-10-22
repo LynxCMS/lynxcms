@@ -1,0 +1,6 @@
+uuid: c8010ea7-5550-4702-8bfa-131190805291
+name: title
+type: text
+label: Title
+translatable: true
+settings: {}

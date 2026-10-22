@@ -1,0 +1,16 @@
+{
+    "name": "lynxcms/ai",
+    "description": "Built-in AI agent for Lynx CMS on the Laravel AI SDK.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "laravel/ai": "^1.0",
+        "lynxcms/core": "self.version"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Ai\\": "src/" }
+    },
+    "extra": {
+        "laravel": { "providers": ["LynxCms\\Ai\\AiServiceProvider"] }
+    }
+}

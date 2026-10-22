@@ -1,0 +1,3 @@
+{"key":"/","parent":null,"template":"home","status":[],"names":{"default":{"name":"","active":true},"pt":{"name":"","active":false}},"values":{"default":{"title":"Home"}}}
+{"key":"/courses/","parent":"/","template":"courses","status":[],"names":{"default":{"name":"courses","active":true},"pt":{"name":"cursos","active":true}},"values":{"default":{"title":"Courses"},"pt":{"title":"Cursos"}}}
+{"key":"/courses/alpha/","parent":"/courses/","template":"course","status":[],"names":{"default":{"name":"alpha","active":true},"pt":{"name":"alpha","active":false}},"values":{"default":{"title":"Alpha"}}}

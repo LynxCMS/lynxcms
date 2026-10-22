@@ -1,0 +1,21 @@
+{
+    "name": "lynxcms/admin",
+    "description": "Livewire admin for Lynx CMS (phase 11).",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "gehrisandro/tailwind-merge-php": "^1.2",
+        "laravel/fortify": "^1.41",
+        "livewire/livewire": "^4.0",
+        "mallardduck/blade-lucide-icons": "^2.0",
+        "lynxcms/core": "self.version"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Admin\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Admin\\AdminServiceProvider"]
+        }
+    }
+}

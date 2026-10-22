@@ -1,0 +1,22 @@
+{
+    "name": "lynxcms/forms",
+    "description": "Forms for Lynx CMS: forms defined in code, Livewire rendering, submissions in the admin and notifications.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version",
+        "spatie/laravel-honeypot": "^4.7"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the submissions inbox to the Livewire admin.",
+        "livewire/livewire": "Renders forms with <livewire:lynx-form>."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Forms\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Forms\\FormsServiceProvider"]
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "lynxcms/sitemap",
+    "description": "XML sitemaps for Lynx CMS: every published page in every language, split into parts past a limit set in config or the admin.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the sitemap screen to the Livewire admin.",
+        "lynxcms/seo": "Leaves out pages marked noindex and adds the sitemap to robots.txt."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Sitemap\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Sitemap\\SitemapServiceProvider"]
+        }
+    }
+}

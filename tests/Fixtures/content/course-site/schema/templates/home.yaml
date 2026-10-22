@@ -1,0 +1,8 @@
+uuid: 5a55f022-0471-461d-b8af-f11c2bbf7f0d
+name: home
+label: Home
+settings: {}
+fields:
+  -
+    name: title
+    required: true

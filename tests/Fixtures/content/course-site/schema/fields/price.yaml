@@ -1,0 +1,6 @@
+uuid: 9d5dea94-2a62-41fe-9b12-85d50283ec11
+name: price
+type: integer
+label: Price
+translatable: false
+settings: {}

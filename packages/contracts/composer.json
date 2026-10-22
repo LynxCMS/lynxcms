@@ -1,0 +1,12 @@
+{
+    "name": "lynxcms/contracts",
+    "description": "Interfaces and DTOs for Lynx CMS modules.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "illuminate/contracts": "^13.0"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Contracts\\": "src/" }
+    }
+}

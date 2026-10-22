@@ -1,0 +1,11 @@
+/vendor
+/node_modules
+composer.lock
+.phpunit.cache
+.phpunit.result.cache
+/build
+.env
+.DS_Store
+.idea
+/workbench/database/database.sqlite
+!docs-site/composer.lock

@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+@source "../views";
+/* Class strings the page tree builds in PHP (TreeUi). */
+@source "../../src/Tree";
+/* First-party modules whose admin screens use these styles (monorepo build). */
+@source "../../../menus/resources/views/admin";
+/* The media package's admin input. */
+@source "../../../media/resources/views/livewire";
+@source "../../../media/resources/views/inputs";
+/* The forms module's inbox. */
+@source "../../../forms/resources/views/admin";
+@source "../../../forms/resources/views/inputs";
+/* The SEO module's screens and previews. */
+@source "../../../seo/resources/views/admin";
+/* The sitemap module's screen. */
+@source "../../../sitemap/resources/views/admin";
+/* The page cache module's screen. */
+@source "../../../cache/resources/views/admin";
+/* The static site export screen. */
+@source "../../../static-site/resources/views/admin";
+
+/*
+ * BlatUI tokens, presets and @theme mapping (ADR-0034). Colours come only from these tokens
+ * (bg-background, text-muted-foreground, bg-primary…); Tailwind's own palette is removed, so a raw
+ * colour like bg-gray-100 cannot slip in and ignore the theme.
+ */
+@theme {
+    --color-*: initial;
+}
+
+@import "./blatui.css";
+
+/*
+ * Lynx tokens: the parts BlatUI has no token for (the page tree). Each defaults to a BlatUI token,
+ * so a BlatUI preset restyles them too; a host stylesheet can still set them (theme.stub.css).
+ */
+:root {
+    --lynx-tree-indent: 1.5rem;
+    --lynx-tree-row-py: 0.375rem;
+    --lynx-tree-row-px: 0.5rem;
+    --lynx-title-color: var(--foreground);
+    --lynx-title-size: 0.9375rem;
+    --lynx-title-weight: 500;
+    --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
+    --lynx-highlight: var(--accent);
+    --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
+    --lynx-hidden-opacity: 0.55;
+    /* Notification bar: green, yellow and red. */
+    --lynx-notice-success: var(--success);
+    --lynx-notice-success-foreground: var(--success-foreground);
+    --lynx-notice-warning: oklch(0.87 0.16 92);
+    --lynx-notice-warning-foreground: oklch(0.27 0.06 75);
+    --lynx-notice-error: var(--destructive);
+    --lynx-notice-error-foreground: var(--destructive-foreground);
+}
+
+@theme {
+    /* Smaller than Tailwind's text-xs, for the compact language tabs. */
+    --text-xxs: 0.625rem;
+    --text-xxs--line-height: 0.875rem;
+}
+
+@theme inline {
+    /* Black and white stay: BlatUI uses them for overlays (bg-black/50) and text on solid fills. */
+    --color-black: #000;
+    --color-white: #fff;
+    --color-highlight: var(--lynx-highlight);
+    --color-transparent: transparent;
+    --color-current: currentColor;
+}
+
+@layer components {
+    /* Page tree (packages/admin/resources/views/components/tree) */
+    .lynx-tree-row {
+        padding-block: var(--lynx-tree-row-py);
+        padding-inline: calc(var(--lynx-tree-row-px) + var(--depth, 0) * var(--lynx-tree-indent)) var(--lynx-tree-row-px);
+        border-bottom: 1px solid var(--border);
+        transition: background-color 120ms ease;
+    }
+
+    .lynx-tree-row:hover {
+        background: var(--lynx-row-hover);
+    }
+
+    .lynx-tree-row-moving,
+    .lynx-tree-row-moving:hover {
+        background: var(--lynx-highlight);
+        box-shadow: inset 0 0 0 1px var(--primary);
+    }
+
+    .lynx-tree-title {
+        color: var(--lynx-title-color);
+        font-size: var(--lynx-title-size);
+        font-weight: var(--lynx-title-weight);
+    }
+
+    .lynx-tree-hidden {
+        opacity: var(--lynx-hidden-opacity);
+    }
+
+    /* The chevron turns when the branch is open, as in BlatUI's server tree table. */
+    [aria-expanded="true"] > .lynx-tree-row .lynx-tree-chevron {
+        transform: rotate(90deg);
+    }
+
+    /* Drop zones under collapsed rows stay slim until a drag starts (Livewire adds body.sorting). */
+    .lynx-tree-dropzone {
+        min-height: 0.25rem;
+        margin-inline-start: calc((var(--depth, 0) + 1) * var(--lynx-tree-indent) + var(--lynx-tree-row-px));
+        border-radius: var(--radius-md);
+        transition: min-height 120ms ease;
+    }
+
+    body.sorting .lynx-tree-dropzone {
+        min-height: 0.875rem;
+        outline: 1px dashed color-mix(in oklab, var(--primary) 35%, transparent);
+    }
+
+    body.sorting .lynx-tree-dropzone:has(.sortable-ghost) {
+        min-height: 2.5rem;
+        outline-color: var(--primary);
+        background: var(--lynx-dropzone);
+    }
+
+    /* Pager links as drop targets: an empty list over the link that only takes the pointer while dragging. */
+    .lynx-pager-drop {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    body.sorting .lynx-pager-drop {
+        pointer-events: auto;
+        outline: 1px dashed color-mix(in oklab, var(--primary) 45%, transparent);
+        outline-offset: -3px;
+    }
+
+    body.sorting .lynx-pager-drop:has(.sortable-ghost) {
+        background: var(--lynx-dropzone);
+        outline-color: var(--primary);
+    }
+
+    /* The dragged row's place: a primary line, like BlatUI's drop indicator. */
+    .lynx-tree .sortable-ghost > .lynx-tree-row {
+        background: var(--lynx-highlight);
+        box-shadow: inset 0 2px 0 0 var(--primary);
+    }
+
+    /* A row's actions sit after its title: shown on hover and keyboard focus as well as when the
+       row is selected (x-show), and kept while "More" is open. !important beats x-show's inline style. */
+    .lynx-tree-row:hover > .lynx-tree-actions,
+    .lynx-tree-row:has(:focus-visible) > .lynx-tree-actions,
+    .lynx-tree-actions.is-open {
+        display: flex !important;
+    }
+
+    /* Notification bar (components/notifications): full width at the bottom of the viewport. */
+    .lynx-notices {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        pointer-events: none;
+    }
+
+    .lynx-notice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        width: 100%;
+        padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+        cursor: pointer;
+        pointer-events: auto;
+        color: var(--lynx-notice-success-foreground);
+        background: var(--lynx-notice-success);
+        box-shadow: 0 -1px 0 color-mix(in oklab, black 12%, transparent);
+    }
+
+    .lynx-notice[data-type="warning"] {
+        color: var(--lynx-notice-warning-foreground);
+        background: var(--lynx-notice-warning);
+    }
+
+    .lynx-notice[data-type="error"] {
+        color: var(--lynx-notice-error-foreground);
+        background: var(--lynx-notice-error);
+    }
+
+    .lynx-notice:focus-visible {
+        outline: 3px solid var(--ring);
+        outline-offset: -3px;
+    }
+
+    .lynx-notice-close {
+        font-size: 1.125rem;
+        line-height: 1;
+        opacity: 0.8;
+    }
+
+    /* Dot after a language tab: filled, falling back to another language, or empty. */
+    .lynx-tab-state {
+        display: inline-block;
+        width: 0.375rem;
+        height: 0.375rem;
+        margin-inline-start: 0.25rem;
+        vertical-align: middle;
+        border: 1px solid var(--muted-foreground);
+        border-radius: 9999px;
+    }
+
+    .lynx-tab-state.is-filled {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .lynx-tab-state.is-fallback {
+        border-style: dashed;
+    }
+
+    .lynx-fallback {
+        color: var(--muted-foreground);
+        font-style: italic;
+    }
+
+    /* Rich text editor (Tiptap): framed like a BlatUI textarea. */
+    .lynx-richtext {
+        @apply border-input dark:bg-input/30 rounded-md border bg-transparent shadow-xs transition-[color,box-shadow];
+    }
+
+    .lynx-richtext:focus-within {
+        @apply border-ring ring-ring/50 ring-[3px];
+    }
+
+    .lynx-richtext-toolbar {
+        @apply border-input flex flex-wrap gap-0.5 border-b p-1;
+    }
+
+    .lynx-richtext-toolbar button {
+        @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground aria-pressed:bg-accent aria-pressed:text-accent-foreground min-w-8 cursor-pointer rounded-sm px-2 py-1 text-xs font-semibold;
+    }
+
+    .lynx-richtext-separator {
+        @apply bg-input m-1 w-px;
+    }
+
+    .lynx-richtext-content {
+        @apply text-foreground min-h-36 px-3 py-2.5 text-sm outline-none;
+    }
+
+    .lynx-richtext-content > * + * {
+        margin-top: 0.625em;
+    }
+
+    .lynx-richtext-content h2 { font-size: 1.25em; font-weight: 600; }
+    .lynx-richtext-content h3 { font-size: 1.1em; font-weight: 600; }
+    .lynx-richtext-content h4 { font-weight: 600; }
+    .lynx-richtext-content ul { padding-inline-start: 1.25rem; list-style: disc; }
+    .lynx-richtext-content ol { padding-inline-start: 1.25rem; list-style: decimal; }
+    .lynx-richtext-content blockquote { padding-inline-start: 0.75rem; color: var(--muted-foreground); border-inline-start: 3px solid var(--border); }
+    .lynx-richtext-content a { color: var(--primary); text-decoration: underline; }
+    .lynx-richtext-content code { padding: 0 0.25rem; font-size: 0.9em; background: var(--muted); border-radius: 0.25rem; }
+    .lynx-richtext-content pre { padding: 0.75rem; overflow-x: auto; background: var(--muted); border-radius: var(--radius-md); }
+
+    /* Placeholder (the fallback text) while the editor is empty */
+    .lynx-richtext-content p.is-editor-empty:first-child::before {
+        float: inline-start;
+        height: 0;
+        color: var(--muted-foreground);
+        content: attr(data-placeholder);
+        pointer-events: none;
+    }
+
+    .lynx-code {
+        @apply bg-muted overflow-x-auto rounded-md p-3 font-mono text-xs;
+    }
+}

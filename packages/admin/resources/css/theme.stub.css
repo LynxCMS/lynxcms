@@ -1,0 +1,31 @@
+/*
+ * Lynx admin theme. Load this file after the admin stylesheet (config lynx-admin.stylesheets)
+ * and change any variable; no rebuild is needed (ADR-0034).
+ *
+ * Colours, radius, fonts and shadows are BlatUI's tokens: set them here, pick presets with
+ * config lynx-admin.appearance, or paste a theme from https://blatui.remix-it.com/themes.
+ * Dark values go under .dark. Examples:
+ *
+ *   :root { --primary: oklch(0.55 0.2 260); --primary-foreground: oklch(0.98 0 0); --radius: 0.5rem; }
+ *   .dark { --primary: oklch(0.7 0.15 260); }
+ *
+ * The page tree has its own tokens, defaulting to BlatUI's:
+ */
+:root {
+    --lynx-tree-indent: 1.5rem;
+    --lynx-tree-row-py: 0.375rem;
+    --lynx-tree-row-px: 0.5rem;
+    --lynx-title-color: var(--foreground);
+    --lynx-title-size: 0.9375rem;
+    --lynx-title-weight: 500;
+    --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
+    --lynx-highlight: var(--accent);
+    --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
+    --lynx-hidden-opacity: 0.55;
+    --lynx-notice-success: var(--success);
+    --lynx-notice-success-foreground: var(--success-foreground);
+    --lynx-notice-warning: oklch(0.87 0.16 92);
+    --lynx-notice-warning-foreground: oklch(0.27 0.06 75);
+    --lynx-notice-error: var(--destructive);
+    --lynx-notice-error-foreground: var(--destructive-foreground);
+}

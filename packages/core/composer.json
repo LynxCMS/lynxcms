@@ -1,0 +1,34 @@
+{
+    "name": "lynxcms/core",
+    "description": "Lynx CMS core: languages, fields, templates, pages, selectors and actions.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "laravel/framework": "^13.0",
+        "league/commonmark": "^2.8",
+        "symfony/yaml": "^7.4|^8.0",
+        "lynxcms/contracts": "self.version",
+        "symfony/html-sanitizer": "^8.1"
+    },
+    "suggest": {
+        "livewire/livewire": "Enables the UsesLynxPage trait for app components on CMS pages."
+    },
+    "autoload": {
+        "psr-4": {
+            "LynxCms\\Core\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LynxCms\\Core\\LynxServiceProvider"
+            ],
+            "aliases": {
+                "Lynx": "LynxCms\\Core\\Facades\\Lynx"
+            }
+        }
+    }
+}

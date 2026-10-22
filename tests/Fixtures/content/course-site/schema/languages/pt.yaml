@@ -1,0 +1,10 @@
+uuid: e4cc7eb8-2091-4724-b459-59f03b2f77b5
+code: pt
+name: Português
+label: null
+locale: pt-PT
+fallback: default
+prefix: pt
+active: true
+default: false
+provider_codes: null

@@ -1,0 +1,6 @@
+uuid: 8c105ede-b11b-43da-98ca-74b7e0a82a20
+name: summary
+type: textarea
+label: Summary
+translatable: true
+settings: {}

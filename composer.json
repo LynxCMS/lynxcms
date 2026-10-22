@@ -1,0 +1,157 @@
+{
+    "name": "lynxcms/monorepo",
+    "description": "Lynx CMS development monorepo: a multilingual, AI-native content management system for Laravel.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sérgio Jardim",
+            "email": "sergio@sergiojardim.com"
+        }
+    ],
+    "require": {
+        "php": "^8.5",
+        "gehrisandro/tailwind-merge-php": "^1.2",
+        "intervention/image": "^4.0",
+        "laravel/ai": "^1.0",
+        "laravel/fortify": "^1.41",
+        "laravel/framework": "^13.0",
+        "laravel/mcp": "^1.0",
+        "league/commonmark": "^2.8",
+        "mallardduck/blade-lucide-icons": "^2.0",
+        "spatie/laravel-honeypot": "^4.7",
+        "symfony/html-sanitizer": "^8.1",
+        "symfony/yaml": "^7.4|^8.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.0",
+        "livewire/livewire": "^4.0",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.1|^5.0",
+        "pestphp/pest-plugin-laravel": "^4.0|^5.0",
+        "rector/rector": "^2.0"
+    },
+    "replace": {
+        "lynxcms/contracts": "self.version",
+        "lynxcms/core": "self.version",
+        "lynxcms/mcp": "self.version",
+        "lynxcms/ai": "self.version",
+        "lynxcms/admin": "self.version",
+        "lynxcms/menus": "self.version",
+        "lynxcms/media": "self.version",
+        "lynxcms/forms": "self.version",
+        "lynxcms/seo": "self.version",
+        "lynxcms/sitemap": "self.version",
+        "lynxcms/page-password": "self.version",
+        "lynxcms/cache": "self.version",
+        "lynxcms/static-site": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "LynxCms\\Contracts\\": "packages/contracts/src/",
+            "LynxCms\\Core\\": "packages/core/src/",
+            "LynxCms\\Mcp\\": "packages/mcp/src/",
+            "LynxCms\\Ai\\": "packages/ai/src/",
+            "LynxCms\\Admin\\": "packages/admin/src/",
+            "LynxCms\\Menus\\": "packages/menus/src/",
+            "LynxCms\\Media\\": "packages/media/src/",
+            "LynxCms\\Forms\\": "packages/forms/src/",
+            "LynxCms\\Seo\\": "packages/seo/src/",
+            "LynxCms\\Sitemap\\": "packages/sitemap/src/",
+            "LynxCms\\PagePassword\\": "packages/page-password/src/",
+            "LynxCms\\Cache\\": "packages/cache/src/",
+            "LynxCms\\StaticSite\\": "packages/static-site/src/"
+        },
+        "files": [
+            "packages/core/src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LynxCms\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LynxCms\\Core\\LynxServiceProvider",
+                "LynxCms\\Mcp\\McpServiceProvider",
+                "LynxCms\\Ai\\AiServiceProvider",
+                "LynxCms\\Admin\\AdminServiceProvider",
+                "LynxCms\\Menus\\MenusServiceProvider",
+                "LynxCms\\Media\\MediaServiceProvider",
+                "LynxCms\\Forms\\FormsServiceProvider",
+                "LynxCms\\Seo\\SeoServiceProvider",
+                "LynxCms\\Sitemap\\SitemapServiceProvider",
+                "LynxCms\\PagePassword\\PagePasswordServiceProvider",
+                "LynxCms\\Cache\\CacheServiceProvider",
+                "LynxCms\\StaticSite\\StaticSiteServiceProvider"
+            ],
+            "aliases": {
+                "Lynx": "LynxCms\\Core\\Facades\\Lynx"
+            }
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": [
+            "@php vendor/bin/testbench workbench:create-sqlite-db --ansi",
+            "@php vendor/bin/testbench workbench:build --ansi"
+        ],
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "@putenv LARAVEL_PARALLEL_TESTING=1",
+            "@php vendor/bin/pest --parallel"
+        ],
+        "test:pgsql": [
+            "Composer\\Config::disableProcessTimeout",
+            "@putenv LARAVEL_PARALLEL_TESTING=1",
+            "@putenv DB_CONNECTION=pgsql",
+            "@php vendor/bin/pest --parallel"
+        ],
+        "test:prefix": [
+            "Composer\\Config::disableProcessTimeout",
+            "@putenv LARAVEL_PARALLEL_TESTING=1",
+            "@putenv DB_CONNECTION=sqlite",
+            "@putenv DB_PREFIX=app_",
+            "@php vendor/bin/pest --parallel"
+        ],
+        "test:all": [
+            "Composer\\Config::disableProcessTimeout",
+            "@test",
+            "@test:pgsql",
+            "@test:prefix"
+        ],
+        "test:serial": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/pest"
+        ],
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=1G",
+        "format": "@php vendor/bin/pint",
+        "refactor": "@php vendor/bin/rector",
+        "check": [
+            "@php vendor/bin/pint --test",
+            "@php vendor/bin/rector process --dry-run",
+            "@php vendor/bin/phpstan analyse --memory-limit=1G"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,49 @@
+laravel: '@testbench'
+
+providers:
+  - Laravel\Mcp\Server\McpServiceProvider
+  - Laravel\Ai\AiServiceProvider
+  - LynxCms\Core\LynxServiceProvider
+  - LynxCms\Mcp\McpServiceProvider
+  - LynxCms\Ai\AiServiceProvider
+  - Livewire\LivewireServiceProvider
+  - BladeUI\Icons\BladeIconsServiceProvider
+  - MallardDuck\LucideIcons\BladeLucideIconsServiceProvider
+  - LynxCms\Admin\AdminServiceProvider
+  - Laravel\Fortify\FortifyServiceProvider
+  - Laravel\Passkeys\PasskeysServiceProvider
+  - LynxCms\Menus\MenusServiceProvider
+  - LynxCms\Media\MediaServiceProvider
+  - Spatie\Honeypot\HoneypotServiceProvider
+  - LynxCms\Forms\FormsServiceProvider
+  - LynxCms\Seo\SeoServiceProvider
+  - LynxCms\Sitemap\SitemapServiceProvider
+  - LynxCms\PagePassword\PagePasswordServiceProvider
+  - LynxCms\Cache\CacheServiceProvider
+  - LynxCms\StaticSite\StaticSiteServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: '/'
+  install: true
+  health: false
+  discovers:
+    web: false
+    api: false
+    commands: false
+    components: false
+    views: true
+  build:
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh:
+        --seed: true
+        --seeder: Workbench\Database\Seeders\DatabaseSeeder
+  assets: []
+  sync: []

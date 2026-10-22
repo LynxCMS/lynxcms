@@ -1,0 +1,98 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [sqlite, pgsql]
+    name: PHP 8.5 / ${{ matrix.db }}
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lynx_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_sqlite, pdo_pgsql, intl, mbstring, zip
+          coverage: none
+      # Composer's download cache survives between runs, so most packages are not downloaded again.
+      - name: Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+      # Authenticated downloads from GitHub have a much higher rate limit than anonymous ones.
+      - run: composer update --prefer-dist --no-interaction --no-progress
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+      - name: Tests
+        run: vendor/bin/pest --ci
+        env:
+          DB_CONNECTION: ${{ matrix.db }}
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: lynx_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+      # Composer's download cache survives between runs, so most packages are not downloaded again.
+      - name: Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+      # Authenticated downloads from GitHub have a much higher rate limit than anonymous ones.
+      - run: composer update --prefer-dist --no-interaction --no-progress
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+      - name: Pint
+        run: vendor/bin/pint --test
+      - name: Rector
+        run: vendor/bin/rector process --dry-run --no-progress-bar
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+  assets:
+    runs-on: ubuntu-latest
+    name: Admin CSS is up to date
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: packages/admin/package-lock.json
+      - run: npm ci
+        working-directory: packages/admin
+      # Rebuilds dist/admin.css from the views and CSS sources and fails if the committed file differs.
+      - run: npm run check
+        working-directory: packages/admin
+

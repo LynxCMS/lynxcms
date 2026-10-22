@@ -1,0 +1,7 @@
+uuid: 2446986b-bc66-4a0b-b36b-8961994c58bb
+name: body
+type: textarea
+label: Body
+translatable: true
+settings:
+  format: html

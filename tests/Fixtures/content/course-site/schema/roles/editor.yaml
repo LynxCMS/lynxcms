@@ -1,0 +1,18 @@
+name: editor
+label: Editor
+superuser: false
+grants:
+  -
+    permission: admin.access
+  -
+    permission: pages.create
+  -
+    permission: pages.edit
+  -
+    permission: pages.move
+  -
+    permission: pages.publish
+  -
+    permission: pages.status
+  -
+    permission: pages.view

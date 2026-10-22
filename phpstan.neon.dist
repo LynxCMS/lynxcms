@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - packages/contracts/src
+        - packages/core/src
+        - packages/mcp/src
+        - packages/ai/src
+        - packages/admin/src
+        - packages/menus/src
+        - packages/media/src
+        - packages/seo/src
+        - packages/page-password/src
+        - packages/sitemap/src
+        - packages/cache/src
+        - packages/static-site/src
+    tmpDir: build/phpstan
+    treatPhpDocTypesAsCertain: false
+    universalObjectCratesClasses:
+        - LynxCms\Core\Pages\Page
+    ignoreErrors:
+        - identifier: trait.unused

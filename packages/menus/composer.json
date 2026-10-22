@@ -1,0 +1,20 @@
+{
+    "name": "lynxcms/menus",
+    "description": "Menu builder for Lynx CMS: multilingual menus stored as pages, rendered with any Blade view.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the menu editor to the Livewire admin."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Menus\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Menus\\MenusServiceProvider"]
+        }
+    }
+}
