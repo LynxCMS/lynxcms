@@ -20,7 +20,30 @@ Menus come with `lynxcms/menus`. A menu is a set of pages under the system page 
 | `lynx-menus::menus.dropdown` | Opens on hover. |
 | `lynx-menus::menus.accordion` | Opens on click. |
 
-Any view of your own works: it receives the menu's items as a tree. Menus leave out pages that are hidden, unpublished, below an unpublished page, or not published in the current language.
+Menus leave out pages that are hidden, unpublished, below an unpublished page, or not published in the current language.
+
+### Your own view
+
+Any view works. It receives `$menu`, with `title` (the menu's label in the current language), `class` and `items`, and `$attributes` from the component tag. Each item has:
+
+| Property | Holds |
+| --- | --- |
+| `label`, `url` | The text and the address, or a `null` URL for a section label (`hasUrl()`). |
+| `target`, `rel`, `class` | The link's attributes, as set in the item form. |
+| `isActive` | The item links to the current page. |
+| `isInActiveTrail` | The item, or one below it, links to the current page. |
+| `children` | The items below it (`hasChildren()`), including a page's child pages when the item lists them. |
+| `pageId`, `iconBefore`, `iconAfter`, `depth` | The linked page, the icons and the level, from 0. |
+
+This navigation bar, in Tailwind, opens submenus with `<details>`, so it needs no JavaScript. It marks the current page with `aria-current` and its section with bold text:
+
+<<< @/snippets/modules/views/menus/navbar.blade.php{blade}
+
+```blade
+<x-lynx-menu name="top" view="menus.navbar" class="mb-8" />
+```
+
+Copy `lynx-menus::menus.list` and its partials from `vendor/lynxcms/menus/resources/views/menus` to start from the full markup, with icons.
 
 ## Stored menus
 
