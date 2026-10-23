@@ -817,3 +817,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `AdminAuth::mode()` names who signs users in: `lynx` (Lynx's screens), `app` (the app's Fortify; chosen by `auto` when `config/fortify.php` exists, or set explicitly) or `off` (`false`: the app's own sign-in, such as single sign-on). Invitations (the `users.invite` and `users.resend_invitation` actions, the invitation screen and its password broker), the account security screen and the two-factor and passkey columns work in `lynx` and `app`. Two-factor authentication and passkeys appear on the account screen only when the Fortify features that ask for them at sign-in are on, so the screen never offers a second factor the sign-in ignores.
 
 **Consequences:** One sign-in for staff and members, with roles deciding who opens the admin (ADR-0073 gives sign-ups the guest role). Staff onboarding is the same on every site. A site that sets `false` manages accounts entirely itself, as before.
+
+## ADR-0075: System pages are outside the site's family rules
+
+**Status:** Accepted (amends ADR-0032)
+
+**Context:** Family rules (ADR-0032) let a site say which templates may sit under which. Modules keep their content in hidden branches under the home page, such as menus under `/_menus/`, created with the `system` status. A site that limited the home page's children to its own templates could no longer install those modules: the module's root page was refused.
+
+**Decision:** A page created with the `system` status is not checked against family rules. System pages are already outside the content tree in every other way: the admin's tree hides them, selectors leave them out, and they cannot be moved.
+
+**Consequences:** Sites can limit the home page's children freely. Code that creates pages with the `system` status takes on the job of placing them sensibly; only modules do that.

@@ -93,6 +93,8 @@ lynx()->templates->update('post', ['allow_children' => false, 'parent_templates'
 | `allow_children` | Whether its pages may have children. |
 | `child_templates` | Templates its children may use; empty means any. |
 | `parent_templates` | Templates its parent may use; empty means any. |
+
+Modules keep their own content in hidden system branches, such as menus under `/_menus/`. Those pages have the `system` status and are not bound by your family rules, so you can limit the home page's children to your own templates and still install modules.
 | `allowed_templates` | Templates its pages may switch to. |
 
 ## Arranging the page editor
