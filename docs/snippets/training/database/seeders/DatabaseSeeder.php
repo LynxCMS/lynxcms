@@ -24,6 +24,6 @@ final class DatabaseSeeder extends Seeder
 
         Artisan::call('lynx:install', ['--user' => (string) $owner->id]);
 
-        $this->call([AtlasSchemaSeeder::class, AtlasContentSeeder::class]);
+        $this->call([AtlasSchemaSeeder::class, AtlasContentSeeder::class, AtlasEditorsSeeder::class, AtlasSeoSeeder::class]);
     }
 }

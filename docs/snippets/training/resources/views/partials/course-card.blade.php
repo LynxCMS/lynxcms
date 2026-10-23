@@ -1,5 +1,5 @@
 {{-- A course as a clay card: level, title, summary, hours and price, and its next session. --}}
-@php($next = $course->children('template=session, starts>=now, availability=open, sort=starts, limit=1')->first())
+@php($next = $course->children('template=session, starts>=now, availability=scheduled, sort=starts, limit=1')->first())
 <article class="atlas-clay relative flex flex-col overflow-hidden" data-level="{{ $course->level?->value }}">
     <div class="atlas-card-band" data-level="{{ $course->level?->value }}">
         @if ($course->level)

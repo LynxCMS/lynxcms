@@ -1,6 +1,6 @@
 {{-- One dated session of a course. The booking form arrives in the "Paid bookings" chapter. --}}
 @php($course = $page->parent())
-<x-layouts.site :page="$page" :title="$course?->title.' · '.$page->title">
+<x-layouts.site :page="$page">
     <section class="px-4 py-12">
         <div class="atlas-clay mx-auto max-w-2xl p-8">
             <p class="atlas-muted text-sm"><a href="{{ $course?->url }}">@field($course?->title)</a></p>

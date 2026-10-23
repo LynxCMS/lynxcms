@@ -58,7 +58,7 @@ final class AtlasSchemaSeeder extends Seeder
         lynx()->fields->add('location', 'page', label: 'Location', settings: ['multiple' => false, 'templates' => ['location'], 'input' => 'select']);
         lynx()->fields->add('seats', 'integer', label: 'Seats left');
         lynx()->fields->add('availability', 'choice', label: 'Availability', settings: ['input' => 'radios', 'options' => [
-            ['value' => 'open', 'label' => ['en' => 'Open', 'pt' => 'Inscrições abertas']],
+            ['value' => 'scheduled', 'label' => ['en' => 'Open for booking', 'pt' => 'Inscrições abertas']],
             ['value' => 'cancelled', 'label' => ['en' => 'Cancelled', 'pt' => 'Cancelada']],
         ]]);
 
