@@ -9,6 +9,7 @@ SEO for Lynx CMS: meta and social tags, canonical links, robots rules and robots
 
 ```bash
 composer require lynxcms/seo
+php artisan lynx:migrate   # asks whether the database is backed up
 ```
 
 See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).

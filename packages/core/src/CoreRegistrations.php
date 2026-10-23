@@ -50,6 +50,7 @@ use LynxCms\Core\Console\FindCommand;
 use LynxCms\Core\Console\ImportCommand;
 use LynxCms\Core\Console\InstallCommand;
 use LynxCms\Core\Console\LanguagesCommand;
+use LynxCms\Core\Console\MigrateCommand;
 use LynxCms\Core\Console\PhpStanStubCommand;
 use LynxCms\Core\Console\ScanStringsCommand;
 use LynxCms\Core\Console\ScheduleRunCommand;
@@ -153,6 +154,7 @@ final class CoreRegistrations
 
     public const array COMMANDS = [
         InstallCommand::class,
+        MigrateCommand::class,
         LanguagesCommand::class,
         FindCommand::class,
         DemoCommand::class,

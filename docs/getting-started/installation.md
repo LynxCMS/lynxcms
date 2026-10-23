@@ -26,6 +26,25 @@ php artisan lynx:install --user=1
 
 Only `lynxcms/core` is required. Leave out the admin, menus, MCP or AI packages if you do not need them.
 
+## Adding modules later
+
+Install a module with Composer. When it brings database changes, Composer's run of `package:discover` ends with a warning that names the module:
+
+```
+WARN  lynxcms/cache has 2 database changes waiting. Run php artisan lynx:migrate once the database is backed up.
+```
+
+Back up the database, then apply them:
+
+```bash
+composer require lynxcms/cache
+php artisan lynx:migrate
+```
+
+`lynx:migrate` lists the changes by package and asks whether the database is backed up before it runs them (`--force` skips the question, for deployments). It runs only Lynx's migrations; `php artisan migrate` works too and runs the app's as well.
+
+Until the changes are applied, the module's screens, and for the page cache the page editor too, fail with a missing table error. If the app caches its configuration and routes (`php artisan optimize`, as most deployments do), run it again so the new screens are found.
+
 ## Open the admin
 
 The admin lives at `/lynx/pages`. If your app does not configure Laravel Fortify itself, Lynx signs people in at `/lynx/login`. See [Sign-in and accounts](/docs/admin/sign-in).

@@ -9,6 +9,7 @@ Page cache for Lynx CMS: guest pages stored as HTML, served by the web server or
 
 ```bash
 composer require lynxcms/cache
+php artisan lynx:migrate   # asks whether the database is backed up
 ```
 
 See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).

@@ -11,4 +11,13 @@ Forms for Lynx CMS. Define a form in PHP, place it on any page, and find what vi
 - Spam protection with [spatie/laravel-honeypot](https://github.com/spatie/laravel-honeypot) and a rate limit.
 - Actions for every change (`forms.submit`, `forms.update_submission`, `forms.delete_submission`, `forms.purge`), so the MCP server and the AI agent can work with submissions.
 
+## Installing
+
+```bash
+composer require lynxcms/forms
+php artisan lynx:migrate   # asks whether the database is backed up
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
+
 See `docs/front-end/forms.md` for the guide.

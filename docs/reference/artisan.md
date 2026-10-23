@@ -9,6 +9,7 @@ order: 2
 | Command | Does |
 | --- | --- |
 | `lynx:install --user= --migrate` | Default language, root page and roles; `--user` makes that user a superuser. |
+| `lynx:migrate --force` | Lists the database changes waiting in Lynx packages, asks whether the database is backed up, then applies them; `--force` skips the question. |
 | `lynx:languages` | Lists the languages. |
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
