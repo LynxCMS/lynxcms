@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use LynxCms\Admin\Livewire\FieldForm;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Forms\Admin\OptionsConverter;
 use LynxCms\Forms\Fields\OptionsType;
@@ -72,4 +73,35 @@ it('edits options in the page editor', function (): void {
         ->call('save')->assertHasNoErrors();
 
     expect(lynx()->pages->get('/courses/alpha/')?->getUnformatted('formats'))->toBe([['value' => 'teaser', 'label' => ['default' => 'Teaser', 'pt' => 'Teaser']]]);
+});
+
+/*
+ * "options" holds a list that visitors pick from, unlike "choice", where an editor picks from a
+ * list in the field's settings. Only the forms module creates options fields, from its schema, so
+ * the field form leaves the type out of its menu; the API and existing fields keep it.
+ */
+
+it('says what an options field is for, unlike a choice field', function (): void {
+    expect(lynx()->fields->types()['options']['description'])
+        ->toStartWith('A list of choices that visitors pick from, e.g. the answers to a form question.')
+        ->toContain('choice field');
+});
+
+it('leaves options out of the type menu for new fields', function (): void {
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(FieldForm::class)
+        ->assertDontSeeHtml('<option value="options">')
+        ->assertSeeHtml('<option value="choice">');
+    Livewire::test(FieldForm::class)->set('name', 'answers')->set('label.default', 'Answers')->set('type', 'options')->call('save')
+        ->assertHasErrors('type');
+});
+
+it('still shows an existing options field and creates them through the API', function (): void {
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(FieldForm::class, ['field' => 'formats'])->assertSee('options')->assertSee('visitors pick from');
+    lynx()->fields->add('answers', 'options');
+
+    expect(lynx()->fields->get('answers')->type)->toBe('options');
 });

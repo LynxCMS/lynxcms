@@ -29,7 +29,7 @@
             <label for="field-type" class="text-sm font-medium">Type</label>
             @if ($field === null)
                 <select id="field-type" class="blat-select max-w-sm" wire:model.live="type">
-                    @foreach ($types as $typeName => $info)
+                    @foreach ($offeredTypes as $typeName => $info)
                         <option value="{{ $typeName }}">{{ $typeName }}</option>
                     @endforeach
                 </select>

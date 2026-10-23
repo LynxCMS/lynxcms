@@ -64,6 +64,14 @@ Wrap the view in the admin layout and use the BlatUI components:
 
 Colours come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
 
+## Field types the field form offers
+
+A module whose field type only its own schema creates can leave it out of the field form's type menu, as the forms module does with `options`. The type still works through the API and MCP, and existing fields of it still open in the field form.
+
+```php
+app(\LynxCms\Admin\Editor\FieldTypeChoices::class)->exclude('rating');
+```
+
 ## A branch the module edits itself
 
 A module that keeps its content as pages under a system page (as menus do under `/_menus/`) registers the branch. The page tree leaves it out, and the page editor sends its pages to the module's screen.
