@@ -6,15 +6,16 @@
 
     {{-- Names and languages --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-names">
-        <h2 id="settings-names" class="mb-4 text-base font-semibold">Names and languages</h2>
+        @php($isMultilingual = lynx()->languages->isMultilingual())
+        <h2 id="settings-names" class="mb-4 text-base font-semibold">{{ $isMultilingual ? 'Names and languages' : 'Name' }}</h2>
         @if ($page->parentId === null)
-            <p class="text-muted-foreground text-sm">The home page has no URL name: its URL is the language prefix.</p>
+            <p class="text-muted-foreground text-sm">The home page has no URL name: its URL is {{ $isMultilingual ? 'the language prefix' : '/' }}.</p>
         @else
             <div class="space-y-4">
                 @foreach ($languages as $language)
                     @php($code = (string) $language->code)
                     <div class="grid items-start gap-2 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-4">
-                        <label for="name-{{ $code }}" class="pt-2 text-sm font-medium">{{ $language->name }}</label>
+                        <label for="name-{{ $code }}" class="pt-2 text-sm font-medium">{{ $isMultilingual ? $language->name : 'URL name' }}</label>
                         <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-3">
                                 <input id="name-{{ $code }}" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="names.{{ $code }}"
@@ -50,7 +51,7 @@
             <div class="space-y-2">
                 @php($flags = ['unpublished' => ['Unpublished', 'Not visible on the site; pages below it are offline too'], 'hidden' => ['Hidden', 'Excluded from lists, menus and searches; still reachable by URL'], 'locked' => ['Locked', 'Not editable, movable or deletable until unlocked']])
                 @if ($page->parentId !== null)
-                    @php($flags['unique'] = ['Unique', 'Require the name “'.$page->name($defaultCode).'” to be unique across the site (default language only)'])
+                    @php($flags['unique'] = ['Unique', 'Require the name “'.$page->name($defaultCode).'” to be unique across the site'.(lynx()->languages->isMultilingual() ? ' (default language only)' : '')])
                 @endif
                 {{-- Publishing needs pages.publish; the other flags pages.status (ADR-0033). --}}
                 @php($flags = array_filter($flags, fn (array $flag, string $name): bool => $can[$name === 'unpublished' ? 'publish' : 'status'], ARRAY_FILTER_USE_BOTH))

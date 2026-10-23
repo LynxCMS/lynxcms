@@ -147,3 +147,39 @@ it('counts a field used inside a repeater as used by the repeater\'s templates',
         ->set('template', 'course')->assertSee('partner');
     Livewire::test(FieldForm::class, ['field' => 'partner'])->assertSee('course (in credits)')->assertDontSee('No template uses this field yet.');
 });
+
+/*
+ * With one language, "translatable" means nothing to the person creating a field, but it can't be
+ * changed later. The form leaves it out and makes fields translatable when their type allows,
+ * so adding a language later just works.
+ */
+
+it('leaves translation out of the field form on a one-language site', function (): void {
+    lynx()->languages->delete('pt');
+
+    Livewire::test(FieldForm::class)->set('type', 'text')
+        ->assertDontSee('Translatable')
+        ->assertDontSee('fallback');
+    Livewire::test(FieldForm::class, ['field' => 'title'])
+        ->assertDontSee('Translatable')
+        ->assertDontSee('Shared by every language')
+        ->assertDontSee('When a translation is empty');
+});
+
+it('creates translatable fields on a one-language site when the type allows it', function (): void {
+    lynx()->languages->delete('pt');
+
+    Livewire::test(FieldForm::class)->set('name', 'subtitle')->set('label.default', 'Subtitle')->set('type', 'text')->call('save')->assertHasNoErrors();
+    Livewire::test(FieldForm::class)->set('name', 'seats')->set('label.default', 'Seats')->set('type', 'integer')->call('save')->assertHasNoErrors();
+
+    expect(lynx()->fields->get('subtitle')->isTranslatable())->toBeTrue()
+        ->and(lynx()->fields->get('seats')->isTranslatable())->toBeFalse();
+});
+
+it('keeps the translatable choice with several languages', function (): void {
+    Livewire::test(FieldForm::class)->set('type', 'text')->assertSee('Translatable: one value per language');
+
+    Livewire::test(FieldForm::class)->set('name', 'subtitle')->set('label.default', 'Subtitle')->set('type', 'text')->set('translatable', false)->call('save');
+
+    expect(lynx()->fields->get('subtitle')->isTranslatable())->toBeFalse();
+});

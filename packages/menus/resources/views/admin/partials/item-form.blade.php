@@ -24,7 +24,7 @@
         <span id="item-label-label" class="blat-label mb-2">Label</span>
         @include('lynx-menus::admin.partials.translated-input', ['model' => 'item.label', 'id' => 'item-label', 'label' => 'Label', 'error' => 'label', 'placeholder' => $item->kind === 'page' ? ($item->pageTitle ?: 'Page title') : ''])
         @if ($item->kind === 'page')
-            <p class="text-muted-foreground text-sm mt-1">Leave empty to use the page title in each language.</p>
+            <p class="text-muted-foreground text-sm mt-1">Leave empty to use the page title{{ count($languages) > 1 ? ' in each language' : '' }}.</p>
         @endif
         @error('label') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     </div>

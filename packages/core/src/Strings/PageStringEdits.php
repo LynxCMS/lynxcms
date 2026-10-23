@@ -123,7 +123,7 @@ final readonly class PageStringEdits
                     DB::table(Tables::STRINGS)->insert($where + ['value' => $text, 'updated_by' => $by, 'updated_at' => now()]);
                 }
 
-                $written[] = "string {$key} [{$code}]";
+                $written[] = $this->languages->all()->count() > 1 ? "string {$key} [{$code}]" : "string {$key}";
             }
         }
 

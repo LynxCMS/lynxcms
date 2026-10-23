@@ -15,6 +15,7 @@ use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
+use LynxCms\Admin\Editor\TypeDescriptions;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
@@ -151,7 +152,7 @@ final class FieldForm extends Component
         }
 
         if ($isNew) {
-            lynx()->fields->add($this->name, $this->type, $this->translatable, LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
+            lynx()->fields->add($this->name, $this->type, $this->isMultilingual() ? $this->translatable : $this->typeCanTranslate(), LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
             $this->redirectRoute('lynx.admin.fields.edit', $this->name);
 
             return;
@@ -188,14 +189,29 @@ final class FieldForm extends Component
         $types = lynx()->fields->types();
 
         return view('lynx-admin::livewire.field-form', [
-            'types' => $types,
+            'types' => TypeDescriptions::forSite($types),
             'definitions' => $this->definitions(),
             'availableFormatters' => lynx()->formatters()->forType($this->type),
-            'canTranslate' => (bool) ($types[$this->type]['translatable'] ?? false),
+            // With one language the choice means nothing yet, and it can't be changed later.
+            'canTranslate' => $this->isMultilingual() && $this->typeCanTranslate(),
             'usedBy' => $this->field === null ? [] : (app(FieldUsage::class)->labels()[$this->field] ?? []),
             'canEdit' => $this->canEdit(),
             'owner' => $this->field === null ? null : app(SchemaOwners::class)->ownerOfField($this->field),
         ]);
+    }
+
+    /**
+     * Translatable is fixed once a field exists. With one language the form leaves the choice out
+     * and makes fields translatable when their type allows, so adding a language later just works.
+     */
+    private function isMultilingual(): bool
+    {
+        return lynx()->languages->isMultilingual();
+    }
+
+    private function typeCanTranslate(): bool
+    {
+        return (bool) (lynx()->fields->types()[$this->type]['translatable'] ?? false);
     }
 
     private function canEdit(): bool

@@ -32,7 +32,7 @@
             <p class="text-muted-foreground text-xs">Set by the site, not editable here.</p>
         @endif
         @if ($showType)
-            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable ? ', translatable' : '' }}</p>
+            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', translatable' : '' }}</p>
         @endif
         @if ($field->description)
             <p class="text-muted-foreground text-sm mt-1">{{ $field->description }}</p>

@@ -37,7 +37,7 @@ final class ChoiceType extends BaseFieldType implements DescribesPhpType, Normal
 
     public static function description(): string
     {
-        return 'One of a fixed list of options (or several with "multiple": true), each a value and a label per language. Settings "options": [{"value": "red", "label": {"en": "Red"}}], "input": select, radios or checkboxes. Selectors compare values.';
+        return 'One of a fixed list of options (or several with "multiple": true), each a value and a label. Labels are per language. Settings "options": [{"value": "red", "label": {"en": "Red"}}], "input": select, radios or checkboxes. Selectors compare values.';
     }
 
     public function multiple(): bool

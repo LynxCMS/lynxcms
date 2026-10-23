@@ -42,7 +42,7 @@
                     <x-lynx-admin::ui.table-row wire:key="field-{{ $field->name }}">
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2"><a href="{{ route('lynx.admin.fields.edit', $field->name) }}" class="font-medium">{{ $field->name }}</a>@if ($owner = $owners->ownerOfField($field->name)) <x-lynx-admin::ui.badge variant="secondary" class="ms-1">system · {{ $owner }}</x-lynx-admin::ui.badge>@endif</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">{{ $field->label }}</x-lynx-admin::ui.table-cell>
-                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ $field->type }}{{ $field->isTranslatable() ? ', translatable' : '' }}</x-lynx-admin::ui.table-cell>
+                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ $field->type }}{{ $field->isTranslatable() && lynx()->languages->isMultilingual() ? ', translatable' : '' }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ implode(', ', $usedBy[$field->name] ?? []) ?: 'No template' }}</x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty
