@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.11
+
+Released October 23, 2026.
+
+- **JSON translations for regional languages.** A language with a regional locale such as `pt-PT` now reads `__('Book now')` from `lang/pt.json`, as it already read `lang/pt/*.php`. Laravel looks up JSON strings for the exact locale only, so these stayed in English before. `lang/pt-PT.json` still wins where it has a string.
+
 ## 0.1.10
 
 Released October 23, 2026.

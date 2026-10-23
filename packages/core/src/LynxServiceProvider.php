@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -35,6 +36,7 @@ use LynxCms\Core\Http\Middleware\RememberLocale;
 use LynxCms\Core\Indexes\IndexesServiceProvider;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Languages\RegionalJsonLoader;
 use LynxCms\Core\Languages\TranslationLocales;
 use LynxCms\Core\Migrations\DiscoverWarning;
 use LynxCms\Core\Models\Template;
@@ -117,6 +119,8 @@ final class LynxServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(UnknownFields::class);
+        // Regional languages (pt-PT) also read the bare language's JSON strings (lang/pt.json).
+        $this->app->extend('translation.loader', fn (Loader $loader): Loader => new RegionalJsonLoader($loader));
         // Page gates and visibility rules (ADR-0062): registered by modules at boot.
         $this->app->singleton(PageGates::class);
         $this->app->singleton(PageVisibility::class);
