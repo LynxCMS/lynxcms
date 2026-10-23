@@ -54,6 +54,7 @@ export default defineConfig({
                 text: 'Getting Started',
                 items: [
                     { text: 'Introduction', link: '/getting-started/introduction' },
+                    { text: 'Lynx Compared', link: '/getting-started/compared' },
                     { text: 'Installation', link: '/getting-started/installation' },
                     { text: 'Your First Site', link: '/getting-started/first-site' },
                     { text: 'Core Concepts', link: '/getting-started/concepts' },
