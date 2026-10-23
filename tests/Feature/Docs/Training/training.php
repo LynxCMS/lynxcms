@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Providers\AtlasServiceProvider;
 use Database\Seeders\AtlasContentSeeder;
 use Database\Seeders\AtlasSchemaSeeder;
+use Database\Seeders\AtlasSurveySeeder;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
@@ -17,6 +18,8 @@ const TRAINING = __DIR__.'/../../../../docs/snippets/training';
 
 require_once TRAINING.'/database/seeders/AtlasSchemaSeeder.php';
 require_once TRAINING.'/database/seeders/AtlasContentSeeder.php';
+require_once TRAINING.'/database/seeders/AtlasSurveySeeder.php';
+require_once TRAINING.'/database/seeders/AtlasCacheSeeder.php';
 require_once TRAINING.'/app/View/Composers/CourseCatalogue.php';
 require_once TRAINING.'/app/Forms/EnquiryForm.php';
 require_once TRAINING.'/app/Forms/NewsletterForm.php';
@@ -41,6 +44,7 @@ function trainingSite(bool $withContent = true): void
 
     if ($withContent) {
         new AtlasContentSeeder()->run();
+        new AtlasSurveySeeder()->run();
     }
 
     new AtlasServiceProvider(app())->boot();

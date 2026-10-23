@@ -48,7 +48,7 @@
             </div>
             <div class="grid gap-6">
                 <x-lynx-menu name="footer" view="menus.footer" />
-                <livewire:lynx-form form="newsletter" :page-id="$page->id" class="atlas-newsletter" />
+                <x-lynx-island livewire="lynx-form" :with="['form' => 'newsletter', 'pageId' => $page->id]" />
             </div>
             <address class="text-sm not-italic opacity-80">
                 @if ($settings = lynx()->settings())

@@ -109,6 +109,8 @@ export default defineConfig({
                     { text: '6. Leads', link: '/guides/training-site/leads' },
                     { text: '7. Paid Bookings', link: '/guides/training-site/bookings' },
                     { text: '8. Members Area', link: '/guides/training-site/members' },
+                    { text: '9. Surveys', link: '/guides/training-site/surveys' },
+                    { text: '10. Launch', link: '/guides/training-site/launch' },
                 ],
             },
             {
