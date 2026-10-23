@@ -42,6 +42,19 @@ final class Mappings
         return $items;
     }
 
+    /**
+     * The settings page's matrix items for these mappings, as SavePage takes them.
+     *
+     * @param  list<array{enabled: bool, template: string, type: string, lines: string}>  $mappings
+     * @return list<array<string, mixed>>
+     */
+    public static function toItems(array $mappings): array
+    {
+        return array_map(fn (array $mapping): array => ['type' => SeoSchema::SCHEMA_ITEM, 'enabled' => $mapping['enabled'], 'values' => [
+            SeoSchema::SCHEMA_TEMPLATE => $mapping['template'], SeoSchema::SCHEMA_TYPE => $mapping['type'], SeoSchema::SCHEMA_MAP => $mapping['lines'],
+        ]], array_values($mappings));
+    }
+
     /** The enabled mapping for a template, if any. */
     public function for(string $template): ?Mapping
     {

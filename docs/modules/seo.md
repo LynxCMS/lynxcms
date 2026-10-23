@@ -115,6 +115,22 @@ A mapping that would make broken structured data is refused when saved, with the
 
 ### In code
 
+Map a template with an action, which is also a tool for MCP clients and the agent. Each property names its source, as in the admin, and the same checks refuse a mapping that would make broken structured data. It replaces the template's mapping and leaves the others:
+
+```php
+use LynxCms\Seo\Actions\MapTemplate;
+use LynxCms\Seo\Actions\UnmapTemplate;
+
+lynx()->run(MapTemplate::class, ['template' => 'event', 'type' => 'Event', 'map' => [
+    'name' => '@title',
+    'startDate' => 'starts',
+    'location' => 'venue',
+    'offers.priceCurrency' => '=EUR',
+]]);
+
+lynx()->run(UnmapTemplate::class, ['template' => 'event']);
+```
+
 Add or change nodes in a service provider:
 
 ```php
@@ -152,7 +168,7 @@ Pages with SEO fields get an **SEO preview** link in the page editor. It shows t
 
 ## Agents
 
-The actions are MCP and agent tools: `seo_install`, `seo_enable_template` and `seo_disable_template`. The read tool `seo_inspect` gives a page's final tags in a language, so an agent can check its work after editing the `seo_*` fields.
+The actions are MCP and agent tools: `seo_install`, `seo_enable_template`, `seo_disable_template`, `seo_map_template` and `seo_unmap_template`. The read tool `seo_inspect` gives a page's final tags in a language, so an agent can check its work after editing the `seo_*` fields.
 
 ## Configuration
 

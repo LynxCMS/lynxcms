@@ -167,9 +167,7 @@ final class SeoSchemas extends Component
     private function persist(array $mappings): bool
     {
         lynx()->run(InstallSeo::class);
-        $items = array_map(fn (array $mapping): array => ['type' => SeoSchema::SCHEMA_ITEM, 'enabled' => $mapping['enabled'], 'values' => [
-            SeoSchema::SCHEMA_TEMPLATE => $mapping['template'], SeoSchema::SCHEMA_TYPE => $mapping['type'], SeoSchema::SCHEMA_MAP => $mapping['lines'],
-        ]], $mappings);
+        $items = Mappings::toItems($mappings);
 
         try {
             lynx()->run(SavePage::class, ['id' => lynx()->settings(SeoSchema::SETTINGS_TEMPLATE)?->id, 'values' => [SeoSchema::SCHEMAS => $items]]);

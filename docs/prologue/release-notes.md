@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.9
+
+Released October 23, 2026.
+
+- **Structured data mappings from code and AI tools.** `seo.map_template` maps a template to a schema.org type, property by property, and `seo.unmap_template` removes it. Both are MCP and agent tools, and the admin's checks refuse a mapping that would make broken structured data. See [SEO, In code](/modules/seo#in-code).
+
 ## 0.1.8
 
 Released October 23, 2026.
