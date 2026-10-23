@@ -1,77 +1,132 @@
 ---
-title: Images and files
-description: Images and documents that belong to a page, with descriptions per language, tags, focus points and sizes made on demand.
-order: 3
+title: Images and Files
+description: Image and file fields, uploads, responsive sizes made on demand, focus points, tags and downloads per language.
 ---
 
-# Images and files
+# Images and Files
 
-`lynxcms/media` adds two field types. Run `php artisan storage:link` once so the `public` disk is served.
+The `lynxcms/media` package adds two field types: `images`, for photos and illustrations, and `files`, for documents such as PDFs. Files belong to the page that holds them, each with a description per language and tags. Images also have a focus point, and Lynx makes the sizes your templates ask for on demand, cropped around that point.
+
+## Installation
+
+```bash
+composer require lynxcms/media
+php artisan storage:link
+```
+
+`storage:link` makes the `public` disk reachable from the web, as in any Laravel app. Files are stored in `storage/app/public/lynx/{page id}/`; set `LYNX_MEDIA_DISK` to use another disk.
+
+## Adding fields
 
 ```php
 lynx()->fields->add('gallery', 'images', settings: ['max_files' => 12, 'tags' => ['hero', 'detail']]);
-lynx()->fields->add('poster', 'images', settings: ['max_files' => 1, 'min_width' => 800]);
+lynx()->fields->add('cover', 'images', settings: ['max_files' => 1, 'min_width' => 800]);
 lynx()->fields->add('downloads', 'files', settings: ['extensions' => 'pdf zip']);
 ```
 
 | Setting | Meaning |
 | --- | --- |
-| `max_files` | Most files; `1` makes templates read one file instead of a list. |
-| `extensions` | Allowed extensions, space separated. |
-| `max_kb` | Largest upload. |
+| `max_files` | Most files. `1` makes templates read one file instead of a list. |
+| `extensions` | Allowed extensions, separated by spaces. |
+| `max_kb` | Largest upload, in kilobytes. |
 | `min_width`, `min_height` | Smaller images are refused. |
-| `max_width`, `max_height` | Larger images are scaled down on upload (default 2560). |
-| `tags` | Tags editors may choose; empty allows any. |
+| `max_width`, `max_height` | Larger images are scaled down on upload. Default 2560. |
+| `tags` | Tags editors may choose; empty allows any tag. |
 
-Files live in `storage/app/public/lynx/{page id}/` (`LYNX_MEDIA_DISK` picks another disk). In the admin, drop files on the field, then drag them into order (or use the arrow buttons under each file), hide, describe them per language, tag them and click the focus point.
+[Field Types](/basics/field-types#media) lists the defaults.
 
-Files are stored with their page, so a new page cannot hold them yet. A required images or files field does not block creating a page: the New page screen leaves it out and creates the page unpublished. Add the files in the editor, then publish. Every save after creation needs the field filled.
+## Uploading in the admin
 
-## In templates
+Editors drop files on the field, then drag them into order (or use the arrow buttons under each file). Each file can be hidden, described in each language and tagged, and each image gets a focus point with a click.
+
+Files are stored with their page, so a page must exist before it can hold them. A required images or files field doesn't block creating a page: the New page screen leaves it out and creates the page unpublished. Editors add the files in the page editor, then publish it.
+
+## Showing images
+
+The `<x-lynx-image>` component prints an `<img>` tag with the size you ask for, its `width` and `height`, a `srcset` for sharp images on every screen, and lazy loading:
 
 ```blade
-@foreach ($page->gallery as $image)
-    <x-lynx-image :image="$image" :width="800" :height="600" />
-@endforeach
+<x-lynx-image :image="$page->cover" :width="1200" sizes="100vw" />
 
-<x-lynx-image :image="$page->poster" :width="1200" sizes="100vw" />
-<a href="{{ $page->downloads->first()?->url() }}">{{ $page->downloads->first()?->description() }}</a>
+@foreach ($page->gallery as $image)
+    <x-lynx-image :image="$image" :width="400" :height="300" />
+@endforeach
 ```
+
+With a width and a height, the image is cropped to exactly that size around its focus point. With only a width, it keeps its proportions. The image's description in the current language becomes the `alt` text, unless you pass `alt`; pass `:lazy="false"` for an image at the top of the page.
+
+For other markup, an image gives you its sizes directly:
 
 | Method | Gives |
 | --- | --- |
 | `url()`, `width()`, `height()` | The original. |
 | `size(800, 600)` | Exactly that size, cropped around the focus point. |
-| `resize(400)` | 400 pixels wide, keeping the ratio, never larger than the original. |
-| `webp()`, `preset('card')` | A WebP copy; a named size from `config/lynx-media.php`. |
-| `srcset([400, 800])` | A srcset value. |
-| `description()`, `tags()`, `hasTag('hero')` | In the current language, with fallback. |
+| `resize(400)` | 400 pixels wide, keeping the proportions, never larger than the original. |
+| `webp()` | A WebP copy. |
+| `preset('card')` | A named size from `config/lynx-media.php` (`thumb`, `card` and `hero` by default). |
+| `srcset([400, 800])` | A `srcset` value. |
+| `description()`, `tags()`, `hasTag('hero')` | Its description and tags, in the current language with fallback. |
 
-`$page->gallery->tagged('hero')` filters by tag. Sizes are made the first time their file or URL is asked for, always from the original, and kept next to it. Calls chain into one file: `$image->size(300, 300, 75)->webp()` is a single WebP named `photo.300x300-q75.webp`.
+```blade
+<div style="background-image: url('{{ $page->cover->size(1920, 600)->webp()->url() }}')"></div>
+```
 
-`withTags()` keeps the files that have every tag given, and returns a list you can keep filtering. `inLanguage()` keeps the files tagged with the current language's code; when there are none, it tries the next language along the fallback chain, then the files tagged with no language. Tag files with language codes (`en`, `pt`) to offer one download per language:
+Sizes are made the first time their file or URL is asked for, always from the original, and kept next to it. Calls chain into one file: `$image->size(300, 300, 75)->webp()` is a single WebP file, `photo.300x300-q75.webp`.
+
+## Tags
+
+Tags group the files of a field. `tagged()` keeps the files with a tag:
+
+```blade
+@foreach ($page->gallery->tagged('hero') as $image)
+    <x-lynx-image :image="$image" :width="1600" />
+@endforeach
+```
+
+## Downloads per language
+
+For documents in several languages, tag each file with its language's code (`en`, `pt`). `inLanguage()` keeps the files of the current language; when there are none, it tries the next language of the fallback chain, then the files tagged with no language. `withTags()` keeps the files that have every tag given:
 
 ```blade
 @php($sheet = $page->downloads->withTags('a4', 'color')->inLanguage()->first())
+
 @if ($sheet)
     <a href="{{ $sheet->url() }}" download>{{ $sheet->description() ?: $sheet->name() }}</a>
 @endif
 ```
 
-Content packages carry the files with their pages (see [Schema and content](/deeper/schema-and-content)).
+## Finding pages by their files
 
-Selectors look inside files too: `gallery.tags=hero`, `hero.width>=1600`, `blocks.gallery.count>0`. See [Selectors](/basics/selectors).
+Selectors look inside images and files, one item per file:
 
-## From code and agents
+```php
+lynx()->pages->find('gallery.tags=hero');
+lynx()->pages->find('cover.width>=1600');
+lynx()->pages->find('template=project, gallery.count=0'); // projects without images
+```
+
+See [Finding Pages](/basics/selectors#inside-repeaters-blocks-and-files) for every property.
+
+## Storing files from code
+
+To attach a file from code, such as an image an importer downloads, store it with the `media.store` action, then add the returned entry to the field:
 
 ```php
 use LynxCms\Media\Actions\StoreMedia;
 
-$entry = lynx()->run(StoreMedia::class, ['page' => '/projects/doc/', 'field' => 'gallery', 'url' => 'https://example.com/still.jpg'])->value;
+$entry = lynx()->run(StoreMedia::class, [
+    'page' => '/projects/documentary',
+    'field' => 'gallery',
+    'url' => 'https://example.com/still.jpg',
+])->value;
 
-$page = lynx()->pages->get('/projects/doc/');
-$page->gallery = [...$page->getUnformatted('gallery'), ['values' => ['description' => ['pt' => 'Rodagem']] + $entry]];
+$page = lynx()->pages->get('/projects/documentary');
+$page->gallery = [...$page->getUnformatted('gallery'), ['values' => ['description' => ['en' => 'On set']] + $entry]];
 $page->save();
 ```
 
-`media.store` is also an MCP and agent tool (URL or base64). Files no page, draft or revision uses are deleted by `php artisan lynx:media:prune`, which the scheduler runs daily.
+`media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
+
+## Cleaning up
+
+Files that no page, draft or revision uses are deleted by `php artisan lynx:media:prune`, which the scheduler runs daily, once they are a day old. [Content packages](/deeper/schema-and-content) carry the files of the pages they hold.

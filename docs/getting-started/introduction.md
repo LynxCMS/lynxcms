@@ -30,6 +30,18 @@ Lynx is a set of Composer packages, not a separate application. After installing
 - You can read content anywhere: in a controller, a Livewire component or a job, `lynx()->pages->find('template=post, limit=10')` returns pages.
 - Your app keeps its own database tables, users, queues and deployment. Lynx adds tables that start with `lynx_`.
 
+## An admin for editors, and optional
+
+The `lynxcms/admin` package gives editors a place to work that needs no technical knowledge. They see the site as a tree of pages they can open, drag to reorder and move; a page editor with the fields laid out the way you arranged them, in plain labels, with a tab per language; drafts they can preview before publishing; publishing on a schedule; a history of every save they can compare and restore; and a trash to recover from mistakes. Developer details, such as template names and field types, are shown only to superusers, and a site with one language never mentions translations.
+
+The admin is also completely optional. Lynx doesn't need it: with only `lynxcms/core`, you define templates and fields in PHP or in YAML files, write content from code, seeders, imports or [content packages](/deeper/schema-and-content), and let AI tools work through the [MCP server](/ai/). Your app can build its own editing screens on the same API, and every rule, such as permissions and validation, still applies, because it lives in the [actions](/getting-started/concepts#actions), not in the admin.
+
+## Livewire
+
+Pages render with Blade, so a template can use any [Livewire](https://livewire.laravel.com) component of your app, such as a newsletter form or a search filter. With a [`component` field](/basics/field-types#component), editors place components on pages themselves and fill in their settings. See [Views](/basics/views#livewire-components).
+
+The admin is built with Livewire 4 too, so you can add screens of your own to it the same way you build the rest of your app ([Extending the Admin](/admin/extending)).
+
 ## The packages
 
 Only `lynxcms/core` is required. Add the others when a site needs them; each one has its own page in this guide.

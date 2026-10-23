@@ -67,7 +67,7 @@ php artisan lynx:schema:apply
 
 ## Creating pages
 
-Editors create pages in the admin: in the page tree, open the actions of the **Home** row and choose **New**, then pick the template. Because of the family rules, a page created under the blog page can only be a post.
+Editors create pages in the admin: in the page tree, open the actions of the **Home** row and choose **New**, then pick the template. The list of templates only offers the ones allowed in that place. Earlier you set `child_templates` to `post` on the blog template, so when an editor creates a page under the blog page, **Post** is the only template on offer, and they can't put a post anywhere else.
 
 For this tutorial, create the blog page and a first post in Tinker:
 
@@ -124,7 +124,7 @@ Now make the blog multilingual. Add Portuguese in the admin under **Settings ›
 
 <<< @/snippets/first-site/languages.php#add-language{php}
 
-The first line names the default language, which `lynx:install` called "Default". The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
+The first line gives the default language, which `lynx:install` called "Default" with the code `default`, its real code, name and locale. The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
 
 Translate the blog page and the first post. In the admin, open the page and use the language tabs above each field; give the page a Portuguese URL name in its **Settings** tab. Or in Tinker:
 

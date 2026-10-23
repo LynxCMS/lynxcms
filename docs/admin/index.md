@@ -6,7 +6,7 @@ order: 6
 
 # The admin
 
-`lynxcms/admin` adds a Livewire admin at `/lynx` (`LYNX_ADMIN_PREFIX`).
+`lynxcms/admin` adds an admin at `/lynx` (`LYNX_ADMIN_PREFIX`) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and Laravel Fortify, and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#an-admin-for-editors-and-optional)).
 
 | Screen | Does | Needs |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ Superusers also see developer details in the page editor: the template's name, e
 
 ## Search
 
-The box in the top bar (Cmd or Ctrl+K) finds pages. Plain text searches titles and the fields templates mark searchable (see [Search](/basics/templates-and-fields#search)), matching word beginnings in any order. Anything with an operator (`=`, `<`, `>`) runs as a [selector](/basics/selectors), the same one `lynx()->pages->find()` takes:
+The box in the top bar (Cmd or Ctrl+K) finds pages. Plain text searches titles and the fields templates mark searchable (see [Search](/basics/templates-and-fields#making-fields-searchable)), matching word beginnings in any order. Anything with an operator (`=`, `<`, `>`) runs as a [selector](/basics/selectors), the same one `lynx()->pages->find()` takes:
 
 ```
 template=course, price>100, sort=-modified
