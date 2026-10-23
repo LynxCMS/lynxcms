@@ -117,7 +117,8 @@
         <x-lynx-admin::ui.tabs-list variant="underline" aria-label="Editor sections">
             {{-- Content and the template's own tabs hold fields; a dot marks one with an error. --}}
             @php($errorTabs = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => $layout->tabOf(explode('.', $key)[1] ?? ''))->unique()->all())
-            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->label->in()])->all() + ($hasStrings ? ['texts' => 'Texts'] : []) + ['settings' => 'Settings'] as $value => $label)
+            {{-- Then the tabs modules add for this page (EditorTabs). --}}
+            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->label->in()])->all() + ($hasStrings ? ['texts' => 'Texts'] : []) + array_map(fn ($t) => $t['label'], $moduleTabs) + ['settings' => 'Settings'] as $value => $label)
                 <x-lynx-admin::ui.tabs-trigger :value="$value" wire:click="$set('tab', '{{ $value }}')">
                     {{ $label }}
                     @if (in_array($value, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="has errors"></span>@endif
@@ -137,6 +138,8 @@
         <livewire:lynx-admin.page-settings :page-id="$pageId" :key="'settings-'.$pageId" />
     @elseif ($tab === 'texts' && $hasStrings)
         <livewire:lynx-admin.page-strings :page-id="$pageId" :key="'texts-'.$pageId" />
+    @elseif (isset($moduleTabs[$tab]))
+        @livewire($moduleTabs[$tab]['component'], ['pageId' => $pageId], key($tab.'-'.$pageId))
     @else
         @include('lynx-admin::livewire.partials.editor-layout')
     @endif

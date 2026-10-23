@@ -21,6 +21,8 @@ Then turn it on in `.env`:
 LYNX_PAGE_CACHE=true
 ```
 
+The page editor has a **Cache** tab on every page with a URL. It says whether guests get a stored copy of the page and at which URLs, or why not (the cache is off, the template is not stored, or the page is unpublished). People who may manage the page cache (`page_cache.manage`) also see the template's rule, how to fix what keeps the page out, a button to clear the page, and a short guide to how the page cache works.
+
 ## Where pages are kept
 
 | Driver | Where | Served by | For |
