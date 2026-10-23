@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.15
+
+Released October 24, 2026.
+
+- The training site starter runs its tests from a fresh clone: `php artisan test` no longer stops at a missing `tests/Unit` folder.
+
 ## 0.1.14
 
 Released October 24, 2026.
