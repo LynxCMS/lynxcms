@@ -15,8 +15,17 @@
     --vp-home-hero-name-color: #22d3ee;
 }
 
-/* Comparison tables with many columns (Lynx Compared). */
+/* Comparison tables with many columns (Lynx Compared): they keep a readable width and scroll
+   sideways in the content column, so the page keeps its outline. */
+.vp-doc .wide-table {
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
 .vp-doc .wide-table table {
+    display: table;
+    min-width: 56rem;
+    margin: 0;
     font-size: 0.875rem;
     line-height: 1.5;
 }

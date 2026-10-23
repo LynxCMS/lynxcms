@@ -1,8 +1,6 @@
 ---
 title: Lynx Compared
 description: How Lynx's features compare with Statamic, ProcessWire, Laravel Folio and WordPress, and when another tool fits better.
-# The comparison table needs the width of the page.
-aside: false
 ---
 
 # Lynx Compared
