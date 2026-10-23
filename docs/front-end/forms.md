@@ -77,6 +77,8 @@ Editors make forms without code. **Forms › Forms** lists them (with the forms 
 | Repeating group | Rows visitors add; indent the blocks that belong to it |
 | New step | Starts a new step; blocks before the first step make step 1 |
 
+The options of a Dropdown, Choose one or Choose several block are stored in an `options` field: a list that visitors pick from. It differs from a `choice` field, where an editor picks from a list set in the field's settings. Only the form builder creates `options` fields, so the field form doesn't offer the type; the API and MCP still can.
+
 Each block has a label and help text in every language, a name (made from the label when empty), whether it is required, a width, and an optional condition: show only when field *subject* has one of *press, other*, compares as `>= 50` or `!= 3`, or for a tick box is *yes* or *no*. A required field is only required while it shows. Switch a block off to hide it without deleting it. Saving refuses a form that would not work, and marks the block to fix. A form is served once it is published.
 
 The form's own settings say who receives submissions (emails, or else everyone who may see submissions), what visitors read after sending or when sending fails, and the confirmation mailed to them.

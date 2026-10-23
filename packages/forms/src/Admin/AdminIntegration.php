@@ -10,6 +10,7 @@ use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\Editor\FieldInputs;
+use LynxCms\Admin\Editor\FieldTypeChoices;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\EditorLinks;
@@ -39,6 +40,8 @@ final class AdminIntegration
     public static function register(): void
     {
         app(FieldInputs::class)->register('options', 'lynx-forms::inputs.options', OptionsConverter::class);
+        // Only the form builder's schema creates options fields; editors pick choice instead.
+        app(FieldTypeChoices::class)->exclude('options');
         Livewire::component('lynx-forms.inbox', Inbox::class);
         Livewire::component('lynx-forms.submission', SubmissionView::class);
         Livewire::component('lynx-forms.list', FormList::class);

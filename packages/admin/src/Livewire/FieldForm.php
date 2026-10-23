@@ -6,11 +6,13 @@ namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\ChoicesForm;
+use LynxCms\Admin\Editor\FieldTypeChoices;
 use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
@@ -152,6 +154,10 @@ final class FieldForm extends Component
         }
 
         if ($isNew) {
+            if (! app(FieldTypeChoices::class)->offers($this->type)) {
+                throw ValidationException::withMessages(['type' => "Fields of type [{$this->type}] are created by the module that uses them."]);
+            }
+
             lynx()->fields->add($this->name, $this->type, $this->isMultilingual() ? $this->translatable : $this->typeCanTranslate(), LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
             $this->redirectRoute('lynx.admin.fields.edit', $this->name);
 
@@ -186,10 +192,11 @@ final class FieldForm extends Component
 
     public function render(): View
     {
-        $types = lynx()->fields->types();
+        $types = TypeDescriptions::forSite(lynx()->fields->types());
 
         return view('lynx-admin::livewire.field-form', [
-            'types' => TypeDescriptions::forSite($types),
+            'types' => $types,
+            'offeredTypes' => app(FieldTypeChoices::class)->for($types),
             'definitions' => $this->definitions(),
             'availableFormatters' => lynx()->formatters()->forType($this->type),
             // With one language the choice means nothing yet, and it can't be changed later.

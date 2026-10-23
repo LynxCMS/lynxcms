@@ -13,6 +13,7 @@ use Livewire\Livewire;
 use LynxCms\Admin\Auth\AdminAuth;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Editor\FieldInputs;
+use LynxCms\Admin\Editor\FieldTypeChoices;
 use LynxCms\Admin\Editor\LinkFiles;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
@@ -74,6 +75,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(EditorTabs::class);
         $this->app->singleton(LinkFiles::class);
         $this->app->singleton(TemplateChoices::class);
+        $this->app->singleton(FieldTypeChoices::class);
         $this->app->singleton(BacklinkFilter::class);
         // The trash page's template is Lynx's own (ADR-0035): a system template.
         $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {

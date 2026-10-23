@@ -28,7 +28,7 @@ final class OptionsType extends BaseFieldType implements DescribesPhpType
 
     public static function description(): string
     {
-        return 'Choices for a select, radio or checkbox list: [{"value": "film", "label": {"pt": "Filme", "en": "Film"}}]. A value left empty is made from the default-language label.';
+        return 'A list of choices that visitors pick from, e.g. the answers to a form question. The list is the page\'s value, unlike a choice field, where an editor picks from a list in the field\'s settings. Rows: [{"value": "film", "label": {"en": "Film"}}]. Labels are per language. A value left empty is made from the default-language label.';
     }
 
     public function indexable(): bool
