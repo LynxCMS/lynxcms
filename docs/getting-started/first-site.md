@@ -67,7 +67,7 @@ php artisan lynx:schema:apply
 
 ## Creating pages
 
-Editors create pages in the admin: in the page tree, open the actions of the **Home** row and choose **New**, then pick the template. Because of the family rules, a page created under the blog page can only be a post.
+Editors create pages in the admin: in the page tree, open the actions of the **Home** row and choose **New**, then pick the template. The list of templates only offers the ones allowed in that place. Earlier you set `child_templates` to `post` on the blog template, so when an editor creates a page under the blog page, **Post** is the only template on offer, and they can't put a post anywhere else.
 
 For this tutorial, create the blog page and a first post in Tinker:
 

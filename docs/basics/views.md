@@ -141,9 +141,37 @@ A `quote` block on a page that uses the `project` template renders `resources/vi
 
 With `APP_DEBUG` on, a block without a view leaves an HTML comment naming the view to create. For full control, loop over `$page->blocks` yourself; `$block->type()` gives each block's slug.
 
-## Components editors choose
+## Livewire components
 
-A [`component` field](/basics/field-types#component) lets editors place one of your Livewire components on a page. Render it with `@lynxComponent`, giving the page and the field's name:
+Pages render with Blade, so a template can use any [Livewire](https://livewire.laravel.com) component of your app, like any other Blade view:
+
+```blade
+<livewire:newsletter-signup />
+<livewire:course-filter :page-id="$page->id" />
+```
+
+Components on Lynx pages can use the `LynxCms\Core\Livewire\UsesLynxPage` trait. Livewire sends its updates to its own URL, without the page's language prefix; the trait remembers the visitor's language and restores it on every update, so `__()` and page fields stay in that language. Pass the page's id as `page-id`, as above, and `$this->page()` returns the page:
+
+```php
+use Livewire\Component;
+use LynxCms\Core\Livewire\UsesLynxPage;
+
+final class CourseFilter extends Component
+{
+    use UsesLynxPage;
+
+    public function render()
+    {
+        return view('livewire.course-filter', [
+            'courses' => $this->page()?->children('template=course, sort=title'),
+        ]);
+    }
+}
+```
+
+### Components editors choose
+
+A [`component` field](/basics/field-types#component) lets editors place one of your registered Livewire components on a page and fill in its settings. Render it with `@lynxComponent`, giving the page and the field's name:
 
 ```blade
 @lynxComponent($page, 'enrol')
@@ -192,4 +220,4 @@ Route::get('/news/{name}', function (string $name) {
 });
 ```
 
-Livewire components on Lynx pages can use the `LynxCms\Core\Livewire\UsesLynxPage` trait. It keeps the page and the visitor's language across Livewire's requests, so `$this->page()->title` and `__()` stay in the visitor's language.
+Livewire components on these pages work as described in [Livewire components](#livewire-components).
