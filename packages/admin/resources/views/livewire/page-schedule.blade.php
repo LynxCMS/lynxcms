@@ -20,7 +20,7 @@
                 @include('lynx-admin::livewire.partials.schedule-row', ['label' => $language->name, 'model' => "times.{$code}", 'key' => "schedule-{$code}"])
             @endforeach
         @else
-            @include('lynx-admin::livewire.partials.schedule-row', ['label' => $languages->count() > 1 ? 'All languages' : $languages->first()?->name, 'model' => 'all', 'key' => 'schedule-all'])
+            @include('lynx-admin::livewire.partials.schedule-row', ['label' => $languages->count() > 1 ? 'All languages' : '', 'model' => 'all', 'key' => 'schedule-all'])
         @endif
     </div>
 

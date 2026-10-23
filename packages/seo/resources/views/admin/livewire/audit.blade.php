@@ -1,5 +1,5 @@
 <div class="space-y-4">
-    <p class="text-muted-foreground text-sm">Checked {{ $checked }} published {{ $checked === 1 ? 'page' : 'pages' }} in this language. {{ count($rows) === 0 ? 'Nothing to fix.' : '' }}</p>
+    <p class="text-muted-foreground text-sm">Checked {{ $checked }} published {{ $checked === 1 ? 'page' : 'pages' }}{{ lynx()->languages->isMultilingual() ? ' in this language' : '' }}. {{ count($rows) === 0 ? 'Nothing to fix.' : '' }}</p>
 
     @if ($rows !== [])
         <x-lynx-admin::ui.table variant="card">

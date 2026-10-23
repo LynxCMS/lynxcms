@@ -86,7 +86,8 @@ final readonly class ValueWriter
                     $this->recordOrigin($pageId, $field, $languageId, $value, $input, $now);
                 }
 
-                $written[] = $field->isTranslatable() ? "{$fieldName} [{$this->code($languageId)}]" : $fieldName;
+                // With one language the code says nothing.
+                $written[] = $field->isTranslatable() && $this->languages->all()->count() > 1 ? "{$fieldName} [{$this->code($languageId)}]" : $fieldName;
             }
         }
 

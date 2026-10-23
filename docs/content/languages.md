@@ -31,6 +31,10 @@ Adding a language makes the home page active in it at once, so `/pt` works befor
 
 A URL that uses another language's names, such as `/pt/courses/risk` for a page whose Portuguese URL is `/pt/cursos/risco`, redirects to the page in the URL's language when the page is published in it.
 
+## Sites with one language
+
+Until a second language is added, the admin leaves languages out: the field form has no Translatable choice, and screens don't mention translations, fallbacks or the default language. Fields of types that can be translated (text, textarea, URL) are created translatable anyway, because that can't be changed later, so adding a language just works. `lynx()->languages->isMultilingual()` says whether the site has more than one language, for templates and modules that want to do the same.
+
 ## Fallback
 
 Fallback happens when a value is read, field by field. With `pt-br` falling back to `pt`, then to the default language, a Brazilian visitor sees each field in the first language of that chain that has a value.

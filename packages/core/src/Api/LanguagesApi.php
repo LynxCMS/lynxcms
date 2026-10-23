@@ -89,6 +89,15 @@ final readonly class LanguagesApi
     }
 
     /**
+     * Whether the site has more than one language. With one, translation, fallbacks and the
+     * "default" language mean nothing yet, so the admin leaves them out.
+     */
+    public function isMultilingual(): bool
+    {
+        return $this->registry->all()->count() > 1;
+    }
+
+    /**
      * @return Collection<int, Language>
      */
     public function active(): Collection

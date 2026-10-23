@@ -10,7 +10,7 @@
             <h1 class="text-2xl font-semibold tracking-tight">{{ $form?->text('label')->in() ?? $submission->form }}</h1>
             <p class="text-muted-foreground text-sm">
                 Received {{ $submission->created_at->toDayDateTimeString() }}
-                @if ($submission->language()) · in {{ $submission->language()->name }} @endif
+                @if ($submission->language() && lynx()->languages->isMultilingual()) · in {{ $submission->language()->name }} @endif
                 @if ($page) · from <a href="{{ $page->url }}" class="underline" target="_blank" rel="noopener">{{ $page->title }}</a> @endif
             </p>
         </div>
