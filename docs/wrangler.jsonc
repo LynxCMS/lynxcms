@@ -1,0 +1,21 @@
+// The documentation site on Cloudflare: a Worker with static assets and no code of its own,
+// answering lynxcms.org/cms/docs. VitePress builds into .vitepress/dist/cms/docs, a folder that
+// mirrors that path, as routes on a path require. Deployed by .github/workflows/docs.yml.
+{
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "lynx-docs",
+    "compatibility_date": "2026-10-01",
+    "routes": [
+        { "pattern": "lynxcms.org/cms/docs*", "zone_name": "lynxcms.org" }
+    ],
+    // Only the route above serves the site; pull requests get preview URLs on workers.dev.
+    "workers_dev": false,
+    "preview_urls": true,
+    "assets": {
+        "directory": ".vitepress/dist",
+        // /cms/docs/getting-started/introduction serves introduction.html.
+        "html_handling": "auto-trailing-slash",
+        // Unknown addresses get VitePress's 404 page (cms/docs/404.html).
+        "not_found_handling": "404-page"
+    }
+}

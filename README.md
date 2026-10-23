@@ -121,7 +121,7 @@ Add the other packages you need from the table above. The [installation guide](d
 
 ## Documentation
 
-The documentation is at **[docs.lynxcms.org](https://docs.lynxcms.org)**. Its Markdown lives in [`docs/`](docs/), and the site is built with VitePress and published on GitHub Pages from `main`.
+The documentation is at **[lynxcms.org/cms/docs](https://lynxcms.org/cms/docs/)**. Its Markdown lives in [`docs/`](docs/); the site is built with VitePress and served by Cloudflare, deployed from `main`.
 
 - [Getting started](docs/getting-started/introduction.md): introduction, installation, [your first site](docs/getting-started/first-site.md) and the core concepts.
 - [The basics](docs/basics/): templates and fields, views, selectors, languages, images and files, publishing.

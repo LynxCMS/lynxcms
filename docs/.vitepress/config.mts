@@ -1,9 +1,13 @@
 import { defineConfig } from 'vitepress'
 
-// The Lynx documentation site, built from this folder and published on GitHub Pages
-// (.github/workflows/docs.yml). Pages keep their place in the sidebar below; a page that is not
-// listed here still builds, but readers only find it through links and search.
+// The Lynx documentation site, built from this folder and served at lynxcms.org/cms/docs by a
+// Cloudflare Worker with static assets (wrangler.jsonc, .github/workflows/docs.yml). Pages keep
+// their place in the sidebar below; a page that is not listed here still builds, but readers only
+// find it through links and search.
 export default defineConfig({
+    base: '/cms/docs/',
+    // The asset folder mirrors the route's path, as Workers routes on a path require.
+    outDir: '.vitepress/dist/cms/docs',
     title: 'Lynx',
     titleTemplate: ':title · Lynx CMS',
     description: 'A multilingual CMS for Laravel that people and AI agents can build and run safely.',
