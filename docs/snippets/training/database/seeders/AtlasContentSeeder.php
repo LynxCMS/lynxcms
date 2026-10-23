@@ -40,6 +40,8 @@ final class AtlasContentSeeder extends Seeder
             $page = $this->course($name, $course);
             $this->session($page, 'lisbon', CarbonImmutable::now()->startOfWeek()->addWeeks($week++)->setTime(10, 0));
             $this->session($page, 'porto', CarbonImmutable::now()->startOfWeek()->addWeeks($week + 3)->setTime(18, 30));
+            $this->page('materials', '/'.$page->path().'/', 'materials', ['pt' => 'materiais', 'title' => ['en' => 'Course materials', 'pt' => 'Materiais do curso'],
+                'body' => ['en' => '<p>Your reading list and handouts. See you in class!</p>', 'pt' => '<p>A lista de leituras e os apontamentos. Até à aula!</p>']]);
         }
 
         $this->home($data['home']);
@@ -83,7 +85,8 @@ final class AtlasContentSeeder extends Seeder
 
     private function session(Page $course, string $location, CarbonImmutable $starts): void
     {
-        $this->page('session', '/'.$course->path().'/', $starts->format('Y-m-d').'-'.$location, [
+        $name = $starts->format('Y-m-d').'-'.$location;
+        $this->page('session', '/'.$course->path().'/', $name, ['pt' => $name,
             'title' => [
                 'en' => $course->getLanguageValue('en', 'title').', '.$starts->format('j F Y'),
                 'pt' => $course->getLanguageValue('pt', 'title').', '.$starts->locale('pt')->isoFormat('D [de] MMMM [de] YYYY'),

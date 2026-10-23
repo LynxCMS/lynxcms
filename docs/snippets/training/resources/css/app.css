@@ -1,3 +1,5 @@
-/* BlatUI's foundation (Tailwind, theme tokens, sources), then Atlas's Bloom look. */
+/* BlatUI's foundation (Tailwind, theme tokens, sources), the forms module's styles, then Atlas's
+   Bloom look, which also colours the forms (--lynx-form-*). */
 @import "./blatui.css";
+@import "../../vendor/lynxcms/forms/resources/css/forms.css";
 @import "./atlas.css";

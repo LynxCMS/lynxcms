@@ -95,6 +95,14 @@ a.atlas-clay:hover, .atlas-clay:has(a:hover) { transform: translateY(-4px); }
 .atlas-blob { position: absolute; border-radius: 9999px; filter: blur(60px); opacity: 0.35; pointer-events: none; }
 .atlas-footer { background: var(--atlas-ink); color: rgb(255 255 255 / 0.85); }
 
+/* The forms module's variables */
+.lynx-form {
+    --lynx-form-accent: var(--atlas-ink);
+    --lynx-form-accent-text: #fff;
+    --lynx-form-line: rgb(58 51 64 / 0.15);
+}
+.atlas-footer .lynx-form { --lynx-form-accent: var(--atlas-lilac); --lynx-form-accent-text: var(--atlas-ink); --lynx-form-line: rgb(255 255 255 / 0.25); }
+
 [data-slot="tabs-list"] { border-radius: 9999px; }
 [data-slot="tabs-trigger"][data-state="active"] { border-radius: 9999px; }
 

@@ -18,7 +18,9 @@ composer dev
 
 `composer setup` installs the dependencies, creates `.env` and the SQLite database, runs the migrations and builds the CSS and JavaScript. `php artisan db:seed` adds the demo school and an owner account. `composer dev` serves the site at http://localhost:8000.
 
-Sign in to the admin at http://localhost:8000/lynx with `owner@atlas-training.example` and the password `change-me-now` (set `ATLAS_OWNER_PASSWORD` in `.env` before seeding to choose another). Change it under **Account security** before you put the site anywhere others can reach.
+Sign in at http://localhost:8000/login with `owner@atlas-training.example` and the password `change-me-now` (set `ATLAS_OWNER_PASSWORD` in `.env` before seeding to choose another), then open the admin at http://localhost:8000/lynx. Change the password before you put the site anywhere others can reach. Visitors create their own accounts at `/register`; they see the members area and never the admin.
+
+Payments, the CRM and the newsletter stay off until you add their keys to `.env` (`STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`, `ATLAS_CRM_URL`, `ATLAS_CRM_TOKEN`, `ATLAS_NEWSLETTER_URL`, `ATLAS_NEWSLETTER_TOKEN`). The guide explains each.
 
 ## Start over
 

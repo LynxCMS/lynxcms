@@ -26,6 +26,9 @@
 
             <div class="ml-auto flex items-center gap-2">
                 @include('partials.language-switcher', ['page' => $page])
+                <a href="{{ auth()->check() ? route('account') : route('login') }}" class="hidden rounded-full px-3 py-1.5 text-sm font-medium hover:bg-black/5 md:inline-block">
+                    @auth @string('layout.account', ['en' => 'My bookings', 'pt' => 'As minhas reservas']) @else @string('layout.sign-in', ['en' => 'Sign in', 'pt' => 'Entrar']) @endauth
+                </a>
                 <a href="{{ lynx()->pages->get('/courses/')?->url }}" class="atlas-pill-btn atlas-pill-btn-primary hidden sm:inline-flex" style="padding:.55rem 1.4rem;font-size:.9rem">
                     @string('layout.cta', ['en' => 'Find a course', 'pt' => 'Encontrar um curso'])
                 </a>
@@ -43,7 +46,10 @@
                 <p class="atlas-logo text-white">Atlas Training</p>
                 <p class="mt-2 text-sm opacity-60">@string('layout.tagline', ['en' => 'Certified wellness courses since 2011.', 'pt' => 'Cursos certificados de bem-estar desde 2011.'])</p>
             </div>
-            <x-lynx-menu name="footer" view="menus.footer" />
+            <div class="grid gap-6">
+                <x-lynx-menu name="footer" view="menus.footer" />
+                <livewire:lynx-form form="newsletter" :page-id="$page->id" class="atlas-newsletter" />
+            </div>
             <address class="text-sm not-italic opacity-80">
                 @if ($settings = lynx()->settings())
                     <a href="mailto:{{ $settings->email }}">{{ $settings->email }}</a><br>

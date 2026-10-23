@@ -30,8 +30,8 @@ npm install --silent --save-dev alpinejs @alpinejs/anchor @alpinejs/collapse @al
 rsync -a --exclude 'resources/views/components/ui' --exclude 'starter' "$SOURCE"/ ./
 cp -R "$SOURCE"/starter/. ./
 php -r '$f = "bootstrap/providers.php"; $s = file_get_contents($f);
-    $s = str_replace("use App\\Providers\\AppServiceProvider;", "use App\\Providers\\AppServiceProvider;\nuse App\\Providers\\AtlasServiceProvider;", $s);
-    file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    AtlasServiceProvider::class,", $s));'
+    $s = str_replace("use App\\Providers\\AppServiceProvider;", "use App\\Providers\\AppServiceProvider;\nuse App\\Providers\\AtlasServiceProvider;\nuse App\\Providers\\FortifyServiceProvider;", $s);
+    file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    AtlasServiceProvider::class,\n    FortifyServiceProvider::class,", $s));'
 rm -f tests/Feature/ExampleTest.php tests/Unit/ExampleTest.php
 
 npm run build --silent

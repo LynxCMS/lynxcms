@@ -20,13 +20,13 @@ The code is tested: every file the guide shows runs in Lynx's test suite, so it 
 | 3. [The front end](./front-end) | Views from BlatUI's Bloom template, filters and languages | A site that looks finished, in two languages |
 | 4. [The editors' side](./editors) | Roles, previews, scheduling, translation | A team that edits safely |
 | 5. [SEO](./seo) | Titles, structured data, sitemap | Courses that show up well in search |
-| 6. Leads | An enquiry form, a newsletter form, a CRM link | An inbox of leads, and leads in their CRM |
-| 7. Paid bookings | Stripe Checkout and a webhook | Revenue, with seats counted for them |
-| 8. Members area | Sign-up, bookings, gated materials | Customers who help themselves |
+| 6. [Leads](./leads) | An enquiry form, a newsletter form, a CRM link | An inbox of leads, and leads in their CRM |
+| 7. [Paid bookings](./bookings) | Stripe Checkout and a webhook | Revenue, with seats counted for them |
+| 8. [Members area](./members) | Sign-up, bookings, gated materials | Customers who help themselves |
 | 9. Surveys | Course feedback forms for members | Answers, summarised per question |
 | 10. Launch | Caching, backups, deploys, AI tools | A fast site that is safe to run |
 
-Chapters 6 to 10 follow in later releases of this guide.
+Chapters 9 and 10 follow in later releases of this guide.
 
 ## Before you start
 
