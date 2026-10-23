@@ -132,7 +132,6 @@ jobs:
           php artisan key:generate --force
           touch database/database.sqlite
           php artisan migrate --force
-          php artisan lynx:install
           php artisan storage:link
           php artisan lynx:import content --with-schema
       - run: npm ci && npm run build

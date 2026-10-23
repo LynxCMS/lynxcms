@@ -50,7 +50,7 @@ php artisan optimize                    # cache config, routes, views and events
 
 Each language, field, template and role in the files carries a uuid, and applying matches items by it, so renaming a field in the admin and exporting again renames it everywhere. That makes schema files a way to keep environments **that share an origin** in step: your machine, staging and production, created from one database or one content package.
 
-A fresh `lynx:install` creates its own default language, home template and `title` field, with uuids the files don't know, so don't build a new environment by installing and then applying files. Start it from a content package instead, which brings the schema and the pages together (see below), then keep it in step with the files from there.
+A fresh `lynx:install` creates its own default language, home template and `title` field, with uuids the files don't know. Applying files to it later lists those three as missing from the files, and `--force` would delete them. So don't build a new environment by installing and then applying files. Start it from a content package instead, which brings the schema and the pages together (see below), then keep it in step with the files from there.
 
 ## Content packages
 
@@ -66,13 +66,15 @@ An import creates the pages that are missing and updates the ones that differ, a
 
 With the media package installed, a package also carries the images and files its pages use, in a `files` folder. An import stores them with the page they land on, and reuses a file the page already has with the same name and contents.
 
-This is also how to start a new environment, such as a new staging server or a developer's machine: migrate, run `lynx:install`, then import a package exported from an existing environment with `--with-schema`. From then on, the new environment shares the schema's uuids, and schema files keep it in step.
+This is also how to start a new environment, such as a new staging server or a developer's machine. Migrate, import a package exported from an existing environment with `--with-schema`, and only then run `lynx:install` to make your user a superuser:
 
 ```bash
 php artisan migrate --force
-php artisan lynx:install
 php artisan lynx:import site.zip --with-schema
+php artisan lynx:install --user=1
 ```
+
+The import brings languages, fields and templates first, then the pages, then the roles, whose grants may name branches of those pages. It all succeeds or nothing is written. Running `lynx:install` afterwards finds the default language, the home page and the roles already there and adds nothing to the schema, so the new environment shares the source's uuids and schema files keep it in step. Users are not in packages, which is why the last step names one.
 
 ## Backups
 
