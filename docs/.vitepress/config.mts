@@ -103,7 +103,7 @@ export default defineConfig({
                 text: 'Digging Deeper',
                 items: [
                     { text: 'Actions and Hooks', link: '/deeper/actions-and-hooks' },
-                    { text: 'Visibility Rules', link: '/deeper/visibility' },
+                    { text: 'Page Access', link: '/deeper/visibility' },
                     { text: 'Schema and Content Packages', link: '/deeper/schema-and-content' },
                     { text: 'Custom Field Types', link: '/deeper/custom-field-types' },
                     { text: 'Server Capacity', link: '/deeper/server-capacity' },

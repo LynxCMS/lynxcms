@@ -87,11 +87,19 @@ On the site, the URL prefix decides the language. On a URL without a prefix, Lyn
 | `localization.accept_language` | `false` | Use the browser's language on a first visit. |
 | `localization.redirect_default_prefix` | `true` | Redirect URLs that carry the default language's prefix, such as `/en/blog`, to `/blog`. |
 
-In code, `lynx()->languages->current()` is the language of the request. To run code in another language, such as sending an email in the recipient's language from a queued job, use `lynx()->language()`:
+In code, `lynx()->languages->current()` is the language of the request. To run code in another language, use `lynx()->language()`: it switches the language for the callback, and back afterwards.
 
 ```php
 $title = lynx()->language('pt', fn () => (string) $post->title);
 ```
+
+### Mail in the reader's language
+
+To send a subscriber a new post in the language they read, build the mail inside `lynx()->language()`. The mailable reads the post's title and URL in its constructor, so a queued mail, which a worker sends later outside that language, keeps them:
+
+<<< @/snippets/advanced/NewPostMail.php#mailable{php}
+
+<<< @/snippets/advanced/language-mail.php#send{php}
 
 ## Sites with one language
 

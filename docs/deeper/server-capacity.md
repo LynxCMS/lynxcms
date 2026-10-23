@@ -1,7 +1,6 @@
 ---
-title: Server capacity
+title: Server Capacity
 description: How many visitors a small server can take, with and without the page cache.
-order: 10
 ---
 
 # Server capacity
