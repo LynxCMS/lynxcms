@@ -47,6 +47,8 @@ export default defineConfig({
                 text: 'Prologue',
                 collapsed: true,
                 items: [
+                    { text: 'Release Notes', link: '/prologue/release-notes' },
+                    { text: 'Upgrade Guide', link: '/prologue/upgrade' },
                     { text: 'Roadmap', link: '/prologue/roadmap' },
                 ],
             },

@@ -64,6 +64,30 @@ Wrap the view in the admin layout and use the BlatUI components:
 
 Colours come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
 
+## Example: reviewing blog posts
+
+This example adds a review step to the blog from [Your First Site](/getting-started/first-site). Editors who hold a new `blog.review` permission get three things. A **Review** screen lists the posts with something to fix, and its sidebar link shows how many there are. Each post gets a **Checklist** tab with a button that writes a missing summary. MCP clients and the agent get the same list as a [read tool](/ai/#your-own-read-tools). The test suite runs every file below.
+
+Write the checks once, in a class that each part of the example uses:
+
+<<< @/snippets/review/PostChecks.php#checks{php}
+
+Register everything in a service provider. The permission and the tool work without the admin, so the admin part only runs when the admin is installed:
+
+<<< @/snippets/review/BlogReviewServiceProvider.php{php}
+
+`Admin::screen()` renders the view only for users with `blog.review`; others get a 403. The screen's view wraps the list in the admin layout:
+
+<<< @/snippets/review/views/blog/review.blade.php{blade}
+
+The tab is a Livewire component. Livewire sends every click to its own endpoint, which is outside the admin's routes and their middleware. So the component checks access itself in `boot()`, which runs on every request, not only the first one:
+
+<<< @/snippets/review/ChecklistTab.php#tab{php}
+
+<<< @/snippets/review/views/blog/checklist-tab.blade.php{blade}
+
+The button saves the post like any other write, so the save action checks `pages.edit` on that post. If a reviewer has `blog.review` but not `pages.edit`, they see the checklist, but the button gets a 403 and writes nothing. The change also shows in the post's history under the reviewer's name.
+
 ## Field types the field form offers
 
 A module whose field type only its own schema creates can leave it out of the field form's type menu, as the forms module does with `options`. The type still works through the API and MCP, and existing fields of it still open in the field form.
