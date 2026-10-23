@@ -14,3 +14,40 @@
     --vp-c-brand-soft: rgba(34, 211, 238, 0.16);
     --vp-home-hero-name-color: #22d3ee;
 }
+
+/* Comparison tables with many columns (Lynx Compared): they keep a readable width and scroll
+   sideways in the content column, so the page keeps its outline. */
+.vp-doc .wide-table {
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.vp-doc .wide-table table {
+    display: table;
+    min-width: 56rem;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.vp-doc .wide-table th:first-child,
+.vp-doc .wide-table td:first-child {
+    min-width: 9rem;
+}
+
+/* The row labels stay in view while the table scrolls. */
+.vp-doc .wide-table th:first-child,
+.vp-doc .wide-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: var(--vp-c-bg);
+}
+
+.vp-doc .wide-table tr:nth-child(2n) td:first-child {
+    background-color: var(--vp-c-bg-soft);
+}
+
+.vp-doc .wide-table thead th:first-child {
+    background-color: var(--vp-c-bg-soft);
+}
