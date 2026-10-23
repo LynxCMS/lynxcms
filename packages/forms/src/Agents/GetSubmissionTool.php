@@ -52,6 +52,7 @@ final class GetSubmissionTool extends AgentReadTool
             'status' => $submission->status,
             'received' => $submission->created_at->toIso8601String(),
             'language' => $submission->language()?->code,
+            'account' => $submission->account(),
             'page' => $submission->page_id === null ? null : lynx()->pages->get($submission->page_id)?->path(),
             'answers' => array_map(fn (array $line): array => ['label' => $line['label'], 'value' => $line['value']], $this->presenter->lines($submission)),
             'files' => $submission->files->pluck('name')->all(),

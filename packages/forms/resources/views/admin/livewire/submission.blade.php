@@ -12,6 +12,7 @@
                 Received {{ $submission->created_at->toDayDateTimeString() }}
                 @if ($submission->language() && lynx()->languages->isMultilingual()) · in {{ $submission->language()->name }} @endif
                 @if ($page) · from <a href="{{ $page->url }}" class="underline" target="_blank" rel="noopener">{{ $page->title }}</a> @endif
+                @if ($account = $submission->account()) · by {{ $account }} @endif
             </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
