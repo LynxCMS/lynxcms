@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.14
+
+Released October 24, 2026.
+
+- **A new guide: [Build a Training Company Site](/guides/training-site/).** Ten chapters build a bilingual site that brings in leads, takes paid bookings, serves members and runs surveys, from BlatUI's Bloom template. Its code runs in Lynx's test suite, and the finished site is a starter you can clone: [LynxCMS/starter-training](https://github.com/LynxCMS/starter-training).
+
 ## 0.1.13
 
 Released October 24, 2026.
