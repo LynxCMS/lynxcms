@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace LynxCms\Core\Actions\Templates;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Models\Template;
-use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Pages\TemplateUsage;
 use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
@@ -19,7 +18,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final class DeleteTemplate extends Action
 {
-    public function __construct(private readonly TemplateRegistry $templates) {}
+    public function __construct(private readonly TemplateRegistry $templates, private readonly TemplateUsage $usage) {}
 
     public static function name(): string
     {
@@ -33,7 +32,7 @@ final class DeleteTemplate extends Action
 
     public static function description(): string
     {
-        return 'Delete a template. Refused while any page uses it.';
+        return 'Delete a template. Refused while any page uses it, trashed pages included: the refusal names them; switch them to another template (pages.switch_template) or delete them first.';
     }
 
     public static function destructive(): bool
@@ -54,10 +53,8 @@ final class DeleteTemplate extends Action
     public function handle(Input $input, ActionContext $context): Template
     {
         $template = $this->templates->get((string) $input->string('template'));
-        $pages = DB::table(Tables::PAGES)->where('template_id', $template->id)->whereNull('draft_of')->count();
-
-        if ($pages > 0) {
-            throw ValidationException::withMessages(['template' => "Template [{$template->name}] is used by {$pages} page(s)."]);
+        if ($this->usage->count($template) > 0) {
+            throw ValidationException::withMessages(['template' => $this->usage->refusal($template)]);
         }
 
         Template::query()->whereKey($template->id)->delete();

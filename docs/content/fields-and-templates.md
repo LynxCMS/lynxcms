@@ -198,6 +198,10 @@ Saving, restoring, moving to another template or deleting a page updates it, and
 
 Removing a field from a template, or switching a page to another template, keeps the values as orphans. `pages.purge_orphans` deletes them when you are sure. Deleting a field deletes its table and values.
 
+## Deleting templates
+
+A template can be deleted only when no page uses it, counting unpublished pages and pages in the trash. The template's screen in the admin lists the pages that use it, each linking to its Settings tab, where its template is switched. `templates.delete` refuses with the same list (the first ten pages, then a count), so an agent or a script knows which pages to switch with `pages.switch_template` or delete first. `TemplateUsage` (`@api`) gives the count and the pages in PHP.
+
 ## System templates
 
 Modules own some templates and fields (the trash, menus). The admin hides them unless you tick **Show system templates** and shows them read only.

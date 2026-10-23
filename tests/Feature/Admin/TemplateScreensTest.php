@@ -7,6 +7,7 @@ use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageCreator;
 use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Admin\Livewire\TemplateList;
+use LynxCms\Core\Actions\Pages\TrashPage;
 use LynxCms\Core\Templates\Layout\TemplateLayout;
 use LynxCms\Core\Templates\TemplateField;
 
@@ -144,7 +145,30 @@ it('refuses to delete a template that pages use', function (): void {
         ->assertSee('2 pages use this template')
         ->call('confirmDelete')
         ->assertHasErrors('template')
-        ->assertSee('is used by 2 page(s)');
+        ->assertSee('is used by 2 pages');
+});
+
+it('lists the pages that use a template, linking to where their template is switched', function (): void {
+    $alpha = lynx()->pages->get('/courses/alpha/');
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertSeeInOrder(['Alpha', 'Beta'])
+        ->assertSee('/courses/alpha')
+        ->assertSeeHtml(route('lynx.admin.pages.edit', ['page' => $alpha?->id, 'tab' => 'settings']));
+});
+
+it('marks trashed pages, which still keep the template', function (): void {
+    lynx()->run(TrashPage::class, ['page' => lynx()->pages->get('/courses/beta/')?->id]);
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertSee('2 pages use this template')
+        ->assertSee('In the trash');
+});
+
+it('explains how to free a template instead of offering to delete it', function (): void {
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertDontSee('Delete template')
+        ->assertSee('Switch these pages to another template');
 });
 
 it('deletes an unused template after confirmation', function (): void {

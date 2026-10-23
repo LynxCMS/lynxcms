@@ -37,9 +37,30 @@
     <h2 id="template-pages" class="text-base font-semibold">Pages</h2>
     <p class="text-sm">{{ match (true) { $pageCount === 0 => 'No page uses this template.', $pageCount === 1 => '1 page uses this template.', default => $pageCount.' pages use this template.' } }}</p>
 
+    @if ($pagesUsing !== [])
+        <ul class="grid gap-1 text-sm">
+            @foreach ($pagesUsing as $using)
+                <li wire:key="using-{{ $using['id'] }}" class="flex flex-wrap items-baseline gap-x-2">
+                    <a href="{{ route('lynx.admin.pages.edit', ['page' => $using['id'], 'tab' => 'settings']) }}" class="hover:underline">{{ $using['title'] }}</a>
+                    @if ($using['trashed'])
+                        <x-lynx-admin::ui.badge variant="secondary">In the trash</x-lynx-admin::ui.badge>
+                    @else
+                        <span class="text-muted-foreground font-mono text-xs">{{ $using['url'] }}</span>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+        @if ($pageCount > count($pagesUsing))
+            <p class="text-muted-foreground text-sm">And {{ $pageCount - count($pagesUsing) }} more.</p>
+        @endif
+    @endif
+
     @error('template') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
 
-    @if ($isConfirmingDelete)
+    @if ($pageCount > 0)
+        {{-- templates.delete refuses while any page uses the template, trashed ones included. --}}
+        <p class="text-muted-foreground text-sm">Switch these pages to another template (in each page's Settings tab) or delete them, then you can delete this template. Pages in the trash count too: restore and switch them, or empty the trash.</p>
+    @elseif ($isConfirmingDelete)
         <div role="alert" class="grid gap-3">
             <ul class="list-disc ps-5 text-sm">
                 @foreach ($deleteSummary as $line)
