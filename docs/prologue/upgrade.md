@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.5 to 0.1.6
+
+No changes needed.
+
 ## From 0.1.4 to 0.1.5
 
 No changes needed. If your app has its own `config/fortify.php`, the Users screen offers invitations again, and the admin's user menu links to Account security.
