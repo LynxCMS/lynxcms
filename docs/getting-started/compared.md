@@ -1,6 +1,8 @@
 ---
 title: Lynx Compared
 description: How Lynx's features compare with Statamic, ProcessWire, Laravel Folio and WordPress, and when another tool fits better.
+# The comparison table needs the width of the page.
+aside: false
 ---
 
 # Lynx Compared
@@ -11,6 +13,8 @@ If you are choosing a way to build a content site with Laravel, you are probably
 > Every product here changes over time. These facts were checked against each project's documentation and announcements on **23 October 2026**; the sources are listed at the end of the page. If something has changed, please [open an issue](https://github.com/LynxCMS/lynxcms/issues).
 
 ## At a glance
+
+<div class="wide-table">
 
 | | Lynx | Statamic | ProcessWire | Laravel Folio | WordPress |
 | --- | --- | --- | --- | --- | --- |
@@ -28,6 +32,8 @@ If you are choosing a way to build a content site with Laravel, you are probably
 | **Content API** | PHP and MCP; no REST or GraphQL API yet | REST and GraphQL | PHP; JSON through modules or your own templates | Your own routes | REST API |
 | **AI tools** | MCP server and an AI agent, generated from its actions | Laravel Boost guidelines | Agent Tools module (2026) | None of its own | Abilities API in the core; MCP through the official MCP Adapter plugin |
 | **Maturity** | Before 1.0: APIs may change | Mature, with an add-on marketplace | Mature, with a modules directory | Official Laravel package | The largest ecosystem of themes and plugins |
+
+</div>
 
 ## Lynx and Statamic
 
