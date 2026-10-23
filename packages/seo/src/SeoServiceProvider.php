@@ -19,6 +19,8 @@ use LynxCms\Core\Support\Value;
 use LynxCms\Seo\Actions\DisableSeo;
 use LynxCms\Seo\Actions\EnableSeo;
 use LynxCms\Seo\Actions\InstallSeo;
+use LynxCms\Seo\Actions\MapTemplate;
+use LynxCms\Seo\Actions\UnmapTemplate;
 use LynxCms\Seo\Admin\AdminIntegration;
 use LynxCms\Seo\Agents\InspectSeoTool;
 use LynxCms\Seo\Http\RobotsController;
@@ -47,7 +49,7 @@ final class SeoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
-        $this->app->make(ActionRegistry::class)->register(InstallSeo::class, EnableSeo::class, DisableSeo::class);
+        $this->app->make(ActionRegistry::class)->register(InstallSeo::class, EnableSeo::class, DisableSeo::class, MapTemplate::class, UnmapTemplate::class);
         $permissions = $this->app->make(PermissionRegistry::class);
         $permissions->register('seo.manage', 'Manage SEO settings', requires: ['pages.view']);
         // The settings are the hidden /seo-settings/ page: managing SEO covers the page actions there.
