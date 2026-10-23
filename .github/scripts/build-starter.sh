@@ -20,7 +20,14 @@ fi
 composer create-project laravel/laravel "$DEST" --prefer-dist --no-interaction --quiet
 cd "$DEST"
 
-composer require $(printf "lynxcms/%s:^${VERSION} " "${PACKAGES[@]}") --no-interaction
+# Packagist's mirrors can trail a new tag by a few minutes after its own listing shows it.
+for attempt in 1 2 3 4 5 6; do
+    composer require $(printf "lynxcms/%s:^${VERSION} " "${PACKAGES[@]}") --no-interaction && break
+    [ "$attempt" -eq 6 ] && exit 1
+    echo "Lynx ${VERSION} is not installable yet; trying again in a minute." >&2
+    composer clear-cache --quiet
+    sleep 60
+done
 composer require anousss007/blatui --dev --no-interaction --quiet
 php artisan vendor:publish --tag=blatui-foundations --quiet
 php artisan blatui:add "${COMPONENTS[@]}" --quiet
