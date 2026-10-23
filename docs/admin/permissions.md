@@ -45,7 +45,22 @@ Until any user has a role, every signed in user may do everything.
 Gate::allows('lynx.pages.edit', $page);
 ```
 
-Modules register their own permissions with `lynx()->permissions()->register('reports.view', 'View reports')`.
+## Your own permissions
+
+Register a permission in a service provider. It then shows in the Roles screen, and roles grant it like the built-in ones:
+
+<<< @/snippets/review/BlogReviewServiceProvider.php#permission{php}
+
+`requires` lists the permissions a role must grant alongside it. Saving a role that grants `blog.review` without `pages.view` fails with "[blog.review] needs [pages.view] in the same role." Pass `scoped: true` when grants should be limitable to templates and branches. In that case, check the permission against the page: `app(AdminAccess::class)->allows('blog.review', $page)`.
+
+Check the permission where the work happens, not only where the link shows:
+
+- Admin screens: `Admin::screen()` takes the permission and answers 403 without it.
+- Livewire components: check in `boot()`, because every click is a new request ([example](/admin/extending#example-reviewing-blog-posts)).
+- Actions: return the permission from `permission()`, and the runner checks it for the PHP API, the admin, MCP and the agent.
+- Read tools for MCP and the agent: return it from `permission()` too.
+
+A permission guards your code, and actions guard their own writes. A user with `blog.review` but not `pages.edit` can open the review screen, but cannot save a post from it.
 
 ## Agents and MCP clients
 
