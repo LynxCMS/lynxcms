@@ -134,9 +134,11 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 **Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first. You can filter by status (new and read, archived, spam) and form, search any answer, and mark several at once. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes. Each form exports to CSV.
 
+**Results**, next to each form in **Forms › Forms**, sums the answers up per question, as a survey's results: how many chose each option, the average of numbers, the range of dates, and the latest written answers, with spam left out. A form placed on several pages, such as one survey per course, filters the results by the page it was sent from. In code, `app(\LynxCms\Forms\Results\FormResults::class)->summarize($form, $pageId)` returns the same.
+
 ## Agents
 
-MCP clients and the built-in agent read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, and sort them with `forms_update_submission`. Ask "summarise this week's quote requests", or "mark the obvious spam". Both read tools need `forms.view`.
+MCP clients and the built-in agent read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarise this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
 
 ## Permissions
 

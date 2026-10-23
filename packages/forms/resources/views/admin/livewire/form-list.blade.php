@@ -45,6 +45,7 @@
                             @if ($row['edit'] !== null && $canBuild)
                                 <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['edit']">Edit</x-lynx-admin::ui.button>
                             @endif
+                            <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.results', $row['key'])">Results</x-lynx-admin::ui.button>
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.preview', $row['key'])">Preview</x-lynx-admin::ui.button>
                         </span>
                     </x-lynx-admin::ui.table-cell>
