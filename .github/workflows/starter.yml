@@ -49,16 +49,21 @@ jobs:
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
-      # Packagist can take a minute to list a tag the split workflow has just pushed.
+      # Packagist can take a few minutes to list a tag the split workflow has just pushed, one
+      # package at a time, so every package the starter needs is waited for.
       - name: Wait for the release on Packagist
         if: github.ref_type == 'tag'
         run: |
-          for attempt in $(seq 1 30); do
-            curl -sf https://repo.packagist.org/p2/lynxcms/core.json | grep -q "\"${{ steps.version.outputs.tag }}\"" && exit 0
-            sleep 20
+          for package in core admin menus media forms seo sitemap cache mcp; do
+            for attempt in $(seq 1 45); do
+              curl -sf "https://repo.packagist.org/p2/lynxcms/${package}.json" | grep -q "\"${TAG}\"" && continue 2
+              sleep 20
+            done
+            echo "lynxcms/${package} ${TAG} is not on Packagist yet." >&2
+            exit 1
           done
-          echo "lynxcms/core ${{ steps.version.outputs.tag }} is not on Packagist yet." >&2
-          exit 1
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
 
       - name: Build and test the starter
         run: .github/scripts/build-starter.sh "${{ steps.version.outputs.version }}" ../starter-training

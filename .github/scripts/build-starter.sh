@@ -20,7 +20,7 @@ fi
 composer create-project laravel/laravel "$DEST" --prefer-dist --no-interaction --quiet
 cd "$DEST"
 
-composer require $(printf "lynxcms/%s:^${VERSION} " "${PACKAGES[@]}") --no-interaction --quiet
+composer require $(printf "lynxcms/%s:^${VERSION} " "${PACKAGES[@]}") --no-interaction
 composer require anousss007/blatui --dev --no-interaction --quiet
 php artisan vendor:publish --tag=blatui-foundations --quiet
 php artisan blatui:add "${COMPONENTS[@]}" --quiet
