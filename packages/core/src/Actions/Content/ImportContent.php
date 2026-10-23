@@ -21,6 +21,8 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Pages\Revisions;
+use LynxCms\Core\Schema\SchemaSync;
+use LynxCms\Core\Schema\SchemaSyncResult;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
 
@@ -28,6 +30,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * Imports a content package (ADR-0040) through pages.save: pages are matched by key, created when
  * missing and updated when they differ; page references, and files stored for the page they
  * land on (ADR-0050), are set once every page exists. With
+ * "with_schema", the package's languages, fields and templates come first and its roles last, once
+ * the pages their grants are limited to exist; a schema error stops the import. With
  * "prune", pages not in the package go to the trash. A page that cannot be written (a locked one,
  * another template) is skipped with the reason, and the rest still imports.
  */
@@ -46,6 +50,7 @@ final class ImportContent extends Action
         private readonly PackageReferences $references,
         private readonly Revisions $revisions,
         private readonly PackageFiles $files,
+        private readonly SchemaSync $schema,
     ) {}
 
     public static function name(): string
@@ -66,7 +71,7 @@ final class ImportContent extends Action
 
     public static function rules(): array
     {
-        return ['path' => ['required', 'string'], 'prune' => ['sometimes', 'boolean']];
+        return ['path' => ['required', 'string'], 'prune' => ['sometimes', 'boolean'], 'with_schema' => ['sometimes', 'boolean']];
     }
 
     public static function schema(JsonSchema $schema): array
@@ -74,6 +79,7 @@ final class ImportContent extends Action
         return [
             'path' => $schema->string()->description('Directory of an extracted content package.')->required(),
             'prune' => $schema->boolean()->description('Move pages that are not in the package to the trash.'),
+            'with_schema' => $schema->boolean()->description('Also apply the package\'s languages, fields, templates and roles.'),
         ];
     }
 
@@ -83,6 +89,12 @@ final class ImportContent extends Action
     public function handle(Input $input, ActionContext $context): array
     {
         $package = ContentPackage::open((string) $input->string('path'));
+        $withSchema = $input->bool('with_schema');
+
+        if ($withSchema) {
+            $this->apply($this->schema->applyStructure($package->schemaDirectory()), $context);
+        }
+
         $existing = $this->exporter->keys();
         $this->ids = array_flip($existing);
         $references = [];
@@ -109,6 +121,10 @@ final class ImportContent extends Action
             $this->importStrings($line, $context);
         }
 
+        if ($withSchema) {
+            $this->apply($this->schema->applyRoles($package->schemaDirectory()), $context);
+        }
+
         if ($input->bool('prune')) {
             $this->prune($existing, $package, $context);
         }
@@ -116,6 +132,18 @@ final class ImportContent extends Action
         $context->changes->updated('content', null, sprintf('Import content: %d created, %d updated, %d trashed', $this->result['created'], $this->result['updated'], $this->result['trashed']), $this->result);
 
         return $this->result;
+    }
+
+    /** Records a schema step's changes; any error stops the import, and nothing is written. */
+    private function apply(SchemaSyncResult $result, ActionContext $context): void
+    {
+        if ($result->hasErrors()) {
+            throw ValidationException::withMessages(['path' => $result->errors]);
+        }
+
+        foreach ($result->changes as $change) {
+            $context->changes->schema('schema', $change);
+        }
     }
 
     /**
