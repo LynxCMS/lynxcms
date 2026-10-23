@@ -21,6 +21,11 @@ order: 2
 | `lynx:schedule:run` | Applies due publishing schedules (the scheduler runs it every minute). |
 | `lynx:clean-html --field= --dry-run` | Cleans stored HTML the way a save would. |
 | `lynx:search-index --template=` | Rebuilds the search index, for every page or one template's pages. |
+| `lynx:sort-keys` | Rebuilds the stored sort values of the fields in `lynx.sort_keys`, after adding one or changing a field's fallback. See [Finding Pages](/basics/selectors#large-sites). |
+| `lynx:trigram` | Installs PostgreSQL's `pg_trgm` and adds trigram indexes that speed up text selectors. See [Finding Pages](/basics/selectors#large-sites). |
+| `lynx:strings:scan` | Lists the editable strings views declare with `@string`, and reports problems. See [Views](/basics/views#editable-texts). |
+| `lynx:media:prune --older-than= --dry-run` | Deletes media files that no page, draft or revision uses (the scheduler runs it daily). Needs `lynxcms/media`. |
+| `lynx:forms:purge --days=` | Deletes old spam and archived form submissions with their files. Needs `lynxcms/forms`. |
 | `lynx:sitemap --clear --warm` | Lists the sitemap's parts; `--clear` drops the cached files, `--warm` builds them all now. Needs `lynxcms/sitemap`. |
 | `lynx:page-cache --clear --prune --warm --stats --compile` | Drops every stored page, drops expired ones (scheduled every minute), stores every public page now, counts them per template, or writes the settings `serve.php` reads. Needs `lynxcms/cache`. |
 | `lynx:static --path= --url= --zip` | Exports the site as static files, to host without PHP. See [Static site export](/modules/static-site). Needs `lynxcms/static-site`. |

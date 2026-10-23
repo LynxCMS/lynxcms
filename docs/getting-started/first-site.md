@@ -124,7 +124,7 @@ Now make the blog multilingual. Add Portuguese in the admin under **Settings ›
 
 <<< @/snippets/first-site/languages.php#add-language{php}
 
-The first line names the default language, which `lynx:install` called "Default". The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
+The first line gives the default language, which `lynx:install` called "Default" with the code `default`, its real code, name and locale. The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
 
 Translate the blog page and the first post. In the admin, open the page and use the language tabs above each field; give the page a Portuguese URL name in its **Settings** tab. Or in Tinker:
 

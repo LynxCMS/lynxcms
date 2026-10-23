@@ -1,73 +1,87 @@
 ---
 title: Publishing
-description: Status, drafts, revisions, scheduling, the trash, old URLs and edit locks.
-order: 5
+description: Page statuses, drafts, revisions, scheduled publishing, the trash, old URLs and edit locks.
 ---
 
 # Publishing
 
-Every operation here is an action: it can run as a dry run, is checked against permissions and is logged.
+Editors rarely change a live page in one step. Lynx gives them the tools of a newsroom: statuses that take a page offline or out of lists, drafts that wait for review, revisions to compare and restore, publishing on a schedule, and a trash to recover from mistakes.
 
-## Status
+Each of these is an [action](/getting-started/concepts#actions), so it checks the user's permissions, can run as a dry run, and shows up in the activity log, whether an editor clicks a button or your code calls it.
 
-```php
-lynx()->pages->setStatus($page, add: ['hidden']);
-lynx()->pages->setStatus($page, remove: ['unpublished']); // publishes the page
-```
+## Page status
+
+A page's status flags change how visitors and editors see it:
 
 | Status | Effect |
 | --- | --- |
-| `unpublished` | The page and every page below it return 404 and leave listings. |
-| `hidden` | Reachable by URL, left out of listings. Children are not affected. |
-| `locked` | Cannot be saved, moved, sorted, translated, switched or deleted until unlocked. |
-| `unique` | Its default-language name is used by no other page anywhere. |
-| `system` | Needed by Lynx or a module: cannot be deleted, moved or switched. Values can be edited. |
+| `unpublished` | The page and every page below it return 404 and leave lists. |
+| `hidden` | Reachable by its URL, but left out of lists, menus and searches. Pages below it are not affected. |
+| `locked` | Can't be saved, moved, sorted, translated, switched to another template or deleted until it is unlocked. |
+| `unique` | No other page anywhere may use its default language URL name. |
+| `system` | Needed by Lynx or a module: it can't be deleted, moved or switched to another template, but its values can be edited. |
 
-A page is published in a language once it has a name in that language.
+Editors set them in the page's **Settings** tab. In code, add and remove flags:
+
+```php
+lynx()->pages->setStatus('/news/launch', add: ['hidden']);
+lynx()->pages->setStatus('/news/launch', remove: ['unpublished']); // publishes the page
+```
+
+### Publishing in a language
+
+A page is published in a language once it has a URL name in that language. Editors give it one in the page's **Settings** tab, where they can also take a page offline in a single language. Until a page has a name in a language, links to it in that language point to its default language URL. See [Languages](/basics/languages#urls).
 
 ## Drafts
 
-A page can have one draft, shared by every editor. It holds changes that are not live yet: field values and the page's own texts (`strings.save` with `draft: true`).
+A draft holds changes that are not live yet, so an editor can prepare an update and publish it later, or have someone review it. A page has at most one draft, shared by every editor, holding field values and the page's own [editable texts](/basics/views#editable-texts).
+
+In the page editor, editors choose to save their changes as a draft, and publish it when it is ready. In code:
 
 ```php
-lynx()->pages->saveDraft($page, ['title' => ['pt' => 'Novo título']]);
-lynx()->pages->publishDraft($page);
+lynx()->pages->saveDraft('/about', ['title' => ['en' => 'About us', 'pt' => 'Sobre nós']]);
+lynx()->pages->publishDraft('/about');
+lynx()->pages->discardDraft('/about');
 ```
 
-Editors preview the draft at the page's URL with `?preview=draft`. `pages.discard_draft` drops it.
+Editors preview a draft at the page's URL with `?preview=draft`. Your templates need no changes for it.
 
 ## Revisions
 
-Every save that changes values or the page's texts keeps a revision; the newest 50 per page stay (`LYNX_REVISIONS_KEEP`). The editor's **History** lists them, and `pages.restore_revision` puts one back as a new save, so a restore can be undone too.
+Every save that changes a page's values or texts keeps a **revision**, and the newest 50 per page are kept (`LYNX_REVISIONS_KEEP`). The page editor's **History** lists them, compares one with the current page, and restores it. Restoring is a new save, so it can be undone too.
 
-When saving through the API or tools, pass the revision you loaded as `expected_revision`: a save made by someone else in between is refused instead of overwritten.
+When two people edit the same page, the second save could overwrite the first. The admin prevents that with [edit locks](#edit-locks). When you save through the API or MCP tools, pass the revision you loaded as `expected_revision`: a save that someone else made in between makes yours fail instead of being overwritten.
 
-## Scheduling
+## Scheduled publishing
+
+Pages can publish or unpublish themselves at a set time, in one language or in all of them:
 
 ```php
-lynx()->pages->schedule($page, 'pt', publishAt: now()->addDay());
-lynx()->pages->schedule($page, 'pt', unpublishAt: now()->addMonth());
-lynx()->pages->schedule($page, '*', publishAt: now()->addDay()); // every language
+lynx()->pages->schedule('/news/launch', 'en', publishAt: now()->addDay());
+lynx()->pages->schedule('/news/launch', 'en', unpublishAt: now()->addMonth());
+lynx()->pages->schedule('/news/launch', '*', publishAt: now()->addDay()); // every language
 ```
 
-With `'*'` every language is checked first, so a time one language refuses changes nothing. In the editor's Settings tab, one row sets every language; tick "Different times per language" to set each one. The editor opens on the per language rows by itself when the saved times differ.
+With `'*'`, Lynx checks every language first, so a time that one language can't take changes nothing. In the page's **Settings** tab, one row sets every language; editors tick "Different times per language" to set each one.
 
-`lynx:schedule:run` applies due entries every minute from Laravel's scheduler.
+The command `lynx:schedule:run` applies the times that are due. Laravel's scheduler runs it every minute, so the server needs the [scheduler's cron entry](/getting-started/installation#the-scheduler).
 
 ## The trash
 
+In the page tree, editors move a page, with every page below it, to the **trash**. Trashed pages leave the site, and editors can restore them to their place, or under another parent, or delete them for good from the trash.
+
 ```php
-lynx()->pages->trash('/courses/old/');
-lynx()->pages->restore('/courses/old/');
+lynx()->pages->trash('/news/old');
+lynx()->pages->restore('/news/old');
 lynx()->pages->emptyTrash();
 ```
 
-Trashed pages and their children leave the site and can be restored to their place (or another parent) until the trash is emptied. Prefer the trash to `delete()`, which removes pages for good.
+`lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash.
 
 ## Old URLs
 
-Renaming or moving a page keeps the old paths as redirects, per language. `redirects.delete` removes one; the current URL cannot be removed.
+When an editor renames or moves a page, its old URLs keep working: they redirect to the new address, in every language. Editors can remove an old URL in the page's **Settings** tab, and the `redirects.delete` action does the same in code. A page's current URL can't be removed.
 
 ## Edit locks
 
-When someone opens a page in the admin editor, they hold a lock for two minutes (`LYNX_EDIT_LOCK_SECONDS`), renewed while the page stays open. Writes to the page from anyone else are refused until it is free. Superusers can take a lock over.
+When an editor opens a page in the admin, they hold a lock on it for two minutes (`LYNX_EDIT_LOCK_SECONDS`), renewed while the page stays open. Anyone else can view the page, but their changes are refused until it is free, so two editors never overwrite each other. Superusers can take a lock over.

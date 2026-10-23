@@ -63,6 +63,7 @@ export default defineConfig({
                 text: 'The Basics',
                 items: [
                     { text: 'Templates and Fields', link: '/basics/templates-and-fields' },
+                    { text: 'Field Types', link: '/basics/field-types' },
                     { text: 'Views', link: '/basics/views' },
                     { text: 'Finding Pages', link: '/basics/selectors' },
                     { text: 'Languages', link: '/basics/languages' },

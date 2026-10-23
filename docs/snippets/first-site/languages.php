@@ -5,8 +5,8 @@ declare(strict_types=1);
 // A second language for the blog, as in "Your First Site".
 
 // #region add-language
-lynx()->languages->update('default', ['name' => 'English', 'locale' => 'en']);
-lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'default');
+lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'locale' => 'en']);
+lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'en');
 // #endregion add-language
 
 // #region translate

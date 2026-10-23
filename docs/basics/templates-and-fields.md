@@ -1,83 +1,105 @@
 ---
-title: Fields and templates
-description: Field types, translatable fields, conditions, formatters and template rules.
-order: 2
+title: Templates and Fields
+description: Create fields and templates, set where pages may go, arrange the editor and change the schema safely.
 ---
 
-# Fields and templates
+# Templates and Fields
 
-## Fields
+Every page uses a **template**, and a template is a list of **fields**. Together they are the site's *schema*: what each kind of page holds and how editors fill it in. If you know Eloquent, a template plays the part of a model's table, and a field the part of a column, except that you change them while the site runs and Lynx creates the tables for you.
+
+You can build the schema in the admin, under **Settings › Fields** and **Settings › Templates**, or in PHP. Both run the same actions, so they validate the same way and show up in the same activity log. The examples on this page use PHP; every setting has a matching control in the admin.
+
+## Creating fields
+
+Create a field with `lynx()->fields->add()`, giving its name and [type](/basics/field-types):
 
 ```php
-lynx()->fields->add('body', 'textarea', translatable: true, settings: ['format' => 'html']);
-lynx()->fields->add('price', 'integer');
-lynx()->fields->add('related', 'page');
+lynx()->fields->add('summary', 'textarea', translatable: true);
+lynx()->fields->add('price', 'decimal', settings: ['places' => 2]);
+lynx()->fields->add('related', 'page', settings: ['templates' => ['course']]);
 ```
 
-Each field gets its own table (`lynx_f_{name}`), created at runtime. Field names are lowercase letters, digits and underscores, starting with a letter.
+Field names use lowercase letters, digits and underscores, and start with a letter: they become property names in your templates (`$page->related`). Each field gets its own table, `lynx_f_{name}`, created at once.
 
-| Type | Stores |
-| --- | --- |
-| `text` | A single line of text. |
-| `textarea` | Longer text; `format: html` adds the rich text editor and cleans the HTML on save. |
-| `integer` | A whole number. |
-| `decimal` | A number with decimals, such as a price or a rating, rounded to `places` (default 2). Templates read a float. A comma also works as the decimal point in the admin. |
-| `choice` | One of a fixed list of options, or several with `multiple: true`. Each option has a value and a label per language; editors pick with a select, radios or checkboxes (`input`). See below. |
-| `email` | An email address, checked on save, with the domain stored in lower case. Templates read a string. |
-| `url` | A web address starting with `http://` or `https://`, so a link never runs script. `relative: true` also accepts a path on the site, such as `/contact/`. Can be translatable. |
-| `date` | A date, or a date and time with `time: true`. Templates get a `CarbonImmutable`: `$page->starts_on->isoFormat('D MMMM YYYY')`. |
-| `time` | A time of day without a date, such as an opening hour, stored as `HH:MM` (or `HH:MM:SS` with `seconds: true`). Templates read the same string. Editors may type `9h30` or `9.30`. Selectors compare padded times: `opens<12:00`. |
-| `toggle` | On or off. |
-| `icon` | An icon from the admin's [Lucide](https://lucide.dev/icons) set, such as `calendar`, chosen with a picker that previews each icon. Templates read the name: `<x-dynamic-component :component="'lucide-'.$page->badge" />`. Comes with `lynxcms/admin`. |
-| `page` | References to other pages, read as a `PageArray`. `multiple: false` allows one, read as that page or `null`; `templates` limits the choice. Editors search by title, or with `input: select`, `radios` or `checkboxes` pick from a list of the allowed pages (up to 100), which suits short lists such as categories. |
-| `page_table` | Pages made for this page and listed in a table, like a course's sessions or an event's speakers. Settings: `templates` (required), `parent` (the path new items go under; default the page itself), `columns` (fields the admin table shows; default the title) and `remove` (`keep`, the default, or `trash`). In the admin, editors add an item by its title, then edit it as a page. New items are hidden from navigation. Templates read a `PageArray`; selectors compare ids like page references. |
-| `component` | An app Livewire component editors choose, with its settings. |
+A field is created once and shared by every template that uses it. The `title` field that `lynx:install` creates is used by most templates, for example.
 
-`lynx()->fields->types()` lists the types with their settings.
+### Translatable fields
 
-**Translatable fields** store one value per language. Other fields are shared by every language.
+A **translatable** field holds one value per language, such as a title or a body text. Any other field is **shared**: one value for every language, such as a price or a date. Only text, textarea and URL fields can be translatable. [Field Types](/basics/field-types#shared-and-translatable) explains the difference, and [Languages](/basics/languages) how values fall back between languages.
 
-**Formatters** change how text is shown, never what is stored: `settings: ['formatters' => ['markdown', 'smartypants']]` runs them in order when a page is shown. `$page->getUnformatted('body')` returns the stored value. `heading_anchors` gives headings ids made from their text, so links can point at a section.
+Whether a field is translatable can't be changed after it is created, so choose with care. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so adding a language later just works.
 
-**Links in rich text** open a dialog with two tabs. On Link, editors type an address, an email (`mailto:`), an `#anchor`, or words that find a page by title; Select page browses the page tree, Select section lists the headings of the chosen page (or of the page being edited, for an `#anchor` on the same page), and Select file lists the files and images of the page being edited and of the page chosen. Headings become sections when their field uses the `heading_anchors` formatter, which gives each h2, h3 and h4 an id made from its text (`Opening hours` becomes `#opening-hours`). A chosen page links to its address in the language being edited. On Attributes, editors set a title, where the link opens and its relations (`nofollow`, `sponsored`, `noreferrer`). The choices come from `lynx-admin.links` in the admin config; add `ugc` there for sites whose visitors write content. Saving keeps only those four relations, adds `noopener` to links that open a new window, and refuses addresses that could run script. Links do not get `noreferrer` unless an editor asks for it, so sites you link to can see the visits you send them. Modules can offer more files with `app(\LynxCms\Admin\Editor\LinkFiles::class)->add(...)`.
+### Labels, descriptions and notes
 
-## Labels in every language
-
-Labels, descriptions and notes (a short hint under the input) can be one text or one per language:
+A field's label, description and notes (a short hint under the input) are what editors read in the admin. Each can be one text, or one text per language:
 
 ```php
 lynx()->fields->add('role', 'text', translatable: true,
-    label: ['pt' => 'Função', 'en' => 'Role'],
-    settings: ['notes' => ['pt' => 'Por exemplo, Realização', 'en' => 'For example, Direction']]);
+    label: ['en' => 'Role', 'pt' => 'Função'],
+    settings: ['notes' => ['en' => 'For example, Direction', 'pt' => 'Por exemplo, Realização']]);
 ```
 
-Editors read them in their language, falling back like content does. Templates take the same shape for their own label and for the labels they give their fields.
+The keys are language codes (see [Languages](/basics/languages#adding-a-language) for giving the default language a code such as `en`). Editors read each text in their own language, falling back like content does.
 
-## Templates
+## Creating templates
+
+Create a template from a list of fields. A field in the list can be a name, or an array that adds options for this template only, such as `required`:
 
 ```php
-lynx()->templates->add('course', fields: [['name' => 'title', 'required' => true], 'summary', 'body', 'price']);
-lynx()->templates->update('course', ['child_templates' => ['lesson'], 'allow_children' => true]);
+lynx()->templates->add('course', label: 'Course', fields: [
+    ['name' => 'title', 'required' => true],
+    'summary',
+    'price',
+    'related',
+]);
+```
+
+To add or remove fields later:
+
+```php
+lynx()->templates->update('course', ['add' => ['body'], 'remove' => ['related']]);
+```
+
+Removing a field from a template keeps its values, as [Changing the schema](#changing-the-schema) explains.
+
+A template's options for a field override the field's own: a template can give a field another label, description, notes or placeholder, make it required, or [show it only when other fields match](#showing-fields-only-when-needed). In the admin, each field of a template has an **Overrides** button for these.
+
+Required fields are checked in the default language only, so a page can be saved before it is translated.
+
+### Pages without a URL, and one-page templates
+
+Two options change what a template is for:
+
+- `has_url: false` makes a template for content that is never shown at its own address, such as a settings page or a list of partners other pages reference.
+- `singleton: true` allows only one page on the template, such as the site's settings or a blog's index page.
+
+```php
+lynx()->templates->add('settings', fields: ['footer_text'], hasUrl: false, singleton: true);
+```
+
+## Where pages may go
+
+Templates can say where their pages belong in the tree. These **family rules** keep the tree tidy: the admin only offers templates that fit, and saving, moving or switching a page refuses a place the rules forbid.
+
+```php
+lynx()->templates->update('blog', ['allow_children' => true, 'child_templates' => ['post']]);
+lynx()->templates->update('post', ['allow_children' => false, 'parent_templates' => ['blog']]);
 ```
 
 | Rule | Meaning |
 | --- | --- |
-| `has_url` | `false` for pages that are content or settings, never shown at a URL. |
-| `singleton` | Only one page may use the template (settings pages). |
 | `allow_children` | Whether its pages may have children. |
 | `child_templates` | Templates its children may use; empty means any. |
 | `parent_templates` | Templates its parent may use; empty means any. |
 | `allowed_templates` | Templates its pages may switch to. |
 
-Saving, moving and switching templates refuse placements these rules forbid.
+## Arranging the page editor
 
-## Layout
-
-A template can arrange its fields in the page editor: extra tabs next to Content, sections that group fields, and a sidebar column for fields editors rarely change.
+By default the page editor shows a template's fields in order, on one tab. A template can arrange them: extra tabs next to Content, sections that group fields, and a sidebar for fields editors rarely change.
 
 ```php
 lynx()->templates->update('project', [
-    'tabs' => [['key' => 'credits', 'label' => ['pt' => 'Créditos', 'en' => 'Credits']]],
+    'tabs' => [['key' => 'credits', 'label' => ['en' => 'Credits', 'pt' => 'Créditos']]],
     'fields' => [
         ['name' => 'title', 'required' => true],
         'summary',
@@ -91,117 +113,68 @@ lynx()->templates->update('project', [
 
 | Setting | On | Meaning |
 | --- | --- | --- |
-| `tabs` | template | Tabs besides Content, each with a `key` and a `label`. They come after Content and before Texts and Settings. |
-| `section` | field list | A titled group of fields. Its fields move together and take its tab and column. Sections do not nest. |
-| `collapsed` | section | The section starts closed. Editors can open it, and the editor remembers their choice per template in their browser. A section with an error always opens. |
+| `tabs` | template | Tabs besides Content, each with a `key` and a `label`. They come after Content and before the editor's own tabs, such as Settings. |
+| `section` | field list | A titled group of fields, which move together and share its tab and column. Sections do not nest. |
+| `collapsed` | section | The section starts closed. The editor remembers each editor's choice per template, and a section with an error always opens. |
 | `tab` | field or section | The tab it appears in; `content` when not set. |
 | `column` | field or section | `main` (default) or `sidebar`. |
-| `editor` | field | How the field shows in the page editor: `open` (default), `collapsed`, `collapsed_blank` (closed while empty), `collapsed_populated` (closed while filled), `locked` (the value shows, editors cannot change it) or `hidden` (not shown). Locked and hidden fields are written only by code, imports, actions, agents and MCP, and cannot be required. |
-| `width` | field | `25`, `33`, `50`, `66`, `75` or `100` (default): fields in a card sit side by side when it is wide enough. |
-| `placeholder` | field | Text in the empty input, per language like `label`. |
-| `icon` | field | A [Lucide](https://lucide.dev/icons) icon name shown before the label, such as `calendar`. |
+| `editor` | field | How the field shows: `open` (default), `collapsed`, `collapsed_blank` (closed while empty), `collapsed_populated` (closed while filled), `locked` (shown, not editable) or `hidden`. Locked and hidden fields are written only by code, imports, actions and agents, and can't be required. |
+| `width` | field | `25`, `33`, `50`, `66`, `75` or `100` (default): fields sit side by side when there is room. |
+| `placeholder` | field | Text in the empty input, per language like a label. |
+| `icon` | field | A [Lucide](https://lucide.dev/icons) icon shown before the label, such as `calendar`. |
 
-In the admin, **Settings > Templates** edits the layout. Each field's Overrides button sets its label, description, notes, conditions, required, searchable, how it shows in the editor, width, placeholder and icon. Each tab shows a Main and a Sidebar list, and fields and sections are dragged between tabs, columns and sections. A section moves with its fields. The Move to menu on each row does the same without a mouse. Removing a section keeps its fields where it was; removing a tab moves its fields to Content. Nothing is stored until Save fields.
+In the admin, **Settings › Templates** edits the layout. Each tab shows a Main and a Sidebar list; drag fields and sections between tabs, columns and sections, or use the **Move to** menu on each row from the keyboard. Removing a section keeps its fields; removing a tab moves its fields to Content. Nothing is stored until you choose **Save fields**.
 
-A section shows how many fields it holds, and a dot when one of them falls back to another language. Saving refused for a field on another tab opens that tab. The field order stays one list, so values, selectors and `templates->fields()` are not affected, and a template without these settings looks as before. Schema files write sections inside the field list, in the same shape.
+The layout only changes the editor. The template's fields stay one list, so values, selectors and schema files are not affected.
 
-## Choices
+## Showing fields only when needed
 
-```php
-lynx()->fields->add('level', 'choice', settings: [
-    'input' => 'radios',
-    'options' => [
-        ['value' => 'beginner', 'label' => ['en' => 'Beginner', 'pt' => 'Iniciante']],
-        ['label' => ['en' => 'Advanced', 'pt' => 'Avançado']],   // value "advanced", made from the label
-    ],
-]);
-```
-
-```blade
-{{ $page->level }}                          {{-- the label in the current language --}}
-@if ($page->level?->value === 'advanced') … @endif
-@foreach ($page->formats as $format) {{ $format->label() }} @endforeach   {{-- with multiple: true --}}
-```
-
-Pages store the value, so labels can change and be translated freely; changing a value leaves pages that had it without a choice. A single choice reads as a `Choice` or `null`, several as a `ChoiceList` (`has('online')`, `values()`, `labels()`). Selectors compare values: `level=advanced`, `formats=online|hybrid`. In the admin, **Settings > Fields** edits the options with the same list editor as form options.
-
-## Repeaters
-
-A repeater holds a list of items that each have the same fields, such as credits with a partner and a role. Items are sortable and can be switched off.
+A field of a template can show, or be required, only when other fields match. Conditions use the same syntax as [selectors](/basics/selectors):
 
 ```php
-lynx()->fields->add('partner', 'page', settings: ['multiple' => false]);
-lynx()->fields->add('role', 'text', translatable: true);
-lynx()->fields->add('credits', 'repeater', settings: [
-    'fields' => [['name' => 'partner', 'required' => true], ['name' => 'role']],
-    'max' => 10,
-    'item_label' => '{partner} · {role}',
-]);
-
-$page->credits = [
-    ['values' => ['partner' => [7], 'role' => ['pt' => 'Realização', 'en' => 'Direction']]],
-    ['enabled' => false, 'values' => ['partner' => [9], 'role' => 'Editing']],
-];
-$page->save();
-```
-
-```blade
-@foreach ($page->credits as $credit)  {{-- items switched on, in order --}}
-    {{ $credit->partner?->title }}: @field($credit->role)
-@endforeach
-```
-
-Each item is a row of the repeater's table, plus one row per language that has translations, so a missing translation falls back per subfield. Every item keeps a `key`; pass it back when saving to update an item, and leave it out for new ones.
-
-## Matrix
-
-A matrix holds typed blocks: each item has a type and that type's fields.
-
-```php
-lynx()->fields->add('blocks', 'matrix', settings: ['types' => [
-    ['slug' => 'text',  'label' => ['pt' => 'Texto', 'en' => 'Text'],  'fields' => [['name' => 'body']]],
-    ['slug' => 'video', 'label' => ['pt' => 'Vídeo', 'en' => 'Video'], 'fields' => [['name' => 'video_url', 'required' => true], ['name' => 'caption']]],
+lynx()->templates->update('course', ['fields' => [
+    'title',
+    'format',
+    ['name' => 'venue', 'required' => true, 'show_if' => 'format=onsite|hybrid'],
+    ['name' => 'summary', 'required_if' => 'format=online, price>0'],
 ]]);
-
-$page->blocks = [
-    ['type' => 'text', 'values' => ['body' => ['pt' => '<p>Olá</p>', 'en' => '<p>Hello</p>']]],
-    ['type' => 'video', 'values' => ['video_url' => 'https://vimeo.com/123']],
-];
 ```
 
-Slugs never change, so reordering types or editing their labels never changes what a block is. A block that changes type keeps its other values, hidden. A template can offer only some types: `['name' => 'blocks', 'allowed_types' => ['text']]`. See [Templates and views](/basics/views) for rendering.
+Clauses separated by commas must all match, and `|` separates alternative values. An empty value means empty: `video_url=` matches when there is no video. The operators are `=`, `!=`, `>`, `<`, `>=`, `<=` and `%=` (contains). A hidden field is never required.
 
-## Conditions
+## Making fields searchable
 
-A template field can show or require itself only when other fields match, written like ProcessWire's `showIf`:
-
-```php
-['name' => 'venue', 'required' => true, 'show_if' => 'format=onsite|hybrid']
-['name' => 'summary', 'required_if' => 'format=online, price>0']
-```
-
-Clauses separated by commas must all match, `|` separates alternatives, and an empty value means empty. Operators: `=`, `!=`, `>`, `<`, `>=`, `<=` and `%=` (contains). A hidden field is never required. Required fields are checked in the default language only.
-
-## Search
-
-The search index holds, for each page and language, the words of its title and of the fields its template marks searchable. In the admin, tick "Searchable" on the field in the template's screen; in code, set it on the template field:
+The search index holds, for each page and language, the words of its title and of the fields its template marks **searchable**. The admin's search box and [`search*=` selectors](/basics/selectors#searching-text) read the index. Tick "Searchable" on the field in the template's screen, or in code:
 
 ```php
 lynx()->templates->update('project', ['add' => [['name' => 'blocks', 'searchable' => true]]]);
 ```
 
-A searchable repeater or matrix adds the text of its enabled items. Text, textarea, email and url fields give their words (markup removed) and choices their labels in each language. Numbers, dates, toggles and page references add nothing. The admin's search box and `search*=` selectors use the index. The page pickers (page fields, the link dialog, the menu editor) list title matches first, then pages found through the index.
+Text, textarea, email and URL fields add their words, without markup; choices add their labels in each language. A searchable repeater or matrix adds the text of its items that are switched on. Numbers, dates, toggles and page references add nothing.
 
-Saving, restoring, moving to another template or deleting a page updates it, and so does changing which fields a template marks. After changing a field's own settings, such as a choice label or a matrix type's fields, run `php artisan lynx:search-index`. Drafts are indexed when they are published.
+Saving, restoring, moving to another template or deleting a page updates the index, and so does changing which fields a template marks. After changing a field's own settings, such as a choice label or a matrix type's fields, rebuild it:
 
-## Removing fields
+```bash
+php artisan lynx:search-index
+```
 
-Removing a field from a template, or switching a page to another template, keeps the values as orphans. `pages.purge_orphans` deletes them when you are sure. Deleting a field deletes its table and values.
+## Changing the schema
 
-## Deleting templates
+Lynx keeps content unless you delete it on purpose:
 
-A template can be deleted only when no page uses it, counting unpublished pages and pages in the trash. The template's screen in the admin lists the pages that use it, each linking to its Settings tab, where its template is switched. `templates.delete` refuses with the same list (the first ten pages, then a count), so an agent or a script knows which pages to switch with `pages.switch_template` or delete first. `TemplateUsage` (`@api`) gives the count and the pages in PHP.
+- **Removing a field from a template** keeps its values as *orphans*, and **switching a page to another template** keeps the values of fields the new template lacks. Adding the field back, or switching back, brings them back. `pages.purge_orphans` deletes orphaned values when you are sure.
+- **Deleting a field** deletes its table and every value, in every template.
+- **Deleting a template** is possible only when no page uses it, counting unpublished pages and pages in the trash. The template's screen in the admin lists the pages that use it, each linking to its Settings tab, where its template is switched. `templates.delete` refuses with the same list, so a script or an AI agent knows which pages to switch with `pages.switch_template` or delete first.
+
+```php
+lynx()->pages->switchTemplate('/courses/old', 'archived-course');
+lynx()->pages->purgeOrphans(template: 'course', dryRun: true);
+```
+
+## Keeping the schema in Git
+
+Fields and templates live in the database, but you can keep them in your repository, like migrations. `php artisan lynx:schema:export` writes them as YAML files, and `php artisan lynx:schema:apply` applies the files on another machine. [Schema and Content Packages](/deeper/schema-and-content) covers both, and how to make the admin's schema screens read only in production.
 
 ## System templates
 
-Modules own some templates and fields (the trash, menus). The admin hides them unless you tick **Show system templates** and shows them read only.
+Modules own some templates and fields, such as the trash and menus. The admin hides them unless you tick **Show system templates**, and shows them read only.
