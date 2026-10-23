@@ -17,6 +17,7 @@ use LynxCms\Admin\Livewire\Concerns\ManagesTemplateFamily;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Pages\TemplateUsage;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\EditorSettings;
 use LynxCms\Core\Templates\FieldDisplay;
@@ -42,6 +43,9 @@ final class TemplateForm extends Component
 
     /** Yes or no overrides, stored only when set. */
     private const array FLAGS = ['required', 'searchable'];
+
+    /** Pages listed under Pages; the count covers the rest. */
+    private const int PAGES_LISTED = 50;
 
     /** The template being edited; null on the New template screen. */
     #[Locked]
@@ -146,8 +150,26 @@ final class TemplateForm extends Component
             'fieldInfo' => $fields->mapWithKeys(fn (Field $field): array => [$field->name => ['label' => $field->label, 'type' => $field->type]])->all(),
             'canEdit' => $this->canEdit(),
             'owner' => $this->template === null ? null : app(SchemaOwners::class)->ownerOfTemplate($this->template),
-            'pageCount' => $this->template === null ? 0 : lynx()->pages->count("template={$this->template}, include=all"),
+            ...$this->usage(),
         ]);
+    }
+
+    /**
+     * The pages that keep the template from being deleted, trashed ones too.
+     *
+     * @return array{pageCount: int, pagesUsing: list<array{id: int, title: string, url: string, trashed: bool}>}
+     */
+    private function usage(): array
+    {
+        $template = $this->template === null ? null : lynx()->templates->find($this->template);
+
+        if ($template === null) {
+            return ['pageCount' => 0, 'pagesUsing' => []];
+        }
+
+        $usage = app(TemplateUsage::class);
+
+        return ['pageCount' => $usage->count($template), 'pagesUsing' => $usage->pages($template, self::PAGES_LISTED)];
     }
 
     private function canEdit(): bool
