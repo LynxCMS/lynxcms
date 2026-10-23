@@ -34,3 +34,20 @@
 .vp-doc .wide-table td:first-child {
     min-width: 9rem;
 }
+
+/* The row labels stay in view while the table scrolls. */
+.vp-doc .wide-table th:first-child,
+.vp-doc .wide-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: var(--vp-c-bg);
+}
+
+.vp-doc .wide-table tr:nth-child(2n) td:first-child {
+    background-color: var(--vp-c-bg-soft);
+}
+
+.vp-doc .wide-table thead th:first-child {
+    background-color: var(--vp-c-bg-soft);
+}
