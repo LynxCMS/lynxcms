@@ -8,7 +8,14 @@ order: 9
 
 The page cache comes with `lynxcms/cache`. It stores the HTML of pages guests see and sends it again to the next guest, without loading the page or rendering Blade. With web server rules it is sent without PHP running at all, as ProcessWire's ProCache does. Saving content clears what it changed.
 
-Turn it on in `.env`:
+Install it, back up the database and apply its migrations:
+
+```bash
+composer require lynxcms/cache
+php artisan lynx:migrate
+```
+
+Then turn it on in `.env`:
 
 ```dotenv
 LYNX_PAGE_CACHE=true

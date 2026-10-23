@@ -7,6 +7,15 @@ Multilingual menus for Lynx CMS. Build as many menus as you need (a top bar, a f
 
 Menus are stored as pages (ADR-0008, ADR-0025), so they get translations, fallback, ordering, the activity log and MCP and AI tools for free.
 
+## Installing
+
+```bash
+composer require lynxcms/menus
+php artisan lynx:migrate   # asks whether the database is backed up
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
+
 ## Items
 
 | Kind | What it is | Label |

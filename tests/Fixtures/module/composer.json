@@ -1,0 +1,4 @@
+{
+    "name": "lynxcms/fixture",
+    "description": "A Lynx module with a migration, for the lynx:migrate tests."
+}

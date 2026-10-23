@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace LynxCms\Core;
 
+use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\Translator;
@@ -33,6 +35,7 @@ use LynxCms\Core\Indexes\IndexesServiceProvider;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Languages\TranslationLocales;
+use LynxCms\Core\Migrations\DiscoverWarning;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageAncestry;
@@ -168,6 +171,7 @@ final class LynxServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands(CoreRegistrations::COMMANDS);
+            Event::listen(CommandFinished::class, [DiscoverWarning::class, 'handle']);
         }
 
         // Scheduled publishing (ADR-0036): due entries are applied within a minute.

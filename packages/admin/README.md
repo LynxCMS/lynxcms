@@ -5,6 +5,15 @@
 
 Livewire admin for Lynx CMS. It calls the same API and actions as every other caller and never touches the database directly. The first screen is the page tree at `/lynx/pages`.
 
+## Installing
+
+```bash
+composer require lynxcms/admin
+php artisan lynx:migrate   # asks whether the database is backed up
+```
+
+See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
+
 ## Page tree
 
 `<livewire:lynx-admin.page-tree />` renders a ProcessWire-style tree. Click a title to open its children and show its actions. **Move** starts move mode: drag the highlighted row by its handle, or use the arrow keys (up and down reorder, right indents under the previous sibling, left outdents). Enter or Esc ends move mode. To move a page to another pager page, drop it on that page's number (or arrow): it lands at the top of that page. Keyboard moves past the edge of a pager page follow the row onto the next or previous page.
