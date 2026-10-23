@@ -115,3 +115,8 @@ it('names field tables lynx_f_{name} and fits the longest name in PostgreSQL ide
     lynx()->fields->add(substr($longest, 0, -1).'c', 'text', translatable: true);
     expect(Schema::hasTable('lynx_f_'.substr($longest, 0, -1).'c'))->toBeTrue();
 });
+
+it('says why a reserved name is refused', function (): void {
+    expect(fn () => lynx()->fields->add('status', 'choice'))
+        ->toThrow(ValidationException::class, 'The name "status" is reserved, because pages and selectors already use it. Choose another name.');
+});

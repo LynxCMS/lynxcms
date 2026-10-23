@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.6
+
+Released October 23, 2026.
+
+- **Reserved field names say why they are refused.** Creating a field called `status`, `sort` or another name pages and selectors already use now says so, instead of "The selected name is invalid." The [list of reserved names](/basics/templates-and-fields#creating-fields) is in the docs.
+
 ## 0.1.5
 
 Released October 23, 2026.
