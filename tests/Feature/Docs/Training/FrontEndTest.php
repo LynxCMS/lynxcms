@@ -45,7 +45,7 @@ it('shows a course with its curriculum, instructors and next dates', function ()
 it('shows a session with its place, price and seats', function (): void {
     $session = lynx()->pages->findOne('template=session, sort=starts');
 
-    $this->get($session->url)->assertOk()->assertSee('Lisbon studio')->assertSee('€2,400.00')->assertSee('16');
+    $this->get($session->url)->assertOk()->assertSee('Lisbon studio')->assertSee('€2,400.00')->assertSeeInOrder(['16', 'seats left']);
 });
 
 it('lists instructors, studios and news, and renders their pages', function (string $path, string $text): void {

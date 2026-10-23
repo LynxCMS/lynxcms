@@ -123,13 +123,14 @@ final class AtlasSchemaSeeder extends Seeder
         lynx()->templates->add('posts', fields: [['name' => 'title', 'required' => true], 'summary'], label: 'News', singleton: true);
         lynx()->templates->add('post', fields: [['name' => 'title', 'required' => true], 'summary', 'body', 'published_on', 'photos'], label: 'News post');
 
+        lynx()->templates->add('materials', fields: [['name' => 'title', 'required' => true], 'body'], label: 'Course materials');
         lynx()->templates->add('page', fields: [['name' => 'title', 'required' => true], 'summary', 'body'], label: 'Page');
         lynx()->templates->add('settings', fields: ['email', 'phone'], label: 'Settings', hasUrl: false, singleton: true);
 
         // Where pages may go: the admin offers only these, and the API refuses the rest
         $children = [
             'home' => ['courses', 'instructors', 'locations', 'posts', 'page', 'settings'],
-            'courses' => ['course'], 'course' => ['session'], 'session' => [],
+            'courses' => ['course'], 'course' => ['session', 'materials'], 'session' => [], 'materials' => [],
             'instructors' => ['instructor'], 'instructor' => [],
             'locations' => ['location'], 'location' => [],
             'posts' => ['post'], 'post' => [], 'page' => [],

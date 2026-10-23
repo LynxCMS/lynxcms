@@ -106,6 +106,9 @@ export default defineConfig({
                     { text: '3. The Front End', link: '/guides/training-site/front-end' },
                     { text: '4. The Editors\' Side', link: '/guides/training-site/editors' },
                     { text: '5. SEO', link: '/guides/training-site/seo' },
+                    { text: '6. Leads', link: '/guides/training-site/leads' },
+                    { text: '7. Paid Bookings', link: '/guides/training-site/bookings' },
+                    { text: '8. Members Area', link: '/guides/training-site/members' },
                 ],
             },
             {

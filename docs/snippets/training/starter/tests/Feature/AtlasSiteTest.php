@@ -38,8 +38,15 @@ final class AtlasSiteTest extends TestCase
         $this->get('/courses?level=beginner')->assertOk()->assertSee('Mindful movement')->assertDontSee('Sports nutrition');
     }
 
-    public function test_the_admin_asks_to_sign_in(): void
+    public function test_the_admin_asks_to_sign_in_on_the_site_s_own_screen(): void
     {
-        $this->get('/lynx/pages')->assertRedirect('/lynx/login');
+        $this->get('/lynx/pages')->assertRedirect('/login');
+        $this->get('/login')->assertOk()->assertSee('Forgot your password?');
+    }
+
+    public function test_the_owner_opens_the_admin(): void
+    {
+        $this->post('/login', ['email' => 'owner@atlas-training.example', 'password' => 'change-me-now'])->assertRedirect('/account');
+        $this->get('/lynx/pages')->assertOk();
     }
 }

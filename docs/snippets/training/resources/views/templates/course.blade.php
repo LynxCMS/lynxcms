@@ -42,7 +42,15 @@
                 @endif
             </div>
 
-            @include('partials.course.sessions')
+            <div class="grid h-fit gap-6">
+                @include('partials.course.sessions')
+
+                {{-- The enquiry form; the submission keeps this page, so staff know the course --}}
+                <section class="atlas-clay p-6" aria-labelledby="enquiry">
+                    <h2 id="enquiry" class="text-lg">@string('course.enquiry', ['en' => 'Questions about this course?', 'pt' => 'Dúvidas sobre este curso?'])</h2>
+                    <livewire:lynx-form form="enquiry" :page-id="$page->id" />
+                </section>
+            </div>
         </div>
     </article>
 </x-layouts.site>

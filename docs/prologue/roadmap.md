@@ -33,6 +33,7 @@ A text changed once for every page of a template (all courses), between the site
 
 - A central media library, shared by pages, next to the per page files.
 - Image sizes made in a queue instead of on first request.
+- Private files: files of a page that is not public (behind a password, a visibility rule or a gate) served through a route that asks the same rules, instead of a public address. Found while writing the training site guide's members area.
 
 ## Page cache
 
