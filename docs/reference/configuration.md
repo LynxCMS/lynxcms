@@ -41,7 +41,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | --- | --- | --- |
 | `prefix` | `lynx` | URL prefix of the admin. |
 | `middleware` | `['web', 'auth']` | Middleware of every admin route. |
-| `auth.enabled` | `auto` | Lynx's sign-in screens; see [Sign-in](/docs/admin/sign-in). |
+| `auth.enabled` | `auto` | Lynx's sign-in screens; see [Sign-in](/admin/sign-in). |
 | `auth.invitation_days` | `7` | How long an invitation link works. |
 | `theme` | `system` | `light`, `dark` or `system`. |
 | `appearance.*` | | BlatUI options: base, theme, radius, font, heading font, shadow, spacing, tracking, input style, font loading. |
@@ -80,7 +80,7 @@ Comes with `lynxcms/sitemap`; publish it with `php artisan vendor:publish --tag=
 
 ## config/lynx-cache.php
 
-Comes with `lynxcms/cache`; publish it with `php artisan vendor:publish --tag=lynx-cache-config`. See [Page cache](/docs/front-end/page-cache).
+Comes with `lynxcms/cache`; publish it with `php artisan vendor:publish --tag=lynx-cache-config`. See [Page cache](/modules/page-cache).
 
 | Key | Default | Meaning |
 | --- | --- | --- |
@@ -105,4 +105,4 @@ Comes with `lynxcms/cache`; publish it with `php artisan vendor:publish --tag=ly
 
 ## config/lynx-static.php
 
-Comes with `lynxcms/static-site`; publish it with `php artisan vendor:publish --tag=lynx-static-config`. The keys are listed in [Static site export](/docs/front-end/static-site#configuration).
+Comes with `lynxcms/static-site`; publish it with `php artisan vendor:publish --tag=lynx-static-config`. The keys are listed in [Static site export](/modules/static-site#configuration).

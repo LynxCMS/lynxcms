@@ -169,7 +169,7 @@ $page->blocks = [
 ];
 ```
 
-Slugs never change, so reordering types or editing their labels never changes what a block is. A block that changes type keeps its other values, hidden. A template can offer only some types: `['name' => 'blocks', 'allowed_types' => ['text']]`. See [Templates and views](/docs/front-end/templates) for rendering.
+Slugs never change, so reordering types or editing their labels never changes what a block is. A block that changes type keeps its other values, hidden. A template can offer only some types: `['name' => 'blocks', 'allowed_types' => ['text']]`. See [Templates and views](/basics/views) for rendering.
 
 ## Conditions
 

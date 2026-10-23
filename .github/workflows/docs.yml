@@ -1,0 +1,52 @@
+# Builds the documentation site from docs/ with VitePress. Pull requests only build it, which
+# also fails on dead links; pushes to main publish it on GitHub Pages at docs.lynxcms.org
+# (docs/public/CNAME).
+name: docs
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # "Last updated" dates come from git history.
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+      - run: npm ci
+        working-directory: docs
+      - run: npm run build
+        working-directory: docs
+      - uses: actions/upload-pages-artifact@v5
+        if: github.event_name != 'pull_request'
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

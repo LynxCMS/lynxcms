@@ -6,7 +6,7 @@ order: 10
 
 # Server capacity
 
-How many visitors a server can take depends on how many of its pages are rendered and how many are sent from the [page cache](/docs/front-end/page-cache). This guide turns the load test in [How fast](/docs/front-end/page-cache#how-fast) and [Two cores against five](/docs/front-end/page-cache#two-cores-against-five) into visitor numbers for a 2 core server with 4 GB of memory. They are estimates from those measurements, not from real traffic.
+How many visitors a server can take depends on how many of its pages are rendered and how many are sent from the [page cache](/modules/page-cache). This guide turns the load test in [How fast](/modules/page-cache#how-fast) and [Two cores against five](/modules/page-cache#two-cores-against-five) into visitor numbers for a 2 core server with 4 GB of memory. They are estimates from those measurements, not from real traffic.
 
 ## Visitors and requests
 
@@ -38,9 +38,9 @@ Real sites mix both. When 90% of page views come from the cache, PHP renders onl
 ## Where to be careful
 
 - **Many signed in visitors**, such as a members' area or an intranet. Their pages are always rendered, so plan with the full render rows: about 900 people browsing at once on PostgreSQL. A few dozen editors in the admin are no problem.
-- **Search, filters and forms on every page.** Each of those requests renders. [Islands](/docs/front-end/page-cache#islands) and the [fragment cache](/docs/front-end/page-cache#fragment-cache) keep the rest of the page cached or cheaper.
+- **Search, filters and forms on every page.** Each of those requests renders. [Islands](/modules/page-cache#islands) and the [fragment cache](/modules/page-cache#fragment-cache) keep the rest of the page cached or cheaper.
 - **Spikes on pages that aren't cached**, such as a newsletter linking to a search page. On 2 cores, response times climb fast: about 100 ms with 10 requests at once, and more beyond that.
-- **Clearing.** By default a change clears the whole site, so on a busy site each save sends all traffic to PHP for a moment. [Template rules](/docs/front-end/page-cache#template-rules) and warming soften it.
+- **Clearing.** By default a change clears the whole site, so on a busy site each save sends all traffic to PHP for a moment. [Template rules](/modules/page-cache#template-rules) and warming soften it.
 
 ## What the estimate leaves out
 

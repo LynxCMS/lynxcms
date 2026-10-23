@@ -77,7 +77,7 @@ Files offer `file`, `mime`, `bytes`, `tags` and `description`; images add `width
 
 ## Searching text
 
-`search*=` looks for words in the search index: the title of every page, plus the fields each template marks searchable (see [Search](/docs/content/fields-and-templates#search)), matrix and repeater items included.
+`search*=` looks for words in the search index: the title of every page, plus the fields each template marks searchable (see [Search](/basics/templates-and-fields#search)), matrix and repeater items included.
 
 ```php
 lynx()->pages->find('search*="quatro estações", limit=20');

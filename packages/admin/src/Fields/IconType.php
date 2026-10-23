@@ -15,7 +15,7 @@ use LynxCms\Core\Support\Value;
 /**
  * An icon name from the admin's Lucide set, such as "calendar". Templates print it with
  * <x-dynamic-component :component="'lucide-'.$page->icon" />. The worked example of the custom
- * field types guide (docs/reference/field-types.md).
+ * field types guide (docs/deeper/custom-field-types.md).
  *
  * @api
  */

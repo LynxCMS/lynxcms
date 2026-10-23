@@ -1,30 +1,34 @@
 ---
-title: Lynx
-description: A multilingual CMS for Laravel that people and AI agents can build and run safely.
-order: 1
+layout: home
+title: Lynx CMS
+titleTemplate: A multilingual CMS for Laravel
+
+hero:
+  name: Lynx
+  text: A multilingual CMS for Laravel
+  tagline: Add a page tree, runtime fields and a translated admin to the Laravel app you already know. People and AI agents edit through the same safe actions.
+  actions:
+    - theme: brand
+      text: Get started
+      link: /getting-started/introduction
+    - theme: alt
+      text: Build your first site
+      link: /getting-started/first-site
+    - theme: alt
+      text: GitHub
+      link: https://github.com/LynxCMS/lynxcms
+
+features:
+  - title: It is still your Laravel app
+    details: Lynx is a set of Composer packages. Your routes, controllers, Blade views, queues and deployments keep working; Lynx serves the URLs your app leaves free.
+  - title: Fields without migrations
+    details: Define templates and fields in the admin, in PHP or in YAML files you commit. Lynx creates their tables at runtime.
+  - title: Languages are rows
+    details: Add a language to a running site in one step. Each field falls back to the next language when a translation is missing, and URLs are translated too.
+  - title: Find pages with one line
+    details: "Selectors such as template=post, sort=-published_on, limit=10 compile to plain SQL, with fallback, permissions and visibility rules applied."
+  - title: Every write is an action
+    details: The admin, Artisan, your code, the MCP server and the AI agent call the same validated actions, with permissions, hooks, dry runs and an activity log.
+  - title: Modules when you need them
+    details: Menus, forms, SEO, sitemaps, a page cache, page passwords, media and a static site export. Install only what the site uses.
 ---
-
-# Lynx
-
-Lynx brings ProcessWire's page tree, runtime fields and selector API into any Laravel 13 app, with languages as a core concept.
-
-- **Languages are rows, not columns.** Add a language to a running site with one insert. No migration, no deploy.
-- **Fallback at read time, field by field.** A partly translated page shows each field in its own language or in the next language of its fallback chain (`pt-BR`, then `pt`, then the default), and templates know which is which.
-- **Translated URLs with history.** `/courses/delivery-8` and `/pt/cursos/navegando-entrega-8`. Renamed or moved pages keep redirecting from their old URLs.
-- **Every write is an action.** The PHP API, Artisan, the admin, the MCP server and the built-in agent call the same validated actions, with hooks, dry runs, permissions and an activity log.
-- **AI native.** An MCP server and a `laravel/ai` agent are generated from the action registry. The agent plans first and applies only what you approve.
-
-> [!NOTE]
-> Lynx is pre-release. APIs may still change before 1.0.
-
-## Packages
-
-| Package | What it adds |
-| --- | --- |
-| `lynxcms/core` | Languages, fields, templates, pages, selectors, actions, routing and Blade helpers. |
-| `lynxcms/admin` | The Livewire admin: page tree, editor, schema screens, languages, roles, users and sign-in. |
-| `lynxcms/menus` | Menus as pages, the menu editor and `<x-lynx-menu>`. |
-| `lynxcms/mcp` | An MCP server generated from the actions. |
-| `lynxcms/ai` | The built-in agent and the translation provider. |
-
-Start with [Installation](/docs/getting-started/installation).

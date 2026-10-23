@@ -55,4 +55,4 @@ Deleting removes every value, page name and URL stored in that language. Languag
 
 ## The current language
 
-On the site, the URL prefix picks the language. Without a prefix, Lynx uses the session, the signed in user's language, then the default language. See `lynx.localization` in [Configuration](/docs/reference/configuration).
+On the site, the URL prefix picks the language. Without a prefix, Lynx uses the session, the signed in user's language, then the default language. See `lynx.localization` in [Configuration](/reference/configuration).

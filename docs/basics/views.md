@@ -67,7 +67,7 @@ The switcher lists only the languages the page is published in and keeps the que
 @endforeach
 ```
 
-See [Selectors](/docs/content/selectors).
+See [Selectors](/basics/selectors).
 
 ## Matrix blocks
 

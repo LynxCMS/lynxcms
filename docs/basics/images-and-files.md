@@ -58,9 +58,9 @@ Files are stored with their page, so a new page cannot hold them yet. A required
 @endif
 ```
 
-Content packages carry the files with their pages (see [Schema and content](schema-and-content.md)).
+Content packages carry the files with their pages (see [Schema and content](/deeper/schema-and-content)).
 
-Selectors look inside files too: `gallery.tags=hero`, `hero.width>=1600`, `blocks.gallery.count>0`. See [Selectors](selectors.md).
+Selectors look inside files too: `gallery.tags=hero`, `hero.width>=1600`, `blocks.gallery.count>0`. See [Selectors](/basics/selectors).
 
 ## From code and agents
 

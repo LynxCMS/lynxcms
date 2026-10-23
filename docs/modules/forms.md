@@ -91,7 +91,7 @@ Templates let editors pick a form with the `form` field, and render it:
 <x-lynx-form :form="$page->form" livewire="quote-request" /> {{-- with your own component --}}
 ```
 
-On a page the [page cache](/docs/front-end/page-cache) stores, a form keeps the time it was first rendered, so the honeypot's "sent too fast" check never fires. Put forms that rely on it in an island, which renders them for each visitor:
+On a page the [page cache](/modules/page-cache) stores, a form keeps the time it was first rendered, so the honeypot's "sent too fast" check never fires. Put forms that rely on it in an island, which renders them for each visitor:
 
 ```blade
 <x-lynx-island livewire="lynx-form" :with="['form' => 'newsletter']" />

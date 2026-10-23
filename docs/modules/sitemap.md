@@ -60,4 +60,4 @@ Agents and MCP clients get `sitemap_install` and `sitemap_clear_cache`.
 
 ## Configuration
 
-Publish `config/lynx-sitemap.php` with `php artisan vendor:publish --tag=lynx-sitemap-config`; its keys are listed in [Configuration](/docs/reference/configuration).
+Publish `config/lynx-sitemap.php` with `php artisan vendor:publish --tag=lynx-sitemap-config`; its keys are listed in [Configuration](/reference/configuration).

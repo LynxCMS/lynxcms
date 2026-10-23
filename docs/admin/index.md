@@ -24,7 +24,7 @@ Superusers also see developer details in the page editor: the template's name, e
 
 ## Search
 
-The box in the top bar (Cmd or Ctrl+K) finds pages. Plain text searches titles and the fields templates mark searchable (see [Search](/docs/content/fields-and-templates#search)), matching word beginnings in any order. Anything with an operator (`=`, `<`, `>`) runs as a [selector](/docs/content/selectors), the same one `lynx()->pages->find()` takes:
+The box in the top bar (Cmd or Ctrl+K) finds pages. Plain text searches titles and the fields templates mark searchable (see [Search](/basics/templates-and-fields#search)), matching word beginnings in any order. Anything with an operator (`=`, `<`, `>`) runs as a [selector](/basics/selectors), the same one `lynx()->pages->find()` takes:
 
 ```
 template=course, price>100, sort=-modified
@@ -34,9 +34,9 @@ Hidden and unpublished pages are included unless the selector sets `include=`. I
 
 The icon at the right of the top bar opens the site in a new tab. In the page editor it opens the page being edited.
 
-- [Sign-in and accounts](/docs/admin/sign-in)
-- [Roles and permissions](/docs/admin/permissions)
-- [Extending the admin](/docs/admin/extending)
+- [Sign-in and accounts](/admin/sign-in)
+- [Roles and permissions](/admin/permissions)
+- [Extending the admin](/admin/extending)
 
 ## Look and feel
 
@@ -55,4 +55,4 @@ Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_R
 
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.
 
-Set `LYNX_ADMIN_SCHEMA_EDITING=false` to make the schema screens read only, for sites whose schema comes from [schema files](/docs/content/schema-and-content).
+Set `LYNX_ADMIN_SCHEMA_EDITING=false` to make the schema screens read only, for sites whose schema comes from [schema files](/deeper/schema-and-content).

@@ -117,19 +117,19 @@ php artisan migrate
 php artisan lynx:install --user=1   # your user id becomes a superuser
 ```
 
-Add the other packages you need from the table above. The [installation guide](docs/getting-started/installation.md) covers the user model, the scheduler, shared hosting and developing against a local clone of this repository.
+Add the other packages you need from the table above. The [installation guide](docs/getting-started/installation.md) covers the first user, the scheduler, shared hosting and developing against a local clone of this repository.
 
 ## Documentation
 
-The documentation is Markdown in [`docs/`](docs/index.md):
+The documentation is at **[docs.lynxcms.org](https://docs.lynxcms.org)**. Its Markdown lives in [`docs/`](docs/), and the site is built with VitePress and published on GitHub Pages from `main`.
 
-- [Getting started](docs/getting-started/_index.md): installation, a quick tour and the core concepts.
-- [Content](docs/content/_index.md): languages, fields and templates, selectors, images and files, moving content between sites.
-- [Front end](docs/front-end/_index.md): templates, menus, forms, SEO, sitemaps, page passwords, the page cache, server capacity and the static export.
-- [Publishing](docs/publishing/_index.md), [Admin](docs/admin/_index.md) and [AI](docs/ai/_index.md).
-- [Reference](docs/reference/_index.md): Artisan commands, configuration, actions and hooks, field types.
+- [Getting started](docs/getting-started/introduction.md): introduction, installation, [your first site](docs/getting-started/first-site.md) and the core concepts.
+- [The basics](docs/basics/): templates and fields, views, selectors, languages, images and files, publishing.
+- [The admin](docs/admin/index.md), [modules](docs/modules/) (menus, forms, SEO, sitemap, page cache, page passwords, static export) and [AI](docs/ai/index.md).
+- [Digging deeper](docs/deeper/): actions and hooks, visibility rules, schema and content packages, custom field types, server capacity.
+- [Reference](docs/reference/): Artisan commands and configuration.
 
-[LynxCMS/docs-site](https://github.com/LynxCMS/docs-site) serves them as a website.
+To work on the documentation, run `npm --prefix docs ci` once, then `npm --prefix docs run dev` for a live preview. `npm --prefix docs run build` checks every link, as CI does.
 
 The design decisions are recorded as ADRs in [`documentation/ADRs.md`](documentation/ADRs.md), and [`AGENTS.md`](AGENTS.md) describes the architecture and the rules for contributors, people and coding agents alike.
 

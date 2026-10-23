@@ -156,4 +156,4 @@ The actions are MCP and agent tools: `seo_install`, `seo_enable_template` and `s
 
 ## Configuration
 
-Publish `config/lynx-seo.php` with `php artisan vendor:publish --tag=lynx-seo-config`; its keys are listed in [Configuration](/docs/reference/configuration).
+Publish `config/lynx-seo.php` with `php artisan vendor:publish --tag=lynx-seo-config`; its keys are listed in [Configuration](/reference/configuration).

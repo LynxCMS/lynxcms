@@ -1,0 +1,16 @@
+/* The admin's cyan (BlatUI's cyan preset), so the docs look like the product. */
+:root {
+    --vp-c-brand-1: #0e7490;
+    --vp-c-brand-2: #0891b2;
+    --vp-c-brand-3: #0e7490;
+    --vp-c-brand-soft: rgba(8, 145, 178, 0.14);
+    --vp-home-hero-name-color: #0e7490;
+}
+
+.dark {
+    --vp-c-brand-1: #22d3ee;
+    --vp-c-brand-2: #06b6d4;
+    --vp-c-brand-3: #0891b2;
+    --vp-c-brand-soft: rgba(34, 211, 238, 0.16);
+    --vp-home-hero-name-color: #22d3ee;
+}
