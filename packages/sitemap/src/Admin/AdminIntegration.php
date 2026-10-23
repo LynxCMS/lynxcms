@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LynxCms\Sitemap\Admin;
 
-use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
@@ -30,7 +29,7 @@ final class AdminIntegration
         Livewire::component('lynx-sitemap.settings', SitemapSettings::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('sitemap.manage');
         app(Navigation::class)->add('Sitemap', 'lynx.admin.sitemap', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'map', group: Navigation::SETTINGS);
-        Admin::routes(fn () => Route::get('sitemap', fn () => $canManage() ? view('lynx-sitemap::admin.index') : abort(403))->name('sitemap'));
+        Admin::routes(fn () => Admin::screen('sitemap', 'lynx-sitemap::admin.index', 'sitemap.manage')->name('sitemap'));
 
         // The settings page is edited on the sitemap screen, never as a page.
         app(AdminBranches::class)->register(SitemapSchema::SETTINGS_TEMPLATE, fn (): string => route('lynx.admin.sitemap'));

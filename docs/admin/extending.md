@@ -14,7 +14,9 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Navigation;
 
 Admin::routes(function (): void {
-    Route::get('reports', ReportsController::class)->name('reports'); // lynx.admin.reports
+    // The view, for users with the permission; 403 for others.
+    Admin::screen('reports', 'reports::index', 'reports.view')->name('reports'); // lynx.admin.reports
+    Route::get('reports/{report}', ShowReportController::class)->name('reports.show');
 });
 
 app(Navigation::class)->add('Reports', 'lynx.admin.reports', order: 70, icon: 'chart-bar',
@@ -40,7 +42,9 @@ app(EditorLinks::class)->add(fn (Page $page): ?array => $page->template()->name 
 
 A module that keeps its pages in a hidden branch registers it with `AdminBranches`: the page tree leaves the branch out, and the closure says where its pages open (`null` keeps a page in the page editor).
 
-`Admin::routes()` adds the admin prefix, middleware and access gate. Wrap the view in the admin layout and use the BlatUI components:
+`Admin::routes()` adds the admin prefix, middleware and access gate. Route to `Admin::screen()` or controllers, not closures: `php artisan route:cache` stores a closure by its line, so a closure route written inside the `Admin::routes()` closure on one line comes back as the wrong closure, and the screen fails once routes are cached.
+
+Wrap the view in the admin layout and use the BlatUI components:
 
 ```blade
 <x-lynx-admin::layout title="Reports" :crumbs="['Pages' => route('lynx.admin.pages')]">

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LynxCms\Cache\Admin;
 
-use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
@@ -36,7 +35,7 @@ final class AdminIntegration
         Livewire::component('lynx-cache.fragments', FragmentsList::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('page_cache.manage');
         app(Navigation::class)->add('Page cache', 'lynx.admin.page-cache', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'zap', group: Navigation::SETTINGS);
-        Admin::routes(fn () => Route::get('page-cache', fn () => $canManage() ? view('lynx-cache::admin.index') : abort(403))->name('page-cache'));
+        Admin::routes(fn () => Admin::screen('page-cache', 'lynx-cache::admin.index', 'page_cache.manage')->name('page-cache'));
         // The settings page is edited on the page cache screen, never as a page.
         app(AdminBranches::class)->register(PageCacheSchema::SETTINGS_TEMPLATE, fn (): string => route('lynx.admin.page-cache'));
         app(TemplateChoices::class)->exclude(PageCacheSchema::SETTINGS_TEMPLATE);
