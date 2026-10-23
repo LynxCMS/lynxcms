@@ -18,9 +18,24 @@ Lynx signs people in with Laravel Fortify, under the admin prefix:
 
 There is no registration. Superusers invite people.
 
-## Turning it off
+## Who signs users in
 
-`LYNX_ADMIN_AUTH` is `auto` by default: Lynx's sign-in is on unless your app has its own `config/fortify.php`, in which case your screens sign users in and Lynx leaves Fortify alone. Set it to `false` to turn Lynx's sign-in off, or `true` to force it on.
+`LYNX_ADMIN_AUTH` decides:
+
+| Value | Sign-in | Invitations and Account security |
+| --- | --- | --- |
+| `auto` (default) | Lynx's screens above, unless your app has its own `config/fortify.php`; then as `app`. | Yes |
+| `app` | Your app's Fortify screens, for everyone. Lynx registers no Fortify routes of its own. | Yes |
+| `false` | Neither: your app signs users in its own way, such as single sign-on. | No |
+
+### A site where visitors sign up
+
+A site with a members area, bookings or surveys lets visitors create accounts. Use your app's Fortify for that, with registration on, and Lynx switches to `app` by itself once `config/fortify.php` exists:
+
+- Everyone signs in at your app's `/login`, staff included. A staff member who opens `/lynx` while signed out goes to `/login` and comes back to the admin afterwards.
+- People who sign up get the `guest` role, so they see the site and never the admin (see [People who sign up](/admin/permissions#people-who-sign-up)).
+- Superusers still invite staff from **Access > Users**. The invitation link opens Lynx's screen to choose a password, which then signs them in.
+- **Account security** stays in the admin's user menu. It offers two-factor authentication only when your Fortify config turns `Features::twoFactorAuthentication()` on, since your sign-in is what asks for the code. Passkeys follow `Features::passkeys()` the same way.
 
 ## Invitations
 

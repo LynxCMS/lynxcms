@@ -24,7 +24,7 @@ trait InvitesUsers
 
     public function sendInvitation(): void
     {
-        abort_unless(AdminAuth::isEnabled(), 404);
+        abort_unless(AdminAuth::managesAccounts(), 404);
         $this->status = null;
 
         try {
@@ -42,7 +42,7 @@ trait InvitesUsers
 
     public function resendInvitation(string $user): void
     {
-        abort_unless(AdminAuth::isEnabled(), 404);
+        abort_unless(AdminAuth::managesAccounts(), 404);
         $this->status = null;
         $email = lynx()->run(ResendInvitation::class, ['user' => $user])->value;
         $this->notify('Invitation sent again to '.Value::string($email).'.');

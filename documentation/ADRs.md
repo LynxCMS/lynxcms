@@ -807,3 +807,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** Install creates a `guest` role with no grants: it sees the website like any visitor and cannot open the admin, which needs `admin.access`. Core listens to Laravel's `Registered` event, which the app's registration (Fortify, Breeze or its own code) dispatches, and gives the new user the role named by `lynx.permissions.registration_role` (`LYNX_REGISTRATION_ROLE`, default `guest`; null gives none). It assigns through `roles.assign`, run as the system, so the activity log records it. Users who already hold a role keep their roles. When the role does not exist, nothing is assigned and a warning says how to fix it. The guest role is a schema item like any role and exports with the schema files.
 
 **Consequences:** The first sign-up turns role enforcement on. If no one is a superuser yet, the owner loses the open rights at that moment; a warning in the log says to run `php artisan lynx:install --user=ID`, which works from the console because the console always has every right. Sites without registration see no change apart from one more role. Apps can give sign-ups a role with grants of their own (such as a reviewer) through the same setting.
+
+## ADR-0074: When the app signs users in, Lynx keeps invitations and the account screen
+
+**Status:** Accepted (amends ADR-0041)
+
+**Context:** ADR-0041 gives the admin its own Fortify sign-in under its prefix, and steps aside when the app configures Fortify itself (`config/fortify.php`). Sites with a members area must do that, since Fortify serves one set of screens and visitors need registration at the site's root. Stepping aside also dropped staff invitations and the account security screen, so such a site had no way to bring staff in except letting them sign up and promoting them by hand.
+
+**Decision:** `AdminAuth::mode()` names who signs users in: `lynx` (Lynx's screens), `app` (the app's Fortify; chosen by `auto` when `config/fortify.php` exists, or set explicitly) or `off` (`false`: the app's own sign-in, such as single sign-on). Invitations (the `users.invite` and `users.resend_invitation` actions, the invitation screen and its password broker), the account security screen and the two-factor and passkey columns work in `lynx` and `app`. Two-factor authentication and passkeys appear on the account screen only when the Fortify features that ask for them at sign-in are on, so the screen never offers a second factor the sign-in ignores.
+
+**Consequences:** One sign-in for staff and members, with roles deciding who opens the admin (ADR-0073 gives sign-ups the guest role). Staff onboarding is the same on every site. A site that sets `false` manages accounts entirely itself, as before.

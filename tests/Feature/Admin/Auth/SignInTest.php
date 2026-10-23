@@ -82,3 +82,14 @@ it('is on unless the app configures Fortify itself', function (): void {
     config(['lynx-admin.auth.enabled' => false]);
     expect(AdminAuth::isEnabled())->toBeFalse();
 });
+
+it('names who signs users in: Lynx, the app, or neither', function (): void {
+    config(['lynx-admin.auth.enabled' => 'auto']);
+    expect([AdminAuth::mode(), AdminAuth::managesAccounts()])->toBe(['lynx', true]);
+
+    config(['lynx-admin.auth.enabled' => 'app']);
+    expect([AdminAuth::mode(), AdminAuth::isEnabled(), AdminAuth::managesAccounts()])->toBe(['app', false, true]);
+
+    config(['lynx-admin.auth.enabled' => false]);
+    expect([AdminAuth::mode(), AdminAuth::managesAccounts()])->toBe(['off', false]);
+});

@@ -65,8 +65,8 @@ final class UserRoles extends Component
         return view('lynx-admin::livewire.user-roles', [
             'users' => $found,
             'roleNames' => Role::query()->orderBy('name')->pluck('label', 'name')->all(),
-            'canInvite' => AdminAuth::isEnabled(),
-            'pending' => AdminAuth::isEnabled() ? $this->pendingInvitations(array_column($found, 'id')) : [],
+            'canInvite' => AdminAuth::managesAccounts(),
+            'pending' => AdminAuth::managesAccounts() ? $this->pendingInvitations(array_column($found, 'id')) : [],
         ]);
     }
 

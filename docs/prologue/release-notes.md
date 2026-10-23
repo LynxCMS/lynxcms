@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.5
+
+Released October 23, 2026.
+
+- **Sites whose app signs users in keep staff invitations.** When your app has its own `config/fortify.php`, as a site with sign-ups does, everyone signs in through your app's screens. Lynx now keeps inviting staff and keeps the Account security screen in that case. `LYNX_ADMIN_AUTH=app` chooses it explicitly. See [Who signs users in](/admin/sign-in#who-signs-users-in).
+
 ## 0.1.4
 
 Released October 23, 2026.

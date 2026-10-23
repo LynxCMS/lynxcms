@@ -19,9 +19,16 @@ use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Support\Value;
 
 /**
- * The admin's own sign-in screens (ADR-0041): Laravel Fortify under the admin prefix (/lynx/login),
- * without registration (users are invited), with two-factor authentication, passkeys and Lynx's views. On unless the app configures Fortify
- * itself (config/fortify.php), when its own screens sign users in.
+ * Who signs users in to the admin (ADR-0041, ADR-0074):
+ *
+ * - "lynx": Lynx's own screens, Laravel Fortify under the admin prefix (/lynx/login), without
+ *   registration (users are invited), with two-factor authentication and passkeys;
+ * - "app": the app's own Fortify (config/fortify.php), as a site with a members area has. Its
+ *   screens sign everyone in; Lynx keeps invitations and the account screen;
+ * - "off": neither, for apps with their own sign-in (SSO and the like).
+ *
+ * lynx-admin.auth.enabled is "auto" (app when config/fortify.php exists, else lynx), "app",
+ * true (lynx, or app when config/fortify.php exists) or false (off).
  *
  * @internal
  */
@@ -31,21 +38,47 @@ final class AdminAuth
 
     private const int PASSKEY_ATTEMPTS_PER_MINUTE = 10;
 
-    public static function isEnabled(): bool
+    public const string LYNX = 'lynx';
+
+    public const string APP = 'app';
+
+    public const string OFF = 'off';
+
+    /** @return self::LYNX|self::APP|self::OFF */
+    public static function mode(): string
     {
         $setting = config('lynx-admin.auth.enabled', 'auto');
 
-        return $setting === 'auto' ? ! self::appConfiguresFortify() : Value::bool($setting);
+        return match (true) {
+            $setting === self::APP => self::APP,
+            $setting !== 'auto' && ! Value::bool($setting) => self::OFF,
+            self::appConfiguresFortify() => self::APP,
+            default => self::LYNX,
+        };
+    }
+
+    /** Whether Lynx's own sign-in screens are on. */
+    public static function isEnabled(): bool
+    {
+        return self::mode() === self::LYNX;
+    }
+
+    /** Whether Lynx manages accounts: invitations and the account screen, with either sign-in. */
+    public static function managesAccounts(): bool
+    {
+        return self::mode() !== self::OFF;
     }
 
     /** On register: Fortify reads this config when it registers its routes. */
     public static function configure(): void
     {
-        if (self::appConfiguresFortify()) {
+        if (self::mode() === self::APP) {
+            Invitations::configureBroker();
+
             return;
         }
 
-        if (! self::isEnabled()) {
+        if (self::mode() === self::OFF) {
             // Fortify's defaults would offer registration at /register: no routes unless asked.
             Fortify::ignoreRoutes();
 
@@ -74,24 +107,32 @@ final class AdminAuth
         Invitations::configureBroker();
     }
 
-    /** On boot: Lynx's views, password rules and rate limits. */
+    /** On boot: invitations and the account screen, plus Lynx's screens when they sign users in. */
     public static function boot(): void
     {
-        if (self::appConfiguresFortify() || ! self::isEnabled()) {
+        if (! self::managesAccounts()) {
             return;
         }
 
+        Event::listen(UserInvited::class, SendInvitation::class);
+        Event::listen(PasswordReset::class, ClearInvitation::class);
+        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class);
+        self::routes();
+
+        if (self::isEnabled()) {
+            self::bootScreens();
+        }
+    }
+
+    /** Lynx's own sign-in screens, password rules and rate limits. */
+    private static function bootScreens(): void
+    {
         Fortify::loginView(fn (): mixed => view('lynx-admin::auth.login'));
         Fortify::requestPasswordResetLinkView(fn (): mixed => view('lynx-admin::auth.forgot-password'));
         Fortify::resetPasswordView(fn (Request $request): mixed => view('lynx-admin::auth.reset-password', ['request' => $request]));
         Fortify::confirmPasswordView(fn (): mixed => view('lynx-admin::auth.confirm-password'));
         Fortify::twoFactorChallengeView(fn (): mixed => view('lynx-admin::auth.two-factor-challenge'));
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
-
-        Event::listen(UserInvited::class, SendInvitation::class);
-        Event::listen(PasswordReset::class, ClearInvitation::class);
-        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class);
-        self::routes();
 
         RateLimiter::for('lynx-login', fn (Request $request): Limit => Limit::perMinute(self::LOGIN_ATTEMPTS_PER_MINUTE)
             ->by(Str::transliterate(Str::lower(Value::string($request->input(Fortify::username())))).'|'.$request->ip()));
