@@ -50,7 +50,11 @@ final readonly class RegionalJsonLoader implements Loader
         return $this->loader->namespaces();
     }
 
-    /** Anything else FileLoader offers (jsonPaths(), addPath()…), for code that calls it. */
+    /**
+     * Anything else FileLoader offers (jsonPaths(), addPath()…), for code that calls it.
+     *
+     * @param  list<mixed>  $arguments
+     */
     public function __call(string $method, array $arguments): mixed
     {
         return $this->loader->{$method}(...$arguments);
