@@ -37,6 +37,7 @@ The design and the decisions behind it live in the plan document and its ADRs. D
 - Raw SQL built at runtime goes through `LynxCms\Core\Query\Sql::trusted()` / `Sql::raw()`, and only from grammar-wrapped identifiers, whitelisted operators and integer ids. Values always go through bindings.
 - Tables are prefixed `lynx_`; field tables are `lynx_f_{name}` (indexes `{table}_pk`, `_lang`, `_data`), so no core table may start with `lynx_f_`; field names are capped so these fit PostgreSQL's 63-character identifiers (`Tables::maxFieldNameLength()`). Lynx must also work under the host app's connection prefix (`composer test:prefix`): in raw SQL, wrap table names with the grammar (`wrapTable`, `wrap`) instead of writing them out.
 - Artisan commands are `lynx:*`; the helper is `lynx()`; the facade is `Lynx`.
+- Documentation is Markdown in `docs/`, built with VitePress and deployed from `main` to lynxcms.org/cms/docs, a Cloudflare Worker with static assets (`docs/wrangler.jsonc`, `.github/workflows/docs.yml`). Its pages and sidebar order live in `docs/.vitepress/config.mts`. Write for a developer who knows basic Laravel. Code the tutorial shows lives in `docs/snippets` and is run by `tests/Feature/Docs`, so change both together.
 - Tests use Pest and must pass on SQLite and PostgreSQL, in parallel. Tests that write files use `testingPath()` (one folder per process). Add a test for every action: happy path, validation failure, rollback, dry run.
 
 ## Commands
@@ -51,6 +52,7 @@ composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)
 composer check                         # Pint, Rector and PHPStan in check mode, as CI runs them
+npm --prefix docs run dev              # live preview of the documentation site (npm --prefix docs ci once); run build to check links, as CI does
 composer assets                        # build the admin's CSS and JS into packages/admin/dist (after npm --prefix packages/admin ci once); built, never committed (ADR-0071)
 composer build && composer serve       # workbench demo site
 php vendor/bin/testbench lynx:find "template=course, sort=title" --lang=pt --sql

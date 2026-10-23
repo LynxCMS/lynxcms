@@ -98,7 +98,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::addPersistentMiddleware([WithoutPageVisibility::class]);
         Livewire::component('lynx-admin.page-tree', PageTree::class);
         Livewire::component('lynx-admin.icon-picker', IconPicker::class);
-        // The icon field type: an icon name from the admin's set (docs/reference/field-types.md).
+        // The icon field type: an icon name from the admin's set (docs/deeper/custom-field-types.md).
         $this->app->make(FieldTypeRegistry::class)->register(IconType::class);
         Livewire::component('lynx-admin.search', AdminSearch::class);
         Livewire::component('lynx-admin.language-list', LanguageList::class);

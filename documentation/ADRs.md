@@ -770,7 +770,7 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 ## ADR-0070: Template values are safe to test: empty texts are null, single references are pages
 
-**Status:** Accepted. Amends ADR-0031 and ADR-0042.
+**Status:** Accepted. Amends ADR-0031 and ADR-0042.ADR-0070
 
 **Context:** Rebuilding a real site on Lynx (a demo rebuilt from an existing Statamic site) showed four traps in what templates read. Shared and translatable texts are value objects (ADR-0031), which PHP always treats as true, so `@if ($block->sublabel)` printed empty markup and `$block->utm_source ?: $page->utm_source_global` never fell back. A page reference with `multiple: false` still read as a `PageArray` (ADR-0042), so templates needed `->first()`. Joining titles with `collect($pages)->map(...)->implode(', ')` returned empty strings, because Laravel's `Collection::implode()` checks for its own `Stringable` class, not PHP's interface, and plucks the glue from each value. And `$image->size(300, 300)->webp()` made a WebP copy of the PNG copy, named with the size twice, leaving the PNG behind.
 

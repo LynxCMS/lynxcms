@@ -20,4 +20,4 @@ php artisan lynx:migrate   # asks whether the database is backed up
 
 See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).
 
-See `docs/front-end/forms.md` for the guide.
+See the [Forms guide](https://lynxcms.org/cms/docs/modules/forms).

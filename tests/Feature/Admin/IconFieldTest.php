@@ -13,7 +13,7 @@ use LynxCms\Core\Pages\Page;
 
 /*
  * The icon field type: an icon name from the admin's Lucide set, chosen with a picker that
- * previews each icon. The worked example in docs/reference/field-types.md.
+ * previews each icon. The worked example in docs/deeper/custom-field-types.md.
  */
 
 beforeEach(function (): void {
