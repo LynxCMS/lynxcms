@@ -173,11 +173,23 @@ Without `sort`, pages come in the order editors gave them among their siblings (
 
 ### Selectors from visitors
 
-A selector built from a request, such as a search box or a filter in the query string, needs a cap, so a visitor can't ask for every page at once:
+A selector built from a request needs a cap, so a visitor can't ask for every page at once:
 
 ```php
 lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
 ```
+
+## Filters and pagination
+
+A list that visitors filter, sort and page through is a controller like any other. Validate the query string, map each choice to a selector clause you wrote yourself, and keep visitors' text out of the selector's syntax. `start` and `limit` select one page of results, and `total()` counts every match, so Laravel's paginator can draw the links:
+
+<<< @/snippets/advanced/PostIndexController.php#controller{php}
+
+The view uses the paginator like any Eloquent one:
+
+<<< @/snippets/advanced/views/blog/index.blade.php{blade}
+
+Register the route in `routes/web.php` as usual, `Route::get('/posts', PostIndexController::class)`. Your routes come before Lynx's, so the controller answers `/posts` even if a page has that address.
 
 ## Which fields load
 

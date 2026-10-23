@@ -1,23 +1,51 @@
 ---
-title: Custom field types
-description: Write a field type, present its values, declare references and edit it in the admin.
-order: 4
+title: Custom Field Types
+description: Write your own field type, with storage, validation, selectors, settings and an admin input.
 ---
 
-# Custom field types
+# Custom Field Types
 
-A field type owns its storage, conversion and validation. Extend `LynxCms\Core\Fields\Types\BaseFieldType` and register it in a service provider:
+Lynx's [field types](/basics/field-types) cover most content, but a site can need its own: a star rating, a colour from a brand palette, a product code checked against an external system. A field type decides how a value is stored, validated, compared in selectors and shown in templates, and every part of Lynx then works with it: saving through any action, selectors, schema files, content packages, the MCP server and the AI agent.
+
+## A first field type: star ratings
+
+A rating from 1 to 5 stars, or up to a maximum the field sets, is a small, complete example. Extend `BaseFieldType` and answer only what differs from the defaults:
+
+<<< @/snippets/advanced/RatingType.php#type{php}
+
+Register the type in a service provider. With the admin installed, also tell the page editor which input to show; a rating is a whole number, so the built-in integer input and its converter do:
+
+<<< @/snippets/advanced/rating-register.php#register{php}
+
+The type now works like a built-in one:
 
 ```php
-lynx()->fieldTypes()->register(RatingType::class);
+lynx()->fields->add('rating', 'rating', settings: ['max' => 10]);
+lynx()->templates->update('post', ['add' => ['rating']]);
+
+$post->rating = 8;  // validated on save: 11 is refused
+$post->save();
+
+lynx()->pages->find('template=post, rating>=7, sort=-rating');
 ```
 
-| Method | Does |
-| --- | --- |
-| `columns()` | Adds the value column(s) to the field table. |
-| `normalize()`, `rules()` | Clean and validate a value on every save. |
-| `sleep()`, `wake()` | Convert a value to rows and back. |
-| `comparison()` | How selectors compare it: `Comparison::Text`, `Integer`, `Decimal`, `Boolean`, `Date` or `None`. |
+```blade
+@if ($post->rating)
+    <p>{{ str_repeat('★', $post->rating) }}</p>
+@endif
+```
+
+## What a field type can answer
+
+| Method | Does | Default |
+| --- | --- | --- |
+| `name()`, `description()` | The type's name, and one sentence the field form, MCP tools and the agent read. | Required |
+| `columns()` | Adds the value column(s) to the field's table. | Required |
+| `comparison()` | How selectors compare values: `Comparison::Text`, `Integer`, `Decimal`, `Boolean`, `Date` or `None`. | `Text` |
+| `settingsSchema()`, `settingsRules()` | The field's settings, described for the admin and AI tools, and validated. | None |
+| `rules()`, `normalize()` | Validate a value on every save, and clean it before it is stored. | None, unchanged |
+| `sleep()`, `wake()` | Turn a value into rows of the table and back, for values that span several rows or columns. | One value in `data` |
+| `supportsTranslation()` | Whether fields of the type can be translatable. | `false` |
 
 ## Optional interfaces
 
@@ -54,7 +82,7 @@ app(\LynxCms\Admin\Editor\FieldInputs::class)->register(
 
 A converter that also implements `PreparesDisplay` prepares stored values for the display view, for example loading page titles in one query.
 
-## Worked example: the icon field
+## A complete example: the icon field
 
 The `icon` field type that comes with the admin is a small, complete field type, built the way your own would be. It stores an icon name such as `calendar`, checks it against a list of names (its custom data), and lets editors choose with a picker that previews each icon. Its files are in `packages/admin`.
 
