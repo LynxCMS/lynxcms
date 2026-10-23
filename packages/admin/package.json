@@ -5,8 +5,7 @@
         "build": "npm run build:css && npm run build:js",
         "build:css": "tailwindcss -i resources/css/admin.css -o dist/admin.css --minify",
         "build:js": "esbuild resources/js/admin.js --bundle --minify --format=iife --target=es2020 --legal-comments=none --metafile=dist/admin.meta.json --outfile=dist/admin.js && node scripts/licenses.mjs && rm dist/admin.meta.json",
-        "watch": "tailwindcss -i resources/css/admin.css -o dist/admin.css --watch",
-        "check": "npm run build && git diff --exit-code --stat -- dist/ || (echo 'dist/ is out of date: run npm run build in packages/admin and commit dist/admin.css and dist/admin.js.' && exit 1)"
+        "watch": "tailwindcss -i resources/css/admin.css -o dist/admin.css --watch"
     },
     "devDependencies": {
         "@alpinejs/anchor": "^3.17.4",

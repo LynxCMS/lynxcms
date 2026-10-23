@@ -99,10 +99,11 @@ These variables and `lynx-admin.appearance` are a public contract and follow sem
 ```bash
 cd packages/admin
 npm ci
-npm run build   # writes dist/admin.css, dist/admin.js and dist/admin.js.LICENSES.txt (all committed)
-npm run check   # rebuilds and fails if dist/ differs from the committed files (CI runs it)
+npm run build   # writes dist/admin.css, dist/admin.js and dist/admin.js.LICENSES.txt
 npm run watch   # CSS only
 ```
+
+In the monorepo `dist/` is not committed: `composer assets` builds it, and the split workflow builds it into this repository, so Composer installs need no build step (ADR-0071). The build scans the views of every first-party package with admin screens, so it only works from the monorepo.
 
 `dist/admin.js` holds the rich text editor (Tiptap, from `resources/js/admin.js`), bundled with esbuild. Html textarea fields (`format: html`) use it; their HTML is cleaned by core on every save.
 

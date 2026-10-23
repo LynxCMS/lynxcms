@@ -102,6 +102,7 @@ The workbench holds a small multilingual course site with the admin and demo use
 ```bash
 git clone https://github.com/LynxCMS/lynxcms.git && cd lynxcms
 composer install
+npm --prefix packages/admin ci && composer assets   # the admin's CSS and JS, built locally
 composer build      # creates the demo data (and wipes it when run again)
 composer serve      # the site, and the admin at /lynx/pages
 ```
@@ -139,7 +140,7 @@ composer test                          # SQLite, in parallel
 composer test:pgsql                    # PostgreSQL, a database per test process
 composer test:all                      # SQLite, PostgreSQL and a table prefix, as CI runs them
 composer check                         # Pint, Rector and PHPStan at level max
-(cd packages/admin && npm run check)   # rebuild the admin assets and check they are committed
+composer assets                        # build the admin's CSS and JS (run npm --prefix packages/admin ci once first)
 ```
 
 Every change comes with tests, and every action is tested for its happy path, a validation failure, a rollback and a dry run. Read `AGENTS.md` before opening a pull request.
