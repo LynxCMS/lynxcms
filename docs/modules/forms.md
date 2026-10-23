@@ -10,49 +10,9 @@ The `lynxcms/forms` module keeps what visitors send. It stores each submission w
 
 ## Defining a form
 
-A form is a PHP class. Texts are a string, or a map of language codes to text, read in the visitor's language with fallback.
+A form is a PHP class. Texts are a string, or a map of [language codes](/basics/languages#adding-a-language) to text, read in the visitor's language with fallback. This quote request has two steps, a field that shows only for livestreams, a repeating group and file uploads:
 
-```php
-use LynxCms\Forms\Definition\Form;
-use LynxCms\Forms\Definition\FormField;
-use LynxCms\Forms\Definition\FormStep;
-
-final class QuoteForm extends Form
-{
-    public function key(): string
-    {
-        return 'quote';
-    }
-
-    public function label(): string|array
-    {
-        return ['pt' => 'Pedido de orçamento', 'en' => 'Quote request'];
-    }
-
-    public function fields(): array
-    {
-        return [
-            FormField::select('type')->label(['pt' => 'Tipo', 'en' => 'Type'])->required()
-                ->options(['film' => ['pt' => 'Filme', 'en' => 'Film'], 'live' => ['pt' => 'Direto', 'en' => 'Livestream']]),
-            FormField::number('cameras')->label(['pt' => 'Câmaras', 'en' => 'Cameras'])->showIf('type', 'live'),
-            FormField::group('deliverables')->label(['pt' => 'Entregas', 'en' => 'Deliverables'])->fields([
-                FormField::text('format')->label(['pt' => 'Formato', 'en' => 'Format'])->required(),
-            ]),
-            FormField::file('brief')->extensions(['pdf', 'jpg'])->maxKb(10240)->maxFiles(3),
-            FormField::email('email')->label('Email')->required()->replyTo(),
-            FormField::checkbox('consent')->label(['pt' => 'Aceito ser contactado', 'en' => 'I agree to be contacted'])->required(),
-        ];
-    }
-
-    public function steps(): array
-    {
-        return [
-            new FormStep('project', ['pt' => 'Projeto', 'en' => 'Project'], ['type', 'cameras', 'deliverables', 'brief']),
-            new FormStep('contact', ['pt' => 'Contacto', 'en' => 'Contact'], ['email', 'consent']),
-        ];
-    }
-}
-```
+<<< @/snippets/modules/QuoteForm.php#form{php}
 
 Register it in a service provider:
 
@@ -155,6 +115,16 @@ Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a h
 ## Who hears about submissions
 
 Each submission is mailed (queued) to the form's `recipients()`. Without them, it goes to the users whose roles grant `forms.view`, superusers included. When nobody holds it, it goes to the addresses in `LYNX_FORMS_NOTIFY`. Files are never attached; they stay on the private disk (`LYNX_FORMS_DISK`, default `local`).
+
+## Reacting to submissions
+
+`LynxCms\Forms\Events\FormSubmitted` is dispatched once a submission is stored and committed, with the submission's id. Listen to it to send leads to a CRM, post to Slack or start your own workflow. Make the listener queued, so a slow service never slows the visitor, and let it fail when the service is down, so the queue tries again:
+
+<<< @/snippets/modules/SendQuoteToCrm.php#listener{php}
+
+Laravel finds listeners in `app/Listeners` by the event their `handle()` method takes, so the class above needs no registration. Elsewhere, register it with `Event::listen(FormSubmitted::class, SendQuoteToCrm::class)`.
+
+`$submission->data` holds the answers by field name, `$submission->fields` the form's fields as they were when it was sent, and `$submission->files` the uploads, which stay on the private forms disk. A caught bot never gets this far: nothing is stored, so no event is dispatched.
 
 ## In the admin
 

@@ -244,6 +244,16 @@ Pages with a lifetime expire in PHP at once, but web servers keep sending the fi
 
 A page that was rendering while a clear ran is not stored, so a slow request cannot put back what a save just cleared.
 
+### When your own data changes
+
+Lynx clears pages when Lynx content changes. It can't see your app's own tables. If a post page shows comments stored by your app, clear the post when a comment arrives:
+
+<<< @/snippets/modules/ClearPostOnComment.php#listener{php}
+
+`page_cache.clear` checks `page_cache.manage`, as every action checks its permission. A signed-in reader who comments doesn't hold it, and actions run as the signed-in user. So code that clears on a visitor's behalf runs as the system, with `lynx()->actingAs(Actor::system(), ...)`. Requests with nobody signed in already run as the system, and Artisan commands, queue workers and the scheduler run as `cli`; both may do everything.
+
+For data that changes on a timetable, such as prices imported every hour, give the template's rule a lifetime instead, or clear its pages with `['template' => 'course']` after the import.
+
 ## Pages with forms
 
 A form, or any Livewire component, carries the visitor's CSRF token, which no other visitor can use. Such pages are stored with a placeholder instead of the token (token refresh). To leave them out instead:
