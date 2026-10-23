@@ -19,7 +19,7 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
-## To the next release
+## From 0.1.2 to 0.1.3
 
 No changes needed. If you start new environments from a content package, use the new order: migrate, `lynx:import --with-schema`, then `lynx:install --user=…` (see [Content packages](/deeper/schema-and-content#content-packages)). Running `lynx:install` before the import still works, but it leaves the installed default language, home template and `title` field with uuids your schema files don't know.
 

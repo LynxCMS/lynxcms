@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.3
+
+Released October 23, 2026.
 
 - **Restoring a backup into a new database works.** `lynx:import --with-schema` used to fail on sites with a role limited to a branch of the page tree, because it applied roles before the pages they point at existed. It now imports languages, fields and templates, then the pages, then the roles. The whole import runs in one transaction, dry runs included: if any step fails, it lists every error and writes nothing.
 - The `content.import` action takes `with_schema`, so code can do the same import as the command.
