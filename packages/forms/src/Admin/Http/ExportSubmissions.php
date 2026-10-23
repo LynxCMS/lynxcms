@@ -34,7 +34,7 @@ final readonly class ExportSubmissions
                 return;
             }
 
-            fputcsv($out, ['Date', 'Status', 'Language', ...array_values($columns)], escape: '');
+            fputcsv($out, ['Date', 'Status', 'Language', 'Account', ...array_values($columns)], escape: '');
             Submission::query()->with('files')->where('form', $form)->orderByDesc('id')->chunk(self::CHUNK, function ($submissions) use ($out, $columns): void {
                 foreach ($submissions as $submission) {
                     $values = array_column($this->presenter->lines($submission), 'value', 'name');
@@ -42,6 +42,7 @@ final readonly class ExportSubmissions
                         $submission->created_at->toDateTimeString(),
                         $submission->status,
                         (string) $submission->language()?->code,
+                        (string) $submission->account(),
                         ...array_map(fn (string $name): string => $values[$name] ?? '', array_keys($columns)),
                     ], escape: '');
                 }

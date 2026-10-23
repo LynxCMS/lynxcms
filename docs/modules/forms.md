@@ -126,6 +126,8 @@ Laravel finds listeners in `app/Listeners` by the event their `handle()` method 
 
 `$submission->data` holds the answers by field name, `$submission->fields` the form's fields as they were when it was sent, and `$submission->files` the uploads, which stay on the private forms disk. A caught bot never gets this far: nothing is stored, so no event is dispatched.
 
+When a signed-in visitor sends a form, such as a member answering a survey, the submission keeps their account: `$submission->user_id`, `$submission->user()` (the app's user, or `null` for a guest) and `$submission->account()` (*Name &lt;email&gt;*, as staff read it). The inbox, the CSV export and the agents' `get_submission` show the account too. Find someone's answers with `Submission::query()->fromUser($user->id)`.
+
 ## In the admin
 
 **Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first. You can filter by status (new and read, archived, spam) and form, search any answer, and mark several at once. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes. Each form exports to CSV.

@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.9 to 0.1.10
+
+- With `lynxcms/forms` installed, run `php artisan lynx:migrate`: submissions get a `user_id` column.
+
 ## From 0.1.8 to 0.1.9
 
 No changes needed.

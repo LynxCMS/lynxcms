@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
@@ -88,7 +89,7 @@ final class SubmitForm extends Action
 
         lynx()->language((string) $language->code, fn () => $this->validator->make($form, $data)->validate());
 
-        $submission = $this->store($form, $data, $language, $input);
+        $submission = $this->store($form, $data, $language, $input, $context->actor);
         $this->storeFiles($submission, $this->validator->files($form, $data), $context->dryRun);
         $context->changes->created('form_submission', $submission->id, "Receive a {$form->key()} submission", ['form' => $form->key(), 'uuid' => $submission->uuid]);
         $context->event(new FormSubmitted($submission->id));
@@ -99,7 +100,7 @@ final class SubmitForm extends Action
     /**
      * @param  array<string, mixed>  $data
      */
-    private function store(Form $form, array $data, Language $language, Input $input): Submission
+    private function store(Form $form, array $data, Language $language, Input $input, Actor $actor): Submission
     {
         $page = $input->get('page') === null ? null : lynx()->pages->get(Value::string($input->get('page')));
 
@@ -108,6 +109,8 @@ final class SubmitForm extends Action
             'form' => $form->key(),
             'page_id' => $page?->id,
             'language_id' => $language->id,
+            // A signed-in visitor (a member); not staff or agents submitting for someone else
+            'user_id' => $actor->kind === Actor::USER && $actor->id !== null ? (string) $actor->id : null,
             'data' => $this->validator->values($form, $data),
             'fields' => $form->snapshot(),
             'status' => 'new',

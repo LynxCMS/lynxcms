@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.10
+
+Released October 23, 2026.
+
+- **Submissions keep who sent them.** When a signed-in visitor sends a form, the submission records their account, shown in the inbox, the CSV export and the agents' `get_submission`. `Submission::query()->fromUser($id)` finds a member's answers. Run `php artisan lynx:migrate` for the new column.
+
 ## 0.1.9
 
 Released October 23, 2026.
