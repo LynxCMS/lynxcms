@@ -48,7 +48,9 @@
                 {{-- The enquiry form; the submission keeps this page, so staff know the course --}}
                 <section class="atlas-clay p-6" aria-labelledby="enquiry">
                     <h2 id="enquiry" class="text-lg">@string('course.enquiry', ['en' => 'Questions about this course?', 'pt' => 'Dúvidas sobre este curso?'])</h2>
-                    <livewire:lynx-form form="enquiry" :page-id="$page->id" />
+                    {{-- An island: the page cache keeps the course page, and every visitor gets a
+                         fresh form (its token and the honeypot's timing) (chapter 10). --}}
+                    <x-lynx-island livewire="lynx-form" :with="['form' => 'enquiry', 'pageId' => $page->id]" />
                 </section>
             </div>
         </div>
