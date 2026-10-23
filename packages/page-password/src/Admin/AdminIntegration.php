@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LynxCms\PagePassword\Admin;
 
-use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
@@ -35,7 +34,7 @@ final class AdminIntegration
         Livewire::component('lynx-page-password.settings', PagePasswordSettings::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('schema.manage');
         app(Navigation::class)->add('Page passwords', 'lynx.admin.page-passwords', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'key-round', group: Navigation::SETTINGS);
-        Admin::routes(fn () => Route::get('page-passwords', fn () => $canManage() ? view('lynx-page-password::admin.index') : abort(403))->name('page-passwords'));
+        Admin::routes(fn () => Admin::screen('page-passwords', 'lynx-page-password::admin.index', 'schema.manage')->name('page-passwords'));
 
         $visibility = app(PasswordVisibility::class);
         app(TreeMarkers::class)->add('page-password', fn (Page $page): ?array => $visibility->nearestRoot((int) $page->id) === (int) $page->id

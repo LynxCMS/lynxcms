@@ -17,6 +17,8 @@ use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Forms\Admin\Http\DownloadSubmissionFile;
 use LynxCms\Forms\Admin\Http\ExportSubmissions;
+use LynxCms\Forms\Admin\Http\ShowFormPreview;
+use LynxCms\Forms\Admin\Http\ShowSubmission;
 use LynxCms\Forms\Admin\Livewire\FormList;
 use LynxCms\Forms\Admin\Livewire\Inbox;
 use LynxCms\Forms\Admin\Livewire\PreviewForm;
@@ -34,9 +36,6 @@ final class AdminIntegration
 {
     private const int NAVIGATION_ORDER = 15;
 
-    /** The default form look, shown in the preview. */
-    private const string STYLESHEET = __DIR__.'/../../resources/css/forms.css';
-
     public static function register(): void
     {
         app(FieldInputs::class)->register('options', 'lynx-forms::inputs.options', OptionsConverter::class);
@@ -50,14 +49,12 @@ final class AdminIntegration
         app(Navigation::class)->add('Forms', 'lynx.admin.forms', order: self::NAVIGATION_ORDER, visible: $canSee, icon: 'inbox',
             badge: fn (): int => Submission::query()->where('status', 'new')->count());
 
-        Admin::routes(function () use ($canSee): void {
-            Route::get('forms', fn () => $canSee() ? view('lynx-forms::admin.index') : abort(403))->name('forms');
-            Route::get('forms/builder', fn () => $canSee() ? view('lynx-forms::admin.builder') : abort(403))->name('forms.builder');
-            Route::get('forms/preview/{form}', fn (string $form) => $canSee()
-                ? view('lynx-forms::admin.preview', ['form' => $form, 'css' => (string) file_get_contents(self::STYLESHEET)])
-                : abort(403))->name('forms.preview');
+        Admin::routes(function (): void {
+            Admin::screen('forms', 'lynx-forms::admin.index', 'forms.view')->name('forms');
+            Admin::screen('forms/builder', 'lynx-forms::admin.builder', 'forms.view')->name('forms.builder');
+            Route::get('forms/preview/{form}', ShowFormPreview::class)->name('forms.preview');
             Route::get('forms/export/{form}', ExportSubmissions::class)->name('forms.export');
-            Route::get('forms/{submission}', fn (string $submission) => $canSee() ? view('lynx-forms::admin.show', ['uuid' => $submission]) : abort(403))->name('forms.show');
+            Route::get('forms/{submission}', ShowSubmission::class)->name('forms.show');
             Route::get('forms/{submission}/files/{file}', DownloadSubmissionFile::class)->name('forms.file');
         });
     }
