@@ -101,7 +101,7 @@ To build a site against a local clone of the Lynx monorepo, point Composer at it
 }
 ```
 
-Then `composer require lynxcms/core:@dev lynxcms/admin:@dev lynxcms/menus:@dev`. The packages require each other at the same version, so every one of them needs a version in `options.versions`. With `symlink`, changes in the checkout show up in the site at once.
+Then `composer require lynxcms/core:@dev lynxcms/admin:@dev lynxcms/menus:@dev`. The admin's CSS and JS are not committed in the monorepo, so build them once in the checkout, and again after pulling changes to the admin's views: `npm --prefix packages/admin ci && composer assets`. The packages require each other at the same version, so every one of them needs a version in `options.versions`. With `symlink`, changes in the checkout show up in the site at once.
 
 ## The user model
 

@@ -2,6 +2,9 @@
 # with its history, on each push to main and each tag, so Packagist can list them one by one.
 # Needs SPLIT_TOKEN: a fine-grained token for the LynxCMS organization with Contents read and
 # write on the package repositories only.
+# The admin's built assets are not committed here (ADR-0071): this workflow builds them from the
+# whole monorepo and commits them on top of the admin split, so Composer installs get them.
+# Run it by hand with dry_run (the default) to check a split without pushing anything.
 name: Split packages
 
 on:
@@ -9,6 +12,11 @@ on:
     branches: [main]
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and split, but push nothing
+        type: boolean
+        default: true
 
 concurrency:
   group: split
@@ -33,7 +41,30 @@ jobs:
         env:
           PACKAGE: ${{ matrix.package }}
 
+      # The Tailwind build scans every package's views, so it runs in the monorepo checkout.
+      - uses: actions/setup-node@v7
+        if: matrix.package == 'admin'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: packages/admin/package-lock.json
+
+      - name: Build the admin's assets onto the split
+        if: matrix.package == 'admin'
+        run: |
+          npm --prefix packages/admin ci
+          npm --prefix packages/admin run build
+          git worktree add ../admin-split split
+          cp -R packages/admin/dist ../admin-split/dist
+          cd ../admin-split
+          git add --force dist
+          git -c user.name="github-actions[bot]" -c user.email="41898173+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Build admin assets for ${GITHUB_SHA}"
+          git ls-tree -r --name-only HEAD dist
+
       - name: Push to LynxCMS/${{ matrix.package }}
+        # A manual run pushes only with dry_run off, and only from main or a tag.
+        if: github.event_name != 'workflow_dispatch' || (inputs.dry_run == false && (github.ref == 'refs/heads/main' || github.ref_type == 'tag'))
         run: |
           remote="https://x-access-token:${SPLIT_TOKEN}@github.com/LynxCMS/${PACKAGE}.git"
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then

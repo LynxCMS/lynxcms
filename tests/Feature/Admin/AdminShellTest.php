@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
+use LynxCms\Admin\Http\AssetController;
 use LynxCms\Core\Lynx;
 use Symfony\Component\Finder\Finder;
 
@@ -89,4 +90,10 @@ it('uses only themeable colour utilities in admin views', function (): void {
     }
 
     expect($offenders)->toBe([]);
+});
+
+it('renders the admin before its assets are built', function (): void {
+    // dist/ is built, not committed (ADR-0071): a fresh checkout must not crash on the version.
+    expect(AssetController::versionOf(__DIR__.'/not-built/admin.css'))->toBe('0')
+        ->and(AssetController::versionOf(AssetController::STYLESHEET))->not->toBe('0');
 });

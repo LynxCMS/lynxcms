@@ -1,1 +1,3 @@
 node_modules
+# Built by composer assets and by the split workflow, never committed (ADR-0071).
+/dist/

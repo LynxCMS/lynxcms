@@ -105,6 +105,7 @@
             "@php vendor/bin/testbench workbench:create-sqlite-db --ansi",
             "@php vendor/bin/testbench workbench:build --ansi"
         ],
+        "assets": "npm --prefix packages/admin run build",
         "serve": [
             "Composer\\Config::disableProcessTimeout",
             "@php vendor/bin/testbench serve --ansi"

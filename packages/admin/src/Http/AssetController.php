@@ -20,37 +20,45 @@ final class AssetController
 
     private const int ONE_YEAR = 31_536_000;
 
+    /** Shown when the assets were not built: they are not committed in the monorepo (ADR-0071). */
+    private const string NOT_BUILT = 'The admin assets are not built. Run composer assets (npm --prefix packages/admin ci once).';
+
     public function __invoke(): BinaryFileResponse
     {
-        return $this->css(self::STYLESHEET);
+        return $this->file(self::STYLESHEET, 'text/css; charset=utf-8');
     }
 
     /** The admin's JavaScript (the rich text editor), bundled from resources/js. */
     public function script(): BinaryFileResponse
     {
-        return response()->file(self::SCRIPT, [
-            'Content-Type' => 'text/javascript; charset=utf-8',
-            'Cache-Control' => 'public, max-age='.self::ONE_YEAR.', immutable',
-        ]);
-    }
-
-    /** Cache-busting version for the script URL. */
-    public static function scriptVersion(): string
-    {
-        return (string) (filemtime(self::SCRIPT) ?: '0');
-    }
-
-    private function css(string $path): BinaryFileResponse
-    {
-        return response()->file($path, [
-            'Content-Type' => 'text/css; charset=utf-8',
-            'Cache-Control' => 'public, max-age='.self::ONE_YEAR.', immutable',
-        ]);
+        return $this->file(self::SCRIPT, 'text/javascript; charset=utf-8');
     }
 
     /** Cache-busting version for the stylesheet URL. */
     public static function version(): string
     {
-        return (string) (filemtime(self::STYLESHEET) ?: '0');
+        return self::versionOf(self::STYLESHEET);
+    }
+
+    /** Cache-busting version for the script URL. */
+    public static function scriptVersion(): string
+    {
+        return self::versionOf(self::SCRIPT);
+    }
+
+    /** The file's modification time, or "0" when it was not built, so pages still render. */
+    public static function versionOf(string $path): string
+    {
+        return is_file($path) ? (string) (filemtime($path) ?: '0') : '0';
+    }
+
+    private function file(string $path, string $contentType): BinaryFileResponse
+    {
+        abort_unless(is_file($path), 404, self::NOT_BUILT);
+
+        return response()->file($path, [
+            'Content-Type' => $contentType,
+            'Cache-Control' => 'public, max-age='.self::ONE_YEAR.', immutable',
+        ]);
     }
 }

@@ -51,7 +51,7 @@ composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)
 composer check                         # Pint, Rector and PHPStan in check mode, as CI runs them
-(cd packages/admin && npm run check)   # rebuild dist/ (admin.css, admin.js) and fail if the committed files are stale (CI runs it)
+composer assets                        # build the admin's CSS and JS into packages/admin/dist (after npm --prefix packages/admin ci once); built, never committed (ADR-0071)
 composer build && composer serve       # workbench demo site
 php vendor/bin/testbench lynx:find "template=course, sort=title" --lang=pt --sql
 php vendor/bin/testbench lynx:demo --pages=50000 --languages=1   # performance data
