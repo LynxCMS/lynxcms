@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Core;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -47,6 +48,7 @@ use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Pages\UnknownFields;
 use LynxCms\Core\Pages\UnpublishedBranches;
 use LynxCms\Core\Pages\Visibility\PageVisibility;
+use LynxCms\Core\Permissions\AssignRegistrationRole;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Search\SearchServiceProvider;
@@ -168,6 +170,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->registerRouting();
         $this->registerBladeDirectives();
         $this->registerGate();
+        Event::listen(Registered::class, AssignRegistrationRole::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands(CoreRegistrations::COMMANDS);

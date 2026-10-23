@@ -39,6 +39,14 @@ lynx()->run(AssignRoles::class, ['user' => '42', 'roles' => ['course-editor']]);
 
 Until any user has a role, every signed in user may do everything.
 
+## People who sign up
+
+Install also creates a `guest` role with no grants. If your app lets visitors sign up (Fortify, Breeze or your own registration), Lynx gives each new user the `guest` role when Laravel's `Registered` event fires. They see the website like any visitor, and the admin answers 403. Users who already hold a role keep their roles.
+
+The first sign-up turns the permission checks on for everyone, so make yourself a superuser before you open registration: `php artisan lynx:install --user=1`. If nobody is a superuser yet when someone signs up, Lynx logs a warning with that command.
+
+Set `LYNX_REGISTRATION_ROLE` to give sign-ups another role, such as one with grants of your own, or to `null` to give them none.
+
 ## Checking permissions
 
 ```php

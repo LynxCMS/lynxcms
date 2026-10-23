@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.4
+
+Released October 23, 2026.
+
+- **People who sign up get a `guest` role.** Install creates a `guest` role with no grants, and Lynx gives it to each new user when Laravel's `Registered` event fires. A sign-up sees the website and never the admin, even on a site where nobody held a role yet, which used to give every signed in user full rights. `LYNX_REGISTRATION_ROLE` picks another role, or none. See [People who sign up](/admin/permissions#people-who-sign-up).
+
 ## 0.1.3
 
 Released October 23, 2026.

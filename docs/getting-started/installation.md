@@ -69,7 +69,7 @@ php artisan lynx:install --user=1
 `lynx:install` creates the default language and the home page, a `superuser` role and an `editor` role, and gives the user with that id the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts.
 
 > [!IMPORTANT]
-> Until any user has a role, every signed in user may do everything, so an install or an upgrade never locks anyone out. Giving the first role turns the permission checks on. Production sites should always have a superuser.
+> Until any user has a role, every signed in user may do everything, so an install or an upgrade never locks anyone out. Giving the first role turns the permission checks on. Production sites should always have a superuser. People who sign up on the site get the `guest` role, which grants nothing, so a sign-up never has these open rights (see [People who sign up](/admin/permissions#people-who-sign-up)).
 
 ## Signing in
 

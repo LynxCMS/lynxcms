@@ -30,6 +30,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `revisions.keep` | `50` | Revisions kept per page. |
 | `edit_lock_seconds` | `120` | How long an editor's lock lasts without renewal. |
 | `permissions.anonymous_role` | `null` | Role for MCP clients and agents acting for no user. |
+| `permissions.registration_role` | `guest` | Role for people who sign up (`LYNX_REGISTRATION_ROLE`); `null` gives none. |
 | `agents.allowed_languages` | `[]` | Languages agents may write; empty means all. |
 | `agents.default_limit`, `agents.max_limit` | `25`, `100` | Page limits for agent searches. |
 | `mcp.web.enabled` | `false` | Serve the MCP server over HTTP at `mcp.web.path`. |

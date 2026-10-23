@@ -10,12 +10,12 @@ use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Permissions\RoleAssignment;
 use LynxCms\Core\Schema\SchemaSync;
 
-it('creates a superuser and an editor role on install, once', function (): void {
+it('creates the superuser, editor and guest roles on install, once', function (): void {
     installLynx();
     lynx()->run(InstallLynx::class);
 
     $editor = Role::query()->where('name', 'editor')->firstOrFail();
-    expect(Role::query()->pluck('name')->sort()->values()->all())->toBe(['editor', 'superuser'])
+    expect(Role::query()->pluck('name')->sort()->values()->all())->toBe(['editor', 'guest', 'superuser'])
         ->and(Role::query()->where('name', 'superuser')->firstOrFail()->is_superuser)->toBeTrue()
         ->and($editor->grants()->pluck('permission')->sort()->values()->all())
         ->toBe(['admin.access', 'pages.create', 'pages.edit', 'pages.move', 'pages.publish', 'pages.status', 'pages.view'])
