@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\File;
+
 beforeEach(function (): void {
     courseSite();
     app('translator')->addLines(['demo.greeting' => 'Olá'], 'pt');
@@ -26,4 +28,31 @@ it('accepts both spellings of a regional locale', function (): void {
     app('translator')->addLines(['demo.greeting' => 'Olá (pt_PT)'], 'pt_PT');
 
     expect(lynx()->language('pt', fn (): string => __('demo.greeting')))->toBe('Olá (pt_PT)');
+});
+
+describe('JSON translation strings', function (): void {
+    beforeEach(function (): void {
+        $this->lang = testingPath('json-lang');
+        File::ensureDirectoryExists($this->lang);
+        file_put_contents($this->lang.'/pt.json', json_encode(['Book now' => 'Reservar já', 'Pay' => 'Pagar']));
+        app('translator')->addJsonPath($this->lang);
+    });
+
+    afterEach(function (): void {
+        File::deleteDirectory($this->lang);
+    });
+
+    it('reads a regional language\'s strings from the bare language\'s file', function (): void {
+        expect(lynx()->language('pt', fn (): string => __('Book now')))->toBe('Reservar já');
+    });
+
+    it('prefers the regional file\'s strings, and keeps the rest', function (): void {
+        file_put_contents($this->lang.'/pt-PT.json', json_encode(['Book now' => 'Reserve já']));
+
+        expect(lynx()->language('pt', fn (): array => [__('Book now'), __('Pay')]))->toBe(['Reserve já', 'Pagar']);
+    });
+
+    it('leaves strings with no translation as they are', function (): void {
+        expect(lynx()->language('pt', fn (): string => __('Not translated')))->toBe('Not translated');
+    });
 });
