@@ -18,6 +18,7 @@ use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\FieldConditions;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldViews;
+use LynxCms\Admin\EditorTabs;
 use LynxCms\Admin\Livewire\Concerns\EditsDraft;
 use LynxCms\Admin\Livewire\Concerns\HoldsEditLock;
 use LynxCms\Admin\Livewire\Concerns\ManagesItems;
@@ -172,13 +173,17 @@ final class PageEditor extends Component
             $this->errorField = null;
         }
 
-        if (! in_array($this->tab, [...$fieldTabs, 'texts', 'settings'], true)) {
+        // A template's own tab keeps its key when a module uses the same one.
+        $moduleTabs = array_diff_key(app(EditorTabs::class)->for($page), array_flip($fieldTabs));
+
+        if (! in_array($this->tab, [...$fieldTabs, ...array_keys($moduleTabs), 'texts', 'settings'], true)) {
             $this->tab = LayoutTab::CONTENT;
         }
 
         return view('lynx-admin::livewire.page-editor', [
             'layout' => $layout,
             'isFieldsTab' => in_array($this->tab, $fieldTabs, true),
+            'moduleTabs' => $moduleTabs,
             'page' => $page,
             'title' => (new DefaultPresenter)->title($page),
             'ancestors' => $this->ancestors($page),

@@ -40,6 +40,15 @@ app(EditorLinks::class)->add(fn (Page $page): ?array => $page->template()->name 
     : null);
 ```
 
+Tabs in the page editor come from `EditorTabs`. A tab shows after the template's tabs and before Settings, on the pages its closure accepts, and renders a Livewire component that receives the page's id as `pageId`. The page cache's Cache tab is one:
+
+```php
+app(EditorTabs::class)->add('reports', 'Reports', 'reports.page-tab',
+    fn (Page $page): bool => $page->template()->hasUrl() && app(AdminAccess::class)->allows('reports.view'));
+```
+
+The key is the tab's value in the URL (`?tab=reports`). A template's own tab with the same key wins, and `content`, `texts` and `settings` are reserved.
+
 A module that keeps its pages in a hidden branch registers it with `AdminBranches`: the page tree leaves the branch out, and the closure says where its pages open (`null` keeps a page in the page editor).
 
 `Admin::routes()` adds the admin prefix, middleware and access gate. Route to `Admin::screen()` or controllers, not closures: `php artisan route:cache` stores a closure by its line, so a closure route written inside the `Admin::routes()` closure on one line comes back as the wrong closure, and the screen fails once routes are cached.

@@ -71,6 +71,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(FieldInputs::class);
         $this->app->singleton(AdminBranches::class);
         $this->app->singleton(EditorLinks::class);
+        $this->app->singleton(EditorTabs::class);
         $this->app->singleton(LinkFiles::class);
         $this->app->singleton(TemplateChoices::class);
         $this->app->singleton(BacklinkFilter::class);
