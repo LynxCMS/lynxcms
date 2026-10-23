@@ -7,14 +7,20 @@ namespace LynxCms\Core\Api;
 use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use Illuminate\JsonSchema\Types\Type;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Fields\DeleteField;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Fields\ChoiceOptions;
+use LynxCms\Core\Fields\Choices\Choice;
+use LynxCms\Core\Fields\Choices\ChoiceList;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Fields\FieldTypeRegistry;
+use LynxCms\Core\Fields\Types\ChoiceType;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Support\LocalizedText;
 
 /**
  * $lynx->fields
@@ -61,6 +67,26 @@ final readonly class FieldsApi
     public function find(string $name): ?Field
     {
         return $this->registry->find($name);
+    }
+
+    /**
+     * Every option of a choice field, in order, with labels in the current language: for filters,
+     * tabs and menus built from a field's options, such as a course list filtered by level.
+     */
+    public function choices(Field|string $field): ChoiceList
+    {
+        $field = $field instanceof Field ? $field : $this->registry->get($field);
+
+        if ($field->type !== ChoiceType::name()) {
+            throw new InvalidArgumentException("Field [{$field->name}] is a {$field->type} field, not a choice field.");
+        }
+
+        $labels = ChoiceOptions::labels($field->config()['options'] ?? []);
+
+        return new ChoiceList(array_map(
+            fn (string $value): Choice => new Choice($value, LocalizedText::from($labels[$value])),
+            array_map(strval(...), array_keys($labels)),
+        ));
     }
 
     /**

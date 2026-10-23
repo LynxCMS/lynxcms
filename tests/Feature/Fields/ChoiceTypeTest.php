@@ -73,3 +73,24 @@ it('finds pages by their choices', function (): void {
     expect(lynx()->pages->find('level=advanced')->map(fn ($p) => $p->name()))->toBe(['beta'])
         ->and(lynx()->pages->find('formats=online|hybrid, sort=name')->map(fn ($p) => $p->name()))->toBe(['alpha', 'beta']);
 });
+
+describe('listing a field\'s options', function (): void {
+    beforeEach(function (): void {
+        lynx()->fields->add('difficulty', 'choice', settings: ['options' => [
+            ['value' => 'easy', 'label' => ['default' => 'Easy', 'pt' => 'Fácil']],
+            ['value' => 'hard', 'label' => ['default' => 'Hard', 'pt' => 'Difícil']],
+        ]]);
+    });
+
+    it('gives every option of a choice field, in order, for filters and menus', function (): void {
+        $options = lynx()->fields->choices('difficulty');
+
+        expect($options->values())->toBe(['easy', 'hard'])
+            ->and((string) $options->first())->toBe('Easy')
+            ->and(lynx()->language('pt', fn (): array => lynx()->fields->choices('difficulty')->labels()))->toBe(['Fácil', 'Difícil']);
+    });
+
+    it('refuses a field that is not a choice', function (): void {
+        expect(fn () => lynx()->fields->choices('title'))->toThrow(InvalidArgumentException::class, 'Field [title] is a text field, not a choice field.');
+    });
+});

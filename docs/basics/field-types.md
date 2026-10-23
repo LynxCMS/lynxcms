@@ -151,6 +151,14 @@ A single choice reads as a `Choice`, or `null`. It prints its label in the curre
 
 Selectors compare values: `level=advanced`, `formats=online|hybrid`. Removing an option leaves the pages that had it without a choice.
 
+To build filters, tabs or menus from a field's options, list them all with `lynx()->fields->choices()`. It returns the options in order as a `ChoiceList`, with labels in the current language:
+
+```blade
+@foreach (lynx()->fields->choices('level') as $level)
+    <a href="?level={{ $level->value }}">{{ $level }}</a>
+@endforeach
+```
+
 ## Other pages
 
 ### `page`

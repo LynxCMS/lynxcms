@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.7
+
+Released October 23, 2026.
+
+- **List a choice field's options.** `lynx()->fields->choices('level')` gives every option of a choice field, in order, with labels in the current language, for filters, tabs and menus. See [`choice`](/basics/field-types#choice).
+
 ## 0.1.6
 
 Released October 23, 2026.
