@@ -60,6 +60,15 @@ abstract class Form
         return null;
     }
 
+    /**
+     * Whether only signed-in users may answer, once each, as with a survey for members. Guests are
+     * asked to sign in, and a second answer from the same account is refused (ADR-0076).
+     */
+    public function oncePerUser(): bool
+    {
+        return false;
+    }
+
     /** Runs after a submission is stored and committed. */
     public function afterSubmit(Submission $submission): void {}
 

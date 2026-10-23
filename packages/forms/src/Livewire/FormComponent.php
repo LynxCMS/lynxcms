@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Livewire\UsesLynxPage;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\SubmitForm;
@@ -17,6 +18,7 @@ use LynxCms\Forms\Definition\FormField;
 use LynxCms\Forms\Definition\FormValidator;
 use LynxCms\Forms\Livewire\Concerns\EditsRows;
 use LynxCms\Forms\Livewire\Concerns\GuardsSubmissions;
+use LynxCms\Forms\OncePerUser;
 use LynxCms\Forms\SubmissionPresenter;
 use Throwable;
 
@@ -142,8 +144,11 @@ class FormComponent extends Component
         $form = $this->definition();
         $steps = $form->steps();
 
+        $refusal = OncePerUser::refusal($form, app(ActionRunner::class)->actor());
+
         return view('lynx-forms::livewire.form', [
             'definition' => $form,
+            'refusal' => $this->isSent || $refusal === null ? null : __($refusal),
             'steps' => $steps,
             'fields' => $this->visibleFields(),
             'isLastStep' => $steps === [] || $this->step >= count($steps) - 1,

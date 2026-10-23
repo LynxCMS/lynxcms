@@ -31,6 +31,7 @@ final class PageForm extends Form
         private readonly array $steps,
         private readonly ?array $recipients,
         private readonly array $texts,
+        private readonly bool $isOncePerUser = false,
     ) {}
 
     public function key(): string
@@ -56,6 +57,11 @@ final class PageForm extends Form
     public function recipients(): ?array
     {
         return $this->recipients;
+    }
+
+    public function oncePerUser(): bool
+    {
+        return $this->isOncePerUser;
     }
 
     public function successMessage(): string|array

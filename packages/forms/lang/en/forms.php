@@ -18,6 +18,9 @@ return [
     'files_hint' => 'Up to :count files, :size each. :types',
     'uploading' => 'Uploading…',
     'summary' => 'Check your answers before sending.',
+    'sign_in_to_answer' => 'Sign in to answer this form.',
+    'sign_in' => 'Sign in',
+    'already_answered' => 'You have already answered this form.',
     'mail' => [
         'subject' => 'New submission: :form',
         'open' => 'Open in the admin',

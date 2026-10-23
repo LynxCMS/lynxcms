@@ -52,6 +52,8 @@ final class FormSchema
 
     public const string RECIPIENTS = 'form_recipients';
 
+    public const string ONCE_PER_USER = 'form_once_per_user';
+
     public const string SUCCESS = 'form_success';
 
     public const string ERROR = 'form_error';
@@ -87,6 +89,7 @@ final class FormSchema
             self::SHOW_IF_VALUES => ['text', false, 'is one of (comma separated), compares as >= 18, or yes / no', []],
             self::FIELDS => ['matrix', false, 'Fields', ['types' => self::blockTypes(), 'max_depth' => 1]],
             self::RECIPIENTS => ['text', false, 'Send submissions to (emails, comma separated)', []],
+            self::ONCE_PER_USER => ['toggle', false, 'Members only, one answer each', []],
             self::SUCCESS => ['textarea', true, 'Message after sending', []],
             self::ERROR => ['textarea', true, 'Message when sending fails', []],
             self::AUTO_REPLY => ['textarea', true, 'Confirmation mailed to the visitor', []],
@@ -103,7 +106,7 @@ final class FormSchema
     {
         return [
             self::ROOT_TEMPLATE => ['Forms', ['title'], true, ['child_templates' => [self::FORM_TEMPLATE]]],
-            self::FORM_TEMPLATE => ['Form', [['name' => 'title', 'required' => true], self::FIELDS, self::RECIPIENTS, self::SUCCESS, self::ERROR, self::AUTO_REPLY], false, ['allow_children' => false, 'parent_templates' => [self::ROOT_TEMPLATE]]],
+            self::FORM_TEMPLATE => ['Form', [['name' => 'title', 'required' => true], self::FIELDS, self::RECIPIENTS, self::ONCE_PER_USER, self::SUCCESS, self::ERROR, self::AUTO_REPLY], false, ['allow_children' => false, 'parent_templates' => [self::ROOT_TEMPLATE]]],
         ];
     }
 

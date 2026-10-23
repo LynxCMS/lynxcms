@@ -3,6 +3,14 @@
 <div class="lynx-form" data-form="{{ $definition->key() }}">
     @if ($isSent)
         <div class="lynx-form-sent" role="status">{{ $definition->text('success')->in() }}</div>
+    @elseif ($refusal)
+        {{-- A form members answer once each (Form::oncePerUser()): a guest, or a second answer --}}
+        <div class="lynx-form-sent" role="status">
+            {{ $refusal }}
+            @if (auth()->guest() && Route::has('login'))
+                <a href="{{ route('login') }}" class="lynx-form-link">{{ __('lynx-forms::forms.sign_in') }}</a>
+            @endif
+        </div>
     @else
         <div @class(['lynx-form-layout', 'has-aside' => $aside !== null])>
             <form wire:submit="{{ $isLastStep ? 'submit' : 'next' }}" class="lynx-form-body" novalidate>
