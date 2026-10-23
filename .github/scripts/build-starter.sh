@@ -33,6 +33,8 @@ php -r '$f = "bootstrap/providers.php"; $s = file_get_contents($f);
     $s = str_replace("use App\\Providers\\AppServiceProvider;", "use App\\Providers\\AppServiceProvider;\nuse App\\Providers\\AtlasServiceProvider;\nuse App\\Providers\\FortifyServiceProvider;", $s);
     file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    AtlasServiceProvider::class,\n    FortifyServiceProvider::class,", $s));'
 rm -f tests/Feature/ExampleTest.php tests/Unit/ExampleTest.php
+# phpunit.xml lists tests/Unit, and Git keeps no empty folder: a clone would fail to run tests.
+touch tests/Unit/.gitkeep
 
 npm run build --silent
 php artisan test --compact
