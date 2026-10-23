@@ -40,10 +40,26 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      # Previews need the Worker to exist. Until main first deploys it, create it from
+      # wrangler.jsonc without its route, so nothing is served on lynxcms.org before a merge.
+      - name: Create the Worker without its route
+        if: github.event_name == 'pull_request' && env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          if npx wrangler deployments list > /dev/null 2>&1; then exit 0; fi
+          node -e "
+            const fs = require('fs');
+            const config = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8').replace(/^\s*\/\/.*$/gm, ''));
+            delete config.routes;
+            delete config['\$schema'];
+            fs.writeFileSync('wrangler.unrouted.json', JSON.stringify(config));
+          "
+          npx wrangler deploy -c wrangler.unrouted.json --message "Created for previews, without its route"
+
       # Pull requests from forks get no secrets, so they only build.
       - name: Upload a preview
         if: github.event_name == 'pull_request' && env.CLOUDFLARE_API_TOKEN != ''
         run: |
+          set -o pipefail
           output=$(npx wrangler versions upload --preview-alias "pr-${PR_NUMBER}" --message "PR #${PR_NUMBER}" 2>&1 | tee /dev/stderr)
           url=$(printf '%s' "$output" | grep -o "https://pr-${PR_NUMBER}-[^ ]*workers\.dev" | head -1)
           echo "Docs preview: ${url}/cms/docs/" >> "$GITHUB_STEP_SUMMARY"
