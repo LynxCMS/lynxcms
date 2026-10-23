@@ -84,8 +84,11 @@ final class AtlasContentSeeder extends Seeder
     private function session(Page $course, string $location, CarbonImmutable $starts): void
     {
         $this->page('session', '/'.$course->path().'/', $starts->format('Y-m-d').'-'.$location, [
-            'title' => ['en' => $starts->format('j F Y'), 'pt' => $starts->locale('pt')->isoFormat('D [de] MMMM [de] YYYY')],
-            'starts' => $starts->format('Y-m-d H:i'), 'location' => $this->ids[$location], 'seats' => 16, 'availability' => 'open',
+            'title' => [
+                'en' => $course->getLanguageValue('en', 'title').', '.$starts->format('j F Y'),
+                'pt' => $course->getLanguageValue('pt', 'title').', '.$starts->locale('pt')->isoFormat('D [de] MMMM [de] YYYY'),
+            ],
+            'starts' => $starts->format('Y-m-d H:i'), 'location' => $this->ids[$location], 'seats' => 16, 'availability' => 'scheduled',
         ]);
     }
 

@@ -1,4 +1,4 @@
-@props(['page', 'title' => null])
+@props(['page', 'seo' => []])
 
 {{-- The site's frame, from BlatUI's Bloom template: sticky pill navigation, page, footer. --}}
 <!DOCTYPE html>
@@ -6,8 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? $page->title }} · Atlas Training</title>
-    @hreflang($page)
+    {{-- Title, description, canonical, robots, share cards, hreflang and JSON-LD (chapter 5) --}}
+    @seo($page, $seo)
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=fredoka:500,600,700|plus-jakarta-sans:400,500,600,700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

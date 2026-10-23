@@ -18,15 +18,15 @@ The code is tested: every file the guide shows runs in Lynx's test suite, so it 
 | 1. [Plan and install](./install) | A Laravel app with Lynx and its modules | An admin to sign in to, with roles |
 | 2. [The content model](./content-model) | Templates and fields for courses, sessions, instructors and studios | Forms in the admin that fit their content |
 | 3. [The front end](./front-end) | Views from BlatUI's Bloom template, filters and languages | A site that looks finished, in two languages |
-| 4. The editors' side | Roles, previews, scheduling, translation | A team that edits safely |
-| 5. SEO | Titles, structured data, sitemap | Courses that show up well in search |
+| 4. [The editors' side](./editors) | Roles, previews, scheduling, translation | A team that edits safely |
+| 5. [SEO](./seo) | Titles, structured data, sitemap | Courses that show up well in search |
 | 6. Leads | An enquiry form, a newsletter form, a CRM link | An inbox of leads, and leads in their CRM |
 | 7. Paid bookings | Stripe Checkout and a webhook | Revenue, with seats counted for them |
 | 8. Members area | Sign-up, bookings, gated materials | Customers who help themselves |
 | 9. Surveys | Course feedback forms for members | Answers, summarised per question |
 | 10. Launch | Caching, backups, deploys, AI tools | A fast site that is safe to run |
 
-Chapters 4 to 10 follow in later releases of this guide.
+Chapters 6 to 10 follow in later releases of this guide.
 
 ## Before you start
 

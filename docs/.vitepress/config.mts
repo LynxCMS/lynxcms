@@ -104,6 +104,8 @@ export default defineConfig({
                     { text: '1. Plan and Install', link: '/guides/training-site/install' },
                     { text: '2. The Content Model', link: '/guides/training-site/content-model' },
                     { text: '3. The Front End', link: '/guides/training-site/front-end' },
+                    { text: '4. The Editors\' Side', link: '/guides/training-site/editors' },
+                    { text: '5. SEO', link: '/guides/training-site/seo' },
                 ],
             },
             {

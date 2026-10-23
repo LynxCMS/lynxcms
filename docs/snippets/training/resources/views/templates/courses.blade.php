@@ -1,5 +1,6 @@
 {{-- The catalogue. CourseCatalogue (a view composer) gives it $levels, $filters and $courses. --}}
-<x-layouts.site :page="$page">
+{{-- A filtered list is not a page of its own: search engines index the full catalogue. --}}
+<x-layouts.site :page="$page" :seo="isset($filters['level']) || isset($filters['q']) ? ['robots' => 'noindex, follow', 'canonical' => $page->url] : []">
     <section class="px-4 py-12">
         <div class="mx-auto max-w-5xl">
             <h1 class="atlas-section-title">@field($page->title)</h1>
