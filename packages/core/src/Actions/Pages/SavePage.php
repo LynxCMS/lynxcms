@@ -213,7 +213,9 @@ final class SavePage extends Action
             throw ValidationException::withMessages(['parent' => 'Pages cannot be created in the trash.']);
         }
 
-        if ($isNew) {
+        // A module's system branch (menus under /_menus/, form pages) sits outside the content
+        // tree, so the site's family rules, written for its own pages, don't apply to it.
+        if ($isNew && ! $page->hasStatus(PageStatus::SYSTEM)) {
             $this->family->assertAllowed($template, $page->parentId, 'parent');
         }
     }

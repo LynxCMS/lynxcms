@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.8
+
+Released October 23, 2026.
+
+- **Family rules no longer block modules.** A home page that limits its children to some templates used to refuse the hidden branch a module installs there, such as menus under `/_menus/`. Pages created with the `system` status are now outside the site's family rules.
+
 ## 0.1.7
 
 Released October 23, 2026.

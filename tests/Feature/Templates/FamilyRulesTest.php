@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Menus\Actions\InstallMenus;
 
 beforeEach(function (): void {
     courseSite();
@@ -66,4 +67,14 @@ it('reports the rules to agents and keeps them in schema export', function (): v
 
 it('refuses template names it cannot read', function (): void {
     expect(fn () => lynx()->templates->update('courses', ['child_templates' => ['Not A Name']]))->toThrow(ValidationException::class);
+});
+
+it('lets modules keep their system branch under a home page that limits its children', function (): void {
+    lynx()->templates->update('home', ['allow_children' => true, 'child_templates' => ['course']]);
+
+    lynx()->run(InstallMenus::class);
+
+    expect(lynx()->menus()->root())->not->toBeNull()
+        ->and(fn (): Page => pageOn('lesson', '/', 'not-system'))
+        ->toThrow(ValidationException::class, 'Under [home] pages may only use: course.');
 });
