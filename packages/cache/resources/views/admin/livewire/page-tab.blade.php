@@ -17,13 +17,13 @@
         @if ($entries->isNotEmpty())
             <table class="w-full text-left text-sm">
                 <thead class="text-muted-foreground">
-                    <tr><th class="py-1 font-normal">URL</th><th class="py-1 font-normal">Language</th><th class="py-1 font-normal">Stored</th><th class="py-1 font-normal">Expires</th></tr>
+                    <tr><th class="py-1 font-normal">URL</th>@if (count($languages) > 1)<th class="py-1 font-normal">Language</th>@endif<th class="py-1 font-normal">Stored</th><th class="py-1 font-normal">Expires</th></tr>
                 </thead>
                 <tbody>
                     @foreach ($entries as $entry)
                         <tr wire:key="entry-{{ $entry->id }}" class="border-t">
                             <td class="py-1 font-mono text-xs">{{ \LynxCms\Core\Pages\PageUrl::of('', $entry->path) }}{{ $entry->query === '' ? '' : '?'.$entry->query }}</td>
-                            <td class="py-1">{{ $languages[$entry->language_id] ?? '' }}</td>
+                            @if (count($languages) > 1)<td class="py-1">{{ $languages[$entry->language_id] ?? '' }}</td>@endif
                             <td class="py-1">{{ $entry->created_at->diffForHumans() }}</td>
                             <td class="py-1">{{ $entry->expires_at?->diffForHumans() ?? 'When content changes' }}</td>
                         </tr>

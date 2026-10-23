@@ -136,3 +136,19 @@ it('explains how the page cache treats pages', function (): void {
         ->assertSee('Signed-in people always see the live page')
         ->assertSeeHtml(route('lynx.admin.page-cache', ['page' => cacheTabPage()->id]));
 });
+
+it('shows the language of each stored URL only when the site has several', function (): void {
+    $this->app['auth']->forgetGuards();
+    $this->get('/a')->assertOk();
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(PageCacheTab::class, ['pageId' => cacheTabPage()->id])->assertDontSeeHtml('>Language</th>');
+
+    // Adding a language clears the cache (URLs and language switchers change), so visit again.
+    lynx()->languages->add('pt', 'Português', fallback: 'default');
+    $this->app['auth']->forgetGuards();
+    $this->get('/a')->assertOk();
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(PageCacheTab::class, ['pageId' => cacheTabPage()->id])->assertSeeHtml('>Language</th>');
+});
