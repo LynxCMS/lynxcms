@@ -827,3 +827,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** A page created with the `system` status is not checked against family rules. System pages are already outside the content tree in every other way: the admin's tree hides them, selectors leave them out, and they cannot be moved.
 
 **Consequences:** Sites can limit the home page's children freely. Code that creates pages with the `system` status takes on the job of placing them sensibly; only modules do that.
+
+## ADR-0076: Forms that members answer once each
+
+**Status:** Accepted
+
+**Context:** A course survey for members must be answered by people who took the course, once each. Submissions record their account since 0.1.10, but any visitor could answer any form any number of times.
+
+**Decision:** A form says so with `Form::oncePerUser()`, or with the builder's **Members only, one answer each** toggle (`form_once_per_user` on the form template, added to existing sites by `forms.install`). `forms.submit` refuses such a form from an actor that is not a signed-in user, and refuses a second submission from the same account, under a cache lock per form and account so two answers sent together can't both get through. The form component shows the reason, in the visitor's language, instead of the form, with a sign-in link for guests when the app has a `login` route. Who may answer beyond "signed in" (only people who booked the course) stays with the app: put the form on a page that only those people can open.
+
+**Consequences:** Surveys need no code beyond the toggle. Staff and agents submitting for someone else are refused like guests, since such a form's answers must come from the member. Answers are matched by account, so a member with two accounts can answer twice.

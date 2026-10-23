@@ -24,6 +24,8 @@ Field types: `text`, `email`, `tel`, `textarea`, `select`, `radio`, `checkboxes`
 
 Forms can also say what visitors read after sending (`successMessage()`), when sending fails (`errorMessage()`), and a confirmation mailed to the `replyTo()` address (`autoReply()`).
 
+A form that members answer once each, such as a course survey, returns `true` from `oncePerUser()`. Guests see "Sign in to answer this form" with a link to your `login` route instead of the form, and a member who already answered is told so. `forms.submit` refuses both, whoever calls it. In the builder, the same is the form's **Members only, one answer each** setting. To limit a survey to some members, such as those who booked a course, place it on a page only they can open (see [Page Access](/deeper/visibility)).
+
 ## Building forms in the admin
 
 Editors make forms without code. **Forms › Forms** lists them (with the forms defined in code) and their submissions; **New form** asks for a title and a name, then opens the form in the page editor. **Preview** shows the form as visitors will see it, unpublished forms too, and sending there only checks the answers. Each form is a page under a hidden branch that the page tree leaves out; its **Fields** are blocks:

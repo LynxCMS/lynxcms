@@ -42,6 +42,7 @@ final class PageFormCompiler
             $steps,
             $this->recipients(Value::string($page->getUnformatted(FormSchema::RECIPIENTS))),
             ['success' => $byLanguage(FormSchema::SUCCESS), 'error' => $byLanguage(FormSchema::ERROR), 'auto_reply' => $byLanguage(FormSchema::AUTO_REPLY)],
+            $page->templateField(FormSchema::ONCE_PER_USER) !== null && Value::bool($page->getUnformatted(FormSchema::ONCE_PER_USER)),
         );
     }
 

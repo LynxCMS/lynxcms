@@ -18,6 +18,9 @@ return [
     'files_hint' => 'Até :count ficheiros, :size cada. :types',
     'uploading' => 'A carregar…',
     'summary' => 'Reveja as respostas antes de enviar.',
+    'sign_in_to_answer' => 'Inicie sessão para responder a este formulário.',
+    'sign_in' => 'Iniciar sessão',
+    'already_answered' => 'Já respondeu a este formulário.',
     'mail' => [
         'subject' => 'Nova submissão: :form',
         'open' => 'Abrir no admin',

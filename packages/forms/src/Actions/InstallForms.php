@@ -13,6 +13,8 @@ use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
+use LynxCms\Core\Actions\Templates\UpdateTemplate;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\FormSchema;
 
 /**
@@ -54,6 +56,17 @@ final class InstallForms extends Action
         foreach (FormSchema::templates() as $name => [$label, $fields, $singleton, $family]) {
             if (lynx()->templates->find($name) === null) {
                 $context->run(CreateTemplate::class, ['name' => $name, 'label' => $label, 'fields' => $fields, 'has_url' => false, 'singleton' => $singleton] + $family);
+                $installed = true;
+
+                continue;
+            }
+
+            // Sites from an earlier version get the fields added since (form_once_per_user).
+            $names = array_map(fn (string|array $field): string => is_array($field) ? Value::string($field['name'] ?? '') : $field, $fields);
+            $missing = array_values(array_diff($names, lynx()->templates->fields($name)->keys()->all()));
+
+            if ($missing !== []) {
+                $context->run(UpdateTemplate::class, ['template' => $name, 'add' => $missing]);
                 $installed = true;
             }
         }

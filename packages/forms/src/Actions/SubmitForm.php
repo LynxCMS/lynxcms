@@ -6,6 +6,7 @@ namespace LynxCms\Forms\Actions;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +24,7 @@ use LynxCms\Forms\Events\FormSubmitted;
 use LynxCms\Forms\FormRegistry;
 use LynxCms\Forms\FormsFiles;
 use LynxCms\Forms\Models\Submission;
+use LynxCms\Forms\OncePerUser;
 
 /**
  * Receives a form's answers (ADR-0052): validates them in the visitor's language, stores the
@@ -89,12 +91,33 @@ final class SubmitForm extends Action
 
         lynx()->language((string) $language->code, fn () => $this->validator->make($form, $data)->validate());
 
-        $submission = $this->store($form, $data, $language, $input, $context->actor);
+        $submission = $form->oncePerUser()
+            ? $this->storeOnce($form, $data, $language, $input, $context->actor)
+            : $this->store($form, $data, $language, $input, $context->actor);
         $this->storeFiles($submission, $this->validator->files($form, $data), $context->dryRun);
         $context->changes->created('form_submission', $submission->id, "Receive a {$form->key()} submission", ['form' => $form->key(), 'uuid' => $submission->uuid]);
         $context->event(new FormSubmitted($submission->id));
 
         return $submission;
+    }
+
+    /**
+     * A member's one answer: refused for guests and for a second answer. The lock keeps two
+     * answers sent at the same moment from both getting through.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function storeOnce(Form $form, array $data, Language $language, Input $input, Actor $actor): Submission
+    {
+        return Cache::lock("lynx-forms:once:{$form->key()}:{$actor->id}", 10)->block(5, function () use ($form, $data, $language, $input, $actor): Submission {
+            $refusal = OncePerUser::refusal($form, $actor);
+
+            if ($refusal !== null) {
+                throw ValidationException::withMessages(['form' => lynx()->language((string) $language->code, fn (): string => Value::string(__($refusal)))]);
+            }
+
+            return $this->store($form, $data, $language, $input, $actor);
+        });
     }
 
     /**

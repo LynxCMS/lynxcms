@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.12
+
+Released October 24, 2026.
+
+- **Forms that members answer once each.** `Form::oncePerUser()`, or the form builder's **Members only, one answer each** setting, asks guests to sign in and refuses a second answer from the same account, in the visitor's language. See [Forms](/modules/forms#defining-a-form).
+
 ## 0.1.11
 
 Released October 23, 2026.
