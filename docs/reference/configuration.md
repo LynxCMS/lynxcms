@@ -42,7 +42,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | --- | --- | --- |
 | `prefix` | `lynx` | URL prefix of the admin. |
 | `middleware` | `['web', 'auth']` | Middleware of every admin route. |
-| `auth.enabled` | `auto` | Lynx's sign-in screens; see [Sign-in](/admin/sign-in). |
+| `auth.enabled` | `auto` | Who signs users in: `auto`, `app` or `false`; see [Sign-in](/admin/sign-in#who-signs-users-in). |
 | `auth.invitation_days` | `7` | How long an invitation link works. |
 | `theme` | `system` | `light`, `dark` or `system`. |
 | `appearance.*` | | BlatUI options: base, theme, radius, font, heading font, shadow, spacing, tracking, input style, font loading. |

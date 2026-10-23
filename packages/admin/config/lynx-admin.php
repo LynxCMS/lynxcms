@@ -15,9 +15,10 @@ return [
     'middleware' => ['web', 'auth'],
 
     /*
-    | Lynx's sign-in screens (Laravel Fortify) at /{prefix}/login, with password reset and no
-    | registration: superusers invite users from Setup > Users. "auto" turns them on unless the app configures Fortify
-    | itself (config/fortify.php); then the app's own screens sign users in.
+    | Who signs users in (ADR-0074). "auto": Lynx's screens (Laravel Fortify at /{prefix}/login,
+    | password reset, no registration) unless the app configures Fortify itself
+    | (config/fortify.php), when the app's screens sign everyone in ("app"). Invitations and the
+    | account screen work with either. false: neither, for apps with their own sign-in.
     */
     'auth' => [
         'enabled' => env('LYNX_ADMIN_AUTH', 'auto'),

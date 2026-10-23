@@ -124,7 +124,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->defineDefaultGate();
         AdminAuth::boot();
 
-        if (AdminAuth::isEnabled()) {
+        if (AdminAuth::managesAccounts()) {
             $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
         }
 
