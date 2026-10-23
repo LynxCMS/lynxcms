@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.13
+
+Released October 24, 2026.
+
+- **Survey results.** **Results**, next to each form in the admin, sums the answers up per question: counts per option, averages, date ranges and the latest written answers, with spam left out and a filter by the page a form was sent from. Agents read the same with the new `summarize_form` tool, and code with `FormResults`. See [Forms](/modules/forms#in-the-admin).
+
 ## 0.1.12
 
 Released October 24, 2026.

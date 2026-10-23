@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.12 to 0.1.13
+
+No changes needed.
+
 ## From 0.1.11 to 0.1.12
 
 - With `lynxcms/forms` installed, existing sites get the new form setting the next time `forms.install` runs, for example when someone creates a form in the admin. To add it now: `php artisan tinker --execute="lynx()->run(LynxCms\\Forms\\Actions\\InstallForms::class)"`.

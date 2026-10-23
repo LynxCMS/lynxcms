@@ -26,6 +26,7 @@ use LynxCms\Forms\Actions\UpdateSubmission;
 use LynxCms\Forms\Admin\AdminIntegration;
 use LynxCms\Forms\Agents\GetSubmissionTool;
 use LynxCms\Forms\Agents\ListSubmissionsTool;
+use LynxCms\Forms\Agents\SummarizeFormTool;
 use LynxCms\Forms\Builder\PageFormValidator;
 use LynxCms\Forms\Console\PurgeSubmissionsCommand;
 use LynxCms\Forms\Events\FormSubmitted;
@@ -62,7 +63,7 @@ final class FormsServiceProvider extends ServiceProvider
         $permissions->register('forms.manage', 'Build forms and delete submissions', requires: ['forms.view']);
         // Forms are pages under /_forms/: building forms covers the page actions there.
         $permissions->delegate(FormSchema::ROOT_TEMPLATE, 'forms.manage');
-        $this->app->make(ReadToolRegistry::class)->register(ListSubmissionsTool::class, GetSubmissionTool::class);
+        $this->app->make(ReadToolRegistry::class)->register(ListSubmissionsTool::class, GetSubmissionTool::class, SummarizeFormTool::class);
         Lynx::macro('forms', fn (): FormRegistry => app(FormRegistry::class));
         Event::listen(FormSubmitted::class, NotifyRecipients::class);
 
