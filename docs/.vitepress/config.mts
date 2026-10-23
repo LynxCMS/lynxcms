@@ -38,6 +38,7 @@ export default defineConfig({
 
         nav: [
             { text: 'Guide', link: '/getting-started/introduction', activeMatch: '^/(getting-started|basics|admin|modules|ai|deeper)/' },
+            { text: 'Guides', link: '/guides/training-site/', activeMatch: '^/guides/' },
             { text: 'Reference', link: '/reference/configuration', activeMatch: '^/reference/' },
             { text: 'Roadmap', link: '/prologue/roadmap' },
         ],
@@ -93,6 +94,16 @@ export default defineConfig({
                     { text: 'Page Cache', link: '/modules/page-cache' },
                     { text: 'Page Passwords', link: '/modules/page-passwords' },
                     { text: 'Static Site Export', link: '/modules/static-site' },
+                ],
+            },
+            {
+                text: 'Guide: A Training Site',
+                collapsed: true,
+                items: [
+                    { text: 'Overview', link: '/guides/training-site/' },
+                    { text: '1. Plan and Install', link: '/guides/training-site/install' },
+                    { text: '2. The Content Model', link: '/guides/training-site/content-model' },
+                    { text: '3. The Front End', link: '/guides/training-site/front-end' },
                 ],
             },
             {

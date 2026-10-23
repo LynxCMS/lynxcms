@@ -1,0 +1,104 @@
+/*
+ * Atlas Training's look, from BlatUI's Bloom template (https://blatui.remix-it.com/templates/bloom,
+ * MIT License): soft clay cards, pastel blobs, pill buttons, Fredoka headings.
+ */
+:root {
+    --atlas-bg: #fff7f3;
+    --atlas-lavender: #f4f0ff;
+    --atlas-card: #fffcfa;
+    --atlas-peach: #ffb4a2;
+    --atlas-mint: #7ee0b0;
+    --atlas-mint-soft: #edfaf4;
+    --atlas-blue: #a8d8ff;
+    --atlas-lilac: #c9b8ff;
+    --atlas-sunny: #ffd97d;
+    --atlas-ink: #3a3340;
+    --atlas-muted: #6b5e78;
+
+    /* BlatUI tokens the components read */
+    --background: var(--atlas-bg);
+    --foreground: var(--atlas-ink);
+    --primary: var(--atlas-ink);
+    --primary-foreground: #fff;
+    --muted-foreground: var(--atlas-muted);
+    --radius: 1rem;
+}
+
+body.atlas {
+    background: var(--atlas-bg);
+    color: var(--atlas-ink);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.atlas h1, .atlas h2, .atlas h3, .atlas-logo, .atlas-figure, .atlas-step {
+    font-family: 'Fredoka', 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.atlas-logo { font-size: 1.25rem; font-weight: 700; }
+.atlas-hero-title { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 700; line-height: 1.1; }
+.atlas-section-title { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.atlas-lead { color: var(--atlas-muted); font-size: 1.125rem; }
+.atlas-muted { color: var(--atlas-muted); }
+.atlas-figure { font-size: 2rem; font-weight: 700; }
+.atlas-prose p { margin-block: 0.75rem; }
+
+.atlas-clay {
+    background: var(--atlas-card);
+    border-radius: 28px;
+    box-shadow: 8px 8px 20px rgb(58 51 64 / 0.08), -6px -6px 16px rgb(255 255 255 / 0.9), inset 2px 2px 6px rgb(255 255 255 / 0.6);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s;
+}
+a.atlas-clay:hover, .atlas-clay:has(a:hover) { transform: translateY(-4px); }
+
+.atlas-nav {
+    background: rgb(255 252 250 / 0.88);
+    backdrop-filter: blur(18px);
+    border-radius: 9999px;
+    box-shadow: 0 4px 24px rgb(58 51 64 / 0.1);
+}
+
+.atlas-icon-tile {
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 3rem; height: 3rem; border-radius: 18px;
+    box-shadow: 4px 4px 12px rgb(58 51 64 / 0.1), -3px -3px 8px rgb(255 255 255 / 0.9);
+}
+
+.atlas-pill-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.75rem 2rem; border-radius: 9999px; white-space: nowrap;
+    font-family: 'Fredoka', sans-serif; font-size: 1.05rem; font-weight: 600;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.atlas-pill-btn:hover { transform: scale(1.04) translateY(-2px); }
+.atlas-pill-btn-primary { background: var(--atlas-ink); color: #fff; box-shadow: 4px 6px 16px rgb(58 51 64 / 0.25); }
+.atlas-pill-btn-outline { background: var(--atlas-card); border: 2px solid rgb(58 51 64 / 0.14); }
+
+.atlas-badge { background: rgb(201 184 255 / 0.25); color: var(--atlas-ink); border-color: rgb(201 184 255 / 0.45); }
+.atlas-chip { border-radius: 9999px; padding: 0.4rem 1rem; background: rgb(58 51 64 / 0.06); font-weight: 500; }
+.atlas-chip.is-active { background: var(--atlas-ink); color: #fff; }
+
+.atlas-stat { background: var(--atlas-card); border-radius: 24px; padding: 1.25rem 1.5rem; text-align: center; box-shadow: 6px 6px 18px rgb(58 51 64 / 0.07), -4px -4px 12px rgb(255 255 255 / 0.9); }
+.atlas-step { display: inline-flex; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center; border-radius: 9999px; background: var(--atlas-lilac); }
+.atlas-session { display: grid; gap: 0.15rem; border-radius: 18px; padding: 0.75rem 1rem; background: rgb(58 51 64 / 0.04); }
+.atlas-session:hover { background: rgb(201 184 255 / 0.2); }
+
+/* A coloured band per course level */
+.atlas-card-band { height: 5rem; padding: 0.75rem; background: linear-gradient(135deg, var(--atlas-lilac), var(--atlas-blue)); }
+.atlas-card-band[data-level="beginner"] { background: linear-gradient(135deg, var(--atlas-mint), var(--atlas-blue)); }
+.atlas-card-band[data-level="advanced"] { background: linear-gradient(135deg, var(--atlas-peach), var(--atlas-sunny)); }
+
+.atlas-section-lavender { background: var(--atlas-lavender); }
+.atlas-section-peach { background: #fff3f0; }
+.atlas-blob { position: absolute; border-radius: 9999px; filter: blur(60px); opacity: 0.35; pointer-events: none; }
+.atlas-footer { background: var(--atlas-ink); color: rgb(255 255 255 / 0.85); }
+
+[data-slot="tabs-list"] { border-radius: 9999px; }
+[data-slot="tabs-trigger"][data-state="active"] { border-radius: 9999px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .atlas-clay, .atlas-pill-btn { transition: none; transform: none !important; }
+    .atlas-blob { display: none; }
+}
