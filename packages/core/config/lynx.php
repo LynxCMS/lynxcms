@@ -74,6 +74,10 @@ return [
         // Role given to MCP clients and agents that act for no user. Null refuses them once
         // roles are in use (ADR-0033).
         'anonymous_role' => env('LYNX_ANONYMOUS_ROLE'),
+
+        // Role given to people who sign up on the site (Laravel's Registered event). "guest"
+        // grants nothing: the website, never the admin. Null gives none (ADR-0073).
+        'registration_role' => env('LYNX_REGISTRATION_ROLE', 'guest'),
     ],
 
     // Translatable fields sorted through stored sort keys (ADR-0061): sort=title reads an index

@@ -48,7 +48,7 @@ function freshMachine(): void
 it('exports one YAML file per language, field, template and role', function (): void {
     $count = sync()->export($this->dir);
 
-    expect($count)->toBe(3 + 5 + 3 + 2) // roles: the superuser and editor roles install creates
+    expect($count)->toBe(3 + 5 + 3 + 3) // roles: the superuser, editor and guest roles install creates
         ->and(File::exists("{$this->dir}/languages/pt-br.yaml"))->toBeTrue()
         ->and(Yaml::parseFile("{$this->dir}/languages/pt-br.yaml")['fallback'])->toBe('pt')
         ->and(Yaml::parseFile("{$this->dir}/templates/course.yaml")['fields'][0])->toBe(['name' => 'title', 'required' => true]);

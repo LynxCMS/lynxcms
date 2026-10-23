@@ -43,6 +43,9 @@ final class InstallLynx extends Action
     }
 
     /** The editor role's grants: everyday page work on every template and branch. */
+    /** The role people who sign up get: no grants, so the website and never the admin (ADR-0073). */
+    public const string GUEST_ROLE = 'guest';
+
     public const array EDITOR_PERMISSIONS = ['admin.access', 'pages.view', 'pages.edit', 'pages.create', 'pages.status', 'pages.move', 'pages.publish'];
 
     public static function rules(): array
@@ -76,7 +79,7 @@ final class InstallLynx extends Action
         return $installed;
     }
 
-    /** The superuser and editor roles (ADR-0033), unless roles with those names exist. */
+    /** The superuser, editor and guest roles (ADR-0033, ADR-0073), unless roles with those names exist. */
     private function ensureRoles(ActionContext $context): bool
     {
         $created = false;
@@ -88,6 +91,11 @@ final class InstallLynx extends Action
 
         if (! Role::query()->where('name', 'editor')->exists()) {
             $context->run(SaveRole::class, ['name' => 'editor', 'label' => 'Editor', 'grants' => array_map(fn (string $permission): array => ['permission' => $permission], self::EDITOR_PERMISSIONS)]);
+            $created = true;
+        }
+
+        if (! Role::query()->where('name', self::GUEST_ROLE)->exists()) {
+            $context->run(SaveRole::class, ['name' => self::GUEST_ROLE, 'label' => 'Guest']);
             $created = true;
         }
 
