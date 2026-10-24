@@ -14,6 +14,7 @@ Released October 24, 2026. A security release: update soon.
 
 - **Closed by default.** A user without a role has no rights. Before, every signed in user of the app could do everything until someone was given a role, including making themselves a superuser. `lynx:install` warns when nobody is a superuser, and `LYNX_OPEN_UNTIL_ROLES=true` keeps the old behaviour on your own machine. See the [upgrade guide](/prologue/upgrade#from-0-1-16-to-0-1-17).
 - **Visitors are not the system.** Actions run in a web request with nobody signed in act as a visitor, allowed only what is open to everyone. Code that writes for a visitor uses `lynx()->actingAs(Actor::system(), ...)`.
+- **Exports from the admin are a guest's.** A static export started from the admin rendered pages as the signed-in editor, so pages for members and parts of templates for signed-in users ended up in the public copy. Each export now lists and renders pages as a visitor who is not signed in, and leaves the editor's session as it was.
 - **URL downloads stay on the internet.** `media.store`, which the admin, MCP clients and the agent use, now downloads only from public web servers on the usual ports, checks every redirect, and stops at the field's size limit. Before, it fetched any address, including the server's own network. See [Storing files from code](/basics/images-and-files#storing-files-from-code).
 
 ## 0.1.16

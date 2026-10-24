@@ -25,7 +25,7 @@ The command reports what it wrote, the pages it left out and the pages that need
 ## What is exported
 
 - Every published page whose template has URLs, hidden pages included, in every language it is live in, as `{path}/index.html`. Hosts then answer both `/about` and `/about/`.
-- Pages render as a visitor sees them. Unpublished pages and pages behind a [page password](/modules/page-passwords) are left out, and so is anything a page answers with other than a normal page.
+- Pages render as a visitor who is not signed in sees them, also when you export from the admin: your session and account never reach the pages. Unpublished pages, pages behind a [page password](/modules/page-passwords) and pages your visibility rules keep for members are left out, and so is anything a page answers with other than a normal page.
 - `/sitemap.xml` and its parts and `/robots.txt`, when those modules are installed, and any address added to `paths`.
 - `404.html`, the site's own not found page. GitHub Pages, Netlify and Cloudflare Pages send it for unknown addresses.
 - Everything in `public/`, copied after the pages render so the image sizes they made are included: built assets, media, icons. PHP entry points, `.htaccess` and the page cache's folder are left out. A file in `public/` wins over a route at the same address, as on the live site.
