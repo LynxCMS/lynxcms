@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace LynxCms\Cache\Pages;
 
 use Illuminate\Http\Request;
+use LynxCms\Core\Pages\Visibility\PageVisibility;
 use LynxCms\Core\Support\Value;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Whether a rendered page may be stored, as a reason it may not (ADR-0064). Only what any guest
- * would see qualifies: a 200 HTML page at its canonical address, with nothing private, personal
- * or tied to the visitor's session in it.
+ * would see qualifies: a 200 HTML page at its canonical address, rendered for a visitor the
+ * visibility rules treat as a guest with no cookies or account, with nothing private, personal or
+ * tied to the visitor's session in it.
  *
  * @internal
  */
-final class Eligibility
+final readonly class Eligibility
 {
     /** Request attribute templates set (@nocache) to keep a page out of the cache. */
     public const string OPT_OUT = 'lynx-cache.skip';
@@ -27,11 +29,14 @@ final class Eligibility
     /** The Expires header Livewire's DisableBackButtonCacheMiddleware sends. */
     private const string LIVEWIRE_EXPIRES = 'Fri, 01 Jan 1990 00:00:00 GMT';
 
+    public function __construct(private PageVisibility $visibility) {}
+
     public function skipReason(Request $request, Response $response, PageRequest $pending): ?string
     {
         return match (true) {
             $response->getStatusCode() !== Response::HTTP_OK => 'status',
             $request->user() !== null => 'signed-in',
+            ! $this->visibility->seesDefault() => 'visitor',
             $pending->page === null || $pending->language === null => 'not-a-page',
             $pending->rule === null => 'template',
             ! $pending->rule->allowsQuery($pending->address->query) => 'query',

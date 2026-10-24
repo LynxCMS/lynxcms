@@ -175,6 +175,8 @@ Only what any guest would see:
 - Not for signed in users. Signing in sets the `lynx_bypass` cookie, so web servers send those users to Laravel too.
 - Not when the response says `Cache-Control: no-store`, as password protected pages and draft previews do.
 - Not when the response sets a cookie other than the session's.
+- Not when a [visibility rule](/deeper/visibility#caches-and-audiences) shows this visitor more than a guest sees: its `audience()` names a group, or the rule doesn't implement `VariesByVisitor`, so Lynx can't tell. Such a rule keeps every page out of the cache, so give your rules an `audience()`.
+- Anything else a guest sees only for themselves, such as a cart kept in the session, must say so: send the response with `Cache-Control: no-store`, as in `response($view)->header('Cache-Control', 'no-store, private')`.
 - Pages holding the visitor's CSRF token (a form, a Livewire component, a layout printing `@livewireScripts`) are stored with a placeholder that a script refreshes. See [Pages with forms](#pages-with-forms).
 - Only templates listed in `templates`. All of them by default.
 
