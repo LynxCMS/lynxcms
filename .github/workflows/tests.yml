@@ -5,10 +5,11 @@ on:
     branches: [main]
   pull_request:
 
-# A new push to a pull request cancels its run in progress.
+# A new push to a pull request cancels its run in progress. Runs on main always finish: the next
+# push may be docs only and skip the tests, so cancelling would leave code on main untested.
 concurrency:
-  group: tests-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: tests-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   # Whether anything but the documentation's prose changed. A change to docs/ Markdown, its
