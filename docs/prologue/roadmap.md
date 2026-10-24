@@ -8,6 +8,19 @@ order: 9
 
 These are ideas, not promises. Each needs its own decision record before work starts.
 
+## Security follow-ups
+
+Smaller hardening left from the October 2026 review, none of them exploitable on a default install:
+
+- The page cache keeps a response unless it is marked private, so pages that differ per visitor rely on their module or app sending that header. A bypass for signed-in visitors would not depend on it.
+- Sitemaps are cached for everyone and built without a session; building them inside an explicit guest context would keep a members-only rule from ever leaking into the shared copy.
+- The static export copies the whole public disk. It could copy only the files of the pages it exported.
+- The agent's plan mode keeps one database transaction open for the whole conversation, which locks SQLite for other writers. Recording steps and running them in a short transaction on apply would avoid it.
+- A few admin components keep properties a browser could change unlocked, such as the page table input's columns.
+- Page passwords are rate limited per address only; a limit per page and account would slow distributed guessing.
+- Form file fields without an extensions list accept any file type; a default list would be safer.
+- Invitation tokens share the password reset table; their own table would keep the two apart.
+
 ## Template strings
 
 ### Page overrides of site strings

@@ -16,7 +16,7 @@ Lynx signs people in with Laravel Fortify, under the admin prefix:
 | `/lynx/invitation/{token}` | An invited user chooses a password. |
 | `/lynx/account/security` | Password, two-factor authentication and passkeys. |
 
-There is no registration. Superusers invite people.
+There is no registration. Superusers invite people. The first superuser comes from `php artisan lynx:install`, which asks for their name, email and password, or from `php artisan lynx:superuser` at any time (see [Installation](/getting-started/installation#running-the-installer)).
 
 ## Who signs users in
 
