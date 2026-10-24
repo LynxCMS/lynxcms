@@ -19,7 +19,7 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
-## From 0.1.18 to the next release
+## From 0.1.18 to 0.1.19
 
 - `lynx:phpstan-stub` is now `lynx:phpstan`, and writes `lynx/phpstan/types.php` instead of a stub. In `phpstan.neon`, remove `lynx/phpstan/Page.stub` from `stubFiles`, include `vendor/lynxcms/core/phpstan/extension.neon`, and delete the old stub.
 
