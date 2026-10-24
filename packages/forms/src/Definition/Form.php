@@ -31,16 +31,16 @@ abstract class Form
         return [];
     }
 
-    /** @return string|array<string, string> */
+    /** @return string|array<string, string> by default lynx-forms::forms.sent, in the visitor's language */
     public function successMessage(): string|array
     {
-        return ['default' => 'Thank you. We received your message.'];
+        return __('lynx-forms::forms.sent');
     }
 
     /** @return string|array<string, string> shown when sending fails for a reason other than the fields */
     public function errorMessage(): string|array
     {
-        return ['default' => 'Your message could not be sent. Please try again.'];
+        return __('lynx-forms::forms.failed');
     }
 
     /** @return string|array<string, string>|null a confirmation mailed to the replyTo() email field, in the visitor's language */

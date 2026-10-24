@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LynxCms\Forms\Definition\Form;
 use LynxCms\Forms\Definition\FormField;
 use LynxCms\Forms\Definition\FormValidator;
 use LynxCms\Tests\Fixtures\Forms\QuoteForm;
@@ -90,3 +91,31 @@ it('shows a field when a tick box is ticked, or when it is not', function (): vo
 it('refuses comparison operators it does not know', function (): void {
     FormField::text('a')->showWhen('b', '~', 1);
 })->throws(InvalidArgumentException::class);
+
+it('words the default messages in the visitor\'s language', function (string $language, string $sent, string $failed): void {
+    lynx()->languages->add('fr', 'Français', locale: 'fr-CA', fallback: 'default');
+    $form = new class extends Form
+    {
+        public function key(): string
+        {
+            return 'plain';
+        }
+
+        public function label(): string
+        {
+            return 'Plain';
+        }
+
+        public function fields(): array
+        {
+            return [];
+        }
+    };
+
+    expect(lynx()->language($language, fn (): string => $form->text('success')->in()))->toBe($sent)
+        ->and(lynx()->language($language, fn (): string => $form->text('error')->in()))->toBe($failed);
+})->with([
+    ['default', 'Thank you. We received your message.', 'Your message could not be sent. Please try again.'],
+    ['pt', 'Obrigado. Recebemos a sua mensagem.', 'Não foi possível enviar a mensagem. Tente novamente.'],
+    ['fr', 'Merci. Nous avons bien reçu votre message.', 'Votre message n’a pas pu être envoyé. Veuillez réessayer.'],
+]);
