@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Admin\Users\CreateUser;
@@ -20,6 +21,8 @@ use Workbench\App\Models\User;
  */
 
 beforeEach(fn () => config(['lynx.permissions.open_until_roles' => false]));
+
+afterEach(fn (): bool => putenv('SHELL_INTERACTIVE'));
 
 function rolesOf(string $email): array
 {
@@ -113,6 +116,9 @@ it('runs without questions for deploy scripts', function (): void {
 });
 
 it('offers to create the superuser when installing a site without one', function (): void {
+    // Symfony's way to say a person answers, as when lynx:install is typed in a terminal.
+    putenv('SHELL_INTERACTIVE=1');
+
     $this->artisan('lynx:install')
         ->expectsConfirmation('No one is a superuser yet. Create one now?', 'yes')
         ->expectsQuestion('Email', 'ada@example.com')
@@ -122,6 +128,14 @@ it('offers to create the superuser when installing a site without one', function
         ->assertSuccessful();
 
     expect(rolesOf('ada@example.com'))->toBe(['superuser']);
+});
+
+it('asks nothing when code runs the installer, and only warns', function (): void {
+    $code = Artisan::call('lynx:install');
+
+    expect($code)->toBe(0)
+        ->and(Artisan::output())->toContain('No one is a superuser yet')
+        ->and(app(PermissionHolders::class)->hasSuperuser())->toBeFalse();
 });
 
 it('makes an existing account a superuser on install, by email', function (): void {

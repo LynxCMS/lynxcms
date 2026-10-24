@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- `lynx:install` no longer asks to create a superuser when code runs it (`Artisan::call()` in a seeder or a test), where nobody can answer: it waited forever in tests, and elsewhere started `lynx:superuser` with no answers. It asks only when typed in a terminal.
+
 ## 0.1.18
 
 Released October 24, 2026. Security hardening, and media from production for developers' machines. Run `php artisan lynx:migrate` after updating.

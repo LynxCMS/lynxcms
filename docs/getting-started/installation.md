@@ -52,7 +52,7 @@ Route::get('/', function () {
 php artisan lynx:install
 ```
 
-`lynx:install` creates the default language and the home page, and the `superuser`, `editor` and `guest` roles. When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts, where it asks nothing.
+`lynx:install` creates the default language and the home page, and the `superuser`, `editor` and `guest` roles. When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
 
 If your app already has accounts, make one of them the superuser instead:
 
