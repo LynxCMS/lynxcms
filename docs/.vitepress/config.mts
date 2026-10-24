@@ -160,6 +160,7 @@ export default defineConfig({
                     { text: 'Actions and Hooks', link: '/deeper/actions-and-hooks' },
                     { text: 'Page Access', link: '/deeper/visibility' },
                     { text: 'Schema and Content Packages', link: '/deeper/schema-and-content' },
+                    { text: 'Working on a Live Site', link: '/deeper/live-site' },
                     { text: 'Custom Field Types', link: '/deeper/custom-field-types' },
                     { text: 'Server Capacity', link: '/deeper/server-capacity' },
                 ],
