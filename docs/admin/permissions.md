@@ -74,7 +74,7 @@ Check the permission where the work happens, not only where the link shows:
 - Admin screens: `Admin::screen()` takes the permission and answers 403 without it.
 - Livewire components: check in `boot()`, because every click is a new request ([example](/admin/extending#example-reviewing-blog-posts)).
 - Actions: return the permission from `permission()`, and the runner checks it for the PHP API, the admin, MCP and the agent.
-- Read tools for MCP and the agent: return it from `permission()` too.
+- Read tools for MCP and the agent: return it from `permission()` too. A read tool that names none needs `pages.view`.
 
 A permission guards your code, and actions guard their own writes. A user with `blog.review` but not `pages.edit` can open the review screen, but cannot save a post from it.
 

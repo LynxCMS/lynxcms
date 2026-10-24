@@ -60,9 +60,24 @@ it('writes nothing on a dry run and removes the file when the action rolls back'
         ->and(Storage::disk('public')->allFiles())->toBe([]);
 });
 
-it('keeps agents from storing server files', function (): void {
-    lynx()->actingAs(Actor::mcp(), fn (): ActionResult => lynx()->run(StoreMedia::class, ['page' => test()->alphaId, 'field' => 'gallery', 'upload' => __FILE__]));
-})->throws(ValidationException::class);
+it('never reads a file on the server for anyone', function (Actor $actor): void {
+    lynx()->actingAs($actor, fn (): ActionResult => lynx()->run(StoreMedia::class, ['page' => test()->alphaId, 'field' => 'gallery', 'upload' => __FILE__, 'filename' => 'photo.jpg']));
+})->with([Actor::mcp(), Actor::user(1)])->throws(ValidationException::class, 'Give a url, or base64 content');
+
+it('refuses an image that declares more pixels than it can process, before decoding it', function (): void {
+    // A PNG header declaring 20000 × 20000 pixels, with no image data behind it.
+    $header = "\x89PNG\r\n\x1a\n".pack('N', 13).'IHDR'.pack('NN', 20000, 20000)."\x08\x02\x00\x00\x00".pack('N', 0);
+
+    expect(fn (): ActionResult => lynx()->run(StoreMedia::class, ['page' => test()->alphaId, 'field' => 'gallery', 'base64' => base64_encode($header), 'filename' => 'huge.png']))
+        ->toThrow(ValidationException::class, 'too large to process');
+});
+
+it('refuses file entries that name a dot file or another folder level', function (string $file): void {
+    $page = lynx()->pages->get(test()->alphaId);
+    $page->downloads = [['values' => ['file' => $file]]];
+
+    expect(fn () => $page->save())->toThrow(ValidationException::class, 'its stored name');
+})->with(['5/..', '5/.htaccess', '../etc/passwd']);
 
 it('saves images with descriptions per language, tags and a focus point, and reads them back', function (): void {
     $entry = storeImage();

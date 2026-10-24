@@ -20,7 +20,7 @@ php artisan lynx:static --path=/tmp/site --zip            # another folder, and 
 
 The admin has the same under **Settings › Static export**, with a button to download the zip. Through MCP and AI agents it is the `static.export` action. All three need the `static.export` permission.
 
-The command reports what it wrote, the pages it left out and the pages that need PHP for part of what they do.
+The command reports what it wrote, the pages it left out and the pages that need PHP for part of what they do. Keep the export folder outside `public/` on the live server, or the export and its zip are downloadable from the site itself.
 
 ## What is exported
 

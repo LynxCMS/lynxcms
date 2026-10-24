@@ -21,7 +21,7 @@ final readonly class ShowSeoPreview
     public function __invoke(int $page): View
     {
         $found = lynx()->pages->get($page);
-        abort_if($found === null || ! $found->template()->hasUrl() || ! $this->access->allows('pages.view'), 404);
+        abort_if($found === null || ! $found->template()->hasUrl() || ! $this->access->allows('pages.view', $found), 404);
 
         return view('lynx-seo::admin.preview', ['page' => $found, 'seo' => $this->resolver->resolve($found)]);
     }

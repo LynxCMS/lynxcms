@@ -102,6 +102,9 @@ return [
             'enabled' => env('LYNX_MCP_WEB', false),
             'path' => '/mcp/lynx',
             'middleware' => ['auth:sanctum'],
+            // Sanctum tokens must carry this ability: $user->createToken('assistant', ['lynx:mcp']).
+            // Empty accepts any token.
+            'ability' => 'lynx:mcp',
         ],
     ],
 

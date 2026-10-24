@@ -149,7 +149,7 @@ final class AdminAuth
             Route::view('account/security', 'lynx-admin::account.security')->middleware('password.confirm')->name('account');
         });
         Route::middleware(['web', 'guest'])->prefix(Value::string(config('lynx-admin.prefix')))->name('lynx.admin.')->group(function (): void {
-            Route::get('invitation/{token}', [InvitationController::class, 'show'])->name('invitation');
+            Route::get('invitation/{token}', [InvitationController::class, 'show'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation');
             Route::post('invitation', [InvitationController::class, 'store'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation.accept');
         });
     }

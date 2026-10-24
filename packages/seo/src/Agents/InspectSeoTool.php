@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Seo\Agents;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Agents\AgentReadTool;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Support\Value;
 use LynxCms\Seo\SeoData;
 
@@ -44,6 +46,11 @@ final class InspectSeoTool extends AgentReadTool
         $reference = Value::string($arguments['page'] ?? '');
         $page = lynx()->pages->get(ctype_digit($reference) ? (int) $reference : $reference);
         $language = Value::string($arguments['language'] ?? '') ?: (string) lynx()->languages->default()->code;
+
+        // A page outside the user's pages.view scope reads as missing, as get_page answers.
+        if ($page instanceof Page && ! app(Authorizer::class)->allows(app(ActionRunner::class)->actor(), 'pages.view', $page)) {
+            $page = null;
+        }
 
         if (! $page instanceof Page || lynx()->languages->find($language) === null) {
             return ['error' => $page instanceof Page ? "There is no language [{$language}]." : 'There is no such page.'];

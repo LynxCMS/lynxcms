@@ -138,7 +138,7 @@ An action has:
 | `description()` | What it does. AI tools read it to decide when to use the action. |
 | `permission()` | The permission it needs. `null` allows superusers only. |
 | `rules()`, `schema()` | Laravel validation rules for its input, and the input's JSON schema for AI tools. |
-| `handle()` | The work. Run other actions with `$context->run()`, so they share its transaction and log entry. |
+| `handle()` | The work. Run other actions with `$context->run()`, so they share its transaction and log entry. Actions run this way are not checked again, so check every page your action passes on, such as one named in its input, with `$context->authorize('pages.edit', $page)`. |
 | `destructive()` | Return `true` for actions that remove data. AI tools are told to run them as a dry run first and ask the user to confirm. |
 | `exposedAsTool()` | Return `false` to keep an action out of the MCP server and the agent. |
 

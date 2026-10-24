@@ -139,6 +139,19 @@ it('moves a field\'s files when it turns private, and back', function (): void {
     Storage::disk('local')->assertMissing('lynx/'.$brochure['file']);
 });
 
+it('never moves another page\'s file that a value names', function (): void {
+    $secret = test()->course->id.'/secret.pdf';
+    Storage::disk('local')->put('lynx/'.$secret, '%PDF private');
+    ['beta' => $beta] = createCourses('beta');
+    $beta->handouts = [['values' => ['file' => $secret, 'bytes' => 12, 'mime' => 'application/pdf']]];
+    $beta->save();
+
+    lynx()->fields->update('handouts', ['settings' => ['private' => false]]);
+
+    Storage::disk('local')->assertExists('lynx/'.$secret);
+    Storage::disk('public')->assertMissing('lynx/'.$secret);
+});
+
 it('moves nothing on a dry run', function (): void {
     $brochure = privateFile('brochure', 'brochure.pdf', '%PDF staying');
 

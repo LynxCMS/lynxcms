@@ -29,10 +29,13 @@ abstract class AgentReadTool
         return [];
     }
 
-    /** The permission the acting user needs, or null when reading needs none. */
+    /**
+     * The permission the acting user needs: pages.view unless the tool says otherwise, so a tool
+     * that forgets to name one is not open to every client. Null when reading needs none.
+     */
     public static function permission(): ?string
     {
-        return null;
+        return 'pages.view';
     }
 
     /**
