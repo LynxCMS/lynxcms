@@ -123,7 +123,7 @@ final class FormValidator
 
         match ($field->type) {
             'checkboxes' => $rules[$key.'.*'] = [Rule::in(array_keys($field->options))],
-            'file' => $rules[$key.'.*'] = array_filter(['file', 'max:'.$field->maxKb, $field->extensions === [] ? null : 'extensions:'.implode(',', $field->extensions)]),
+            'file' => $rules[$key.'.*'] = array_filter(['file', 'max:'.$field->maxKb, $field->allowedExtensions() === null ? null : 'extensions:'.implode(',', $field->allowedExtensions())]),
             'group' => $this->describeRows($field, $key, $rules, $messages, $attributes),
             default => null,
         };
