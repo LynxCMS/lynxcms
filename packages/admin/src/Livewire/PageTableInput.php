@@ -8,8 +8,10 @@ use DateTimeInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\TrashPage;
@@ -34,20 +36,35 @@ final class PageTableInput extends Component
     #[Modelable]
     public array $value = [];
 
+    #[Locked]
     public ?int $pageId = null;
 
     /** @var list<string> */
+    #[Locked]
     public array $templates = [];
 
     /** @var list<string> */
+    #[Locked]
     public array $columns = ['title'];
 
     /** Path new items go under; empty for the page itself. */
+    #[Locked]
     public string $parent = '';
 
+    #[Locked]
     public bool $trashOnRemove = false;
 
+    #[Locked]
     public bool $disabled = false;
+
+    /**
+     * Pages the field held when it opened, or that were created here: shown even outside what
+     * the user may view, so the value never looks empty.
+     *
+     * @var list<int>
+     */
+    #[Locked]
+    public array $known = [];
 
     public string $template = '';
 
@@ -65,6 +82,7 @@ final class PageTableInput extends Component
     public function mount(array $value = [], ?int $pageId = null, array $settings = [], bool $disabled = false): void
     {
         $this->value = Value::ints($value);
+        $this->known = $this->value;
         $this->pageId = $pageId;
         $this->templates = Value::strings($settings['templates'] ?? []);
         $this->columns = Value::strings($settings['columns'] ?? []) ?: ['title'];
@@ -88,6 +106,7 @@ final class PageTableInput extends Component
         ])->valueAs(Page::class);
 
         $this->value = [...$this->value, (int) $page->id];
+        $this->known = [...$this->known, (int) $page->id];
         $this->title = '';
     }
 
@@ -117,7 +136,8 @@ final class PageTableInput extends Component
 
     public function render(): View
     {
-        $pages = app(PageLoader::class)->many($this->value);
+        $viewable = app(AdminAccess::class)->viewable(array_values(array_diff($this->value, $this->known)));
+        $pages = app(PageLoader::class)->many(array_values(array_filter($this->value, fn (int $id): bool => in_array($id, $this->known, true) || in_array($id, $viewable, true))));
         $rows = [];
 
         foreach ($pages as $page) {

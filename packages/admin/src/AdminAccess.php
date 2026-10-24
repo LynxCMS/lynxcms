@@ -57,6 +57,26 @@ final readonly class AdminAccess
         return $this->authorizer->scopeOf($this->actor(), 'pages.view');
     }
 
+    /**
+     * The given pages the current user may view, in their order: for components that load pages
+     * by ids a request could change.
+     *
+     * @param  list<int>  $pageIds
+     * @return list<int>
+     */
+    public function viewable(array $pageIds): array
+    {
+        $scope = $this->viewScope();
+
+        if ($scope === null || $pageIds === []) {
+            return $pageIds;
+        }
+
+        $covered = $scope->covering($pageIds);
+
+        return array_values(array_filter($pageIds, fn (int $id): bool => in_array($id, $covered, true)));
+    }
+
     public function isSuperuser(): bool
     {
         return $this->authorizer->isSuperuser($this->actor());

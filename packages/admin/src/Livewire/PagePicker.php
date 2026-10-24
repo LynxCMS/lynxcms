@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\PageSearch;
 use LynxCms\Admin\Tree\DefaultPresenter;
@@ -39,6 +40,15 @@ final class PagePicker extends Component
 
     public string $search = '';
 
+    /**
+     * Pages the field held when it opened: shown even outside what the user may view, so the
+     * value never looks empty and gets dropped on save.
+     *
+     * @var list<int>
+     */
+    #[Locked]
+    public array $known = [];
+
     /** Text of the empty search box; null uses a default that fits single or multiple choice. */
     #[Locked]
     public ?string $placeholder = null;
@@ -55,6 +65,7 @@ final class PagePicker extends Component
     public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null): void
     {
         $this->value = Value::ints($value);
+        $this->known = $this->value;
         $this->multiple = $multiple;
         $this->templates = Value::strings($templates);
         $this->placeholder = $placeholder;
@@ -64,7 +75,7 @@ final class PagePicker extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $this->isAllowed($page)) {
+        if (! $page instanceof Page || ! $this->isAllowed($page) || app(AdminAccess::class)->viewable([$id]) === []) {
             return;
         }
 
@@ -89,6 +100,8 @@ final class PagePicker extends Component
     private function chosen(): array
     {
         $ids = Value::ints($this->value);
+        $viewable = app(AdminAccess::class)->viewable(array_values(array_diff($ids, $this->known)));
+        $ids = array_values(array_filter($ids, fn (int $id): bool => in_array($id, $this->known, true) || in_array($id, $viewable, true)));
 
         if ($ids === []) {
             return [];
@@ -96,8 +109,8 @@ final class PagePicker extends Component
 
         $pages = [];
 
-        // Not limited to pages the user may view: hiding a chosen page would look like an empty
-        // field, and saving would then drop the reference. Only the search is limited.
+        // Pages the field held show even outside the user's view scope: hiding them would look
+        // like an empty field, and saving would then drop the reference.
         foreach (lynx()->pages->find('id='.implode('|', $ids).', include=all')->map(fn (Page $page): Page => $page) as $page) {
             $pages[(int) $page->id] = $this->row($page);
         }
