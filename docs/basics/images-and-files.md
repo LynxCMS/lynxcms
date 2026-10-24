@@ -128,6 +128,8 @@ $page->save();
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
+URLs are downloaded only from public web servers: `http` and `https` on their usual ports, from hosts whose addresses are on the internet, never the server's own network or a cloud's metadata address. Redirects get the same checks, and the download stops once it passes the field's size limit. To download from a host of your own network, such as an asset server, add it to `downloads.allowed_hosts` in `config/lynx-media.php`. `LYNX_MEDIA_URL_DOWNLOADS=false` turns URL downloads off.
+
 ## Private files
 
 Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting:
