@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
+use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Http\AssetController;
 use LynxCms\Core\Lynx;
 use Symfony\Component\Finder\Finder;
@@ -67,6 +68,17 @@ it('applies the appearance a user picked before the stylesheet loads', function 
     $html = $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->getContent();
 
     expect(strpos((string) $html, "localStorage.getItem('lynx:color-scheme')"))->toBeInt()->toBeLessThan(strpos((string) $html, 'admin.css'));
+});
+
+it('renders the sidebar open, or collapsed as the person left it, from the first paint', function (): void {
+    $user = new GenericUser(['id' => 1]);
+
+    $this->actingAs($user)->get('/lynx/pages')->assertOk()
+        ->assertSee('data-state="expanded"', false)->assertSee('style="width: var(--sidebar-width)"', false);
+
+    $this->actingAs($user)->withUnencryptedCookie(AdminServiceProvider::SIDEBAR_COOKIE, 'collapsed')->get('/lynx/pages')->assertOk()
+        ->assertSee('data-state="collapsed"', false)->assertSee('data-collapsible="icon"', false)
+        ->assertSee('style="width: var(--sidebar-width-icon)"', false);
 });
 
 it('serves the prebuilt stylesheet', function (): void {

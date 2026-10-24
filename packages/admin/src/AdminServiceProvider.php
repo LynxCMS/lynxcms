@@ -6,6 +6,7 @@ namespace LynxCms\Admin;
 
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -67,6 +68,9 @@ final class AdminServiceProvider extends ServiceProvider
     /** Gate checked on every admin route and Livewire request. Define it in the app to restrict access. */
     public const string GATE = 'accessLynxAdmin';
 
+    /** Whether the admin's sidebar is open: set by the browser, read to render the next page. */
+    public const string SIDEBAR_COOKIE = 'lynx_sidebar';
+
     private const string ROOT = __DIR__.'/..';
 
     public function register(): void
@@ -98,6 +102,8 @@ final class AdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-admin');
+        // Written by the sidebar's script, so it is plain text, not one Laravel encrypted.
+        EncryptCookies::except(self::SIDEBAR_COOKIE);
         Blade::anonymousComponentPath(self::ROOT.'/resources/views/components', 'lynx-admin');
         // Admin components' updates keep the admin routes' WithoutPageVisibility (ADR-0062).
         Livewire::addPersistentMiddleware([WithoutPageVisibility::class]);

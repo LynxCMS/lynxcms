@@ -3,7 +3,8 @@
      viewUrl: the front-end page this screen edits; the top bar's view link opens it instead of the site. --}}
 <x-lynx-admin::document :title="$title">
 <body class="min-h-screen font-sans antialiased">
-    <x-lynx-admin::ui.sidebar-provider>
+    {{-- Open or collapsed as the person left it, from the first paint: no flash between pages. --}}
+    <x-lynx-admin::ui.sidebar-provider :default-open="request()->cookie(\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE) !== 'collapsed'" :cookie="\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE">
         <x-lynx-admin::ui.sidebar collapsible="icon">
             <x-lynx-admin::ui.sidebar-header>
                 <a href="{{ route('lynx.admin.pages') }}" class="flex items-center gap-2 rounded-md p-1.5 font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">

@@ -4,8 +4,11 @@
                       (767px). Raise it to 1023px to get the drawer on tablets too, where an
                       always-docked rail often costs more room than it earns. A bare number
                       is read as px; anything else is passed to matchMedia as written.
+    cookie            Name of a cookie that remembers whether the sidebar is open ("expanded" or
+                      "collapsed"), so the next page can render it that way from the server
+                      (pass that as defaultOpen) instead of opening and closing as Alpine boots.
 --}}
-@props(['defaultOpen' => true, 'mobileBreakpoint' => '767px'])
+@props(['defaultOpen' => true, 'mobileBreakpoint' => '767px', 'cookie' => null])
 
 @php
     $mobileQuery = '(max-width: '.(is_numeric($mobileBreakpoint) ? $mobileBreakpoint.'px' : $mobileBreakpoint).')';
@@ -31,6 +34,10 @@
             const mq = window.matchMedia(@js($mobileQuery));
             this.isMobile = mq.matches;
             mq.addEventListener('change', e => this.isMobile = e.matches);
+            const cookie = @js($cookie);
+            if (cookie) {
+                this.$watch('open', open => document.cookie = `${cookie}=${open ? 'expanded' : 'collapsed'}; path=/; max-age=31536000; SameSite=Lax`);
+            }
         }
     }"
     {{-- `collapsed` is a plain property kept in sync, deliberately NOT a getter. Alpine
