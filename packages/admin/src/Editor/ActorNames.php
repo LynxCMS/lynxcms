@@ -27,6 +27,7 @@ final class ActorNames
             Actor::MCP => $user === null ? 'MCP' : "{$user} via MCP",
             Actor::AI => $user === null ? 'AI agent' : "AI agent for {$user}",
             Actor::CLI => 'Console',
+            Actor::GUEST => 'Visitor',
             default => 'System',
         };
     }

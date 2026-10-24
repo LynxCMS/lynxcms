@@ -13,14 +13,14 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Gives people who sign up on the site the role in lynx.permissions.registration_role ("guest",
- * which grants nothing), so a sign-up never has the full rights that signed in users keep while
- * no one holds a role (ADR-0033, ADR-0073).
+ * which grants nothing), so a sign-up can see what guests see and nothing more (ADR-0073). In open
+ * mode the first one turns the role checks on, so a warning says when no one is a superuser yet.
  *
  * @internal
  */
 final readonly class AssignRegistrationRole
 {
-    public function __construct(private ActionRunner $runner) {}
+    public function __construct(private ActionRunner $runner, private PermissionHolders $holders) {}
 
     public function handle(Registered $event): void
     {
@@ -37,16 +37,11 @@ final readonly class AssignRegistrationRole
             return;
         }
 
-        $hadSuperuser = $this->hasSuperuser();
+        $wasOpen = Value::bool(config('lynx.permissions.open_until_roles')) && ! $this->holders->hasSuperuser();
         $this->runner->actingAs(Actor::system(), fn (): mixed => $this->runner->run(AssignRoles::class, ['user' => $user, 'roles' => [$role]]));
 
-        if (! $hadSuperuser) {
+        if ($wasOpen) {
             Log::warning("Lynx now enforces roles: user {$user} signed up and got the [{$role}] role, and no user is a superuser yet. Run php artisan lynx:install --user=ID to make one.");
         }
-    }
-
-    private function hasSuperuser(): bool
-    {
-        return RoleAssignment::query()->whereIn('role_id', Role::query()->where('is_superuser', true)->select('id'))->exists();
     }
 }

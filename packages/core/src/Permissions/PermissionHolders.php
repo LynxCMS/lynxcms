@@ -26,4 +26,10 @@ final class PermissionHolders
 
         return array_values(array_unique(array_map(Value::string(...), RoleAssignment::query()->whereIn('role_id', $roles)->pluck('user_id')->all())));
     }
+
+    /** Whether any user holds a superuser role; a site without one has no one who can open the admin. */
+    public function hasSuperuser(): bool
+    {
+        return RoleAssignment::query()->whereIn('role_id', Role::query()->where('is_superuser', true)->select('id'))->exists();
+    }
 }

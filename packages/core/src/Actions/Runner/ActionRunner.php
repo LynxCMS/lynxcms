@@ -37,6 +37,8 @@ final class ActionRunner
 
     private ?Actor $actor = null;
 
+    private bool $isServingRequest = false;
+
     public function __construct(
         private readonly Container $container,
         private readonly HookRegistry $hooks,
@@ -160,7 +162,28 @@ final class ActionRunner
             return Actor::user($id);
         }
 
-        return $this->container->runningInConsole() ? Actor::cli() : Actor::system();
+        return $this->container->runningInConsole() && ! $this->isServingRequest ? Actor::cli() : Actor::guest();
+    }
+
+    /**
+     * Run a web request: with nobody signed in its actions are a visitor's, even where the app
+     * also counts as running in the console (tests, a request handled from a command).
+     *
+     * @template T
+     *
+     * @param  Closure(): T  $callback
+     * @return T
+     */
+    public function servingRequest(Closure $callback): mixed
+    {
+        $previous = $this->isServingRequest;
+        $this->isServingRequest = true;
+
+        try {
+            return $callback();
+        } finally {
+            $this->isServingRequest = $previous;
+        }
     }
 
     public function queueEvent(object $event): void

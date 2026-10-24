@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
@@ -33,6 +34,7 @@ use LynxCms\Core\Http\Middleware\DetectLocale;
 use LynxCms\Core\Http\Middleware\MarkPageRoute;
 use LynxCms\Core\Http\Middleware\RedirectDefaultLocale;
 use LynxCms\Core\Http\Middleware\RememberLocale;
+use LynxCms\Core\Http\Middleware\ServeAsVisitor;
 use LynxCms\Core\Indexes\IndexesServiceProvider;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
@@ -68,6 +70,7 @@ final class LynxServiceProvider extends ServiceProvider
         $router->aliasMiddleware('lynx.locale', DetectLocale::class);
         $router->aliasMiddleware('lynx.locale-session', RememberLocale::class);
         $router->aliasMiddleware('lynx.locale-redirect', RedirectDefaultLocale::class);
+        $this->app->make(Kernel::class)->pushMiddleware(ServeAsVisitor::class);
 
         if (! config('lynx.routes.enabled', true)) {
             return;

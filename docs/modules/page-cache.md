@@ -250,7 +250,7 @@ Lynx clears pages when Lynx content changes. It can't see your app's own tables.
 
 <<< @/snippets/modules/ClearPostOnComment.php#listener{php}
 
-`page_cache.clear` checks `page_cache.manage`, as every action checks its permission. A signed-in reader who comments doesn't hold it, and actions run as the signed-in user. So code that clears on a visitor's behalf runs as the system, with `lynx()->actingAs(Actor::system(), ...)`. Requests with nobody signed in already run as the system, and Artisan commands, queue workers and the scheduler run as `cli`; both may do everything.
+`page_cache.clear` checks `page_cache.manage`, as every action checks its permission. A signed-in reader who comments doesn't hold it, and actions run as the signed-in user. So code that clears on a visitor's behalf runs as the system, with `lynx()->actingAs(Actor::system(), ...)`. Requests with nobody signed in run as a visitor, who may only run actions open to everyone, and Artisan commands, queue workers and the scheduler run as `cli`, which may do everything.
 
 For data that changes on a timetable, such as prices imported every hour, give the template's rule a lifetime instead, or clear its pages with `['template' => 'course']` after the import.
 
