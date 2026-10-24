@@ -37,7 +37,7 @@ lynx()->run(SaveRole::class, ['name' => 'course-editor', 'grants' => [
 lynx()->run(AssignRoles::class, ['user' => '42', 'roles' => ['course-editor']]);
 ```
 
-A user without a role can do nothing in Lynx: the admin answers 403, and the actions they run are refused. `php artisan lynx:install --user=ID` makes someone a superuser, on a new site or on one where nobody is.
+A user without a role can do nothing in Lynx: the admin answers 403, and the actions they run are refused. `php artisan lynx:superuser` creates a superuser, or makes an existing account one, on a new site or on one where nobody is.
 
 Visitors who are not signed in can run only the actions open to everyone, such as submitting a form. Code that writes on a visitor's behalf, such as a webhook that updates a page, says so:
 

@@ -21,7 +21,7 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 ## From 0.1.16 to 0.1.17
 
-- A user without a role no longer has every right while no one holds a role. If nobody on your site has a role yet, nobody can open the admin after the update: run `php artisan lynx:install --user=ID` with your user's id. Sites that already have a superuser see no change.
+- A user without a role no longer has every right while no one holds a role. If nobody on your site has a role yet, nobody can open the admin after the update: run `php artisan lynx:superuser` and give your account's email (it creates the account if there is none). Sites that already have a superuser see no change.
 - Web requests with nobody signed in run actions as a visitor, who may only run actions open to everyone. Code that writes on a visitor's behalf (a webhook, a public form of your own) must say so with `lynx()->actingAs(Actor::system(), fn () => ...)`; without it, it now fails with an authorization error.
 - Files and images fields no longer accept types a server or a browser runs, even if their extensions setting lists one (`php`, `html`, `svg`, `js`…). Files already stored stay where they are; check public disks for any you did not expect.
 - `media.store` no longer downloads from hosts on your own network. If an importer downloads from one, add it to `downloads.allowed_hosts` in `config/lynx-media.php`.

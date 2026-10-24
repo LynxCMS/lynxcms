@@ -71,10 +71,10 @@ This is also how to start a new environment, such as a new staging server or a d
 ```bash
 php artisan migrate --force
 php artisan lynx:import site.zip --with-schema
-php artisan lynx:install --user=1
+php artisan lynx:install --user=ada@example.com
 ```
 
-The import brings languages, fields and templates first, then the pages, then the roles, whose grants may name branches of those pages. It all succeeds or nothing is written. Running `lynx:install` afterwards finds the default language, the home page and the roles already there and adds nothing to the schema, so the new environment shares the source's uuids and schema files keep it in step. Users are not in packages, which is why the last step names one.
+The import brings languages, fields and templates first, then the pages, then the roles, whose grants may name branches of those pages. It all succeeds or nothing is written. Running `lynx:install` afterwards finds the default language, the home page and the roles already there and adds nothing to the schema, so the new environment shares the source's uuids and schema files keep it in step. Users are not in packages, which is why the last step names one: an account of that environment, by email or id. Without `--user`, it offers to create a superuser.
 
 ## Backups
 

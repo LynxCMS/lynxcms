@@ -65,7 +65,7 @@ Lynx then writes a content package every day to `storage/app/lynx/backups`, keep
 ```bash
 php artisan migrate --force
 php artisan lynx:import atlas-2026-11-02.zip --with-schema
-php artisan lynx:install --user=1
+php artisan lynx:install --user=owner@atlas-training.example
 ```
 
 Import first and install after, so the new environment shares the live site's schema ids, and `lynx:schema:apply` keeps them in step afterwards. See [Schema and Content Packages](/deeper/schema-and-content). A content package is not a database backup: the bookings, users and submissions live in your tables, so back up the database too.
