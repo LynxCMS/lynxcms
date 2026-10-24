@@ -50,14 +50,14 @@ composer require lynxcms/core lynxcms/admin lynxcms/menus lynxcms/media \
 | `lynxcms/cache` | The page cache that makes the site fast (chapter 10). |
 | `lynxcms/mcp` | MCP tools so the owner's AI assistant can work with the site (chapter 10). |
 
-Composer lists the packages with database changes waiting. Run the migrations, then install Lynx with your own user as superuser:
+Composer lists the packages with database changes waiting. Run the migrations, then install Lynx:
 
 ```bash
 php artisan migrate
-php artisan lynx:install --user=1
+php artisan lynx:install
 ```
 
-`lynx:install` creates the default language, the home page and three roles: `superuser`, `editor` and `guest`. Making yourself superuser right away matters on this site: in chapter 8 customers sign up, and each new account gets the `guest` role, which sees the website and never the admin. The first role assignment turns permission checks on for everyone, so the owner should hold one before any customer signs up. See [People who sign up](/admin/permissions#people-who-sign-up).
+`lynx:install` creates the default language, the home page and three roles: `superuser`, `editor` and `guest`, then asks for the owner's name, email and password and creates their account as superuser. In chapter 8 customers sign up too, and each new account gets the `guest` role, which sees the website and never the admin. See [People who sign up](/admin/permissions#people-who-sign-up).
 
 ## Hand the home page to Lynx
 

@@ -114,10 +114,10 @@ Opening the admin signs you in as the demo superuser. `/demo/sign-in/editor` and
 ```bash
 composer require lynxcms/core lynxcms/admin lynxcms/media lynxcms/menus
 php artisan migrate
-php artisan lynx:install --user=1   # your user id becomes a superuser
+php artisan lynx:install            # asks for your superuser's name, email and password
 ```
 
-Add the other packages you need from the table above. The [installation guide](docs/getting-started/installation.md) covers the first user, the scheduler, shared hosting and developing against a local clone of this repository.
+Add the other packages you need from the table above. The [installation guide](docs/getting-started/installation.md) covers the first superuser, the scheduler, shared hosting and developing against a local clone of this repository.
 
 ## Documentation
 

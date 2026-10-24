@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use LynxCms\Admin\Auth\AdminAuth;
+use LynxCms\Admin\Console\SuperuserCommand;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldTypeChoices;
@@ -45,9 +46,11 @@ use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Admin\Livewire\TemplateList;
 use LynxCms\Admin\Livewire\UserRoles;
 use LynxCms\Admin\Tree\TreeMarkers;
+use LynxCms\Admin\Users\CreateUser;
 use LynxCms\Admin\Users\EloquentUsers;
 use LynxCms\Admin\Users\LynxUsers;
 use LynxCms\Admin\View\TailwindMergeMacros;
+use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Pages\Trash;
@@ -102,6 +105,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.icon-picker', IconPicker::class);
         // The icon field type: an icon name from the admin's set (docs/deeper/custom-field-types.md).
         $this->app->make(FieldTypeRegistry::class)->register(IconType::class);
+        $this->app->make(ActionRegistry::class)->register(CreateUser::class);
         Livewire::component('lynx-admin.search', AdminSearch::class);
         Livewire::component('lynx-admin.language-list', LanguageList::class);
         Livewire::component('lynx-admin.account-security', AccountSecurity::class);
@@ -134,6 +138,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->assetRoutes();
 
         if ($this->app->runningInConsole()) {
+            $this->commands([SuperuserCommand::class]);
             $this->publishes([self::ROOT.'/config/lynx-admin.php' => config_path('lynx-admin.php')], 'lynx-admin-config');
             $this->publishes([self::ROOT.'/resources/css/theme.stub.css' => public_path('vendor/lynx-admin/theme.css')], 'lynx-admin-theme');
         }
@@ -183,7 +188,7 @@ final class AdminServiceProvider extends ServiceProvider
 
             $isFirstRun = Value::bool(config('app.debug')) && ! $this->app->make(PermissionHolders::class)->hasSuperuser();
 
-            return Response::deny($isFirstRun ? 'No one is a superuser yet. Run php artisan lynx:install --user=ID to make one.' : null);
+            return Response::deny($isFirstRun ? 'No one is a superuser yet. Run php artisan lynx:superuser to make one.' : null);
         });
     }
 }

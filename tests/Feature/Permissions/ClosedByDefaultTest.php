@@ -45,20 +45,20 @@ it('keeps a user without a role out of the admin and says how to make a superuse
 
     $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')
         ->assertForbidden()
-        ->assertSee('No one is a superuser yet. Run php artisan lynx:install --user=ID to make one.');
+        ->assertSee('No one is a superuser yet. Run php artisan lynx:superuser to make one.');
 });
 
 it('gives no hint without debugging', function (): void {
     config(['app.debug' => false]);
 
-    $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:install');
+    $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:superuser');
 });
 
 it('gives no hint once someone is a superuser', function (): void {
     config(['app.debug' => true]);
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 
-    $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:install');
+    $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:superuser');
     $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk();
 });
 
@@ -123,6 +123,6 @@ it('keeps the old open mode for signed in users, never for visitors, when asked'
 });
 
 it('warns on install when no one is a superuser, and not once someone is', function (): void {
-    $this->artisan('lynx:install')->expectsOutputToContain('No one is a superuser yet')->assertSuccessful();
+    $this->artisan('lynx:install', ['--no-interaction' => true])->expectsOutputToContain('No one is a superuser yet')->assertSuccessful();
     $this->artisan('lynx:install', ['--user' => '1'])->doesntExpectOutputToContain('No one is a superuser yet')->assertSuccessful();
 });

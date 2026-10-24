@@ -10,7 +10,7 @@ Lynx CMS core: languages, fields, templates, pages, selectors and actions.
 ```bash
 composer require lynxcms/core
 php artisan migrate
-php artisan lynx:install --user=1
+php artisan lynx:install
 ```
 
 See the [installation guide](https://github.com/LynxCMS/lynxcms/blob/main/docs/getting-started/installation.md).

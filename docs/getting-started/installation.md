@@ -46,30 +46,24 @@ Route::get('/', function () {
 });
 ```
 
-### Creating the first user
-
-The admin signs in your app's users, so you need at least one. If your app has no registration screen yet, create a user with Tinker:
-
-```bash
-php artisan tinker
-```
-
-```php
-App\Models\User::create(['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'a-strong-password']);
-```
-
-The user's `id` is printed with the new model; on a new app it is `1`.
-
 ### Running the installer
 
 ```bash
-php artisan lynx:install --user=1
+php artisan lynx:install
 ```
 
-`lynx:install` creates the default language and the home page, a `superuser` role and an `editor` role, and gives the user with that id the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts.
+`lynx:install` creates the default language and the home page, and the `superuser`, `editor` and `guest` roles. When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts, where it asks nothing.
+
+If your app already has accounts, make one of them the superuser instead:
+
+```bash
+php artisan lynx:install --user=ada@example.com     # an email, or a user id
+```
 
 > [!IMPORTANT]
-> A user without a role can do nothing in Lynx, so until you run this with `--user`, nobody can open the admin. Run it again with another id whenever a site has no superuser. People who sign up on the site get the `guest` role, which grants nothing (see [People who sign up](/admin/permissions#people-who-sign-up)).
+> A user without a role can do nothing in Lynx, so until someone is a superuser, nobody can open the admin. `php artisan lynx:superuser` creates a superuser, or makes an existing account one, at any time, also on a site that lost its last superuser. People who sign up on the site get the `guest` role, which grants nothing (see [People who sign up](/admin/permissions#people-who-sign-up)).
+
+In a deploy script or CI, give everything as options: `php artisan lynx:superuser --email=ada@example.com --name=Ada --password=... --no-interaction`. A password on the command line stays in the shell's history, so prefer the question where you can.
 
 ## Signing in
 

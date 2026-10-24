@@ -41,7 +41,7 @@ final readonly class AssignRegistrationRole
         $this->runner->actingAs(Actor::system(), fn (): mixed => $this->runner->run(AssignRoles::class, ['user' => $user, 'roles' => [$role]]));
 
         if ($wasOpen) {
-            Log::warning("Lynx now enforces roles: user {$user} signed up and got the [{$role}] role, and no user is a superuser yet. Run php artisan lynx:install --user=ID to make one.");
+            Log::warning("Lynx now enforces roles: user {$user} signed up and got the [{$role}] role, and no user is a superuser yet. Run php artisan lynx:superuser, or lynx:install --user=EMAIL, to make one.");
         }
     }
 }
