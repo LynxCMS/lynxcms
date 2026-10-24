@@ -7,6 +7,7 @@ use Database\Seeders\AtlasContentSeeder;
 use Database\Seeders\AtlasSchemaSeeder;
 use Database\Seeders\AtlasSurveySeeder;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
 /*
@@ -39,6 +40,9 @@ require_once TRAINING.'/app/Providers/AtlasServiceProvider.php';
 /** The schema, and the demo content unless $withContent is false. */
 function trainingSite(bool $withContent = true): void
 {
+    // The demo content uploads course materials; keep them off the real disks
+    Storage::fake('public');
+    Storage::fake('local');
     installLynx();
     new AtlasSchemaSeeder()->run();
 

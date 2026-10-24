@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Media\Actions\StoreMedia;
 use RuntimeException;
 
 /**
@@ -40,13 +41,22 @@ final class AtlasContentSeeder extends Seeder
             $page = $this->course($name, $course);
             $this->session($page, 'lisbon', CarbonImmutable::now()->startOfWeek()->addWeeks($week++)->setTime(10, 0));
             $this->session($page, 'porto', CarbonImmutable::now()->startOfWeek()->addWeeks($week + 3)->setTime(18, 30));
-            $this->page('materials', '/'.$page->path().'/', 'materials', ['pt' => 'materiais', 'title' => ['en' => 'Course materials', 'pt' => 'Materiais do curso'],
+            $materials = $this->page('materials', '/'.$page->path().'/', 'materials', ['pt' => 'materiais', 'title' => ['en' => 'Course materials', 'pt' => 'Materiais do curso'],
                 'body' => ['en' => '<p>Your reading list and handouts. See you in class!</p>', 'pt' => '<p>A lista de leituras e os apontamentos. Até à aula!</p>']]);
+            $this->download($materials, 'reading-list.pdf', "Reading list for {$name}");
         }
 
         $this->home($data['home']);
         $this->extras();
         $this->menus();
+    }
+
+    /** A file in the materials page's private downloads field, as an editor would upload it. */
+    private function download(Page $materials, string $filename, string $contents): void
+    {
+        $entry = lynx()->run(StoreMedia::class, ['page' => $materials->id, 'field' => 'downloads', 'base64' => base64_encode($contents), 'filename' => $filename])->value;
+        $materials->downloads = [['values' => $entry]];
+        $materials->save();
     }
 
     /** The main and footer menus, which editors change in the admin's Menus screen. */

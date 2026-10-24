@@ -6,6 +6,15 @@
             <h1 class="atlas-section-title mt-2">@field($page->title)</h1>
             <div class="atlas-prose mt-6">@field($page->body)</div>
 
+            {{-- A private field: these addresses work only for people who may open this page. --}}
+            @if ($page->downloads?->count())
+                <ul class="mt-8 grid gap-3">
+                    @foreach ($page->downloads as $file)
+                        <li><a href="{{ $file->url() }}" download class="atlas-session">{{ $file->description() ?: $file->name() }}</a></li>
+                    @endforeach
+                </ul>
+            @endif
+
             {{-- The course survey (chapter 9): members only, one answer each. The page it is sent
                  from says which course it is about. --}}
             <section class="atlas-clay mt-10 p-6" aria-labelledby="feedback">

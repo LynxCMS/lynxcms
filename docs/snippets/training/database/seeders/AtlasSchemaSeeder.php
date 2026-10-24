@@ -95,6 +95,9 @@ final class AtlasSchemaSeeder extends Seeder
 
         // News
         lynx()->fields->add('published_on', 'date', label: 'Published on');
+
+        // Course materials (chapter 8): private, so only the people who booked can download them
+        lynx()->fields->add('downloads', 'files', label: 'Downloads', settings: ['private' => true, 'extensions' => 'pdf zip mp3 mp4']);
         // #endregion fields
     }
 
@@ -123,7 +126,7 @@ final class AtlasSchemaSeeder extends Seeder
         lynx()->templates->add('posts', fields: [['name' => 'title', 'required' => true], 'summary'], label: 'News', singleton: true);
         lynx()->templates->add('post', fields: [['name' => 'title', 'required' => true], 'summary', 'body', 'published_on', 'photos'], label: 'News post');
 
-        lynx()->templates->add('materials', fields: [['name' => 'title', 'required' => true], 'body'], label: 'Course materials');
+        lynx()->templates->add('materials', fields: [['name' => 'title', 'required' => true], 'body', 'downloads'], label: 'Course materials');
         lynx()->templates->add('page', fields: [['name' => 'title', 'required' => true], 'summary', 'body'], label: 'Page');
         lynx()->templates->add('settings', fields: ['email', 'phone'], label: 'Settings', hasUrl: false, singleton: true);
 
