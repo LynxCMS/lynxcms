@@ -38,7 +38,7 @@ it('keeps system pages last, so hiding them leaves the other positions right', f
     lynx()->pages->sort('/courses/', 99);
 
     expect(lynx()->pages->find('parent=/, include=all, sort=sort')->map(fn ($page): string => (string) $page->template()->name))
-        ->toBe(['courses', 'courses', 'menus'])
+        ->toBe(['courses', 'courses', 'not-found', 'menus'])
         ->and(lynx()->pages->get('/courses/')?->sort)->toBe(1);
 });
 

@@ -204,6 +204,29 @@ Site-wide content that editors change, such as a footer text or social links, be
 
 `lynx()->settings('shop_settings')` reads the page of another singleton template.
 
+## The page not found
+
+A URL that matches no page shows the **page not found** with status 404: a page in the tree, so editors write its text like any other page's, in every language. `lynx:install` creates it at `/not-found/` with a `not-found` template that only has a title. It is a system page: it can't be deleted or moved, and it stays out of lists, searches and the sitemap.
+
+Give it a view like any template, and add fields to the template for whatever the page should say:
+
+```blade
+{{-- resources/views/templates/not-found.blade.php --}}
+<x-layout :page="$page">
+    <h1>{{ $page->title }}</h1>
+    @field($page->body)
+    <a href="/">Back to the home page</a>
+</x-layout>
+```
+
+Superusers can pick another page, or none, under **Settings > General** in the admin, which marks the chosen page in the tree. Without one, and for JSON requests and the admin's own screens, Laravel's `errors/404` view answers as usual. If the page's view fails, the error is reported and Laravel's 404 answers instead. The same choice is the `pages.set_not_found` action:
+
+```php
+lynx()->run('pages.set_not_found', ['page' => '/oops/']); // or null for none
+```
+
+Sites installed before this existed get the page the next time `php artisan lynx:install` runs; it does nothing once someone has chosen a page, or none.
+
 ## Drafts and old URLs
 
 Editors preview a page's draft at its URL with `?preview=draft`; templates need no changes for it. When an editor renames or moves a page, its old URLs redirect to the new one, in every language. See [Publishing](/basics/publishing).

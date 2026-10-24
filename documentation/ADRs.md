@@ -914,3 +914,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** The sign-in screens, the sidebar header and the browser title show the site's name and logo without a deploy. Config-only sites keep working; their logo may be any file, since it is the developer's. The accent setting and the `appearance.theme` accent name overlap: the hex accent wins where set.
 
+## ADR-0085: The page not found is a page in the tree
+
+**Status:** Accepted
+
+**Context:** A URL that matched nothing aborted with 404 and Laravel rendered the app's `errors/404` view: text in code that editors could not change or translate, and that template strings could not reach either, since no template includes the error view.
+
+**Decision:** A setting, `pages.not_found`, names a page; the `pages.set_not_found` action (superusers only) sets it, or clears it for none. Core registers a renderable for `NotFoundHttpException` that, for GET and HEAD requests outside the admin that don't expect JSON, renders that page with its template view and status 404 and `X-Robots-Tag: noindex`. The page's own URL answers with 404 too. A trashed or unpublished page, a site without one, or a render failure (reported) leave the answer to Laravel. `lynx:install` creates a hidden system page `/not-found/` with a `not-found` template (title only) and picks it, unless the setting exists, so choosing none sticks. The admin picks the page under Settings > General and marks it in the tree.
+
+**Consequences:** Editors write the 404 text, translate it and give it template strings like any page. Existing sites get the page on their next `lynx:install`, which adds a template to their schema. Content packages carry the page like any other; the setting stays with each site.
+

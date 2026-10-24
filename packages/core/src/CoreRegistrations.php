@@ -28,6 +28,7 @@ use LynxCms\Core\Actions\Pages\RunSchedules;
 use LynxCms\Core\Actions\Pages\SaveDraft;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\SchedulePage;
+use LynxCms\Core\Actions\Pages\SetNotFoundPage;
 use LynxCms\Core\Actions\Pages\SetPageStatus;
 use LynxCms\Core\Actions\Pages\SortPage;
 use LynxCms\Core\Actions\Pages\SwitchTemplate;
@@ -115,6 +116,7 @@ final class CoreRegistrations
     public const array ACTIONS = [
         SaveStrings::class,
         InstallLynx::class,
+        SetNotFoundPage::class,
         CreateLanguage::class,
         UpdateLanguage::class,
         DeleteLanguage::class,

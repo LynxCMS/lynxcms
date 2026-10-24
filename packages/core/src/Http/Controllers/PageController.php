@@ -8,9 +8,11 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use LynxCms\Core\Http\PageAttributes;
+use LynxCms\Core\Http\TemplateView;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Pages\NotFoundPage;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\PageLoader;
@@ -24,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * The catch-all front-end route: one indexed lookup on (language, path). An inactive (old) path
  * answers with a 301 to the page's current URL in the same language (ADR-0011). A one-segment URL
  * that matches nothing redirects to the unique page with that name, like ProcessWire (ADR-0029).
+ * The page not found answers its own URL with status 404 too (ADR-0085).
  */
 final readonly class PageController
 {
@@ -38,6 +41,7 @@ final readonly class PageController
         private Publication $publication,
         private UniqueNames $uniqueNames,
         private PageGates $gates,
+        private NotFoundPage $notFound,
     ) {}
 
     public function __invoke(Request $request): Response
@@ -80,14 +84,10 @@ final readonly class PageController
             $request->attributes->set(PageAttributes::PAGE, $page);
         }
 
-        $view = Value::string(config('lynx.views_path', 'templates')).'.'.$page->template()->name;
-        $html = $this->views->make($this->views->exists($view) ? $view : 'lynx::page', [
-            'page' => $preview ?? $page,
-            'lynx' => lynx(),
-        ])->render();
+        $html = TemplateView::render($page, $this->views, $preview);
 
         if (! $isPreviewing) {
-            return response($html);
+            return $this->notFound->is($page) ? response($html, Response::HTTP_NOT_FOUND)->header('X-Robots-Tag', 'noindex') : response($html);
         }
 
         // Drafts are for the editor's eyes only: never cached, never indexed.

@@ -25,7 +25,8 @@ it('installs a default language with an empty prefix', function (): void {
 it('is idempotent', function (): void {
     installLynx();
 
-    expect(Language::query()->count())->toBe(1)->and(DB::table('lynx_pages')->count())->toBe(1);
+    // The home page and the page not found.
+    expect(Language::query()->count())->toBe(1)->and(DB::table('lynx_pages')->count())->toBe(2);
 });
 
 it('adds languages at runtime without changing the schema', function (): void {

@@ -33,6 +33,7 @@ use LynxCms\Admin\Livewire\IconPicker;
 use LynxCms\Admin\Livewire\LanguageForm;
 use LynxCms\Admin\Livewire\LanguageList;
 use LynxCms\Admin\Livewire\LinkDialog;
+use LynxCms\Admin\Livewire\NotFoundPageForm;
 use LynxCms\Admin\Livewire\PageCreator;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageHistory;
@@ -56,6 +57,8 @@ use LynxCms\Admin\View\TailwindMergeMacros;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
+use LynxCms\Core\Pages\NotFoundPage;
+use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
@@ -136,6 +139,11 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.role-form', RoleForm::class);
         Livewire::component('lynx-admin.user-roles', UserRoles::class);
         Livewire::component('lynx-admin.branding-form', BrandingForm::class);
+        Livewire::component('lynx-admin.not-found-page-form', NotFoundPageForm::class);
+        // The page shown for addresses that match no page (ADR-0085), so editors know which it is.
+        $this->app->make(TreeMarkers::class)->add('not-found', fn (Page $page): ?array => $this->app->make(NotFoundPage::class)->is($page)
+            ? ['icon' => 'file-question', 'label' => 'Shown for addresses that match no page (404)']
+            : null);
         $this->defineDefaultGate();
         AdminAuth::boot();
 
