@@ -21,6 +21,7 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 ## From 0.1.17 to the next release
 
+- Run `php artisan lynx:migrate`: invitation tokens move to their own table. Invitations already sent keep working.
 - File questions in forms that list no types now take only documents, images, spreadsheets, presentations and zip files (`FormField::DEFAULT_EXTENSIONS`). If a form must take anything, give it `extensions(['*'])`, or `*` in the builder's file types.
 
 ## From 0.1.16 to 0.1.17

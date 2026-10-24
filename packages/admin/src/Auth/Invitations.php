@@ -10,8 +10,9 @@ use LogicException;
 use LynxCms\Core\Support\Value;
 
 /**
- * Invitation links (ADR-0041): password reset tokens from their own broker, so they last days
- * (lynx-admin.auth.invitation_days) instead of the hour of a password reset.
+ * Invitation links (ADR-0041): tokens from their own broker and their own table
+ * (lynx_invitation_tokens), so they last days (lynx-admin.auth.invitation_days) while password
+ * resets last an hour, and neither kind of link opens the other's form.
  *
  * @internal
  */
@@ -23,13 +24,15 @@ final class Invitations
 
     private const int DEFAULT_DAYS = 7;
 
-    /** On register: the broker shares the app's reset table and user provider. */
+    public const string TABLE = 'lynx_invitation_tokens';
+
+    /** On register: the broker shares the app's user provider, with a table of its own. */
     public static function configureBroker(): void
     {
         $users = (array) config('auth.passwords.users', []);
         config(['auth.passwords.'.self::BROKER => [
             'provider' => $users['provider'] ?? 'users',
-            'table' => $users['table'] ?? 'password_reset_tokens',
+            'table' => self::TABLE,
             'expire' => self::days() * self::MINUTES_PER_DAY,
             'throttle' => 0,
         ]]);
