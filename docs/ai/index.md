@@ -65,6 +65,10 @@ php artisan lynx:ask "Create a template called consulting, copy the course field
 
 The agent works in plan mode: it dry-runs its changes and you approve the plan before anything is written. `--apply` skips the question.
 
+The agent reads and writes with the roles of the user it works for: `lynx()->ai()->ask($prompt, actor: Actor::ai($userId))`, or the signed-in user by default. That holds in a command or a queued job too, which otherwise run with every right.
+
+Plan mode undoes database changes only. Anything a tool does outside the database while planning has already happened when you review the plan: `media.store` downloads the URL it was given, `static.export` writes an export, and listeners of yours that call other services run. Keep that in mind before letting the agent read content others wrote, such as form submissions, since that text can ask it to do things.
+
 | Setting | Meaning |
 | --- | --- |
 | `LYNX_AI_PROVIDER`, `LYNX_AI_MODEL` | The `laravel/ai` provider and model. |

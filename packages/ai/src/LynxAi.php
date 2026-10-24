@@ -7,6 +7,7 @@ namespace LynxCms\Ai;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Files\Document;
+use Laravel\Ai\Responses\AgentResponse;
 use LynxCms\Ai\Agents\CmsAgent;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionRunner;
@@ -45,12 +46,14 @@ final readonly class LynxAi
         DB::beginTransaction();
 
         try {
-            $response = $agent->prompt(
+            // Every tool call, reads included, runs as the session's actor, not as whoever runs
+            // this code (the console in a command or a queued job).
+            $response = $this->runner->actingAs($session->actor, fn (): AgentResponse => $agent->prompt(
                 $prompt,
                 $attachments,
                 provider: self::provider(),
                 model: Value::nullableString(config('lynx.ai.model')),
-            );
+            ));
 
             $run = new AgentRun($response->text, $session->steps(), false, $session);
             $commit = $apply || ($confirm !== null && $run->steps !== [] && $confirm($run));
