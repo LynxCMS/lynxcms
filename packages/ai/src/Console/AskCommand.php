@@ -7,6 +7,7 @@ namespace LynxCms\Ai\Console;
 use Illuminate\Console\Command;
 use LynxCms\Ai\AgentRun;
 use LynxCms\Ai\LynxAi;
+use LynxCms\Ai\PlanTookTooLong;
 use LynxCms\Core\Support\Value;
 use Override;
 
@@ -25,15 +26,21 @@ final class AskCommand extends Command
     {
         $files = array_map(fn (string $f): string => realpath($f) ?: $f, Value::strings($this->option('file')));
 
-        $run = $ai->ask((string) $this->argument('prompt'), $files, apply: (bool) $this->option('apply'), confirm: function (AgentRun $run): bool {
-            $this->showPlan($run);
+        try {
+            $run = $ai->ask((string) $this->argument('prompt'), $files, apply: (bool) $this->option('apply'), confirm: function (AgentRun $run): bool {
+                $this->showPlan($run);
 
-            if ($run->isDestructive()) {
-                $this->components->warn('This plan removes data.');
-            }
+                if ($run->isDestructive()) {
+                    $this->components->warn('This plan removes data.');
+                }
 
-            return $this->confirm('Apply this plan?', ! $run->isDestructive());
-        });
+                return $this->confirm('Apply this plan?', ! $run->isDestructive());
+            });
+        } catch (PlanTookTooLong $exception) {
+            $this->components->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
 
         if ($run->isApplied()) {
             if ($this->option('apply')) {

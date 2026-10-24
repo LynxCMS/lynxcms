@@ -37,6 +37,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `mcp.web.enabled` | `false` | Serve the MCP server over HTTP at `mcp.web.path`. |
 | `mcp.web.ability` | `lynx:mcp` | Ability a Sanctum token needs for the MCP web route; empty accepts any token. |
 | `ai.provider`, `ai.model`, `ai.translation_model` | `null` | The agent's provider and models. |
+| `ai.plan_seconds` | `120` (`LYNX_AI_PLAN_SECONDS`) | Longest an agent run may take; past it, the run stops and keeps nothing. |
 
 ## config/lynx-admin.php
 

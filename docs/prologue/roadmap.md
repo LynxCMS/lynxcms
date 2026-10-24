@@ -8,12 +8,6 @@ order: 9
 
 These are ideas, not promises. Each needs its own decision record before work starts.
 
-## Security follow-ups
-
-Smaller hardening left from the October 2026 review, none of them exploitable on a default install:
-
-- The agent's plan mode keeps one database transaction open for the whole conversation, which locks SQLite for other writers. Recording steps and running them in a short transaction on apply would avoid it.
-
 ## Template strings
 
 ### Page overrides of site strings

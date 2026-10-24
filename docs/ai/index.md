@@ -69,6 +69,8 @@ php artisan lynx:ask "Create a template called consulting, copy the course field
 
 The agent works in plan mode: it dry-runs its changes and you approve the plan before anything is written. `--apply` skips the question.
 
+While the agent works, its changes wait in one database transaction, which other writers wait on with SQLite. So a run has two minutes (`LYNX_AI_PLAN_SECONDS`); past that, it stops at its next step and keeps nothing. The plan is shown after that transaction is rolled back, so reading it holds nothing up, and approving it replays the recorded steps in a short transaction of their own.
+
 The agent reads and writes with the roles of the user it works for: `lynx()->ai()->ask($prompt, actor: Actor::ai($userId))`, or the signed-in user by default. That holds in a command or a queued job too, which otherwise run with every right.
 
 From code, `ask()` takes uploaded files or paths as attachments. Pass the files a person uploaded, never a path from a request, or the agent reads whatever file the path names.

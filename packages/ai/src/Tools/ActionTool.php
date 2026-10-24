@@ -47,6 +47,7 @@ final readonly class ActionTool implements Tool
 
     public function handle(Request $request): string
     {
+        $this->session->assertTimeLeft();
         $arguments = $request->all();
         unset($arguments['dry_run']);
 

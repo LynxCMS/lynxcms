@@ -43,7 +43,7 @@ class CmsAgent implements Agent, HasTools
     public function tools(): iterable
     {
         return [
-            ...ReadTool::all($this->toolkit),
+            ...ReadTool::all($this->toolkit, $this->session),
             ...array_map(
                 fn (string $action): ActionTool => new ActionTool($action, $this->session, $this->toolkit),
                 array_values($this->toolkit->writeTools()),

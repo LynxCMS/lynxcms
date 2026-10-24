@@ -869,11 +869,17 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Consequences:** Installing Lynx on a new app is two commands, `migrate` and `lynx:install`, with no account made beforehand. Apps with their own user store keep working through their `LynxUsers` binding. Without the admin package, `lynx:install --user` is still the way, since the core has no user creation of its own.
 
 ## ADR-0080: Invitation tokens have their own table
-
 **Status:** Accepted (amends ADR-0041)
-
 **Context:** ADR-0041 gave invitations their own password broker, on the app's password reset table, so they could last days while resets last an hour. One table meant one kind of token: a reset link was accepted by the invitation form for as long as invitations last, and an invitation token by the reset form.
-
 **Decision:** The invitation broker uses `lynx_invitation_tokens`, an admin table shaped like Laravel's reset table. Its migration moves the tokens of pending invitations there, so links already sent keep working. When an invited user sets a password through a password reset, their invitation token is deleted along with the pending invitation.
-
 **Consequences:** Each link keeps its own lifetime and opens only its own form. Sites run `lynx:migrate` once.
+
+## ADR-0081: The agent's plan is approved after its transaction ends, and a run has a time limit
+
+**Status:** Accepted (amends ADR-0020)
+
+**Context:** Plan mode runs the agent's actions in one database transaction so later steps can use what earlier ones made (a new page's id), and rolls it back unless the plan is approved. The transaction stayed open for the whole conversation and, with `lynx:ask`, while the person read the plan and decided. On SQLite the first write takes the database's write lock, so every editor, form submission and session write waited or failed until then; on PostgreSQL the rows it wrote stayed locked.
+
+**Decision:** `ask()` rolls the transaction back before calling the confirm callback, and an approval replays the recorded steps through `AgentRun::apply()`, in a short transaction of its own with ids of pages made during planning mapped to the new ones, as code that calls `apply()` later already did. A run has `lynx.ai.plan_seconds` (`LYNX_AI_PLAN_SECONDS`, 120): the session checks it before each tool call, and a run past it throws `PlanTookTooLong`, which rolls everything back. `--apply` keeps committing the run's own transaction.
+
+**Consequences:** No one waits on a person reading a plan, and a slow or stuck model holds writers back for two minutes at most. An approved plan is applied by replaying it, so a step whose arguments name something made earlier in the plan, other than a page id the replay maps, can differ from what the plan showed; the steps the agent tools take (pages by id, path or name, fields and templates by name) replay as planned.
