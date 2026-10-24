@@ -59,20 +59,21 @@ Read tools for MCP and the agent: `find_free_rooms` (date, duration, capacity, e
 
 Checked in `rooms.book` and `rooms.change`, before Zap's own conflict check:
 
-- inside the room's opening hours (its availability; Zap's bookable slots already enforce this);
+- inside the room's opening hours: Zap's free slots follow availability, but creating an appointment does not check it (the spike booked 07:00 in a room that opens at 09:00), so `rooms.book` checks `isBookableAtTime` itself;
 - at least `rooms.min_minutes` (15) and at most `rooms.max_minutes` (240);
-- `rooms.buffer_minutes` (5) after each meeting: Zap's `buffer_minutes` config and its bookable slot methods take it, so one setting serves both;
+- `rooms.buffer_minutes` (5) after each meeting, as Zap's `conflict_detection.buffer_minutes` (the spike refused 12:02 after a meeting ending at 12:00, and accepted 12:05) and as the buffer passed to its free slot methods;
 - not in a blocked time, and not in the past.
 
 ## Recurrence with one-off changes
 
-Zap repeats a schedule with patterns, but its documentation describes no way to cancel or move one occurrence. So:
+Zap repeats a schedule with patterns and has no way to cancel or move one occurrence (checked in the spike, Zap 1.15.7). A series is split instead:
 
-- a series is one Zap appointment with a pattern, and an app `booking_exceptions` table (`schedule_id`, `date`, `action`: skip or move, `moved_to` schedule id) records changes to single dates;
-- moving an occurrence adds a one-off appointment and a skip for the original date;
-- the schedule reader that the screens, the feed and the booking page use applies the exceptions.
+- a series is one recurring Zap appointment, with `series` in its metadata;
+- cancelling one date ends the schedule the day before and starts a copy the day after, both with the same `series`;
+- moving one date does the same, and adds a one-off appointment at the new time;
+- "the whole series" means every schedule with that `series`.
 
-A spike comes first (see the order of work): if Zap can express exceptions itself, this table goes.
+The spike confirmed that Zap's conflict checks and free slots stay right after a split: the freed date can be booked, and the other dates stay taken. No table of exceptions is needed.
 
 ## Screens
 
@@ -111,7 +112,7 @@ Found so far, each fixed in Lynx first with its own PR, as for the training guid
 
 Each step is a phase: it ends with something to try, and the next one starts only once it is approved.
 
-1. **Spike**: install Zap in a scratch app, check recurrence exceptions, buffers and bookable slots with opening hours, and timezone behaviour. Decide whether `booking_exceptions` is needed. Report before building.
+1. **Spike** (done): Zap 1.15.7 checks conflicts and buffers, follows availability for free slots but not for new appointments, understands recurring schedules in conflicts, has no single-occurrence changes (a series is split instead), and stores dates with wall-clock times in `app.timezone`.
 2. **Skeleton**: a fresh Laravel app with Lynx, the templates (room, screen, announcement, settings), the `rooms` sync and availability from opening hours, seeded with four rooms.
 3. **Booking actions and rules**, with tests for each action (happy path, validation, rollback, dry run, conflicts, buffers, opening hours).
 4. **Admin**: a bookings screen per room and a week view, blocking, screens with kiosk links and QR codes.
