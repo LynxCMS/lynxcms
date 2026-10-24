@@ -47,8 +47,12 @@ final readonly class ContentExporter
         private PackageFiles $files,
     ) {}
 
-    /** @return int the number of pages written */
-    public function export(string $directory): int
+    /**
+     * @param  bool  $withFiles  false leaves the files out: values keep naming them, for machines
+     *                           that download them from production when needed (ADR-0082)
+     * @return int the number of pages written
+     */
+    public function export(string $directory, bool $withFiles = true): int
     {
         File::ensureDirectoryExists($directory);
         $this->schema->export($directory.'/schema');
@@ -59,7 +63,9 @@ final readonly class ContentExporter
         foreach (array_chunk(array_keys($keys), self::CHUNK) as $ids) {
             foreach ($this->loader->many($ids) as $page) {
                 fwrite($handle, json_encode($this->line($page, $keys), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n");
-                $this->files->export($page, $directory);
+                if ($withFiles) {
+                    $this->files->export($page, $directory);
+                }
             }
 
             $this->loader->flush();

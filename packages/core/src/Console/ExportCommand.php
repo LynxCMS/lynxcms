@@ -14,7 +14,7 @@ use Override;
 final class ExportCommand extends Command
 {
     #[Override]
-    protected $signature = 'lynx:export {path : Directory, or a file ending in .zip}';
+    protected $signature = 'lynx:export {path : Directory, or a file ending in .zip} {--without-files : Leave media files out; values keep naming them}';
 
     #[Override]
     protected $description = 'Export the schema and all pages as a content package';
@@ -25,7 +25,7 @@ final class ExportCommand extends Command
         $isZip = str_ends_with($path, '.zip');
         $directory = $isZip ? sys_get_temp_dir().'/lynx-export-'.bin2hex(random_bytes(6)) : $path;
 
-        $count = $exporter->export($directory);
+        $count = $exporter->export($directory, ! $this->option('without-files'));
 
         if ($isZip) {
             PackageArchive::zip($directory, $path);

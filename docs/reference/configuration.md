@@ -91,6 +91,8 @@ Comes with `lynxcms/media`; publish it with `php artisan vendor:publish --tag=ly
 | `disk` | `public` (`LYNX_MEDIA_DISK`) | Disk of media files, under `{root}/{page id}/`. |
 | `private_disk` | `local` (`LYNX_MEDIA_PRIVATE_DISK`) | Disk of private fields' files, served through `/lynx-media/{page}/{file}`. |
 | `root` | `lynx` | Folder on both disks that holds the pages' folders. |
+| `remote.url` | `null` (`LYNX_MEDIA_REMOTE`) | On a developer's machine, the https address of production's media folder; missing public files download from it. Ignored in production. |
+| `remote.max_kb` | `51200` | Largest file downloaded from production. |
 | `downloads.enabled` | `true` (`LYNX_MEDIA_URL_DOWNLOADS`) | Let `media.store` download files from URLs. |
 | `downloads.allowed_hosts` | `[]` | Hosts trusted for downloads on any address and port, such as your own asset server. |
 | `quality` | `82` (`LYNX_MEDIA_QUALITY`) | JPEG and WebP quality of image sizes. |

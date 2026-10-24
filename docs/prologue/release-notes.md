@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Media from production, on demand.** On a developer's machine, `LYNX_MEDIA_REMOTE` names production's media folder, and missing public files download from it when a page or an image size needs them. `lynx:export --without-files` makes a light package for this, and `lynx:media:pull` queues the downloads ahead. See [Working on a Live Site](/deeper/live-site#media-from-production).
 - **The agent no longer holds the database while you read its plan.** Its changes are rolled back before the plan is shown, and approving replays them in a short transaction of their own. A run also has two minutes (`LYNX_AI_PLAN_SECONDS`); past that it stops and keeps nothing, so a slow model can't keep other writers waiting on SQLite.
 - **Invitation links and password reset links are kept apart.** Invitation tokens have their own table, so a reset link, which lasts an hour, can't be used as a days-long invitation, and an invitation can't reset a password. Run `php artisan lynx:migrate`; links already sent keep working.
 - **Form uploads take common document types by default.** A file question without its own types takes documents, images, spreadsheets, presentations and zip files, not any file a visitor sends. `extensions(['*'])`, or `*` in the form builder, takes any file as before.

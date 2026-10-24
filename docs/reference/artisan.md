@@ -16,7 +16,7 @@ order: 2
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
 | `lynx:schema:apply --path= --dry-run --force` | Applies schema files; `--force` also deletes what the files lack. |
 | `lynx:phpstan-stub --path=` | Writes a PHPStan stub that types `$page->field` reads (default `lynx/phpstan/Page.stub`). |
-| `lynx:export path` | Writes a content package (a directory or a `.zip`). |
+| `lynx:export path --without-files` | Writes a content package (a directory or a `.zip`); `--without-files` leaves media files out, for machines that [download them from production](/deeper/live-site#media-from-production). |
 | `lynx:import path --with-schema --prune --dry-run` | Imports a content package. |
 | `lynx:backup` | Writes a content backup and keeps the newest ones. |
 | `lynx:schedule:run` | Applies due publishing schedules (the scheduler runs it every minute). |
@@ -26,6 +26,7 @@ order: 2
 | `lynx:trigram` | Installs PostgreSQL's `pg_trgm` and adds trigram indexes that speed up text selectors. See [Finding Pages](/basics/selectors#large-sites). |
 | `lynx:strings:scan` | Lists the editable strings views declare with `@string`, and reports problems. See [Views](/basics/views#editable-texts). |
 | `lynx:media:prune --older-than= --dry-run` | Deletes media files that no page, draft or revision uses (the scheduler runs it daily). Needs `lynxcms/media`. |
+| `lynx:media:pull --page=` | Queues downloads from production for the media files this machine lacks (`LYNX_MEDIA_REMOTE`). Needs `lynxcms/media`. |
 | `lynx:forms:purge --days=` | Deletes old spam and archived form submissions with their files. Needs `lynxcms/forms`. |
 | `lynx:sitemap --clear --warm` | Lists the sitemap's parts; `--clear` drops the cached files, `--warm` builds them all now. Needs `lynxcms/sitemap`. |
 | `lynx:page-cache --clear --prune --warm --stats --compile` | Drops every stored page, drops expired ones (scheduled every minute), stores every public page now, counts them per template, or writes the settings `serve.php` reads. Needs `lynxcms/cache`. |
