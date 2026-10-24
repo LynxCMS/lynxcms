@@ -21,7 +21,7 @@ use LynxCms\Core\Models\Setting;
  * private storage. Files are written and deleted once the change is committed, so a rollback or a
  * dry run leaves storage as it was.
  *
- * @internal
+ * @api
  */
 final class SaveBranding extends Action
 {
