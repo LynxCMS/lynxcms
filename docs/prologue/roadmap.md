@@ -12,7 +12,6 @@ These are ideas, not promises. Each needs its own decision record before work st
 
 Smaller hardening left from the October 2026 review, none of them exploitable on a default install:
 
-- The page cache keeps a response unless it is marked private, so pages that differ per visitor rely on their module or app sending that header. A bypass for signed-in visitors would not depend on it.
 - Sitemaps are cached for everyone and built without a session; building them inside an explicit guest context would keep a members-only rule from ever leaking into the shared copy.
 - The static export copies the whole public disk. It could copy only the files of the pages it exported.
 - The agent's plan mode keeps one database transaction open for the whole conversation, which locks SQLite for other writers. Recording steps and running them in a short transaction on apply would avoid it.

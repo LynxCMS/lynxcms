@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- **The page cache stores only what a plain guest sees.** A page rendered for a visitor a visibility rule treats apart (its `audience()` names a group, or the rule has none) is no longer stored, so a rule based on a header, an address or a cookie can't put its version in the copy every guest gets.
+
 ## 0.1.17
 
 Released October 24, 2026. A security release: update soon.
