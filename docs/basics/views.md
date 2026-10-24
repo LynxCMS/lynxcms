@@ -222,7 +222,9 @@ Give it a view like any template, and add fields to the template for whatever th
 Superusers can pick another page, or none, under **Settings > General** in the admin, which marks the chosen page in the tree. Without one, and for JSON requests and the admin's own screens, Laravel's `errors/404` view answers as usual. If the page's view fails, the error is reported and Laravel's 404 answers instead. The same choice is the `pages.set_not_found` action:
 
 ```php
-lynx()->run('pages.set_not_found', ['page' => '/oops/']); // or null for none
+use LynxCms\Core\Actions\Pages\SetNotFoundPage;
+
+lynx()->run(SetNotFoundPage::class, ['page' => '/oops/']); // or null for none
 ```
 
 Sites installed before this existed get the page the next time `php artisan lynx:install` runs; it does nothing once someone has chosen a page, or none.

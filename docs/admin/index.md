@@ -71,7 +71,9 @@ The defaults come from `config/lynx-admin.php`, so a developer can ship them wit
 What a superuser saves wins over the config; an empty field goes back to it. Uploaded logos are kept in private storage and served by the admin, so no `storage:link` is needed; an uploaded SVG is served sandboxed, so it cannot run scripts. The same settings can be changed with the `admin.branding` action, from code or an agent:
 
 ```php
-lynx()->run('admin.branding', ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
+use LynxCms\Admin\Branding\SaveBranding;
+
+lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
 ```
 
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.
