@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.18 to the next release
+
+- `lynx:phpstan-stub` is now `lynx:phpstan`, and writes `lynx/phpstan/types.php` instead of a stub. In `phpstan.neon`, remove `lynx/phpstan/Page.stub` from `stubFiles`, include `vendor/lynxcms/core/phpstan/extension.neon`, and delete the old stub.
+
 ## From 0.1.17 to 0.1.18
 
 - If you use the page cache with visibility rules of your own, give each rule an `audience()` (`VariesByVisitor`). A rule without one now keeps pages out of the cache, since Lynx can't tell who sees what.
