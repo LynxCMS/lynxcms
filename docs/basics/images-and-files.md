@@ -27,7 +27,7 @@ lynx()->fields->add('downloads', 'files', settings: ['extensions' => 'pdf zip'])
 | Setting | Meaning |
 | --- | --- |
 | `max_files` | Most files. `1` makes templates read one file instead of a list. |
-| `extensions` | Allowed extensions, separated by spaces. |
+| `extensions` | Allowed extensions, separated by spaces. Types a web server or a browser runs (`php`, `phtml`, `phar`, `html`, `svg`, `js`, `xml` and the like) are never allowed, since media files are served from your site's address. |
 | `max_kb` | Largest upload, in kilobytes. |
 | `min_width`, `min_height` | Smaller images are refused. |
 | `max_width`, `max_height` | Larger images are scaled down on upload. Default 2560. |
@@ -143,7 +143,7 @@ A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK
 - staff whose roles let them view the page, in the admin or on the site;
 - visitors, when the page is published, no page gate answers instead and the [visibility rules](/deeper/visibility) allow it.
 
-A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
+A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Images, video, audio, PDFs and plain text open in the browser, sandboxed; other files download. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
 
 Turning the setting on or off moves the field's existing files to the other disk, inside the same change: the originals and their image sizes are deleted from the old disk once it is saved, and sizes are made again when next asked for. Files of private fields travel in content packages like any other, and stay private on import.
 
