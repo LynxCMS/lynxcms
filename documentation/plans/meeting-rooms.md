@@ -40,7 +40,9 @@ To show more of Lynx, the app becomes the website of **Castor & Otters, Inc.**, 
 | Besides the screens | A confirmation email with an `.ics` invite (and updates and cancellations), a calendar feed per room and per person, and reminders before a meeting. |
 | Booking rules | Room opening hours, a shortest and longest booking, a buffer between meetings, and blocked times. |
 | Accounts | Lynx invitations (its own sign-in, two-factor and passkeys). No registration. |
-| Hosting | The office's own server, on the intranet. |
+| Hosting | Public, on the internet: the firm's website and the rooms are one app, and the screens reach it through their kiosk links. |
+| Attendees | Only a meeting's organizer invites people to it; attendees get the `.ics` invite and see it in their feed, but cannot invite others. |
+| After hours | When a room is closed, its door screen and the lobby show the firm's logo instead of an empty day. |
 | Size | Small: up to about 10 rooms, a few screens, under 100 staff. SQLite is enough. |
 
 ## The site's content
@@ -122,15 +124,15 @@ For signed-in staff, at `/book`: pick a date, a length and a capacity or equipme
 - **Confirmation** on booking, change and cancellation, as a queued mail with an `.ics` attachment (`METHOD:REQUEST` or `CANCEL`, a stable `UID` per booking), so Outlook, Google and Apple Calendar update the event instead of adding a new one.
 - **Reminders**: a scheduled command sends one 15 minutes before (configurable), skipping cancelled and private ones' details.
 - **Calendar feeds**: `/calendar/rooms/{token}.ics` per room and `/calendar/me/{token}.ics` per person, tokens like kiosk links. Private bookings show as busy in room feeds and in full in their organizer's feed.
-- On an intranet, mail needs the office's SMTP relay, and feeds work only for calendar apps on the office network. The guide says so.
+- Mail goes through the app's mail provider; feeds are public addresses with secret tokens, so calendar apps reach them from anywhere.
 
 ## No-shows
 
 A scheduled command every minute releases bookings of rooms that need check in, when nobody checked in within `rooms.check_in_minutes` (10) of the start: the rest of the booking is freed and the organizer gets an email. Releases are actions too, so they show in the activity log.
 
-## Hosting on an office server
+## Hosting
 
-SQLite, a queue worker and the scheduler's cron entry; `APP_URL` on the intranet name. The guide covers a small Linux box or a VM (the load test VMs are a good rehearsal), backups with `lynx:backup` plus a copy of the SQLite file, and a time server, since screens and bookings depend on the clock. One timezone for the office (`APP_TIMEZONE`), shown on every screen.
+The whole app is public: the website, the booking page and the kiosk links. SQLite, a queue worker and the scheduler's cron entry are enough at this size; `APP_URL` is the firm's address. Backups with `lynx:backup` plus a copy of the SQLite file. Each room's office sets its time zone; the server's clock must be right (a time server), since screens and bookings depend on it. Kiosk links are the only way a screen reads bookings without signing in, so they stay secret, revocable and `no-store`.
 
 ## Lynx gaps
 
@@ -164,8 +166,4 @@ Each step is a phase: it ends with something to try, and the next one starts onl
 
 ## Open questions
 
-- Hosting: a public website must be reachable from the internet, while the plan put the app on the office's server. Either the site is hosted publicly and the screens reach it through their kiosk links, or the public site and the rooms run apart. To decide before the hosting notes.
-
 - Should a door screen also allow "Book now" later? Left out for now.
-- Attendees: invite other staff (they get the `.ics` too), or organizer only?
-- Do screens need to show the next day after hours, or a "closed" state?
