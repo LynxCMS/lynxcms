@@ -16,7 +16,7 @@ use LynxCms\Forms\SubmissionPresenter;
 
 /**
  * Mail to the people who handle a form: its answers and a link to the submission in the admin.
- * Files stay on the private disk; the mail only names them.
+ * Files stay on the private disk; the mail only names them. Answers are plain text, never Markdown.
  */
 final class SubmissionReceived extends Notification implements ShouldQueue
 {
@@ -42,7 +42,7 @@ final class SubmissionReceived extends Notification implements ShouldQueue
         foreach (app(SubmissionPresenter::class)->lines($this->submission) as $line) {
             // "Name:", but "Which project?" and "I agree." keep their own punctuation.
             $label = preg_match('/[?!.:]$/u', $line['label']) === 1 ? $line['label'] : $line['label'].':';
-            $mail->line("**{$label}** {$line['value']}");
+            $mail->line("**{$label}** ".PlainMarkdown::escape($line['value']));
         }
 
         return Route::has('lynx.admin.forms.show')
