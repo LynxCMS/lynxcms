@@ -867,3 +867,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** The admin package adds `lynx:superuser`. It asks for an email; if an account has it, it offers to make that account a superuser, keeping its roles; otherwise it asks for a name and a password (twice, checked against the app's `Password::defaults()`) and creates the account through `LynxUsers` with the new `users.create` action, then gives it the `superuser` role through `lynx:install`'s action, installing Lynx first if needed. `--email`, `--name` and `--password` make it scriptable. `users.create` is superusers only and never an agent tool, and the password is never recorded. `lynx:install` offers `lynx:superuser` when no one is a superuser and it can ask (never under `--no-interaction`), and its `--user` takes an email as well as an id.
 
 **Consequences:** Installing Lynx on a new app is two commands, `migrate` and `lynx:install`, with no account made beforehand. Apps with their own user store keep working through their `LynxUsers` binding. Without the admin package, `lynx:install --user` is still the way, since the core has no user creation of its own.
+
+## ADR-0080: Invitation tokens have their own table
+
+**Status:** Accepted (amends ADR-0041)
+
+**Context:** ADR-0041 gave invitations their own password broker, on the app's password reset table, so they could last days while resets last an hour. One table meant one kind of token: a reset link was accepted by the invitation form for as long as invitations last, and an invitation token by the reset form.
+
+**Decision:** The invitation broker uses `lynx_invitation_tokens`, an admin table shaped like Laravel's reset table. Its migration moves the tokens of pending invitations there, so links already sent keep working. When an invited user sets a password through a password reset, their invitation token is deleted along with the pending invitation.
+
+**Consequences:** Each link keeps its own lifetime and opens only its own form. Sites run `lynx:migrate` once.
