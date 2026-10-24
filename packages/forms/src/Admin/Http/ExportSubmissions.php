@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * A form's submissions as CSV, newest first: date, status, language, then one column per field,
- * read through each submission's own snapshot.
+ * read through each submission's own snapshot. What visitors typed never runs as a formula.
  *
  * @internal
  */
@@ -42,8 +42,8 @@ final readonly class ExportSubmissions
                         $submission->created_at->toDateTimeString(),
                         $submission->status,
                         (string) $submission->language()?->code,
-                        (string) $submission->account(),
-                        ...array_map(fn (string $name): string => $values[$name] ?? '', array_keys($columns)),
+                        SpreadsheetCell::safe((string) $submission->account()),
+                        ...array_map(fn (string $name): string => SpreadsheetCell::safe($values[$name] ?? ''), array_keys($columns)),
                     ], escape: '');
                 }
             });

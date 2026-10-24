@@ -132,7 +132,7 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 ## In the admin
 
-**Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first. You can filter by status (new and read, archived, spam) and form, search any answer, and mark several at once. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes. Each form exports to CSV.
+**Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first. You can filter by status (new and read, archived, spam) and form, search any answer, and mark several at once. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes. Each form exports to CSV, where answers that start like a formula (`=`, `+`, `-`, `@`) get a leading quote so spreadsheets show them as text.
 
 **Results**, next to each form in **Forms › Forms**, sums the answers up per question, as a survey's results: how many chose each option, the average of numbers, the range of dates, and the latest written answers, with spam left out. A form placed on several pages, such as one survey per course, filters the results by the page it was sent from. In code, `app(\LynxCms\Forms\Results\FormResults::class)->summarize($form, $pageId)` returns the same.
 
