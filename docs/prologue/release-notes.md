@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.16
+
+Released October 24, 2026.
+
+- **Private files.** A files or images field with **Private** on keeps its files off the public disk and serves them through `/lynx-media/{page}/{file}`, only to people who may open the page: staff who may view it, or visitors when it is published, its page gates let them through and the visibility rules allow it. Switching the setting moves existing files. See [Private files](/basics/images-and-files#private-files).
+
 ## 0.1.15
 
 Released October 24, 2026.
