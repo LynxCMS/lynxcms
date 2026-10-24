@@ -19,8 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
-## From 0.1.17 to the next release
+## From 0.1.17 to 0.1.18
 
+- If you use the page cache with visibility rules of your own, give each rule an `audience()` (`VariesByVisitor`). A rule without one now keeps pages out of the cache, since Lynx can't tell who sees what.
+- `ask(confirm: ...)`, and `lynx:ask` without `--apply`, now replay an approved plan in a new transaction instead of committing the one the agent worked in. A run also stops after two minutes (`LYNX_AI_PLAN_SECONDS`).
 - Run `php artisan lynx:migrate`: invitation tokens move to their own table. Invitations already sent keep working.
 - File questions in forms that list no types now take only documents, images, spreadsheets, presentations and zip files (`FormField::DEFAULT_EXTENSIONS`). If a form must take anything, give it `extensions(['*'])`, or `*` in the builder's file types.
 
