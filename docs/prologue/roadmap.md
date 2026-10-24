@@ -12,7 +12,6 @@ These are ideas, not promises. Each needs its own decision record before work st
 
 Smaller hardening left from the October 2026 review, none of them exploitable on a default install:
 
-- The static export copies the whole public disk. It could copy only the files of the pages it exported.
 - The agent's plan mode keeps one database transaction open for the whole conversation, which locks SQLite for other writers. Recording steps and running them in a short transaction on apply would avoid it.
 - A few admin components keep properties a browser could change unlocked, such as the page table input's columns.
 - Page passwords are rate limited per address only; a limit per page and account would slow distributed guessing.
