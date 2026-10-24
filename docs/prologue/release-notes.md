@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **The agent no longer holds the database while you read its plan.** Its changes are rolled back before the plan is shown, and approving replays them in a short transaction of their own. A run also has two minutes (`LYNX_AI_PLAN_SECONDS`); past that it stops and keeps nothing, so a slow model can't keep other writers waiting on SQLite.
 - **Invitation links and password reset links are kept apart.** Invitation tokens have their own table, so a reset link, which lasts an hour, can't be used as a days-long invitation, and an invitation can't reset a password. Run `php artisan lynx:migrate`; links already sent keep working.
 - **Form uploads take common document types by default.** A file question without its own types takes documents, images, spreadsheets, presentations and zip files, not any file a visitor sends. `extensions(['*'])`, or `*` in the form builder, takes any file as before.
 - **Page passwords resist guessing from many addresses.** Besides five tries a minute per address, a protected page takes at most 100 wrong passwords an hour from all addresses together (`LYNX_PAGE_PASSWORD_MAX_FAILURES`), then refuses every try for the rest of the hour and logs a warning.

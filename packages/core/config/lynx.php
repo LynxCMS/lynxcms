@@ -113,5 +113,8 @@ return [
         'model' => env('LYNX_AI_MODEL'),
         'translation_model' => env('LYNX_AI_TRANSLATION_MODEL'),
         'max_steps' => 25,
+        // Seconds an agent run may take: its changes wait in one database transaction (which
+        // keeps other writers waiting on SQLite) until it ends, so a longer run stops and keeps nothing.
+        'plan_seconds' => (int) env('LYNX_AI_PLAN_SECONDS', 120),
     ],
 ];

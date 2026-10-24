@@ -35,7 +35,8 @@ final readonly class LynxAi
 
     /**
      * @param  list<mixed>  $attachments  laravel/ai files, or paths to local files
-     * @param  (Closure(AgentRun): bool)|null  $confirm  called with the plan before rollback; true commits it as is
+     * @param  (Closure(AgentRun): bool)|null  $confirm  called with the plan after its transaction is rolled back,
+     *                                                   so no one waits on a person reading it; true replays it (AgentRun::apply)
      */
     public function ask(string $prompt, array $attachments = [], bool $apply = false, ?Actor $actor = null, ?Closure $confirm = null): AgentRun
     {
@@ -55,15 +56,8 @@ final readonly class LynxAi
                 model: Value::nullableString(config('lynx.ai.model')),
             ));
 
-            $run = new AgentRun($response->text, $session->steps(), false, $session);
-            $commit = $apply || ($confirm !== null && $run->steps !== [] && $confirm($run));
-
-            if ($commit) {
-                DB::commit();
-                $run = new AgentRun($run->text, $run->steps, true, $session);
-            } else {
-                DB::rollBack();
-            }
+            $run = new AgentRun($response->text, $session->steps(), $apply, $session);
+            $apply ? DB::commit() : DB::rollBack();
         } catch (Throwable $e) {
             DB::rollBack();
 
@@ -72,7 +66,7 @@ final readonly class LynxAi
             $this->runner->flushCaches();
         }
 
-        return $run;
+        return ! $apply && $confirm !== null && $run->steps !== [] && $confirm($run) ? $run->apply() : $run;
     }
 
     /**

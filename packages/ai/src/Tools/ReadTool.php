@@ -10,6 +10,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
+use LynxCms\Ai\AgentSession;
 use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Agents\PageHistory;
 use LynxCms\Core\Agents\ReadToolRegistry;
@@ -31,14 +32,15 @@ final readonly class ReadTool implements Tool
         private string $description,
         private Closure $schema,
         private Closure $handler,
+        private ?AgentSession $session = null,
     ) {}
 
     /**
      * @return list<self>
      */
-    public static function all(AgentToolkit $toolkit): array
+    public static function all(AgentToolkit $toolkit, ?AgentSession $session = null): array
     {
-        return [
+        $tools = [
             new self('describe_schema', 'Describe the site: languages with fallback chains, templates and fields, field types, components, selector syntax. Call this first.',
                 fn (JsonSchema $s): array => [], fn (array $a): mixed => $toolkit->describeSchema()),
             new self('describe_field_types', 'Field types with their description and accepted settings (max_length, min/max, format, templates...).',
@@ -64,6 +66,8 @@ final readonly class ReadTool implements Tool
                 app(ReadToolRegistry::class)->all(),
             ),
         ];
+
+        return array_map(fn (self $tool): self => new self($tool->name, $tool->description, $tool->schema, $tool->handler, $session), $tools);
     }
 
     public function name(): string
@@ -83,6 +87,8 @@ final readonly class ReadTool implements Tool
 
     public function handle(Request $request): string
     {
+        $this->session?->assertTimeLeft();
+
         try {
             $result = ($this->handler)($request->all());
         } catch (SelectorException|AuthorizationException $e) {
