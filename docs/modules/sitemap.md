@@ -30,7 +30,7 @@ Choose it in the admin or with `'group_by' => 'template'` in the config.
 
 ## Cache
 
-Each file is built on its first request and cached. Any change to pages, templates or languages drops the cache, so the next request builds it again. Responses carry an ETag, so a crawler that already has the current file gets a `304`.
+Each file is built on its first request and cached. Any change to pages, templates or languages drops the cache, so the next request builds it again. Responses carry an ETag, so a crawler that already has the current file gets a `304`. The cached files are what a guest sees. A visitor your [visibility rules](/deeper/visibility#caches-and-audiences) show more to, such as a signed-in member, gets a sitemap built for them alone, never cached and sent with `no-store`.
 
 ```bash
 php artisan lynx:sitemap            # the parts and their URLs

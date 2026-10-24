@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Sitemaps share only a plain guest's build.** A visitor your visibility rules show more to gets a sitemap built for them alone, never cached and sent with `no-store`, so their pages never reach the copy search engines read.
 - **The page cache stores only what a plain guest sees.** A page rendered for a visitor a visibility rule treats apart (its `audience()` names a group, or the rule has none) is no longer stored, so a rule based on a header, an address or a cookie can't put its version in the copy every guest gets.
 
 ## 0.1.17
