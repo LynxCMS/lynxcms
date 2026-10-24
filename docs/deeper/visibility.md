@@ -27,7 +27,7 @@ Then register the rule, with a gate for the URLs:
 
 <<< @/snippets/advanced/members-only.php#register{php}
 
-A gate receives the page and the request. Returning a response sends it instead of the page; returning `null` lets the page through, to the next gate or to the view.
+A gate receives the page and the request. Returning a response sends it instead of the page; returning `null` lets the page through, to the next gate or to the view. Pages that only a gate protects are still listed in the sitemap, with their URL and date; leave them out with a [sitemap filter](/modules/sitemap) when their addresses are private too.
 
 Now guests don't see members-only posts on the blog page, in "latest posts" or in menus, and opening one's URL sends them to sign in. Signed in users see everything as before.
 

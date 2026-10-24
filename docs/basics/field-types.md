@@ -302,7 +302,7 @@ Lynx::components()->register('enrol-form', EnrolForm::class,
 );
 ```
 
-The field's `allowed` setting limits which components editors may pick. In the page's view, render the component chosen in a `component` field, here one named `enrol`, with `@lynxComponent($page, 'enrol')`. Settings are shared by every language, so keep them to configuration such as a capacity or a layout. Components that use the `LynxCms\Core\Livewire\UsesLynxPage` trait read the page with `$this->page()` and keep the visitor's language across Livewire requests.
+The field's `allowed` setting limits which components editors may pick. In the page's view, render the component chosen in a `component` field, here one named `enrol`, with `@lynxComponent($page, 'enrol')`. Settings are shared by every language, so keep them to configuration such as a capacity or a layout. They also reach the visitor's browser with the component's state, so never put secrets in them, such as an API key or an address you don't publish; keep those in config. Components that use the `LynxCms\Core\Livewire\UsesLynxPage` trait read the page with `$this->page()` and keep the visitor's language across Livewire requests.
 
 ### `options`
 

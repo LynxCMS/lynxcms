@@ -12,6 +12,8 @@ use Override;
 
 final class DescribeSchemaTool extends Tool
 {
+    use ActsForUser;
+
     #[Override]
     protected string $name = 'describe_schema';
 
@@ -20,6 +22,6 @@ final class DescribeSchemaTool extends Tool
 
     public function handle(Request $request, AgentToolkit $toolkit): Response
     {
-        return Response::json($toolkit->describeSchema());
+        return $this->asUser($request, fn (): Response => Response::json($toolkit->describeSchema()));
     }
 }

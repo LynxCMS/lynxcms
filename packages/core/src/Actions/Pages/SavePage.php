@@ -173,7 +173,8 @@ final class SavePage extends Action
     /**
      * Permissions (ADR-0033): pages.create under the parent for the new page's template, or
      * pages.edit on the page; pages.publish when the save publishes or unpublishes (a new page
-     * not created unpublished counts as publishing); pages.status for hidden and locked.
+     * not created unpublished counts as publishing); pages.status for hidden and locked;
+     * system.manage to set or clear the system flag.
      */
     private function authorize(ActionContext $context, Page $page, Template $template, bool $isNew): void
     {
@@ -191,6 +192,12 @@ final class SavePage extends Action
 
         if (($changed & ~PageStatus::UNPUBLISHED) !== 0) {
             $context->authorize('pages.status', $target ?? ($page->parentId === null ? null : $this->loader->find($page->parentId)), $isNew ? $template : null);
+        }
+
+        // System pages skip family rules and hide from the tree, so only system.manage may make
+        // one; modules create theirs inside their own actions, which are not checked again.
+        if ((($stored ^ $page->status) & PageStatus::SYSTEM) !== 0) {
+            $context->authorize('system.manage', $target ?? ($page->parentId === null ? null : $this->loader->find($page->parentId)));
         }
     }
 

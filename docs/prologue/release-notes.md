@@ -19,6 +19,18 @@ Released October 24, 2026. A security release: update soon.
 - **Form answers stay plain text.** In the CSV export, an answer that starts like a formula (`=`, `+`, `-`, `@`) gets a leading quote, so a spreadsheet shows it instead of running it. In the staff email, Markdown in answers is escaped, so a visitor can no longer add links or images to a mail your site sends.
 - **The agent reads as the user it works for.** Its read tools (`find_pages`, `get_page`, module tools such as `list_submissions`) ran as whoever ran the code, which in a command or a queued job meant every right. They now run with the roles of the run's actor, like its writes.
 - **URL downloads stay on the internet.** `media.store`, which the admin, MCP clients and the agent use, now downloads only from public web servers on the usual ports, checks every redirect, and stops at the field's size limit. Before, it fetched any address, including the server's own network. See [Storing files from code](/basics/images-and-files#storing-files-from-code).
+- **Smaller fixes.**
+  - Creating a page with the `system` status needs `system.manage`.
+  - The invitation screen names the account only for a valid invitation, and is rate limited.
+  - The MCP web route takes only Sanctum tokens with the `lynx:mcp` ability.
+  - `inspect_seo` and the SEO preview check `pages.view` on the page itself.
+  - `describe_schema` needs `pages.view` or `schema.manage`.
+  - Read tools that name no permission need `pages.view`.
+  - Page references show visitors only published pages that are out of the trash.
+  - `media.store` never reads a file path from its input.
+  - Moving a field's files on a privacy switch moves only files in the page's own folder.
+  - Images that declare more than 50 million pixels are refused before they are decoded.
+  - Content package archives with entries outside the package are refused before extraction.
 
 ## 0.1.16
 

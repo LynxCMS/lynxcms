@@ -179,6 +179,8 @@ A selector built from a request needs a cap, so a visitor can't ask for every pa
 lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
 ```
 
+Never paste a visitor's words into a selector you write, as in `"template=post, title%={$request->q}"`: they could add their own conditions, such as `include=unpublished` to list drafts. Check them against what you expect (a known category name, digits for an id) before they go in.
+
 ## Filters and pagination
 
 A list that visitors filter, sort and page through is a controller like any other. Validate the query string, map each choice to a selector clause you wrote yourself, and keep visitors' text out of the selector's syntax. `start` and `limit` select one page of results, and `total()` counts every match, so Laravel's paginator can draw the links:

@@ -123,11 +123,13 @@ final readonly class AgentToolkit
 
     /**
      * The whole content model: languages, templates with their fields, field types, components.
+     * For actors who may view pages or manage the schema: it maps where the content is.
      *
      * @return array<string, mixed>
      */
     public function describeSchema(): array
     {
+        $this->authorizer->authorizeAction($this->runner->actor(), 'pages.view|schema.manage', 'describe_schema');
         $default = $this->languages->default();
 
         return [

@@ -39,7 +39,16 @@ final class PageVisibility
      */
     public function isActive(): bool
     {
-        return $this->rules !== [] && $this->suspended === 0 && ($this->asVisitor > 0 || ! app()->runningInConsole() || app()->runningUnitTests());
+        return $this->rules !== [] && $this->servesVisitors();
+    }
+
+    /**
+     * Whether what is read now is for visitors, rules or not: true where isActive() would be with
+     * a rule, false on admin and MCP routes, in withoutRules(), commands and workers.
+     */
+    public function servesVisitors(): bool
+    {
+        return $this->suspended === 0 && ($this->asVisitor > 0 || ! app()->runningInConsole() || app()->runningUnitTests());
     }
 
     /**

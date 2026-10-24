@@ -25,6 +25,9 @@ After `composer update`, Composer lists any Lynx package with database changes w
 - Web requests with nobody signed in run actions as a visitor, who may only run actions open to everyone. Code that writes on a visitor's behalf (a webhook, a public form of your own) must say so with `lynx()->actingAs(Actor::system(), fn () => ...)`; without it, it now fails with an authorization error.
 - Files and images fields no longer accept types a server or a browser runs, even if their extensions setting lists one (`php`, `html`, `svg`, `js`…). Files already stored stay where they are; check public disks for any you did not expect.
 - `media.store` no longer downloads from hosts on your own network. If an importer downloads from one, add it to `downloads.allowed_hosts` in `config/lynx-media.php`.
+- MCP clients on the web route need a token made with the `lynx:mcp` ability: `$user->createToken('assistant', ['lynx:mcp'])`. Tokens with every ability (`['*']`) are refused too; set `lynx.mcp.web.ability` to `''` to accept any token.
+- `media.store` no longer takes an `upload` path. Send the file's contents as `base64`, with a `filename`.
+- Templates that list page references now get only published pages, out of the trash, on the site. The admin still gets every page.
 - MCP clients and `lynx:ask` acting for no user need `LYNX_ANONYMOUS_ROLE` on every site, as they already did on sites with roles.
 
 ## From 0.1.15 to 0.1.16

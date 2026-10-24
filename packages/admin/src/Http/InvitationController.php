@@ -25,15 +25,17 @@ use LynxCms\Core\Support\Value;
  */
 final class InvitationController
 {
+    /** The greeting names the user only for a valid invitation, so the page tells no one who has an account. */
     public function show(Request $request, string $token): View
     {
         $email = $request->string('email')->toString();
         $user = Auth::getProvider()->retrieveByCredentials(['email' => $email]);
+        $isInvited = $user instanceof CanResetPassword && Invitations::broker()->tokenExists($user, $token);
 
         return view('lynx-admin::auth.invitation', [
             'token' => $token,
             'email' => $email,
-            'name' => $user === null ? null : Value::nullableString(data_get($user, 'name')),
+            'name' => $isInvited ? Value::nullableString(data_get($user, 'name')) : null,
         ]);
     }
 

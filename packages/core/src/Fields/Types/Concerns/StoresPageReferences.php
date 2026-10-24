@@ -12,6 +12,8 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Pages\PageLoader;
+use LynxCms\Core\Pages\Publication;
+use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Pages\Visibility\PageVisibility;
 use LynxCms\Core\Support\Value;
 use stdClass;
@@ -79,8 +81,15 @@ trait StoresPageReferences
     /** A PageArray, or for a field holding one page (multiple off) that page or null (ADR-0070). */
     public function present(mixed $value, Field $field): mixed
     {
-        // Pages a visibility rule refuses are left out for the visitor (ADR-0062).
-        $pages = app(PageVisibility::class)->only(app(PageLoader::class)->many(Value::ints((array) $value)));
+        // Visitors get only pages they could open: published, out of the trash, and allowed by
+        // the visibility rules (ADR-0062). The admin and commands get every referenced page.
+        $visibility = app(PageVisibility::class);
+        $pages = $visibility->only(app(PageLoader::class)->many(Value::ints((array) $value)));
+
+        if ($visibility->servesVisitors()) {
+            [$publication, $trash] = [app(Publication::class), app(Trash::class)];
+            $pages = new PageArray(array_values(array_filter($pages->all(), fn (Page $page): bool => ! $trash->holds((int) $page->id) && $publication->isPublished($page))));
+        }
 
         return $this->holdsSeveral($field->config()) ? $pages : $pages->first();
     }

@@ -69,6 +69,14 @@ it('lets the invited user choose a password and signs them in', function (): voi
     expect(Auth::user()?->getAuthIdentifier())->toBe(User::query()->where('email', 'bruno@example.com')->value('id'));
 });
 
+it('names no one for an invitation link without a valid token', function (): void {
+    invite();
+    Auth::logout();
+
+    $this->get('/lynx/invitation/made-up-token?email=ada%40example.com')->assertOk()->assertDontSee('Ada Admin');
+    $this->get('/lynx/invitation/made-up-token?email=bruno%40example.com')->assertOk()->assertDontSee('Bruno Costa');
+});
+
 it('keeps the link valid for days, not the hour of a password reset', function (): void {
     invite();
     $token = (string) str(invitationLink('bruno@example.com'))->after('/lynx/invitation/')->before('?');

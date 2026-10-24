@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Mcp\Facades\Mcp;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Support\Value;
+use LynxCms\Mcp\Http\RequireTokenAbility;
 
 final class McpServiceProvider extends ServiceProvider
 {
@@ -19,7 +20,7 @@ final class McpServiceProvider extends ServiceProvider
         // HTTP server for remote clients, behind the app's auth middleware.
         if (config('lynx.mcp.web.enabled', false)) {
             Mcp::web(Value::string(config('lynx.mcp.web.path', '/mcp/lynx')), LynxServer::class)
-                ->middleware([...Value::strings(config('lynx.mcp.web.middleware', ['auth:sanctum'])), WithoutPageVisibility::class]);
+                ->middleware([...Value::strings(config('lynx.mcp.web.middleware', ['auth:sanctum'])), RequireTokenAbility::class, WithoutPageVisibility::class]);
         }
     }
 }

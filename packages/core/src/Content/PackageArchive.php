@@ -39,10 +39,29 @@ final class PackageArchive
             throw new RuntimeException("Cannot read {$zipPath}.");
         }
 
+        for ($index = 0; $index < $zip->numFiles; $index++) {
+            $name = (string) $zip->getNameIndex($index);
+
+            if (! self::isSafeEntry($name)) {
+                $zip->close();
+
+                throw new RuntimeException("{$zipPath} holds a file outside the package: [{$name}].");
+            }
+        }
+
         $directory = sys_get_temp_dir().'/lynx-import-'.bin2hex(random_bytes(6));
         $zip->extractTo($directory);
         $zip->close();
 
         return $directory;
+    }
+
+    /** A relative path inside the archive: no absolute path, drive letter or ".." segment. */
+    private static function isSafeEntry(string $name): bool
+    {
+        $path = str_replace('\\', '/', $name);
+
+        return $path !== '' && ! str_starts_with($path, '/') && preg_match('/^[A-Za-z]:/', $path) !== 1
+            && ! in_array('..', explode('/', $path), true);
     }
 }

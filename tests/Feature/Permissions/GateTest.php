@@ -11,6 +11,7 @@ use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Mcp\LynxServer;
+use LynxCms\Mcp\Tools\DescribeSchemaTool;
 use LynxCms\Mcp\Tools\FindPagesTool;
 use LynxCms\Mcp\Tools\GetPageTool;
 
@@ -62,6 +63,14 @@ it('opens the admin to users holding admin.access', function (): void {
 
 it('keeps the admin open to signed in users until someone has a role', function (): void {
     $this->actingAs(new GenericUser(['id' => 9]))->get('/lynx/pages')->assertOk();
+});
+
+it('describes the site only to MCP clients who may view pages or manage the schema', function (): void {
+    $viewer = member(5, ['pages.view' => []]);
+    $outsider = member(6, ['forms.view' => []]);
+
+    LynxServer::actingAs($viewer)->tool(DescribeSchemaTool::class)->assertOk()->assertSee('course');
+    LynxServer::actingAs($outsider)->tool(DescribeSchemaTool::class)->assertHasErrors(['describe_schema']);
 });
 
 it('lets MCP clients read pages only with pages.view', function (): void {

@@ -35,6 +35,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `agents.allowed_languages` | `[]` | Languages agents may write; empty means all. |
 | `agents.default_limit`, `agents.max_limit` | `25`, `100` | Page limits for agent searches. |
 | `mcp.web.enabled` | `false` | Serve the MCP server over HTTP at `mcp.web.path`. |
+| `mcp.web.ability` | `lynx:mcp` | Ability a Sanctum token needs for the MCP web route; empty accepts any token. |
 | `ai.provider`, `ai.model`, `ai.translation_model` | `null` | The agent's provider and models. |
 
 ## config/lynx-admin.php

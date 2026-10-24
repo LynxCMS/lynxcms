@@ -38,7 +38,11 @@ Other clients take the same command in their configuration, such as `.mcp.json`:
 
 A client started this way acts for no user. It gets the role named by `LYNX_ANONYMOUS_ROLE`, or is refused without one. On your own machine, `LYNX_ANONYMOUS_ROLE=superuser` in `.env` is convenient. Never set it on a server that others can reach.
 
-To serve the MCP server over HTTP, set `LYNX_MCP_WEB=true`. It listens at `/mcp/lynx` behind `auth:sanctum` (see `lynx.mcp.web`), and each client acts as the user its token belongs to, with that user's roles.
+To serve the MCP server over HTTP, set `LYNX_MCP_WEB=true`. It listens at `/mcp/lynx` behind `auth:sanctum` (see `lynx.mcp.web`), and each client acts as the user its token belongs to, with that user's roles. Tokens must be made for it, with the `lynx:mcp` ability, so tokens your app issues for other uses don't open the MCP server:
+
+```php
+$token = $user->createToken('assistant', ['lynx:mcp'])->plainTextToken;
+```
 
 ### Your own read tools
 
@@ -66,6 +70,8 @@ php artisan lynx:ask "Create a template called consulting, copy the course field
 The agent works in plan mode: it dry-runs its changes and you approve the plan before anything is written. `--apply` skips the question.
 
 The agent reads and writes with the roles of the user it works for: `lynx()->ai()->ask($prompt, actor: Actor::ai($userId))`, or the signed-in user by default. That holds in a command or a queued job too, which otherwise run with every right.
+
+From code, `ask()` takes uploaded files or paths as attachments. Pass the files a person uploaded, never a path from a request, or the agent reads whatever file the path names.
 
 Plan mode undoes database changes only. Anything a tool does outside the database while planning has already happened when you review the plan: `media.store` downloads the URL it was given, `static.export` writes an export, and listeners of yours that call other services run. Keep that in mind before letting the agent read content others wrote, such as form submissions, since that text can ask it to do things.
 
