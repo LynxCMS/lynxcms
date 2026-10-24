@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin;
 
+use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -50,6 +51,7 @@ use LynxCms\Admin\View\TailwindMergeMacros;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Pages\Trash;
+use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -164,13 +166,24 @@ final class AdminServiceProvider extends ServiceProvider
     }
 
     /**
-     * The default rule: holding admin.access (ADR-0033), which every signed in user has until
-     * someone is given a role. Apps can define their own rule instead.
+     * The default rule: holding admin.access (ADR-0033). With debugging on, a refusal on a site
+     * where no one is a superuser yet says how to make one (ADR-0078). Apps can define their own
+     * rule instead.
      */
     private function defineDefaultGate(): void
     {
-        if (! Gate::has(self::GATE)) {
-            Gate::define(self::GATE, fn (Authenticatable $user): bool => Gate::forUser($user)->allows('lynx.admin.access'));
+        if (Gate::has(self::GATE)) {
+            return;
         }
+
+        Gate::define(self::GATE, function (Authenticatable $user): Response {
+            if (Gate::forUser($user)->allows('lynx.admin.access')) {
+                return Response::allow();
+            }
+
+            $isFirstRun = Value::bool(config('app.debug')) && ! $this->app->make(PermissionHolders::class)->hasSuperuser();
+
+            return Response::deny($isFirstRun ? 'No one is a superuser yet. Run php artisan lynx:install --user=ID to make one.' : null);
+        });
     }
 }

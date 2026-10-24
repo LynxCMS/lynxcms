@@ -15,13 +15,15 @@ use LynxCms\Core\Support\Flushable;
 use LynxCms\Core\Support\Value;
 
 /**
- * Whether an actor holds a permission, optionally for a page or a template (ADR-0033).
+ * Whether an actor holds a permission, optionally for a page or a template (ADR-0033, ADR-0078).
  *
- * Until any user has a role, signed in users keep full rights, so upgrading locks nobody out.
- * The console and the system actor always have every right. Users, and MCP clients and agents
- * acting for a user, have the union of that user's roles; a superuser role passes every check.
- * MCP clients and agents without a user get the role named by lynx.permissions.anonymous_role,
- * or nothing. Grants can be limited to templates and to branches of the tree.
+ * A user without a role has no rights; lynx.permissions.open_until_roles brings back the old
+ * "everyone may do everything until any user has a role", for local work only. Visitors who are
+ * not signed in hold only what is open to everyone. The console and the system actor always have
+ * every right. Users, and MCP clients and agents acting for a user, have the union of that user's
+ * roles; a superuser role passes every check. MCP clients and agents without a user get the role
+ * named by lynx.permissions.anonymous_role, or nothing. Grants can be limited to templates and to
+ * branches of the tree.
  *
  * @api
  */
@@ -45,7 +47,7 @@ final class Authorizer implements Flushable
      */
     public function allows(Actor $actor, string $permission, ?Page $page = null, ?Template $template = null): bool
     {
-        if (in_array($actor->kind, [Actor::CLI, Actor::SYSTEM], true) || ! $this->isEnforced()) {
+        if ($this->hasEveryRight($actor)) {
             return true;
         }
 
@@ -135,7 +137,7 @@ final class Authorizer implements Flushable
 
     /**
      * The pages a permission reaches, for filtering lists: null when nothing limits it (the
-     * console, superusers, roles not enforced yet, or one grant without templates and branches).
+     * console, superusers, open mode before any role, or one grant without templates and branches).
      * For page permissions, the branches of modules whose permission the user holds count too.
      */
     public function scopeOf(Actor $actor, string $permission): ?PageScope
@@ -154,17 +156,27 @@ final class Authorizer implements Flushable
 
     public function isSuperuser(Actor $actor): bool
     {
-        if (in_array($actor->kind, [Actor::CLI, Actor::SYSTEM], true) || ! $this->isEnforced()) {
+        if ($this->hasEveryRight($actor)) {
             return true;
         }
 
         return $this->rightsOf($actor)['superuser'] ?? false;
     }
 
-    /** False until any user holds a role: then every user is checked. */
+    /** The console and the system always; anyone but a visitor in open mode before any role. */
+    private function hasEveryRight(Actor $actor): bool
+    {
+        return in_array($actor->kind, [Actor::CLI, Actor::SYSTEM], true)
+            || ($actor->kind !== Actor::GUEST && ! $this->isEnforced());
+    }
+
+    /**
+     * True unless lynx.permissions.open_until_roles is on and no user holds a role yet: then
+     * every actor passes, as before ADR-0078.
+     */
     public function isEnforced(): bool
     {
-        return $this->isEnforced ??= RoleAssignment::query()->exists();
+        return $this->isEnforced ??= ! Value::bool(config('lynx.permissions.open_until_roles')) || RoleAssignment::query()->exists();
     }
 
     public function flush(): void

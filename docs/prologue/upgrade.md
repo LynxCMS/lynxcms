@@ -19,6 +19,12 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.16 to 0.1.17
+
+- A user without a role no longer has every right while no one holds a role. If nobody on your site has a role yet, nobody can open the admin after the update: run `php artisan lynx:install --user=ID` with your user's id. Sites that already have a superuser see no change.
+- Web requests with nobody signed in run actions as a visitor, who may only run actions open to everyone. Code that writes on a visitor's behalf (a webhook, a public form of your own) must say so with `lynx()->actingAs(Actor::system(), fn () => ...)`; without it, it now fails with an authorization error.
+- MCP clients and `lynx:ask` acting for no user need `LYNX_ANONYMOUS_ROLE` on every site, as they already did on sites with roles.
+
 ## From 0.1.15 to 0.1.16
 
 No changes needed. Public fields keep their files and URLs. Before turning a field private on a server with several machines, make sure `LYNX_MEDIA_PRIVATE_DISK` is a disk every machine reads, such as S3 without public access.

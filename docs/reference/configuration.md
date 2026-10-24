@@ -29,6 +29,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `backups.schedule` | `null` | `daily` or `hourly` to run backups from the scheduler. |
 | `revisions.keep` | `50` | Revisions kept per page. |
 | `edit_lock_seconds` | `120` | How long an editor's lock lasts without renewal. |
+| `permissions.open_until_roles` | `false` | Every signed in user may do everything until any user has a role (`LYNX_OPEN_UNTIL_ROLES`); local work only. |
 | `permissions.anonymous_role` | `null` | Role for MCP clients and agents acting for no user. |
 | `permissions.registration_role` | `guest` | Role for people who sign up (`LYNX_REGISTRATION_ROLE`); `null` gives none. |
 | `agents.allowed_languages` | `[]` | Languages agents may write; empty means all. |

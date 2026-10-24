@@ -359,7 +359,7 @@ The totals of paged results are now counted only when `total()` is read, which r
 
 ## ADR-0033: Roles and permissions are enforced in core, without locking anyone out on upgrade
 
-**Status:** Accepted
+**Status:** Accepted (the open rights until a role exists are superseded by ADR-0078)
 
 **Context:** One gate (`accessLynxAdmin`) let any signed in user do everything in the admin, and MCP clients, the agent and the pages API were not limited at all. Sites with several editors need "blog editors only edit the blog" and "only publishers publish", and agents that can do no more than the person behind them.
 
@@ -800,7 +800,7 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 ## ADR-0073: People who sign up get a guest role, so a sign-up never has full rights
 
-**Status:** Accepted (amends ADR-0033)
+**Status:** Accepted (amends ADR-0033; its warning applies only in open mode since ADR-0078)
 
 **Context:** ADR-0033 keeps full rights for every signed in user until any user holds a role, so an install or upgrade never locks anyone out. Sites that let visitors sign up (a members area, bookings, surveys) break that promise's premise: on a site where the owner never ran `lynx:install --user`, the first person to sign up would open the admin with every right.
 
@@ -847,3 +847,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** Media fields get a `private` setting. A private field's files are stored on `lynx-media.private_disk` (default `local`) and their URLs point to `/lynx-media/{page}/{file}`, a route of the media package. It serves a file of a page to staff whose roles let them view the page, and otherwise only when the page is published, no page gate answers instead (ADR-0062) and the visibility rules allow it; a gate's answer becomes the file's answer. Responses are `Cache-Control: private` and `X-Robots-Tag: noindex`. Privacy is a property of the field, so values are unchanged: a presented file learns it from its field's settings, image sizes follow their original, and content packages read from either disk and write through the field (CarriesFiles::mapFiles sets the disk). Changing the setting moves the field's files, found in its own values, in repeater and matrix items and in revisions: they are copied within fields.update, and the originals and their sizes are deleted from the old disk only after the change commits. Pruning and deleting a page's folder cover both disks.
 
 **Consequences:** Public sites lose nothing: public fields keep direct disk URLs. Each private file costs a PHP request, and private files don't work in a static export. Several servers need a private disk they all read. A file referenced by two fields of different privacy (rare: each upload names its field) ends up on the disk of the field changed last.
+
+## ADR-0078: Closed by default: a user without a role has no rights, and a visitor is not the system
+
+**Status:** Accepted (supersedes the open rights of ADR-0033 and the warning of ADR-0073)
+
+**Context:** ADR-0033 gave every signed in user every right until any user held a role, so an install or upgrade never locked anyone out. That turned out to be a hole, not a convenience. Any account of the host app (a customer of a shop, a user created by a seeder, a Socialite callback or an import) could open the admin, change the schema and make itself a superuser through `roles.assign`, so the first person to try kept the site. ADR-0073 closed it only for sign-ups that fire `Registered`. MCP clients and agents without a user had every right too. Separately, a web request with nobody signed in ran actions as the `system` actor, which passes every check, so app code such as a public form or a webhook calling `lynx()->run()` wrote with every right.
+
+**Decision:** A user without a role has no rights, whether or not anyone else holds one; `Authorizer::isEnforced()` is true. `lynx.permissions.open_until_roles` (`LYNX_OPEN_UNTIL_ROLES`, default false) brings the old behaviour back for local work, and never for visitors. A web request with nobody signed in acts as the new `guest` actor (`Actor::guest()`), which holds only actions open to everyone (`languages.set_current`, `forms.submit`); a global middleware marks web requests so this holds in tests too. Queue workers, the scheduler and Artisan stay `cli`. Code that must write for a visitor says so: `lynx()->actingAs(Actor::system(), fn () => ...)`. `lynx:install --user=ID` still makes the first superuser and recovers a site without one; `lynx:install` warns when no one is a superuser, and with debugging on the admin's 403 says how to make one.
+
+**Consequences:** Installing Lynx on an app with users gives none of them rights until the owner runs `lynx:install --user=ID`. An upgraded site where no one held a role locks everyone out of the admin until then; the upgrade guide says so. MCP clients and `lynx:ask` acting for no user need `LYNX_ANONYMOUS_ROLE`, as they already did on sites with roles. App code that wrote from guest requests without `actingAs` is refused with an authorization error, which is the point. The test suite keeps open mode for brevity (its tests act as the site owner without a role); the tests of this decision turn it off.

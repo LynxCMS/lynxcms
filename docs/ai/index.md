@@ -36,7 +36,7 @@ Other clients take the same command in their configuration, such as `.mcp.json`:
 }
 ```
 
-A client started this way acts for no user. Before any user has a role, it may do everything. After that, it gets the role named by `LYNX_ANONYMOUS_ROLE`, or is refused without one. On your own machine, `LYNX_ANONYMOUS_ROLE=superuser` in `.env` is convenient. Never set it on a server that others can reach.
+A client started this way acts for no user. It gets the role named by `LYNX_ANONYMOUS_ROLE`, or is refused without one. On your own machine, `LYNX_ANONYMOUS_ROLE=superuser` in `.env` is convenient. Never set it on a server that others can reach.
 
 To serve the MCP server over HTTP, set `LYNX_MCP_WEB=true`. It listens at `/mcp/lynx` behind `auth:sanctum` (see `lynx.mcp.web`), and each client acts as the user its token belongs to, with that user's roles.
 

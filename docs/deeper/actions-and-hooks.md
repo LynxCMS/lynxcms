@@ -54,7 +54,7 @@ Events are never dispatched for a dry run, so listeners don't send mail or clear
 
 ### Acting as a user
 
-Code runs with the permissions of the signed in user, and Artisan commands run as `cli`, which may do everything. To run code as a specific user, for example in a queued job, use `actingAs()`:
+Code runs with the permissions of the signed in user. In a web request with nobody signed in, it runs as a visitor, who may only run actions open to everyone. Artisan commands, queue workers and the scheduler run as `cli`, which may do everything. To run code as a specific user, for example in a queued job, or as the system for a visitor, use `actingAs()`:
 
 ```php
 use LynxCms\Contracts\Actions\Actor;

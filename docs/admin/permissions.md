@@ -37,13 +37,21 @@ lynx()->run(SaveRole::class, ['name' => 'course-editor', 'grants' => [
 lynx()->run(AssignRoles::class, ['user' => '42', 'roles' => ['course-editor']]);
 ```
 
-Until any user has a role, every signed in user may do everything.
+A user without a role can do nothing in Lynx: the admin answers 403, and the actions they run are refused. `php artisan lynx:install --user=ID` makes someone a superuser, on a new site or on one where nobody is.
+
+Visitors who are not signed in can run only the actions open to everyone, such as submitting a form. Code that writes on a visitor's behalf, such as a webhook that updates a page, says so:
+
+```php
+use LynxCms\Contracts\Actions\Actor;
+
+lynx()->actingAs(Actor::system(), fn () => $session->save());
+```
+
+On your own machine, `LYNX_OPEN_UNTIL_ROLES=true` brings back the open mode of older releases: until any user has a role, every signed in user may do everything. Never set it on a server others can reach.
 
 ## People who sign up
 
 Install also creates a `guest` role with no grants. If your app lets visitors sign up (Fortify, Breeze or your own registration), Lynx gives each new user the `guest` role when Laravel's `Registered` event fires. They see the website like any visitor, and the admin answers 403. Users who already hold a role keep their roles.
-
-The first sign-up turns the permission checks on for everyone, so make yourself a superuser before you open registration: `php artisan lynx:install --user=1`. If nobody is a superuser yet when someone signs up, Lynx logs a warning with that command.
 
 Set `LYNX_REGISTRATION_ROLE` to give sign-ups another role, such as one with grants of your own, or to `null` to give them none.
 
@@ -72,4 +80,4 @@ A permission guards your code, and actions guard their own writes. A user with `
 
 ## Agents and MCP clients
 
-Agents act with the roles of the user they work for. MCP clients that act for no user get `LYNX_ANONYMOUS_ROLE`; without it they are refused once roles are in use.
+Agents act with the roles of the user they work for. MCP clients that act for no user get `LYNX_ANONYMOUS_ROLE`; without it they are refused.

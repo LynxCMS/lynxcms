@@ -91,6 +91,10 @@ abstract class TestCase extends Orchestra
             ]));
         }
 
+        // Most tests act as the site's owner without giving them a role, so the suite keeps the
+        // old open mode; tests of the closed default turn it off (ADR-0078).
+        $app['config']->set('lynx.permissions.open_until_roles', true);
+
         // DB_PREFIX simulates a host app that uses Laravel's table prefix setting.
         $app['config']->set("database.connections.{$connection}.prefix", env('DB_PREFIX', ''));
     }

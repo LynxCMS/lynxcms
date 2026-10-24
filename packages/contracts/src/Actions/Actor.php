@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Contracts\Actions;
 
 /**
- * Who performed an action: a logged-in user, the CLI, an MCP client or the built-in AI agent.
+ * Who performed an action: a logged-in user, a visitor who is not signed in, the CLI, an MCP client,
+ * the built-in AI agent or the system (queued jobs, scheduled tasks, code that asks for it).
  *
  * @api
  */
@@ -20,6 +21,8 @@ final readonly class Actor
     public const string AI = 'ai';
 
     public const string SYSTEM = 'system';
+
+    public const string GUEST = 'guest';
 
     /**
      * @param  array<string, mixed>  $meta
@@ -38,6 +41,12 @@ final readonly class Actor
     public static function system(): self
     {
         return new self(self::SYSTEM);
+    }
+
+    /** A web request without a signed-in user: only actions open to everyone. */
+    public static function guest(): self
+    {
+        return new self(self::GUEST);
     }
 
     public static function user(int|string $id): self
