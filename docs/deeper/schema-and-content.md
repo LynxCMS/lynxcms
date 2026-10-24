@@ -10,6 +10,8 @@ A Lynx site's database holds two different things: the **schema** (languages, fi
 - The schema belongs in your repository, like migrations: you change it on your machine, commit it, and apply it on every other environment.
 - Content belongs to the site that holds it. When it has to move, such as from staging to production or into a fresh install for a demo, you move it as a **content package**.
 
+For the day to day of developing against a site already in production, see [Working on a Live Site](/deeper/live-site).
+
 ## Schema files
 
 Export the schema as YAML, one file per language, field, template and role, in `lynx/schema`:
