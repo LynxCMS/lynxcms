@@ -13,7 +13,6 @@ These are ideas, not promises. Each needs its own decision record before work st
 Smaller hardening left from the October 2026 review, none of them exploitable on a default install:
 
 - The agent's plan mode keeps one database transaction open for the whole conversation, which locks SQLite for other writers. Recording steps and running them in a short transaction on apply would avoid it.
-- Form file fields without an extensions list accept any file type; a default list would be safer.
 - Invitation tokens share the password reset table; their own table would keep the two apart.
 
 ## Template strings

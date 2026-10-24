@@ -20,7 +20,7 @@ Register it in a service provider:
 lynx()->forms()->register(QuoteForm::class);
 ```
 
-Field types: `text`, `email`, `tel`, `textarea`, `select`, `radio`, `checkboxes`, `checkbox`, `number`, `date`, `file` and `group`. `showIf('subject', 'press', 'other')` asks a field only when another has one of some values; `showWhen('guests', '>=', 50)` compares (`=`, `!=`, `<`, `<=`, `>`, `>=`), and `showWhen('newsletter', '=', true)` follows a tick box (an untouched box counts as unticked). Hidden fields are neither checked nor stored, so a required field is only required while it shows. `rules()` adds Laravel rules, and `messages()` words a rule's message per language.
+Field types: `text`, `email`, `tel`, `textarea`, `select`, `radio`, `checkboxes`, `checkbox`, `number`, `date`, `file` and `group`. `showIf('subject', 'press', 'other')` asks a field only when another has one of some values; `showWhen('guests', '>=', 50)` compares (`=`, `!=`, `<`, `<=`, `>`, `>=`), and `showWhen('newsletter', '=', true)` follows a tick box (an untouched box counts as unticked). Hidden fields are neither checked nor stored, so a required field is only required while it shows. `rules()` adds Laravel rules, and `messages()` words a rule's message per language. A `file` field takes the types `extensions()` lists; without them, it takes documents, images, spreadsheets, presentations and zip files (`FormField::DEFAULT_EXTENSIONS`), and `extensions(['*'])` takes any file. Staff open what visitors upload, so keep the list short.
 
 Forms can also say what visitors read after sending (`successMessage()`), when sending fails (`errorMessage()`), and a confirmation mailed to the `replyTo()` address (`autoReply()`). That address is whatever the visitor typed, so anyone can make your site send its confirmation to someone else; keep the confirmation short, with nothing in it you would not send a stranger.
 
@@ -35,7 +35,7 @@ Editors make forms without code. **Forms › Forms** lists them (with the forms 
 | Text, Long text, Email, Phone, Number, Date | Inputs, with a maximum for text and numbers |
 | Dropdown, Choose one, Choose several | Choices from the block's options (a stable value and a label per language) |
 | Tick box | One box, such as consent; "Required" means it must be ticked |
-| Files | Uploads, with allowed types, the largest file and how many |
+| Files | Uploads, with allowed types (empty takes documents, images and zip files; `*` takes any), the largest file and how many |
 | Repeating group | Rows visitors add; indent the blocks that belong to it |
 | New step | Starts a new step; blocks before the first step make step 1 |
 

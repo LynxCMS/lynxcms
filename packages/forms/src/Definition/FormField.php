@@ -49,6 +49,15 @@ final class FormField
     /** @var array{field: string, operator: string, values: list<string>}|null */
     public ?array $showIf = null;
 
+    /** File types a file question takes when it names none: what staff can open safely. */
+    public const array DEFAULT_EXTENSIONS = [
+        'pdf', 'txt', 'rtf', 'doc', 'docx', 'odt', 'xls', 'xlsx', 'ods', 'csv', 'ppt', 'pptx', 'odp',
+        'jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'zip',
+    ];
+
+    /** Lets extensions() take any file type. */
+    public const string ANY_EXTENSION = '*';
+
     /** @var list<string> */
     public array $extensions = [];
 
@@ -193,10 +202,24 @@ final class FormField
         return $this->with(fn (self $f): array => $f->showIf = ['field' => $field, 'operator' => $applied, 'values' => [$text]]);
     }
 
-    /** @param list<string> $extensions */
+    /**
+     * The file types a file question takes; without a call, DEFAULT_EXTENSIONS, and ['*'] for any.
+     *
+     * @param  list<string>  $extensions
+     */
     public function extensions(array $extensions): self
     {
         return $this->with(fn (self $f): array => $f->extensions = array_map(strtolower(...), $extensions));
+    }
+
+    /** @return list<string>|null the extensions a file question takes, or null for any */
+    public function allowedExtensions(): ?array
+    {
+        return match (true) {
+            in_array(self::ANY_EXTENSION, $this->extensions, true) => null,
+            $this->extensions === [] => self::DEFAULT_EXTENSIONS,
+            default => $this->extensions,
+        };
     }
 
     public function maxKb(int $kilobytes): self

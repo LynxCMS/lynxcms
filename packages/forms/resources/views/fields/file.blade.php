@@ -3,8 +3,8 @@
      x-on:livewire-upload-start="uploading = true" x-on:livewire-upload-finish="uploading = false"
      x-on:livewire-upload-error="uploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
     <input id="{{ $id }}" type="file" class="lynx-form-input" wire:model="{{ $filesPath }}" @if ($field->maxFiles > 1) multiple @endif
-           @if ($field->extensions !== []) accept="{{ implode(',', array_map(fn ($e) => '.'.$e, $field->extensions)) }}" @endif>
-    <p class="lynx-form-help">{{ __('lynx-forms::forms.files_hint', ['count' => $field->maxFiles, 'size' => \Illuminate\Support\Number::fileSize($field->maxKb * 1024), 'types' => strtoupper(implode(', ', $field->extensions))]) }}</p>
+           @if ($field->allowedExtensions() !== null) accept="{{ implode(',', array_map(fn ($e) => '.'.$e, $field->allowedExtensions())) }}" @endif>
+    <p class="lynx-form-help">{{ __('lynx-forms::forms.files_hint', ['count' => $field->maxFiles, 'size' => \Illuminate\Support\Number::fileSize($field->maxKb * 1024), 'types' => strtoupper(implode(', ', $field->allowedExtensions() ?? []))]) }}</p>
     <div x-show="uploading" x-cloak class="lynx-form-progress" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
         <span :style="'width:' + progress + '%'"></span>
     </div>

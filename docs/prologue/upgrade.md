@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.17 to the next release
+
+- File questions in forms that list no types now take only documents, images, spreadsheets, presentations and zip files (`FormField::DEFAULT_EXTENSIONS`). If a form must take anything, give it `extensions(['*'])`, or `*` in the builder's file types.
+
 ## From 0.1.16 to 0.1.17
 
 A security release with no database changes. Read each point before updating a live site:
