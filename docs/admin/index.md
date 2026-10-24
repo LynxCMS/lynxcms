@@ -53,6 +53,27 @@ The admin is built on BlatUI components. Change its look without rebuilding anyt
 
 Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_RADIUS` and so on).
 
+### The site's name, logo and colours
+
+Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colours, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in.
+
+The defaults come from `config/lynx-admin.php`, so a developer can ship them with the site:
+
+```php
+'branding' => [
+    'name' => 'Castor & Otters',
+    'logo' => '/images/logo.svg', // a URL or a path below public/
+    'background' => '#f3eee4',
+    'accent' => '#1f5a69',
+],
+```
+
+What a superuser saves wins over the config; an empty field goes back to it. Uploaded logos are kept in private storage and served by the admin, so no `storage:link` is needed; an uploaded SVG is served sandboxed, so it cannot run scripts. The same settings can be changed with the `admin.branding` action, from code or an agent:
+
+```php
+lynx()->run('admin.branding', ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
+```
+
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.
 
 Set `LYNX_ADMIN_SCHEMA_EDITING=false` to make the schema screens read only, for sites whose schema comes from [schema files](/deeper/schema-and-content).

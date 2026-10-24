@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use LynxCms\Admin\Livewire\RoleList;
 
 /**
- * The Roles and Users screens, superusers only. A controller rather than closures so route:cache
+ * The Roles, Users and General screens, superusers only. A controller rather than closures so route:cache
  * keeps working.
  *
  * @internal
@@ -27,5 +27,13 @@ final class SuperuserScreenController
         abort_unless(RoleList::currentUserIsSuperuser(), 403);
 
         return view('lynx-admin::users.index');
+    }
+
+    /** Settings > General: the admin's branding. */
+    public function general(): View
+    {
+        abort_unless(RoleList::currentUserIsSuperuser(), 403);
+
+        return view('lynx-admin::general');
     }
 }

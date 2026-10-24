@@ -8,8 +8,7 @@
         <x-lynx-admin::ui.sidebar collapsible="icon">
             <x-lynx-admin::ui.sidebar-header>
                 <a href="{{ route('lynx.admin.pages') }}" class="flex items-center gap-2 rounded-md p-1.5 font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
-                    <span class="bg-primary text-primary-foreground flex size-7 shrink-0 items-center justify-center rounded-md text-sm" aria-hidden="true">L</span>
-                    <span class="truncate group-data-[collapsible=icon]:hidden">Lynx</span>
+                    <x-lynx-admin::brand />
                 </a>
             </x-lynx-admin::ui.sidebar-header>
             <x-lynx-admin::ui.sidebar-content>

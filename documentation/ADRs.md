@@ -903,3 +903,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `lynx:phpstan` writes `lynx/phpstan/types.php`, a PHP array of every field's type, fully qualified, for pages and for items, plus the built-in properties and whether code may set them. `lynxcms/core` ships `phpstan/extension.neon`, which registers `PhpStan\FieldProperties`, a properties class reflection extension that resolves those types with PHPStan's own type resolver, so they may name any class the app loads. Writes accept anything; of the built-ins, only `$page->name` is writable. The extension's classes live in core's source but are only loaded by PHPStan.
 
 **Consequences:** Apps include one file in `phpstan.neon` and commit the generated types next to their schema files. A test runs PHPStan itself on a fixture to check the extension. Upgrading means replacing the stub with the include.
+
+## ADR-0084: The admin's branding is a setting over config defaults
+
+**Status:** Accepted
+
+**Context:** The sign-in screens and the sidebar always showed an "L" and "Lynx", and the only way to change the admin's colours was a BlatUI accent name or a stylesheet. A client signing in to their own site expects to see their logo and colours, and the person who changes them is often not a developer.
+
+**Decision:** `config('lynx-admin.branding')` holds a name, a logo (URL or public path), a background and an accent (hex colours). Superusers override them under Settings > General; the saved values are one JSON setting, `admin.branding`, written by the `admin.branding` action (superusers only), and an empty value falls back to the config. Uploaded logos (PNG, JPEG, WebP or SVG, checked by their bytes, up to 1 MB) are sent to the action as data URLs, stored in private storage under their hash, written and deleted only after the change commits, and served by the admin's asset route with long caching; SVGs get a sandboxing Content-Security-Policy. The accent re-colours BlatUI's primary tokens through the `<html>` element's style attribute, so it wins in light and dark, with white or near-black text picked by contrast. Only six-digit hex colours reach a style attribute.
+
+**Consequences:** The sign-in screens, the sidebar header and the browser title show the site's name and logo without a deploy. Config-only sites keep working; their logo may be any file, since it is the developer's. The accent setting and the `appearance.theme` accent name overlap: the hex accent wins where set.
+

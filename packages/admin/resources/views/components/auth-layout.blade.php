@@ -1,11 +1,11 @@
 @props(['title', 'description' => null])
-{{-- The sign-in screens: one centred card, no sidebar. --}}
+{{-- The sign-in screens: one centred card, no sidebar, on the site's backdrop with its logo. --}}
+@php($branding = \LynxCms\Admin\Branding\Branding::current())
 <x-lynx-admin::document :title="$title">
-<body class="bg-muted/40 flex min-h-screen items-center justify-center p-4 font-sans antialiased">
+<body class="bg-muted/40 flex min-h-screen items-center justify-center p-4 font-sans antialiased" @if ($branding->backgroundStyle() !== '') style="{{ $branding->backgroundStyle() }}" @endif>
     <main class="w-full max-w-sm">
         <div class="mb-6 flex items-center justify-center gap-2">
-            <span class="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md font-semibold" aria-hidden="true">L</span>
-            <span class="text-lg font-semibold">Lynx</span>
+            <x-lynx-admin::brand :branding="$branding" size="lg" />
         </div>
         <x-lynx-admin::ui.card class="grid gap-6">
             <div class="grid gap-1 text-center">
