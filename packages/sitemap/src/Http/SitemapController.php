@@ -6,6 +6,7 @@ namespace LynxCms\Sitemap\Http;
 
 use Illuminate\Http\Request;
 use LynxCms\Sitemap\Sitemap;
+use LynxCms\Sitemap\SitemapCache;
 use LynxCms\Sitemap\SitemapPages;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final readonly class SitemapController
 {
-    public function __construct(private Sitemap $sitemap) {}
+    public function __construct(private Sitemap $sitemap, private SitemapCache $cache) {}
 
     public function root(Request $request): Response
     {
@@ -39,6 +40,12 @@ final readonly class SitemapController
         abort_if($body === null || ! (bool) config('lynx-sitemap.enabled', true), 404);
 
         $response = response($body)->header('Content-Type', 'application/xml; charset=UTF-8');
+
+        if (! $this->cache->isShared()) {
+            // Built for this visitor alone: no shared cache may keep it.
+            $response->headers->set('Cache-Control', 'no-store, private');
+        }
+
         $response->setEtag(md5($body));
         $response->isNotModified($request);
 
