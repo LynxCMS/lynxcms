@@ -1,4 +1,38 @@
-import { defineConfig } from 'vitepress'
+import { readdirSync, readFileSync } from 'node:fs'
+import { join, relative } from 'node:path'
+import { defineConfig, type DefaultTheme } from 'vitepress'
+
+const DOCS = join(__dirname, '..')
+
+/**
+ * Pages whose front matter says `draft: true`, as paths relative to docs/ ("getting-started/compared.md").
+ * Found with a pattern, not a YAML parser, so a page being written with broken front matter is
+ * still recognized.
+ */
+function draftPages(folder = DOCS): string[] {
+    return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
+        const path = join(folder, entry.name)
+
+        if (entry.isDirectory()) {
+            return ['node_modules', '.vitepress', 'snippets', 'public'].includes(entry.name) ? [] : draftPages(path)
+        }
+
+        const frontMatter = entry.name.endsWith('.md') ? /^---\n([\s\S]*?)\n---/.exec(readFileSync(path, 'utf8')) : null
+
+        return frontMatter && /^draft:\s*true\s*$/m.test(frontMatter[1]) ? [relative(DOCS, path)] : []
+    })
+}
+
+// Drafts show in `npm run dev`, and are left out of builds (the published site and PR previews)
+// unless DOCS_DRAFTS=1. Links to a draft from other pages are not dead links while it is one.
+const drafts = process.argv.includes('build') && process.env.DOCS_DRAFTS !== '1' ? draftPages() : []
+const draftLinks = new Set(drafts.map((page) => '/' + page.replace(/\.md$/, '').replace(/(^|\/)index$/, '$1')))
+
+function withoutDrafts(items: DefaultTheme.SidebarItem[]): DefaultTheme.SidebarItem[] {
+    return items
+        .filter((item) => item.link === undefined || !draftLinks.has(item.link))
+        .map((item) => (item.items ? { ...item, items: withoutDrafts(item.items) } : item))
+}
 
 // The Lynx documentation site, built from this folder and served at lynxcms.org/cms/docs by a
 // Cloudflare Worker with static assets (wrangler.jsonc, .github/workflows/docs.yml). Pages keep
@@ -14,8 +48,9 @@ export default defineConfig({
     lang: 'en',
     cleanUrls: true,
     lastUpdated: true,
-    // Files in docs/ that are not pages.
-    srcExclude: ['**/README.md', 'node_modules/**'],
+    // Files in docs/ that are not pages, and drafts in a build.
+    srcExclude: ['**/README.md', 'node_modules/**', ...drafts],
+    ignoreDeadLinks: [(url) => draftLinks.has(url.replace(/[#?].*$/, '').replace(/\.html$/, ''))],
 
     head: [
         ['meta', { name: 'theme-color', content: '#0e7490' }],
@@ -43,7 +78,7 @@ export default defineConfig({
             { text: 'Roadmap', link: '/prologue/roadmap' },
         ],
 
-        sidebar: [
+        sidebar: withoutDrafts([
             {
                 text: 'Prologue',
                 collapsed: true,
@@ -136,7 +171,7 @@ export default defineConfig({
                     { text: 'Configuration', link: '/reference/configuration' },
                 ],
             },
-        ],
+        ]),
 
         search: { provider: 'local' },
 
