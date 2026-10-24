@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.18
+
+Released October 24, 2026. Security hardening, and media from production for developers' machines. Run `php artisan lynx:migrate` after updating.
 
 - **Media from production, on demand.** On a developer's machine, `LYNX_MEDIA_REMOTE` names production's media folder, and missing public files download from it when a page or an image size needs them. `lynx:export --without-files` makes a light package for this, and `lynx:media:pull` queues the downloads ahead. See [Working on a Live Site](/deeper/live-site#media-from-production).
 - **The agent no longer holds the database while you read its plan.** Its changes are rolled back before the plan is shown, and approving replays them in a short transaction of their own. A run also has two minutes (`LYNX_AI_PLAN_SECONDS`); past that it stops and keeps nothing, so a slow model can't keep other writers waiting on SQLite.
