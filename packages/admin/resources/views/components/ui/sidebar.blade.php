@@ -3,6 +3,8 @@
     'variant' => 'sidebar',
     'collapsible' => 'offcanvas',
 ])
+{{-- The provider's starting state, so the first paint already has it (see below). --}}
+@aware(['defaultOpen' => true])
 
 @php
     $isLeft = $side === 'left';
@@ -14,6 +16,15 @@
     // $attributes exactly as the consumer passed it.
     $rootAttributes = $attributes->except('class');
     $userClass = (string) $attributes->get('class', '');
+
+    // The state and widths Alpine binds below, written out for the first paint as well: without
+    // them the page paints with no width and the sidebar animates open (or shut) as Alpine boots,
+    // a flash on every page load. Alpine then sets the same values, so nothing moves.
+    $closedWidth = $collapsible === 'icon' ? 'width: var(--sidebar-width-icon)' : 'width: 0';
+    $gapStyle = $defaultOpen ? 'width: var(--sidebar-width)' : $closedWidth;
+    $containerStyle = $defaultOpen || $collapsible === 'icon'
+        ? $gapStyle
+        : 'width: var(--sidebar-width); transform: translateX('.($isLeft ? '-100%' : '100%').')';
 @endphp
 
 @if ($collapsible === 'none')
@@ -38,7 +49,9 @@
          from its own mobile-breakpoint) then overrides them when the two disagree — which is
          exactly what a breakpoint other than md means. --}}
     :class="{ 'md:hidden!': isMobile }"
+    data-state="{{ $defaultOpen ? 'expanded' : 'collapsed' }}"
     :data-state="open ? 'expanded' : 'collapsed'"
+    data-collapsible="{{ $defaultOpen ? '' : $collapsible }}"
     :data-collapsible="open ? '' : @js($collapsible)"
     data-variant="{{ $variant }}"
     data-side="{{ $side }}"
@@ -47,6 +60,7 @@
     {{-- gap --}}
     <div
         class="relative bg-transparent transition-[width] duration-200 ease-linear"
+        style="{{ $gapStyle }}"
         :style="open
             ? 'width: var(--sidebar-width)'
             : (@js($collapsible) === 'icon' ? 'width: var(--sidebar-width-icon)' : 'width: 0')"
@@ -54,6 +68,7 @@
     {{-- fixed container --}}
     <div
         class="fixed inset-y-0 z-10 hidden h-svh transition-[left,right,width,transform] duration-200 ease-linear md:flex {{ $isLeft ? 'left-0' : 'right-0' }}"
+        style="{{ $containerStyle }}"
         :style="open
             ? 'width: var(--sidebar-width)'
             : (@js($collapsible) === 'icon'
