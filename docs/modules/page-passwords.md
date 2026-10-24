@@ -27,7 +27,7 @@ The template gets a **Password** field in the page editor's sidebar. Editors typ
 - A page with a password protects itself and every page below it.
 - A page below with its own password uses that one instead: the nearest password wins.
 - Visitors who open a protected page see a password form (HTTP 403). The right password unlocks the page that holds it, and the pages below it, for 30 days in that browser (`lynx-page-password.remember_days`, or `LYNX_PAGE_PASSWORD_REMEMBER_DAYS`). Changing the password locks it again for everyone.
-- Wrong passwords show an error; after five tries in a minute from one address, the form asks the visitor to wait.
+- Wrong passwords show an error; after five tries in a minute from one address, the form asks the visitor to wait. A page also takes at most 100 wrong passwords an hour from all addresses together (`LYNX_PAGE_PASSWORD_MAX_FAILURES`); past that it refuses every try, the right one too, until the hour is over, and the log says so. Choose a passphrase of several words rather than a short code, since guests share it and anyone can try.
 - Until a page is unlocked, it is left out of everything visitors see: selectors (`find`, `count`, `children`), search, page reference fields and menus.
 - Protected pages never appear in the sitemap, are sent with `X-Robots-Tag: noindex` and are never cached (`Cache-Control: no-store, private`), unlocked or not.
 - Signed-in users see the protected pages their roles let them view in the admin, without the form.
