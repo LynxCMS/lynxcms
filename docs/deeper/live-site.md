@@ -42,7 +42,31 @@ php artisan lynx:import site.zip --with-schema
 php artisan lynx:superuser                          # your own account: users are not in packages
 ```
 
-The package carries the images and files of its pages, private ones included, so the site looks as it does live. Page ids are new on your machine, which is why the package keys pages by their path.
+The package carries the images and files of its pages, private ones included, so the site looks as it does live. Page ids are new on your machine, which is why the package keys pages by their path. On a site with a lot of media, leave the files out and let your machine download them as you need them (see [Media from production](#media-from-production)).
+
+## Media from production
+
+A content package with every image of a large site can weigh gigabytes. Export it without its files instead, and tell your machine where production keeps them:
+
+```bash
+php artisan lynx:export storage/app/site.zip --without-files   # on production
+```
+
+```dotenv
+LYNX_MEDIA_REMOTE=https://www.example.com/storage/lynx
+```
+
+`LYNX_MEDIA_REMOTE` is the https address of production's media folder: its public disk's URL followed by `lynx`, or your CDN's address for it. The imported values keep naming production's files, and when one is missing on your machine, Lynx downloads it the moment something needs it: the browser asking for the file, or a template asking for an image size, which is made from the original. A page with many new images is slow the first time and local after that.
+
+To fetch everything ahead, queue the downloads and let a worker fill the disk while you work:
+
+```bash
+php artisan lynx:media:pull                  # every page
+php artisan lynx:media:pull --page=/courses/ # one branch
+php artisan queue:work
+```
+
+Downloads happen only outside production (`APP_ENV` is not `production`), only over https, and only for stored media names, with the same size and address checks as other downloads. Private files are not downloaded, since production serves them only to people who may open their page; they come with a package that has files.
 
 ## Changing the schema
 
