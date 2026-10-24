@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\LinkPages;
 use LynxCms\Core\Fields\LinkRelSanitizer;
@@ -64,6 +65,7 @@ final class LinkDialog extends Component
     public string $panel = '';
 
     /** The page last chosen: its sections and files are offered too. */
+    #[Locked]
     public ?int $chosenPageId = null;
 
     /** Words typed in "Select page": while set, matching pages replace the tree. */
@@ -107,7 +109,7 @@ final class LinkDialog extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $page->template()->hasUrl()) {
+        if (! $page instanceof Page || ! $page->template()->hasUrl() || app(AdminAccess::class)->viewable([$id]) === []) {
             return;
         }
 
