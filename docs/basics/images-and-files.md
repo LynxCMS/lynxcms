@@ -32,6 +32,7 @@ lynx()->fields->add('downloads', 'files', settings: ['extensions' => 'pdf zip'])
 | `min_width`, `min_height` | Smaller images are refused. |
 | `max_width`, `max_height` | Larger images are scaled down on upload. Default 2560. |
 | `tags` | Tags editors may choose; empty allows any tag. |
+| `private` | Keep the files private: see [Private files](#private-files). |
 
 [Field Types](/basics/field-types#media) lists the defaults.
 
@@ -127,6 +128,25 @@ $page->save();
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
+## Private files
+
+Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting:
+
+```php
+lynx()->fields->add('handouts', 'files', settings: ['private' => true]);
+```
+
+A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK`, Laravel's `local` disk by default, which the web server never serves), and their URLs point to Lynx: `/lynx-media/{page id}/{file}`. Lynx serves a file only to someone who may open its page:
+
+- staff whose roles let them view the page, in the admin or on the site;
+- visitors, when the page is published, no page gate answers instead and the [visibility rules](/deeper/visibility) allow it.
+
+A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
+
+Turning the setting on or off moves the field's existing files to the other disk, inside the same change: the originals and their image sizes are deleted from the old disk once it is saved, and sizes are made again when next asked for. Files of private fields travel in content packages like any other, and stay private on import.
+
+Private files cost a PHP request each, so keep public images (logos, photos on public pages) in public fields. They also don't work in a [static site export](/modules/static-site), whose pages have no Lynx to ask.
+
 ## Cleaning up
 
-Files that no page, draft or revision uses are deleted by `php artisan lynx:media:prune`, which the scheduler runs daily, once they are a day old. [Content packages](/deeper/schema-and-content) carry the files of the pages they hold.
+Files that no page, draft or revision uses, on the public and the private disk, are deleted by `php artisan lynx:media:prune`, which the scheduler runs daily, once they are a day old. [Content packages](/deeper/schema-and-content) carry the files of the pages they hold.

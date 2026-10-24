@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.15 to 0.1.16
+
+No changes needed. Public fields keep their files and URLs. Before turning a field private on a server with several machines, make sure `LYNX_MEDIA_PRIVATE_DISK` is a disk every machine reads, such as S3 without public access.
+
 ## From 0.1.14 to 0.1.15
 
 No changes needed.

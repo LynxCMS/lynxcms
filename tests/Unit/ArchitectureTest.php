@@ -20,6 +20,7 @@ use LynxCms\Core\Query\ValueJoins;
 use LynxCms\Core\Search\Engines\SqliteSearchEngine;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Forms\FormsFiles;
+use LynxCms\Media\MovePrivateMedia;
 use LynxCms\Menus\Menus;
 use LynxCms\Menus\MenuSchema;
 use LynxCms\Menus\MenusServiceProvider;
@@ -122,6 +123,8 @@ arch('only actions write page data')
         'LynxCms\PagePassword\Access',
         // Only defers clearing the page cache until the action's transaction commits.
         ClearOnChange::class,
+        // Reads which files a field's values name, and defers deleting moved files to the commit.
+        MovePrivateMedia::class,
     ]);
 
 arch('no debugging calls')

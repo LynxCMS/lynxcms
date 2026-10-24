@@ -79,6 +79,19 @@ Comes with `lynxcms/sitemap`; publish it with `php artisan vendor:publish --tag=
 | `cache.store` | `null` | Cache store for the built files; `null` uses the default store. |
 | `cache.ttl` | `86400` | Seconds a built file is kept. Any content change drops it sooner. |
 
+## config/lynx-media.php
+
+Comes with `lynxcms/media`; publish it with `php artisan vendor:publish --tag=lynx-media-config`. See [Images and Files](/basics/images-and-files).
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `disk` | `public` (`LYNX_MEDIA_DISK`) | Disk of media files, under `{root}/{page id}/`. |
+| `private_disk` | `local` (`LYNX_MEDIA_PRIVATE_DISK`) | Disk of private fields' files, served through `/lynx-media/{page}/{file}`. |
+| `root` | `lynx` | Folder on both disks that holds the pages' folders. |
+| `quality` | `82` (`LYNX_MEDIA_QUALITY`) | JPEG and WebP quality of image sizes. |
+| `presets` | `thumb`, `card`, `hero` | Named sizes for `$image->preset('card')`. |
+| `prune_after_hours` | `24` | Age before `lynx:media:prune` deletes files nothing uses. |
+
 ## config/lynx-cache.php
 
 Comes with `lynxcms/cache`; publish it with `php artisan vendor:publish --tag=lynx-cache-config`. See [Page cache](/modules/page-cache).
