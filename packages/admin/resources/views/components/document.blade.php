@@ -5,6 +5,8 @@
     $settings = (array) config('lynx-admin.appearance', []);
     $appearance = \LynxCms\Admin\Appearance::html($settings);
     $fonts = ($settings['load_fonts'] ?? true) ? \LynxCms\Admin\Appearance::fontsUrl($settings) : null;
+    // The site's name and accent (Settings > General): inline on <html>, so they win in light and dark.
+    $branding = \LynxCms\Admin\Branding\Branding::current();
 @endphp
 <!DOCTYPE html>
 <html
@@ -12,11 +14,12 @@
     data-lynx-theme="{{ $scheme }}"
     @if ($scheme === 'dark') class="dark" @endif
     {!! $appearance !!}
+    @if ($branding->accentStyle() !== '') style="{{ $branding->accentStyle() }}" @endif
 >
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} · Lynx</title>
+    <title>{{ $title }} · {{ $branding->name }}</title>
     {{-- Before the stylesheet, so the scheme the user picked (or the configured one) never flashes the other. --}}
     <script>(() => { let scheme = @js($scheme); try { scheme = localStorage.getItem('lynx:color-scheme') || scheme } catch (e) {} document.documentElement.classList.toggle('dark', scheme === 'dark' || (scheme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) })()</script>
     @if ($fonts)

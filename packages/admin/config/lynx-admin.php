@@ -62,6 +62,20 @@ return [
     ],
 
     /*
+    | The site's own name, logo and colours on the sign-in screens and at the top of the sidebar.
+    | Superusers change them under Settings in the admin; these are the defaults until they do.
+    | logo: a URL or a path below public/ (an SVG is fine here). background: the sign-in screens'
+    | backdrop. accent: buttons, links and focus rings. Colours are hex, e.g. #b4602c; empty keeps
+    | the admin's own.
+    */
+    'branding' => [
+        'name' => env('LYNX_ADMIN_NAME', 'Lynx'),
+        'logo' => env('LYNX_ADMIN_LOGO'),
+        'background' => env('LYNX_ADMIN_BACKGROUND'),
+        'accent' => env('LYNX_ADMIN_BRAND_ACCENT'),
+    ],
+
+    /*
     | Extra stylesheet URLs loaded after the admin CSS. Redefine BlatUI's tokens (--primary,
     | --background…) or the --lynx-* tree tokens in them to re-theme the admin without rebuilding
     | it (php artisan vendor:publish --tag=lynx-admin-theme), or paste a theme from BlatUI's

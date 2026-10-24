@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\DB;
+use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Ai\AgentRun;
 use LynxCms\Ai\LynxAi;
 use LynxCms\Cache\Pages\ClearOnChange;
@@ -128,6 +129,8 @@ arch('only actions write page data')
         MovePrivateMedia::class,
         // Reads which files pages' media values name, for lynx:media:pull.
         MediaReferences::class,
+        // Only defers writing and deleting the admin's logo files until the action commits.
+        SaveBranding::class,
     ]);
 
 arch('no debugging calls')

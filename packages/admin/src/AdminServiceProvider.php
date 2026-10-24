@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use LynxCms\Admin\Auth\AdminAuth;
+use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Admin\Console\SuperuserCommand;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Editor\FieldInputs;
@@ -25,6 +26,7 @@ use LynxCms\Admin\Http\AssetController;
 use LynxCms\Admin\Icons\IconSet;
 use LynxCms\Admin\Livewire\AccountSecurity;
 use LynxCms\Admin\Livewire\AdminSearch;
+use LynxCms\Admin\Livewire\BrandingForm;
 use LynxCms\Admin\Livewire\FieldForm;
 use LynxCms\Admin\Livewire\FieldList;
 use LynxCms\Admin\Livewire\IconPicker;
@@ -111,7 +113,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.icon-picker', IconPicker::class);
         // The icon field type: an icon name from the admin's set (docs/deeper/custom-field-types.md).
         $this->app->make(FieldTypeRegistry::class)->register(IconType::class);
-        $this->app->make(ActionRegistry::class)->register(CreateUser::class);
+        $this->app->make(ActionRegistry::class)->register(CreateUser::class, SaveBranding::class);
         Livewire::component('lynx-admin.search', AdminSearch::class);
         Livewire::component('lynx-admin.language-list', LanguageList::class);
         Livewire::component('lynx-admin.account-security', AccountSecurity::class);
@@ -133,6 +135,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.role-list', RoleList::class);
         Livewire::component('lynx-admin.role-form', RoleForm::class);
         Livewire::component('lynx-admin.user-roles', UserRoles::class);
+        Livewire::component('lynx-admin.branding-form', BrandingForm::class);
         $this->defineDefaultGate();
         AdminAuth::boot();
 
@@ -163,6 +166,7 @@ final class AdminServiceProvider extends ServiceProvider
             ->add('Fields', 'lynx.admin.fields', order: 10, visible: $canManageSchema, icon: 'text-cursor-input', group: Navigation::SETTINGS)
             ->add('Templates', 'lynx.admin.templates', order: 20, visible: $canManageSchema, icon: 'layout-template', group: Navigation::SETTINGS)
             ->add('Languages', 'lynx.admin.languages', order: 50, visible: $canManageSchema, icon: 'languages', group: Navigation::SETTINGS)
+            ->add('General', 'lynx.admin.general', order: 60, visible: RoleList::currentUserIsSuperuser(...), icon: 'settings', group: Navigation::SETTINGS)
             ->add('Roles', 'lynx.admin.roles', order: 10, visible: RoleList::currentUserIsSuperuser(...), icon: 'shield-check', group: Navigation::ACCESS)
             ->add('Users', 'lynx.admin.users', order: 20, visible: UserRoles::currentUserIsSuperuser(...), icon: 'users', group: Navigation::ACCESS);
     }
@@ -173,6 +177,7 @@ final class AdminServiceProvider extends ServiceProvider
         Route::middleware('web')->prefix(Value::string(config('lynx-admin.prefix')))->name('lynx.admin.')->group(function (): void {
             Route::get('assets/admin.css', AssetController::class)->name('assets.css');
             Route::get('assets/admin.js', [AssetController::class, 'script'])->name('assets.js');
+            Route::get('assets/logo/{file}', [AssetController::class, 'logo'])->where('file', '[a-z0-9.-]+')->name('assets.logo');
         });
     }
 

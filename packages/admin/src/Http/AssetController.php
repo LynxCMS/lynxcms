@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Http;
 
+use Illuminate\Support\Facades\Storage;
+use LynxCms\Admin\Branding\Branding;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Serves the prebuilt admin stylesheet from the package, so host apps need no build step
  * and no vendor:publish. The layout adds the file's mtime as a version for cache busting.
+ * Also serves the logo uploaded under Settings, which the sign-in screens show to guests.
  *
  * @internal
  */
@@ -32,6 +35,25 @@ final class AssetController
     public function script(): BinaryFileResponse
     {
         return $this->file(self::SCRIPT, 'text/javascript; charset=utf-8');
+    }
+
+    /**
+     * The uploaded logo, from private storage, so no storage:link is needed. Its name holds its
+     * hash, so it is cached for good. An SVG is sandboxed: opened on its own, it runs nothing.
+     */
+    public function logo(string $file): BinaryFileResponse
+    {
+        $path = Branding::FOLDER.'/'.$file;
+        $disk = Storage::disk(Branding::DISK);
+        abort_unless(preg_match(Branding::LOGO_FILE, $file) === 1 && $disk->exists($path), 404);
+        $isSvg = str_ends_with($file, '.svg');
+
+        return response()->file($disk->path($path), [
+            'Content-Type' => $isSvg ? 'image/svg+xml' : (string) $disk->mimeType($path),
+            'Cache-Control' => 'public, max-age='.self::ONE_YEAR.', immutable',
+            'X-Content-Type-Options' => 'nosniff',
+            ...($isSvg ? ['Content-Security-Policy' => "default-src 'none'; style-src 'unsafe-inline'; sandbox"] : []),
+        ]);
     }
 
     /** Cache-busting version for the stylesheet URL. */
