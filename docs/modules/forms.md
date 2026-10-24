@@ -108,7 +108,7 @@ final class QuoteRequest extends FormComponent
 
 ### Texts
 
-Labels, help, options, step titles and the success and error messages come from the form, in each language. The component's own words (Next, Send, "Too many attempts…") are translations in `lynx-forms::forms`; publish them with `--tag=lynx-forms-lang` to change them. Validation messages come from the app's `lang/{locale}/validation.php`, such as laravel-lang's, with field labels as attribute names.
+Labels, help, options, step titles and the success and error messages come from the form, in each language. The component's own words (Next, Send, "Too many attempts…"), and the success and error messages of a form that doesn't define its own, are translations in `lynx-forms::forms`, shipped in English, French and Portuguese; publish them with `--tag=lynx-forms-lang` to change them. Validation messages come from the app's `lang/{locale}/validation.php`, such as laravel-lang's, with field labels as attribute names.
 
 ### Spam
 

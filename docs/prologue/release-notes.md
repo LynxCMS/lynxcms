@@ -8,6 +8,11 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- **French for visitors.** The forms and page password modules ship French strings next to English and Portuguese, so a `fr` language (or a regional locale such as `fr-CA`) shows them without a published copy.
+- A form's default success and error messages (when it doesn't define `successMessage()` or `errorMessage()`) come from `lynx-forms::forms.sent` and `.failed`, in the visitor's language. They were English for everyone.
+
 ## 0.1.19
 
 Released October 24, 2026.

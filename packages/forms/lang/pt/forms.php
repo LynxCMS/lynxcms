@@ -21,6 +21,8 @@ return [
     'sign_in_to_answer' => 'Inicie sessão para responder a este formulário.',
     'sign_in' => 'Iniciar sessão',
     'already_answered' => 'Já respondeu a este formulário.',
+    'sent' => 'Obrigado. Recebemos a sua mensagem.',
+    'failed' => 'Não foi possível enviar a mensagem. Tente novamente.',
     'mail' => [
         'subject' => 'Nova submissão: :form',
         'open' => 'Abrir no admin',
