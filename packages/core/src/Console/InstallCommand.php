@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
 use Override;
+use Symfony\Component\Console\Input\ArgvInput;
 
 /**
  * Installs Lynx, then makes sure someone can open the admin: --user promotes an account (by id or
@@ -73,7 +74,7 @@ final class InstallCommand extends Command
     {
         $canCreate = $this->getApplication()?->has(self::SUPERUSER_COMMAND) ?? false;
 
-        if ($canCreate && $this->input->isInteractive() && $this->confirm('No one is a superuser yet. Create one now?', true)) {
+        if ($canCreate && $this->canAsk() && $this->confirm('No one is a superuser yet. Create one now?', true)) {
             return $this->call(self::SUPERUSER_COMMAND);
         }
 
@@ -81,5 +82,21 @@ final class InstallCommand extends Command
             .($canCreate ? self::SUPERUSER_COMMAND.' to create one, or ' : '').'php artisan lynx:install --user=EMAIL to make an existing account one.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Whether a person is there to answer: the command was typed in a terminal, or
+     * SHELL_INTERACTIVE says so, as Symfony allows. Artisan::call() from a seeder, a deploy script
+     * or a test never asks, since nobody could answer and Laravel Prompts would either wait on
+     * STDIN or answer the default for them.
+     */
+    private function canAsk(): bool
+    {
+        if (! $this->input->isInteractive()) {
+            return false;
+        }
+
+        return getenv('SHELL_INTERACTIVE') !== false
+            || ($this->input instanceof ArgvInput && defined('STDIN') && stream_isatty(STDIN));
     }
 }
