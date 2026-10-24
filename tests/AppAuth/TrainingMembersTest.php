@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Booking;
 use App\Providers\FortifyServiceProvider;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -30,9 +31,13 @@ beforeEach(function (): void {
     $this->materials = '/courses/yoga-teacher-training/materials';
 });
 
+/** A member as sign-up makes one: with the guest role, so roles are in use as on a live site. */
 function trainingMember(string $email = 'mia@example.com'): User
 {
-    return User::query()->forceCreate(['name' => 'Mia Member', 'email' => $email, 'password' => Hash::make('long enough pass')]);
+    $user = User::query()->forceCreate(['name' => 'Mia Member', 'email' => $email, 'password' => Hash::make('long enough pass')]);
+    event(new Registered($user));
+
+    return $user;
 }
 
 function trainingPaidBooking(User $user, int $courseId): Booking
@@ -89,4 +94,19 @@ it('keeps a booking made while signed in in the member\'s area', function (): vo
 
     expect(Booking::query()->sole()->user_id)->toBe($mia->id);
     $this->get('/account')->assertSee('pending');
+});
+
+it('lets only the people who booked download the course\'s private files', function (): void {
+    $download = lynx()->pages->get($this->materials.'/')->downloads->first();
+
+    expect($download->url())->toContain('/lynx-media/');
+    $this->get($download->url())->assertRedirect('/login');
+
+    $this->actingAs(trainingMember('nobody@example.com'));
+    $this->get($download->url())->assertForbidden();
+
+    $mia = trainingMember();
+    trainingPaidBooking($mia, $this->course->id);
+    $this->actingAs($mia);
+    expect($this->get($download->url())->assertOk()->streamedContent())->toBe('Reading list for yoga-teacher-training');
 });

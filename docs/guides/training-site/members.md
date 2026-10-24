@@ -44,7 +44,7 @@ A booking made while signed in carries the member's id (chapter 7's controller s
 Each course has a child page on the `materials` template: reading lists, preparation, links. Two pieces keep it for the people who booked:
 
 - A **visibility rule** leaves materials pages out of everything visitors find (lists, menus, search, page references) unless they booked that course.
-- A **page gate** guards the URL: guests are sent to sign in, and members who didn't book see what the page is for.
+- A **page gate** guards the URL, and the page's private downloads: guests are sent to sign in, and members who didn't book see what the page is for.
 
 <<< @/snippets/training/app/Members/CourseMaterials.php#rule{php}
 
@@ -52,8 +52,19 @@ Each course has a child page on the `materials` template: reading lists, prepara
 
 `audience()` tells Lynx's caches that members see different things, so a copy of a page made for one member is never served to another. [Page Access](/deeper/visibility) explains rules and gates in full.
 
-> [!WARNING]
-> Files uploaded to a page, such as a PDF in a files field, have public addresses, which the gate doesn't guard. Anyone with the link can download them. Keep paid materials in the page's text here, or serve files through a route of your own that checks the booking. Private files for pages are on the [roadmap](/prologue/roadmap).
+### Downloads only for them
+
+Materials pages have a `downloads` field with **Private** on (chapter 2's seeder sets it). Files in a public field have public addresses, which anyone with a link could share. A private field's files live off the public disk, and their links go through Lynx, which asks the materials page's own questions. People who booked get the file. Guests are sent to sign in by the same gate, and other members see what the page is for.
+
+```php
+lynx()->fields->add('downloads', 'files', label: 'Downloads', settings: ['private' => true, 'extensions' => 'pdf zip mp3 mp4']);
+```
+
+The view lists them like any files, and `$file->url()` gives the private address:
+
+<<< @/snippets/training/resources/views/templates/materials.blade.php{blade}
+
+Staff upload the files in the page editor as usual. See [Private files](/basics/images-and-files#private-files).
 
 ## What you get
 
