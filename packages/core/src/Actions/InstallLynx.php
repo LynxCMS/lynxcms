@@ -6,25 +6,36 @@ namespace LynxCms\Core\Actions;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Actions\Languages\CreateLanguage;
+use LynxCms\Core\Actions\Pages\SavePage;
+use LynxCms\Core\Actions\Pages\SetNotFoundPage;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Pages\NotFoundPage;
+use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\RootPage;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Permissions\RoleAssignment;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Creates what every Lynx site has: the default language (code "default", name "Default",
- * no prefix, ADR-0006) and the root page. Safe to run twice.
+ * no prefix, ADR-0006), the root page, and a hidden "Page not found" page shown for URLs that match
+ * nothing (ADR-0085), unless someone already chose one or none. Safe to run twice.
  */
 final class InstallLynx extends Action
 {
+    public const string NOT_FOUND_TEMPLATE = 'not-found';
+
     public function __construct(
         private readonly LanguageRegistry $languages,
         private readonly RootPage $root,
+        private readonly NotFoundPage $notFound,
+        private readonly TemplateRegistry $templates,
     ) {}
 
     public static function name(): string
@@ -68,6 +79,7 @@ final class InstallLynx extends Action
         }
 
         $installed = $this->root->ensure($context) || $installed;
+        $installed = $this->ensureNotFoundPage($context) || $installed;
         $installed = $this->ensureRoles($context) || $installed;
 
         if ($input->get('user') !== null) {
@@ -80,6 +92,33 @@ final class InstallLynx extends Action
     }
 
     /** The superuser, editor and guest roles (ADR-0033, ADR-0073), unless roles with those names exist. */
+    /**
+     * A page under the home page, with a template of its own that only has a title. A system page,
+     * like the trash: it cannot be deleted or moved, stays last among its siblings and out of
+     * listings, search and the sitemap; its content is edited like any other page's.
+     */
+    private function ensureNotFoundPage(ActionContext $context): bool
+    {
+        if ($this->notFound->isChosen()) {
+            return false;
+        }
+
+        if ($this->templates->find(self::NOT_FOUND_TEMPLATE) === null) {
+            $context->run(CreateTemplate::class, ['name' => self::NOT_FOUND_TEMPLATE, 'label' => 'Page not found', 'fields' => [['name' => 'title', 'required' => true]]]);
+        }
+
+        $page = $context->run(SavePage::class, [
+            'template' => self::NOT_FOUND_TEMPLATE,
+            'parent' => $this->root->id(),
+            'values' => ['title' => 'Page not found'],
+            'names' => [(string) $this->languages->default()->code => self::NOT_FOUND_TEMPLATE],
+            'status' => ['hidden', 'system'],
+        ]);
+        $context->run(SetNotFoundPage::class, ['page' => $page instanceof Page ? $page->id : null]);
+
+        return true;
+    }
+
     private function ensureRoles(ActionContext $context): bool
     {
         $created = false;

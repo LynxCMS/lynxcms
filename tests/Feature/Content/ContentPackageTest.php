@@ -39,9 +39,10 @@ it('exports the schema and every page, parents first, keyed by their names', fun
     $pages = packagedPages($this->dir);
     $alpha = collect($pages)->firstWhere('key', '/courses/alpha/');
 
-    expect($count)->toBe(3)
-        ->and(array_column($pages, 'key'))->toBe(['/', '/courses/', '/courses/alpha/'])
-        ->and(json_decode(File::get($this->dir.'/manifest.json'), true))->toMatchArray(['format' => 'lynx-content', 'version' => 1, 'pages' => 3])
+    // The page not found that install creates is content too.
+    expect($count)->toBe(4)
+        ->and(array_column($pages, 'key'))->toBe(['/', '/courses/', '/not-found/', '/courses/alpha/'])
+        ->and(json_decode(File::get($this->dir.'/manifest.json'), true))->toMatchArray(['format' => 'lynx-content', 'version' => 1, 'pages' => 4])
         ->and(File::exists($this->dir.'/schema/templates/course.yaml'))->toBeTrue()
         ->and($alpha)->toMatchArray(['parent' => '/courses/', 'template' => 'course'])
         ->and($alpha['names']['pt'])->toBe(['name' => 'alfa', 'active' => true])

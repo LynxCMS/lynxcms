@@ -29,7 +29,7 @@ it('creates a role with scoped grants', function (): void {
     ])->valueAs(Role::class);
 
     expect([$role->name, $role->label, $role->is_superuser])->toBe(['course-editor', 'Course editor', false])
-        ->and($role->grants()->pluck('permission')->all())->toBe(['admin.access', 'pages.edit'])
+        ->and($role->grants()->orderBy('permission')->pluck('permission')->all())->toBe(['admin.access', 'pages.edit'])
         ->and($role->grants()->where('permission', 'pages.edit')->first()?->branches)->toBe([$courses]);
 });
 
@@ -37,7 +37,7 @@ it('replaces the grants of an existing role', function (): void {
     lynx()->run(SaveRole::class, ['name' => 'writer', 'grants' => [['permission' => 'pages.edit']]]);
     lynx()->run(SaveRole::class, ['name' => 'writer', 'label' => 'Writer', 'grants' => [['permission' => 'pages.create']]]);
 
-    expect(Role::query()->where('name', 'writer')->firstOrFail()->grants()->pluck('permission')->all())->toBe(['pages.create']);
+    expect(Role::query()->where('name', 'writer')->firstOrFail()->grants()->orderBy('permission')->pluck('permission')->all())->toBe(['pages.create']);
 });
 
 it('refuses unknown permissions and scopes on permissions that cannot have one', function (array $grant): void {

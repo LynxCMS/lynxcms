@@ -29,7 +29,7 @@ final class SuperuserScreenController
         return view('lynx-admin::users.index');
     }
 
-    /** Settings > General: the admin's branding. */
+    /** Settings > General: the admin's branding and the page not found. */
     public function general(): View
     {
         abort_unless(RoleList::currentUserIsSuperuser(), 403);

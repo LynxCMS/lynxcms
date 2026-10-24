@@ -8,8 +8,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Translation\Loader;
+use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -35,6 +38,7 @@ use LynxCms\Core\Http\Middleware\MarkPageRoute;
 use LynxCms\Core\Http\Middleware\RedirectDefaultLocale;
 use LynxCms\Core\Http\Middleware\RememberLocale;
 use LynxCms\Core\Http\Middleware\ServeAsVisitor;
+use LynxCms\Core\Http\NotFoundResponder;
 use LynxCms\Core\Indexes\IndexesServiceProvider;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
@@ -42,6 +46,7 @@ use LynxCms\Core\Languages\RegionalJsonLoader;
 use LynxCms\Core\Languages\TranslationLocales;
 use LynxCms\Core\Migrations\DiscoverWarning;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Pages\NotFoundPage;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageAncestry;
 use LynxCms\Core\Pages\PageGates;
@@ -61,6 +66,8 @@ use LynxCms\Core\Strings\StringDefinition;
 use LynxCms\Core\Strings\StringStore;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class LynxServiceProvider extends ServiceProvider
 {
@@ -93,6 +100,16 @@ final class LynxServiceProvider extends ServiceProvider
         });
     }
 
+    /** Front-end 404s show the page not found, when the site has one (ADR-0085). */
+    private function registerNotFoundPage(): void
+    {
+        $this->callAfterResolving(ExceptionHandler::class, function (ExceptionHandler $handler): void {
+            if ($handler instanceof Handler) {
+                $handler->renderable(fn (NotFoundHttpException $e, Request $request): ?SymfonyResponse => $this->app->make(NotFoundResponder::class)->respond($request));
+            }
+        });
+    }
+
     private function registerBladeDirectives(): void
     {
         Blade::directive('hreflang', fn (string $page): string => "<?php echo app(\\LynxCms\\Core\\View\\HreflangBuilder::class)->html({$page}); ?>");
@@ -117,6 +134,7 @@ final class LynxServiceProvider extends ServiceProvider
         PageAncestry::class,
         Authorizer::class,
         Trash::class,
+        NotFoundPage::class,
     ];
 
     public function register(): void
@@ -161,6 +179,7 @@ final class LynxServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerNotFoundPage();
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'lynx');
 
