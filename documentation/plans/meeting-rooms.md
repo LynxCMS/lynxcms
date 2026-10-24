@@ -1,10 +1,26 @@
-# Plan: meeting room screens
+# Plan: Castor & Otters, Inc., a law firm site with meeting room screens
 
 ## Goal
 
 An office runs a site on its own server that shows its meeting rooms' schedules on screens: a TV in the lobby with every room, and a tablet at each door with that room's day. Staff book rooms in the admin, on a booking page, or by asking an AI assistant, and the screens update within seconds. It is built for real use first, then becomes the second Lynx guide and starter (after the training site), showing Lynx as the base of an application rather than a content site.
 
 Calendar logic comes from [Laravel Zap](https://www.laravel-zap.com/) (`laraveljutsu/zap`, PHP 8.5 and Laravel 12+, so it fits Lynx): rooms are its schedulables, bookings its appointments, opening hours its availability, maintenance its blocked times, and it finds conflicts and free slots.
+
+## The firm (added after phase 3)
+
+To show more of Lynx, the app becomes the website of **Castor & Otters, Inc.**, a law firm specialized in wildlife, based in Vancouver with an office in Montreal. The meeting rooms and their screens stay, behind a page password. The humor is in the firm itself: its lawyers are animals of lakes and their shores.
+
+| Question | Decision |
+| --- | --- |
+| Sections | Practice areas, our team, cases and news, contact with a consultation request, and the two offices. |
+| The team | Animals: Castor the beaver and the Otter siblings as founding partners, with a heron, a pike, a loon, a dragonfly paralegal and others. The jokes live in their bios, titles and case names. |
+| Languages | English and Canadian French (`fr`, locale `fr-CA`, under `/fr`), written by hand in the seeder. Translation by the agent is out of scope for now. |
+| Tone and look | A credible firm: a lakeside palette and clean type, with the puns in the copy and small illustrations. Fonts are bundled by Vite, so pages make no requests elsewhere. |
+| Pictures | SVG illustrations drawn for the site, as Blade components: a lawyer or practice area picks one in an `illustration` field. Media fields never accept SVG (Lynx 0.1.17), so editors may upload a photo instead, which then wins. |
+| Rooms | Behind one page password on the Rooms section (`lynxcms/page-password`), which covers every room below it and is remembered for 30 days. |
+| Offices | Both offices have rooms and a lobby screen. Each office page has a time zone (Vancouver `America/Vancouver`, Montreal `America/Toronto`); a room belongs to an office, and its bookings, rules and screens use that zone. |
+| Lynx shown off | Menus, forms (the consultation request), SEO with structured data and hreflang, the sitemap, the page cache for public pages, and search, in both languages. |
+| Order | The site comes before the booking admin; the admin and the screens then take the site's look. |
 
 ## Decisions taken
 
@@ -26,6 +42,20 @@ Calendar logic comes from [Laravel Zap](https://www.laravel-zap.com/) (`laravelj
 | Accounts | Lynx invitations (its own sign-in, two-factor and passkeys). No registration. |
 | Hosting | The office's own server, on the intranet. |
 | Size | Small: up to about 10 rooms, a few screens, under 100 staff. SQLite is enough. |
+
+## The site's content
+
+| Template | Fields (main) | Under |
+| --- | --- | --- |
+| `home` | hero, highlights, featured lawyers and practice areas, latest news | the root |
+| `practice-areas` / `practice-area` | summary, body, illustration, lawyers (page references) | `/practice-areas/` |
+| `team` / `lawyer` | role (founding partner, partner, associate, paralegal), species, illustration or photo, bio, practice areas, office, fun fact | `/team/` |
+| `news` / `post` | kind (case or news), published on, summary, body, practice areas | `/news/` |
+| `offices` / `office` | city, address, phone, opening hours, time zone | `/offices/` |
+| `contact` | intro, the consultation form | `/contact` |
+| `page` | body | legal pages |
+
+Rooms move under the protected Rooms section as before, each with an `office` reference. Screens get an office too, and a lobby shows its office's rooms.
 
 ## The data
 
@@ -113,15 +143,18 @@ Found so far, each fixed in Lynx first with its own PR, as for the training guid
 Each step is a phase: it ends with something to try, and the next one starts only once it is approved.
 
 1. **Spike** (done): Zap 1.15.7 checks conflicts and buffers, follows availability for free slots but not for new appointments, understands recurring schedules in conflicts, has no single-occurrence changes (a series is split instead), and stores dates with wall-clock times in `app.timezone`.
-2. **Skeleton**: a fresh Laravel app with Lynx, the templates (room, screen, announcement, settings), the `rooms` sync and availability from opening hours, seeded with four rooms.
-3. **Booking actions and rules**, with tests for each action (happy path, validation, rollback, dry run, conflicts, buffers, opening hours).
-4. **Admin**: a bookings screen per room and a week view, blocking, screens with kiosk links and QR codes.
-5. **Screens**: lobby and door, polling, offline mark, check in, end early, no-show release.
-6. **Booking page** and "My bookings".
-7. **Recurrence with one-off changes.**
-8. **Mail, .ics, reminders and feeds.**
-9. **MCP and agent**: the read tools, and the booking actions as tools.
-10. **Hosting notes**, then the guide chapters and the starter repo, built and tested on tags like `starter-training`.
+2. **Skeleton** (done): a fresh Laravel app with Lynx, the templates (room, screen, announcement, settings), the `rooms` sync and availability from opening hours, seeded with four rooms.
+3. **Booking actions and rules** (done), with tests for each action (happy path, validation, rollback, dry run, conflicts, buffers, opening hours).
+4. **The firm's foundations**: English and French, the offices with their time zones, rooms belonging to an office (rules and free times in the room's zone), the site's templates, and the page password on Rooms.
+5. **Design and content**: the layout and pages in the firm's look, the SVG illustrations, and the content in both languages: practice areas, the team, cases and news, the offices.
+6. **Lynx features**: menus, the consultation form, SEO with structured data and hreflang, the sitemap, search, and the page cache.
+7. **Admin**: a bookings screen per room and a week view, blocking, screens with kiosk links and QR codes.
+8. **Screens**: lobby and door, polling, offline mark, check in, end early, no-show release.
+9. **Booking page** and "My bookings".
+10. **Recurrence with one-off changes.**
+11. **Mail, .ics, reminders and feeds.**
+12. **MCP and agent**: the read tools, and the booking actions as tools.
+13. **Hosting notes**, then the guide chapters and the starter repo, built and tested on tags like `starter-training`.
 
 ## Verification
 
@@ -130,6 +163,8 @@ Each step is a phase: it ends with something to try, and the next one starts onl
 - Calendars: invites and cancellations in Outlook, Google Calendar and Apple Calendar; feeds subscribed in each.
 
 ## Open questions
+
+- Hosting: a public website must be reachable from the internet, while the plan put the app on the office's server. Either the site is hosted publicly and the screens reach it through their kiosk links, or the public site and the rooms run apart. To decide before the hosting notes.
 
 - Should a door screen also allow "Book now" later? Left out for now.
 - Attendees: invite other staff (they get the `.ics` too), or organizer only?
