@@ -15,7 +15,7 @@ order: 2
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
 | `lynx:schema:apply --path= --dry-run --force` | Applies schema files; `--force` also deletes what the files lack. |
-| `lynx:phpstan-stub --path=` | Writes a PHPStan stub that types `$page->field` reads (default `lynx/phpstan/Page.stub`). |
+| `lynx:phpstan --path=` | Writes the field types Lynx's PHPStan extension reads, so `$page->field` and `$item->field` are checked (default `lynx/phpstan/types.php`). |
 | `lynx:export path --without-files` | Writes a content package (a directory or a `.zip`); `--without-files` leaves media files out, for machines that [download them from production](/deeper/live-site#media-from-production). |
 | `lynx:import path --with-schema --prune --dry-run` | Imports a content package. |
 | `lynx:backup` | Writes a content backup and keeps the newest ones. |

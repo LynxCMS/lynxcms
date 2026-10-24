@@ -1,0 +1,24 @@
+# Lynx's PHPStan extension (ADR-0083): types $page->field and $item->field from the file
+# php artisan lynx:phpstan writes. Include it in your phpstan.neon:
+#
+#   includes:
+#       - vendor/lynxcms/core/phpstan/extension.neon
+#
+# and set parameters.lynx.types when the file is not at lynx/phpstan/types.php.
+
+parameters:
+    lynx:
+        types: %currentWorkingDirectory%/lynx/phpstan/types.php
+
+parametersSchema:
+    lynx: structure([
+        types: string()
+    ])
+
+services:
+    -
+        class: LynxCms\Core\PhpStan\FieldProperties
+        arguments:
+            typesFile: %lynx.types%
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension

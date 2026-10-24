@@ -51,23 +51,24 @@ lynx()->pages->find('template=post, rating>=7, sort=-rating');
 
 - `PresentsValue`: return what templates read, such as a value object, instead of the stored value. `getUnformatted()` still returns the stored value.
 - `ReferencesPages`: list the page ids a value points at (eager loading), map them to page keys and back (content packages), and narrow a query to rows that reference a page (backlinks).
-- `DescribesPhpType`: the PHPDoc type templates read for a shared value, such as `'\Carbon\CarbonImmutable|null'`, for `lynx:phpstan-stub`. Without it the field reads as `mixed`.
+- `DescribesPhpType`: the PHPDoc type templates read for a shared value, such as `'\Carbon\CarbonImmutable|null'`, for `lynx:phpstan`. Without it the field reads as `mixed`.
 
 ## Static analysis
 
-Fields are read as magic properties (`$page->starts_on`), which PHPStan cannot see. Generate a stub from the schema and add it to `phpstan.neon`:
+Fields are read as magic properties (`$page->starts_on`, `$item->role`), which PHPStan cannot see. Lynx ships a PHPStan extension that types them from your schema. Write the types, then include the extension in `phpstan.neon`:
 
 ```bash
-php artisan lynx:phpstan-stub
+php artisan lynx:phpstan
 ```
 
 ```neon
-parameters:
-    stubFiles:
-        - lynx/phpstan/Page.stub
+includes:
+    - vendor/lynxcms/core/phpstan/extension.neon
 ```
 
-Each field then reads as its type presents it: a `TranslatableValue` for translatable fields, `int|null` for an integer, a `PageArray` for page references (`Page|null` with `multiple: false`), a single image or `null` for an images field with `max_files: 1`. Writes accept any value, as `pages.save` validates them. The stub lists every field, so reading a field the page's template does not have still returns `null` at runtime. Regenerate it after adding fields, for example in the same commit as `lynx:schema:export`.
+Each field then reads as its type presents it, on pages and on repeater and matrix items: a `TranslatableValue` for translatable fields, `int|null` for an integer, a `PageArray` for page references (`Page|null` with `multiple: false`), a single image or `null` for an images field with `max_files: 1`. Writes accept any value, as `pages.save` validates them; of the built-in properties, only `$page->name` may be set. Every field is listed, so reading a field the page's template does not have still returns `null` at runtime.
+
+`lynx:phpstan` writes `lynx/phpstan/types.php`. Commit it, and regenerate it after changing fields, for example in the same commit as `lynx:schema:export`. Elsewhere, point the extension at it with `parameters.lynx.types`.
 
 ## In the admin
 
@@ -111,7 +112,7 @@ The data could as well come from a config file, a database table or an API; regi
 | `comparison()` | Left to `BaseFieldType`, which compares as text, so selectors filter by icon: `badge=calendar`. |
 | `rules()` | Refuses a name the data source does not have, with a message editors understand. |
 | `normalize()` | Trims the name; an empty one is stored as `null`. |
-| `phpType()` (`DescribesPhpType`) | A nullable string, for `lynx:phpstan-stub`. |
+| `phpType()` (`DescribesPhpType`) | A nullable string, for `lynx:phpstan`. |
 
 `sleep()` and `wake()` are also left to `BaseFieldType`, which stores one value in `data`. Override them when a value spans several rows or columns.
 

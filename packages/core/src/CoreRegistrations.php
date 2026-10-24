@@ -51,7 +51,7 @@ use LynxCms\Core\Console\ImportCommand;
 use LynxCms\Core\Console\InstallCommand;
 use LynxCms\Core\Console\LanguagesCommand;
 use LynxCms\Core\Console\MigrateCommand;
-use LynxCms\Core\Console\PhpStanStubCommand;
+use LynxCms\Core\Console\PhpStanCommand;
 use LynxCms\Core\Console\ScanStringsCommand;
 use LynxCms\Core\Console\ScheduleRunCommand;
 use LynxCms\Core\Console\SchemaApplyCommand;
@@ -167,6 +167,6 @@ final class CoreRegistrations
         ImportCommand::class,
         BackupCommand::class,
         ScanStringsCommand::class,
-        PhpStanStubCommand::class,
+        PhpStanCommand::class,
     ];
 }

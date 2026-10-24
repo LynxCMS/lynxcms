@@ -64,7 +64,7 @@ final class RatingType extends BaseFieldType implements DescribesPhpType
         return $value === null || $value === '' ? null : (int) $value;
     }
 
-    /** What templates read, for lynx:phpstan-stub. */
+    /** What templates read, for lynx:phpstan. */
     public function phpType(Field $field): string
     {
         return 'int|null';

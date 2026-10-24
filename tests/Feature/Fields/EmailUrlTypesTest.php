@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageEditor;
+use LynxCms\Core\Pages\TranslatableValue;
 
 beforeEach(function (): void {
     courseSite();
@@ -73,15 +74,15 @@ it('refuses a protocol-relative address even with "relative"', function (): void
     courseWith(['booking' => '//evil.example/']);
 })->throws(ValidationException::class);
 
-it('types both as strings in the PHPStan stub', function (): void {
-    $path = sys_get_temp_dir().'/lynx-stub-'.uniqid().'/Page.stub';
-    $this->artisan('lynx:phpstan-stub', ['--path' => $path])->assertSuccessful();
-    $stub = File::get($path);
+it('types both as strings for PHPStan', function (): void {
+    $path = testingPath('email-url-types').'/types.php';
+    $this->artisan('lynx:phpstan', ['--path' => $path])->assertSuccessful();
+    $types = (require $path)['page'];
     File::deleteDirectory(dirname($path));
 
-    expect($stub)->toContain('@property-read string|null $contact')
-        ->toContain('@property-read string|null $website')
-        ->toContain('@property-read \LynxCms\Core\Pages\TranslatableValue $booking');
+    expect($types['contact']['type'])->toBe('string|null')
+        ->and($types['website']['type'])->toBe('string|null')
+        ->and($types['booking']['type'])->toBe('\\'.TranslatableValue::class);
 });
 
 it('gives editors email and url inputs', function (): void {

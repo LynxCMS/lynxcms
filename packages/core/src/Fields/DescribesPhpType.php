@@ -9,7 +9,7 @@ use LynxCms\Core\Models\Field;
 /**
  * A field type that tells static analysis what templates read: the PHPDoc type of $page->field
  * for a shared (not translatable) field, as the type presents it. Translatable fields always read
- * as a TranslatableValue. Used by lynx:phpstan-stub; types without it read as mixed.
+ * as a TranslatableValue. Used by lynx:phpstan; types without it read as mixed.
  *
  * @api
  */

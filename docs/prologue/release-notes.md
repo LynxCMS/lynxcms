@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **PHPStan types fields through an extension.** `lynx:phpstan` (formerly `lynx:phpstan-stub`) writes your fields' types, and `vendor/lynxcms/core/phpstan/extension.neon` reads them, for pages and for repeater and matrix items. The stub it replaces failed PHPStan 2's stub checks, which can't see vendor classes, and left `$page->name` read only. See [Static analysis](/deeper/custom-field-types#static-analysis).
 - `lynx:install` no longer asks to create a superuser when code runs it (`Artisan::call()` in a seeder or a test), where nobody can answer: it waited forever in tests, and elsewhere started `lynx:superuser` with no answers. It asks only when typed in a terminal.
 
 ## 0.1.18
