@@ -9,4 +9,5 @@ return [
     'open' => 'Abrir',
     'wrong' => 'A palavra-passe está errada.',
     'too_many' => 'Demasiadas tentativas. Aguarde um minuto e tente de novo.',
+    'locked' => 'Demasiadas palavras-passe erradas para esta página. Tente de novo daqui a uma hora.',
 ];

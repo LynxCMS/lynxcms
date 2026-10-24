@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Page passwords resist guessing from many addresses.** Besides five tries a minute per address, a protected page takes at most 100 wrong passwords an hour from all addresses together (`LYNX_PAGE_PASSWORD_MAX_FAILURES`), then refuses every try for the rest of the hour and logs a warning.
 - **Page pickers keep to what editors may view.** The page table, the page picker and the link dialog no longer show or offer pages outside the editor's view scope, even from a crafted request. Pages a field already held still show, so a value an editor can't see doesn't look empty.
 - **Exports leave out media of pages guests can't open.** A static export copies the files of pages that are published, out of the trash and open to guests, and no longer the whole media disk.
 - **Sitemaps share only a plain guest's build.** A visitor your visibility rules show more to gets a sitemap built for them alone, never cached and sent with `no-store`, so their pages never reach the copy search engines read.
