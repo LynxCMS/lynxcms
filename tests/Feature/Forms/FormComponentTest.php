@@ -38,6 +38,12 @@ it('shows the first step in the visitor\'s language', function (): void {
         ->assertSee('Seguinte')->assertSee('Escolha…');
 });
 
+it('speaks Canadian French to a French visitor', function (): void {
+    lynx()->languages->add('fr', 'Français', locale: 'fr-CA', fallback: 'default');
+
+    quoteComponent('fr')->assertSee('Étape 1 de 2')->assertSee('Suivant')->assertSee('Choisir…');
+});
+
 it('sends a field to the server when it is left, so checks and live extras follow', function (): void {
     // Livewire 4: .blur alone only updates the browser's copy; .live.blur also sends it.
     fillQuote(quoteComponent())->assertSeeHtml('wire:model.live.blur="data.name"')->assertDontSeeHtml('wire:model.blur=');
@@ -121,7 +127,7 @@ it('says when sending fails for another reason', function (): void {
     $component = fillQuote(quoteComponent());
     $this->travel(5)->seconds();
 
-    $component->call('submit')->assertSet('isSent', false)->assertSee('Your message could not be sent');
+    $component->call('submit')->assertSet('isSent', false)->assertSee('Não foi possível enviar a mensagem');
 });
 
 it('sums up the earlier answers on the last step', function (): void {

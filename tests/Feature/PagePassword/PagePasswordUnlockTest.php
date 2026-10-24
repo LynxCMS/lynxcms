@@ -106,3 +106,11 @@ it('lets signed-in users with access skip the form', function (): void {
 it('shows the form in the visitor language', function (): void {
     $this->get('/pt/cursos/membros/')->assertForbidden()->assertSee('protegida');
 });
+
+it('shows the form in Canadian French', function (): void {
+    lynx()->languages->add('fr', 'Français', locale: 'fr-CA', fallback: 'default');
+    $this->members->setLanguageName('fr', 'membres');
+    $this->members->save();
+
+    $this->get('/fr/courses/membres/')->assertForbidden()->assertSee('Cette page est protégée')->assertSee('Mot de passe');
+});

@@ -21,6 +21,8 @@ return [
     'sign_in_to_answer' => 'Sign in to answer this form.',
     'sign_in' => 'Sign in',
     'already_answered' => 'You have already answered this form.',
+    'sent' => 'Thank you. We received your message.',
+    'failed' => 'Your message could not be sent. Please try again.',
     'mail' => [
         'subject' => 'New submission: :form',
         'open' => 'Open in the admin',
