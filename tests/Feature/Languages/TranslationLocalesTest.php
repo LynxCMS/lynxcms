@@ -56,3 +56,36 @@ describe('JSON translation strings', function (): void {
         expect(lynx()->language('pt', fn (): string => __('Not translated')))->toBe('Not translated');
     });
 });
+
+describe('PHP translation files', function (): void {
+    beforeEach(function (): void {
+        $this->lang = testingPath('php-lang');
+        File::ensureDirectoryExists($this->lang.'/pt');
+        File::ensureDirectoryExists($this->lang.'/en');
+        file_put_contents($this->lang.'/en/rooms.php', "<?php return ['seats' => 'One seat|:count seats', 'labels' => ['wall' => 'Wall', 'door' => 'Door']];");
+        file_put_contents($this->lang.'/pt/rooms.php', "<?php return ['seats' => 'Um lugar|:count lugares', 'labels' => ['wall' => 'Parede', 'door' => 'Porta']];");
+        app('translation.loader')->addPath($this->lang);
+    });
+
+    afterEach(function (): void {
+        File::deleteDirectory($this->lang);
+    });
+
+    it('picks plural forms from the bare language\'s file', function (): void {
+        expect(lynx()->language('pt', fn (): string => trans_choice('rooms.seats', 3)))->toBe('3 lugares');
+    });
+
+    it('prefers the regional file, and keeps the rest of the bare one', function (): void {
+        File::ensureDirectoryExists($this->lang.'/pt-PT');
+        file_put_contents($this->lang.'/pt-PT/rooms.php', "<?php return ['labels' => ['wall' => 'Muro']];");
+
+        expect(lynx()->language('pt', fn (): array => [__('rooms.labels.wall'), __('rooms.labels.door'), trans_choice('rooms.seats', 1)]))
+            ->toBe(['Muro', 'Porta', 'Um lugar']);
+    });
+
+    it('falls back to the app\'s fallback language for plurals it lacks', function (): void {
+        file_put_contents($this->lang.'/en/rooms.php', "<?php return ['seats' => 'One seat|:count seats', 'rooms' => 'One room|:count rooms'];");
+
+        expect(lynx()->language('pt', fn (): string => trans_choice('rooms.rooms', 2)))->toBe('2 rooms');
+    });
+});

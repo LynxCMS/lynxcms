@@ -29,7 +29,7 @@ A language has these settings:
 | `code` | Short code for code, the API and per-language arrays such as labels: lowercase letters, digits, `-` and `_`. Changing it renames the labels stored under the old code. |
 | `name` | Display name, such as "Português". |
 | `label` | Optional short label for the admin's language tabs ("PT", "pt-BR"). Empty shows the name. |
-| `locale` | Locale for Laravel's translations and the HTML `lang` attribute. Defaults to the code. A regional locale (`pt-PT`) also reads the bare language's translations: the files in `lang/pt` and the strings in `lang/pt.json`, with `lang/pt-PT.json` winning where both have a string. |
+| `locale` | Locale for Laravel's translations and the HTML `lang` attribute. Defaults to the code. A regional locale (`pt-PT`) also reads the bare language's translations: the files in `lang/pt` and the strings in `lang/pt.json`, with `lang/pt-PT.json` winning where both have a string. `trans_choice()` finds them too, and uses the language's plural rules. |
 | `prefix` | URL prefix. Defaults to the code; the default language has none. |
 | `fallback` | Language used when a value is missing. Chains end at the default language, and cycles are refused. |
 | `active` | Whether visitors can see the language. |

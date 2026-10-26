@@ -42,7 +42,8 @@ use LynxCms\Core\Http\NotFoundResponder;
 use LynxCms\Core\Indexes\IndexesServiceProvider;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
-use LynxCms\Core\Languages\RegionalJsonLoader;
+use LynxCms\Core\Languages\RegionalLoader;
+use LynxCms\Core\Languages\RegionalMessageSelector;
 use LynxCms\Core\Languages\TranslationLocales;
 use LynxCms\Core\Migrations\DiscoverWarning;
 use LynxCms\Core\Models\Template;
@@ -140,8 +141,8 @@ final class LynxServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(UnknownFields::class);
-        // Regional languages (pt-PT) also read the bare language's JSON strings (lang/pt.json).
-        $this->app->extend('translation.loader', fn (Loader $loader): Loader => new RegionalJsonLoader($loader));
+        // Regional languages (pt-PT) also read the bare language's strings and files (lang/pt.json, lang/pt/*.php).
+        $this->app->extend('translation.loader', fn (Loader $loader): Loader => new RegionalLoader($loader));
         // Page gates and visibility rules (ADR-0062): registered by modules at boot.
         $this->app->singleton(PageGates::class);
         $this->app->singleton(PageVisibility::class);
@@ -203,12 +204,13 @@ final class LynxServiceProvider extends ServiceProvider
             Event::listen(CommandFinished::class, [DiscoverWarning::class, 'handle']);
         }
 
-        // Scheduled publishing (ADR-0036): due entries are applied within a minute.
-        // Regional locales (pt-PT) also read the bare language's translations (lang/pt).
+        // Regional locales (pt-PT) also read the bare language's translations (lang/pt), and use its plural rules.
         $this->callAfterResolving('translator', function (Translator $translator): void {
             $translator->determineLocalesUsing(TranslationLocales::expand(...));
+            $translator->setSelector(new RegionalMessageSelector);
         });
 
+        // Scheduled publishing (ADR-0036): due entries are applied within a minute.
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->command(ScheduleRunCommand::class)->everyMinute()->withoutOverlapping();
 

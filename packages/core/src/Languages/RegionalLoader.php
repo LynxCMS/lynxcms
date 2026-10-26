@@ -7,28 +7,25 @@ namespace LynxCms\Core\Languages;
 use Illuminate\Contracts\Translation\Loader;
 
 /**
- * Laravel's translation loader, with JSON strings widened like TranslationLocales widens PHP
- * files: a language set to "pt-PT" reads lang/pt.json, then lang/pt_PT.json, then
- * lang/pt-PT.json, the most specific winning. Laravel looks up JSON strings for the exact locale
- * only, so without it __('Book now') stays English on a pt-PT page even with lang/pt.json there.
+ * Laravel's translation loader, widened like TranslationLocales: a language set to "pt-PT" reads
+ * lang/pt, then lang/pt_PT, then lang/pt-PT, the most specific winning key by key. That covers
+ * JSON strings, which Laravel looks up for the exact locale only, so __('Book now') stays English
+ * on a pt-PT page even with lang/pt.json there; and PHP files, which trans_choice() checks for the
+ * exact locale before picking plural forms, so it showed English plurals with lang/pt/rooms.php.
  *
  * @internal
  */
-final readonly class RegionalJsonLoader implements Loader
+final readonly class RegionalLoader implements Loader
 {
     public function __construct(private Loader $loader) {}
 
     /** @return array<array-key, mixed> */
     public function load($locale, $group, $namespace = null): array
     {
-        if ($group !== '*' || $namespace !== '*') {
-            return $this->loader->load($locale, $group, $namespace);
-        }
-
         $lines = [];
 
         foreach (array_reverse(TranslationLocales::expand([$locale])) as $candidate) {
-            $lines = [...$lines, ...$this->loader->load($candidate, '*', '*')];
+            $lines = array_replace_recursive($lines, $this->loader->load($candidate, $group, $namespace));
         }
 
         return $lines;
