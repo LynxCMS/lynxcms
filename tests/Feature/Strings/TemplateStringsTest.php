@@ -127,6 +127,17 @@ it('scans from Artisan', function (): void {
     $this->artisan('lynx:strings:scan')->expectsOutputToContain('landing');
 });
 
+it('lists only templates with a view, and counts the others', function (): void {
+    lynx()->templates->add('shop_settings', fields: ['title'], hasUrl: false, singleton: true);
+
+    expect(app(StringCatalog::class)->hasView('landing'))->toBeTrue()
+        ->and(app(StringCatalog::class)->hasView('shop_settings'))->toBeFalse();
+
+    $this->artisan('lynx:strings:scan')
+        ->doesntExpectOutputToContain('shop_settings')
+        ->expectsOutputToContain('have no view, so they declare no strings');
+});
+
 it('shows agents the strings of a page with their edits', function (): void {
     saveStrings(['language' => 'pt', 'values' => ['cta.label' => 'Fale connosco']]);
     $strings = collect(app(AgentToolkit::class)->getPage('/landing/')['strings'])->keyBy('key');

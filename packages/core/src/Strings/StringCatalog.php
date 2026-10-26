@@ -39,6 +39,12 @@ final class StringCatalog
         return $definitions;
     }
 
+    /** Whether the template has a view to scan (templates/{name}.blade.php by default). */
+    public function hasView(string $template): bool
+    {
+        return $this->views->exists($this->viewName($template));
+    }
+
     /**
      * Site strings declared by any template, which every page shares (stored on the home page).
      *
@@ -123,7 +129,8 @@ final class StringCatalog
      */
     private function entry(string $template): array
     {
-        $view = Value::string(config('lynx.views_path', 'templates'), 'templates').'.'.$template;
+        $view = $this->viewName($template);
+
         if (isset($this->memo[$view]) && $this->isFresh($this->memo[$view]['files'])) {
             return $this->memo[$view];
         }
@@ -153,6 +160,11 @@ final class StringCatalog
             'definitions' => array_map(fn (mixed $definition): StringDefinition => StringDefinition::fromArray(Value::array($definition)), Value::list($cached['definitions'] ?? [])),
             'errors' => Value::strings($cached['errors'] ?? []),
         ];
+    }
+
+    private function viewName(string $template): string
+    {
+        return Value::string(config('lynx.views_path', 'templates'), 'templates').'.'.$template;
     }
 
     /** The folders of site strings decide scopes (ADR-0051), so a scan is kept per setting. */
