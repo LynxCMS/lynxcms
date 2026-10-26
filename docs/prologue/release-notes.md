@@ -8,11 +8,13 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.22
+
+Released October 26, 2026. Nothing to run after updating. If your code reads other languages through a translatable field, see the [upgrade guide](/prologue/upgrade).
 
 - **Friendlier commands in a terminal.** `lynx:superuser` checks the email and password as you type them. `lynx:import`, `lynx:export`, `lynx:find` and `lynx:ask` ask for a missing argument, `lynx:page-cache` without flags lets you pick what to do, and `lynx:import --prune` and `lynx:schema:apply --force` show what they would remove and ask first. Long commands (`lynx:backup`, `lynx:export`, `lynx:import`, `lynx:static`, `lynx:demo`, `lynx:bench`, cache and sitemap warming, the agent's planning) show a spinner or a progress bar. Commands run from code, a pipe, a scheduler log or with `--no-interaction` never ask and print plain lines, as before.
 
-- A translatable text reads as `null` when no language in the visitor's fallback chain has a value, even if another language holds one, so `@if ($page->job_title)` and `$page->job_title ?: $default` work on pages translated only in part. Before, such a field read as an empty object, which PHP treats as true. See the [upgrade guide](/prologue/upgrade) if your code reads other languages through it.
+- A translatable text reads as `null` when no language in the visitor's fallback chain has a value, even if another language holds one, so `@if ($page->job_title)` and `$page->job_title ?: $default` work on pages translated only in part. Before, such a field read as an empty object, which PHP treats as true.
 
 ## 0.1.21
 
