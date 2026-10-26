@@ -11,14 +11,19 @@ use PhpToken;
 /**
  * Finds the @string calls in a Blade file (ADR-0047) with PHP's tokenizer: keys, code texts and
  * options must be literals ('text', or ['pt' => 'texto']), so they are known without running the
- * template. Also lists the views the file pulls in (@include, @extends, <x-component>), so a
- * template's catalog follows its layout and partials.
+ * template; only the values for placeholders (replace:) are code. Also lists the views the file
+ * pulls in (@include, @extends, <x-component>, and <livewire:name> or @livewire('name') as the
+ * view livewire.name, Livewire's convention), so a template's catalog follows its layout,
+ * partials and components.
  *
  * @internal
  */
 final class StringScanner
 {
     private const array OPTIONS = ['label', 'scope', 'format'];
+
+    /** The option whose value is code, run with the template: the values for placeholders. */
+    private const string REPLACE = 'replace';
 
     public function scan(string $path): ScanReport
     {
@@ -31,9 +36,11 @@ final class StringScanner
 
         preg_match_all("/@(?:include|includeIf|includeWhen|includeFirst|extends|each)\\(\\s*(?:[^'\")]*,\\s*)?['\"]([\\w.\\-:]+)['\"]/", $source, $includes);
         preg_match_all('/<x-([a-z0-9][\w.\-]*)[\s>\/]/', $source, $components);
+        preg_match_all("/<livewire:([a-z0-9][\\w.\\-]*)[\\s>\\/]|@livewire\\(\\s*['\"]([\\w.\\-]+)['\"]/", $source, $livewire);
         $report->views = array_values(array_unique([
             ...$includes[1],
             ...array_map(fn (string $name): string => 'components.'.$name, $components[1]),
+            ...array_map(fn (string $name): string => 'livewire.'.$name, array_filter([...$livewire[1], ...$livewire[2]])),
         ]));
 
         return $report;
@@ -138,6 +145,12 @@ final class StringScanner
                 $i += 2;
             }
 
+            if ($name === self::REPLACE) {
+                $i = $this->skipExpression($tokens, $i);
+
+                continue;
+            }
+
             [$value, $i] = $this->literal($tokens, $i);
 
             if ($value === null || ($name !== null && ! in_array($name, self::OPTIONS, true))) {
@@ -152,6 +165,34 @@ final class StringScanner
         }
 
         return $values;
+    }
+
+    /**
+     * The token after an expression of any shape, such as replace: ['room' => $room->title]: the
+     * next top-level comma, or the end. Its commas inside brackets and calls belong to it.
+     *
+     * @param  list<PhpToken>  $tokens
+     */
+    private function skipExpression(array $tokens, int $i): int
+    {
+        $depth = 0;
+        $end = count($tokens);
+
+        for (; $i < $end; $i++) {
+            $text = $tokens[$i]->text;
+
+            if ($depth === 0 && ($text === ',' || $text === ';')) {
+                return $text === ',' ? $i + 1 : $i;
+            }
+
+            $depth += match ($text) {
+                '(', '[', '{' => 1,
+                ')', ']', '}' => -1,
+                default => 0,
+            };
+        }
+
+        return $i;
     }
 
     /**

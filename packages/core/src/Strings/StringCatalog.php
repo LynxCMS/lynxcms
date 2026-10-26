@@ -18,7 +18,7 @@ use Throwable;
 final class StringCatalog
 {
     /** Bump when the scanner or the cached shape changes, so cached scans are made again. */
-    private const string CACHE_PREFIX = 'lynx-strings:v4:';
+    private const string CACHE_PREFIX = 'lynx-strings:v5:';
 
     /** @var array<string, array{files: array<string, int>, definitions: list<StringDefinition>, errors: list<string>}> */
     private array $memo = [];

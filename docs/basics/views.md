@@ -192,6 +192,20 @@ The text in the view is the default. Editors change it per language in the page'
 
 A default can also be one text per language: `@string('hero.title', ['en' => 'We make films', 'pt' => 'Fazemos filmes'])`. Lynx stores only the texts editors change, so a new default in the view reaches every page nobody edited. Keys and texts must be written out literally. `php artisan lynx:strings:scan` lists every string the views declare and reports problems.
 
+### Values in texts
+
+A text that holds a value, such as a name or a time, marks it with a placeholder, as Laravel's translations do, and `replace:` gives the values. Editors move the placeholder where their language wants it:
+
+```blade
+<p>@string('rooms.free', ['en' => ':room is free until :time.', 'fr' => 'La salle :room est libre jusqu\'à :time.'], replace: ['room' => $room->title, 'time' => $until])</p>
+```
+
+`:Room` capitalises the value and `:ROOM` upper-cases it. Values are escaped like the text. `replace:` is the one argument that may be code; the Texts tab lists the placeholders each text uses and asks editors to keep them.
+
+### Texts in Livewire components
+
+A template that places a Livewire component, with `<livewire:book-a-room />` or `@livewire('book-a-room')`, also declares the strings of the component's view, `livewire/book-a-room.blade.php` by Livewire's convention, so they show in the page's Texts tab. Page texts need the page: give the component's view a `$page` variable, for example by passing the page's id to the component and loading it in `render()`. Without one, page texts show their default.
+
 A page's own texts are part of the page: while it has a draft, the Texts tab edits the draft, and revisions keep and restore them. Site texts are shared, so they are always live.
 
 ## The settings page

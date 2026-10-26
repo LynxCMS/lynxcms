@@ -14,6 +14,9 @@
                         @elseif ($definition->format === 'markdown')
                             <p class="text-muted-foreground text-xs">Markdown</p>
                         @endif
+                        @if ($definition->placeholders() !== [])
+                            <p class="text-muted-foreground text-xs">Keep {{ implode(', ', $definition->placeholders()) }}: the site fills {{ count($definition->placeholders()) === 1 ? 'it' : 'them' }} in.</p>
+                        @endif
                         @if ($isSuperuser && $definition->view !== '')
                             <p class="text-muted-foreground font-mono text-xs break-all" title="Declared in this view">{{ $definition->view }}</p>
                         @endif

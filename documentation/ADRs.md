@@ -924,3 +924,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Editors write the 404 text, translate it and give it template strings like any page. Existing sites get the page on their next `lynx:install`, which adds a template to their schema. Content packages carry the page like any other; the setting stays with each site.
 
+
+## ADR-0086: Template strings take values, and follow Livewire components
+
+**Status:** Accepted
+
+**Context:** ADR-0047 required every `@string` argument to be a literal, so the scanner knows the strings without running a template. A text holding a value ("Our clocks run on Pacific time", "Kingfisher is taken from 10:00 to 11:00") could then only be split around the value, which breaks languages whose word order differs and gives editors fragments, or stay in a lang file editors can't reach. Strings in a Livewire component's view were not found either: the scanner followed `@include` and `<x-…>`, not `<livewire:…>`, so a booking form's texts never reached the page's Texts tab.
+
+**Decision:** `@string` takes `replace:`, an array of values for `:name` placeholders, filled in after the text is chosen (code or editors' text) and before escaping, with Laravel's `:Name` and `:NAME` variants. It is the only argument that may be code; the scanner skips its expression. `StringDefinition::placeholders()` reads the placeholders from the code texts, and the Texts tab asks editors to keep them. The scanner follows `<livewire:name>` and `@livewire('name')` to the view `livewire.name`, Livewire's default, without core depending on Livewire; a component whose view lives elsewhere is not followed.
+
+**Consequences:** Texts with values become editable in every language. An editor who drops a placeholder loses that value from the page; the hint is the only guard. Page texts in a component's view need the view to have `$page`. The scan cache's prefix changes, so every template is scanned again once.

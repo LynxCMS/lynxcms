@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Values in editable texts.** `@string` takes `replace:`, values for `:name` placeholders, so a text such as ":room is free until :time." is one text editors can reword and translate. The Texts tab lists each text's placeholders. See [Values in texts](/basics/views#values-in-texts).
+- Templates that place a Livewire component (`<livewire:name>` or `@livewire('name')`) now declare the strings of its view, `livewire/name.blade.php`, so they show in the page's Texts tab. See [Texts in Livewire components](/basics/views#texts-in-livewire-components).
 - **A new guide: [Build a Meeting Rooms App](/guides/meeting-rooms/).** Eight chapters build an application on Lynx: a law firm's meeting rooms, booked from the admin, a staff page, door and lobby screens and AI assistants, all through the same actions, with [Laravel Zap](https://www.laravel-zap.com/) for the calendars. The finished app is a starter you can clone, updated to each release: [LynxCMS/starter-meeting-rooms](https://github.com/LynxCMS/starter-meeting-rooms).
 
 ## 0.1.20
