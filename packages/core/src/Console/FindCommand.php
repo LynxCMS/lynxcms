@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Console;
 
+use Closure;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
+use LynxCms\Core\Console\Concerns\AsksInTerminal;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\TranslatableValue;
@@ -12,11 +15,15 @@ use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Support\Value;
 use Override;
 
+use function Laravel\Prompts\text;
+
 /**
  * Prints the pages matching a selector and the SQL it compiles to.
  */
-final class FindCommand extends Command
+final class FindCommand extends Command implements PromptsForMissingInput
 {
+    use AsksInTerminal;
+
     #[Override]
     protected $signature = 'lynx:find {selector : e.g. "template=course, price<300, sort=-title"} {--lang= : Language code} {--sql : Show the compiled SQL}';
 
@@ -49,6 +56,13 @@ final class FindCommand extends Command
         $lang = $this->option('lang');
 
         return $lang ? $context->with((string) $lang, fn (): int => $run()) : $run();
+    }
+
+    /** @return array<string, Closure(): string> */
+    #[Override]
+    protected function promptForMissingArgumentsUsing(): array
+    {
+        return ['selector' => fn (): string => text('Selector', placeholder: 'template=course, price<300, sort=-title', required: true)];
     }
 
     private function title(Page $page): string

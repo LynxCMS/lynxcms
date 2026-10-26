@@ -6,12 +6,16 @@ namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Prompts\Elements\Element;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Console\Concerns\AsksInTerminal;
+use LynxCms\Core\Console\Concerns\TerminalFeedback;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
 use Override;
-use Symfony\Component\Console\Input\ArgvInput;
+
+use function Laravel\Prompts\confirm;
 
 /**
  * Installs Lynx, then makes sure someone can open the admin: --user promotes an account (by id or
@@ -19,6 +23,9 @@ use Symfony\Component\Console\Input\ArgvInput;
  */
 final class InstallCommand extends Command
 {
+    use AsksInTerminal;
+    use TerminalFeedback;
+
     /** The admin package's command that creates a superuser. */
     private const string SUPERUSER_COMMAND = 'lynx:superuser';
 
@@ -48,11 +55,10 @@ final class InstallCommand extends Command
         if ($result->value === false) {
             $this->components->info('Lynx is already installed.'.($user !== null ? " User {$given} is a superuser." : ''));
         } else {
-            foreach ($result->changes->summary() as $line) {
-                $this->line('  '.$line);
-            }
-
-            $this->components->info('Lynx installed. Add languages with lynx()->languages->add(...) or the MCP server.');
+            $this->box('Lynx installed', [
+                Element::bulletedList($result->changes->summary()),
+                'Add languages with lynx()->languages->add(...) or the MCP server.',
+            ]);
         }
 
         return $holders->hasSuperuser() ? self::SUCCESS : $this->offerSuperuser();
@@ -74,7 +80,7 @@ final class InstallCommand extends Command
     {
         $canCreate = $this->getApplication()?->has(self::SUPERUSER_COMMAND) ?? false;
 
-        if ($canCreate && $this->canAsk() && $this->confirm('No one is a superuser yet. Create one now?', true)) {
+        if ($canCreate && $this->canAsk() && confirm('No one is a superuser yet. Create one now?')) {
             return $this->call(self::SUPERUSER_COMMAND);
         }
 
@@ -82,21 +88,5 @@ final class InstallCommand extends Command
             .($canCreate ? self::SUPERUSER_COMMAND.' to create one, or ' : '').'php artisan lynx:install --user=EMAIL to make an existing account one.');
 
         return self::SUCCESS;
-    }
-
-    /**
-     * Whether a person is there to answer: the command was typed in a terminal, or
-     * SHELL_INTERACTIVE says so, as Symfony allows. Artisan::call() from a seeder, a deploy script
-     * or a test never asks, since nobody could answer and Laravel Prompts would either wait on
-     * STDIN or answer the default for them.
-     */
-    private function canAsk(): bool
-    {
-        if (! $this->input->isInteractive()) {
-            return false;
-        }
-
-        return getenv('SHELL_INTERACTIVE') !== false
-            || ($this->input instanceof ArgvInput && defined('STDIN') && stream_isatty(STDIN));
     }
 }

@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- **Friendlier commands in a terminal.** `lynx:superuser` checks the email and password as you type them. `lynx:import`, `lynx:export`, `lynx:find` and `lynx:ask` ask for a missing argument, `lynx:page-cache` without flags lets you pick what to do, and `lynx:import --prune` and `lynx:schema:apply --force` show what they would remove and ask first. Long commands (`lynx:backup`, `lynx:export`, `lynx:import`, `lynx:static`, `lynx:demo`, `lynx:bench`, cache and sitemap warming, the agent's planning) show a spinner or a progress bar. Commands run from code, a pipe, a scheduler log or with `--no-interaction` never ask and print plain lines, as before.
+
 ## 0.1.21
 
 Released October 26, 2026. Nothing to run after updating; templates are scanned for texts again once.

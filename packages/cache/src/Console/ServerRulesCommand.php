@@ -26,7 +26,7 @@ final class ServerRulesCommand extends Command
         $text = $rules->for($server);
 
         if ($text === null) {
-            $this->error('Unknown server ['.$server.']: use '.implode(', ', ServerRules::SERVERS).'.');
+            $this->components->error("Unknown server [{$server}]: use ".implode(', ', ServerRules::SERVERS).'.');
 
             return self::FAILURE;
         }

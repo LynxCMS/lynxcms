@@ -5,6 +5,7 @@
     "require": {
         "php": "^8.5",
         "laravel/ai": "^1.0",
+        "laravel/prompts": "^0.3.23",
         "lynxcms/core": "self.version"
     },
     "autoload": {

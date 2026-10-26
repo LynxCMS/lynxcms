@@ -6,6 +6,8 @@ namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use LynxCms\Core\Console\Concerns\TerminalFeedback;
+use LynxCms\Core\Content\BackupFiles;
 use LynxCms\Core\Content\ContentExporter;
 use LynxCms\Core\Content\PackageArchive;
 use LynxCms\Core\Support\Value;
@@ -18,6 +20,8 @@ use Override;
  */
 final class BackupCommand extends Command
 {
+    use TerminalFeedback;
+
     #[Override]
     protected $signature = 'lynx:backup';
 
@@ -26,27 +30,29 @@ final class BackupCommand extends Command
 
     public function handle(ContentExporter $exporter): int
     {
-        $directory = Value::string(config('lynx.backups.path')) ?: storage_path('app/lynx/backups');
+        $directory = BackupFiles::directory();
         File::ensureDirectoryExists($directory);
         $work = sys_get_temp_dir().'/lynx-backup-'.bin2hex(random_bytes(6));
         $zip = $directory.'/lynx-'.now()->format('Ymd-His').'.zip';
 
-        $count = $exporter->export($work);
-        PackageArchive::zip($work, $zip);
-        File::deleteDirectory($work);
-        $this->prune($directory);
+        $count = $this->working('Backing up...', function () use ($exporter, $work, $zip): int {
+            $count = $exporter->export($work);
+            PackageArchive::zip($work, $zip);
+            File::deleteDirectory($work);
+
+            return $count;
+        });
+
+        $this->prune();
 
         $this->components->info("Backed up {$count} page(s) to {$zip}.");
 
         return self::SUCCESS;
     }
 
-    private function prune(string $directory): void
+    private function prune(): void
     {
-        $backups = Value::strings(File::glob($directory.'/lynx-*.zip') ?: []);
-        rsort($backups);
-
-        foreach (array_slice($backups, max(1, Value::int(config('lynx.backups.keep'), 14))) as $old) {
+        foreach (array_slice(BackupFiles::latestFirst(), max(1, Value::int(config('lynx.backups.keep'), 14))) as $old) {
             File::delete($old);
         }
     }

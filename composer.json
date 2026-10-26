@@ -17,6 +17,7 @@
         "laravel/fortify": "^1.41",
         "laravel/framework": "^13.0",
         "laravel/mcp": "^1.0",
+        "laravel/prompts": "^0.3.23",
         "league/commonmark": "^2.8",
         "mallardduck/blade-lucide-icons": "^2.0",
         "spatie/laravel-honeypot": "^4.7",

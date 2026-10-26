@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Cache\Pages;
 
+use Closure;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
@@ -28,8 +29,11 @@ final readonly class Warmer
 
     public function __construct(private Kernel $kernel, private CookieJar $cookies, private TemplateRules $rules, private PageStore $store, private RequestRules $requestRules, private PageVisibility $visibility, private PageUrls $urls) {}
 
-    /** @return array<string, int> stored => n, and skip reason => n */
-    public function warm(): array
+    /**
+     * @param  (Closure(string): void)|null  $visiting  told each URL before it is rendered, for progress
+     * @return array<string, int> stored => n, and skip reason => n
+     */
+    public function warm(?Closure $visiting = null): array
     {
         $report = [];
         $selector = $this->templateSelector();
@@ -39,6 +43,10 @@ final readonly class Warmer
 
             foreach ($pages as $page) {
                 foreach ($this->urlsOf($page) as $url) {
+                    if ($visiting !== null) {
+                        $visiting($url);
+                    }
+
                     $outcome = $this->visit($url);
                     $report[$outcome] = ($report[$outcome] ?? 0) + 1;
                 }
