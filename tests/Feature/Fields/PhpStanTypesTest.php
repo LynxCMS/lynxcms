@@ -27,7 +27,7 @@ beforeEach(function (): void {
     lynx()->fields->add('formats', 'choice', settings: ['multiple' => true, 'options' => [['value' => 'online', 'label' => 'Online']]]);
     $this->folder = testingPath('phpstan-types');
     File::deleteDirectory($this->folder);
-    File::ensureDirectoryExists($this->folder);
+    File::ensureDirectoryExists($this->folder.'/src');
 });
 
 afterEach(fn () => File::deleteDirectory($this->folder));
@@ -61,7 +61,7 @@ it('writes every field as its type presents it, fully qualified', function (): v
 
 it('types pages and items in PHPStan itself', function (): void {
     $this->artisan('lynx:phpstan', ['--path' => $this->folder.'/types.php'])->assertSuccessful();
-    File::put($this->folder.'/Checked.php', <<<'PHP_WRAP'
+    File::put($this->folder.'/src/Checked.php', <<<'PHP_WRAP'
     <?php
 
     use LynxCms\Core\Pages\Items\Item;
@@ -79,12 +79,7 @@ it('types pages and items in PHPStan itself', function (): void {
         echo $page->nonexistent;
     }
     PHP_WRAP);
-    $extension = dirname(__DIR__, 3).'/packages/core/phpstan/extension.neon';
-    File::put($this->folder.'/phpstan.neon', "includes:\n    - {$extension}\n\nparameters:\n    level: max\n    tmpDir: {$this->folder}/tmp\n    lynx:\n        types: {$this->folder}/types.php\n");
-
-    $process = new Process([PHP_BINARY, dirname(__DIR__, 3).'/vendor/bin/phpstan', 'analyse', '-c', $this->folder.'/phpstan.neon', '--error-format=json', '--no-progress', $this->folder.'/Checked.php']);
-    $process->setTimeout(120)->run();
-    $messages = array_column(json_decode($process->getOutput(), true)['files'][$this->folder.'/Checked.php']['messages'] ?? [], 'message');
+    $messages = phpStanMessages($this->folder);
 
     expect($messages)->toContain('Dumped type: int|null')
         ->toContain('Dumped type: Carbon\CarbonImmutable|null')
@@ -95,3 +90,40 @@ it('types pages and items in PHPStan itself', function (): void {
         ->not->toContain('$name')
         ->not->toContain('$price');
 });
+
+it('analyses again when lynx:phpstan writes new types', function (): void {
+    $this->artisan('lynx:phpstan', ['--path' => $this->folder.'/types.php'])->assertSuccessful();
+    File::put($this->folder.'/src/Checked.php', <<<'PHP_WRAP'
+    <?php
+
+    function checked(LynxCms\Core\Pages\Page $page): void
+    {
+        \PHPStan\dumpType($page->venue);
+    }
+    PHP_WRAP);
+
+    expect(implode("\n", phpStanMessages($this->folder)))->toContain('undefined property LynxCms\Core\Pages\Page::$venue');
+
+    lynx()->fields->add('venue', 'integer');
+    lynx()->templates->update('course', ['add' => ['venue']]);
+    $this->artisan('lynx:phpstan', ['--path' => $this->folder.'/types.php'])->assertSuccessful();
+
+    expect(phpStanMessages($this->folder))->toBe(['Dumped type: int|null']);
+});
+
+/**
+ * PHPStan's messages for $folder/src/Checked.php, with Lynx's extension reading $folder/types.php.
+ * It analyses the folder, not the file, so PHPStan keeps its result cache in $folder/tmp between runs.
+ *
+ * @return list<string>
+ */
+function phpStanMessages(string $folder): array
+{
+    $extension = dirname(__DIR__, 3).'/packages/core/phpstan/extension.neon';
+    File::put($folder.'/phpstan.neon', "includes:\n    - {$extension}\n\nparameters:\n    level: max\n    tmpDir: {$folder}/tmp\n    lynx:\n        types: {$folder}/types.php\n");
+
+    $process = new Process([PHP_BINARY, dirname(__DIR__, 3).'/vendor/bin/phpstan', 'analyse', '-c', $folder.'/phpstan.neon', '--error-format=json', '--no-progress', $folder.'/src']);
+    $process->setTimeout(120)->run();
+
+    return array_column(json_decode($process->getOutput(), true)['files'][$folder.'/src/Checked.php']['messages'] ?? [], 'message');
+}
