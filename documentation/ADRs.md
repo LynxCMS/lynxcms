@@ -934,3 +934,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `@string` takes `replace:`, an array of values for `:name` placeholders, filled in after the text is chosen (code or editors' text) and before escaping, with Laravel's `:Name` and `:NAME` variants. It is the only argument that may be code; the scanner skips its expression. `StringDefinition::placeholders()` reads the placeholders from the code texts, and the Texts tab asks editors to keep them. The scanner follows `<livewire:name>` and `@livewire('name')` to the view `livewire.name`, Livewire's default, without core depending on Livewire; a component whose view lives elsewhere is not followed.
 
 **Consequences:** Texts with values become editable in every language. An editor who drops a placeholder loses that value from the page; the hint is the only guard. Page texts in a component's view need the view to have `$page`. The scan cache's prefix changes, so every template is scanned again once.
+
+## ADR-0087: A translatable text with nothing in the current chain reads as null
+
+**Status:** Accepted. Amends ADR-0070.
+
+**Context:** ADR-0070 made a translatable text read as `null` only when no language held a value, and kept it a `TranslatableValue` otherwise, so `in()` could reach other languages. A text filled in one language and read in a language that doesn't fall back to it was then an object whose value is `null` and which prints nothing. Objects are always true in PHP, so `@if ($page->field)` printed empty markup and `$page->field ?: $default` never used the default: a lawyer's job title written only in French blanked their role on the English page of a real site. The documentation already promised that an empty text reads as `null`.
+
+**Decision:** A translatable text, on a page or in a repeater or matrix item, reads as `null` when no language in the current language's fallback chain has a value (`TranslatableValue::isEmpty()`), whatever other languages hold. A field set never to fall back only looks at the current language. Code that needs a language outside the chain reads it with `$page->getLanguageValue($language, $field)`, or reads the field inside `lynx()->language()`. `isBlank()` stays, for code that asks whether any language holds a value.
+
+**Consequences:** `@if`, `?:` and `??` follow what the visitor sees. Code that called `in()` or `has()` on a field read in a language whose chain is empty now gets `null` and must use `getLanguageValue()`; the upgrade note says so. A page serialized for MCP and the read tools gives `null` for such a field instead of an object with a `null` value.

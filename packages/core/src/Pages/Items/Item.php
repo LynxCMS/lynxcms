@@ -85,7 +85,7 @@ final readonly class Item
 
             $translatable = new TranslatableValue($subfield->field, $byId, app(LanguageContext::class), $languages);
 
-            return $translatable->isBlank() ? null : $translatable;
+            return $translatable->isEmpty() ? null : $translatable;
         }
 
         $type = $subfield->type();

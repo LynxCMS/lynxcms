@@ -44,7 +44,7 @@ Print text fields with **`@field`**:
 
 Values are made to be tested in templates:
 
-- An empty text field reads as `null`, so `@if ($page->subtitle)`, `$page->subtitle ?: 'None'` and `??` work. A filled text field is a value object; cast it to compare it with a string: `(string) $page->subtitle === 'News'`.
+- An empty text field reads as `null`, so `@if ($page->subtitle)`, `$page->subtitle ?: 'None'` and `??` work. A translatable field is empty when no language in the visitor's fallback chain has a value, even if another language does. A filled text field is a value object; cast it to compare it with a string: `(string) $page->subtitle === 'News'`.
 - A page reference that holds one page reads as that page or `null`: `{{ $page->category?->title }}`. One that holds several reads as a list of pages.
 - A field the page's template doesn't have reads as `null`, so partials shared by several templates can use `$page->subtitle ?? ''` safely.
 - In debug mode (`APP_DEBUG`), reading a field that doesn't exist at all, usually a typo such as `$page->titel`, writes a warning to the log.

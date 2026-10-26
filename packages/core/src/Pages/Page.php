@@ -125,7 +125,8 @@ class Page implements JsonSerializable
     /**
      * A field value: TranslatableValue for translatable fields; for shared ones, what the field type
      * presents (a PageArray for page references, ADR-0042), else the stored value. A text with no
-     * value in any language reads as null (ADR-0070).
+     * value in the current language's fallback chain reads as null (ADR-0070, ADR-0087); read
+     * another language with getLanguageValue().
      */
     public function get(string $field): mixed
     {
@@ -143,7 +144,7 @@ class Page implements JsonSerializable
         if ($definition->isTranslatable()) {
             $translatable = new TranslatableValue($definition, $this->values[$field] ?? [], $this->context(), $this->registry());
 
-            return $translatable->isBlank() ? null : $translatable;
+            return $translatable->isEmpty() ? null : $translatable;
         }
 
         $value = $this->values[$field][0] ?? null;
