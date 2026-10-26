@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.22 to 0.1.23
+
+- Run `php artisan lynx:phpstan`. Text fields are now typed `TranslatableValue|null` (translatable) or `SharedValue|null`, as they read at runtime, so PHPStan reports code that calls a method on a field that may be empty, such as `$page->title->value()`. Use `$page->title?->value()`, cast with `(string) $page->title` (an empty field gives `''`), or check it first.
+
 ## From 0.1.21 to 0.1.22
 
 - A translatable text with no value in the current language's fallback chain now reads as `null`, even when another language holds a value. If your code reaches other languages through such a field, as in `$page->title->in('fr')` or `->has('fr')`, read them with `$page->getLanguageValue('fr', 'title')` instead, which works whatever the current language is. Templates that worked around the empty object, such as `(string) $page->title !== ''`, keep working and can go back to `@if ($page->title)`.

@@ -41,13 +41,13 @@ it('writes every field as its type presents it, fully qualified', function (): v
         'parent' => '\LynxCms\Core\Pages\Page|null',
         'children' => '\\'.PageArray::class,
         'template' => '\\'.Template::class,
-        'title' => '\\'.TranslatableValue::class,
+        'title' => '\\'.TranslatableValue::class.'|null',
         'price' => 'int|null',
         'related' => '\\'.PageArray::class,
         'starts_on' => '\Carbon\CarbonImmutable|null',
         'poster' => '\LynxCms\Media\Values\Pageimage|null',
         'gallery' => '\\'.MediaList::class,
-        'note' => '\\'.SharedValue::class,
+        'note' => '\\'.SharedValue::class.'|null',
         'rating' => 'float|null',
         'level' => '\LynxCms\Core\Fields\Choices\Choice|null',
         'formats' => '\\'.ChoiceList::class,
@@ -56,7 +56,7 @@ it('writes every field as its type presents it, fully qualified', function (): v
         ->and($types['page']['url']['writable'])->toBeFalse()
         ->and($types['page']['price']['writable'])->toBeTrue()
         ->and($types['item']['key']['type'])->toBe('string')
-        ->and($types['item']['note']['type'])->toBe('\\'.SharedValue::class);
+        ->and($types['item']['note']['type'])->toBe('\\'.SharedValue::class.'|null');
 });
 
 it('types pages and items in PHPStan itself', function (): void {
@@ -73,6 +73,7 @@ it('types pages and items in PHPStan itself', function (): void {
         \PHPStan\dumpType($page->starts_on);
         \PHPStan\dumpType($item->note);
         \PHPStan\dumpType($item->key);
+        \PHPStan\dumpType($page->title);
         $page->name = 'renamed';
         $page->price = '12';
         $page->url = '/elsewhere';
@@ -83,7 +84,8 @@ it('types pages and items in PHPStan itself', function (): void {
 
     expect($messages)->toContain('Dumped type: int|null')
         ->toContain('Dumped type: Carbon\CarbonImmutable|null')
-        ->toContain('Dumped type: LynxCms\Core\Pages\SharedValue')
+        ->toContain('Dumped type: LynxCms\Core\Pages\SharedValue|null')
+        ->toContain('Dumped type: LynxCms\Core\Pages\TranslatableValue|null')
         ->toContain('Dumped type: string')
         ->and(implode("\n", $messages))->toContain('LynxCms\Core\Pages\Page::$url is not writable')
         ->toContain('undefined property LynxCms\Core\Pages\Page::$nonexistent')

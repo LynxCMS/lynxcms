@@ -66,7 +66,7 @@ includes:
     - vendor/lynxcms/core/phpstan/extension.neon
 ```
 
-Each field then reads as its type presents it, on pages and on repeater and matrix items: a `TranslatableValue` for translatable fields, `int|null` for an integer, a `PageArray` for page references (`Page|null` with `multiple: false`), a single image or `null` for an images field with `max_files: 1`. Writes accept any value, as `pages.save` validates them; of the built-in properties, only `$page->name` may be set. Every field is listed, so reading a field the page's template does not have still returns `null` at runtime.
+Each field then reads as its type presents it, on pages and on repeater and matrix items: `TranslatableValue|null` for translatable fields and `SharedValue|null` for other texts (both read as `null` when empty), `int|null` for an integer, a `PageArray` for page references (`Page|null` with `multiple: false`), a single image or `null` for an images field with `max_files: 1`. Writes accept any value, as `pages.save` validates them; of the built-in properties, only `$page->name` may be set. Every field is listed, so reading a field the page's template does not have still returns `null` at runtime.
 
 `lynx:phpstan` writes `lynx/phpstan/types.php`. Commit it, and regenerate it after changing fields, for example in the same commit as `lynx:schema:export`. Elsewhere, point the extension at it with `parameters.lynx.types`. PHPStan 2.3 and later analyse the code that reads fields again when the file changes; with an older PHPStan, run `vendor/bin/phpstan clear-result-cache` after regenerating it, or the result cache keeps reporting the old fields.
 

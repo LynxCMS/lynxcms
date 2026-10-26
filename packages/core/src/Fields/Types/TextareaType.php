@@ -100,8 +100,9 @@ final class TextareaType extends BaseFieldType implements DescribesPhpType, Pres
         return in_array($settings['format'] ?? 'plain', ['html', 'markdown'], true);
     }
 
+    /** A SharedValue, or null when empty (PresentsSharedText). */
     public function phpType(Field $field): string
     {
-        return '\\'.SharedValue::class;
+        return '\\'.SharedValue::class.'|null';
     }
 }
