@@ -1,60 +1,70 @@
 ---
 title: Staff Pages, Mail and Calendars
-description: Chapter 6 of the meeting rooms guide. The staff's booking page and My bookings as app routes in two languages, invitations with .ics mailed after the action commits, reminders, and calendar feeds.
+description: Chapter 6 of the meeting rooms guide. The staff's booking page and My bookings as Lynx pages behind a gate, refusals as the page's texts, invitations with .ics mailed after the action commits, reminders, and calendar feeds.
 ---
 
 # Staff Pages, Mail and Calendars
 
 Staff should not need the admin to book a room. They get two pages of their own, `/book` and `/my-bookings`, in English and French, and the meetings reach their calendar without them doing anything.
 
-## App routes, not pages
+## Pages behind a gate
 
-The booking pages are the app's own routes, not pages in the tree: they have no content for editors, and they must never appear in menus, search or the sitemap. Lynx's page routes answer every other address, so these come first in `routes/web.php`, once per language:
+The booking pages are Lynx pages: `/book` (`/fr/reserver`) with a `book` template, and `/my-bookings` (`/fr/mes-reservations`) with a `my-bookings` template. Editors write their titles and summaries in both languages, Lynx gives them their French addresses, and their status is `hidden`, so they never appear in menus, search or the sitemap. Each template's view places a Livewire component and passes it the page:
 
-```php
-Route::middleware('auth')->group(function (): void {
-    Route::get('book', [StaffPagesController::class, 'book'])->defaults('language', 'en')->name('staff.book');
-    Route::get('fr/reserver', [StaffPagesController::class, 'book'])->defaults('language', 'fr')->name('staff.book.fr');
-    Route::get('my-bookings', [StaffPagesController::class, 'mine'])->defaults('language', 'en')->name('staff.mine');
-    Route::get('fr/mes-reservations', [StaffPagesController::class, 'mine'])->defaults('language', 'fr')->name('staff.mine.fr');
-});
+```blade
+<x-layout :title="(string) $page->title" robots="noindex, nofollow">
+    <x-page-header :title="(string) $page->title" :summary="(string) $page->summary" />
+    <livewire:book-a-room :page-id="(int) $page->id" />
+</x-layout>
 ```
 
-The `auth` middleware sends people who are not signed in to Lynx's sign-in page and back. The controller lets in people with `rooms.book` and sets the page's language, so the layout, the site texts and the dates all follow:
+Only staff may open them. A [gate](/deeper/visibility) decides what happens when someone opens a page: it sends people who are not signed in to sign in and back, and refuses people who may not book:
 
 ```php
-private function enter(string $language): void
+app(PageGates::class)->add(fn (Page $page, Request $request): ?Response => $this->staffOnly($page, $request));
+
+private function staffOnly(Page $page, Request $request): ?Response
 {
-    $id = auth()->id();
-    abort_unless($id !== null && app(Authorizer::class)->allows(Actor::user($id), 'rooms.book'), 403);
-    app(LanguageContext::class)->set($language);
+    if (! in_array((string) $page->template()->name, ['book', 'my-bookings'], true)) {
+        return null;
+    }
+
+    $id = $request->user()?->getAuthIdentifier();
+
+    if (! is_int($id) && ! is_string($id)) {
+        return redirect()->guest(route('login'));
+    }
+
+    abort_unless(app(Authorizer::class)->allows(Actor::user($id), 'rooms.book'), 403);
+
+    return null;
 }
 ```
+
+Signed-in users never get pages from the page cache, and guests only ever get the redirect, so nothing personal is stored.
 
 ## Livewire components that run actions
 
-The pages are Livewire components. Livewire answers at its own address, without the `/fr` prefix, so a shared trait keeps the visitor's language between requests, checks the permission on every request, and turns an action's refusal into errors on the form:
+Livewire answers at its own address, without the `/fr` prefix, so a shared trait keeps the visitor's language between requests, checks the permission on every request, and runs actions. **Book a room** asks for an office, a day, a length, seats and equipment, and lists each room that fits with its free start times every quarter hour, keeping the gap between meetings (`App\Rooms\FreeRooms` and `App\Rooms\Slots`). Picking a time and naming the meeting runs `rooms.book`. **My bookings** lists the meetings the person organizes, to move, rename or cancel with `rooms.change` and `rooms.cancel`.
+
+## Refusals as the page's texts
+
+When the office's rules refuse a booking, the person should read why in their language, in words the firm chose. The actions serve the admin and AI assistants too, which read English messages, so they don't translate. They say why instead: `BookingRules` throws a `BookingRefused`, a `ValidationException` that also carries a reason and the values it names:
 
 ```php
-private function attemptAction(string $action, array $input): bool
-{
-    $this->resetErrorBag();
-
-    try {
-        lynx()->run($action, $input);
-    } catch (ValidationException $exception) {
-        foreach ($exception->errors() as $field => $messages) {
-            $this->addError($field, $messages[0] ?? 'Not valid.');
-        }
-
-        return false;
-    }
-
-    return true;
-}
+throw BookingRefused::because('from', 'taken', ['room' => $name, 'times' => '11:15–12:15', 'buffer' => 5], "{$name} is taken from 11:15 to 12:15.");
 ```
 
-**Book a room** asks for an office, a day, a length, seats and equipment, and lists each room that fits with its free start times every quarter hour, keeping the gap between meetings (`App\Rooms\FreeRooms` and `App\Rooms\Slots`). Picking a time and naming the meeting runs `rooms.book`. **My bookings** lists the meetings the person organizes, to move, rename or cancel with `rooms.change` and `rooms.cancel`.
+The component keeps the reason and values, and its view shows them as one of the booking page's [editable texts](/basics/views#editable-texts), with the values filled into placeholders:
+
+```blade
+@case('taken')
+    @string('refusal.taken', ['en' => ':room is taken during :times.', 'fr' => 'La salle :room est prise pendant :times.'],
+        label: 'Refused: room taken (times)', replace: ['room' => $values['room'], 'times' => $values['times']])
+    @break
+```
+
+Lynx finds these texts through the component's view ([Texts in Livewire components](/basics/views#texts-in-livewire-components)), so the booking page's **Texts** tab lists all ten refusals, in English and French, with the placeholders each must keep. My bookings shows the same texts, read from the booking page, so the firm words each refusal once.
 
 ## Mail after the commit
 
@@ -95,4 +105,4 @@ Each person can subscribe to their meetings, and managers to a room's, at a secr
 ## What you get
 
 - **The firm:** staff who book for themselves in their language, and meetings that land in everyone's calendar, updated when they move.
-- **You:** two pages and a mail listener, with every rule still in the actions, and no mail that could go out for a change that never happened.
+- **You:** two pages, a gate and a mail listener, with every rule still in the actions, refusals editors can word, and no mail that could go out for a change that never happened.
