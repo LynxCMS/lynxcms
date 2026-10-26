@@ -10,6 +10,15 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **A new guide: [Build a Meeting Rooms App](/guides/meeting-rooms/).** Eight chapters build an application on Lynx: a law firm's meeting rooms, booked from the admin, a staff page, door and lobby screens and AI assistants, all through the same actions, with [Laravel Zap](https://www.laravel-zap.com/) for the calendars. The finished app is a starter you can clone, updated to each release: [LynxCMS/starter-meeting-rooms](https://github.com/LynxCMS/starter-meeting-rooms).
+
+## 0.1.20
+
+Released October 25, 2026. Run `php artisan lynx:install` after updating to get the page not found (see the [upgrade guide](/prologue/upgrade)).
+
+- **The page not found is a page in the tree.** `lynx:install` creates `/not-found/`, a system page with a `not-found` template, which Lynx shows with status 404 and `noindex` for any front-end address that matches no page, in the visitor's language. Editors write it like any page. Superusers pick another page, or none, under **Settings > General** (`pages.set_not_found`). See [The page not found](/basics/views#the-page-not-found).
+- **The site's name, logo and colours in the admin.** Superusers set them under **Settings > General**, with a preview; developers set defaults in `config/lynx-admin.php` (`LYNX_ADMIN_NAME`, `LYNX_ADMIN_LOGO`, `LYNX_ADMIN_BACKGROUND`, `LYNX_ADMIN_BRAND_ACCENT`). They show on the sign-in screens, in the sidebar and in the browser's tab titles. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
+- The admin's sidebar keeps its state, open or collapsed, between pages and visits, and no longer flashes open on each page.
 - **French for visitors.** The forms and page password modules ship French strings next to English and Portuguese, so a `fr` language (or a regional locale such as `fr-CA`) shows them without a published copy.
 - A form's default success and error messages (when it doesn't define `successMessage()` or `errorMessage()`) come from `lynx-forms::forms.sent` and `.failed`, in the visitor's language. They were English for everyone.
 

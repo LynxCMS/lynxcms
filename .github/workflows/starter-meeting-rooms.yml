@@ -1,0 +1,112 @@
+# Keeps the meeting rooms starter (LynxCMS/starter-meeting-rooms), the code of the meeting rooms
+# guide, on the latest release. Unlike starter-training it is an app of its own, developed in its
+# repository: each tag requires the new Lynx version there, runs its PHPStan and tests, and pushes
+# the update as one commit on main plus the tag.
+# Needs SPLIT_TOKEN with Contents read and write on LynxCMS/starter-meeting-rooms too.
+name: Starter (meeting rooms)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Update and test, but push nothing
+        type: boolean
+        default: true
+
+concurrency:
+  group: starter-meeting-rooms-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  starter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/checkout@v7
+        with:
+          repository: LynxCMS/starter-meeting-rooms
+          path: starter
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: sqlite3, pdo_sqlite, intl
+          tools: composer:v2
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      # A tag updates to itself; a manual run from a branch tests the latest release.
+      - name: Choose the Lynx version
+        id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then tag="${GITHUB_REF_NAME}"; else tag="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"; fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      # Packagist lists a tag the split workflow has just pushed one package at a time.
+      - name: Wait for the release on Packagist
+        if: github.ref_type == 'tag'
+        working-directory: starter
+        run: |
+          for package in $(jq -r '.require | keys[] | select(startswith("lynxcms/"))' composer.json); do
+            for attempt in $(seq 1 45); do
+              curl -sf "https://repo.packagist.org/p2/${package}.json" | grep -q "\"${TAG}\"" && continue 2
+              sleep 20
+            done
+            echo "${package} ${TAG} is not on Packagist yet." >&2
+            exit 1
+          done
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+
+      - name: Require the release
+        working-directory: starter
+        run: |
+          packages=$(jq -r --arg version "^${VERSION}" '.require | keys[] | select(startswith("lynxcms/")) | . + ":" + $version' composer.json)
+          # Packagist's mirrors can trail a new tag by a few minutes after its own listing shows it.
+          for attempt in 1 2 3 4 5 6; do
+            composer require ${packages} --with-all-dependencies --no-interaction && break
+            [ "$attempt" -eq 6 ] && exit 1
+            echo "Lynx ${VERSION} is not installable yet; trying again in a minute." >&2
+            composer clear-cache --quiet
+            sleep 60
+          done
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Check and test the starter
+        working-directory: starter
+        run: |
+          npm ci
+          npm run build
+          cp .env.example .env
+          php artisan key:generate
+          vendor/bin/phpstan analyse --no-progress
+          php artisan test --compact
+
+      - name: Push to LynxCMS/starter-meeting-rooms
+        # A manual run pushes only with dry_run off, and only from a tag.
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false && github.ref_type == 'tag')
+        working-directory: starter
+        run: |
+          git add composer.json composer.lock
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" -c user.email="41898173+github-actions[bot]@users.noreply.github.com" \
+              commit --quiet -m "chore: Lynx ${TAG}"
+          fi
+          git tag --force "${TAG}"
+          remote="https://x-access-token:${SPLIT_TOKEN}@github.com/LynxCMS/starter-meeting-rooms.git"
+          git push "${remote}" HEAD:main
+          git push --force "${remote}" "refs/tags/${TAG}"
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          SPLIT_TOKEN: ${{ secrets.SPLIT_TOKEN }}

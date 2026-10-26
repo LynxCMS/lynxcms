@@ -149,6 +149,21 @@ export default defineConfig({
                 ],
             },
             {
+                text: 'Guide: Meeting Rooms',
+                collapsed: true,
+                items: [
+                    { text: 'Overview', link: '/guides/meeting-rooms/' },
+                    { text: '1. Plan and Install', link: '/guides/meeting-rooms/install' },
+                    { text: '2. Rooms Are Pages', link: '/guides/meeting-rooms/rooms' },
+                    { text: '3. Bookings Are Actions', link: '/guides/meeting-rooms/bookings' },
+                    { text: '4. The Admin', link: '/guides/meeting-rooms/admin' },
+                    { text: '5. Screens', link: '/guides/meeting-rooms/screens' },
+                    { text: '6. Staff Pages, Mail and Calendars', link: '/guides/meeting-rooms/staff' },
+                    { text: '7. AI Assistants', link: '/guides/meeting-rooms/assistants' },
+                    { text: '8. Hosting', link: '/guides/meeting-rooms/hosting' },
+                ],
+            },
+            {
                 text: 'AI',
                 items: [
                     { text: 'MCP Server and Agent', link: '/ai/' },
