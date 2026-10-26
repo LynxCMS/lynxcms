@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.21
+
+Released October 26, 2026. Nothing to run after updating; templates are scanned for texts again once.
 
 - **Values in editable texts.** `@string` takes `replace:`, values for `:name` placeholders, so a text such as ":room is free until :time." is one text editors can reword and translate. The Texts tab lists each text's placeholders. See [Values in texts](/basics/views#values-in-texts).
 - Templates that place a Livewire component (`<livewire:name>` or `@livewire('name')`) now declare the strings of its view, `livewire/name.blade.php`, so they show in the page's Texts tab. See [Texts in Livewire components](/basics/views#texts-in-livewire-components).
