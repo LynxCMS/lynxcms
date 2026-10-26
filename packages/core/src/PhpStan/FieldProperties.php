@@ -7,6 +7,8 @@ namespace LynxCms\Core\PhpStan;
 use LynxCms\Core\Pages\Items\Item;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
+use PHPStan\Analyser\DeclarationDependencyTracker;
+use PHPStan\DependencyInjection\Container;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
@@ -16,7 +18,9 @@ use RuntimeException;
 /**
  * PHPStan extension (ADR-0083): $page->field and $item->field have the types lynx:phpstan wrote
  * from the schema, resolved in PHPStan's own container, so they may name any class the app can
- * load. Only loaded by PHPStan, through phpstan/extension.neon.
+ * load. Only loaded by PHPStan, through phpstan/extension.neon. The types file is declared as what
+ * Page and Item depend on, so PHPStan 2.3 and later analyse again when lynx:phpstan rewrites it;
+ * older versions keep their result cache until it is cleared.
  *
  * @internal
  */
@@ -28,13 +32,24 @@ final class FieldProperties implements PropertiesClassReflectionExtension
     /** @var array<string, FieldProperty> */
     private array $properties = [];
 
-    public function __construct(private readonly string $typesFile, private readonly TypeStringResolver $resolver) {}
+    private readonly ?DeclarationDependencyTracker $dependencies;
+
+    public function __construct(private readonly string $typesFile, private readonly TypeStringResolver $resolver, Container $container)
+    {
+        $this->dependencies = interface_exists(DeclarationDependencyTracker::class) ? $container->getByType(DeclarationDependencyTracker::class) : null;
+    }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         $kind = $this->kind($classReflection);
 
-        return $kind !== null && isset($this->types()[$kind][$propertyName]);
+        if ($kind === null) {
+            return false;
+        }
+
+        $this->dependencies?->trackFileDependency($classReflection, $this->typesFile);
+
+        return isset($this->types()[$kind][$propertyName]);
     }
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection

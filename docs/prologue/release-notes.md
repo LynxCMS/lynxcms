@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- PHPStan analyses again after `lynx:phpstan` rewrites `lynx/phpstan/types.php`, instead of reporting fields you just added as undefined until `phpstan clear-result-cache`. This needs PHPStan 2.3 or later; older versions behave as before.
+
 - `trans_choice()` on a language with a regional locale such as `fr-CA` reads the plural forms from `lang/fr`, and picks them with French plural rules. Before, it checked `lang/fr-CA` only and showed the fallback language's plurals, and a hyphenated locale always took the first form.
 
 - Structured data for people takes `worksFor`: map it to `@organization` for the site's own organization, to a page field, or give `worksFor.name` and `worksFor.url`.
