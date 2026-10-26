@@ -82,7 +82,7 @@ it('types both as strings for PHPStan', function (): void {
 
     expect($types['contact']['type'])->toBe('string|null')
         ->and($types['website']['type'])->toBe('string|null')
-        ->and($types['booking']['type'])->toBe('\\'.TranslatableValue::class);
+        ->and($types['booking']['type'])->toBe('\\'.TranslatableValue::class.'|null');
 });
 
 it('gives editors email and url inputs', function (): void {

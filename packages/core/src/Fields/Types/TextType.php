@@ -68,8 +68,9 @@ final class TextType extends BaseFieldType implements DescribesPhpType, Presents
         return trim(preg_replace('/\s+/u', ' ', Value::string($value)) ?? '');
     }
 
+    /** A SharedValue, or null when empty (PresentsSharedText). */
     public function phpType(Field $field): string
     {
-        return '\\'.SharedValue::class;
+        return '\\'.SharedValue::class.'|null';
     }
 }

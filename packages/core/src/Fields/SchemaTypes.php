@@ -72,7 +72,7 @@ final class SchemaTypes
     private function type(Field $field): string
     {
         if ($field->isTranslatable()) {
-            return '\\'.TranslatableValue::class;
+            return '\\'.TranslatableValue::class.'|null';
         }
 
         $type = $field->fieldType();
