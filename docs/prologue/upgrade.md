@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.19 to 0.1.20
+
+- Run `php artisan lynx:install`. It creates the page not found, `/not-found/` with a `not-found` template, unless someone already chose a page or none. Then add `resources/views/templates/not-found.blade.php` in your site's layout ([The page not found](/basics/views#the-page-not-found)). Until the view exists, rendering it fails, the error is reported, and Laravel's own 404 answers as before.
+
 ## From 0.1.18 to 0.1.19
 
 - `lynx:phpstan-stub` is now `lynx:phpstan`, and writes `lynx/phpstan/types.php` instead of a stub. In `phpstan.neon`, remove `lynx/phpstan/Page.stub` from `stubFiles`, include `vendor/lynxcms/core/phpstan/extension.neon`, and delete the old stub.
