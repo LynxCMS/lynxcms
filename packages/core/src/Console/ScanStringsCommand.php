@@ -11,8 +11,10 @@ use LynxCms\Core\Strings\StringDefinition;
 use Override;
 
 /**
- * Lists the strings each template declares with @string, and reports keys that are not literals,
- * keys declared twice with different texts, and texts for language codes the site lacks (ADR-0047).
+ * Lists the strings each template with a view declares with @string, and reports keys that are not
+ * literals, keys declared twice with different texts, and texts for language codes the site lacks
+ * (ADR-0047). Templates without a view (settings pages, menus, pages without a URL) declare none,
+ * so they are counted, not listed.
  */
 final class ScanStringsCommand extends Command
 {
@@ -24,7 +26,8 @@ final class ScanStringsCommand extends Command
 
     public function handle(StringCatalog $catalog): int
     {
-        $templates = array_values(array_map(fn (Template $t): string => (string) $t->name, lynx()->templates->all()->all()));
+        $all = array_map(fn (Template $t): string => (string) $t->name, lynx()->templates->all()->all());
+        $templates = array_values(array_filter($all, $catalog->hasView(...)));
         $rows = [];
         $problems = 0;
 
@@ -51,6 +54,12 @@ final class ScanStringsCommand extends Command
         }
 
         $this->table(['Template', 'Page strings', 'Site strings'], $rows);
+
+        $withoutView = count($all) - count($templates);
+
+        if ($withoutView > 0) {
+            $this->components->info("{$withoutView} more template(s) have no view, so they declare no strings.");
+        }
 
         return $problems === 0 ? self::SUCCESS : self::FAILURE;
     }
