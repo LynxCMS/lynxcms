@@ -6,13 +6,17 @@ namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
 use LynxCms\Core\Actions\Fields\CleanHtmlValues;
+use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
+use LynxCms\Core\Console\Concerns\TerminalFeedback;
 use LynxCms\Core\Support\Value;
 use Override;
 
 /** Runs fields.clean_html, e.g. once after upgrading from a version without the HTML sanitizer. */
 final class CleanHtmlCommand extends Command
 {
+    use TerminalFeedback;
+
     #[Override]
     protected $signature = 'lynx:clean-html {--field= : One html field, default every html field} {--dry-run : Show what would change without writing}';
 
@@ -23,7 +27,7 @@ final class CleanHtmlCommand extends Command
     {
         $isDryRun = (bool) $this->option('dry-run');
         $field = Value::nullableString($this->option('field'));
-        $result = lynx()->run(CleanHtmlValues::class, array_filter(['field' => $field]), dryRun: $isDryRun);
+        $result = $this->working('Cleaning html values...', fn (): ActionResult => lynx()->run(CleanHtmlValues::class, array_filter(['field' => $field]), dryRun: $isDryRun));
 
         foreach ($result->changes->summary() as $line) {
             $this->line('  '.$line);

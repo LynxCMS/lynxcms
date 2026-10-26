@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Console;
 
+use Closure;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,10 @@ use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Support\Value;
 use Override;
+
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
 
 /**
  * Makes someone a superuser (ADR-0079): creates their account in the app's users, or promotes the
@@ -33,7 +38,7 @@ final class SuperuserCommand extends Command
 
     public function handle(ActionRunner $runner): int
     {
-        $email = mb_strtolower(trim(Value::string($this->option('email')) ?: Value::string($this->ask('Email'))));
+        $email = mb_strtolower($this->optionOrAsk('email', fn (): string => text('Email', required: true, validate: ['email' => ['required', 'email']])));
 
         if (Validator::make(['email' => $email], ['email' => ['required', 'email']])->fails()) {
             $this->components->error("[{$email}] is not an email address.");
@@ -47,7 +52,7 @@ final class SuperuserCommand extends Command
             return $this->promote($runner, $existing, $email);
         }
 
-        $name = trim(Value::string($this->option('name')) ?: Value::string($this->ask('Name')));
+        $name = $this->optionOrAsk('name', fn (): string => text('Name', required: true));
         $password = $this->password();
 
         if ($password === null) {
@@ -74,7 +79,7 @@ final class SuperuserCommand extends Command
     {
         $name = Value::string(data_get($user, 'name'), $email);
 
-        if (! $this->confirm("{$name} <{$email}> already has an account. Make them a superuser?", true)) {
+        if (! confirm("{$name} <{$email}> already has an account. Make them a superuser?")) {
             return self::SUCCESS;
         }
 
@@ -94,20 +99,29 @@ final class SuperuserCommand extends Command
         }
 
         while (true) {
-            $password = Value::string($this->secret('Password'));
-            $errors = Validator::make(['password' => $password], ['password' => ['required', Password::default()]])->errors();
+            $password = password('Password', required: true, validate: ['password' => ['required', Password::default()]]);
 
-            if ($errors->isNotEmpty()) {
-                $this->components->error(Value::string($errors->first('password')));
-
-                continue;
-            }
-
-            if ($password === Value::string($this->secret('Password again'))) {
+            if ($password === password('Password again')) {
                 return $password;
             }
 
             $this->components->error('The passwords differ. Try again.');
         }
+    }
+
+    /**
+     * The option, trimmed, or the answer to $ask when the option is empty and someone can answer.
+     *
+     * @param  Closure(): string  $ask
+     */
+    private function optionOrAsk(string $option, Closure $ask): string
+    {
+        $given = trim(Value::string($this->option($option)));
+
+        if ($given !== '' || ! $this->input->isInteractive()) {
+            return $given;
+        }
+
+        return trim($ask());
     }
 }

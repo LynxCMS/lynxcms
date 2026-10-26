@@ -4,6 +4,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
+        "laravel/prompts": "^0.3.23",
         "lynxcms/core": "self.version"
     },
     "suggest": {

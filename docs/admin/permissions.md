@@ -80,4 +80,4 @@ A permission guards your code, and actions guard their own writes. A user with `
 
 ## Agents and MCP clients
 
-Agents act with the roles of the user they work for. MCP clients that act for no user get `LYNX_ANONYMOUS_ROLE`; without it they are refused.
+Agents act with the roles of the user they work for. MCP clients and `lynx:ask`, which act for no user, get `LYNX_ANONYMOUS_ROLE`; without it they are refused.

@@ -73,6 +73,8 @@ While the agent works, its changes wait in one database transaction, which other
 
 The agent reads and writes with the roles of the user it works for: `lynx()->ai()->ask($prompt, actor: Actor::ai($userId))`, or the signed-in user by default. That holds in a command or a queued job too, which otherwise run with every right.
 
+`lynx:ask` has no signed-in user, so its agent acts for no user, like an MCP client started from the terminal. It gets the role named by `LYNX_ANONYMOUS_ROLE`, or each tool is refused for lack of permission. The `editor` role that `lynx:install` creates lets the agent read and change pages; templates, fields and languages need `superuser` or a role of your own with `schema.manage`. As with MCP, set it on your own machine only, never on a server that others can reach. For a run as a given user, call `ask()` from code with `actor: Actor::ai($userId)`.
+
 From code, `ask()` takes uploaded files or paths as attachments. Pass the files a person uploaded, never a path from a request, or the agent reads whatever file the path names.
 
 Plan mode undoes database changes only. Anything a tool does outside the database while planning has already happened when you review the plan: `media.store` downloads the URL it was given, `static.export` writes an export, and listeners of yours that call other services run. Keep that in mind before letting the agent read content others wrote, such as form submissions, since that text can ask it to do things.
@@ -81,6 +83,7 @@ Plan mode undoes database changes only. Anything a tool does outside the databas
 | --- | --- |
 | `LYNX_AI_PROVIDER`, `LYNX_AI_MODEL` | The `laravel/ai` provider and model. |
 | `LYNX_AI_TRANSLATION_MODEL` | Model used by `pages.translate`. |
+| `LYNX_ANONYMOUS_ROLE` | Role of `lynx:ask` and of MCP clients that act for no user; none refuses them. |
 | `lynx.agents.allowed_languages` | Languages agents may write; empty means all. |
 | `LYNX_AGENT_DEFAULT_LIMIT`, `LYNX_AGENT_MAX_LIMIT` | Pages `find_pages` returns without a limit (25) and at most (100). |
 
