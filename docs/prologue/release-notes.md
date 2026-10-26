@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- `trans_choice()` on a language with a regional locale such as `fr-CA` reads the plural forms from `lang/fr`, and picks them with French plural rules. Before, it checked `lang/fr-CA` only and showed the fallback language's plurals, and a hyphenated locale always took the first form.
+
 ## 0.1.22
 
 Released October 26, 2026. Nothing to run after updating. If your code reads other languages through a translatable field, see the [upgrade guide](/prologue/upgrade).
