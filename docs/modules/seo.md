@@ -91,7 +91,7 @@ On **SEO**, then **Structured data**, map a template to a schema.org type and sa
 | A field | `startDate: starts` | The page's field, in the current language with fallback. |
 | A built in | `headline: @title` | `@title`, `@url`, `@published` or `@modified`. |
 | A fixed value | `offers.priceCurrency: =EUR` | The text after `=`. |
-| The site's owner | `author: @organization` | The organization or person from the settings, linked by `@id`. Fits `author` and `publisher` on articles, `provider` on courses and `organizer` on events. |
+| The site's owner | `author: @organization` | The organization or person from the settings, linked by `@id`. Fits `author` and `publisher` on articles, `provider` on courses, `organizer` on events and `worksFor` on people. |
 
 The types are Article, BlogPosting, NewsArticle, CreativeWork, Event, Product, Course, Place, LocalBusiness, Store, Restaurant, ProfessionalService, LodgingBusiness, Person and FAQPage. Values are converted for each property: dates to ISO 8601, images and links to full URLs, numbers to numbers, text without tags.
 

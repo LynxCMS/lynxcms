@@ -41,6 +41,7 @@ final class SchemaTypes
         'provider' => 'Organization',
         'publisher' => 'Organization',
         'organizer' => 'Organization',
+        'worksFor' => 'Organization',
         'performer' => 'Person',
         'brand' => 'Brand',
         'location' => 'Place',
@@ -128,7 +129,7 @@ final class SchemaTypes
             'Course' => [...self::THING, 'provider' => self::PAGE, 'provider.name' => self::TEXT, 'provider.url' => self::URL, ...self::prefixed('offers', self::OFFER)],
             'Place' => $place,
             ...array_fill_keys(self::LOCAL_BUSINESSES, $business),
-            'Person' => [...self::THING, 'jobTitle' => self::TEXT, 'email' => self::TEXT, 'telephone' => self::TEXT, 'sameAs' => self::LINES],
+            'Person' => [...self::THING, 'jobTitle' => self::TEXT, 'email' => self::TEXT, 'telephone' => self::TEXT, 'sameAs' => self::LINES, 'worksFor' => self::PAGE, 'worksFor.name' => self::TEXT, 'worksFor.url' => self::URL],
             'FAQPage' => ['mainEntity' => self::LIST, 'mainEntity.name' => self::TEXT, 'mainEntity.acceptedAnswer.text' => self::TEXT],
         ];
     }

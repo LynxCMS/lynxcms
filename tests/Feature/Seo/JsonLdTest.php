@@ -114,6 +114,14 @@ it('credits the site\'s organization as author, provider or organizer', function
     expect(nodeOf(graphOf($this->alpha), 'Article'))->not->toHaveKey('author');
 });
 
+it('says whom a person works for: the site\'s organization, or one named', function (): void {
+    mapSchemas(['course' => ['Person', "name: @title\njobTitle: =Partner\nworksFor: @organization"]]);
+    expect(nodeOf(graphOf($this->alpha), 'Person'))->toMatchArray(['jobTitle' => 'Partner', 'worksFor' => ['@id' => 'http://localhost/#organization']]);
+
+    mapSchemas(['course' => ['Person', "name: @title\nworksFor.name: =Castor Ltd\nworksFor.url: =https://castor.test"]]);
+    expect(nodeOf(graphOf($this->alpha), 'Person')['worksFor'])->toBe(['@type' => 'Organization', 'name' => 'Castor Ltd', 'url' => 'https://castor.test']);
+});
+
 it('refuses the organization where a property takes no page', function (): void {
     mapSchemas(['course' => ['Article', 'headline: @organization']]);
 })->throws(ValidationException::class, '[@organization] only fits');

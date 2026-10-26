@@ -12,6 +12,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - `trans_choice()` on a language with a regional locale such as `fr-CA` reads the plural forms from `lang/fr`, and picks them with French plural rules. Before, it checked `lang/fr-CA` only and showed the fallback language's plurals, and a hyphenated locale always took the first form.
 
+- Structured data for people takes `worksFor`: map it to `@organization` for the site's own organization, to a page field, or give `worksFor.name` and `worksFor.url`.
+
 ## 0.1.22
 
 Released October 26, 2026. Nothing to run after updating. If your code reads other languages through a translatable field, see the [upgrade guide](/prologue/upgrade).

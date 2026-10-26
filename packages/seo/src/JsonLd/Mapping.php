@@ -16,7 +16,7 @@ final readonly class Mapping
     /** Built-in sources a page has whatever its template. */
     public const array BUILT_INS = ['@title', '@url', '@published', '@modified'];
 
-    /** The site's organization or person from the SEO settings, for author, provider or organizer. */
+    /** The site's organization or person from the SEO settings, for author, provider, organizer or worksFor. */
     public const string ORGANIZATION = '@organization';
 
     /**
