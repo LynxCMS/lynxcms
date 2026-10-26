@@ -105,7 +105,7 @@ final class MappingValidator
         $list = SchemaTypes::listOf($type, $property);
 
         if ($source === Mapping::ORGANIZATION) {
-            return $kind === SchemaTypes::PAGE && $list === null ? null : '['.Mapping::ORGANIZATION.'] only fits properties that take a page, such as author, provider or organizer.';
+            return $kind === SchemaTypes::PAGE && $list === null ? null : '['.Mapping::ORGANIZATION.'] only fits properties that take a page, such as author, provider, organizer or worksFor.';
         }
 
         if (Mapping::isBuiltIn($source)) {
