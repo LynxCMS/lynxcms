@@ -8,9 +8,11 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.23
 
-- `lynx:phpstan` types text fields as they read: `TranslatableValue|null` for translatable fields and `SharedValue|null` for other texts and textareas, since empty ones read as `null`. Run `php artisan lynx:phpstan` after updating; see the [upgrade guide](/prologue/upgrade).
+Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).
+
+- `lynx:phpstan` types text fields as they read: `TranslatableValue|null` for translatable fields and `SharedValue|null` for other texts and textareas, since empty ones read as `null`.
 
 - PHPStan analyses again after `lynx:phpstan` rewrites `lynx/phpstan/types.php`, instead of reporting fields you just added as undefined until `phpstan clear-result-cache`. This needs PHPStan 2.3 or later; older versions behave as before.
 
