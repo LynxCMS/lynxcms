@@ -105,7 +105,7 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 ## Sites with one language
 
-Until a site has a second language, the admin leaves languages out: the field form doesn't ask whether a field is translatable, and screens don't mention translations, fallbacks or the default language. Fields whose type can be translated are created translatable anyway, because that can't be changed later, so adding a language just works.
+Until a site has a second language, the admin leaves languages out: the field form doesn't ask whether a field is translatable, and screens don't mention translations, fallbacks or the default language. Fields whose type can be translated are created translatable anyway, because that can't be changed later, so a language added later can be translated without changing any field.
 
 `lynx()->languages->isMultilingual()` says whether the site has more than one language, for templates that want to do the same, such as hiding a language switcher.
 

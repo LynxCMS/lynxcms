@@ -55,7 +55,7 @@ When the office's rules refuse a booking, the person should read why in their la
 throw BookingRefused::because('from', 'taken', ['room' => $name, 'times' => '11:15–12:15', 'buffer' => 5], "{$name} is taken from 11:15 to 12:15.");
 ```
 
-The component keeps the reason and values, and its view shows them as one of the booking page's [editable texts](/basics/views#editable-texts), with the values filled into placeholders:
+The component keeps the reason and values, and its view shows them as one of the booking page's [editable texts](/basics/views#editable-template-wide-or-site-wide-texts), with the values filled into placeholders:
 
 ```blade
 @case('taken')

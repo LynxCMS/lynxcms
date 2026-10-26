@@ -21,7 +21,7 @@ hero:
 features:
   - title: It is still your Laravel app
     details: Lynx is a set of Composer packages. Your routes, controllers, Blade views, queues and deployments keep working; Lynx serves the URLs your app leaves free.
-  - title: An admin editors enjoy, if you want one
+  - title: An admin for editors, if you want one
     details: A page tree, an editor laid out per template with a tab per language, drafts, scheduling, history and a trash, in plain words. Or skip it and manage content from code.
   - title: Livewire, in your pages and in the admin
     details: Templates use any Livewire component, editors can place components on pages themselves, and the admin is built with Livewire 4.

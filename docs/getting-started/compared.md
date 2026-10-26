@@ -153,7 +153,7 @@ WordPress has posts and pages; custom post types and fields come from plugins or
 
 WordPress has no multilingual support in its core; plugins add it. In Lynx, languages, fallback and translated URLs are part of the core.
 
-- **For developers:** there is no separate multilingual plugin that every other plugin has to support. Menus, SEO, the sitemap, forms and the page cache are language aware out of the box.
+- **For developers:** there is no separate multilingual plugin that every other plugin has to support. Menus, SEO, the sitemap, forms and the page cache handle languages without extra setup.
 - **For clients and editors:** translation works the same way everywhere in the admin, with a tab per language, and untranslated pages fall back instead of breaking.
 
 ### Plugins and updates

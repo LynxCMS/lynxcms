@@ -29,7 +29,7 @@ A field is created once and shared by every template that uses it. The `title` f
 
 A **translatable** field holds one value per language, such as a title or a body text. Any other field is **shared**: one value for every language, such as a price or a date. Only text, textarea and URL fields can be translatable. [Field Types](/basics/field-types#shared-and-translatable) explains the difference, and [Languages](/basics/languages) how values fall back between languages.
 
-Whether a field is translatable can't be changed after it is created, so choose with care. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so adding a language later just works.
+Whether a field is translatable can't be changed after it is created, so choose with care. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so a language added later can be translated without changing any field.
 
 ### Labels, descriptions and notes
 
@@ -93,9 +93,9 @@ lynx()->templates->update('post', ['allow_children' => false, 'parent_templates'
 | `allow_children` | Whether its pages may have children. |
 | `child_templates` | Templates its children may use; empty means any. |
 | `parent_templates` | Templates its parent may use; empty means any. |
+| `allowed_templates` | Templates its pages may switch to. |
 
 Modules keep their own content in hidden system branches, such as menus under `/_menus/`. Those pages have the `system` status and are not bound by your family rules, so you can limit the home page's children to your own templates and still install modules.
-| `allowed_templates` | Templates its pages may switch to. |
 
 ## Arranging the page editor
 

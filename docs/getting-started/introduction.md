@@ -5,7 +5,7 @@ description: What Lynx is, how it fits into a Laravel app, and the packages it i
 
 # Introduction
 
-Lynx is a content management system that you add to a Laravel application. It gives your app a tree of pages, fields you define without writing migrations, an admin where editors work, and first-class support for sites in several languages.
+Lynx is a content management system that you add to a Laravel application. It gives your app a tree of pages, fields you define without writing migrations, an admin where editors work, and built-in support for sites in several languages.
 
 If you know Laravel's routing, Blade and Eloquent, you already know most of what you need. Lynx adds a few ideas of its own, which the rest of this guide introduces one at a time.
 
@@ -34,7 +34,7 @@ Lynx is a set of Composer packages, not a separate application. After installing
 
 The `lynxcms/admin` package gives editors a place to work that needs no technical knowledge. They see the site as a tree of pages they can open, drag to reorder and move; a page editor with the fields laid out the way you arranged them, in plain labels, with a tab per language; drafts they can preview before publishing; publishing on a schedule; a history of every save they can compare and restore; and a trash to recover from mistakes. Developer details, such as template names and field types, are shown only to superusers, and a site with one language never mentions translations.
 
-The admin is also completely optional. Lynx doesn't need it: with only `lynxcms/core`, you define templates and fields in PHP or in YAML files, write content from code, seeders, imports or [content packages](/deeper/schema-and-content), and let AI tools work through the [MCP server](/ai/). Your app can build its own editing screens on the same API, and every rule, such as permissions and validation, still applies, because it lives in the [actions](/getting-started/concepts#actions), not in the admin.
+Lynx runs without the admin. With only `lynxcms/core`, you define templates and fields in PHP or in YAML files, write content from code, seeders, imports or [content packages](/deeper/schema-and-content), and let AI tools work through the [MCP server](/ai/). Your app can build its own editing screens on the same API, and every rule, such as permissions and validation, still applies, because it lives in the [actions](/getting-started/concepts#actions), not in the admin.
 
 ## Livewire
 

@@ -7,7 +7,7 @@ description: Chapter 7 of the training site guide. Book a session and pay with S
 
 This chapter turns the site into a till. A visitor picks a session, pays with Stripe Checkout, and gets a confirmation email in their language. The session's seat count goes down by itself, and the school sees the booking in Stripe and in its own database.
 
-Lynx keeps the content: the course, the session, its price and its seats are pages and fields that staff edit. The bookings are your app's data, in a table of their own. That split is the point of this chapter. Lynx doesn't need a commerce module for you to sell with it.
+Lynx keeps the content: the course, the session, its price and its seats are pages and fields that staff edit. The bookings are your app's data, in a table of their own. With that split, you can sell through Lynx without a commerce module.
 
 Out of scope here, and worth planning for a real school: refunds, invoices and VAT. Stripe's dashboard handles refunds, and Stripe Tax and invoicing cover the rest.
 

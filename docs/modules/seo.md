@@ -157,7 +157,7 @@ app(\LynxCms\Seo\RobotsTxt::class)->line(fn (): string => 'Sitemap: '.url('/site
 
 ## Admin
 
-The **SEO** screen has three tabs:
+The **SEO** screen has these tabs:
 
 - **Templates**: SEO fields on or off per template. Turning them on adds an SEO tab to the page editor, with Hide from search engines in its sidebar; turning them off removes the tab when nothing else is in it. Templates that had SEO before the tab existed move there on `migrate`, except fields an editor had already placed in another tab, column or section.
 - **Structured data**: templates mapped to schema.org types.

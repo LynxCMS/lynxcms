@@ -24,7 +24,7 @@ order: 2
 | `lynx:search-index --template=` | Rebuilds the search index, for every page or one template's pages. |
 | `lynx:sort-keys` | Rebuilds the stored sort values of the fields in `lynx.sort_keys`, after adding one or changing a field's fallback. See [Finding Pages](/basics/selectors#large-sites). |
 | `lynx:trigram` | Installs PostgreSQL's `pg_trgm` and adds trigram indexes that speed up text selectors. See [Finding Pages](/basics/selectors#large-sites). |
-| `lynx:strings:scan` | Lists the editable strings each template's view declares with `@string`, and reports problems. Templates without a view, such as settings pages and menus, are counted, not listed. See [Views](/basics/views#editable-texts). |
+| `lynx:strings:scan` | Lists the editable strings each template's view declares with `@string`, and reports problems. Templates without a view, such as settings pages and menus, are counted, not listed. See [Views](/basics/views#checking-your-strings). |
 | `lynx:media:prune --older-than= --dry-run` | Deletes media files that no page, draft or revision uses (the scheduler runs it daily). Needs `lynxcms/media`. |
 | `lynx:media:pull --page=` | Queues downloads from production for the media files this machine lacks (`LYNX_MEDIA_REMOTE`). Needs `lynxcms/media`. |
 | `lynx:forms:purge --days=` | Deletes old spam and archived form submissions with their files. Needs `lynxcms/forms`. |

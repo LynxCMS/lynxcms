@@ -5,7 +5,7 @@ description: Chapter 7 of the meeting rooms guide. Staff connect Claude or anoth
 
 # AI Assistants
 
-"Book a room for six with video tomorrow at 10" is a sentence, not a form. Lynx's [MCP server](/ai/) turns every registered action into a tool, so the booking actions of chapter 3 are already there, with their rules, permissions and dry runs. This chapter adds what an assistant needs to read, and a safe way for each person to connect theirs.
+Staff ask their assistant for "a room for six with video tomorrow at 10", and it books one. Lynx's [MCP server](/ai/) turns every registered action into a tool, so the booking actions of chapter 3 are already there, with their rules, permissions and dry runs. This chapter adds what an assistant needs to read, and a safe way for each person to connect theirs.
 
 ## Each person's token
 

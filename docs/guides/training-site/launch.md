@@ -5,7 +5,7 @@ description: Chapter 10 of the training site guide. The page cache with islands,
 
 # Launch
 
-The site works. This chapter makes it fast, makes it safe to change, and hands the owner the tools to run it. Most of it is configuration and a deploy script, because Lynx already does the work.
+This chapter makes the site fast, makes it safe to change, and hands the owner the tools to run it. Most of it is configuration and a deploy script, because Lynx already does the work.
 
 ## The page cache
 

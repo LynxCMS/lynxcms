@@ -36,7 +36,7 @@ Each page view renders inside one layout component: Bloom's floating navigation,
 
 Two Lynx features carry the layout:
 
-- **`@string`** declares a short text in the view, with a default per language. Staff change it under **Site texts** in the admin; texts in a `layouts` folder are shared by every page. No field needed for a button label.
+- **`@string`** declares a short text in the view, with a default per language. Staff change it under **Site texts** in the admin; texts in a `layouts` folder are shared by every page. A button label needs no field of its own.
 - **`@hreflang($page)`** tells search engines about the page in each language, and the language switcher links to it:
 
 <<< @/snippets/training/resources/views/partials/language-switcher.blade.php{blade}

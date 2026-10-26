@@ -27,7 +27,7 @@ php artisan lynx:schema:apply --dry-run   # shows what would change
 php artisan lynx:schema:apply             # applies it
 ```
 
-Applying creates and updates what the files describe, through the same actions as the admin, and is safe to run again: when the database already matches, it changes nothing. It never deletes a field, template or language that is missing from the files unless you add `--force`, because deleting a field deletes its values. Typed in a terminal, `--force` first shows the dry run and asks before applying; from a script or a deploy it applies as before.
+Applying creates and updates what the files describe, through the same actions as the admin, and is safe to run again: when the database already matches, it changes nothing. It never deletes a field, template or language that is missing from the files unless you add `--force`, because deleting a field deletes its values. Typed in a terminal, `--force` first shows the dry run and asks before applying; from a script or a deploy it applies without asking.
 
 ### On production
 

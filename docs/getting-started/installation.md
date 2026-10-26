@@ -73,7 +73,7 @@ The admin also offers password resets, two-factor authentication and passkeys. S
 
 ## Next steps
 
-Lynx is installed. [Your First Site](/getting-started/first-site) continues from here and builds a small blog in two languages.
+[Your First Site](/getting-started/first-site) continues from here and builds a small blog in two languages.
 
 ## Adding modules
 
