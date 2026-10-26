@@ -57,7 +57,9 @@ it('treats an explicit empty value as empty, not missing', function (): void {
 
     $page = lynx()->pages->get($page->id);
 
-    expect(lynx()->language('pt', fn (): array => [(string) $page->body, $page->body->isFallback()]))->toBe(['', false]);
+    expect(lynx()->language('pt', fn (): mixed => $page->body))->toBeNull()
+        ->and($page->getLanguageValue('pt', 'body'))->toBe('')
+        ->and((string) $page->body)->toBe('<p>English body</p>');
 });
 
 it('escapes plain text and trusts html fields in Blade', function (): void {

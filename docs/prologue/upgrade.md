@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.21 to 0.1.22
+
+- A translatable text with no value in the current language's fallback chain now reads as `null`, even when another language holds a value. If your code reaches other languages through such a field, as in `$page->title->in('fr')` or `->has('fr')`, read them with `$page->getLanguageValue('fr', 'title')` instead, which works whatever the current language is. Templates that worked around the empty object, such as `(string) $page->title !== ''`, keep working and can go back to `@if ($page->title)`.
+
 ## From 0.1.19 to 0.1.20
 
 - Run `php artisan lynx:install`. It creates the page not found, `/not-found/` with a `not-found` template, unless someone already chose a page or none. Then add `resources/views/templates/not-found.blade.php` in your site's layout ([The page not found](/basics/views#the-page-not-found)). Until the view exists, rendering it fails, the error is reported, and Laravel's own 404 answers as before.

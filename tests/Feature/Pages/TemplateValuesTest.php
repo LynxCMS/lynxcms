@@ -44,12 +44,39 @@ it('reads an empty shared text as null, and a filled one as a value', function (
 
 it('reads a translatable text empty in every language as null', function (): void {
     expect(reread($this->alpha)->tagline)->toBeNull();
+});
 
+it('reads a translatable text as null when only a language outside the chain has it', function (): void {
     $this->alpha->setLanguageValue('pt', 'tagline', 'Prático');
     $this->alpha->save();
 
-    expect(reread($this->alpha)->tagline)->toBeInstanceOf(TranslatableValue::class)
-        ->and(reread($this->alpha)->tagline?->in('pt'))->toBe('Prático');
+    expect(reread($this->alpha)->tagline)->toBeNull()
+        ->and(Blade::render('{{ $page->tagline ?: "None" }}@if ($page->tagline) shown @endif', ['page' => reread($this->alpha)]))->toBe('None')
+        ->and(reread($this->alpha)->getLanguageValue('pt', 'tagline'))->toBe('Prático')
+        ->and(lynx()->language('pt', fn (): mixed => reread($this->alpha)->tagline?->value()))->toBe('Prático');
+});
+
+it('reads a translatable text found through fallback as a value', function (): void {
+    $this->alpha->tagline = 'Hands on';
+    $this->alpha->save();
+
+    $isFallback = lynx()->language('pt', function (): bool {
+        $tagline = reread($this->alpha)->tagline;
+
+        return $tagline instanceof TranslatableValue && $tagline->isFallback();
+    });
+
+    expect($isFallback)->toBeTrue();
+});
+
+it('reads a translatable text that never falls back as null in a language without it', function (): void {
+    lynx()->fields->add('motto', 'text', translatable: true, settings: ['fallback' => 'none']);
+    lynx()->templates->update('course', ['add' => ['motto']]);
+    $this->alpha->motto = 'Learn by doing';
+    $this->alpha->save();
+
+    expect(lynx()->language('pt', fn (): mixed => reread($this->alpha)->motto))->toBeNull()
+        ->and((string) reread($this->alpha)->motto)->toBe('Learn by doing');
 });
 
 it('reads a single page reference as the page, or null', function (): void {
@@ -67,9 +94,10 @@ it('reads item values the same way', function (): void {
     $this->alpha->credits = [
         ['values' => ['subtitle' => '', 'partner' => [$this->beta->id], 'related' => [$this->beta->id, $this->gamma->id]]],
         ['values' => ['subtitle' => 'Second', 'tagline' => ['default' => 'Hello']]],
+        ['values' => ['tagline' => ['pt' => 'Olá']]],
     ];
     $this->alpha->save();
-    [$first, $second] = reread($this->alpha)->credits->all();
+    [$first, $second, $third] = reread($this->alpha)->credits->all();
 
     expect($first->subtitle)->toBeNull()
         ->and($first->tagline)->toBeNull()
@@ -77,7 +105,9 @@ it('reads item values the same way', function (): void {
         ->and($first->related)->toBeInstanceOf(PageArray::class)
         ->and((string) $second->subtitle)->toBe('Second')
         ->and((string) $second->tagline)->toBe('Hello')
-        ->and($second->partner)->toBeNull();
+        ->and($second->partner)->toBeNull()
+        ->and($third->tagline)->toBeNull()
+        ->and(lynx()->language('pt', fn (): string => (string) $third->tagline))->toBe('Olá');
 });
 
 it('joins and filters the pages of a PageArray', function (): void {

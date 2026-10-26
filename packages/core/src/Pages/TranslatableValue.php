@@ -74,6 +74,7 @@ final readonly class TranslatableValue implements FieldValue
         return array_key_exists($this->languages->get($language)->id, $this->values);
     }
 
+    /** True when no language in the current chain has a value, so templates read the field as null (ADR-0087). */
     public function isEmpty(): bool
     {
         $value = $this->value();
@@ -81,7 +82,7 @@ final readonly class TranslatableValue implements FieldValue
         return $value === null || $value === '';
     }
 
-    /** True when no language holds a value, so templates read the field as null (ADR-0070). */
+    /** True when no language holds a value, not even one outside the current chain. */
     public function isBlank(): bool
     {
         return array_all($this->values, fn (mixed $value): bool => $value === null || $value === '');

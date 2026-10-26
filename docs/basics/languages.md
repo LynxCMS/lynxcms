@@ -73,6 +73,8 @@ lynx()->language('pt-br', function () use ($page) {
 });
 ```
 
+When no language in the chain has a value, the field reads as `null`, like an empty field, even if another language holds one. To read that language anyway, ask for it by name: `$page->getLanguageValue('fr', 'title')`.
+
 `@field` uses this to mark fallback text with the right `lang` attribute (see [Views](/basics/views#printing-fields)).
 
 A translatable field can turn fallback off in its settings ("When a translation is empty: show nothing"), for text that must never appear in another language.
