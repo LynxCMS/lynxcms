@@ -91,7 +91,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           vendor/bin/phpstan analyse --no-progress
-          php artisan test --compact
+          php artisan test --parallel --compact
 
       - name: Push to LynxCMS/starter-meeting-rooms
         # A manual run pushes only with dry_run off, and only from a tag.

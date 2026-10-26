@@ -78,6 +78,19 @@ final readonly class StringDefinition
         return LocalizedText::from($this->default)->in($language);
     }
 
+    /**
+     * The placeholders its code texts use (":room"), which the template fills in: editors keep
+     * them in their own texts.
+     *
+     * @return list<string>
+     */
+    public function placeholders(): array
+    {
+        preg_match_all('/(?<![\w:]):([a-z][a-z0-9_]*)/i', implode("\n", (array) $this->default), $matches);
+
+        return array_values(array_unique(array_map(fn (string $name): string => ':'.$name, $matches[1])));
+    }
+
     public function isSite(): bool
     {
         return $this->scope === self::SITE;
