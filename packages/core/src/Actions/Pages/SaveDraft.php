@@ -62,8 +62,9 @@ final class SaveDraft extends Action
         $context->authorize('pages.edit', $page);
 
         $draft = $this->drafts->of((int) $page->id) ?? $this->drafts->create($page, EditLocks::holder($context->actor));
-        $saved = $context->run(SavePage::class, ['id' => $draft, 'values' => $input->array('values'), 'strings' => $input->array('strings')]);
+        // Recorded before the draft's own save: the activity log files an action under its first change, so under the live page.
         $context->changes->updated('page', $page->id, "Save draft of page {$page->name()}", ['draft' => $draft]);
+        $saved = $context->run(SavePage::class, ['id' => $draft, 'values' => $input->array('values'), 'strings' => $input->array('strings')]);
 
         return $saved instanceof Page ? $saved : throw new UnexpectedValueException('pages.save did not return the draft.');
     }

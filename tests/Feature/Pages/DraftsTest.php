@@ -125,3 +125,12 @@ it('previews and rolls back', function (): void {
         ->and((string) live()->get('title'))->toBe('Alpha')
         ->and(lynx()->pages->draft(live()))->not->toBeNull();
 });
+
+it('files saving and discarding a draft under the live page in the activity log', function (): void {
+    draftTitle('Alpha in draft');
+    lynx()->pages->discardDraft(live());
+
+    $actions = array_map(fn ($event): string => $event->action, lynx()->pages->activity(live()));
+
+    expect($actions)->toContain('pages.save_draft')->toContain('pages.discard_draft');
+});

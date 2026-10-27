@@ -56,7 +56,9 @@ final class DiscardDraft extends Action
         $context->authorize('pages.edit', $page);
 
         $this->drafts->delete($draftId);
-        $context->changes->deleted('page', $draftId, "Discard the draft of page {$page->name()}", ['page' => $page->id]);
+        // The live page's change first, so the activity log files the discard under it, not under the draft.
+        $context->changes->updated('page', $page->id, "Discard the draft of page {$page->name()}", ['draft' => $draftId]);
+        $context->changes->deleted('page', $draftId, "Delete draft {$draftId} of page {$page->name()}", ['page' => $page->id]);
 
         return true;
     }
