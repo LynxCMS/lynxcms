@@ -23,15 +23,17 @@
                     $shownAs = collect($row['label'])->filter()->first() ?: $info['label'];
                 @endphp
                 <li wire:key="sub-{{ $list }}-{{ $row['name'] }}" wire:sort:item="{{ $list }}:{{ $row['name'] }}" x-data="{ open: false }" @class(['min-w-0 py-2', 'px-4' => $flush, 'px-3' => ! $flush]) data-subfield="{{ $row['name'] }}">
-                    <div class="flex items-center gap-3 text-sm">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
                         @if ($canEdit) <span wire:sort:handle class="text-muted-foreground cursor-grab select-none active:cursor-grabbing" title="Drag to reorder" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span> @endif
-                        <span class="bg-muted text-muted-foreground grid size-8 shrink-0 place-items-center rounded-md" title="{{ $kind['label'] }}">
+                        <span class="bg-muted text-muted-foreground hidden size-8 shrink-0 place-items-center rounded-md sm:grid" title="{{ $kind['label'] }}">
                             <x-dynamic-component :component="'lucide-'.$kind['icon']" class="size-4" aria-hidden="true" />
                         </span>
-                        <span class="grid min-w-0 flex-1">
+                        <span class="grid min-w-40 flex-1">
                             <span class="truncate font-medium">{{ $shownAs }}@if ($row['required'])<span class="text-destructive" aria-label="required"> *</span>@endif</span>
                             <span class="text-muted-foreground truncate text-xs"><a href="{{ route('lynx.admin.fields.edit', $row['name']) }}" class="font-mono hover:underline" target="_blank">{{ $row['name'] }}</a> · {{ $kind['label'] }}</span>
                         </span>
+                        {{-- The controls take a line of their own when the row is narrow. --}}
+                        <span class="ms-auto flex shrink-0 items-center gap-2">
                         <label class="text-muted-foreground flex shrink-0 items-center gap-1.5 text-xs"><input class="blat-checkbox" type="checkbox" wire:model.live="{{ $model }}.{{ $position }}.required"> Required</label>
                         <label class="sr-only" for="width-{{ $list }}-{{ $row['name'] }}">Width of {{ $shownAs }} in the page editor</label>
                         <select id="width-{{ $list }}-{{ $row['name'] }}" class="blat-select h-8 w-auto shrink-0 text-xs" wire:model.live="{{ $model }}.{{ $position }}.width" title="Width in the page editor">
@@ -40,6 +42,7 @@
                             @endforeach
                         </select>
                         <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-label="Label, help and remove for {{ $shownAs }}" title="Label, help and remove"><x-lucide-ellipsis aria-hidden="true" /></x-lynx-admin::ui.button>
+                        </span>
                     </div>
                     <div x-show="open" x-cloak class="@container mt-3 grid gap-3 ps-11">
                         <p class="text-muted-foreground text-xs">Here only: leave empty to use the field's own.</p>

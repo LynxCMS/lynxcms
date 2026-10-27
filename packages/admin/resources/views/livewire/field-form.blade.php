@@ -19,10 +19,10 @@
             default => 'field',
         })->unique()->all();
     @endphp
-    <nav class="flex gap-5 border-b" aria-label="Field sections">
+    <nav class="flex gap-5 overflow-x-auto border-b" aria-label="Field sections">
         @foreach ($sections as $section)
             <button type="button" data-field-tab="{{ $section }}" x-on:click="section = '{{ $section }}'"
-                    class="text-muted-foreground relative -mb-px inline-flex items-center gap-1.5 border-b-2 border-transparent pb-2.5 text-sm font-medium hover:text-foreground"
+                    class="text-muted-foreground relative -mb-px inline-flex shrink-0 items-center gap-1.5 border-b-2 whitespace-nowrap border-transparent pb-2.5 text-sm font-medium hover:text-foreground"
                     x-bind:class="section === '{{ $section }}' && 'border-primary! text-foreground'" x-bind:aria-current="section === '{{ $section }}' ? 'page' : 'false'">
                 {{ $tabLabels[$section] }}
                 @if ($section === 'builder')<span class="bg-muted rounded-full px-1.5 text-xs tabular-nums">{{ $type === 'matrix' ? count($itemTypes) : count($itemFields) }}</span>@endif
