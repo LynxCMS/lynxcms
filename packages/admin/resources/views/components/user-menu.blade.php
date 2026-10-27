@@ -1,4 +1,4 @@
-{{-- The signed-in user's menu in the sidebar footer: light, dark or system appearance (kept in this browser) and account security. --}}
+{{-- The signed-in user's menu in the sidebar footer: light, dark or system appearance and translation hints (kept in this browser), and account security. --}}
 @php($user = data_get(auth()->user(), 'name') ?? data_get(auth()->user(), 'email'))
 <x-lynx-admin::ui.dropdown-menu>
     <x-lynx-admin::ui.dropdown-menu-trigger>
@@ -15,6 +15,13 @@
             <x-lynx-admin::ui.dropdown-menu-radio-item value="dark"><x-lucide-moon aria-hidden="true" /> Dark</x-lynx-admin::ui.dropdown-menu-radio-item>
             <x-lynx-admin::ui.dropdown-menu-radio-item value="system"><x-lucide-monitor aria-hidden="true" /> System</x-lynx-admin::ui.dropdown-menu-radio-item>
         </x-lynx-admin::ui.dropdown-menu-radio-group>
+        @if (lynx()->languages->isMultilingual())
+            {{-- Sentences explaining fallbacks under fields; the language tabs' markers show it without them. --}}
+            <x-lynx-admin::ui.dropdown-menu-separator />
+            <x-lynx-admin::ui.dropdown-menu-checkbox-item data-lynx-hints-toggle x-init="checked = lynxTranslationHints.isOn(); $watch('checked', () => lynxTranslationHints.set(checked))">
+                Translation hints
+            </x-lynx-admin::ui.dropdown-menu-checkbox-item>
+        @endif
         @if (Route::has('lynx.admin.account'))
             <x-lynx-admin::ui.dropdown-menu-separator />
             <x-lynx-admin::ui.dropdown-menu-item :href="route('lynx.admin.account')"><x-lucide-shield aria-hidden="true" /> Security</x-lynx-admin::ui.dropdown-menu-item>

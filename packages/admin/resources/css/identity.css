@@ -1,0 +1,61 @@
+/*
+ * Lynx's identity in the admin: the mark's facet (a parallelogram) and a sidebar tinted by the
+ * accent. Every colour comes from BlatUI's tokens, so a client's accent re-colours all of it.
+ */
+@layer components {
+    /* The sidebar takes a trace of the accent, over whatever its own colour is. */
+    [data-sidebar="sidebar"] {
+        background-image: linear-gradient(
+            color-mix(in oklab, var(--primary) 4%, transparent),
+            color-mix(in oklab, var(--primary) 4%, transparent)
+        );
+    }
+
+    /* The current screen's link ends with a facet; on the collapsed icon rail the fill is enough. */
+    [data-sidebar="menu-button"][data-active="true"]::after {
+        content: "";
+        flex: none;
+        margin-inline-start: auto;
+        width: 0.4375rem;
+        height: 0.75rem;
+        background: var(--primary);
+        clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%);
+    }
+
+    [data-collapsible="icon"] [data-sidebar="menu-button"]::after {
+        display: none;
+    }
+
+    /*
+     * A language tab's state, drawn as the mark's facet: filled when the language has its own
+     * value, a light fill when it shows another language's (fallback), an outline when empty.
+     */
+    .lynx-tab-state {
+        display: inline-block;
+        width: 0.4375rem;
+        height: 0.5625rem;
+        margin-inline-start: 0.3125rem;
+        vertical-align: -0.0625rem;
+        border: 1.5px solid var(--muted-foreground);
+        transform: skewX(-18deg);
+    }
+
+    .lynx-tab-state.is-filled {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .lynx-tab-state.is-fallback {
+        background: color-mix(in oklab, var(--primary) 40%, var(--background));
+        border-color: var(--primary);
+    }
+
+    /* Translation hints stay hidden unless the editor turns them on in the user menu. */
+    .lynx-hint {
+        display: none;
+    }
+
+    [data-lynx-hints="on"] .lynx-hint {
+        display: block;
+    }
+}

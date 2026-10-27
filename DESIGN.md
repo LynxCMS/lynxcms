@@ -157,14 +157,14 @@ The system is white label by construction. Every color, radius, font, shadow and
 A warm stone ground with a single teal accent; status colors appear only to report state.
 
 ### Primary
-- **Lynx Teal** (`lynx-teal`): primary buttons, links, focus emphasis, the filled language dot, active drop zones and the moving row's outline. In dark mode it deepens to **Lynx Teal Night** (`lynx-teal-night`) with the same pale foreground (`lynx-teal-foreground`). A client's branding accent replaces both through the `<html>` style attribute, with white or near black text picked by contrast.
+- **Lynx Teal** (`lynx-teal`): primary buttons, links, focus emphasis, the filled language facet, the current screen's facet in the sidebar, active drop zones and the moving row's outline. In dark mode it deepens to **Lynx Teal Night** (`lynx-teal-night`) with the same pale foreground (`lynx-teal-foreground`). A client's branding accent replaces both through the `<html>` style attribute, with white or near black text picked by contrast.
 
 ### Neutral
 - **Paper** (`paper`): the light background, cards, popovers and the top bar (at 95% with a backdrop blur).
 - **Stone Ink** (`stone-ink`): body text and headings in light mode; also the dark mode ground (`night-ground`).
 - **Stone Graphite** (`stone-graphite`): text on secondary and accent washes; the dark mode card surface (`night-surface`).
 - **Stone Wash** (`stone-wash`): muted, secondary and accent backgrounds, hover states, the tree's row hover (at 60%) and code blocks.
-- **Stone Muted Ink** (`stone-muted-ink`): help text, placeholders, fallback values and empty language dots. Tuned to clear WCAG AA (4.5:1) on Paper and on Stone Wash.
+- **Stone Muted Ink** (`stone-muted-ink`): help text, placeholders, fallback values and empty language facets. Tuned to clear WCAG AA (4.5:1) on Paper and on Stone Wash.
 - **Stone Rule** (`stone-rule`): every border and input outline, and the hairline under each tree row.
 - **Stone Ring** (`stone-ring`): focus rings, drawn at 50% opacity and 3px wide.
 - **Sidebar Paper** (`sidebar-paper`): the sidebar, a shade off Paper so the navigation reads as its own plane.
@@ -222,7 +222,7 @@ The `appearance.shadow` preset can restore BlatUI's shadow scale (`sm`, `lg`, `x
 
 ## Shapes
 
-Nearly square. The default radius is 0.3rem, and BlatUI derives the scale from it: controls, buttons, inputs and drop zones use `md` (0.3rem less 2px, almost sharp), cards use `xl` (0.3rem plus 4px), checkboxes keep 4px, and the language state dots and radios are full circles. The `appearance.radius` preset (0 to 1rem) rescales every corner at once. Borders are always 1px; focus rings are 3px at half opacity, drawn outside the border.
+Nearly square. The default radius is 0.3rem, and BlatUI derives the scale from it: controls, buttons, inputs and drop zones use `md` (0.3rem less 2px, almost sharp), cards use `xl` (0.3rem plus 4px), checkboxes keep 4px, radios are full circles, and the language state facets keep their slant. The `appearance.radius` preset (0 to 1rem) rescales every corner at once. Borders are always 1px; focus rings are 3px at half opacity, drawn outside the border.
 
 ## Components
 
@@ -262,7 +262,7 @@ A faceted lynx head facing right, flat planes separated by gaps. The full mark (
 The admin's home screen and its most distinctive surface. Each page is a row with a 1px Stone Rule hairline below it, indented by 1.5rem per level, its title in Tree Title type. Hover washes the row; row actions appear after the title on hover, keyboard focus or selection. A chevron rotates 90° when a branch opens. Hidden pages fade to 55%. While dragging, slim drop zones under rows grow to 0.875rem with a dashed Lynx Teal outline at 35%, and the target zone expands to 2.5rem with a teal tint and solid outline; the dragged row's place shows as a 2px teal line. Move mode highlights the moving row with an accent fill and a 1px teal inset outline. All of it is driven by `--lynx-*` tokens that default to BlatUI's, so a preset restyles the tree too.
 
 ### Language Tabs (signature component)
-Every translatable field carries a compact tab strip (Micro type) with one tab per language. After each label a 6px dot reports the value's state: a filled Lynx Teal dot when the language has its own value, a dashed outline when it falls back to another language, an empty outline when nothing is there. A fallback value reads in Stone Muted Ink italics and becomes the input's placeholder, so the editor always sees what visitors would see.
+Every translatable field carries a compact tab strip (Micro type) with one tab per language. After each label a small facet, the mark's parallelogram, reports the value's state: filled with the accent when the language has its own value, a light accent fill with an accent outline when it falls back to another language, a muted outline when nothing is there. A fallback value reads in Stone Muted Ink italics and becomes the input's placeholder, so the editor always sees what visitors would see. The sentences explaining a fallback are translation hints, shown only when the editor turns them on in the user menu.
 
 ### Notification Bar (signature component)
 Notices span the full width at the bottom of the viewport, centered 0.875rem medium text on a solid status fill: Signal Green for success, Notice Yellow for warnings, Signal Red for errors. A click or the close mark dismisses them; the bar respects the safe area inset and shows a 3px Stone Ring outline on focus.
@@ -275,7 +275,7 @@ Notices span the full width at the bottom of the viewport, centered 0.875rem med
 - **Do** keep controls on the 36, 32 and 28px heights and spacing on multiples of the spacing unit.
 - **Do** separate surfaces with a 1px Stone Rule border or a wash, so the design reads correctly with shadows off.
 - **Do** check every new screen in light and dark mode and with a client accent other than Lynx Teal, at WCAG AA contrast.
-- **Do** show translation state with the language dot vocabulary (filled, dashed, empty) wherever a value has languages.
+- **Do** show translation state with the language facet vocabulary (filled, light, outline) wherever a value has languages.
 
 ### Don't:
 - **Don't** use Tailwind's raw palette (`bg-gray-100`, `text-blue-600`); it is removed from the build on purpose.

@@ -69,7 +69,8 @@
                         'readOnly' => $state->value,
                     ])
                     @if ($state->fallsBackTo !== null)
-                        <p class="text-muted-foreground text-sm mt-1">Empty in this language: visitors see the {{ $state->fallsBackTo }} value.</p>
+                        {{-- A translation hint: the tab's state marker says it already, so it shows only when the editor turns hints on. --}}
+                        <p class="lynx-hint text-muted-foreground text-sm mt-1">Empty in this language: visitors see the {{ $state->fallsBackTo }} value.</p>
                     @endif
                     @if (($field->settings['formatters'] ?? []) !== [] && trim((string) ($current[$code] ?? '')) !== '')
                         {{-- What visitors see: the field's format and formatters (ADR-0031), cleaned by core. --}}
@@ -81,7 +82,7 @@
                 @elseif ($state->isOwn)
                     <x-lynx-admin::editor.value :type="$field->type" :value="$state->value" />
                 @elseif ($state->fallsBackTo)
-                    <p class="text-muted-foreground text-sm mb-1">Falls back to {{ $state->fallsBackTo }}:</p>
+                    <p class="lynx-hint text-muted-foreground text-sm mb-1">Falls back to {{ $state->fallsBackTo }}:</p>
                     <div class="lynx-fallback"><x-lynx-admin::editor.value :type="$field->type" :value="$state->value" /></div>
                 @else
                     <p class="text-muted-foreground text-sm">Empty</p>

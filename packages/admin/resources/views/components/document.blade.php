@@ -27,6 +27,8 @@
     @endif
     {{-- Before the stylesheet, so the scheme the user picked (or the configured one) never flashes the other. --}}
     <script>(() => { let scheme = @js($scheme); try { scheme = localStorage.getItem('lynx:color-scheme') || scheme } catch (e) {} document.documentElement.classList.toggle('dark', scheme === 'dark' || (scheme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) })()</script>
+    {{-- Translation hints the editor turned on in the user menu, also before the first paint. --}}
+    <script>try { if (localStorage.getItem('lynx:translation-hints') === 'on') document.documentElement.dataset.lynxHints = 'on' } catch (e) {}</script>
     @if ($fonts)
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="{{ $fonts }}">

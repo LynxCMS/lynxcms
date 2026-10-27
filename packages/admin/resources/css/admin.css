@@ -31,6 +31,9 @@
 
 @import "./blatui.css";
 
+/* The mark's facet and the accent-tinted sidebar (ADR-0089). */
+@import "./identity.css";
+
 /*
  * Lynx tokens: the parts BlatUI has no token for (the page tree). Each defaults to a BlatUI token,
  * so a BlatUI preset restyles them too; a host stylesheet can still set them (theme.stub.css).
@@ -215,25 +218,6 @@
     }
 
     /* Dot after a language tab: filled, falling back to another language, or empty. */
-    .lynx-tab-state {
-        display: inline-block;
-        width: 0.375rem;
-        height: 0.375rem;
-        margin-inline-start: 0.25rem;
-        vertical-align: middle;
-        border: 1px solid var(--muted-foreground);
-        border-radius: 9999px;
-    }
-
-    .lynx-tab-state.is-filled {
-        background: var(--primary);
-        border-color: var(--primary);
-    }
-
-    .lynx-tab-state.is-fallback {
-        border-style: dashed;
-    }
-
     .lynx-fallback {
         color: var(--muted-foreground);
         font-style: italic;

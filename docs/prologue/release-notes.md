@@ -28,6 +28,12 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The admin's default font is Geist, for headings too, instead of an Inter body and monospace headings. Set `LYNX_ADMIN_FONT=inter` and `LYNX_ADMIN_HEADING_FONT=mono` to keep the old look, or give headings any other font.
 
+- The admin wears the Lynx mark's facet: the language tabs mark a field's state with a small slanted shape (filled, light or outlined) instead of a dot, and the sidebar ends the current screen's link with one. The sidebar takes a trace of the accent colour.
+
+- The sentences under a field that explain a fallback ("visitors see the English value") are now translation hints, off by default. Turn them on under **Translation hints** in the user menu; each browser remembers the choice.
+
+- The page tree's row actions are plain text, and **Unpub** and **Pub** read **Unpublish** and **Publish**.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).
