@@ -13,13 +13,13 @@
                 @error('newSubfield.name') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1 text-sm">
-                <label for="new-subfield-type" class="font-medium">Type</label>
+                <label for="new-subfield-type" class="font-medium">What it holds</label>
                 <select id="new-subfield-type" class="blat-select" wire:model.live="newSubfield.type">
                     @foreach ($subfieldTypes as $typeName => $typeInfo)
-                        <option value="{{ $typeName }}">{{ $typeName }}</option>
+                        <option value="{{ $typeName }}">{{ app(\LynxCms\Admin\Editor\FieldKinds::class)->for($typeName)['label'] }}</option>
                     @endforeach
                 </select>
-                <p class="text-muted-foreground">{{ $types[$newSubfield['type']]['description'] ?? '' }}</p>
+                <p class="text-muted-foreground">{{ app(\LynxCms\Admin\Editor\FieldKinds::class)->for($newSubfield['type'])['description'] }}</p>
                 @error('newSubfield.type') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1 text-sm">

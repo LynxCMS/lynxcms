@@ -40,18 +40,10 @@ it('reports one language', function (): void {
     expect(lynx()->languages->isMultilingual())->toBeTrue();
 });
 
-it('leaves languages out of field type descriptions', function (): void {
-    $this->get('/lynx/fields/create')->assertOk()
-        ->assertSee('Single-line text up to 255 characters')
-        ->assertDontSee('Can be translatable');
-});
-
-it('keeps the rest of a description that mentions languages', function (): void {
-    expect(lynx()->fields->types()['choice']['description'])->toContain('Labels are per language.');
-
-    Livewire::test(FieldForm::class)->set('type', 'choice')
-        ->assertSee('each a value and a label.')
-        ->assertDontSee('per language');
+it('leaves the languages choice out of a new field', function (): void {
+    Livewire::test(FieldForm::class)
+        ->assertSeeHtml('data-kind="text"')
+        ->assertDontSeeHtml('name="field-translatable"');
 });
 
 it('leaves translatable out of field types in lists and the editor', function (): void {
@@ -122,7 +114,7 @@ it('keeps the language wording with several languages', function (): void {
     lynx()->languages->add('pt', 'Português', fallback: 'default');
     $course = oneLanguageCourse();
 
-    $this->get('/lynx/fields/create')->assertSee('Can be translatable');
+    Livewire::test(FieldForm::class)->assertSeeHtml('name="field-translatable"');
     $this->get(route('lynx.admin.pages.edit', ['page' => $course->id, 'tab' => 'settings']))->assertSee('Names and languages');
     $this->get(route('lynx.admin.templates.edit', 'course'))->assertSee('in the default language');
     $this->get(route('lynx.admin.menus'))->assertSee('in every language');

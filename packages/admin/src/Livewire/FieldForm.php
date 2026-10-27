@@ -11,13 +11,15 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\Editor\FieldTypeChoices;
 use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
-use LynxCms\Admin\Editor\TypeDescriptions;
 use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
+use LynxCms\Admin\Livewire\Concerns\EditsFormatters;
+use LynxCms\Admin\Livewire\Concerns\EditsItemDisplay;
 use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
@@ -26,15 +28,18 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Value;
 
 /**
- * Setup > Fields > New field and Edit field. The settings form comes from the field type's settings
- * schema; every write goes through fields.create or fields.update, whose errors show by their
- * inputs. Name, type and translatable are fixed once the field exists (schema-admin plan).
+ * Setup > Fields > New field and Edit field, in tabs: a repeater's or matrix's builder, Preview,
+ * Field, and Limits and display. Kinds and settings are in words for people (FieldKinds,
+ * SettingLabels); every write goes through fields.create or fields.update, whose errors show by
+ * their inputs. Name, type and translatable are fixed once the field exists (schema-admin plan).
  *
  * @api
  */
 final class FieldForm extends Component
 {
     use EditsChoiceOptions;
+    use EditsFormatters;
+    use EditsItemDisplay;
     use EditsItemSettings;
     use Notifies;
 
@@ -66,9 +71,6 @@ final class FieldForm extends Component
     /** @var array<string, mixed> setting name => form value */
     public array $settings = [];
 
-    /** @var list<string> text formatters in the order they run (ADR-0031) */
-    public array $formatters = [];
-
     #[Locked]
     public ?string $status = null;
 
@@ -90,7 +92,7 @@ final class FieldForm extends Component
     public function mount(?string $field = null): void
     {
         $existing = $field === null ? null : lynx()->fields->find($field);
-        $this->label = $this->description = $this->notes = LocalizedForm::toForm(null);
+        $this->label = $this->description = $this->notes = $this->addLabel = LocalizedForm::toForm(null);
 
         if ($existing instanceof Field) {
             $config = $existing->config();
@@ -107,6 +109,7 @@ final class FieldForm extends Component
             $this->loadChoiceOptions($config);
             $this->formatters = Value::strings($config['formatters'] ?? []);
             $this->loadItemSettings($config);
+            $this->loadItemDisplay($config);
         }
     }
 
@@ -116,28 +119,7 @@ final class FieldForm extends Component
         $this->settings = [];
         $this->formatters = [];
         $this->resetItemSettings();
-    }
-
-    public function addFormatter(string $name): void
-    {
-        if (! in_array($name, $this->formatters, true) && array_key_exists($name, lynx()->formatters()->forType($this->type))) {
-            $this->formatters[] = $name;
-        }
-    }
-
-    public function removeFormatter(string $name): void
-    {
-        $this->formatters = array_values(array_diff($this->formatters, [$name]));
-    }
-
-    /** wire:sort handler: a formatter dropped at a 0-based position. */
-    public function sortFormatter(string $name, int|string $position): void
-    {
-        if (in_array($name, $this->formatters, true)) {
-            $order = array_values(array_diff($this->formatters, [$name]));
-            array_splice($order, max(0, Value::int($position)), 0, [$name]);
-            $this->formatters = $order;
-        }
+        $this->addLabel = LocalizedForm::toForm(null);
     }
 
     public function save(SchemaForm $form): void
@@ -145,7 +127,7 @@ final class FieldForm extends Component
         $this->authorizeEditing();
         $this->status = null;
         $isNew = $this->field === null;
-        $settings = $this->choiceSettings() + $this->itemSettings() + $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
+        $settings = $this->choiceSettings() + $this->itemSettings() + $this->itemDisplaySettings() + $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
 
         if ($isNew) {
             if (! app(FieldTypeChoices::class)->offers($this->type)) {
@@ -186,9 +168,15 @@ final class FieldForm extends Component
 
     public function render(): View
     {
-        $types = TypeDescriptions::forSite(lynx()->fields->types());
+        $types = lynx()->fields->types();
+
+        $kinds = app(FieldKinds::class);
 
         return view('lynx-admin::livewire.field-form', [
+            'title' => $this->field === null ? 'New field' : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
+            'sections' => $this->sections(),
+            'kind' => $kinds->for($this->type),
+            'kinds' => $this->field === null ? $kinds->grouped(array_keys(app(FieldTypeChoices::class)->for($types))) : [],
             'types' => $types,
             'offeredTypes' => app(FieldTypeChoices::class)->for($types),
             'definitions' => $this->definitions(),
@@ -203,6 +191,21 @@ final class FieldForm extends Component
             'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
             'typeUsage' => $this->typeUsage(),
         ]);
+    }
+
+    /**
+     * The form's tabs, the first one open: a builder's list first on a repeater or matrix that
+     * exists, the Field tab first otherwise.
+     *
+     * @return list<string>
+     */
+    private function sections(): array
+    {
+        if (! $this->hasItemBuilder()) {
+            return ['field', 'preview'];
+        }
+
+        return $this->field === null ? ['field', 'builder', 'preview', 'limits'] : ['builder', 'preview', 'field', 'limits'];
     }
 
     /**
@@ -241,7 +244,9 @@ final class FieldForm extends Component
     {
         $definitions = app(SchemaForm::class)->definitions(Value::map(lynx()->fields->types()[$this->type]['settings'] ?? []));
 
-        return array_diff_key($definitions, array_flip([...array_filter([$this->itemSetting()]), ...$this->choiceSettingsEditedHere()]));
+        $editedElsewhere = [...array_filter([$this->itemSetting()]), ...$this->choiceSettingsEditedHere(), ...($this->hasItemBuilder() ? ['add_label'] : [])];
+
+        return array_diff_key($definitions, array_flip($editedElsewhere));
     }
 
     /**

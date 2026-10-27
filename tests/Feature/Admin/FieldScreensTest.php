@@ -36,7 +36,7 @@ it('creates a field with settings from its type', function (): void {
         ->set('name', 'intro')
         ->set('label.default', 'Introduction')
         ->set('type', 'textarea')
-        ->assertSee('How the text is entered and rendered.')
+        ->assertSeeHtml('id="setting-format"')
         ->set('translatable', true)
         ->set('settings.format', 'html')
         ->set('settings.max_length', '500')
@@ -177,7 +177,7 @@ it('creates translatable fields on a one-language site when the type allows it',
 });
 
 it('keeps the translatable choice with several languages', function (): void {
-    Livewire::test(FieldForm::class)->set('type', 'text')->assertSee('Translatable: one value per language');
+    Livewire::test(FieldForm::class)->set('type', 'text')->assertSeeHtml('name="field-translatable"');
 
     Livewire::test(FieldForm::class)->set('name', 'subtitle')->set('label.default', 'Subtitle')->set('type', 'text')->set('translatable', false)->call('save');
 

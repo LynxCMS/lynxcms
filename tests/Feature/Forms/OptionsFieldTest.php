@@ -91,8 +91,8 @@ it('leaves options out of the type menu for new fields', function (): void {
     $this->actingAs(new GenericUser(['id' => 1]));
 
     Livewire::test(FieldForm::class)
-        ->assertDontSeeHtml('<option value="options">')
-        ->assertSeeHtml('<option value="choice">');
+        ->assertDontSeeHtml('data-kind="options"')
+        ->assertSeeHtml('data-kind="choice"');
     Livewire::test(FieldForm::class)->set('name', 'answers')->set('label.default', 'Answers')->set('type', 'options')->call('save')
         ->assertHasErrors('type');
 });
@@ -100,7 +100,7 @@ it('leaves options out of the type menu for new fields', function (): void {
 it('still shows an existing options field and creates them through the API', function (): void {
     $this->actingAs(new GenericUser(['id' => 1]));
 
-    Livewire::test(FieldForm::class, ['field' => 'formats'])->assertSee('options')->assertSee('visitors pick from');
+    Livewire::test(FieldForm::class, ['field' => 'formats'])->assertSeeHtml('data-field-kind="options"');
     lynx()->fields->add('answers', 'options');
 
     expect(lynx()->fields->get('answers')->type)->toBe('options');

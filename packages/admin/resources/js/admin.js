@@ -264,3 +264,9 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('lynxPasskeyRegister', lynxPasskeyRegister)
     window.Alpine.data('lynxPasskeyVerify', lynxPasskeyVerify)
 })
+
+/** A field name made from a label, as the New field screen suggests it: "Opening hours" becomes "opening_hours". */
+window.lynxFieldName = (label) => String(label ?? '')
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+    .replace(/^(\d)/, 'f_$1');
