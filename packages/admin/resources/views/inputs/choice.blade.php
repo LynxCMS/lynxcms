@@ -10,7 +10,8 @@
 @if ($style === 'select')
     <select id="input-{{ $field->name }}-{{ $code }}" class="blat-select max-w-sm" {{ $wire }}="{{ $model }}" @if ($isMultiple) multiple @endif
             aria-labelledby="field-{{ $field->name }}" @disabled($disabled) @error('values.'.$field->name) aria-invalid="true" @enderror>
-        @unless ($isMultiple) <option value="">—</option> @endunless
+        {{-- A required choice with a default always has a value, so it offers no empty option (ADR-0088). --}}
+        @unless ($isMultiple || ($field->isRequired && ($field->settings['default'] ?? null) !== null)) <option value="">—</option> @endunless
         @foreach ($options as $option)
             <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
         @endforeach

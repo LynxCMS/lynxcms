@@ -124,6 +124,7 @@ One of a fixed list of options, or several with `multiple: true`. Each option ha
 | `options` | The options, each with a `value` and a `label`. A missing value is made from the label. |
 | `multiple` | Allow several options. Default `false`. |
 | `input` | How editors choose: `select` (default for one), `radios` or `checkboxes` (default for several). |
+| `default` | The option new pages and new items start with: a value, or a list of values with `multiple`. |
 
 ```php
 lynx()->fields->add('level', 'choice', settings: [
@@ -134,6 +135,8 @@ lynx()->fields->add('level', 'choice', settings: [
     ],
 ]);
 ```
+
+With a `default`, a new page or a new repeater or matrix item starts with that option chosen, and editors can change it. Lynx stores the default when the page or item is created, so `padding=medium` finds those pages too. Pages that existed before the default was set keep their empty value, so a template should still handle `null`. In the admin, tick **Default** next to an option in the field's options.
 
 A single choice reads as a `Choice`, or `null`. It prints its label in the current language, and `->value` gives the stored value. Several choices read as a `ChoiceList`, with `has()`, `values()` and `labels()`:
 

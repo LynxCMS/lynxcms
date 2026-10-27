@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Events\PageSaved;
+use LynxCms\Core\Fields\DefaultValues;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Models\Template;
@@ -64,6 +65,7 @@ final class SavePage extends Action
         private readonly Revisions $revisions,
         private readonly Drafts $drafts,
         private readonly PageStringEdits $strings,
+        private readonly DefaultValues $defaults,
     ) {}
 
     public static function name(): string
@@ -134,6 +136,11 @@ final class SavePage extends Action
 
         $this->assertPlacement($page, $template, $isNew);
         $this->authorize($context, $page, $template, $isNew);
+
+        if ($isNew) {
+            $this->defaults->fillNewPage($page, $default);
+        }
+
         [$names, $nameErrors] = $this->names->prepare($page, $default);
         [$values, $valueErrors] = $this->values->prepare($page, $template, $default);
         $stringErrors = $this->strings->errors($template->name, $input->get('strings') ?? []);

@@ -92,7 +92,8 @@
                 <div class="grid gap-1" wire:key="setting-{{ $type }}-{{ $setting }}">
                     @if ($type === 'choice' && $setting === 'options')
                         <span class="text-sm font-medium">Options</span>
-                        <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" />
+                        <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" defaultable multiple-model="settings.multiple" />
+                        <p class="text-muted-foreground text-sm">Pages store an option's value, and people read its label. Leave a value empty to make it from the label. The default is chosen on new pages and items, and editors can change it.</p>
                     @elseif ($definition['type'] === 'boolean')
                         <label class="flex items-center gap-2 text-sm font-medium"><input class="blat-checkbox" id="setting-{{ $setting }}" type="checkbox" wire:model="settings.{{ $setting }}"> {{ Str::headline($setting) }}</label>
                     @else
@@ -109,7 +110,8 @@
                                    @if ($definition['type'] === 'array') placeholder="Comma separated" @endif @error('settings.'.$setting) aria-invalid="true" @enderror>
                         @endif
                     @endif
-                    @if ($definition['description'] !== '') <p class="text-muted-foreground text-sm">{{ $definition['description'] }}</p> @endif
+                    {{-- The options' schema description is written for agents; the choices editor has its own help above. --}}
+                    @if ($definition['description'] !== '' && ! ($type === 'choice' && $setting === 'options')) <p class="text-muted-foreground text-sm">{{ $definition['description'] }}</p> @endif
                     @error('settings.'.$setting) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </div>
             @endforeach

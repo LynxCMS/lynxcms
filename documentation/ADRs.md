@@ -944,3 +944,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** A translatable text, on a page or in a repeater or matrix item, reads as `null` when no language in the current language's fallback chain has a value (`TranslatableValue::isEmpty()`), whatever other languages hold. A field set never to fall back only looks at the current language. Code that needs a language outside the chain reads it with `$page->getLanguageValue($language, $field)`, or reads the field inside `lynx()->language()`. `isBlank()` stays, for code that asks whether any language holds a value.
 
 **Consequences:** `@if`, `?:` and `??` follow what the visitor sees. Code that called `in()` or `has()` on a field read in a language whose chain is empty now gets `null` and must use `getLanguageValue()`; the upgrade note says so. A page serialized for MCP and the read tools gives `null` for such a field instead of an object with a `null` value.
+
+## ADR-0088: Field defaults are stored on new pages and items
+
+**Status:** Accepted
+
+**Context:** Settings fields, such as a block's image position or padding, need a value even when the editor never touches them. Without a default, every template repeats a fallback (`$block->padding?->value ?? 'medium'`), editors see an empty input while the site shows something else, and selectors such as `padding=medium` miss the pages that rely on the fallback. A default read at query time would need extra SQL for every comparison, and "no choice" could no longer be stored.
+
+**Decision:** A field type may implement `HasDefaultValue`. `pages.save` stores its default on a new page for every template field the input leaves out, and the item normalizer does the same in a new repeater or matrix item (one without a key). A field given as empty stays empty, existing pages and items are never filled in, and importers already send every field, so imports recreate pages as exported. The admin shows a new item with its defaults already chosen. `choice` is the first type with one: the setting `default` holds an option value, or a list with `multiple`. Settings that depend on each other are checked on the merged settings through `ChecksSettings`, so `fields.update` refuses options that leave the default out. In the admin, the choices editor marks the default option, and a required select with a default offers no empty option.
+
+**Consequences:** Stored values keep selectors, search and exports consistent with what templates read. Adding a default, or a field with one, to a template does not change existing pages; templates still handle an empty value there. Other types (toggle, integer, text) can implement `HasDefaultValue` later without new decisions.

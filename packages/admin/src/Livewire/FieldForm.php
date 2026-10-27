@@ -11,18 +11,17 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
-use LynxCms\Admin\Editor\ChoicesForm;
 use LynxCms\Admin\Editor\FieldTypeChoices;
 use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TypeDescriptions;
+use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
 use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
-use LynxCms\Core\Fields\Types\ChoiceType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Value;
 
@@ -35,9 +34,7 @@ use LynxCms\Core\Support\Value;
  */
 final class FieldForm extends Component
 {
-    /** The setting of choice fields edited with the choices editor (ChoicesForm). */
-    private const string CHOICES_SETTING = 'options';
-
+    use EditsChoiceOptions;
     use EditsItemSettings;
     use Notifies;
 
@@ -107,10 +104,7 @@ final class FieldForm extends Component
             $this->fallback = Value::string($config['fallback'] ?? 'inherit');
             $this->autoload = ($config['autoload'] ?? false) === true;
             $this->settings = app(SchemaForm::class)->toForm($this->definitions(), $config);
-
-            if ($this->hasChoices()) {
-                $this->settings[self::CHOICES_SETTING] = ChoicesForm::toForm($config[self::CHOICES_SETTING] ?? []);
-            }
+            $this->loadChoiceOptions($config);
             $this->formatters = Value::strings($config['formatters'] ?? []);
             $this->loadItemSettings($config);
         }
@@ -151,11 +145,7 @@ final class FieldForm extends Component
         $this->authorizeEditing();
         $this->status = null;
         $isNew = $this->field === null;
-        $settings = $this->itemSettings() + $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
-
-        if ($this->hasChoices()) {
-            $settings[self::CHOICES_SETTING] = ChoicesForm::fromForm($this->settings[self::CHOICES_SETTING] ?? []);
-        }
+        $settings = $this->choiceSettings() + $this->itemSettings() + $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
 
         if ($isNew) {
             if (! app(FieldTypeChoices::class)->offers($this->type)) {
@@ -243,7 +233,7 @@ final class FieldForm extends Component
     }
 
     /**
-     * The type's settings for the generic form, without the one the builder edits.
+     * The type's settings for the generic form, without the ones the builder and the choices editor edit.
      *
      * @return array<string, array{type: string, description: string, enum: list<string>}>
      */
@@ -251,7 +241,7 @@ final class FieldForm extends Component
     {
         $definitions = app(SchemaForm::class)->definitions(Value::map(lynx()->fields->types()[$this->type]['settings'] ?? []));
 
-        return array_diff_key($definitions, array_flip(array_filter([$this->itemSetting()])));
+        return array_diff_key($definitions, array_flip([...array_filter([$this->itemSetting()]), ...$this->choiceSettingsEditedHere()]));
     }
 
     /**
@@ -274,11 +264,5 @@ final class FieldForm extends Component
         }
 
         return $settings;
-    }
-
-    /** Whether the type keeps a list of choices in "options", edited with the choices editor. */
-    private function hasChoices(): bool
-    {
-        return $this->type === ChoiceType::name();
     }
 }

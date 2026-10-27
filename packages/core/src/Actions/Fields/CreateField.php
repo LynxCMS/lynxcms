@@ -21,6 +21,7 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * Creates a field and its table at runtime (ADR-0004). No migration.
@@ -118,6 +119,7 @@ final class CreateField extends Action
 
         $settings = $input->array('settings');
         $typeSettings = FieldSettings::validate($type, $settings);
+        FieldSettings::check($type, Value::map(array_merge($settings, $typeSettings)));
 
         $field = Field::query()->create([
             'uuid' => $input->string('uuid') ?? (string) Str::uuid(),
