@@ -964,3 +964,20 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `Branding::usesLynxMark()` is true while the name is the default (`Lynx`) and there is no logo, from the config or uploaded. Then the brand component draws the mark inline (`<x-lynx-admin::lynx-mark>`) where the initial was, and the document links Lynx's favicon (an ICO and an SVG committed under `resources/brand`, not built), served by the admin's asset route. Once a site sets a name or a logo, the admin goes back to ADR-0084: the logo, or the initial and the name, and no Lynx favicon, so browsers fall back to the site's own `/favicon.ico`. The mark's colours are `--lynx-mark-*` tokens in `admin.css`, not BlatUI tokens: an accent does not change artwork. In dark mode the eye takes the light tone. The SVG favicon lifts every tone a step in dark mode, since the deep tone does not read on a dark tab bar at 16px.
 
 **Consequences:** New installs and the workbench show the Lynx mark and favicon. Sites that set only an accent or a background keep the mark. A site that names itself, even with no logo, loses both at once. The mark's sources live in `design/logo`; the admin's copies change only when the mark does.
+
+## ADR-0090: Selectors find pages by status, language, draft and schedule
+
+**Status:** Accepted.
+
+**Context:** The admin's page tree needs lists such as "pages with a draft", "pages with a schedule" and "pages not in Portuguese yet", and the pages API could only answer them one page at a time (`withDrafts(ids)`, `schedules(page)`). `include=hidden|unpublished` adds pages to a result but can't select only them, and `language=pt` picks the language values are compared in without filtering anything. Anything the admin can list should be a selector, so developers, the MCP server and the AI agent can ask the same question in one query.
+
+**Decision:** Four selector terms, compiled by `PageStateMatch`:
+
+- `status=hidden|unpublished|locked` matches pages with any of the statuses, `status!=` with none. Naming a status lets those pages through the status filter, so `status=unpublished` needs no `include`. Like ADR-0061, the match lists the status values rather than testing bits. `unique` and `system` are bookkeeping and can't be named.
+- `language!=pt` matches pages with no published name in Portuguese (`lynx_page_languages`). Several languages (`language!=pt|de`) mean none of them. The default language matches nothing, since every page is published in it. `language=pt` keeps its meaning (ADR-0010), so `!=` doesn't change the language values are compared in. The two read differently on purpose: one picks a language, the other filters by it.
+- `has_draft=1` matches pages with a draft (ADR-0039), `has_draft=0` (or `!=1`) pages without one.
+- `has_schedule=1` matches pages with a publish or unpublish date waiting (ADR-0036). Failed schedules don't count.
+
+`has_draft` and `has_schedule` join the reserved field names. `status` and `language` already were. The terms can't be combined with fields (`status|title=x`).
+
+**Consequences:** Each term is one `EXISTS` or `IN` clause, on SQLite and PostgreSQL alike. A site with a field named `has_draft` or `has_schedule` must rename it; no released site is known to have one. A visitor's text pasted into a selector can now also add `status=unpublished`, which the docs warn about with `include=`.

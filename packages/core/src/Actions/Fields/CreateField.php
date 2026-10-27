@@ -32,7 +32,7 @@ final class CreateField extends Action
     public const array RESERVED = [
         'id', 'name', 'names', 'template', 'parent', 'parents', 'children', 'status', 'sort', 'path', 'url',
         'created', 'modified', 'published', 'created_at', 'updated_at', 'published_at', 'created_by', 'modified_by',
-        'language', 'languages', 'page', 'pages', 'settings', 'has_parent', 'limit', 'start', 'include', 'join', 'lang', 'search',
+        'language', 'languages', 'page', 'pages', 'settings', 'has_parent', 'has_draft', 'has_schedule', 'limit', 'start', 'include', 'join', 'lang', 'search',
     ];
 
     public function __construct(

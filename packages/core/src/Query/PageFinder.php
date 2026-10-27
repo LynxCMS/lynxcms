@@ -132,7 +132,8 @@ final readonly class PageFinder
         $chain = $this->context->chainIds();
 
         foreach ($clauses as $clause) {
-            if (in_array($clause->field, ['language', 'lang'], true)) {
+            // "language!=pt" filters pages (PageStateMatch); only "language=pt" picks the language to match in.
+            if (in_array($clause->field, ['language', 'lang'], true) && $clause->operator !== '!=') {
                 $chain = $this->languages->chainIds($clause->value());
             }
         }

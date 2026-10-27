@@ -43,7 +43,7 @@ Once a value is checked, put it in the selector:
 $courses = $page->children($category === null ? 'sort=title' : "category={$category}, sort=title");
 ```
 
-Never put an unchecked value in a selector. A selector is a small language, and a visitor's text can add conditions of its own: `?category=yoga, include=unpublished` would list unpublished pages. Bound parameters keep the database safe, but they can't tell your conditions from the visitor's.
+Never put an unchecked value in a selector. A selector is a small language, and a visitor's text can add conditions of its own: `?category=yoga, include=unpublished` (or `status=unpublished`) would list unpublished pages. Bound parameters keep the database safe, but they can't tell your conditions from the visitor's.
 
 ### Words in a selector
 
