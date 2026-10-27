@@ -105,3 +105,18 @@ it('puts Save in the header', function (): void {
     Livewire::test(FieldForm::class, ['field' => 'summary'])
         ->assertSeeHtml('form="field-form"');
 });
+
+it('starts a new field with its own text in each language', function (): void {
+    Livewire::test(FieldForm::class)->assertSet('translatable', true);
+});
+
+it('keeps a kind that has no languages shared, whatever the choice', function (): void {
+    Livewire::test(FieldForm::class)
+        ->set('name', 'seats')
+        ->set('label.default', 'Seats')
+        ->set('type', 'integer')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('seats')->isTranslatable())->toBeFalse();
+});

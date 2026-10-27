@@ -54,7 +54,8 @@ final class FieldForm extends Component
 
     public string $type = 'text';
 
-    public bool $translatable = false;
+    /** New fields start with their own text in each language; kinds that have no languages save as shared. */
+    public bool $translatable = true;
 
     /** @var array<string, string> language code => description */
     public array $description = [];
@@ -134,7 +135,7 @@ final class FieldForm extends Component
                 throw ValidationException::withMessages(['type' => "Fields of type [{$this->type}] are created by the module that uses them."]);
             }
 
-            lynx()->fields->add($this->name, $this->type, $this->isMultilingual() ? $this->translatable : $this->typeCanTranslate(), LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
+            lynx()->fields->add($this->name, $this->type, $this->typeCanTranslate() && (! $this->isMultilingual() || $this->translatable), LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
             $this->redirectRoute('lynx.admin.fields.edit', $this->name);
 
             return;

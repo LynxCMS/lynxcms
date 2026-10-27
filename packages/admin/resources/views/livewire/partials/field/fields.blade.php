@@ -32,7 +32,7 @@
             <h2 id="field-languages-heading" class="text-base font-semibold">Languages</h2>
             @if ($field === null)
                 <div class="grid gap-2" role="radiogroup" aria-labelledby="field-languages-heading">
-                    @foreach ([true => ['Its own text in each language', 'Every language gets a value of its own.'], false => ['The same in every language', 'For numbers, dates and codes.']] as $value => [$title, $hint])
+                    @foreach ([true => ['Its own text in each language', 'Every language gets a value of its own.'], false => ['The same in every language', 'For numbers, dates and other data that is the same in all languages.']] as $value => [$title, $hint])
                         <label class="has-checked:border-primary has-checked:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
                             <input type="radio" class="mt-0.5 accent-primary" name="field-translatable" wire:click="$set('translatable', {{ $value ? 'true' : 'false' }})" @checked($translatable === (bool) $value)>
                             <span class="grid gap-0.5"><span class="font-medium">{{ $title }}</span><span class="text-muted-foreground">{{ $hint }}</span></span>
