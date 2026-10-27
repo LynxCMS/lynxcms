@@ -105,6 +105,7 @@ export default defineConfig({
                     { text: 'Field Types', link: '/basics/field-types' },
                     { text: 'Views', link: '/basics/views' },
                     { text: 'Finding Pages', link: '/basics/selectors' },
+                    { text: 'Visitor Input', link: '/basics/visitor-input' },
                     { text: 'Languages', link: '/basics/languages' },
                     { text: 'Images and Files', link: '/basics/images-and-files' },
                     { text: 'Publishing', link: '/basics/publishing' },
@@ -129,6 +130,20 @@ export default defineConfig({
                     { text: 'Page Cache', link: '/modules/page-cache' },
                     { text: 'Page Passwords', link: '/modules/page-passwords' },
                     { text: 'Static Site Export', link: '/modules/static-site' },
+                ],
+            },
+            {
+                text: 'Guide: A Bilingual Website',
+                collapsed: true,
+                items: [
+                    { text: 'Overview', link: '/guides/bilingual-website/' },
+                    { text: '1. Plan and Install', link: '/guides/bilingual-website/install' },
+                    { text: '2. Templates and Fields', link: '/guides/bilingual-website/content-model' },
+                    { text: '3. Content in Two Languages', link: '/guides/bilingual-website/content' },
+                    { text: '4. Views and the Layout', link: '/guides/bilingual-website/views' },
+                    { text: '5. Listing and Linking Pages', link: '/guides/bilingual-website/connected-pages' },
+                    { text: '6. A Contact Form and Search', link: '/guides/bilingual-website/contact-search' },
+                    { text: '7. SEO and Launch', link: '/guides/bilingual-website/launch' },
                 ],
             },
             {

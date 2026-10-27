@@ -23,7 +23,7 @@ A Lynx site is a tree of pages. Ours will look like this:
     └── /blog/second-post        (template: post)
 ```
 
-Each page uses a **template**, which says what the page holds. A template is a list of **fields**. If you think in Laravel terms, a template is close to a model's schema and a field is close to a column, except that you create them at runtime, without migrations.
+Each page uses a **template**, which says what the page holds. A template is a list of **fields**. If you think in Laravel terms, a template is close to a model's schema and a field is close to a column, except that you create them while the site runs, without migrations.
 
 Our blog needs two templates:
 
@@ -98,7 +98,7 @@ Create `resources/views/templates/post.blade.php`:
 
 <<< @/snippets/first-site/views/templates/post.blade.php{blade}
 
-`@field($page->title)` prints a field's value. It escapes text, prints rich text from html fields as HTML, and marks text that comes from another language, which matters once the site has translations. A `date` field reads as a Carbon date, so you can format it as usual. The `?->` is there because a post without a date reads as `null`.
+`@field($page->title)` prints a field's value. It escapes text, prints rich text from html fields as HTML, and marks text that comes from another language, which matters once the site has translations. A `date` field reads as a [Carbon](https://carbon.nesbot.com) date, the date object Laravel uses, so you can format it as usual. The `?->` is there because a post without a date reads as `null`.
 
 ### The blog page
 
@@ -124,7 +124,7 @@ Now make the blog multilingual. Add Portuguese in the admin under **Settings ›
 
 <<< @/snippets/first-site/languages.php#add-language{php}
 
-The first line gives the default language, which `lynx:install` called "Default" with the code `default`, its real code, name and locale. The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
+`lynx:install` created the default language with the code `default` and the name "Default". The first line renames it to English, with the code `en`. The second adds Portuguese, with English as its **fallback**: whenever a Portuguese value is missing, Lynx shows the English one.
 
 Translate the blog page and the first post. In the admin, open the page and use the language tabs above each field; give the page a Portuguese URL name in its **Settings** tab. Or in Tinker:
 
@@ -143,6 +143,6 @@ On `/pt/blogue`, the second post appears with its English URL, `/blog/second-pos
 You have used the core of Lynx: templates and fields for the structure, pages for the content, Blade views and selectors for the front end, and languages with fallback. From here:
 
 - [Core Concepts](/getting-started/concepts) explains the ideas behind what you just did.
-- [Templates and Fields](/basics/templates-and-fields) covers every field type, layouts and conditions.
+- [Templates and Fields](/basics/templates-and-fields) covers templates, field layouts and conditions, and [Field Types](/basics/field-types) lists every field type.
 - [Views](/basics/views) covers images, menus, editable texts and more Blade helpers.
 - [Menus](/modules/menus), [SEO](/modules/seo) and [Forms](/modules/forms) are modules most sites add next.

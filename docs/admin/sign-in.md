@@ -6,7 +6,7 @@ order: 1
 
 # Sign-in and accounts
 
-Lynx signs people in with Laravel Fortify, under the admin prefix:
+The admin comes with everything people need to sign in: passwords and password resets, two-factor authentication, passkeys and invitations for new users. It is built on [Laravel Fortify](https://laravel.com/docs/fortify), Laravel's sign-in package, and its screens live under the admin prefix:
 
 | URL | Screen |
 | --- | --- |

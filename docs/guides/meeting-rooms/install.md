@@ -100,5 +100,5 @@ public function timeZone(): string
 
 ## What you get
 
-- **The firm:** an admin where staff and office managers sign in with the rights they need, nothing more.
+- **The firm:** an admin where staff and office managers sign in with only the rights they need.
 - **You:** a plain Laravel app with one provider to read, and a page tree that already tells you what editors own and what the app computes.

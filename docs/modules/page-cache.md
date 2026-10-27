@@ -6,7 +6,7 @@ order: 9
 
 # Page cache
 
-The page cache comes with `lynxcms/cache`. It stores the HTML of pages guests see and sends it again to the next guest, without loading the page or rendering Blade. With web server rules it is sent without PHP running at all, as ProcessWire's ProCache does. Saving content clears what it changed.
+The page cache comes with `lynxcms/cache`. It makes the site fast for visitors who aren't signed in (guests): it stores the HTML of the pages they see and sends it again to the next guest, without loading the page or rendering Blade. With web server rules it is sent without PHP running at all. Saving content clears what it changed.
 
 Install it, back up the database and apply its migrations:
 
@@ -64,9 +64,9 @@ location / {
 
 Requests with a query string always go to PHP, which drops tracking parameters and sends allowed variants.
 
-The rules send stored pages with the same `Cache-Control` header as PHP: `no-cache, private`, or `public, max-age=0, s-maxage=…` with an [edge TTL](#edge-caches). Without it, a web server sends the file with only its `Last-Modified` date, and browsers may show a cleared page again for a while without asking. Static files keep their own headers. On Apache the header needs `mod_headers` (`a2enmod headers`). Rules printed before this header was added still work, so print them again and replace the old ones.
+The rules send stored pages with the same `Cache-Control` header as PHP: `no-cache, private`, or `public, max-age=0, s-maxage=…` with an [edge TTL](#edge-caches). Without it, a web server sends the file with only its `Last-Modified` date, and browsers may show a cleared page again for a while without asking. Static files keep their own headers. On Apache the header needs `mod_headers` (`a2enmod headers`). Rules printed by older releases lack the header: print them again and replace the old ones.
 
-The printed rules were checked on Ubuntu 26.04 with nginx 1.28, Apache 2.4 and Caddy 2.6, behind PHP-FPM 8.5: with PHP-FPM stopped, stored pages are still sent and other pages fail. On Apache, the rules go in `public/.htaccess` before Laravel's own. They find the cache folder from `public/` itself, not from the document root, so they also work when the host's web folder is the app's root and a `.htaccess` there forwards requests to `public/`, as on shared hosting ([Installation](/getting-started/installation#shared-hosting)). Rules printed before this change used the document root and missed in that setup, so print them again. Lynx URLs have no trailing slash by default, as Laravel's, so Laravel's stock "Redirect Trailing Slashes" rule can stay. If you set `lynx.trailing_slash` to `true` (addresses ending with a slash, as ProcessWire writes them), remove that rule: it would send every page to the address without the slash, an extra redirect on each click.
+The printed rules were checked on Ubuntu 26.04 with nginx 1.28, Apache 2.4 and Caddy 2.6, behind PHP-FPM 8.5: with PHP-FPM stopped, stored pages are still sent and other pages fail. On Apache, the rules go in `public/.htaccess` before Laravel's own. They find the cache folder from `public/` itself, not from the document root, so they also work when the host's web folder is the app's root and a `.htaccess` there forwards requests to `public/`, as on shared hosting ([Installation](/getting-started/installation#shared-hosting)). Rules printed by older releases use the document root and miss in that setup, so print them again. Lynx URLs have no trailing slash by default, as Laravel's, so Laravel's stock "Redirect Trailing Slashes" rule can stay. If you set `lynx.trailing_slash` to `true` (addresses ending with a slash), remove that rule: it would send every page to the address without the slash, an extra redirect on each click.
 
 **Before Laravel boots**, for hosts whose web server you cannot change. Add one line to `public/index.php`, anywhere before `bootstrap/app.php` (it loads its own classes, so it works before or after the Composer autoloader):
 
@@ -128,7 +128,7 @@ What the numbers mean:
 - One request runs on one core, so fewer cores don't make a single page slower. The 2 core VM was even 10 to 15% quicker with one client, which is within how much the host's scheduling varies between VMs.
 - Under load, everything PHP does falls by 2 to 2.3 times, close to the 2.5 times fewer cores. Renders and the middleware are bound by the CPU, so a server's page rate grows with its cores. With 10 clients a render waited about 100 ms on 2 cores against 43 ms on 5.
 - `serve.php` lost about 30% and nginx about 20%. They use so little CPU that `ab`, running on the same VM, takes a good share of it, so the real loss is smaller.
-- A 2 core server rendered 64 to 100 pages a second, and served 8,000 a second through `serve.php` and 77,000 through nginx. On small servers the page cache matters most: it is the difference between a saturated CPU and an idle one.
+- A 2 core server rendered 64 to 100 pages a second, and served 8,000 a second through `serve.php` and 77,000 through nginx, so on small servers the page cache matters most.
 
 ### Rendering on PostgreSQL
 
@@ -192,7 +192,7 @@ With `LYNX_PAGE_CACHE_DEBUG=true`, responses carry `X-Lynx-Cache: HIT`, `MISS`, 
 ```
 
 - `lifetime`: seconds a page is kept. 0, the default, keeps it until content changes.
-- `parameters`: query parameters that make their own stored copy, such as `page` for pagination. A request with any other parameter is not stored. Tracking parameters (`utm_*`, `gclid`, `fbclid`) are dropped first, so a link from a newsletter gets the stored page.
+- `parameters`: query parameters that make their own stored copy, such as `page` for pagination. A request with any other parameter is not stored. See [Query strings](#query-strings).
 - `clear`: what a change to a page of this template clears.
 
 A template missing from the list, with no `'*'` entry, is never stored.
@@ -212,6 +212,23 @@ lynx()->run(SavePageCacheRules::class, [
 ```
 
 The first save installs a hidden settings page (`page_cache.install`). What only the server can decide stays in the config: whether the cache is on, the driver, hosts and the edge TTL.
+
+## Query strings
+
+The query string is the part of an address after `?`, such as `?page=2` or `?category=yoga`. A view can show something different for each one, so the cache keeps a separate copy only for the parameters you allow, and renders the rest fresh:
+
+- **Tracking parameters are dropped.** `utm_*`, `gclid`, `fbclid`, `msclkid`, `mc_cid` and `mc_eid` are removed before the cache looks a page up, so `/courses?utm_source=newsletter` gets the stored `/courses`. `ignored_parameters` in the config lists them; a trailing `*` matches every name that starts the same way.
+- **Parameters a template lists get their own copy.** With `'parameters' => ['page', 'category']`, `/courses?page=2` and `/courses?category=yoga&page=2` are stored apart. Order doesn't matter: `?page=2&category=yoga` reads the same copy.
+- **Any other parameter keeps the request out of the cache.** The page is rendered for that request and not stored. A view that reads a parameter you forgot to list is never shown to the wrong visitor; it is only slower.
+- **A page keeps at most 50 copies** (`max_variants`). Past that, new combinations are rendered each time without being stored, so someone asking for `?page=1`, `?page=2` and so on, forever, can't fill the disk.
+- **Clearing a page clears all its copies**, whatever their query string.
+
+With the [web server rules](#sending-pages-without-php), every request with a query string goes to PHP, which applies these rules and sends the stored copy when there is one.
+
+Two things follow for your views:
+
+- List a parameter only when its values are few and checked, such as a page number or a category from a known list ([Visitor Input](/basics/visitor-input) shows how). A search page's `?q=` takes any text, so leave it unlisted, or turn caching off for the search template.
+- Don't let an ignored parameter change the page. A view that greets visitors who arrive with `?utm_source=newsletter` is stored under `/courses` and greets everyone. Do it in JavaScript, which runs in each visitor's browser and reads the address there.
 
 ## Clearing
 
@@ -281,7 +298,7 @@ Laravel 13 also accepts a same-site request without checking the token when the 
 
 Read the token when the request is sent, never when the page loads. A token copied into `x-data` or read in `init()` is the placeholder on a stored page. On stored pages, requests through `fetch` or `XMLHttpRequest` are covered by the cookie as described above, whatever token they carry.
 
-Read it lazily, as Statamic Peak's form handler does. Axios and Laravel Precognition turn header values into text only when they send the request:
+Read it lazily, with an object whose `toString()` reads the field. Axios and Laravel Precognition turn header values into text only when they send the request:
 
 ```js
 this.form = this.$form('post', action, data, {
@@ -345,7 +362,7 @@ A form in an island is rendered for each visitor, so the honeypot's "sent too fa
 
 ## Fragment cache
 
-For pages that are not stored whole, or parts that cost a lot to render, keep fragments, like ProcessWire's markup cache:
+For pages that are not stored whole, or parts that cost a lot to render, keep fragments:
 
 ```blade
 @lynxCache('main-menu', ['vary' => [$page->id]])

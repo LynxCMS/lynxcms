@@ -116,7 +116,7 @@ public static function conflict(Room $room, ScheduleConflictException $exception
 }
 ```
 
-A `ValidationException` is the form's error on the booking page, a red line in the admin's dialog, and a structured refusal for an AI assistant. One throw, three callers.
+A `ValidationException` is the form's error on the booking page, a red line in the admin's dialog, and a structured refusal for an AI assistant.
 
 ## Who may change what
 

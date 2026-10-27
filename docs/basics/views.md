@@ -5,11 +5,13 @@ description: Render pages with Blade, print fields, list pages, switch languages
 
 # Views
 
-Lynx renders pages with Blade, the way the rest of your Laravel app renders its views. This page shows where a page's view lives, how to print its fields, and the Blade helpers Lynx adds.
+Every page on your site is drawn by a Blade view you write, with the layouts, components and `@include`s you already use in Laravel. Lynx finds the right view for each page and hands it the page, so the view only prints the page's fields.
+
+This page shows where a page's view lives, how to print its fields, how to list and link other pages, and the Blade helpers Lynx adds for languages, blocks and texts editors can change.
 
 ## How a page is rendered
 
-Lynx registers one catch-all route after your app's routes. For each request it reads the language from the URL prefix, finds the page by its path, checks that the visitor may see it, and renders the view named after the page's template:
+Lynx registers one catch-all route after your app's routes: a route that answers every URL your own routes don't. For each request it reads the language from the URL prefix, finds the page by its path, checks that the visitor may see it, and renders the view named after the page's template:
 
 | Template | View |
 | --- | --- |
@@ -42,7 +44,7 @@ Print text fields with **`@field`**:
 
 `@field` escapes plain text and prints the cleaned HTML of rich text fields. When a value comes from another language, because the page isn't translated yet, it wraps the value in an element with that language's `lang` attribute, so browsers, search engines and screen readers read it correctly. `{{ $page->title }}` also prints the value, without that marking.
 
-Values are made to be tested in templates:
+You can test any value in `@if`, or give it a default with `?:` and `??`:
 
 - An empty text field reads as `null`, so `@if ($page->subtitle)`, `$page->subtitle ?: 'None'` and `??` work. A translatable field is empty when no language in the visitor's fallback chain has a value, even if another language does. A filled text field is a value object; cast it to compare it with a string: `(string) $page->subtitle === 'News'`.
 - A page reference that holds one page reads as that page or `null`: `{{ $page->category?->title }}`. One that holds several reads as a list of pages.
@@ -85,7 +87,7 @@ Use a [selector](/basics/selectors) to list pages. `$page->children()` lists the
 @endforeach
 ```
 
-Both return a `PageArray`, which you can loop, count and filter. It also joins values without the pitfalls of Laravel's `implode()` on field values:
+Both return a `PageArray`, which you can loop, count and filter. `implode()` joins one field of each page into a text, or what a closure returns for each page:
 
 ```blade
 {{ $page->topics->implode(', ', 'title') }}
@@ -123,7 +125,7 @@ The switcher keeps the query string, such as filters or a draft preview, while `
 
 ## Matrix blocks
 
-A [matrix field](/basics/field-types#matrix) holds typed blocks. `@matrix` renders each block with the view of its type:
+A [matrix field](/basics/field-types#matrix) holds a list of blocks that editors add and reorder, each of a type you define, such as a quote, an image or a video. `@matrix` renders each block with the view of its type:
 
 ```blade
 @matrix($page->blocks)
@@ -177,9 +179,11 @@ A [`component` field](/basics/field-types#component) lets editors place one of y
 @lynxComponent($page, 'enrol')
 ```
 
-## Editable texts
+## Editable template-wide or site-wide texts
 
-Short texts that belong to the design, such as a headline or a button label, can be declared in the view and changed by editors without a field:
+`Site Texts` are translatable texts you write in a view file (a template or layout). They show up in the admin right away, and editors can change them there. Without them, that wording would sit in language files, which are fine for developers but hard for editors to reach. Site Texts give editors the "static" text directly.
+
+Use them for text that rarely changes and belongs to the template rather than to one page, such as the copyright line in the footer.
 
 ```blade
 <h1>@string('hero.title', 'We make films', label: 'Hero title')</h1>
@@ -188,9 +192,32 @@ Short texts that belong to the design, such as a headline or a button label, can
 <footer>@string('footer.note', '© Example Studio', scope: 'site')</footer>
 ```
 
-The text in the view is the default. Editors change it per language in the page's **Texts** tab, or under **Site texts** for strings with `scope: 'site'`, which every page shares. Strings in views under a `layouts` folder are site strings unless they say `scope: 'page'`, so a layout's footer note is one text for the whole site.
+Once you add a `@string` to a template (in `resources/views/templates`), editors can change it in the admin right away. They edit it per language in the page's Texts tab, or under Site texts for strings with `scope: 'site'`, which every page shares. Strings in views under a layouts folder are site strings unless they say `scope: 'page'`, so a layout's footer note is one text for the whole site.
 
-A default can also be one text per language: `@string('hero.title', ['en' => 'We make films', 'pt' => 'Fazemos filmes'])`. Lynx stores only the texts editors change, so a new default in the view reaches every page nobody edited. Keys and texts must be written out literally. `php artisan lynx:strings:scan` lists every string the views declare and reports problems.
+A `@string` can also be set to hold a default value per language: `@string('hero.title', ['en' => 'We make films', 'pt' => 'Fazemos filmes'])`.
+
+The text in the view stays the default: Lynx saves a text only once an editor changes it, and never copies the default into the database. So when you change the default in the view, every page whose text no editor has touched shows the new one, and pages where an editor changed it keep their edit.
+
+Write the key, the default text and options such as `label:` and `scope:` as quoted strings, never as variables or other code. Lynx reads them from the view file without running it, which is how the admin knows the texts before any page renders. A call such as `@string($key, $title)` can't be read that way, and `lynx:strings:scan` reports it. Only `replace:` takes code (see [Values in texts](#values-in-texts)).
+
+### Checking your strings
+
+The command `php artisan lynx:strings:scan` lists every string the views declare and reports problems. It prints each template with the number of strings it has:
+
+```
++---------------------+--------------+--------------+
+| Template            | Page strings | Site strings |
++---------------------+--------------+--------------+
+| contact             | 3            | 3            |
+| home                | 6            | 3            |
+| news                | 0            | 3            |
+| not-found           | 0            | 4            |
+| office              | 0            | 6            |
+| page                | 0            | 3            |
+| post                | 0            | 4            |
+| practice-area       | 0            | 5            |
++---------------------+--------------+--------------+
+```
 
 ### Values in texts
 

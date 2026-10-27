@@ -1,12 +1,12 @@
 ---
 draft: true
 title: Lynx Compared
-description: How Lynx's features compare with Statamic, ProcessWire, Laravel Folio and WordPress, and when another tool fits better.
+description: How Lynx's features compare with other CMSes and when another tool fits better.
 ---
 
-# Lynx Compared
+# **Lynx** Compared
 
-If you are choosing a way to build a content site with Laravel, you are probably also looking at Statamic, ProcessWire, Laravel Folio or WordPress. This page compares their **features**, so you can see where Lynx is different, where it is the same, and where another tool fits your project better.
+If you are choosing a way to build a content site with Laravel, you are probably comparing CMSes. This page compares some of the CMSes the **Lynx** developers have experienced before deciding to build **Lynx** and their **features**, so you can see where **Lynx** is different, where it is the same, and where another tool fits your project better.
 
 A difference only matters if it changes something for someone. So after the table, each difference says what it means **for developers**, who build and maintain the site, and **for clients and editors**, who own it and work in it every day. Where a difference changes nothing for one of them, the page says so.
 
@@ -17,7 +17,7 @@ A difference only matters if it changes something for someone. So after the tabl
 
 <div class="wide-table">
 
-| | Lynx | Statamic | ProcessWire | Laravel Folio | WordPress |
+| | **Lynx** | Statamic | ProcessWire | Laravel Folio | WordPress |
 | --- | --- | --- | --- | --- | --- |
 | **What it is** | A CMS in Laravel packages | A CMS in a Laravel package | A CMS and PHP framework | A page router for Laravel | A CMS and PHP application |
 | **Lives inside a Laravel app** | Yes | Yes | No | Yes | No |
@@ -36,16 +36,16 @@ A difference only matters if it changes something for someone. So after the tabl
 
 </div>
 
-## Lynx and Statamic
+## **Lynx** and Statamic
 
 Statamic is the closest to Lynx: both are Laravel packages that add a content model, an admin and Blade templates to your app.
 
 ### Where content is stored
 
-Statamic stores content in Markdown and YAML files by default, and can move it to a database with its Eloquent driver. Lynx always stores content in the database, PostgreSQL or SQLite, and keeps only the *schema* (fields and templates) in YAML files you commit.
+Statamic stores content in Markdown and YAML files by default, and can move it to a database with its Eloquent driver. **Lynx** always stores content in the database, PostgreSQL or SQLite, and keeps only the *schema* (fields and templates) in YAML files you commit.
 
-- **For developers:** with files, content lives in Git next to the code, with diffs and history for free, and needs no database server; content edited on the live site has to find its way back into the repository. With Lynx, content changes are database transactions, several editors can save at once without file conflicts, and selectors compile to indexed SQL that stays fast with tens of thousands of pages. Schema changes still go through Git, like migrations.
-- **For clients and editors:** an edit in Lynx is live as soon as it is saved, and backups are ordinary database backups. With files, content history can also live in Git, which suits sites edited by technical people.
+- **For developers:** with files, content lives in Git next to the code, with diffs and history for free, and needs no database server; content edited on the live site has to find its way back into the repository, usually via Statamic Git integration (Pro version). With Lynx, content changes are database transactions, several editors can save at once without file conflicts, and selectors compile to indexed SQL that stays fast with tens of thousands of pages. Schema changes still go through Git, like migrations.
+- **For clients and editors:** an edit in **Lynx** is live as soon as it is saved, and backups are ordinary database backups. With files, content history can also live in Git, which suits sites edited by technical people.
 
 ### Languages
 
@@ -77,67 +77,67 @@ Every change in Lynx, from any source, is an action that checks permissions, run
 
 **Statamic fits better when** you want content in flat files under version control, a REST or GraphQL API, a mature product with a large add-on marketplace, or Antlers templates.
 
-## Lynx and ProcessWire
+## **Lynx** and ProcessWire
 
-Lynx takes several ideas from ProcessWire: one tree of pages, templates and fields created at runtime, and selectors for finding pages. If you know ProcessWire, Lynx will feel familiar.
+Lynx takes several ideas from ProcessWire: one tree of pages, templates and fields created at runtime, and selectors for finding pages. If you know ProcessWire, **Lynx** will feel familiar.
 
 ### Laravel or its own framework
 
-ProcessWire is its own PHP framework. Lynx runs inside a Laravel app.
+ProcessWire is its own PHP framework. **Lynx** runs inside a Laravel app.
 
 - **For developers:** you keep Laravel's routing, Eloquent, queues, mail, authentication, Livewire, Pest and the packages around them, and the content and the rest of the application share one codebase, one set of users and one deployment.
 - **For clients and editors:** a site that grows into an application, with accounts, bookings or a shop, stays one system with one admin, instead of a CMS next to a separate app.
 
 ### Languages
 
-ProcessWire's multi-language support comes from core modules, and a blank translation falls back to the default language; other fallback orders need a hook. Lynx falls back along a chain you set per language.
+ProcessWire's multi-language support comes from core modules, and a blank translation falls back to the default language; other fallback orders need a hook. **Lynx** falls back along a chain you set per language.
 
 - **For developers:** regional variants and fallback chains are configuration, not custom hooks, and they apply the same way in templates, selectors, menus, the sitemap and the admin.
 - **For clients and editors:** a regional site (Brazilian Portuguese, Swiss German) can reuse a related language's text before falling back to the default one, so less has to be translated twice.
 
 ### Databases
 
-ProcessWire runs on MySQL or MariaDB, with SQLite and PostgreSQL support experimental on its development branch. Lynx runs on PostgreSQL or SQLite, and does not support MySQL.
+ProcessWire runs on MySQL or MariaDB, with SQLite and PostgreSQL support experimental on its development branch. **Lynx** runs on PostgreSQL or SQLite, and does not support MySQL.
 
-- **For developers:** SQLite needs no database server, which suits small sites and local work; PostgreSQL brings full text search and trigram indexes that Lynx uses for large sites.
-- **For clients and editors:** hosting that only offers MySQL can't run Lynx today. SQLite works on most low cost hosting (see [shared hosting](/getting-started/installation#shared-hosting)).
+- **For developers:** SQLite needs no database server, which suits small sites and local work; PostgreSQL brings full text search and trigram indexes that **Lynx** uses for large sites.
+- **For clients and editors:** hosting that only offers MySQL can't run **Lynx** today. SQLite works on most low cost hosting (see [shared hosting](/getting-started/installation#shared-hosting)).
 
 ### Every change is an action
 
-ProcessWire offers hooks and, since 2026, an Agent Tools module for AI agents. Lynx runs every change, including an AI agent's, through the same actions.
+ProcessWire offers hooks and, since 2026, an Agent Tools module for AI agents. **Lynx** runs every change, including an AI agent's, through the same actions.
 
 - **For developers:** the MCP server and the agent are generated from the actions, so every action is available to AI tools with the same validation and permissions, with nothing extra to write.
 - **For clients and editors:** an AI agent's changes appear in the activity log like anyone else's, and the built-in agent waits for approval before it changes anything.
 
 **ProcessWire fits better when** you don't want a Laravel app, you host on MySQL, or you want a mature CMS with a long record and a large directory of modules.
 
-## Lynx and Laravel Folio
+## **Lynx** and Laravel Folio
 
-Folio is not a CMS: it is a router that turns Blade files in `resources/views/pages` into routes, with parameters, route model binding, middleware and named routes. You can use Folio and Lynx in the same app, since Lynx only serves the URLs your app's own routes leave free.
+Folio is not a CMS: it is a router that turns Blade files in `resources/views/pages` into routes, with parameters, route model binding, middleware and named routes. You can use Folio and **Lynx** in the same app, since **Lynx** only serves the URLs your app's own routes leave free.
 
 ### Who writes the pages
 
 With Folio, a page is a Blade file a developer writes. With Lynx, a page is content that editors create and change in the admin.
 
-- **For developers:** Folio needs nothing beyond Blade and is ideal for pages that change with the code. Lynx adds storage, fields, languages, drafts and history, which you would otherwise build yourself.
+- **For developers:** Folio needs nothing beyond Blade and is ideal for pages that change with the code. **Lynx** adds storage, fields, languages, drafts and history, which you would otherwise build yourself.
 - **For clients and editors:** with Folio, every text change needs a developer and a deployment. With Lynx, editors change content themselves, preview it as a draft and publish it when it is ready.
 
 ### Languages
 
-Folio has no language support. Lynx has languages, fallback and translated URLs in its core.
+Folio has no language support. **Lynx** has languages, fallback and translated URLs in its core.
 
 - **For developers:** no translation tables, localized routes or language switcher to build.
 - **For clients and editors:** a new language can be added and translated in the admin, page by page, without a developer.
 
 **Folio fits better when** your pages are written by developers, change with deployments, and don't need an editing interface, such as a product's marketing pages or an app's static screens.
 
-## Lynx and WordPress
+## **Lynx** and WordPress
 
 WordPress powers a large part of the web, and its ecosystem of themes and plugins is the largest of any CMS.
 
 ### Laravel or its own application
 
-WordPress is its own PHP application, with its own conventions. Lynx is part of your Laravel app.
+WordPress is its own PHP application, with its own conventions. **Lynx** is part of your Laravel app.
 
 - **For developers:** you build the site with Laravel's tools and conventions, and content and application code share models, users, queues and tests.
 - **For clients and editors:** custom features, such as bookings, accounts or integrations, are built into the same site and admin, instead of being added as separate plugins.
@@ -153,7 +153,7 @@ WordPress has posts and pages; custom post types and fields come from plugins or
 
 WordPress has no multilingual support in its core; plugins add it. In Lynx, languages, fallback and translated URLs are part of the core.
 
-- **For developers:** there is no separate multilingual plugin that every other plugin has to support. Menus, SEO, the sitemap, forms and the page cache are language aware out of the box.
+- **For developers:** there is no separate multilingual plugin that every other plugin has to support. Menus, SEO, the sitemap, forms and the page cache handle languages without extra setup.
 - **For clients and editors:** translation works the same way everywhere in the admin, with a tab per language, and untranslated pages fall back instead of breaking.
 
 ### Plugins and updates
@@ -165,7 +165,7 @@ WordPress's strength is its plugin ecosystem. Lynx's features come in a small se
 
 ### AI tools
 
-WordPress's core has an Abilities API, and the official MCP Adapter plugin exposes abilities to AI tools. Lynx generates its MCP server and AI agent from its actions.
+WordPress's core has an Abilities API, and the official MCP Adapter plugin exposes abilities to AI tools. **Lynx** generates its MCP server and AI agent from its actions.
 
 - **For developers:** every action, including those of Lynx's modules, is available to AI tools automatically, with the same validation and permissions as the admin.
 - **For clients and editors:** an AI agent can only do what its user is allowed to do, every change it makes is logged, and the built-in agent waits for approval.

@@ -6,7 +6,9 @@ order: 2
 
 # Roles and permissions
 
-A role is a set of grants. A grant is a permission, optionally limited to some templates and to branches of the page tree. Users can hold several roles. A superuser role allows everything.
+Roles decide what each person may do. A role can describe editors who edit and publish pages, translators who edit but can't publish, or a client who works only on the pages of their own section of the site. The same rules apply in the admin, in your code and to AI agents.
+
+A role is a set of **grants**. A grant is a permission, optionally limited to some templates and to branches of the page tree (a page and the pages below it). Users can hold several roles. A superuser role allows everything.
 
 | Permission | Allows |
 | --- | --- |

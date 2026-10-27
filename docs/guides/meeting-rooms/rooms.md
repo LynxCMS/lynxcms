@@ -74,7 +74,7 @@ final class Room extends Model
 }
 ```
 
-`withoutRules()` matters here. The Rooms section is behind a page password, a [visibility rule](/deeper/visibility) for visitors. The app's own work, such as a screen that runs without a session, must read rooms whatever the visitor may see.
+The page is read inside `withoutRules()` because the Rooms section is behind a page password, a [visibility rule](/deeper/visibility) for visitors. The app's own work, such as a screen that runs without a session, must read rooms whatever the visitor may see.
 
 ## Keeping it in step
 
@@ -116,4 +116,4 @@ View::composer('templates.room', RoomSchedule::class);
 ## What you get
 
 - **The firm:** rooms they add, photograph and reschedule in the admin, in English and French, with previews and revisions.
-- **You:** Zap's calendar engine without a second admin for rooms, and one direction of truth: pages own the content, the app derives the schedule.
+- **You:** Zap's calendar engine without a second admin for rooms. Pages own the content, and the app derives the schedule from them.

@@ -6,7 +6,7 @@ order: 8
 
 # Page passwords
 
-The `lynxcms/page-password` module (pagePassword) asks visitors for a password before showing a page. The password is set on the page, and the pages below it share it. There are no visitor accounts: anyone who knows the password can open the page.
+The `lynxcms/page-password` module asks visitors for a password before showing a page. The password is set on the page, and the pages below it share it. There are no visitor accounts: anyone who knows the password can open the page.
 
 ## Setting up
 

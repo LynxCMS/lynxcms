@@ -5,7 +5,7 @@ description: Page statuses, drafts, revisions, scheduled publishing, the trash, 
 
 # Publishing
 
-Editors rarely change a live page in one step. Lynx gives them the tools of a newsroom: statuses that take a page offline or out of lists, drafts that wait for review, revisions to compare and restore, publishing on a schedule, and a trash to recover from mistakes.
+Editors rarely change a live page in one step. Lynx gives them statuses that take a page offline or out of lists, drafts that wait for review, revisions to compare and restore, publishing on a schedule, and a trash to recover from mistakes.
 
 Each of these is an [action](/getting-started/concepts#actions), so it checks the user's permissions, can run as a dry run, and shows up in the activity log, whether an editor clicks a button or your code calls it.
 
@@ -34,7 +34,7 @@ A page is published in a language once it has a URL name in that language. Edito
 
 ## Drafts
 
-A draft holds changes that are not live yet, so an editor can prepare an update and publish it later, or have someone review it. A page has at most one draft, shared by every editor, holding field values and the page's own [editable texts](/basics/views#editable-texts).
+A draft holds changes that are not live yet, so an editor can prepare an update and publish it later, or have someone review it. A page has at most one draft, shared by every editor, holding field values and the page's own [editable texts](/basics/views#editable-template-wide-or-site-wide-texts).
 
 In the page editor, editors choose to save their changes as a draft, and publish it when it is ready. In code:
 
@@ -44,7 +44,7 @@ lynx()->pages->publishDraft('/about');
 lynx()->pages->discardDraft('/about');
 ```
 
-Editors preview a draft at the page's URL with `?preview=draft`. Your templates need no changes for it.
+Signed-in editors preview a draft at the page's URL with `?preview=draft`. Previews then stay on for the rest of their session, so links and the language switcher keep showing drafts, until `?preview=live` turns them off. A bar at the bottom of the page says which version they are looking at, and previews are never cached or shown to search engines. Your templates need no changes for any of it.
 
 ## Revisions
 
@@ -76,7 +76,7 @@ lynx()->pages->restore('/news/old');
 lynx()->pages->emptyTrash();
 ```
 
-`lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash.
+`lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash, which editors can undo.
 
 ## Old URLs
 

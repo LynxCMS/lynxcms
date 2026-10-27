@@ -5,19 +5,23 @@ description: Add Lynx to a Laravel app, create the first admin user and add modu
 
 # Installation
 
+This page installs Lynx and its admin, and creates the first account that can sign in. It takes a few minutes. The end of the page covers modules, configuration and hosting, for when you need them.
+
 ## Requirements
 
 Lynx is a set of Laravel packages, so it needs what Laravel 13 needs, plus:
 
 - PHP 8.5 or newer.
 - PostgreSQL (recommended) or SQLite. MySQL and MariaDB are not supported.
-- Laravel's scheduler (one cron entry) if editors schedule pages or you want automatic backups.
+- Laravel's scheduler, which needs one cron entry (cron is the server's timer for recurring commands), if editors schedule pages or you want automatic backups.
 
 Nothing else runs on the server: the admin's CSS and JavaScript come prebuilt, so production servers need no Node.js.
 
 ## Creating a Laravel app
 
-Lynx works in a new app or in one you already have. To start a new one, use the Laravel installer or Composer, as the [Laravel documentation](https://laravel.com/docs/installation) describes:
+Lynx can run a whole site on its own or join an app you already have. Either way it lives in a Laravel app: for a standalone site, create a new one and Lynx serves every page, with no routes or controllers of your own. To add Lynx to an existing app, skip to [Installing Lynx](#installing-lynx).
+
+To create a new app, use the Laravel installer or Composer, as the [Laravel documentation](https://laravel.com/docs/installation) describes:
 
 ```bash
 laravel new blog
@@ -28,7 +32,7 @@ Pick SQLite or PostgreSQL when the installer asks for a database. You can also s
 
 ## Installing Lynx
 
-Require the core and the admin with Composer, then run the migrations:
+Require the core and the admin with Composer, then run the migrations, which create Lynx's database tables:
 
 ```bash
 composer require lynxcms/core lynxcms/admin
@@ -52,7 +56,7 @@ Route::get('/', function () {
 php artisan lynx:install
 ```
 
-`lynx:install` creates the default language and the home page, and the `superuser`, `editor` and `guest` roles. When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
+`lynx:install` creates the default language and the home page, and three roles, the sets of permissions people get: `superuser` (allowed everything), `editor` (works on pages) and `guest` (allowed nothing). When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
 
 If your app already has accounts, make one of them the superuser instead:
 
@@ -73,7 +77,7 @@ The admin also offers password resets, two-factor authentication and passkeys. S
 
 ## Next steps
 
-Lynx is installed. [Your First Site](/getting-started/first-site) continues from here and builds a small blog in two languages.
+[Your First Site](/getting-started/first-site) continues from here and builds a small blog in two languages.
 
 ## Adding modules
 
@@ -126,7 +130,7 @@ Lynx runs on low cost shared and managed hosting (DreamHost, for example) as lon
 - **Queues.** A shared plan can't keep a queue worker running. Set `QUEUE_CONNECTION=sync` so form notifications are sent during the request, or let cron run `php artisan queue:work --stop-when-empty` every minute.
 - **Extensions.** Check with `php -m` that `pdo_sqlite` and `gd` (or `imagick`, for image fields) are there, besides those Laravel needs.
 
-A shared server divides its processor among many customers, so the numbers in [Server Capacity](/deeper/server-capacity) don't apply. With the page cache on, most visitors never reach PHP, which is what makes cheap hosting work. Once the site needs PostgreSQL, a queue worker or steady performance, move to a VPS with root access.
+A shared server divides its processor among many customers, so the numbers in [Server Capacity](/deeper/server-capacity) don't apply. With the page cache on, most visitors never reach PHP, which is what makes cheap hosting work. Once the site needs PostgreSQL, a queue worker or steady performance, move to a VPS (a virtual server of your own) with root access.
 
 ## Developing against a local checkout
 
