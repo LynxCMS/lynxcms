@@ -24,6 +24,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page picker shows the search box first and the chosen pages below it. Results float above the page, open upwards near its bottom, and can be reached with the arrow keys.
 
+- Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).

@@ -53,6 +53,15 @@
     --lynx-notice-warning-foreground: oklch(0.27 0.06 75);
     --lynx-notice-error: var(--destructive);
     --lynx-notice-error-foreground: var(--destructive-foreground);
+    /* The Lynx mark's own colours (ADR-0089): artwork, so not BlatUI tokens and not in the theme stub. */
+    --lynx-mark-deep: #004459;
+    --lynx-mark-mid: #007595;
+    --lynx-mark-light: #56bad5;
+    --lynx-mark-eye: #fff;
+}
+
+.dark {
+    --lynx-mark-eye: #56bad5;
 }
 
 @theme {

@@ -29,6 +29,9 @@ final readonly class Branding
 
     public const string HEX = '/^#[0-9a-fA-F]{6}$/';
 
+    /** The name the admin goes by until the site sets its own. */
+    public const string DEFAULT_NAME = 'Lynx';
+
     /** Relative luminance above which dark text reads better than white (WCAG contrast). */
     private const float LIGHT_LUMINANCE = 0.179;
 
@@ -68,7 +71,7 @@ final readonly class Branding
         $uploaded = self::filled($saved['logo'] ?? null);
 
         return new self(
-            name: $pick('name') ?? 'Lynx',
+            name: $pick('name') ?? self::DEFAULT_NAME,
             logo: $uploaded === null ? self::filled($defaults['logo'] ?? null) : null,
             background: self::hex($pick('background')),
             accent: self::hex($pick('accent')),
@@ -90,7 +93,16 @@ final readonly class Branding
         return preg_match('#^(https?:)?//#', $this->logo) === 1 ? $this->logo : asset($this->logo);
     }
 
-    /** The mark shown without a logo: the name's first letter. */
+    /**
+     * Whether the admin shows Lynx's own mark and favicon (ADR-0089): only until the site sets a
+     * name or a logo of its own, so a client's admin never carries Lynx's brand.
+     */
+    public function usesLynxMark(): bool
+    {
+        return $this->name === self::DEFAULT_NAME && $this->logo === null && $this->uploadedLogo === null;
+    }
+
+    /** The mark shown without a logo, once the site has its own name: the name's first letter. */
     public function initial(): string
     {
         return mb_strtoupper(mb_substr($this->name, 0, 1)) ?: 'L';

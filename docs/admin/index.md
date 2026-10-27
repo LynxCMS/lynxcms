@@ -57,6 +57,8 @@ Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_R
 
 Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colours, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in.
 
+Until the site has a name or a logo of its own, the admin wears Lynx's: the Lynx mark beside the name, and the Lynx icon in browser tabs. Setting a name or a logo replaces both, so a client never sees Lynx's brand in their admin. Without a logo, the name's initial takes the mark's place, and tabs show the site's own `/favicon.ico`. An accent or a background alone keeps the Lynx mark.
+
 The defaults come from `config/lynx-admin.php`, so a developer can ship them with the site:
 
 ```php

@@ -186,6 +186,7 @@ final class AdminServiceProvider extends ServiceProvider
             Route::get('assets/admin.css', AssetController::class)->name('assets.css');
             Route::get('assets/admin.js', [AssetController::class, 'script'])->name('assets.js');
             Route::get('assets/logo/{file}', [AssetController::class, 'logo'])->where('file', '[a-z0-9.-]+')->name('assets.logo');
+            Route::get('assets/favicon.{extension}', [AssetController::class, 'favicon'])->where('extension', 'svg|ico')->name('assets.favicon');
         });
     }
 

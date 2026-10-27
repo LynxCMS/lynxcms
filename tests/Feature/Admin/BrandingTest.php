@@ -115,7 +115,52 @@ it('answers only for logo files, and only superusers open Settings > General', f
 
 it('keeps the admin\'s own look without branding', function (): void {
     expect(Branding::current()->logoUrl())->toBeNull()
-        ->and(Branding::current()->accentStyle())->toBe('');
+        ->and(Branding::current()->accentStyle())->toBe('')
+        ->and(Branding::current()->usesLynxMark())->toBeTrue();
+});
+
+it('shows the Lynx mark and favicon while the site has no name or logo of its own', function (): void {
+    $this->get(route('login'))->assertOk()
+        ->assertSee('data-lynx-mark', false)
+        ->assertSee('/lynx/assets/favicon.svg', false)
+        ->assertSee('/lynx/assets/favicon.ico', false);
+
+    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk()->assertSee('data-lynx-mark', false);
+});
+
+it('leaves the Lynx mark and favicon out once the site has a name or a logo', function (array $branding): void {
+    lynx()->run(SaveBranding::class, $branding);
+
+    expect(Branding::current()->usesLynxMark())->toBeFalse();
+    $this->get(route('login'))->assertOk()
+        ->assertDontSee('data-lynx-mark', false)
+        ->assertDontSee('/lynx/assets/favicon', false);
+})->with([
+    'a name' => [['name' => 'Castor & Otters']],
+    'a logo' => [['logo' => brandingPngLogo()]],
+]);
+
+it('leaves the Lynx mark out for a logo from the config', function (): void {
+    config(['lynx-admin.branding.logo' => '/images/logo.svg']);
+
+    expect(Branding::current()->usesLynxMark())->toBeFalse();
+});
+
+it('keeps the sidebar brand named for screen readers when the sidebar collapses', function (array $branding): void {
+    lynx()->run(SaveBranding::class, $branding);
+
+    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk()
+        ->assertSee('group-data-[collapsible=icon]:sr-only', false);
+})->with([
+    'the Lynx mark' => [[]],
+    'a name' => [['name' => 'Castor & Otters']],
+    'a logo' => [['logo' => brandingPngLogo()]],
+]);
+
+it('serves the Lynx favicon, and nothing else under its name', function (): void {
+    $this->get('/lynx/assets/favicon.svg')->assertOk()->assertHeader('Content-Type', 'image/svg+xml');
+    $this->get('/lynx/assets/favicon.ico')->assertOk()->assertHeader('Content-Type', 'image/x-icon');
+    $this->get('/lynx/assets/favicon.png')->assertNotFound();
 });
 
 it('is closed to anyone but superusers', function (): void {

@@ -20,6 +20,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} · {{ $branding->name }}</title>
+    {{-- Lynx's favicon until the site brands the admin (ADR-0089); then browsers fall back to the site's own /favicon.ico. --}}
+    @if ($branding->usesLynxMark())
+        <link rel="icon" href="{{ route('lynx.admin.assets.favicon', ['extension' => 'ico', 'v' => \LynxCms\Admin\Http\AssetController::versionOf(\LynxCms\Admin\Http\AssetController::FAVICONS['ico'])], false) }}" sizes="32x32">
+        <link rel="icon" href="{{ route('lynx.admin.assets.favicon', ['extension' => 'svg', 'v' => \LynxCms\Admin\Http\AssetController::versionOf(\LynxCms\Admin\Http\AssetController::FAVICONS['svg'])], false) }}" type="image/svg+xml">
+    @endif
     {{-- Before the stylesheet, so the scheme the user picked (or the configured one) never flashes the other. --}}
     <script>(() => { let scheme = @js($scheme); try { scheme = localStorage.getItem('lynx:color-scheme') || scheme } catch (e) {} document.documentElement.classList.toggle('dark', scheme === 'dark' || (scheme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) })()</script>
     @if ($fonts)
