@@ -34,6 +34,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page tree's row actions are plain text, and **Unpub** and **Pub** read **Unpublish** and **Publish**.
 
+- The page editor puts every label above its field, and shows a panel beside the fields: publishing state, how much of the page each language has its own text for, and the latest activity. Templates with their own editor sidebar keep it instead.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).

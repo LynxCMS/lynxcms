@@ -101,7 +101,7 @@ Modules keep their own content in hidden system branches, such as menus under `/
 
 ## Arranging the page editor
 
-By default the page editor shows a template's fields in order, on one tab. A template can arrange them: extra tabs next to Content, sections that group fields, and a sidebar for fields editors rarely change.
+By default the page editor shows a template's fields in order, on one tab, with a panel beside them: whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity. A template can arrange its fields: extra tabs next to Content, sections that group fields, and a sidebar for fields editors rarely change. A tab with a sidebar shows that sidebar instead of the panel.
 
 ```php
 lynx()->templates->update('project', [

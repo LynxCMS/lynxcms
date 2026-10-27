@@ -20,6 +20,8 @@ order: 6
 | Roles, Users | Roles, their grants and who holds them; invitations. | superuser |
 | Account security | Password, two-factor authentication and passkeys. | signed in |
 
+The page editor puts each field's label above its input, and beside the fields a panel shows whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity (the Settings tab has all of it). Templates that lay out their own sidebar keep it instead of the panel.
+
 Superusers also see developer details in the page editor: the template's name, each field's type, and on the Texts tab each string's key and the view that declares it. Other users see only the labels.
 
 ## Search

@@ -1,4 +1,4 @@
-@props(['field', 'languages', 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'stacked' => false, 'cell' => false])
+@props(['field', 'languages', 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false])
 {{-- showType: the field type under the label, for superusers only.
      cell: a cell of a page editor card, which wraps fields side by side by their width (ADR-0063). --}}
 @php
@@ -9,11 +9,11 @@
     $isNarrow = $cell && $field->width < \LynxCms\Core\Templates\EditorSettings::FULL_WIDTH;
     $widthClass = [25 => '@xl:basis-1/4', 33 => '@xl:basis-1/3', 50 => '@xl:basis-1/2', 66 => '@xl:basis-2/3', 75 => '@xl:basis-3/4'][$field->width] ?? '';
 @endphp
-{{-- BlatUI tabs hold the language shown (tab); double-clicking a tab switches every field. The label sits beside the input when the card (an @container) is wide enough, unless stacked or narrower than the card: above it. --}}
+{{-- BlatUI tabs hold the language shown (tab); double-clicking a tab switches every field. The label sits above the input, so the editor reads top to bottom. --}}
 <div data-field="{{ $field->name }}" data-editor="{{ $field->display->value }}" data-collapsed="{{ $startsClosed ? 'true' : 'false' }}" data-width="{{ $field->width }}"
      @class(['min-w-0', 'shrink-0 grow-0 basis-full border-b border-border -mb-px' => $cell, $widthClass => $cell, 'border-e -me-px' => $isNarrow])
      x-data="{ open: @js(! $startsClosed) }">
-<x-lynx-admin::ui.tabs :value="$codes[0]" class="{{ $stacked || $isNarrow ? 'grid gap-2 p-5' : 'grid gap-2 p-5 @xl:grid-cols-[12rem_minmax(0,1fr)] @xl:gap-6' }}"
+<x-lynx-admin::ui.tabs :value="$codes[0]" class="grid gap-2 p-5"
      x-on:lynx-editor-language.window="if ({{ Js::from($codes) }}.includes($event.detail)) tab = $event.detail">
     <div>
         @if ($isCollapsible)

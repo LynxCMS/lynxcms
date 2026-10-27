@@ -250,6 +250,7 @@ Quiet until used: compact, square shouldered, one primary per view.
 - **Focus:** border to Stone Ring plus the 3px half opacity ring.
 - **Error / Disabled:** `aria-invalid` turns the border Signal Red with a red ring at 20%; the message sits below in Signal Red with `role="alert"`. Disabled inputs drop to 50%.
 - **Rich text:** the Tiptap editor is framed exactly like a textarea, with a ghost button toolbar separated by a Stone Rule line; pressed tools show the Stone Wash fill.
+- **Page editor:** every label sits above its input, so a page reads top to bottom. Beside the fields, an 18rem panel of small cards (Publishing, Languages with a per-language meter, Recent activity) stays in view while scrolling; below the fields on narrow screens. A template that lays out its own sidebar keeps it instead (ADR-0063).
 
 ### Navigation
 - **Sidebar:** Sidebar Paper, the brand at the top (the Lynx mark and name until the site sets its own; then the site's logo, or its initial and name, the initial alone when collapsed), the screen links as icon plus label menu buttons, the user menu and sign out at the bottom. Collapses to icons with tooltips.

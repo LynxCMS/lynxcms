@@ -140,6 +140,11 @@
         <livewire:lynx-admin.page-strings :page-id="$pageId" :key="'texts-'.$pageId" />
     @elseif (isset($moduleTabs[$tab]))
         @livewire($moduleTabs[$tab]['component'], ['pageId' => $pageId], key($tab.'-'.$pageId))
+    @elseif ($panel !== null)
+        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <div class="min-w-0">@include('lynx-admin::livewire.partials.editor-layout')</div>
+            @include('lynx-admin::livewire.partials.editor-panel')
+        </div>
     @else
         @include('lynx-admin::livewire.partials.editor-layout')
     @endif

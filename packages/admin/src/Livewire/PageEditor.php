@@ -15,6 +15,7 @@ use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\EditorForm;
+use LynxCms\Admin\Editor\EditorPanel;
 use LynxCms\Admin\Editor\FieldConditions;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldViews;
@@ -180,14 +181,19 @@ final class PageEditor extends Component
             $this->tab = LayoutTab::CONTENT;
         }
 
+        $fields = (new FieldViews)->for($page);
+        $isFieldsTab = in_array($this->tab, $fieldTabs, true);
+
         return view('lynx-admin::livewire.page-editor', [
             'layout' => $layout,
-            'isFieldsTab' => in_array($this->tab, $fieldTabs, true),
+            'isFieldsTab' => $isFieldsTab,
             'moduleTabs' => $moduleTabs,
             'page' => $page,
             'title' => (new DefaultPresenter)->title($page),
             'ancestors' => $this->ancestors($page),
-            'fields' => (new FieldViews)->for($page),
+            'fields' => $fields,
+            // The panel beside the fields, unless the template lays out its own sidebar there (ADR-0063).
+            'panel' => $isFieldsTab && ! $layout->hasSidebar($this->tab) ? (new EditorPanel)->for($page, $fields, $this->hasDraft) : null,
             'inputs' => app(FieldInputs::class),
             // The Texts tab: strings the template declares with @string (ADR-0047).
             'hasStrings' => array_filter(app(StringCatalog::class)->forTemplate((string) $page->template()->name), fn (StringDefinition $s): bool => ! $s->isSite()) !== [],
