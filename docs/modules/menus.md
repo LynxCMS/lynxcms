@@ -6,7 +6,7 @@ order: 2
 
 # Menus
 
-Menus come with `lynxcms/menus`. A menu is a set of pages under the system page `/_menus/`, edited in the admin's **Menus** screen. Items link to a page (optionally with its children), link to a URL, or are section labels. Labels and URLs can differ per language.
+Editors build the site's menus in the admin, and one Blade tag prints them in your layout. Menus come with `lynxcms/menus`. A menu is a set of pages under the system page `/_menus/`, edited in the admin's **Menus** screen. Items link to a page (optionally with its children), link to a URL, or are section labels. Labels and URLs can differ per language.
 
 ## Rendering
 

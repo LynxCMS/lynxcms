@@ -5,11 +5,13 @@ description: Render pages with Blade, print fields, list pages, switch languages
 
 # Views
 
-Lynx renders pages with Blade, the way the rest of your Laravel app renders its views. This page shows where a page's view lives, how to print its fields, and the Blade helpers Lynx adds.
+Every page on your site is drawn by a Blade view you write, with the layouts, components and `@include`s you already use in Laravel. Lynx finds the right view for each page and hands it the page, so the view only prints the page's fields.
+
+This page shows where a page's view lives, how to print its fields, how to list and link other pages, and the Blade helpers Lynx adds for languages, blocks and texts editors can change.
 
 ## How a page is rendered
 
-Lynx registers one catch-all route after your app's routes. For each request it reads the language from the URL prefix, finds the page by its path, checks that the visitor may see it, and renders the view named after the page's template:
+Lynx registers one catch-all route after your app's routes: a route that answers every URL your own routes don't. For each request it reads the language from the URL prefix, finds the page by its path, checks that the visitor may see it, and renders the view named after the page's template:
 
 | Template | View |
 | --- | --- |
@@ -42,7 +44,7 @@ Print text fields with **`@field`**:
 
 `@field` escapes plain text and prints the cleaned HTML of rich text fields. When a value comes from another language, because the page isn't translated yet, it wraps the value in an element with that language's `lang` attribute, so browsers, search engines and screen readers read it correctly. `{{ $page->title }}` also prints the value, without that marking.
 
-Values are made to be tested in templates:
+You can test any value in `@if`, or give it a default with `?:` and `??`:
 
 - An empty text field reads as `null`, so `@if ($page->subtitle)`, `$page->subtitle ?: 'None'` and `??` work. A translatable field is empty when no language in the visitor's fallback chain has a value, even if another language does. A filled text field is a value object; cast it to compare it with a string: `(string) $page->subtitle === 'News'`.
 - A page reference that holds one page reads as that page or `null`: `{{ $page->category?->title }}`. One that holds several reads as a list of pages.
@@ -85,7 +87,7 @@ Use a [selector](/basics/selectors) to list pages. `$page->children()` lists the
 @endforeach
 ```
 
-Both return a `PageArray`, which you can loop, count and filter. It also joins values without the pitfalls of Laravel's `implode()` on field values:
+Both return a `PageArray`, which you can loop, count and filter. `implode()` joins one field of each page into a text, or what a closure returns for each page:
 
 ```blade
 {{ $page->topics->implode(', ', 'title') }}
@@ -123,7 +125,7 @@ The switcher keeps the query string, such as filters or a draft preview, while `
 
 ## Matrix blocks
 
-A [matrix field](/basics/field-types#matrix) holds typed blocks. `@matrix` renders each block with the view of its type:
+A [matrix field](/basics/field-types#matrix) holds a list of blocks that editors add and reorder, each of a type you define, such as a quote, an image or a video. `@matrix` renders each block with the view of its type:
 
 ```blade
 @matrix($page->blocks)

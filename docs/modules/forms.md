@@ -6,7 +6,7 @@ order: 3
 
 # Forms
 
-The `lynxcms/forms` module keeps what visitors send. It stores each submission with a copy of the form's fields and mails the people who handle it.
+With `lynxcms/forms`, visitors can send you messages, requests and files from your pages. Lynx checks each submission, keeps it in the admin's inbox with a copy of the form's fields, and mails the people who handle it.
 
 ## Defining a form
 

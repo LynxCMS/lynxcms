@@ -6,6 +6,8 @@ order: 3
 
 # Extending the admin
 
+Your app can add its own screens to the admin, such as reports or a booking calendar, with links in its sidebar, add tabs to the page editor, and change how the page tree shows your pages. A screen is a Laravel route with a Blade view, and only users with the permission you name can open it.
+
 ## A new screen
 
 ```php

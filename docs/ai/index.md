@@ -6,7 +6,12 @@ order: 7
 
 # AI
 
-The MCP server and the agent expose the same actions as the PHP API, with the same validation, permissions and activity log. Actions that should never be tools (such as `users.invite` or `content.import`) are left out.
+AI tools can work on a Lynx site: an assistant such as Claude can find pages, write and translate content, and change templates and fields, with the same validation, permissions and activity log as a person in the admin. Lynx offers two ways:
+
+- The **MCP server** (`lynxcms/mcp`) lets AI apps on your machine, such as Claude Desktop or Claude Code, use the site. MCP, the Model Context Protocol, is the standard these apps use to call tools.
+- The **built-in agent** (`lynxcms/ai`) works from the command line and from your code: you describe a change, it plans the steps, and nothing happens until you approve them.
+
+Both run the same actions as the PHP API. Actions that should never be tools (such as `users.invite` or `content.import`) are left out.
 
 ## MCP server
 

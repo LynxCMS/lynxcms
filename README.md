@@ -5,7 +5,7 @@
 > [!WARNING]
 > **Lynx is not ready for production.** It is under active development and has not had a release yet. APIs, database tables, configuration and package names will change, sometimes without a migration path, and the structure of this repository may change too (packages may move into their own repositories). Try it, read it and open issues, but do not build a site you depend on with it yet.
 
-Lynx brings [ProcessWire](https://processwire.com)'s page tree, runtime fields and selector API into any Laravel 13 app, with languages as a core concept and every change going through validated actions that people, Artisan, MCP clients and AI agents share.
+Lynx brings [ProcessWire](https://processwire.com)'s page tree, runtime fields and selector API to Laravel 13, as a standalone site in a new app or added to one you already have, with languages as a core concept and every change going through validated actions that people, Artisan, MCP clients and AI agents share.
 
 ## Why Lynx
 

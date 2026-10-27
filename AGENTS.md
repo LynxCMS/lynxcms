@@ -37,8 +37,22 @@ The design and the decisions behind it live in the plan document and its ADRs. D
 - Raw SQL built at runtime goes through `LynxCms\Core\Query\Sql::trusted()` / `Sql::raw()`, and only from grammar-wrapped identifiers, whitelisted operators and integer ids. Values always go through bindings.
 - Tables are prefixed `lynx_`; field tables are `lynx_f_{name}` (indexes `{table}_pk`, `_lang`, `_data`), so no core table may start with `lynx_f_`; field names are capped so these fit PostgreSQL's 63-character identifiers (`Tables::maxFieldNameLength()`). Lynx must also work under the host app's connection prefix (`composer test:prefix`): in raw SQL, wrap table names with the grammar (`wrapTable`, `wrap`) instead of writing them out.
 - Artisan commands are `lynx:*`; the helper is `lynx()`; the facade is `Lynx`.
-- Documentation is Markdown in `docs/`, built with VitePress and deployed from `main` to lynxcms.org/cms/docs, a Cloudflare Worker with static assets (`docs/wrangler.jsonc`, `.github/workflows/docs.yml`). Its pages and sidebar order live in `docs/.vitepress/config.mts`. A page with `draft: true` in its front matter shows in `npm --prefix docs run dev` and is left out of builds (the live site and PR previews) unless `DOCS_DRAFTS=1`. Write for a developer who knows basic Laravel. Code the tutorial shows lives in `docs/snippets` and is run by `tests/Feature/Docs`, so change both together. The training site guide's code (`docs/snippets/training`) is also the starter app `LynxCMS/starter-training`, built by `.github/scripts/build-starter.sh` and pushed on every tag by `.github/workflows/starter.yml`.
+- Documentation is Markdown in `docs/`, built with VitePress and deployed from `main` to lynxcms.org/cms/docs, a Cloudflare Worker with static assets (`docs/wrangler.jsonc`, `.github/workflows/docs.yml`). Its pages and sidebar order live in `docs/.vitepress/config.mts`. A page with `draft: true` in its front matter shows in `npm --prefix docs run dev` and is left out of builds (the live site and PR previews) unless `DOCS_DRAFTS=1`. Write as [Writing docs](#writing-docs) describes. Code the tutorial shows lives in `docs/snippets` and is run by `tests/Feature/Docs`, so change both together. The training site guide's code (`docs/snippets/training`) is also the starter app `LynxCMS/starter-training`, built by `.github/scripts/build-starter.sh` and pushed on every tag by `.github/workflows/starter.yml`.
 - Tests use Pest and must pass on SQLite and PostgreSQL, in parallel. Tests that write files use `testingPath()` (one folder per process). Add a test for every action: happy path, validation failure, rollback, dry run.
+
+## Writing docs
+
+The docs aim to be as easy to follow as Laravel's. The reader is a PHP developer with, maybe, some basic Laravel experience, who may never have used another CMS or built a site in several languages.
+
+- **Lead with what the reader can do**, then show the code, then explain how it works, only as far as the reader needs it. "You can add a language to a live site in one step" comes before how languages are stored.
+- **Show an example before naming an idea**, and define each Lynx term where a page first uses it (template, field, selector, fallback, action, dry run, site text) or link to the page that defines it.
+- **Explain Laravel's own terms in a few words** the first time a page relies on them: a seeder, a service provider, a Blade component, a migration, Artisan.
+- **No comparisons with other CMSes** outside `getting-started/compared.md` (crediting ProcessWire, where many of Lynx's ideas come from, is fine), and no contrasts with an alternative the reader may not know ("a row, not a column"). Say what Lynx does.
+- **One idea per paragraph**, short sentences, and headings that name a task ("Listing the team by role") or a thing, not a slogan.
+- **Plain words.** No staged openers or closers ("Here's the thing", "That's the point"), no stock phrases ("just works", "out of the box", "seamless"), and no dashes as punctuation: use periods, commas, colons or parentheses.
+- **A little dry humour is welcome** where it costs no clarity: a few lines per page at most, inside sentences that also carry a fact, never in code, steps or definitions. Many readers don't have English as a first language, so the joke uses plain words too.
+- **Guides** say what the reader is building first, then each chapter adds one part and ends with what the reader and the site's owner now have. Code in a guide is real: a tested snippet in `docs/snippets`, or a shortened excerpt of a starter app, saying so.
+- Reference pages (Configuration, Artisan, Field Types) may stay terse: readers arrive there knowing what they look for.
 
 ## Commands
 

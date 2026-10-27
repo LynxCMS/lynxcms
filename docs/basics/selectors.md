@@ -5,7 +5,9 @@ description: Find, filter, sort and count pages with selectors, in any language.
 
 # Finding Pages
 
-Pages are not Eloquent models, so instead of a query builder you find them with **selectors**: short strings that filter, sort and limit pages, such as `template=post, sort=-published_on, limit=10`. A selector compiles to a single SQL query, reads the values visitors see in the current language, and leaves out pages the visitor may not see.
+You find pages with **selectors**: short strings that say which pages you want, in what order and how many. A selector reads almost like a sentence. `template=post, sort=-published_on, limit=10` is "posts, newest first, at most ten".
+
+Each selector runs as a single database query. It compares the values visitors see in their language, and leaves out pages they may not see, such as unpublished ones, so your code doesn't check either. Pages aren't Eloquent models, so selectors take the place of Laravel's query builder for them.
 
 ## Getting pages
 
@@ -60,7 +62,7 @@ The name can be a field of the page, such as `title` or `price`, or one of the p
 | --- | --- |
 | `=` and `!=` | Equal and not equal. |
 | `<`, `>`, `<=`, `>=` | Smaller and greater. |
-| `%=` and `*=` | Contains. |
+| `%=` and `*=` | Contains (two spellings of the same operator). |
 | `~=` | Contains every word, in any order: `summary~="risk management"` finds "management of risk". |
 | `^=` | Starts with. |
 | `$=` | Ends with. |
@@ -69,7 +71,7 @@ The text operators (`%=`, `*=`, `~=`, `^=` and `$=`) ignore case. Put a value in
 
 ### Several values, empty values
 
-`|` separates alternative values: `template=course|lesson` matches either. With `!=`, the page must differ from every value: `status!=draft|archived` finds neither.
+`|` separates alternative values: `template=course|lesson` matches either. With `!=`, the page must differ from every value: `category!=news|events` finds pages in neither category.
 
 An empty value means empty or missing: `summary=` finds pages without a summary, and `price!=` finds pages with a price.
 
@@ -173,13 +175,13 @@ Without `sort`, pages come in the order editors gave them among their siblings (
 
 ### Selectors from visitors
 
-A selector built from a request needs a cap, so a visitor can't ask for every page at once:
+Some apps take a whole selector from a request, such as an API that lets its clients filter pages. Give it a cap, so a client can't ask for every page at once:
 
 ```php
 lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
 ```
 
-Never paste a visitor's words into a selector you write, as in `"template=post, title%={$request->q}"`: they could add their own conditions, such as `include=unpublished` to list drafts. Check them against what you expect (a known category name, digits for an id) before they go in.
+The usual case is different: your selector, with a visitor's words in it. Never paste those words in as they come, as in `"template=post, title%={$request->q}"`: a visitor could add conditions of their own, such as `include=unpublished` to list unpublished pages. Check them against what you expect (a known category name, digits for an id) before they go in. For free text, remove double quotes and put the text inside double quotes: inside them, commas, pipes and single quotes are plain text. [Visitor Input](/basics/visitor-input#words-in-a-selector) shows the whole step.
 
 ## Filters and pagination
 
@@ -224,7 +226,7 @@ Rare words become much faster to find (from 90 ms to 6 ms on 50,000 pages); word
 
 ## Debugging
 
-`lynx:find` runs a selector from the command line, and `--sql` prints the query it compiles to:
+To try a selector, run it in Tinker (`php artisan tinker`) and look at what comes back. `lynx:find` runs one straight from the command line, and `--sql` prints the query it compiles to:
 
 ```bash
 php artisan lynx:find "template=course, sort=title" --lang=pt --sql

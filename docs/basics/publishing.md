@@ -44,7 +44,7 @@ lynx()->pages->publishDraft('/about');
 lynx()->pages->discardDraft('/about');
 ```
 
-Editors preview a draft at the page's URL with `?preview=draft`. Your templates need no changes for it.
+Signed-in editors preview a draft at the page's URL with `?preview=draft`. Previews then stay on for the rest of their session, so links and the language switcher keep showing drafts, until `?preview=live` turns them off. A bar at the bottom of the page says which version they are looking at, and previews are never cached or shown to search engines. Your templates need no changes for any of it.
 
 ## Revisions
 
@@ -76,7 +76,7 @@ lynx()->pages->restore('/news/old');
 lynx()->pages->emptyTrash();
 ```
 
-`lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash.
+`lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash, which editors can undo.
 
 ## Old URLs
 

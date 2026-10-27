@@ -6,7 +6,9 @@ order: 4
 
 # SEO
 
-SEO comes with `lynxcms/seo`. It writes the tags search engines and social networks read: the title, the description, the canonical link, the robots rule, Open Graph and X (Twitter) cards, the hreflang links and JSON-LD structured data. It also serves `/robots.txt`.
+With `lynxcms/seo`, every page tells search engines and social networks what it is: its title and description, its address in each language, and the image and text to show when someone shares a link. Editors can change each of them per page, and pages they leave alone still get good tags from their title and summary.
+
+In technical terms, it writes the title, the description, the canonical link, the robots rule, Open Graph and X (Twitter) cards, the hreflang links and JSON-LD structured data. It also serves `/robots.txt`.
 
 ## Rendering
 

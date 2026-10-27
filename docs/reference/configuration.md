@@ -19,7 +19,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | --- | --- | --- |
 | `routes.enabled` | `true` (`LYNX_ROUTES`) | Register the catch-all page route. |
 | `routes.middleware` | `['web']` | Middleware of the page route. |
-| `trailing_slash` | `false` (`LYNX_TRAILING_SLASH`) | End page URLs with a slash (`/courses/risk/`, as ProcessWire writes them), e.g. to keep a migrated site's addresses. By default they have none (`/courses/risk`), as Laravel writes them. Both forms open the page. |
+| `trailing_slash` | `false` (`LYNX_TRAILING_SLASH`) | End page URLs with a slash (`/courses/risk/`), for example to keep the addresses of a site moved from another system. By default they have none (`/courses/risk`), as Laravel writes them. Both forms open the page. |
 | `views_path` | `templates` | Where template views live. |
 | `localization.remember` | `true` | Remember the visitor's language in the session and on the user. |
 | `localization.accept_language` | `false` | Use the browser's language on a first visit. |

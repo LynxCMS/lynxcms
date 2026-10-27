@@ -5,7 +5,9 @@ description: Create fields and templates, set where pages may go, arrange the ed
 
 # Templates and Fields
 
-Every page uses a **template**, and a template is a list of **fields**. Together they are the site's *schema*: what each kind of page holds and how editors fill it in. If you know Eloquent, a template plays the part of a model's table, and a field the part of a column, except that you change them while the site runs and Lynx creates the tables for you.
+Templates and fields decide what each kind of page holds. A course has a title, a summary, a price and related courses, and editors get a form with exactly those inputs, in plain labels, in every language the site has.
+
+Every page uses a **template**, and a template is a list of **fields**. Together they are the site's *schema*: what each kind of page holds and how editors fill it in. If you have used Laravel's models, a template plays the part of a model's database table, and a field the part of a column, except that you change them while the site runs and Lynx creates the tables for you.
 
 You can build the schema in the admin, under **Settings › Fields** and **Settings › Templates**, or in PHP. Both run the same actions, so they validate the same way and show up in the same activity log. The examples on this page use PHP; every setting has a matching control in the admin.
 
@@ -21,7 +23,7 @@ lynx()->fields->add('related', 'page', settings: ['templates' => ['course']]);
 
 Field names use lowercase letters, digits and underscores, and start with a letter: they become property names in your templates (`$page->related`). Each field gets its own table, `lynx_f_{name}`, created at once.
 
-Some names are taken, because pages or selectors already use them, and are refused with a message saying so: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.
+Some names are taken, because pages or selectors already use them. Lynx refuses them with a message saying so, so you find out when you create the field, not when a selector misbehaves: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.
 
 A field is created once and shared by every template that uses it. The `title` field that `lynx:install` creates is used by most templates, for example.
 
