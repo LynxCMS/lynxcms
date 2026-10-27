@@ -1,0 +1,203 @@
+<title>Lynx Admin Refined</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="screens.css">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M21 12h-8M21 6H8M21 18h-8M3 6v4a2 2 0 0 0 2 2h3M3 10v6a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1Z"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="m5 9-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-facet" viewBox="0 0 11 10"><path d="M3.6.8h6.6L7.4 9.2H.8Z"/></symbol>
+</svg>
+
+<div class="preview">
+  <header class="controls">
+    <h1>Lynx admin, refined <small>Preview with illustrative content</small></h1>
+    <div class="seg" role="group" aria-label="Screen"><button id="show-pages" data-screen="pages" aria-pressed="true">Page tree</button><button id="show-editor" data-screen="editor" aria-pressed="false">Page editor</button></div>
+    <div class="seg" role="group" aria-label="Theme"><button id="theme-system" data-theme-pick="system" aria-pressed="true">System</button><button id="theme-light" data-theme-pick="light" aria-pressed="false">Light</button><button id="theme-dark" data-theme-pick="dark" aria-pressed="false">Dark</button></div>
+    <div class="seg" role="group" aria-label="Branding"><button id="brand-lynx" data-brand="lynx" aria-pressed="true">Lynx</button><button id="brand-client" data-brand="client" aria-pressed="false">Client branding</button></div>
+    <div class="seg" role="group" aria-label="Font"><button id="font-geist" data-font="geist" aria-pressed="true">Geist</button><button id="font-inter" data-font="inter" aria-pressed="false">Inter</button><button id="font-manrope" data-font="manrope" aria-pressed="false">Manrope</button><button id="font-figtree" data-font="figtree" aria-pressed="false">Figtree</button><button id="font-atkinson" data-font="atkinson" aria-pressed="false">Atkinson</button></div>
+    <div class="seg" role="group" aria-label="Translation hints"><button id="hints-off" data-hints="off" aria-pressed="true">Hints off</button><button id="hints-on" data-hints="on" aria-pressed="false">Translation hints</button></div>
+  </header>
+
+  <div class="admin" id="admin">
+    <aside class="sidebar" aria-label="Admin">
+      <a class="brand" href="#pages"><svg viewBox="0 0 395 548" aria-hidden="true"><path style="fill:var(--mark-deep)" d="M56.1 260.9L0.2 374L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1L394.8 334.6L338.2 340.1L262.6 264.1L176.9 272.9L44.7 385.8L70 298.9Z"/><path style="fill:var(--mark-mid)" d="M361.8 252.5L357.2 239.1L271 175.5L193.1 171.8L84.6 290.7L63.9 369.3L176.9 272.9L262.6 264.1L338.2 340.1L394.8 334.6L346.5 281.2L344.7 258.1ZM181 337.2L247 356.9L291 304.5L248.3 301L228 280.6L181.9 286L107.3 350.6L96.6 410.3ZM313.4 191.3L321.5 68.4L276 165.2ZM106.4 65.4L80.8 152.6L105.2 247.7L178.6 168.9Z"/><path style="fill:var(--mark-light)" d="M394.8 351.2L338.2 340.1L297.2 298.9L291 304.5L247 356.9L249.3 410.1L237.1 408.3L235.1 364.9L207.7 357L185.1 350.6L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1Z"/><path style="fill:var(--mark-eye)" d="M296.7 299.8L294 275.1L264.8 253.8L206.3 259.1L248.3 301L291 304.5Z"/><path style="fill:var(--mark-deep)" d="M105.2 247.7L76.9 278.8L64.2 242.8L65.4 155.9L90.4 71.1L39.8 8L76.9 37.3L64.2 0.2L106.4 65.4L80.8 152.6ZM216.8 160.2L276 165.2L321.5 68.4L324.2 15.2L304.7 70.8ZM394.8 334.6L341.4 336.4L337.9 339.8L337.9 351.1L354.8 360.8L355.3 369L359.5 375.6L355.9 391.4L305.4 410.1L249 396.2L249 410.1L304.2 423.3L359.9 403.2L371.9 414.3L380.2 405.4L369.2 392.3L372 376.6L394.8 351.2ZM296.1 300.1L263.4 265L230 268.4L253.8 290.5L271 288.2ZM243.8 444.5L291.4 460.7L254.9 533.4L223.3 483.2Z"/></svg><span class="initial" aria-hidden="true">C</span><span class="brand-name">Lynx</span></a>
+      <nav class="nav">
+        <a href="#pages" aria-current="page"><svg class="i"><use href="#i-tree"/></svg>Pages</a>
+        <a href="#pages"><svg class="i"><use href="#i-menu"/></svg>Menus</a>
+        <a href="#pages"><svg class="i"><use href="#i-image"/></svg>Media</a>
+        <a href="#pages"><svg class="i"><use href="#i-inbox"/></svg>Form entries<span class="count num">4 new</span></a>
+        <a href="#pages"><svg class="i"><use href="#i-type"/></svg>Site texts</a>
+      </nav>
+      <div class="me"><span class="avatar">EV</span><div>Eva Vidal<small>Editor</small></div></div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open the menu"><svg class="i"><use href="#i-panel"/></svg></button>
+        <nav class="crumbs" aria-label="Breadcrumbs" id="crumbs"></nav>
+        <div class="search"><svg class="i"><use href="#i-search"/></svg><span>Search pages</span><kbd>⌘K</kbd></div>
+        <a class="icon-btn" href="#pages" aria-label="View the site"><svg class="i"><use href="#i-out"/></svg></a>
+      </div>
+
+      <section class="content screen is-simple" id="screen-pages" aria-label="Pages">
+        <div class="head">
+          <div><h2>Pages</h2><p>Select a page to edit it, add a page inside it or move it.</p></div>
+          <div class="actions"><a class="btn primary" href="#editor"><svg class="i"><use href="#i-plus"/></svg>New page</a></div>
+        </div>
+        <div class="toolbar">
+          <label class="find" for="find"><svg class="i"><use href="#i-search"/></svg><input id="find" placeholder="Find a page by title"></label>
+          <div class="seg view-seg" role="group" aria-label="Tree view"><button id="view-simple" data-view="simple" aria-pressed="true">Simple</button><button id="view-details" data-view="details" aria-pressed="false">Details</button></div>
+          <div class="chips details-only" role="group" aria-label="Show">
+            <button class="chip" aria-pressed="true">All pages</button>
+            <button class="chip" aria-pressed="false">Draft changes <b class="num">3</b></button>
+            <button class="chip" aria-pressed="false">Scheduled <b class="num">1</b></button>
+            <button class="chip" aria-pressed="false">Not in Português <b class="num">12</b></button>
+          </div>
+        </div>
+        <div class="tree" role="tree" aria-label="Site pages">
+          <div class="tree-head"><span>Page</span><span>Languages</span><span>Status</span><span>Last change</span></div>
+          <div class="row" role="treeitem" aria-expanded="true" aria-level="1">
+            <div class="title"><button class="twist" aria-expanded="true" aria-label="Collapse Home"><svg class="i"><use href="#i-chev"/></svg></button><svg class="i kind"><use href="#i-home"/></svg><div class="name"><a href="#editor">Home</a><span class="mono">/</span></div></div>
+            <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet own"><use href="#i-facet"/></svg>PT</span></div>
+            <span class="status live">Published</span><span class="when"><span class="avatar">RS</span>2 days ago</span>
+          </div>
+          <div class="row" role="treeitem" aria-level="2" style="--depth:1">
+            <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">About us</a><span class="mono">/about</span></div></div>
+            <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet follows"><use href="#i-facet"/></svg>PT</span></div>
+            <span class="status live">Published</span><span class="when"><span class="avatar">RS</span>Oct 20</span>
+          </div>
+          <div class="row" role="treeitem" aria-expanded="true" aria-level="2" style="--depth:1">
+            <div class="title"><button class="twist" id="twist-courses" aria-expanded="true" aria-label="Collapse Courses"><svg class="i"><use href="#i-chev"/></svg></button><svg class="i kind"><use href="#i-folder"/></svg><div class="name"><a href="#editor">Courses</a><span class="mono">/courses</span></div><span class="badge num">75</span></div>
+            <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet own"><use href="#i-facet"/></svg>PT</span></div>
+            <span class="status live">Published</span><span class="when"><span class="avatar">EV</span>Yesterday</span>
+          </div>
+          <div class="courses">
+            <div class="row" role="treeitem" aria-level="3" style="--depth:2">
+              <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Leading remote teams</a><span class="mono">/courses/leading-remote-teams</span></div></div>
+              <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet own"><use href="#i-facet"/></svg>PT</span></div>
+              <span class="status live">Published</span><span class="when"><span class="avatar">EV</span>Yesterday</span>
+            </div>
+            <div class="row" role="treeitem" aria-level="3" aria-selected="true" style="--depth:2">
+              <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Budgets for small projects</a><span class="mono">/courses/budgets-for-small-projects</span></div><span class="row-actions"><a class="act primary" href="#editor">Edit</a><a class="act" href="#pages">View</a><button class="act">New</button><button class="act">Move</button><button class="act dots" id="more-acts" aria-expanded="false" aria-label="More actions"><svg class="i"><use href="#i-dots"/></svg></button><span class="more-acts" hidden><button class="act">Unpublish</button><button class="act">Hide</button><button class="act">Lock</button><button class="act danger">Trash</button></span></span></div>
+              <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet follows"><use href="#i-facet"/></svg>PT</span></div>
+              <span class="status draft">Draft changes</span><span class="when"><span class="avatar">EV</span>2 min ago</span>
+            </div>
+            <div class="row" role="treeitem" aria-level="3" style="--depth:2">
+              <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Writing clear requirements</a><span class="mono">/courses/writing-clear-requirements</span></div></div>
+              <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet missing"><use href="#i-facet"/></svg>PT</span></div>
+              <span class="status later">Nov 3, 09:00</span><span class="when"><span class="avatar">RS</span>Today</span>
+            </div>
+            <div class="row" role="treeitem" aria-level="3" style="--depth:2">
+              <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Risk registers that work</a><span class="mono">/courses/risk-registers</span></div></div>
+              <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet own"><use href="#i-facet"/></svg>PT</span></div>
+              <span class="status live">Published</span><span class="when"><span class="avatar">EV</span>Oct 18</span>
+            </div>
+            <div class="row dim" role="treeitem" aria-level="3" style="--depth:2">
+              <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Facilitating workshops</a><span class="mono">/courses/facilitating-workshops</span></div></div>
+              <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet missing"><use href="#i-facet"/></svg>PT</span></div>
+              <span class="status hidden">Hidden</span><span class="when"><span class="avatar">RS</span>Oct 2</span>
+            </div>
+            <nav class="pager" style="--depth:2" aria-label="Pages of children"><ul><li><span class="pg" aria-current="page">1</span></li><li><button class="pg" aria-label="Page 2">2</button></li><li><button class="pg" aria-label="Page 3">3</button></li><li><button class="pg" aria-label="Page 4">4</button></li><li><button class="pg" aria-label="Next page"><svg class="i"><use href="#i-chev"/></svg></button></li></ul></nav>
+          </div>
+          <div class="row" role="treeitem" aria-expanded="false" aria-level="2" style="--depth:1">
+            <div class="title"><button class="twist" aria-expanded="false" aria-label="Expand Team"><svg class="i"><use href="#i-chev"/></svg></button><svg class="i kind"><use href="#i-folder"/></svg><div class="name"><a href="#editor">Team</a><span class="mono">/team</span></div><span class="badge num">6</span></div>
+            <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet own"><use href="#i-facet"/></svg>PT</span></div>
+            <span class="status live">Published</span><span class="when"><span class="avatar">RS</span>Oct 14</span>
+          </div>
+          <div class="row" role="treeitem" aria-level="2" style="--depth:1">
+            <div class="title"><button class="twist leaf" tabindex="-1" aria-hidden="true"></button><svg class="i kind"><use href="#i-file"/></svg><div class="name"><a href="#editor">Contact</a><span class="mono">/contact</span></div></div>
+            <div class="langs"><span><svg class="facet own"><use href="#i-facet"/></svg>EN</span><span><svg class="facet follows"><use href="#i-facet"/></svg>PT</span></div>
+            <span class="status live">Published</span><span class="when"><span class="avatar">EV</span>Sep 29</span>
+          </div>
+        </div>
+        <div class="legend details-only"><span><svg class="facet own"><use href="#i-facet"/></svg>Has its own text</span><span><svg class="facet follows"><use href="#i-facet"/></svg>Shows English where text is missing</span><span><svg class="facet missing"><use href="#i-facet"/></svg>Not in this language yet</span></div>
+      </section>
+
+      <section class="content screen" id="screen-editor" aria-label="Edit page" hidden>
+        <div class="head">
+          <div>
+            <h2><span class="en-own">Budgets for small projects</span><span class="pt-own">Orçamentos para pequenos projetos</span></h2>
+            <div class="pagemeta"><span class="status draft">Draft changes <span>· saved 2 minutes ago</span></span><a href="#editor">View the live page</a><span>Course</span></div>
+          </div>
+          <div class="actions"><a class="btn" href="#editor"><svg class="i"><use href="#i-eye"/></svg>Preview</a><button class="btn" id="save-draft">Save draft</button><button class="btn primary" id="publish">Publish changes</button></div>
+        </div>
+        <nav class="tabs" aria-label="Page sections"><a href="#editor" aria-current="page">Content</a><a href="#editor">SEO</a><a href="#editor">Settings</a></nav>
+        <div class="editor-grid">
+          <div class="fields">
+            <div class="group">
+              <div class="field">
+                <div class="field-top"><label for="f-title">Title<span class="req" aria-hidden="true">*</span></label><span class="langs" role="group" aria-label="Title language"><button data-lang="en" aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button data-lang="pt" aria-pressed="false"><svg class="facet own"><use href="#i-facet"/></svg>PT</button></span></div>
+                <input class="input" id="f-title" value="Budgets for small projects">
+              </div>
+              <div class="field">
+                <div class="field-top"><label for="f-summary">Summary</label><span class="langs" role="group" aria-label="Field language"><button data-lang="en" aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button data-lang="pt" aria-pressed="false"><svg class="facet follows"><use href="#i-facet"/></svg>PT</button></span></div>
+                <textarea class="input" id="f-summary">Plan, track and defend the budget of a project under €50,000, with templates you can reuse on the next one.</textarea>
+                <div class="fallback"><span class="hint-fallback">Shows the English text until you translate it.</span><button class="btn" style="height:30px">Start from the English text</button></div>
+              </div>
+              <div class="field">
+                <div class="field-top"><label>Body</label><span class="langs" role="group" aria-label="Field language"><button data-lang="en" aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button data-lang="pt" aria-pressed="false"><svg class="facet follows"><use href="#i-facet"/></svg>PT</button></span></div>
+                <div class="rich" id="f-body"><div class="rich-tools" role="toolbar" aria-label="Formatting"><button>B</button><button><i>I</i></button><button>H2</button><button>H3</button><button aria-label="List"><svg class="i"><use href="#i-list"/></svg></button><button aria-label="Link"><svg class="i"><use href="#i-link"/></svg></button></div>
+                  <div class="rich-body"><p>Most small projects never get a real budget, just a number someone agreed to in a meeting. This course shows how to turn that number into a plan you can track every week.</p><p>You will build a budget from the work itself, set aside a reserve for what goes wrong, and report spending in a way sponsors read.</p></div></div>
+              </div>
+            </div>
+            <div class="group">
+              <h3>Booking</h3>
+              <div class="row2">
+                <div class="field"><label for="f-price">Price</label><input class="input num" id="f-price" value="249 €"><p class="hint">The same in every language.</p></div>
+                <div class="field"><label for="f-capacity">Places</label><input class="input num" id="f-capacity" value="30"><p class="hint">Booking closes when the course is full.</p></div>
+              </div>
+              <div class="field"><label>Related courses</label><div class="picks"><span class="pick">Leading remote teams<button aria-label="Remove Leading remote teams"><svg class="i"><use href="#i-x"/></svg></button></span><span class="pick">Risk registers that work<button aria-label="Remove Risk registers that work"><svg class="i"><use href="#i-x"/></svg></button></span><button class="btn ghost" style="height:30px"><svg class="i"><use href="#i-plus"/></svg>Add a course</button></div></div>
+            </div>
+          </div>
+          <aside class="rail" aria-label="About this page">
+            <div class="panel"><h3>Publishing</h3>
+              <dl class="kv"><dt>Live</dt><dd>Published Oct 12</dd><dt>Draft</dt><dd>Summary changed by Eva</dd></dl>
+              <a class="btn" href="#editor">Review changes</a><a class="btn ghost" href="#editor"><svg class="i"><use href="#i-clock"/></svg>Publish later</a>
+            </div>
+            <div class="panel"><h3>Languages</h3>
+              <div class="cover"><div><span>English</span><span class="meter"><i style="width:100%"></i></span><span class="num">3 of 3</span></div><div><span>Português</span><span class="meter"><i style="width:33%"></i></span><span class="num">1 of 3</span></div></div>
+              <p class="hint hint-fallback">Summary and Body show English on the Portuguese page.</p>
+            </div>
+            <div class="panel"><h3>History</h3>
+              <ul class="history"><li><span class="avatar">EV</span><div>Changed the summary<small>2 minutes ago</small></div></li><li><span class="avatar">RS</span><div>Published<small>Oct 12, 14:20</small></div></li><li><span class="avatar">EV</span><div>Created the page<small>Sep 30</small></div></li></ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="notes" aria-labelledby="changes">
+    <h2 id="changes">What changed from today's admin</h2>
+    <ul>
+      <li><strong>Plain type.</strong> Geist for headings, labels and text, instead of Inter and monospace headings; monospace stays for addresses only. Screen titles are larger, and each screen has one primary action.</li>
+      <li><strong>The mark's facet carries language state.</strong> Solid: its own text. Light: shows English. Outline: not in that language yet. The same shape in the tree, the language switch and every field.</li>
+      <li><strong>Two views of the tree.</strong> Simple, the default, keeps today's minimal rows. Details adds each page's address, languages, status and last change, with filters for drafts, scheduled and untranslated pages.</li>
+      <li><strong>An editor that reads top to bottom.</strong> Labels above fields, grouped sections, language tabs on each translatable field, and a side panel for publishing, translation and history.</li>
+      <li><strong>Translation hints are optional.</strong> The sentences explaining which fields show English stay hidden unless the editor turns them on, next to the theme in their account menu.</li>
+      <li><strong>Still white label.</strong> Every tone comes from the accent. Choose Client branding: the accent changes and the Lynx mark gives way to the client's name.</li>
+      <li><strong>Illustrative content.</strong> Pages, people and dates are invented for the preview.</li>
+    </ul>
+  </section>
+</div>
+<script src="app.js"></script>
