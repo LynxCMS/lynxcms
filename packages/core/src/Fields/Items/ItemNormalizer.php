@@ -8,7 +8,9 @@ use Closure;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Core\Fields\DefaultValues;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Models\Language;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -42,12 +44,16 @@ final class ItemNormalizer
         foreach ($value === null ? [] : (is_array($value) && array_is_list($value) ? $value : $this->fail('', 'The items must be a list.')) as $index => $raw) {
             $raw = is_array($raw) ? $raw : [];
             $itemType = $type($raw['type'] ?? null, $index);
+            $fields = $subfields($itemType);
+            $values = Value::map($raw['values'] ?? []);
+            // An item without a key is new, so the fields it leaves out start with their defaults (ADR-0088).
+            $isNew = ($raw['key'] ?? null) === null || $raw['key'] === '';
             $items[] = [
                 'key' => $this->key($raw['key'] ?? null, $index),
                 'type' => $itemType,
                 'enabled' => (bool) ($raw['enabled'] ?? true),
                 'depth' => max(0, min(Value::int($settings['max_depth'] ?? 0), Value::int($raw['depth'] ?? 0))),
-                'values' => $this->values(Value::array($raw['values'] ?? []), $subfields($itemType), $index),
+                'values' => $this->values($isNew ? DefaultValues::fillNewItem($fields, $values) : $values, $fields, $index),
             ];
         }
 
@@ -110,7 +116,7 @@ final class ItemNormalizer
         $result = [];
 
         foreach ($map as $code => $languageValue) {
-            if ($this->languages->find((string) $code) === null) {
+            if (! $this->languages->find((string) $code) instanceof Language) {
                 $this->error("{$key}.{$code}", "There is no language [{$code}].");
 
                 continue;

@@ -125,3 +125,14 @@ it('backs up to a zip, keeps the newest ones, and restores from it', function ()
 it('schedules backups when configured', function (): void {
     expect(collect(app(Schedule::class)->events())->contains(fn ($event): bool => str_contains((string) $event->command, 'lynx:backup')))->toBeFalse();
 });
+
+it('recreates pages as exported, leaving out field defaults', function (): void {
+    lynx()->fields->add('level', 'choice', settings: ['default' => 'beginner', 'options' => [['value' => 'beginner', 'label' => 'Beginner']]]);
+    lynx()->templates->update('course', ['add' => ['level']]);
+    app(ContentExporter::class)->export($this->dir);
+    lynx()->pages->delete('/courses/');
+
+    $this->artisan('lynx:import', ['path' => $this->dir])->assertSuccessful();
+
+    expect(contentPage('/courses/alpha/')?->level)->toBeNull();
+});

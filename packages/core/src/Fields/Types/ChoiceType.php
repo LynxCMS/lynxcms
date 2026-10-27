@@ -7,10 +7,13 @@ namespace LynxCms\Core\Fields\Types;
 use Closure;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Validation\ValidationException;
+use LynxCms\Core\Fields\ChecksSettings;
 use LynxCms\Core\Fields\ChoiceOptions;
 use LynxCms\Core\Fields\Choices\Choice;
 use LynxCms\Core\Fields\Choices\ChoiceList;
 use LynxCms\Core\Fields\DescribesPhpType;
+use LynxCms\Core\Fields\HasDefaultValue;
 use LynxCms\Core\Fields\NormalizesSettings;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ProvidesSearchText;
@@ -25,8 +28,9 @@ use stdClass;
  * (settings "options"). Shared across languages: the value is stored, the label is read in the
  * page's language. One row per chosen value, so "multiple" can be switched later. Templates get a
  * Choice (or null), or a ChoiceList with "multiple"; selectors compare values: color=red|blue.
+ * A "default" is stored on new pages and items (ADR-0088).
  */
-final class ChoiceType extends BaseFieldType implements DescribesPhpType, NormalizesSettings, PresentsValue, ProvidesSearchText
+final class ChoiceType extends BaseFieldType implements ChecksSettings, DescribesPhpType, HasDefaultValue, NormalizesSettings, PresentsValue, ProvidesSearchText
 {
     public const array INPUTS = ['select', 'radios', 'checkboxes'];
 
@@ -56,6 +60,7 @@ final class ChoiceType extends BaseFieldType implements DescribesPhpType, Normal
             'options' => $schema->array()->description('The options: [{"value": "red", "label": "Red" or {"en": "Red", "pt": "Vermelho"}}]. An empty value is made from the label.'),
             'multiple' => $schema->boolean()->description('Allow several options. Default false.'),
             'input' => $schema->string()->enum(self::INPUTS)->description('How editors choose: select (default for one), radios, or checkboxes (default for several).'),
+            'default' => $schema->string()->description('The option new pages and new items start with: a value, or a list of values with "multiple". Must be one of the options.'),
         ];
     }
 
@@ -65,7 +70,36 @@ final class ChoiceType extends BaseFieldType implements DescribesPhpType, Normal
             'options' => ['sometimes', 'array'],
             'multiple' => ['sometimes', 'boolean'],
             'input' => ['sometimes', 'in:'.implode(',', self::INPUTS)],
+            'default' => ['sometimes', 'nullable', function (string $attribute, mixed $value, Closure $fail): void {
+                if (! is_string($value) && ! (is_array($value) && array_is_list($value) && array_filter($value, is_string(...)) === $value)) {
+                    $fail('The default is an option value, or a list of them.');
+                }
+            }],
         ];
+    }
+
+    public function checkSettings(array $settings): void
+    {
+        $defaults = Value::strings((array) ($settings['default'] ?? []));
+
+        if (count($defaults) > 1 && ($settings['multiple'] ?? false) !== true) {
+            throw ValidationException::withMessages(['settings.default' => 'A single choice takes one default.']);
+        }
+
+        $values = array_map(strval(...), array_keys(ChoiceOptions::labels($settings['options'] ?? [])));
+
+        foreach ($defaults as $default) {
+            if (! in_array($default, $values, true)) {
+                throw ValidationException::withMessages(['settings.default' => "The default [{$default}] is not one of the options."]);
+            }
+        }
+    }
+
+    public function defaultValue(array $settings): mixed
+    {
+        $defaults = Value::strings((array) ($settings['default'] ?? []));
+
+        return $defaults === [] ? null : $defaults;
     }
 
     public function normalizeSettings(array $settings): array

@@ -70,7 +70,9 @@ final class UpdateField extends Action
             // Normalized settings (NormalizesSettings) replace what was given; nulls still remove.
             $settings = array_merge($settings, FieldSettings::validate($field->fieldType(), $settings));
             // A setting given as null is removed, so it falls back to the type's default again.
-            $field->settings = array_filter(array_merge($field->config(), Value::map($settings)), fn (mixed $value): bool => $value !== null);
+            $merged = array_filter(array_merge($field->config(), Value::map($settings)), fn (mixed $value): bool => $value !== null);
+            FieldSettings::check($field->fieldType(), $merged);
+            $field->settings = $merged;
         }
 
         $field->save();

@@ -79,3 +79,60 @@ it('groups radios by their form path, so repeater items keep their own choice', 
         ->assertSeeHtml('name="values.steps.default.0.values.level.default"')
         ->assertSeeHtml('name="values.steps.default.1.values.level.default"');
 });
+
+it('marks the default option in the choices editor', function (): void {
+    Livewire::test(FieldForm::class)
+        ->set('name', 'level')->set('type', 'choice')
+        ->set('settings.options', [
+            ['value' => '', 'label' => ['default' => 'Beginner', 'pt' => ''], 'isDefault' => false],
+            ['value' => '', 'label' => ['default' => 'Advanced level', 'pt' => ''], 'isDefault' => true],
+        ])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('level')->config()['default'])->toBe('advanced-level');
+
+    Livewire::test(FieldForm::class, ['field' => 'level'])
+        ->assertSet('settings.options.0.isDefault', false)
+        ->assertSet('settings.options.1.isDefault', true)
+        ->set('settings.options.1.isDefault', false)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('level')->config())->not->toHaveKey('default');
+});
+
+it('marks several defaults on a choice of several', function (): void {
+    Livewire::test(FieldForm::class)
+        ->set('name', 'formats')->set('type', 'choice')->set('settings.multiple', true)
+        ->set('settings.options', [
+            ['value' => 'online', 'label' => ['default' => 'Online', 'pt' => ''], 'isDefault' => true],
+            ['value' => 'onsite', 'label' => ['default' => 'On site', 'pt' => ''], 'isDefault' => true],
+        ])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('formats')->config()['default'])->toBe(['online', 'onsite']);
+});
+
+it('starts a new repeater item with the defaults', function (): void {
+    lynx()->fields->add('level', 'choice', settings: ['default' => 'advanced', 'options' => [['value' => 'beginner', 'label' => 'Beginner'], ['value' => 'advanced', 'label' => 'Advanced']]]);
+    lynx()->fields->add('sessions', 'repeater', settings: ['fields' => [['name' => 'level']]]);
+    lynx()->templates->update('course', ['add' => ['sessions']]);
+    ['alpha' => $alpha] = createCourses('alpha');
+
+    Livewire::test(PageEditor::class, ['pageId' => $alpha->id])
+        ->call('addItem', 'sessions')
+        ->assertSet('values.sessions.default.0.values.level.default', 'advanced');
+});
+
+it('offers no empty option on a required select that has a default', function (): void {
+    lynx()->fields->add('size', 'choice', settings: ['default' => 's', 'options' => [['value' => 's', 'label' => 'Small'], ['value' => 'l', 'label' => 'Large']]]);
+    lynx()->templates->update('course', ['add' => [['name' => 'size', 'required' => true]]]);
+    ['alpha' => $alpha] = createCourses('alpha');
+
+    Livewire::test(PageEditor::class, ['pageId' => $alpha->id])->assertDontSeeHtml('<option value="">');
+
+    lynx()->templates->update('course', ['fields' => [['name' => 'title', 'required' => true], 'size']]);
+    Livewire::test(PageEditor::class, ['pageId' => $alpha->id])->assertSeeHtml('<option value="">');
+});

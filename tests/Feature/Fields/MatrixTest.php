@@ -109,3 +109,29 @@ it('refuses bad type definitions', function (): void {
 it('labels types per language', function (): void {
     expect(lynx()->language('pt', fn () => lynx()->fields->get('blocks')->fieldType()->typeLabel(lynx()->fields->get('blocks')->config(), 'text')))->toBe('Texto');
 });
+
+it('names the PHP call that creates a missing subfield', function (): void {
+    try {
+        lynx()->fields->add('sections', 'matrix', settings: ['types' => [['slug' => 'gallery', 'fields' => [['name' => 'slides']]]]]);
+        $this->fail('No validation error.');
+    } catch (ValidationException $e) {
+        expect($e->errors())->toHaveKey('settings.types.0.fields.0.name')
+            ->and($e->errors()['settings.types.0.fields.0.name'][0])->toContain("lynx()->fields->add('slides'");
+    }
+});
+
+it('asks for a block type, and for a field in every type, in plain words', function (): void {
+    try {
+        lynx()->fields->add('sections', 'matrix', settings: ['types' => [['slug' => 'empty', 'fields' => []]]]);
+        $this->fail('No validation error.');
+    } catch (ValidationException $e) {
+        expect($e->errors()['settings.types.0.fields'][0])->toBe('List at least one field.');
+    }
+
+    try {
+        lynx()->fields->add('sections', 'matrix', settings: ['types' => []]);
+        $this->fail('No validation error.');
+    } catch (ValidationException $e) {
+        expect($e->errors()['settings.types'][0])->toBe('Add at least one block type.');
+    }
+});

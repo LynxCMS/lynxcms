@@ -42,7 +42,7 @@ final readonly class TemplateFieldsWriter
             $name = Value::string($spec['name'] ?? '');
 
             if ($this->fields->find($name) === null) {
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] does not exist. Create it first with fields.create."]);
+                throw ValidationException::withMessages(['fields' => "Field [{$name}] does not exist. Create it first with lynx()->fields->add('{$name}', ...) or the fields.create action."]);
             }
 
             $result[$name] = array_intersect_key($spec, array_flip(self::PIVOT_KEYS));

@@ -8,6 +8,22 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- The admin sets up matrix and repeater fields. A matrix's screen shows its block types as cards, each with its label, slug, block header and fields, and a picture of the block as editors will see it. Fields are added from the site's fields, or created on the spot, and sorted by dragging. Removing a block type that pages use asks first. Before, these settings were a single text box that could not hold them.
+
+- Listing a field that does not exist in a repeater, a matrix or a template fails with a message naming `lynx()->fields->add()`, not only the `fields.create` action.
+
+- The matrix example on [Field Types](/basics/field-types#matrix) creates its fields first, so it runs as written.
+
+- A matrix without block types, or a block type or repeater without fields, fails with "Add at least one block type." or "List at least one field." instead of naming the setting's path.
+
+- On a template's screen, the buttons that remove a field or a section work again.
+
+- Choice fields take a `default`: new pages and new repeater or matrix items start with that option chosen, from the admin, the API, MCP and the agent alike. Existing pages keep their values. In the admin, tick **Default** next to an option; a required select with a default no longer offers an empty option. See [Field Types](/basics/field-types#choice).
+
+- The page picker shows the search box first and the chosen pages below it. Results float above the page, open upwards near its bottom, and can be reached with the arrow keys.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).

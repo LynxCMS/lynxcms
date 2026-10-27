@@ -124,6 +124,7 @@ One of a fixed list of options, or several with `multiple: true`. Each option ha
 | `options` | The options, each with a `value` and a `label`. A missing value is made from the label. |
 | `multiple` | Allow several options. Default `false`. |
 | `input` | How editors choose: `select` (default for one), `radios` or `checkboxes` (default for several). |
+| `default` | The option new pages and new items start with: a value, or a list of values with `multiple`. |
 
 ```php
 lynx()->fields->add('level', 'choice', settings: [
@@ -134,6 +135,8 @@ lynx()->fields->add('level', 'choice', settings: [
     ],
 ]);
 ```
+
+With a `default`, a new page or a new repeater or matrix item starts with that option chosen, and editors can change it. Lynx stores the default when the page or item is created, so `padding=medium` finds those pages too. Pages that existed before the default was set keep their empty value, so a template should still handle `null`. In the admin, tick **Default** next to an option in the field's options.
 
 A single choice reads as a `Choice`, or `null`. It prints its label in the current language, and `->value` gives the stored value. Several choices read as a `ChoiceList`, with `has()`, `values()` and `labels()`:
 
@@ -209,14 +212,11 @@ A list of items that each have the same fields, such as a film's credits, each w
 | `add_label` | Text of the add button. |
 | `collapse` | Which items start open in the admin. |
 
-```php
-lynx()->fields->add('partner', 'page', settings: ['multiple' => false]);
-lynx()->fields->add('role', 'text', translatable: true);
-lynx()->fields->add('credits', 'repeater', settings: [
-    'fields' => [['name' => 'partner', 'required' => true], ['name' => 'role']],
-    'item_label' => '{partner} · {role}',
-]);
-```
+Each item lists fields of the site, so create them first:
+
+<<< @/snippets/field-types/repeater.php#fields{php}
+
+In the admin, the repeater's field screen lists its fields in order. Search for an existing field to add it, or create a new one on the spot.
 
 Templates loop over the items that are switched on, in order. Each item reads its fields like a page does:
 
@@ -247,12 +247,13 @@ Typed content blocks: each item has a **type**, and the fields of that type. Use
 | `types` | The block types, each with a `slug`, a `label` and its `fields`. Slugs never change, so reordering types or renaming them never changes what a block is. |
 | `min`, `max`, `max_depth`, `item_label`, `add_label`, `collapse` | As for repeaters. |
 
-```php
-lynx()->fields->add('blocks', 'matrix', settings: ['types' => [
-    ['slug' => 'text', 'label' => 'Text', 'fields' => [['name' => 'body']]],
-    ['slug' => 'video', 'label' => 'Video', 'fields' => [['name' => 'video_url', 'required' => true], ['name' => 'caption']]],
-]]);
-```
+A block type lists fields of the site, the same way a template does. Create the fields first, then the matrix:
+
+<<< @/snippets/field-types/matrix.php#fields{php}
+
+A field can appear in several block types and in templates too, such as `body` here. Listing a field that does not exist yet fails with a message naming the call that creates it.
+
+In the admin, the matrix's field screen shows each block type as a card. Open one to set its label and add its fields, from the fields you have or by creating one on the spot. Each card shows how its block will look in the page editor, and drag and drop orders types and fields.
 
 A template can offer only some types: `['name' => 'blocks', 'allowed_types' => ['text']]`. A block that changes type keeps its other values, hidden. [Views](/basics/views#matrix-blocks) shows how to render blocks with `@matrix`. Selectors match types with `blocks.type=video`.
 

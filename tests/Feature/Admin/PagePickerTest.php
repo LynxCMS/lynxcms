@@ -70,3 +70,10 @@ it('ignores pages that do not exist', function (): void {
         ->call('add', 9999)
         ->assertSet('value', []);
 });
+
+it('keeps the search box first and the chosen pages below it, with results floating over them', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [pid('/courses/alpha/')]])
+        ->set('search', 'Bet')
+        ->assertSeeHtmlInOrder(['aria-label="Search pages"', 'aria-label="Matching pages"', 'aria-label="Chosen pages"'])
+        ->assertSeeHtml('data-picker-results');
+});

@@ -21,6 +21,16 @@ final class ChoiceOptions
     public const string VALUE_PATTERN = '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/';
 
     /**
+     * An option's value: the one given, or one made from its label in the default language.
+     */
+    public static function valueOf(mixed $value, mixed $label): string
+    {
+        $value = trim(Value::string($value));
+
+        return $value !== '' ? $value : Str::slug(LocalizedText::from($label)->in((string) lynx()->languages->default()->code));
+    }
+
+    /**
      * @param  string  $errorPrefix  prefixed to the error keys ("{prefix}{index}.value")
      * @return list<array{value: string, label: string|array<string, string>}>
      *
@@ -39,8 +49,7 @@ final class ChoiceOptions
                 continue;
             }
 
-            $value = trim(Value::string($raw['value'] ?? ''));
-            $value = $value !== '' ? $value : Str::slug(LocalizedText::from($label)->in((string) lynx()->languages->default()->code));
+            $value = self::valueOf($raw['value'] ?? '', $label);
 
             if (preg_match(self::VALUE_PATTERN, $value) !== 1) {
                 $errors["{$errorPrefix}{$index}.value"] = "[{$value}] is not a valid option value: use lowercase letters, digits, dashes and underscores.";

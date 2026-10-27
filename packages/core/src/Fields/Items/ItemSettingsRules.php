@@ -7,6 +7,7 @@ namespace LynxCms\Core\Fields\Items;
 use Closure;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
+use LynxCms\Contracts\Fields\FieldType;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
@@ -26,7 +27,7 @@ final class ItemSettingsRules
     public static function fields(string $prefix): array
     {
         return [
-            $prefix => ['required', 'array', 'min:1'],
+            $prefix => [new FilledList('List at least one field.')],
             "{$prefix}.*.name" => ['required', 'string', self::subfieldExists()],
             "{$prefix}.*.required" => ['sometimes', 'boolean'],
             "{$prefix}.*.width" => ['sometimes', 'integer', 'min:10', 'max:100'],
@@ -66,6 +67,15 @@ final class ItemSettingsRules
         ];
     }
 
+    /**
+     * Whether fields of a type may be listed in an item field's entries: fields that store items themselves
+     * cannot, except the ones that nest their items in the item's JSON (media).
+     */
+    public static function canBeSubfield(FieldType $type): bool
+    {
+        return ! $type instanceof StoresItems || $type instanceof NestsInItems;
+    }
+
     /** The subfield must be an existing field that does not store items itself. */
     private static function subfieldExists(): Closure
     {
@@ -74,8 +84,8 @@ final class ItemSettingsRules
             $field = app(FieldRegistry::class)->find($name);
 
             if ($field === null) {
-                $fail("Field [{$name}] does not exist. Create it first with fields.create.");
-            } elseif ($field->fieldType() instanceof StoresItems && ! $field->fieldType() instanceof NestsInItems) {
+                $fail("Field [{$name}] does not exist. Create it first with lynx()->fields->add('{$name}', ...) or the fields.create action.");
+            } elseif (! self::canBeSubfield($field->fieldType())) {
                 $fail("Field [{$name}] stores items itself; items cannot nest. Use depth instead.");
             }
         };

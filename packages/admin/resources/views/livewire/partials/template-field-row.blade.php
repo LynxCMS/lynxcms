@@ -20,7 +20,7 @@
                 </select>
             @endif
             <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-label="Overrides for {{ $field }}" title="Overrides"><x-lucide-sliders-horizontal aria-hidden="true" /></x-lynx-admin::ui.button>
-            @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" class="hover:text-destructive" wire:click="removeField(@js($field))" aria-label="Remove {{ $field }}" title="Remove"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button> @endif
+            @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" class="hover:text-destructive" wire:click="removeField({{ Js::from($field) }})" aria-label="Remove {{ $field }}" title="Remove"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button> @endif
         </span>
     </div>
     <div x-show="open" x-cloak class="mt-3 grid gap-3 @lg:grid-cols-2">

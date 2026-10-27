@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 
 use Illuminate\Support\Str;
 use LynxCms\Admin\Editor\Converters\ItemsConverter;
+use LynxCms\Core\Fields\DefaultValues;
 use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\Types\MatrixType;
 use LynxCms\Core\Models\Field;
@@ -30,7 +31,9 @@ trait ManagesItems
         }
 
         $items = $this->items($field);
-        $blank = Value::array(Value::list(app(ItemsConverter::class)->toForm([['key' => '', 'type' => $type, 'values' => []]], $definition))[0] ?? []);
+        // A new item starts with its fields' defaults, as pages.save would store them (ADR-0088).
+        $defaults = $fieldType instanceof ItemFieldType ? DefaultValues::fillNewItem($fieldType->subfields($definition->config(), $type), []) : [];
+        $blank = Value::array(Value::list(app(ItemsConverter::class)->toForm([['key' => '', 'type' => $type, 'values' => $defaults]], $definition))[0] ?? []);
         $items[] = ['key' => (string) Str::ulid(), 'new' => true, 'type' => $fieldType instanceof MatrixType ? $type : null, 'enabled' => true, 'depth' => 0,
             'values' => Value::array($blank['values'] ?? [])];
         $this->setItems($field, $items);

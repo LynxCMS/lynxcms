@@ -45,6 +45,18 @@ final class FieldSettings
     }
 
     /**
+     * Checks settings that depend on each other, on everything the field will have (ADR-0088).
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    public static function check(FieldType $type, array $settings): void
+    {
+        if ($type instanceof ChecksSettings) {
+            $type->checkSettings($settings);
+        }
+    }
+
+    /**
      * Why a list of formatters cannot be used on a field type, or null when it can (ADR-0031).
      *
      * @param  array<array-key, mixed>  $names

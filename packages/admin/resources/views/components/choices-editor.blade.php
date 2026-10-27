@@ -1,12 +1,18 @@
-@props(['model', 'disabled' => false])
+@props(['model', 'disabled' => false, 'defaultable' => false, 'multipleModel' => null])
 {{-- A list of choices: a value per row and a label in each language (ChoicesForm). The list lives in
-     Alpine and syncs with the Livewire property at $model. Choice field options and form options use it. --}}
+     Alpine and syncs with the Livewire property at $model. Choice field options and form options use it.
+     With "defaultable", each row can be marked as the default (ADR-0088): one only, unless the
+     Livewire property at $multipleModel says the field takes several. --}}
 @php($languages = \LynxCms\Admin\Editor\LocalizedForm::languages())
 <div data-options-editor class="grid gap-2"
      x-data="{
         rows: $wire.entangle('{{ $model }}'),
         tab: {{ Js::from($languages[0]['code'] ?? 'default') }},
-        add() { this.rows = [...(this.rows || []), { value: '', label: Object.fromEntries({{ Js::from(array_column($languages, 'code')) }}.map(c => [c, ''])) }] },
+        add() { this.rows = [...(this.rows || []), { value: '', label: Object.fromEntries({{ Js::from(array_column($languages, 'code')) }}.map(c => [c, ''])), isDefault: false }] },
+        toggleDefault(i) {
+            const several = {{ $multipleModel ? '!! $wire.get('.Js::from($multipleModel).')' : 'false' }};
+            this.rows = this.rows.map((r, k) => k === i ? { ...r, isDefault: ! r.isDefault } : (several ? r : { ...r, isDefault: false }));
+        },
         remove(i) { this.rows = this.rows.filter((_, k) => k !== i) },
         move(i, by) { const r = [...this.rows]; const j = i + by; if (j < 0 || j >= r.length) return; [r[i], r[j]] = [r[j], r[i]]; this.rows = r },
      }">
@@ -25,6 +31,11 @@
                 <input type="text" class="blat-input min-w-0 flex-1" x-show="tab === '{{ $language['code'] }}'" x-model="row.label['{{ $language['code'] }}']"
                        placeholder="Label ({{ $language['label'] }})" aria-label="Label ({{ $language['label'] }})" @disabled($disabled)>
             @endforeach
+            @if ($defaultable)
+                <label class="flex items-center gap-1.5 text-xs">
+                    <input type="checkbox" class="blat-checkbox" :checked="!! row.isDefault" x-on:change="toggleDefault(index)" @disabled($disabled)> Default
+                </label>
+            @endif
             @unless ($disabled)
                 <span class="flex gap-1">
                     <button type="button" class="text-muted-foreground hover:text-foreground px-1" x-on:click="move(index, -1)" aria-label="Move up">↑</button>
