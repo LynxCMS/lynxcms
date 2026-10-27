@@ -12,14 +12,6 @@
 
     @include('lynx-admin::livewire.partials.editor-header')
 
-    @if ($hasDraft)
-        <x-lynx-admin::ui.alert tone="info" role="status">
-            <x-lucide-file-pen aria-hidden="true" />
-            <x-lynx-admin::ui.alert-description>You are editing a draft. Visitors see the live page until you publish the draft.</x-lynx-admin::ui.alert-description>
-        </x-lynx-admin::ui.alert>
-    @endif
-
-
     @if ($error)
         <p role="alert" class="text-destructive mt-1 text-sm">{{ $error }}</p>
     @endif

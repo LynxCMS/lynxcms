@@ -22,7 +22,7 @@
             </span>
             @if ($hasDraft)
                 <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span class="text-warning inline-flex items-center gap-1.5" data-page-draft><span class="size-1.5 rounded-full bg-current" aria-hidden="true"></span>Draft changes</span>
+                    <span class="text-warning inline-flex items-center gap-1.5" data-page-draft title="Visitors see the live page until you publish the draft."><span class="size-1.5 rounded-full bg-current" aria-hidden="true"></span>Draft changes</span>
                     @if ($page->template()->hasUrl() && ! auth()->check())
                         {{-- The site only shows drafts to signed in users who may edit the page; signed out it would show the live page. --}}
                         <span data-draft-preview-signin>(sign in to preview)</span>

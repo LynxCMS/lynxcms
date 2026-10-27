@@ -40,7 +40,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - **Selectors find pages by state.** `status=unpublished` (or `hidden`, `locked`) finds pages with that status, `language!=pt` finds the pages not published in Portuguese yet, `has_draft=1` the pages with a draft waiting, and `has_schedule=1` the pages with a publish or unpublish date set. See [Finding Pages](/basics/selectors#status). `has_draft` and `has_schedule` are now reserved field names.
 
-- The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits.
+- The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.
 
 ## 0.1.23
 
