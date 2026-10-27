@@ -29,36 +29,36 @@ colors:
   mark-light: "oklch(0.74 0.1 218.2)"
 typography:
   headline:
-    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 600
     lineHeight: 1.333
     letterSpacing: "0em"
   title:
-    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 600
     lineHeight: 1.5
     letterSpacing: "0.025em"
   body:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.43
     letterSpacing: "0.025em"
   tree-title:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 500
     letterSpacing: "0.025em"
   label:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 500
     lineHeight: 1
     letterSpacing: "0.025em"
   micro:
-    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.625rem"
     lineHeight: 1.4
     letterSpacing: "0.025em"
@@ -140,14 +140,14 @@ components:
 
 The admin is a workbench: a flat, ruled surface where the editor's content lies in front and the tools stay out of the way until a hand reaches for them. Surfaces are separated by hairline borders rather than shadows, color is almost entirely warm stone, and the single accent marks the places where something happens (the primary action, a focus ring, a filled translation, a drop target). Nothing is decorative. Confidence comes from precision: aligned rows, consistent heights, exact states.
 
-The character is technical, dense and developer grade. Headings are set in the system monospace, letter spacing runs slightly wide across the whole interface, and controls sit at a compact 36px height. Rows in the page tree, fields in the editor and entries in the history read like a well kept record. Density is a feature here, so long as the words stay plain: the look can be technical while the labels speak the editor's language.
+The character is technical, dense and developer grade, voiced in plain type. Every text style is set in Geist, letter spacing runs slightly wide across the whole interface, and controls sit at a compact 36px height. Rows in the page tree, fields in the editor and entries in the history read like a well kept record. Density is a feature here, so long as the words stay plain: the look can be technical while the labels speak the editor's language.
 
 The system is white label by construction. Every color, radius, font, shadow and spacing value is a BlatUI token that a preset, a client's accent or a host stylesheet can replace without a rebuild. The defaults below are Lynx's own out of the box look, and the design must hold when a client's logo and accent take their place.
 
 **Key Characteristics:**
 - Flat by default: no shadows in the default preset, depth from borders and tonal washes.
 - One accent, used for action and state, never for decoration.
-- Monospace headings over an Inter body, slightly wide tracking everywhere.
+- Geist for every text style, headings included; slightly wide tracking everywhere.
 - Compact, consistent control heights (36px default, 32px small, 28px extra small).
 - Tokens only: Tailwind's raw palette is removed, so every color comes from a theme token.
 - Light, dark and system schemes, each user's choice remembered per browser.
@@ -187,11 +187,11 @@ A warm stone ground with a single teal accent; status colors appear only to repo
 
 ## Typography
 
-**Heading Font:** the system monospace (ui-monospace, SF Mono, Menlo, Consolas)
-**Body Font:** Inter (with ui-sans-serif, system-ui), loaded from fonts.bunny.net unless self hosted
-**Label/Mono Font:** labels use Inter; code, selectors and keys use the same monospace as headings
+**Heading Font:** Geist, following the body font (`heading_font` is `sans`); a host app may give headings their own font
+**Body Font:** Geist (with ui-sans-serif, system-ui), loaded from fonts.bunny.net unless self hosted
+**Label/Mono Font:** labels use Geist; code, selectors, keys and page addresses use the system monospace
 
-**Character:** monospace headings give each screen the precise, record keeping voice of a tool; Inter keeps the dense body text legible. Both are preset choices (`appearance.font`, `appearance.heading_font`), so a host app may swap them without touching markup.
+**Character:** one face from headings to labels keeps the admin plain for editors; Geist stays crisp and legible in dense rows, with even figures in tables. Monospace is kept for code and addresses, never as a costume. Both are preset choices (`appearance.font`, `appearance.heading_font`), so a host app may swap them without touching markup.
 
 ### Hierarchy
 - **Headline** (600, 1.5rem, tight tracking): the screen's `h1`, once per screen.

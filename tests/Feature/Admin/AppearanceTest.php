@@ -44,6 +44,18 @@ it('loads BlatUI\'s default font when none is chosen, and nothing for system fon
         ->and(Appearance::fontsUrl(['font' => 'system', 'heading_font' => 'mono']))->toBeNull();
 });
 
+it('sets the admin in Geist by default, headings included', function (): void {
+    expect(adminHtml())->toContain('data-font="geist"')
+        ->and(adminHtml())->toContain('data-font-heading="sans"')
+        ->and(adminHtml())->toContain('family=geist:');
+});
+
+it('lets the config give headings their own font', function (): void {
+    config(['lynx-admin.appearance.heading_font' => 'mono']);
+
+    expect(adminHtml())->toContain('data-font-heading="mono"');
+});
+
 it('links the fonts stylesheet unless loading fonts is turned off', function (): void {
     config(['lynx-admin.appearance.font' => 'geist']);
     expect(adminHtml())->toContain('href="https://fonts.bunny.net/css?family=geist:400,500,600,700&amp;display=swap"');

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T18:17:52+00:00",
+  "generatedAt": "2026-10-27T19:09:35+00:00",
   "title": "Design System: Lynx Admin",
   "extensions": {
     "colorMeta": {
@@ -383,11 +383,11 @@
     "typographyMeta": {
       "headline": {
         "displayName": "Headline",
-        "purpose": "The screen's h1, once per screen; monospace."
+        "purpose": "The screen's h1, once per screen."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Section and dialog headings; monospace."
+        "purpose": "Section and dialog headings."
       },
       "body": {
         "displayName": "Body",
@@ -459,7 +459,7 @@
       "refersTo": "button-primary",
       "description": "The one primary action of a view: Save, Publish, Add.",
       "html": "<button class=\"ds-btn-primary\">Save</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--primary, oklch(0.52 0.105 223.128)); color: var(--primary-foreground, oklch(0.984 0.019 200.873)); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--primary, oklch(0.52 0.105 223.128)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--primary, oklch(0.52 0.105 223.128)); color: var(--primary-foreground, oklch(0.984 0.019 200.873)); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--primary, oklch(0.52 0.105 223.128)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
     },
     {
       "name": "Outline Button",
@@ -467,7 +467,7 @@
       "refersTo": "button-outline",
       "description": "Secondary actions next to a primary: Preview, Cancel.",
       "html": "<button class=\"ds-btn-outline\">Preview</button>",
-      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border-color: var(--border, oklch(0.923 0.003 48.717)); } .ds-btn-outline:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-outline:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border-color: var(--border, oklch(0.923 0.003 48.717)); } .ds-btn-outline:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-outline:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
     },
     {
       "name": "Ghost Button",
@@ -475,7 +475,7 @@
       "refersTo": "button-ghost",
       "description": "Toolbar and row actions that stay quiet until hovered.",
       "html": "<button class=\"ds-btn-ghost\">More</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-btn-ghost:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-ghost:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-btn-ghost:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-ghost:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
     },
     {
       "name": "Text Input",
@@ -483,7 +483,7 @@
       "refersTo": "input",
       "description": "Outline input, 36px, with the shared focus ring and an invalid state.",
       "html": "<input class=\"ds-input\" placeholder=\"Navigating Project Delivery\">",
-      "css": ".ds-input { height: 2.25rem; width: 100%; padding: 0.25rem 0.75rem; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) - 2px); font: 400 0.875rem/1.43 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.49 0.013 58.071)); } .ds-input:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, oklch(0.55 0.238 27.325)); }"
+      "css": ".ds-input { height: 2.25rem; width: 100%; padding: 0.25rem 0.75rem; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) - 2px); font: 400 0.875rem/1.43 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.49 0.013 58.071)); } .ds-input:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, oklch(0.55 0.238 27.325)); }"
     },
     {
       "name": "Card",
@@ -491,7 +491,7 @@
       "refersTo": "card",
       "description": "Flat, bordered container for a group of settings.",
       "html": "<section class=\"ds-card\"><h2 class=\"ds-card-title\">Status</h2><p class=\"ds-card-body\">Published in English and Português.</p></section>",
-      "css": ".ds-card { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) + 4px); padding: 1.5rem; } .ds-card-title { margin: 0 0 0.5rem; font: 600 1rem/1.5 var(--font-heading, ui-monospace, SFMono-Regular, Menlo, monospace); letter-spacing: 0.025em; } .ds-card-body { margin: 0; font: 400 0.875rem/1.43 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); color: var(--muted-foreground, oklch(0.49 0.013 58.071)); letter-spacing: 0.025em; }"
+      "css": ".ds-card { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) + 4px); padding: 1.5rem; } .ds-card-title { margin: 0 0 0.5rem; font: 600 1rem/1.5 var(--font-heading, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; } .ds-card-body { margin: 0; font: 400 0.875rem/1.43 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); color: var(--muted-foreground, oklch(0.49 0.013 58.071)); letter-spacing: 0.025em; }"
     },
     {
       "name": "Badge",
@@ -499,7 +499,7 @@
       "refersTo": "badge",
       "description": "Small status label; soft success tone shown.",
       "html": "<span class=\"ds-badge\">Published</span>",
-      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.75rem/1rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); color: var(--success, oklch(0.455 0.125 150)); background: color-mix(in oklab, var(--success, oklch(0.455 0.125 150)) 10%, transparent); }"
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.75rem/1rem var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); color: var(--success, oklch(0.455 0.125 150)); background: color-mix(in oklab, var(--success, oklch(0.455 0.125 150)) 10%, transparent); }"
     },
     {
       "name": "Sidebar Item",
@@ -507,7 +507,7 @@
       "refersTo": "sidebar",
       "description": "Icon plus label navigation entry; the active screen is washed.",
       "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" aria-current=\"page\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg><span>Pages</span></a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg><span>Templates</span></a></nav>",
-      "css": ".ds-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; width: 16rem; background: var(--sidebar, oklch(0.985 0.001 106.423)); } .ds-nav-item { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); color: var(--foreground, oklch(0.147 0.004 49.25)); font: 400 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; text-decoration: none; } .ds-nav-item:hover, .ds-nav-item[aria-current=\"page\"] { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-nav-item[aria-current=\"page\"] { font-weight: 500; } .ds-nav-item:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); }"
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; width: 16rem; background: var(--sidebar, oklch(0.985 0.001 106.423)); } .ds-nav-item { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); color: var(--foreground, oklch(0.147 0.004 49.25)); font: 400 0.875rem/1 var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; text-decoration: none; } .ds-nav-item:hover, .ds-nav-item[aria-current=\"page\"] { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-nav-item[aria-current=\"page\"] { font-weight: 500; } .ds-nav-item:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); }"
     },
     {
       "name": "Page Tree Row",
@@ -515,7 +515,7 @@
       "refersTo": "tree-row",
       "description": "Signature: a ruled row per page, indented per level, actions on hover.",
       "html": "<div class=\"ds-tree\"><div class=\"ds-tree-row\" style=\"--depth:0\"><span class=\"ds-tree-chevron is-open\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></span><span class=\"ds-tree-title\">Courses</span><span class=\"ds-tree-meta\">12</span></div><div class=\"ds-tree-row\" style=\"--depth:1\"><span class=\"ds-tree-chevron\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></span><span class=\"ds-tree-title\">Navigating Project Delivery</span></div><div class=\"ds-tree-row is-hidden\" style=\"--depth:1\"><span class=\"ds-tree-chevron\"></span><span class=\"ds-tree-title\">Draft course</span></div></div>",
-      "css": ".ds-tree { font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; } .ds-tree-row { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem 0.375rem calc(0.5rem + var(--depth, 0) * 1.5rem); border-bottom: 1px solid var(--border, oklch(0.923 0.003 48.717)); transition: background-color 120ms ease; } .ds-tree-row:hover { background: color-mix(in oklab, var(--muted, oklch(0.97 0.001 106.424)) 60%, transparent); } .ds-tree-chevron { display: inline-flex; width: 16px; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); transition: transform 120ms ease; } .ds-tree-chevron.is-open { transform: rotate(90deg); } .ds-tree-title { color: var(--foreground, oklch(0.147 0.004 49.25)); font-size: 0.9375rem; font-weight: 500; } .ds-tree-meta { margin-inline-start: auto; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font-size: 0.75rem; } .ds-tree-row.is-hidden { opacity: 0.55; }"
+      "css": ".ds-tree { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; } .ds-tree-row { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem 0.375rem calc(0.5rem + var(--depth, 0) * 1.5rem); border-bottom: 1px solid var(--border, oklch(0.923 0.003 48.717)); transition: background-color 120ms ease; } .ds-tree-row:hover { background: color-mix(in oklab, var(--muted, oklch(0.97 0.001 106.424)) 60%, transparent); } .ds-tree-chevron { display: inline-flex; width: 16px; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); transition: transform 120ms ease; } .ds-tree-chevron.is-open { transform: rotate(90deg); } .ds-tree-title { color: var(--foreground, oklch(0.147 0.004 49.25)); font-size: 0.9375rem; font-weight: 500; } .ds-tree-meta { margin-inline-start: auto; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font-size: 0.75rem; } .ds-tree-row.is-hidden { opacity: 0.55; }"
     },
     {
       "name": "Language Tabs",
@@ -523,7 +523,7 @@
       "refersTo": "tabs",
       "description": "Signature: per field language tabs whose dot says filled, falling back or empty.",
       "html": "<div class=\"ds-langs\" role=\"tablist\"><button class=\"ds-lang\" role=\"tab\" aria-selected=\"true\">EN<span class=\"ds-dot is-filled\"></span></button><button class=\"ds-lang\" role=\"tab\" aria-selected=\"false\">PT<span class=\"ds-dot is-fallback\"></span></button><button class=\"ds-lang\" role=\"tab\" aria-selected=\"false\">DE<span class=\"ds-dot\"></span></button></div>",
-      "css": ".ds-langs { display: inline-flex; gap: 0.125rem; padding: 0.125rem; background: var(--muted, oklch(0.97 0.001 106.424)); border-radius: calc(var(--radius, 0.3rem) - 2px); } .ds-lang { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border: 0; border-radius: calc(var(--radius, 0.3rem) - 2px); background: transparent; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font: 500 0.625rem/0.875rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; cursor: pointer; } .ds-lang[aria-selected=\"true\"] { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-lang:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); } .ds-dot { display: inline-block; width: 0.375rem; height: 0.375rem; margin-inline-start: 0.25rem; border: 1px solid var(--muted-foreground, oklch(0.49 0.013 58.071)); border-radius: 9999px; } .ds-dot.is-filled { background: var(--primary, oklch(0.52 0.105 223.128)); border-color: var(--primary, oklch(0.52 0.105 223.128)); } .ds-dot.is-fallback { border-style: dashed; }"
+      "css": ".ds-langs { display: inline-flex; gap: 0.125rem; padding: 0.125rem; background: var(--muted, oklch(0.97 0.001 106.424)); border-radius: calc(var(--radius, 0.3rem) - 2px); } .ds-lang { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border: 0; border-radius: calc(var(--radius, 0.3rem) - 2px); background: transparent; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font: 500 0.625rem/0.875rem var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; cursor: pointer; } .ds-lang[aria-selected=\"true\"] { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-lang:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); } .ds-dot { display: inline-block; width: 0.375rem; height: 0.375rem; margin-inline-start: 0.25rem; border: 1px solid var(--muted-foreground, oklch(0.49 0.013 58.071)); border-radius: 9999px; } .ds-dot.is-filled { background: var(--primary, oklch(0.52 0.105 223.128)); border-color: var(--primary, oklch(0.52 0.105 223.128)); } .ds-dot.is-fallback { border-style: dashed; }"
     },
     {
       "name": "Notification Bar",
@@ -531,7 +531,7 @@
       "refersTo": "notice",
       "description": "Signature: full width notice at the bottom of the viewport; success shown.",
       "html": "<div class=\"ds-notice\" role=\"status\" tabindex=\"0\">Page saved <span class=\"ds-notice-close\" aria-hidden=\"true\">&times;</span></div>",
-      "css": ".ds-notice { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.75rem 1rem; background: var(--success, oklch(0.455 0.125 150)); color: var(--success-foreground, oklch(0.985 0.018 155)); font: 500 0.875rem/1.25rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); cursor: pointer; box-shadow: 0 -1px 0 color-mix(in oklab, black 12%, transparent); } .ds-notice:focus-visible { outline: 3px solid var(--ring, oklch(0.709 0.01 56.259)); outline-offset: -3px; } .ds-notice-close { font-size: 1.125rem; line-height: 1; opacity: 0.8; }"
+      "css": ".ds-notice { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.75rem 1rem; background: var(--success, oklch(0.455 0.125 150)); color: var(--success-foreground, oklch(0.985 0.018 155)); font: 500 0.875rem/1.25rem var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); cursor: pointer; box-shadow: 0 -1px 0 color-mix(in oklab, black 12%, transparent); } .ds-notice:focus-visible { outline: 3px solid var(--ring, oklch(0.709 0.01 56.259)); outline-offset: -3px; } .ds-notice-close { font-size: 1.125rem; line-height: 1; opacity: 0.8; }"
     }
   ],
   "narrative": {
@@ -540,7 +540,7 @@
     "keyCharacteristics": [
       "Flat by default: no shadows in the default preset, depth from borders and tonal washes.",
       "One accent, used for action and state, never for decoration.",
-      "Monospace headings over an Inter body, slightly wide tracking everywhere.",
+      "Geist for every text style, headings included; slightly wide tracking everywhere.",
       "Compact, consistent control heights (36px default, 32px small, 28px extra small).",
       "Tokens only: Tailwind's raw palette is removed, so every color comes from a theme token.",
       "Light, dark and system schemes, each user's choice remembered per browser."

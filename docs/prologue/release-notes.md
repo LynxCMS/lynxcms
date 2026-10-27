@@ -26,6 +26,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
 
+- The admin's default font is Geist, for headings too, instead of an Inter body and monospace headings. Set `LYNX_ADMIN_FONT=inter` and `LYNX_ADMIN_HEADING_FONT=mono` to keep the old look, or give headings any other font.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).

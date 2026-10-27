@@ -45,8 +45,8 @@ The admin is built on BlatUI components. Change its look without rebuilding anyt
 ```php
 'theme' => 'system', // light, dark or system
 'appearance' => [
-    'base' => 'stone', 'theme' => 'cyan', 'radius' => '0.3', 'font' => 'inter',
-    'heading_font' => 'mono', 'shadow' => 'none', 'spacing' => 'default', 'tracking' => 'wide',
+    'base' => 'stone', 'theme' => 'cyan', 'radius' => '0.3', 'font' => 'geist',
+    'heading_font' => 'sans', 'shadow' => 'none', 'spacing' => 'default', 'tracking' => 'wide',
 ],
 'stylesheets' => [], // extra CSS that redefines BlatUI tokens
 ```
