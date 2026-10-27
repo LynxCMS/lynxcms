@@ -46,8 +46,20 @@
     @endif
 
     @if ($canShowDetails)
-        {{-- Simple shows titles; Details adds languages, status and the last change to each row. --}}
-        <div class="mb-3 flex justify-end">
+        {{-- Simple shows titles; Details adds languages, status and the last change to each row, and filters (TreeFilters). --}}
+        <div class="mb-3 flex flex-wrap items-center justify-end gap-3">
+            @if ($filters !== [])
+                <div role="group" aria-label="Show" class="me-auto flex flex-wrap gap-1.5">
+                    @foreach ([['key' => '', 'label' => 'All pages', 'count' => null], ...$filters] as $item)
+                        <button type="button" wire:click="filterBy('{{ $item['key'] }}')" aria-pressed="{{ $filter === $item['key'] ? 'true' : 'false' }}"
+                                @if ($item['key'] !== '') data-tree-filter="{{ $item['key'] }}" data-filter-count="{{ $item['count'] }}" @endif
+                                class="group text-muted-foreground hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background aria-pressed:border-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-sm">
+                            {{ $item['label'] }}
+                            @if ($item['count'] !== null)<b class="text-foreground group-aria-pressed:text-background font-semibold tabular-nums">{{ $item['count'] }}</b>@endif
+                        </button>
+                    @endforeach
+                </div>
+            @endif
             <div role="group" aria-label="Tree view" data-tree-view class="bg-muted inline-flex gap-0.5 rounded-md p-0.5 text-sm">
                 @foreach ([false => 'Simple', true => 'Details'] as $value => $label)
                     <button type="button" wire:click="showDetails({{ $value ? 'true' : 'false' }})" aria-pressed="{{ $showsDetails === (bool) $value ? 'true' : 'false' }}"
@@ -65,13 +77,20 @@
                 <span class="ms-auto w-56">Languages</span><span class="w-28">Status</span><span class="w-48">Last change</span>
             </div>
         @endif
-        <ul role="tree" aria-label="Pages" class="-mb-px">
-            <x-lynx-admin::tree.branch
-                :branch="$tree"
-                :depth="0"
-                :parent-position="0"
-                :state="['moving' => $moving, 'deleting' => $deleting, 'deleteCount' => $deleteCount, 'sortable' => $sortable, 'events' => $events, 'trash' => $usesTrash]"
-            />
-        </ul>
+        @php($state = ['moving' => $moving, 'deleting' => $deleting, 'deleteCount' => $deleteCount, 'sortable' => $sortable, 'events' => $events, 'trash' => $usesTrash])
+        @if ($filtered !== null)
+            {{-- A filter's pages, flat and paged; nothing to reorder here. --}}
+            <div role="tree" aria-label="Pages" class="-mb-px" data-tree-filtered>
+                @if ($filtered->total === 0)
+                    <p class="text-muted-foreground px-4 py-6 text-sm">No pages here.</p>
+                @else
+                    <x-lynx-admin::tree.level :level="$filtered" :depth="0" :parent-position="0" :state="[...$state, 'sortable' => false]" />
+                @endif
+            </div>
+        @else
+            <ul role="tree" aria-label="Pages" class="-mb-px">
+                <x-lynx-admin::tree.branch :branch="$tree" :depth="0" :parent-position="0" :state="$state" />
+            </ul>
+        @endif
     </div>
 </div>

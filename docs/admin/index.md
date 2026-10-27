@@ -20,7 +20,7 @@ order: 6
 | Roles, Users | Roles, their grants and who holds them; invitations. | superuser |
 | Account security | Password, two-factor authentication and passkeys. | signed in |
 
-The page tree shows titles by default. Its **Details** view adds, beside each title, the page's state in every language (the same facets as the editor's language tabs: its own title, another language's title, or not published there), its status and its last change. Each user's choice lasts for the session.
+The page tree shows titles by default. Its **Details** view adds, beside each title, the page's state in every language (the same facets as the editor's language tabs: its own title, another language's title, or not published there), its status and its last change. Each user's choice lasts for the session. Above it, filters list the pages with **Draft changes**, the **Scheduled** ones, and those **Not in** each other language, each with its count. A filter shows its pages in one list, most recently changed first, each saying which page it sits under. The filters are [selectors](/basics/selectors#status) (`has_draft=1`, `has_schedule=1`, `language!=pt`), so your code can ask the same questions.
 
 The page editor puts each field's label above its input, and beside the fields a panel shows whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity (the Settings tab has all of it). Templates that lay out their own sidebar keep it instead of the panel.
 

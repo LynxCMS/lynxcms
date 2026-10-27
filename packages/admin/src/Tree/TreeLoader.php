@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Tree;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Query\PageScope;
 
 /**
@@ -73,6 +74,45 @@ final class TreeLoader
         return new TreeLevel($parentId, $branches, $children->total(), $page, $this->perPage, $this->isComplete($parentId, $parent->childCount));
     }
 
+    /**
+     * A filter's pages (TreeFilters) as one flat level, most recently changed first, paged like a
+     * branch under parent id 0. Each row says where the page sits, since the tree no longer does.
+     */
+    public function flat(string $selector, int $page): TreeLevel
+    {
+        $found = $this->flatPage($selector, $page);
+
+        if ($found['pages']->count() === 0 && $page > 1) {
+            $found = $this->flatPage($selector, (int) ceil($found['pages']->total() / $this->perPage));
+        }
+
+        $drafts = array_flip(lynx()->pages->withDrafts($found['pages']->ids()));
+        $branches = [];
+
+        foreach (array_values($found['pages']->map(fn (Page $page): Page => $page)) as $index => $match) {
+            $node = $this->node($match, $found['start'] + $index, 0, hasDraft: isset($drafts[(int) $match->id]), location: $this->location($match));
+            $branches[] = new TreeBranch($node, null);
+        }
+
+        return new TreeLevel(0, $branches, $found['pages']->total(), $found['page'], $this->perPage, isComplete: false);
+    }
+
+    /** @return array{pages: PageArray, page: int, start: int} */
+    private function flatPage(string $selector, int $page): array
+    {
+        $page = max(1, $page);
+        $start = ($page - 1) * $this->perPage;
+
+        return ['pages' => lynx()->pages->find("{$selector}, sort=-modified, start={$start}, limit={$this->perPage}", scope: $this->scope), 'page' => $page, 'start' => $start];
+    }
+
+    private function location(Page $page): ?string
+    {
+        $parent = $page->parent();
+
+        return $parent instanceof Page ? $this->presenter->title($parent) : null;
+    }
+
     /** Whether the user sees every child of the parent, so rows can be reordered. */
     public function isComplete(int $parentId, ?int $visibleCount = null): bool
     {
@@ -92,7 +132,7 @@ final class TreeLoader
         return new TreeBranch($node, $isOpen ? $this->level($node) : null);
     }
 
-    private function node(Page $page, int $position, int $childCount, bool $isTreeRoot = false, string $place = TreeNode::SITE, bool $hasDraft = false): TreeNode
+    private function node(Page $page, int $position, int $childCount, bool $isTreeRoot = false, string $place = TreeNode::SITE, bool $hasDraft = false, ?string $location = null): TreeNode
     {
         return new TreeNode(
             id: (int) $page->id,
@@ -110,6 +150,7 @@ final class TreeLoader
             markers: app(TreeMarkers::class)->for($page),
             allowsChildren: $page->template()->allowsChildren(),
             details: $this->details?->for($page),
+            location: $location,
         );
     }
 }

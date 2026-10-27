@@ -27,6 +27,7 @@ final readonly class TreeNode
      * @param  list<array{key: string, icon: string, label: string}>  $markers  icons modules show beside the page (TreeMarkers)
      * @param  bool  $allowsChildren  false when the page's template allows no children (ADR-0032): no New
      * @param  array{languages: list<array{code: string, label: string, state: string}>, status: string, changed: ?string, changedAt: ?string, changedBy: ?string}|null  $details  the Details view's columns (TreeDetails), null in the simple view
+     * @param  ?string  $location  the parent's title, in a filter's flat list, where the tree no longer shows it
      */
     public function __construct(
         public int $id,
@@ -44,6 +45,7 @@ final readonly class TreeNode
         public array $markers = [],
         public bool $allowsChildren = true,
         public ?array $details = null,
+        public ?string $location = null,
     ) {}
 
     public function isTrash(): bool

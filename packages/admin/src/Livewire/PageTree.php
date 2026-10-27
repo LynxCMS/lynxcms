@@ -22,6 +22,8 @@ use LynxCms\Admin\Livewire\Concerns\ScopedToRoot;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Admin\Tree\TreeBranch;
 use LynxCms\Admin\Tree\TreeDetails;
+use LynxCms\Admin\Tree\TreeFilters;
+use LynxCms\Admin\Tree\TreeLevel;
 use LynxCms\Admin\Tree\TreeLoader;
 use LynxCms\Admin\Tree\TreePresenter;
 use LynxCms\Core\Pages\Page;
@@ -86,6 +88,10 @@ final class PageTree extends Component
     #[Session]
     public bool $isDetailed = false;
 
+    /** The Details view's filter (TreeFilters), or empty for the tree; kept for the session. */
+    #[Session]
+    public string $filter = '';
+
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
     public function boot(): void
     {
@@ -117,6 +123,13 @@ final class PageTree extends Component
         $this->isDetailed = $show;
     }
 
+    /** Lists the pages a filter finds instead of the tree; an empty or unknown filter shows the tree. */
+    public function filterBy(string $filter): void
+    {
+        $this->filter = $this->filters()?->selector($filter) !== null ? $filter : '';
+        unset($this->pages[0]);
+    }
+
     /** Pages past the end are clamped to the last page when the tree is loaded. */
     public function goToPage(int $parentId, int $page): void
     {
@@ -146,12 +159,30 @@ final class PageTree extends Component
 
     public function render(): View
     {
+        $filters = $this->filters();
+
         return view('lynx-admin::livewire.page-tree', [
             'tree' => $this->tree(),
             'usesTrash' => $this->usesTrash(),
             'canShowDetails' => $this->canShowDetails(),
             'showsDetails' => $this->isShowingDetails(),
+            'filters' => $filters?->all() ?? [],
+            'filtered' => $this->filtered($filters),
         ]);
+    }
+
+    /** The filters, in the Details view only. */
+    private function filters(): ?TreeFilters
+    {
+        return $this->isShowingDetails() ? new TreeFilters(app(AdminAccess::class)->treeScope()) : null;
+    }
+
+    /** The current filter's pages as one flat level, or null when the tree shows. */
+    private function filtered(?TreeFilters $filters): ?TreeLevel
+    {
+        $selector = $this->filter === '' ? null : $filters?->selector($this->filter);
+
+        return $selector === null ? null : $this->treeLoader()->flat($selector, Value::int($this->pages[0] ?? 1, 1));
     }
 
     private function tree(): TreeBranch

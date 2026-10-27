@@ -69,6 +69,9 @@
             {{-- Unpublished changes waiting in a draft (ADR-0039). --}}
             <span class="inline-flex shrink-0 items-center rounded-md border border-dashed px-1.5 py-px text-[0.625rem] font-medium text-muted-foreground" data-has-draft title="Has a draft">draft</span>
         @endif
+        @if ($node->location !== null)
+            <span class="text-muted-foreground truncate text-xs" data-tree-location>in {{ $node->location }}</span>
+        @endif
         @if ($node->hasChildren())
             <span class="{{ \LynxCms\Admin\Tree\TreeUi::COUNT_BADGE }}" data-child-count="{{ $node->childCount }}">{{ $node->childCount }}</span>
         @endif
