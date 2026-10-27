@@ -17,6 +17,8 @@ use LynxCms\Core\Support\Value;
  * statuses changed. The actions' own summaries are written for developers and agents ("Update page
  * alpha: title [pt]"); actions this class doesn't know keep theirs.
  *
+ * @phpstan-type Parts array{kind: string, fields: list<array{name: string, label: string, languages: list<array{code: string, name: string}>}>, more: int, statuses: list<string>, target: ?string, schedule: list<array{action: string, at: ?string}>, languages: list<array{code: string, name: string}>, summary: string}
+ *
  * @internal
  */
 final class ActivityDescription
@@ -41,7 +43,7 @@ final class ActivityDescription
     private const array STATUS_WORDS = ['hidden' => 'shown', 'unpublished' => 'published', 'locked' => 'unlocked'];
 
     /**
-     * @return array{kind: string, fields: list<array{name: string, label: string, languages: list<array{code: string, name: string}>}>, more: int, statuses: list<string>, target: ?string, schedule: list<array{action: string, at: ?string}>, languages: list<array{code: string, name: string}>, summary: string}
+     * @return Parts
      */
     public function of(ActivityEvent $event): array
     {
@@ -55,7 +57,28 @@ final class ActivityDescription
             'pages.status' => [...$parts, 'kind' => 'status', 'statuses' => $this->statuses($data)],
             'pages.move' => [...$parts, 'kind' => 'moved', 'target' => $this->title(Value::int($data['to'] ?? 0))],
             'pages.schedule' => [...$parts, 'kind' => 'scheduled', 'schedule' => $this->schedule($data), 'languages' => $this->languages([Value::string($data['language'] ?? '')])],
-            default => isset(self::KINDS[$event->action]) ? $parts : [...$parts, 'summary' => Value::string($change['summary'] ?? '', $event->action), 'more' => max(0, count($event->changes) - 1)],
+            default => isset(self::KINDS[$event->action]) ? $parts : $this->byShape($event, $change, $data, $parts),
+        };
+    }
+
+    /**
+     * An action this class doesn't name, worded by what its first change did: modules save pages
+     * through pages.save (a menu item, a form) and the scheduler changes statuses, so their first
+     * change carries the same data. Anything else keeps its own summary.
+     *
+     * @param  array<array-key, mixed>  $change
+     * @param  array<array-key, mixed>  $data
+     * @param  Parts  $parts
+     * @return Parts
+     */
+    private function byShape(ActivityEvent $event, array $change, array $data, array $parts): array
+    {
+        $isPage = ($change['subject'] ?? null) === 'page';
+
+        return match (true) {
+            $isPage && array_key_exists('fields', $data) => [...$parts, ...$this->saved($change, $data)],
+            $isPage && is_array($data['from'] ?? null) && is_array($data['to'] ?? null) => [...$parts, 'kind' => 'status', 'statuses' => $this->statuses($data)],
+            default => [...$parts, 'summary' => Value::string($change['summary'] ?? '', $event->action), 'more' => max(0, count($event->changes) - 1)],
         };
     }
 

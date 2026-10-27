@@ -79,6 +79,27 @@ it('names the page a move went under', function (): void {
     expect($description['kind'])->toBe('moved')->and($description['target'])->toBe('Other');
 });
 
+it('words a module action that saves a page by what the save did', function (): void {
+    $created = new ActivityEvent(['action' => 'menus.create', 'changes' => [
+        ['type' => 'created', 'subject' => 'page', 'id' => 9, 'summary' => 'Create menu page footer: title [default]', 'data' => ['template' => 'menu', 'fields' => ['title [default]']]],
+    ]]);
+    $changed = new ActivityEvent(['action' => 'menus.save_item', 'changes' => [
+        ['type' => 'updated', 'subject' => 'page', 'id' => 9, 'summary' => 'Update page item-1: title [pt]', 'data' => ['fields' => ['title [pt]']]],
+    ]]);
+
+    expect((new ActivityDescription)->of($created)['kind'])->toBe('created')
+        ->and((new ActivityDescription)->of($changed))->toMatchArray(['kind' => 'changed', 'summary' => ''])
+        ->and((new ActivityDescription)->of($changed)['fields'][0]['name'])->toBe('title');
+});
+
+it('words a scheduled change by what it did to the page', function (): void {
+    $event = new ActivityEvent(['action' => 'pages.run_schedules', 'changes' => [
+        ['type' => 'updated', 'subject' => 'page', 'id' => 9, 'summary' => 'Set status of page alpha to []', 'data' => ['from' => ['unpublished'], 'to' => []]],
+    ]]);
+
+    expect((new ActivityDescription)->of($event))->toMatchArray(['kind' => 'status', 'statuses' => ['published']]);
+});
+
 it('keeps the summary of actions it does not know', function (): void {
     $event = new ActivityEvent(['action' => 'menus.save', 'changes' => [['summary' => 'Save menu item 4'], ['summary' => 'Path']]]);
 
