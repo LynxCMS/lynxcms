@@ -113,6 +113,12 @@ function showTab(tab) {
     document.querySelectorAll('[data-tab]').forEach((link) => link.setAttribute('aria-current', link.dataset.tab === tab ? 'page' : 'false'));
 }
 
+document.querySelectorAll('[data-newtab]').forEach((link) => link.addEventListener('click', (event) => {
+    event.preventDefault();
+    $('#new-field').hidden = link.dataset.newtab !== 'field';
+    $('#new-preview').hidden = link.dataset.newtab !== 'preview';
+    document.querySelectorAll('[data-newtab]').forEach((other) => other.setAttribute('aria-current', other === link ? 'page' : 'false'));
+}));
 document.querySelectorAll('[data-tab]').forEach((link) => link.addEventListener('click', (event) => { event.preventDefault(); showTab(link.dataset.tab); }));
 document.querySelectorAll('[data-screen]').forEach((button) => button.addEventListener('click', () => { location.hash = button.dataset.screen; }));
 document.querySelectorAll('[data-theme-pick]').forEach((button) => button.addEventListener('click', () => {

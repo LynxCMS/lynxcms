@@ -61,8 +61,8 @@
       <section class="content screen" id="screen-new" aria-label="New field">
         <div class="head"><div><h2>New field</h2><p>A field holds one kind of content. Templates combine fields, and editors fill them in.</p></div>
           <div class="actions"><a class="btn ghost" href="#new">Cancel</a><button class="btn primary">Create field</button></div></div>
-        <div class="editor-grid">
-          <div class="fields">
+        <nav class="tabs" aria-label="Field sections"><a href="#" data-newtab="field" aria-current="page">Field</a><a href="#" data-newtab="preview">Preview</a></nav>
+        <div class="fields one" id="new-field">
             <div class="group">
               <h3>What it holds</h3>
               <div class="kinds" role="radiogroup" aria-label="Kind of field" id="kinds"></div>
@@ -73,7 +73,7 @@
                 <input class="input" id="f-label" value="Opening hours"><p class="hint">What editors read above the input.</p></div>
               <div class="field"><label for="f-name">Name in templates</label>
                 <div class="code-input"><span>$page-&gt;</span><input id="f-name" value="opening_hours" spellcheck="false"></div>
-                <p class="hint">Made from the label. Lowercase letters, digits and underscores; it can't change once the field exists.</p></div>
+                <p class="hint">Made from the label. Lowercase letters, digits and underscores; it can't change once the field exists. Rich text is HTML, so templates print it with <span class="mono">{!! $page-&gt;<span id="mock-name">opening_hours</span> !!}</span>.</p></div>
             </div>
             <div class="group">
               <h3>Languages</h3>
@@ -105,11 +105,9 @@
             <details class="advanced"><summary>Advanced</summary>
               <label class="choice-row"><input type="checkbox"><span><b>Load with the page</b><small>For fields almost every list shows. Others load the first time a template reads them, for all listed pages at once.</small></span></label></details>
           </div>
-          <aside class="rail" aria-label="Preview">
-            <div class="panel"><h3>In the page editor</h3>
-              <div class="mock"><b id="mock-label">Opening hours</b><small>Leave a day empty when the room is closed.</small><span class="mock-input tall"></span><small>For example: 9:00 to 18:00</small></div></div>
-            <div class="panel"><h3>In templates</h3><code class="snippet">{!! $page-&gt;<span id="mock-name">opening_hours</span> !!}</code><p class="hint">Rich text is HTML, so print it unescaped.</p></div>
-          </aside>
+        <div class="limits" id="new-preview" hidden>
+          <p class="hint">The field as editors see it in the page editor.</p>
+          <div class="mocks"><div class="mock"><b id="mock-label">Opening hours</b><small>Leave a day empty when the room is closed.</small><span class="mock-input tall"></span><small>For example: 9:00 to 18:00</small></div></div>
         </div>
       </section>
 

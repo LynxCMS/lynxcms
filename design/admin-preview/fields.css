@@ -127,3 +127,5 @@
 .acc.plain .acc-body { padding: 0; }
 .acc.plain .subfields { margin-inline: 0; border: 1px solid var(--border); border-radius: 10px; }
 .acc.plain .sub { padding-inline: 6px 10px; }
+.fields.one { max-width: 900px; }
+.fields[hidden] { display: none; }
