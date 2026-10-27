@@ -17,7 +17,7 @@
                 </select>
             @endif
             <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-label="Settings of section {{ $sectionLabel }}" title="Section settings"><x-lucide-sliders-horizontal aria-hidden="true" /></x-lynx-admin::ui.button>
-            @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" class="hover:text-destructive" wire:click="removeSection(@js($key))" aria-label="Remove section {{ $sectionLabel }} (its fields stay)" title="Remove section, keep its fields"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button> @endif
+            @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" class="hover:text-destructive" wire:click="removeSection({{ Js::from($key) }})" aria-label="Remove section {{ $sectionLabel }} (its fields stay)" title="Remove section, keep its fields"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button> @endif
         </span>
     </div>
     <div x-show="open" x-cloak class="grid gap-3 border-t px-4 py-3 sm:grid-cols-2">

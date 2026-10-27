@@ -81,6 +81,10 @@
         </div>
     </section>
 
+    @if ($hasItemBuilder)
+        @include('lynx-admin::livewire.partials.items.builder')
+    @endif
+
     @if ($definitions !== [])
         <section class="bg-card text-card-foreground rounded-xl border shadow-sm grid gap-5 p-5" aria-labelledby="field-settings">
             <h2 id="field-settings" class="text-base font-semibold">Settings for {{ $type }}</h2>

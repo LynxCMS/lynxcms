@@ -53,7 +53,7 @@
                         @endunless
                     </div>
                     @error('values.'.$field->name.'.'.$index.'.type') <p role="alert" class="text-destructive px-3 pb-2 text-sm">{{ $message }}</p> @enderror
-                    <div x-show="open" @unless ($open) x-cloak @endunless class="grid grid-cols-12 items-end gap-4 border-t p-3">
+                    <div x-show="open" @unless ($open) x-cloak @endunless class="grid grid-cols-12 items-start gap-4 border-t p-3">
                         @foreach ($subfields as $subfield)
                             <x-lynx-admin::editor.subfield
                                 :field="$field->name"

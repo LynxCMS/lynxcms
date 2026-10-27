@@ -18,6 +18,7 @@ use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TypeDescriptions;
+use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
@@ -37,6 +38,7 @@ final class FieldForm extends Component
     /** The setting of choice fields edited with the choices editor (ChoicesForm). */
     private const string CHOICES_SETTING = 'options';
 
+    use EditsItemSettings;
     use Notifies;
 
     /** The field being edited; null on the New field screen. */
@@ -110,6 +112,7 @@ final class FieldForm extends Component
                 $this->settings[self::CHOICES_SETTING] = ChoicesForm::toForm($config[self::CHOICES_SETTING] ?? []);
             }
             $this->formatters = Value::strings($config['formatters'] ?? []);
+            $this->loadItemSettings($config);
         }
     }
 
@@ -118,6 +121,7 @@ final class FieldForm extends Component
     {
         $this->settings = [];
         $this->formatters = [];
+        $this->resetItemSettings();
     }
 
     public function addFormatter(string $name): void
@@ -147,7 +151,7 @@ final class FieldForm extends Component
         $this->authorizeEditing();
         $this->status = null;
         $isNew = $this->field === null;
-        $settings = $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
+        $settings = $this->itemSettings() + $form->cast($this->definitions(), $this->settings, emptyAsNull: ! $isNew) + $this->commonSettings();
 
         if ($this->hasChoices()) {
             $settings[self::CHOICES_SETTING] = ChoicesForm::fromForm($this->settings[self::CHOICES_SETTING] ?? []);
@@ -204,6 +208,10 @@ final class FieldForm extends Component
             'usedBy' => $this->field === null ? [] : (app(FieldUsage::class)->labels()[$this->field] ?? []),
             'canEdit' => $this->canEdit(),
             'owner' => $this->field === null ? null : app(SchemaOwners::class)->ownerOfField($this->field),
+            'hasItemBuilder' => $this->hasItemBuilder(),
+            'subfieldChoices' => $this->hasItemBuilder() ? $this->subfieldChoices() : [],
+            'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
+            'typeUsage' => $this->typeUsage(),
         ]);
     }
 
@@ -216,9 +224,9 @@ final class FieldForm extends Component
         return lynx()->languages->isMultilingual();
     }
 
-    private function typeCanTranslate(): bool
+    private function typeCanTranslate(?string $type = null): bool
     {
-        return (bool) (lynx()->fields->types()[$this->type]['translatable'] ?? false);
+        return (bool) (lynx()->fields->types()[$type ?? $this->type]['translatable'] ?? false);
     }
 
     private function canEdit(): bool
@@ -235,11 +243,15 @@ final class FieldForm extends Component
     }
 
     /**
+     * The type's settings for the generic form, without the one the builder edits.
+     *
      * @return array<string, array{type: string, description: string, enum: list<string>}>
      */
     private function definitions(): array
     {
-        return app(SchemaForm::class)->definitions(Value::map(lynx()->fields->types()[$this->type]['settings'] ?? []));
+        $definitions = app(SchemaForm::class)->definitions(Value::map(lynx()->fields->types()[$this->type]['settings'] ?? []));
+
+        return array_diff_key($definitions, array_flip(array_filter([$this->itemSetting()])));
     }
 
     /**
