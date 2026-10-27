@@ -24,7 +24,7 @@ final class EditorPanel
 
     /**
      * @param  list<FieldView>  $fields  the page's fields as the editor shows them (FieldViews)
-     * @return array{isPublished: bool, hasDraft: bool, languages: list<array{code: string, name: string, own: int, total: int}>, activity: list<array{when: string, at: string, who: string, summary: string, more: int}>}
+     * @return array{isPublished: bool, hasDraft: bool, languages: list<array{code: string, name: string, own: int, total: int}>, activity: list<array{when: string, at: string, who: string, what: array<string, mixed>}>}
      */
     public function for(Page $page, array $fields, bool $hasDraft): array
     {

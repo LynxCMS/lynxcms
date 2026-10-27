@@ -42,7 +42,7 @@
             <ol class="grid gap-2.5 text-sm">
                 @foreach ($panel['activity'] as $entry)
                     <li class="grid">
-                        <span>{{ $entry['summary'] }}@if ($entry['more'] > 0) <span class="text-muted-foreground">(+{{ $entry['more'] }})</span>@endif</span>
+                        <x-lynx-admin::activity-summary :what="$entry['what']" />
                         <span class="text-muted-foreground text-xs" title="{{ $entry['at'] }}">{{ $entry['who'] }}, {{ $entry['when'] }}</span>
                     </li>
                 @endforeach

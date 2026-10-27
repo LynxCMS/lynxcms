@@ -72,7 +72,7 @@ it('lists the page\'s latest activity, newest first, up to a few entries', funct
     $activity = (new EditorPanel)->for($page, (new FieldViews)->for($page), hasDraft: false)['activity'];
 
     expect($activity)->toHaveCount(EditorPanel::RECENT_ACTIVITY)
-        ->and($activity[0])->toHaveKeys(['when', 'at', 'who', 'summary', 'more']);
+        ->and($activity[0])->toHaveKeys(['when', 'at', 'who', 'what']);
 });
 
 it('puts every label above its input', function (): void {

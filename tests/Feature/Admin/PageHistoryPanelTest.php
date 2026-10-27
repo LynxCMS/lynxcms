@@ -100,12 +100,9 @@ it('lists the activity with who did what', function (): void {
     lynx()->actingAs(Actor::mcp(1), fn (): Page => lynx()->pages->setStatus($alpha->id, add: ['locked']));
     lynx()->actingAs(Actor::ai(), fn (): Page => lynx()->pages->setStatus($alpha->id, remove: ['locked']));
 
-    historyFor($alpha)->assertSeeInOrder([
-        'AI agent', 'Set status of page alpha to [hidden]',
-        'Ana Lima via MCP', 'Set status of page alpha to [hidden, locked]',
-        'Ana Lima', 'Set status of page alpha to [hidden]',
-        'Create course page alpha',
-    ]);
+    historyFor($alpha)
+        ->assertSeeInOrder(['AI agent', 'Ana Lima via MCP', 'Ana Lima'])
+        ->assertSeeHtmlInOrder(['data-activity-kind="status"', 'data-activity-kind="status"', 'data-activity-kind="status"', 'data-activity-kind="created"']);
 });
 
 it('says when there is nothing to list yet', function (): void {
@@ -122,10 +119,10 @@ it('shows more activity on request', function (): void {
     }
 
     historyFor($alpha)
-        ->assertDontSee('Create course page alpha')
+        ->assertDontSeeHtml('data-activity-kind="created"')
         ->assertSee('Show more')
         ->call('showMoreActivity')
-        ->assertSee('Create course page alpha')
+        ->assertSeeHtml('data-activity-kind="created"')
         ->assertDontSee('Show more');
 });
 

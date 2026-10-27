@@ -38,6 +38,10 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page tree has a **Details** view beside the default one: each page's state in every language, its status and its last change, with who made it. Filters above it list the pages with a draft, the scheduled ones and those not yet in each language, with their counts. Each user's choice lasts for the session. Trees built on the page tree, such as the menu builder, keep the simple view.
 
+- The page's activity, in the editor's panel and on its Settings tab, says what happened in plain words: "Changed Title (Português) and Summary", "Unpublished and locked the page", "Moved under Courses", "Published the draft". Actions from modules keep their own summary.
+
+- Saving or discarding a draft now shows in the page's activity. Both were filed under the draft, which no screen lists.
+
 - **Selectors find pages by state.** `status=unpublished` (or `hidden`, `locked`) finds pages with that status, `language!=pt` finds the pages not published in Portuguese yet, `has_draft=1` the pages with a draft waiting, and `has_schedule=1` the pages with a publish or unpublish date set. See [Finding Pages](/basics/selectors#status). `has_draft` and `has_schedule` are now reserved field names.
 
 - The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.

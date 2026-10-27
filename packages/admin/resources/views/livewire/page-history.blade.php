@@ -51,7 +51,7 @@
             <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-2">
                 <time class="w-28 shrink-0 text-muted-foreground" title="{{ $entry['at'] }}">{{ $entry['when'] }}</time>
                 <span class="font-medium">{{ $entry['who'] }}</span>
-                <span class="min-w-0 flex-1">{{ $entry['summary'] }}@if ($entry['more'] > 0) <span class="text-muted-foreground">(and {{ $entry['more'] }} more {{ Str::plural('change', $entry['more']) }})</span>@endif</span>
+                <span class="min-w-0 flex-1"><x-lynx-admin::activity-summary :what="$entry['what']" /></span>
             </li>
             @if ($loop->last) </ol> @endif
         @empty
