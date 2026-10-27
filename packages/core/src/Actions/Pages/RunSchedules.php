@@ -42,6 +42,12 @@ final class RunSchedules extends Action
         return false;
     }
 
+    /** One run can publish many pages; each page's history shows its own part. */
+    public static function logsActivityPerPage(): bool
+    {
+        return true;
+    }
+
     public static function rules(): array
     {
         return [];

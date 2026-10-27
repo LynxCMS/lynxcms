@@ -13,6 +13,7 @@ use LynxCms\Core\Actions\Pages\SchedulePage;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Runner\ActionResult;
+use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 
@@ -144,4 +145,27 @@ it('records which language each scheduled change ran in', function (): void {
     $changes = lynx()->run(RunSchedules::class)->changes->toArray();
 
     expect(array_column($changes, 'data'))->toContain(['scheduled' => 'publish', 'language' => 'pt']);
+});
+
+it('files each page a run changed under that page in the activity log', function (): void {
+    $beta = createCourses('beta')['beta'];
+    lynx()->pages->schedule(alpha(), 'pt', publishAt: now()->addHour());
+    lynx()->pages->schedule($beta, 'default', unpublishAt: now()->addHour());
+    $this->travel(2)->hours();
+
+    lynx()->run(RunSchedules::class);
+
+    $ran = fn (Page $page): array => array_values(array_filter(lynx()->pages->activity($page), fn (ActivityEvent $event): bool => $event->action === 'pages.run_schedules'));
+
+    expect($ran(alpha()))->toHaveCount(1)
+        ->and($ran($beta))->toHaveCount(1)
+        ->and(array_column($ran($beta)[0]->changes, 'id'))->each->toBe($beta->id);
+});
+
+it('logs nothing when no entry is due', function (): void {
+    $before = ActivityEvent::query()->count();
+
+    lynx()->run(RunSchedules::class);
+
+    expect(ActivityEvent::query()->count())->toBe($before);
 });

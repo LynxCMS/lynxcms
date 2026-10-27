@@ -981,3 +981,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 `has_draft` and `has_schedule` join the reserved field names. `status` and `language` already were. The terms can't be combined with fields (`status|title=x`).
 
 **Consequences:** Each term is one `EXISTS` or `IN` clause, on SQLite and PostgreSQL alike. A site with a field named `has_draft` or `has_schedule` must rename it; no released site is known to have one. A visitor's text pasted into a selector can now also add `status=unpublished`, which the docs warn about with `include=`.
+
+## ADR-0091: An action can log one activity event per page it changed
+
+**Status:** Accepted. Amends ADR-0036's consequences.
+
+**Context:** The activity recorder writes one event per outer action, filed under its first change. A page's history lists the events filed under it. `pages.run_schedules` applies every due entry in one run, so a minute that published three pages filed all of it under the first, and the other two pages' histories never showed it. The scheduler also runs every minute, and each run with nothing due wrote an empty event.
+
+**Decision:** `Action::logsActivityPerPage()`, false by default. When an action returns true, the recorder splits its changes at each change to a different page and writes one event per part, each under the action's name and filed under its page. Changes to other subjects (paths, files) stay with the page before them, and a run with no changes writes nothing. `pages.run_schedules` returns true. Each entry it runs also records whether it published or unpublished and in which language, after the entry succeeds, since the nested `pages.status` or `pages.save` can say neither.
+
+**Consequences:** Each page's history shows its scheduled changes, and the log no longer grows by an empty row a minute. Dry runs and the action's result keep the whole change set. Other actions are unchanged: a move or a trash still logs once, under the page it moved. An app's batch action (an import, a sync) can opt in the same way.
