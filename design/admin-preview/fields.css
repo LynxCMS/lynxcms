@@ -1,5 +1,5 @@
 /* The field screens: a kind picker, label-first naming, settings with their own controls, and a
-   three-pane builder for blocks and repeaters. Built on styles.css and screens.css. */
+   one-column builder for blocks and repeaters, with a Preview tab. Built on styles.css and screens.css. */
 .label { font-weight: 550; }
 .seg.fit { justify-self: start; }
 
@@ -41,23 +41,8 @@
 .mock-input.tall { height: 64px; }
 .snippet { display: block; padding: 10px 12px; border-radius: 8px; background: var(--wash); border: 1px solid var(--border); font: 13px var(--mono); overflow-x: auto; }
 
-/* Builder: block types | the chosen type's fields | how it looks to editors */
-.builder { display: grid; grid-template-columns: 220px minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
-.builder.single { grid-template-columns: minmax(0, 1fr) 300px; }
-.builder.single .types, .builder.single #type-head { display: none; }
-.types { display: grid; gap: 8px; position: sticky; top: 16px; }
-.types ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.type { width: 100%; display: grid; grid-template-columns: 16px 28px minmax(0, 1fr); gap: 2px 8px; align-items: center; padding: 8px 10px 8px 4px; border: 0; border-radius: 8px; background: none; text-align: left; position: relative; }
-.type:hover { background: var(--wash); }
-.type .grip { color: var(--muted-fg); opacity: 0.6; grid-row: span 2; width: 14px; }
-.type svg.ic { grid-row: span 2; width: 28px; height: 28px; padding: 6px; border-radius: 7px; background: var(--wash); color: var(--muted-fg); }
-.type b { font-weight: 550; } .type small { color: var(--muted-fg); font-size: 12px; }
-.type[aria-current="true"] { background: var(--primary-soft); }
-.type[aria-current="true"] svg.ic { background: var(--primary); color: var(--primary-fg); }
-.type[aria-current="true"]::after { content: ""; position: absolute; right: 10px; top: 50%; margin-top: -6px; width: 7px; height: 12px; background: var(--primary); clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%); }
 .add-dashed { display: flex; align-items: center; justify-content: center; gap: 6px; height: 36px; border: 1px dashed var(--border-strong); border-radius: 8px; background: none; color: var(--muted-fg); font-size: 13px; }
 .add-dashed:hover { color: var(--fg); border-color: var(--primary); }
-.type-edit { display: grid; gap: 18px; min-width: 0; }
 .type-head { display: grid; gap: 8px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
 .hint .lock, .hint svg.i { width: 13px; height: 13px; vertical-align: -2px; margin-right: 4px; }
 
@@ -95,14 +80,7 @@
 .danger > div { flex: 1 1 280px; } .danger p { margin-top: 2px; }
 .danger-btn { color: oklch(0.55 0.2 27); }
 
-@media (max-width: 1180px) {
-    .builder { grid-template-columns: 200px minmax(0, 1fr); }
-    .builder > .rail { grid-column: 1 / -1; position: static; }
-    .builder.single { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 760px) {
-    .builder { grid-template-columns: minmax(0, 1fr); }
-    .types { position: static; }
     .sub { grid-template-columns: 16px minmax(0, 1fr) auto 28px; }
     .sub svg.ic, .sub .req-toggle { display: none; }
     .field.inline { grid-template-columns: minmax(0, 1fr); }
@@ -111,8 +89,6 @@
 .width:focus-within { outline: 2px solid color-mix(in oklab, var(--primary) 45%, transparent); }
 .limits[hidden], .builder[hidden] { display: none; }
 .choice-row, .toggles label, .field .choice-row, .field .toggles label { font-weight: 400; }
-.builder { grid-template-columns: 200px minmax(0, 1fr) 264px; }
-.builder.single { grid-template-columns: minmax(0, 1fr) 264px; }
 .width { padding: 0 4px 0 8px; } .width i { width: 18px; }
 .sub .who b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Once a kind is chosen the picker folds to it, with a way back to the list. */
@@ -122,3 +98,32 @@
 .change-kind { justify-self: start; }
 .kinds:not(.chosen) .change-kind { display: none; }
 .kinds.chosen { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+
+/* Builder: one column. Block types are an accordion; the open one shows its fields in place. */
+.builder { display: grid; gap: 10px; max-width: 900px; }
+.accordion { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.acc { border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+.acc.open { border-color: var(--border-strong); }
+.acc-head { width: 100%; display: grid; grid-template-columns: 16px 28px minmax(0, 1fr) 16px; gap: 10px; align-items: center; padding: 10px 14px 10px 8px; border: 0; background: none; text-align: left; border-radius: 10px; }
+.acc-head:hover { background: color-mix(in oklab, var(--wash) 60%, transparent); }
+.acc-head .grip { color: var(--muted-fg); opacity: 0.6; width: 14px; }
+.acc-head svg.ic { width: 28px; height: 28px; padding: 6px; border-radius: 7px; background: var(--wash); color: var(--muted-fg); }
+.acc-head .who { display: grid; line-height: 1.3; } .acc-head b { font-weight: 550; } .acc-head small { color: var(--muted-fg); font-size: 12px; }
+.acc-head .chev { color: var(--muted-fg); transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.acc-head[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.acc-head[aria-expanded="true"] svg.ic { background: var(--primary); color: var(--primary-fg); }
+.acc-body { display: grid; gap: 18px; padding: 4px 16px 18px; }
+.acc-head + .acc-body { border-top: 1px solid var(--border); padding-top: 16px; }
+.mocks { display: grid; gap: 8px; max-width: 640px; }
+.block-mock .bar .chev { margin-left: auto; width: 14px; height: 14px; color: var(--muted-fg); }
+.block-mock .bar .chev.down { transform: rotate(90deg); }
+.add-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 6px; }
+.add-row .btn { height: 32px; font-size: 13px; }
+.add-dashed[hidden] { display: none; }
+/* No box inside a box: inside an open block type, the field rows run edge to edge between rules. */
+.acc-body .subfields { border: 0; border-radius: 0; margin-inline: -16px; border-block: 1px solid var(--border); }
+.acc-body .sub { padding-inline: 16px; }
+.acc.plain { border: 0; background: none; }
+.acc.plain .acc-body { padding: 0; }
+.acc.plain .subfields { margin-inline: 0; border: 1px solid var(--border); border-radius: 10px; }
+.acc.plain .sub { padding-inline: 6px 10px; }

@@ -118,22 +118,14 @@
         <div class="head"><div><h2 id="items-title">Page blocks</h2>
             <div class="pagemeta"><span class="mono" id="items-name">page_blocks</span><span id="items-kind">Blocks</span><span>Used by <a href="#matrix">Home</a> and <a href="#matrix">Landing page</a></span></div></div>
           <div class="actions"><button class="btn primary">Save</button></div></div>
-        <nav class="tabs" aria-label="Field sections"><a href="#" data-tab="builder" aria-current="page" id="items-tab">Block types <span class="badge">4</span></a><a href="#" data-tab="field">Field</a><a href="#" data-tab="limits">Limits and display</a></nav>
+        <nav class="tabs" aria-label="Field sections"><a href="#" data-tab="builder" aria-current="page" id="items-tab">Block types <span class="badge">4</span></a><a href="#" data-tab="preview">Preview</a><a href="#" data-tab="field">Field</a><a href="#" data-tab="limits">Limits and display</a></nav>
         <div class="builder" id="builder">
-          <nav class="types" aria-label="Block types" id="types">
-            <ol id="type-list"></ol>
-            <button class="add-dashed"><svg class="i"><use href="#i-plus"/></svg>Add block type</button>
-          </nav>
-          <div class="type-edit">
-            <div class="type-head" id="type-head">
-              <div class="field"><div class="field-top"><label for="t-label">Name editors see</label><span class="langs"><button aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button aria-pressed="false"><svg class="facet own"><use href="#i-facet"/></svg>PT</button></span></div><input class="input" id="t-label" value="Text and image"></div>
-              <p class="hint"><svg class="i lock"><use href="#i-lock"/></svg><span class="mono">text_image</span> renders with <span class="mono">fields/page_blocks/text_image.blade.php</span></p>
-            </div>
-            <ol class="subfields" id="subfields" aria-label="Fields"></ol>
-            <div class="add-field"><div class="find"><svg class="i"><use href="#i-search"/></svg><input placeholder="Add an existing field" aria-label="Add an existing field"></div><span class="hint">or</span><button class="btn"><svg class="i"><use href="#i-plus"/></svg>Create a field</button></div>
-            <div class="field" id="header-field"><label for="t-header">Header of a closed block</label><input class="input mono-input" id="t-header" value="{heading}"><p class="hint" data-noun="Field names in braces show their values, so editors find a block without opening it.">Field names in braces show their values, so editors find a block without opening it.</p></div>
-          </div>
-          <aside class="rail" aria-label="Preview"><div class="panel"><h3>In the page editor</h3><div class="block-mock" id="block-mock"></div><p class="hint">Change a width to see it here.</p></div></aside>
+          <ol class="accordion" id="type-list" aria-label="Block types"></ol>
+          <button class="add-dashed" id="add-type"><svg class="i"><use href="#i-plus"/></svg>Add block type</button>
+        </div>
+        <div class="limits" id="previewtab" hidden>
+          <p class="hint" data-noun="Each block type as editors see it in the page editor, closed blocks first, then the one they're filling in.">Each block type as editors see it in the page editor.</p>
+          <div class="mocks" id="mocks"></div>
         </div>
         <div class="limits" id="fieldtab" hidden>
           <div class="group"><h3>Name</h3>
@@ -167,7 +159,7 @@
       <li><strong>Label first.</strong> The name templates use is made from the label, shown as <span class="mono">$page-&gt;name</span>, and locks once the field exists.</li>
       <li><strong>Settings with real controls.</strong> Each kind's settings get labels and inputs of their own: the add button's text in every language, "At least / at most" for limits, a choice of how blocks start, instead of a form built from the agent schema.</li>
       <li><strong>Formatters as switches.</strong> Smart quotes, new-tab links and heading anchors are things to turn on, not a wall of "Add smartypants" buttons.</li>
-      <li><strong>Blocks without nested cards.</strong> Block types sit in a list on the left; the chosen one's fields in the middle; the page editor's view of it on the right, updating as widths change. Limits and display move to their own tab, so the page no longer runs 2,000 pixels.</li>
+      <li><strong>Blocks in one column, without nested cards.</strong> Block types are an accordion: the open one shows its name, fields and header in place. How they look to editors moves to its own Preview tab, and limits and display to theirs, so the page no longer runs 2,000 pixels.</li>
       <li><strong>Repeaters use the same builder,</strong> with one item instead of a list of block types.</li>
       <li><strong>Save at the top,</strong> as in the page editor, and "Used by" under the title, where it warns before an edit instead of after.</li>
     </ul>

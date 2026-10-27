@@ -38,34 +38,43 @@ function renderKinds() {
 
 function block() { return isRepeater ? CREDITS : BLOCKS[current]; }
 
-function renderTypes() {
-    $('#type-list').innerHTML = Object.entries(BLOCKS).map(([key, type]) => `<li><button type="button" class="type" data-type="${key}" aria-current="${key === current}">${icon('grip', 'i grip')}${icon(type.icon, 'i ic')}<b>${type.label}</b><small>${type.fields.length} fields · on ${type.pages} pages</small></button></li>`).join('');
-    document.querySelectorAll('.type').forEach((button) => button.addEventListener('click', () => { current = button.dataset.type; renderBuilder(); }));
+function typeBody(type, key) {
+    const noun = isRepeater ? 'item' : 'block';
+    return `<div class="acc-body">${isRepeater ? '' : `<div class="type-head"><div class="field"><div class="field-top"><label for="t-label">Name editors see</label><span class="langs"><button aria-pressed="true">${icon('facet', 'facet own')}EN</button><button aria-pressed="false">${icon('facet', 'facet own')}PT</button></span></div><input class="input" id="t-label" value="${type.label}"></div>
+        <p class="hint">${icon('lock', 'i lock')}<span class="mono">${key}</span> renders with <span class="mono">fields/page_blocks/${key}.blade.php</span></p></div>`}
+        <ol class="subfields" aria-label="Fields">${type.fields.map(([label, name, kind, ic, width, required], index) => `<li class="sub">${icon('grip', 'i grip')}${icon(ic, 'i ic')}
+            <span class="who"><b>${label}${required ? '<span class="req" aria-label="required">*</span>' : ''}</b><small><span class="mono">${name}</span> · ${kind}</small></span>
+            <label class="req-toggle"><input type="checkbox" ${required ? 'checked' : ''} data-required="${index}">Required</label>
+            <label class="width" title="Width in the page editor"><i style="--w:${width}%"></i><select data-width="${index}" aria-label="Width of ${label}">${WIDTHS.map(([value, word]) => `<option value="${value}" ${value === width ? 'selected' : ''}>${word}</option>`).join('')}</select></label>
+            <button type="button" class="more" aria-label="Label, help and remove for ${label}">${icon('dots')}</button></li>`).join('')}</ol>
+        <div class="add-field"><div class="find">${icon('search')}<input placeholder="Add an existing field" aria-label="Add an existing field"></div><span class="hint">or</span><button class="btn">${icon('plus')}Create a field</button></div>
+        <div class="field"><label for="t-header">Header of a closed ${noun}</label><input class="input mono-input" id="t-header" value="${isRepeater ? '{partner} · {role}' : '{heading}'}"><p class="hint">Field names in braces show their values, so editors find ${isRepeater ? 'an item' : 'a block'} without opening it.</p></div></div>`;
 }
 
 function renderBuilder() {
-    if (!isRepeater) renderTypes();
-    $('#t-label').value = block().label;
-    $('#subfields').innerHTML = block().fields.map(([label, name, kind, ic, width, required], index) => `<li class="sub">${icon('grip', 'i grip')}${icon(ic, 'i ic')}
-        <span class="who"><b>${label}${required ? '<span class="req" aria-label="required">*</span>' : ''}</b><small><span class="mono">${name}</span> · ${kind}</small></span>
-        <label class="req-toggle"><input type="checkbox" ${required ? 'checked' : ''} data-required="${index}">Required</label>
-        <label class="width" title="Width in the page editor"><i style="--w:${width}%"></i><select data-width="${index}" aria-label="Width of ${label}">${WIDTHS.map(([value, word]) => `<option value="${value}" ${value === width ? 'selected' : ''}>${word}</option>`).join('')}</select></label>
-        <button type="button" class="more" aria-label="Label, help and remove for ${label}">${icon('dots')}</button></li>`).join('');
-    document.querySelectorAll('[data-width]').forEach((select) => select.addEventListener('change', () => {
-        block().fields[select.dataset.width][4] = Number(select.value);
-        renderBuilder();
-    }));
-    document.querySelectorAll('[data-required]').forEach((box) => box.addEventListener('change', () => {
-        block().fields[box.dataset.required][5] = box.checked;
-        renderBuilder();
-    }));
-    renderMock();
+    $('#add-type').hidden = isRepeater;
+    $('#type-list').innerHTML = isRepeater ? `<li class="acc open plain">${typeBody(CREDITS, 'credit')}</li>` : Object.entries(BLOCKS).map(([key, type]) => `<li class="acc${key === current ? ' open' : ''}">
+        <button type="button" class="acc-head" data-type="${key}" aria-expanded="${key === current}">${icon('grip', 'i grip')}${icon(type.icon, 'i ic')}<span class="who"><b>${type.label}</b><small>${type.fields.length} fields · on ${type.pages} pages</small></span>${icon('chev', 'i chev')}</button>
+        ${key === current ? typeBody(type, key) : ''}</li>`).join('');
+    document.querySelectorAll('.acc-head').forEach((button) => button.addEventListener('click', () => { current = current === button.dataset.type ? null : button.dataset.type; renderBuilder(); }));
+    document.querySelectorAll('[data-width]').forEach((select) => select.addEventListener('change', () => { block().fields[select.dataset.width][4] = Number(select.value); renderBuilder(); }));
+    document.querySelectorAll('[data-required]').forEach((box) => box.addEventListener('change', () => { block().fields[box.dataset.required][5] = box.checked; renderBuilder(); }));
+    renderMocks();
 }
 
-function renderMock() {
-    const header = isRepeater ? 'Studio Lumen · Lighting' : `${block().label}`;
-    $('#block-mock').innerHTML = `<div class="bar">${icon('grip', 'i grip')}${header}</div><div class="grid">${block().fields.map(([label, , , , width, required, tall]) =>
-        `<span class="cell${tall ? ' tall' : ''}" style="--w:${width}%"><span>${label}${required ? ' *' : ''}</span><i></i></span>`).join('')}</div>`;
+function mock(type, header, isOpen) {
+    return `<div class="block-mock"><div class="bar">${icon('grip', 'i grip')}<span>${header}</span>${icon('chev', `i chev${isOpen ? ' down' : ''}`)}</div>${isOpen ? `<div class="grid">${type.fields.map(([label, , , , width, required, tall]) =>
+        `<span class="cell${tall ? ' tall' : ''}" style="--w:${width}%"><span>${label}${required ? ' *' : ''}</span><i></i></span>`).join('')}</div>` : ''}</div>`;
+}
+
+function renderMocks() {
+    if (isRepeater) {
+        $('#mocks').innerHTML = mock(CREDITS, 'Studio Lumen · Lighting', false) + mock(CREDITS, 'New credit', true) + `<div class="add-row"><button class="btn">${icon('plus')}Add a credit</button></div>`;
+        return;
+    }
+    const samples = { text_image: 'Why small budgets fail', quote: 'Quote', gallery: 'Gallery', call: 'Book your place' };
+    $('#mocks').innerHTML = Object.entries(BLOCKS).map(([key, type]) => mock(type, samples[key], key === (current ?? 'text_image'))).join('')
+        + `<div class="add-row"><span class="hint">Below the blocks:</span>${Object.values(BLOCKS).map((type) => `<button class="btn">${icon('plus')}${type.label}</button>`).join('')}</div>`;
 }
 
 const SCREENS = {
@@ -80,13 +89,10 @@ function route() {
     $('#screen-new').hidden = screen !== 'new';
     $('#screen-items').hidden = screen === 'new';
     isRepeater = screen === 'repeater';
-    $('#builder').classList.toggle('single', isRepeater);
     $('#items-title').textContent = isRepeater ? 'Credits' : 'Page blocks';
     $('#items-name').textContent = isRepeater ? 'credits' : 'page_blocks';
     $('#items-kind').textContent = isRepeater ? 'Repeater' : 'Blocks';
     $('#items-tab').innerHTML = isRepeater ? 'Fields of each item <span class="badge">4</span>' : 'Block types <span class="badge">4</span>';
-    $('#header-field label').textContent = isRepeater ? 'Header of a closed item' : 'Header of a closed block';
-    $('#t-header').value = isRepeater ? '{partner} · {role}' : '{heading}';
     $('#limits-noun').textContent = 'Pages have';
     document.querySelectorAll('#limits .unit').forEach((unit) => { unit.textContent = isRepeater ? 'items' : 'blocks'; });
     $('#l-add').placeholder = isRepeater ? 'Add a credit' : 'Add a block';
@@ -102,6 +108,7 @@ function route() {
 function showTab(tab) {
     $('#builder').hidden = tab !== 'builder';
     $('#fieldtab').hidden = tab !== 'field';
+    $('#previewtab').hidden = tab !== 'preview';
     $('#limits').hidden = tab !== 'limits';
     document.querySelectorAll('[data-tab]').forEach((link) => link.setAttribute('aria-current', link.dataset.tab === tab ? 'page' : 'false'));
 }
