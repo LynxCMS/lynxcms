@@ -38,7 +38,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page tree has a **Details** view beside the default one: each page's state in every language, its status and its last change, with who made it. Filters above it list the pages with a draft, the scheduled ones and those not yet in each language, with their counts. Each user's choice lasts for the session. Trees built on the page tree, such as the menu builder, keep the simple view.
 
-- The page's activity, in the editor's panel and on its Settings tab, says what happened in plain words: "Changed Title (Português) and Summary", "Unpublished and locked the page", "Moved under Courses", "Published the draft". Module actions that save a page, such as a menu item or a form, and the scheduler's changes read the same way. Other module actions keep their own summary.
+- The page's activity, in the editor's panel and on its Settings tab, says what happened in plain words: "Changed Title (Português) and Summary", "Unpublished and locked the page", "Moved under Courses", "Published the draft". Module actions that save a page, such as a menu item or a form, and the scheduler's changes read the same way: "Published in Português on schedule". The scheduler now records, for each change it runs, whether it published or unpublished and in which language. Other module actions keep their own summary.
 
 - Saving or discarding a draft now shows in the page's activity. Both were filed under the draft, which no screen lists.
 

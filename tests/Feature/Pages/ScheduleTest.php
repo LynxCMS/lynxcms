@@ -136,3 +136,12 @@ it('stores nothing when one language refuses an all-languages schedule', functio
         ->toThrow(ValidationException::class, 'after')
         ->and(array_map(fn (array $entry): string => $entry['language'].' '.$entry['action'], lynx()->pages->schedules(alpha())))->toBe(['pt publish']);
 });
+
+it('records which language each scheduled change ran in', function (): void {
+    lynx()->pages->schedule(alpha(), 'pt', publishAt: now()->addHour());
+    $this->travel(2)->hours();
+
+    $changes = lynx()->run(RunSchedules::class)->changes->toArray();
+
+    expect(array_column($changes, 'data'))->toContain(['scheduled' => 'publish', 'language' => 'pt']);
+});

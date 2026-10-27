@@ -57,8 +57,33 @@ final class ActivityDescription
             'pages.status' => [...$parts, 'kind' => 'status', 'statuses' => $this->statuses($data)],
             'pages.move' => [...$parts, 'kind' => 'moved', 'target' => $this->title(Value::int($data['to'] ?? 0))],
             'pages.schedule' => [...$parts, 'kind' => 'scheduled', 'schedule' => $this->schedule($data), 'languages' => $this->languages([Value::string($data['language'] ?? '')])],
+            'pages.run_schedules' => $this->ranSchedule($event, $parts) ?? $this->byShape($event, $change, $data, $parts),
             default => isset(self::KINDS[$event->action]) ? $parts : $this->byShape($event, $change, $data, $parts),
         };
+    }
+
+    /**
+     * A scheduled publish or unpublish that ran, from the change the scheduler records after it.
+     * The default language is not named: there, the whole page went live or offline. Events from
+     * before the scheduler recorded it return null.
+     *
+     * @param  Parts  $parts
+     * @return Parts|null
+     */
+    private function ranSchedule(ActivityEvent $event, array $parts): ?array
+    {
+        foreach ($event->changes as $change) {
+            $data = is_array($change['data'] ?? null) ? $change['data'] : [];
+
+            if (isset($data['scheduled'])) {
+                $code = Value::string($data['language'] ?? '');
+                $isDefault = $code === Value::string(lynx()->languages->default()->code);
+
+                return [...$parts, 'kind' => 'schedule_ran', 'schedule' => [['action' => Value::string($data['scheduled']), 'at' => null]], 'languages' => $isDefault ? [] : $this->languages([$code])];
+            }
+        }
+
+        return null;
     }
 
     /**

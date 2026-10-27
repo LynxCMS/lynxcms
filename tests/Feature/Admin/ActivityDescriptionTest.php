@@ -100,6 +100,17 @@ it('words a scheduled change by what it did to the page', function (): void {
     expect((new ActivityDescription)->of($event))->toMatchArray(['kind' => 'status', 'statuses' => ['published']]);
 });
 
+it('says a scheduled change ran, and in which language', function (): void {
+    $ran = fn (string $code): ActivityEvent => new ActivityEvent(['action' => 'pages.run_schedules', 'changes' => [
+        ['type' => 'updated', 'subject' => 'page', 'id' => 9, 'summary' => 'Update page alpha', 'data' => ['fields' => []]],
+        ['type' => 'updated', 'subject' => 'page', 'id' => 9, 'summary' => 'Run the scheduled publish', 'data' => ['scheduled' => 'publish', 'language' => $code]],
+    ]]);
+
+    expect((new ActivityDescription)->of($ran('pt')))->toMatchArray(['kind' => 'schedule_ran', 'schedule' => [['action' => 'publish', 'at' => null]]])
+        ->and(array_column((new ActivityDescription)->of($ran('pt'))['languages'], 'code'))->toBe(['pt'])
+        ->and((new ActivityDescription)->of($ran('default'))['languages'])->toBe([]);
+});
+
 it('keeps the summary of actions it does not know', function (): void {
     $event = new ActivityEvent(['action' => 'menus.save', 'changes' => [['summary' => 'Save menu item 4'], ['summary' => 'Path']]]);
 

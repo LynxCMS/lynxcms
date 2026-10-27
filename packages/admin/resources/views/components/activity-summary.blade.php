@@ -26,6 +26,7 @@
     @case('template_switched') Changed the template @break
     @case('lock_released') Ended someone's editing session @break
     @case('translated') Translated{{ $what['languages'] === [] ? ' the page' : ' into '.$join(array_column($what['languages'], 'name')) }} @break
+    @case('schedule_ran') {{ ($what['schedule'][0]['action'] ?? '') === 'unpublish' ? 'Unpublished' : 'Published' }}{{ $what['languages'] === [] ? ' the page' : ' in '.$join(array_column($what['languages'], 'name')) }} on schedule @break
     @case('scheduled') Scheduled {{ $join($schedule) }}{{ $languages($what['languages']) }} @break
     @default {{ $what['summary'] }}@if ($what['more'] > 0) <span class="text-muted-foreground">(and {{ $what['more'] }} more {{ Str::plural('change', $what['more']) }})</span>@endif
 @endswitch</span>
