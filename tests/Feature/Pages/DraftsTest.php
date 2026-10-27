@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Pages\PublishDraft;
 use LynxCms\Core\Actions\Pages\SaveDraft;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 
 beforeEach(function (): void {
@@ -130,7 +131,7 @@ it('files saving and discarding a draft under the live page in the activity log'
     draftTitle('Alpha in draft');
     lynx()->pages->discardDraft(live());
 
-    $actions = array_map(fn ($event): string => $event->action, lynx()->pages->activity(live()));
+    $actions = array_map(fn (ActivityEvent $event): string => $event->action, lynx()->pages->activity(live()));
 
     expect($actions)->toContain('pages.save_draft')->toContain('pages.discard_draft');
 });

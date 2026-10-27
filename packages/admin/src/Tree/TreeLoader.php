@@ -91,7 +91,7 @@ final class TreeLoader
 
         foreach (array_values($found['pages']->map(fn (Page $page): Page => $page)) as $index => $match) {
             $node = $this->node($match, $found['start'] + $index, 0, hasDraft: isset($drafts[(int) $match->id]), location: $this->location($match));
-            $branches[] = new TreeBranch($node, null);
+            $branches[] = new TreeBranch($node);
         }
 
         return new TreeLevel(0, $branches, $found['pages']->total(), $found['page'], $this->perPage, isComplete: false);

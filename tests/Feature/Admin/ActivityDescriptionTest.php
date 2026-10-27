@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Auth\GenericUser;
+use Livewire\Livewire;
 use LynxCms\Admin\Editor\ActivityDescription;
+use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 
@@ -83,7 +86,7 @@ it('keeps the summary of actions it does not know', function (): void {
 });
 
 it('words every kind in the editor\'s panel', function (): void {
-    Livewire\Livewire::actingAs(new Illuminate\Auth\GenericUser(['id' => 1]))
-        ->test(LynxCms\Admin\Livewire\PageEditor::class, ['pageId' => $this->alpha->id])
+    Livewire::actingAs(new GenericUser(['id' => 1]))
+        ->test(PageEditor::class, ['pageId' => $this->alpha->id])
         ->assertSeeHtml('data-activity-kind="created"');
 });

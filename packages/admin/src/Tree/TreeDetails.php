@@ -8,6 +8,7 @@ use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\Templates\TemplateField;
 
 /**
  * What the page tree's Details view shows beside a title: the page's state in each language, its
@@ -55,7 +56,7 @@ final readonly class TreeDetails
             return [];
         }
 
-        $hasTitle = $page->templateField('title') !== null;
+        $hasTitle = $page->templateField('title') instanceof TemplateField;
         $languages = [];
 
         foreach (lynx()->languages->all() as $language) {
