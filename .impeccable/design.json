@@ -1,0 +1,593 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T18:17:52+00:00",
+  "title": "Design System: Lynx Admin",
+  "extensions": {
+    "colorMeta": {
+      "lynx-teal": {
+        "role": "primary",
+        "displayName": "Lynx Teal",
+        "canonical": "oklch(0.52 0.105 223.128)",
+        "tonalRamp": [
+          "oklch(0.15 0.105 223.128)",
+          "oklch(0.27 0.105 223.128)",
+          "oklch(0.39 0.105 223.128)",
+          "oklch(0.51 0.105 223.128)",
+          "oklch(0.63 0.105 223.128)",
+          "oklch(0.75 0.105 223.128)",
+          "oklch(0.86 0.105 223.128)",
+          "oklch(0.95 0.105 223.128)"
+        ]
+      },
+      "lynx-teal-foreground": {
+        "role": "primary",
+        "displayName": "Lynx Teal Foreground",
+        "canonical": "oklch(0.984 0.019 200.873)",
+        "tonalRamp": [
+          "oklch(0.15 0.019 200.873)",
+          "oklch(0.27 0.019 200.873)",
+          "oklch(0.39 0.019 200.873)",
+          "oklch(0.51 0.019 200.873)",
+          "oklch(0.63 0.019 200.873)",
+          "oklch(0.75 0.019 200.873)",
+          "oklch(0.86 0.019 200.873)",
+          "oklch(0.95 0.019 200.873)"
+        ]
+      },
+      "lynx-teal-night": {
+        "role": "primary",
+        "displayName": "Lynx Teal Night",
+        "canonical": "oklch(0.45 0.085 224.283)",
+        "tonalRamp": [
+          "oklch(0.15 0.085 224.283)",
+          "oklch(0.27 0.085 224.283)",
+          "oklch(0.39 0.085 224.283)",
+          "oklch(0.51 0.085 224.283)",
+          "oklch(0.63 0.085 224.283)",
+          "oklch(0.75 0.085 224.283)",
+          "oklch(0.86 0.085 224.283)",
+          "oklch(0.95 0.085 224.283)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.27 0 0)",
+          "oklch(0.39 0 0)",
+          "oklch(0.51 0 0)",
+          "oklch(0.63 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.86 0 0)",
+          "oklch(0.95 0 0)"
+        ]
+      },
+      "stone-ink": {
+        "role": "neutral",
+        "displayName": "Stone Ink",
+        "canonical": "oklch(0.147 0.004 49.25)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 49.25)",
+          "oklch(0.27 0.004 49.25)",
+          "oklch(0.39 0.004 49.25)",
+          "oklch(0.51 0.004 49.25)",
+          "oklch(0.63 0.004 49.25)",
+          "oklch(0.75 0.004 49.25)",
+          "oklch(0.86 0.004 49.25)",
+          "oklch(0.95 0.004 49.25)"
+        ]
+      },
+      "stone-wash": {
+        "role": "neutral",
+        "displayName": "Stone Wash",
+        "canonical": "oklch(0.97 0.001 106.424)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 106.424)",
+          "oklch(0.27 0.001 106.424)",
+          "oklch(0.39 0.001 106.424)",
+          "oklch(0.51 0.001 106.424)",
+          "oklch(0.63 0.001 106.424)",
+          "oklch(0.75 0.001 106.424)",
+          "oklch(0.86 0.001 106.424)",
+          "oklch(0.95 0.001 106.424)"
+        ]
+      },
+      "stone-graphite": {
+        "role": "neutral",
+        "displayName": "Stone Graphite",
+        "canonical": "oklch(0.216 0.006 56.043)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 56.043)",
+          "oklch(0.27 0.006 56.043)",
+          "oklch(0.39 0.006 56.043)",
+          "oklch(0.51 0.006 56.043)",
+          "oklch(0.63 0.006 56.043)",
+          "oklch(0.75 0.006 56.043)",
+          "oklch(0.86 0.006 56.043)",
+          "oklch(0.95 0.006 56.043)"
+        ]
+      },
+      "stone-muted-ink": {
+        "role": "neutral",
+        "displayName": "Stone Muted Ink",
+        "canonical": "oklch(0.49 0.013 58.071)",
+        "tonalRamp": [
+          "oklch(0.15 0.013 58.071)",
+          "oklch(0.27 0.013 58.071)",
+          "oklch(0.39 0.013 58.071)",
+          "oklch(0.51 0.013 58.071)",
+          "oklch(0.63 0.013 58.071)",
+          "oklch(0.75 0.013 58.071)",
+          "oklch(0.86 0.013 58.071)",
+          "oklch(0.95 0.013 58.071)"
+        ]
+      },
+      "stone-rule": {
+        "role": "neutral",
+        "displayName": "Stone Rule",
+        "canonical": "oklch(0.923 0.003 48.717)",
+        "tonalRamp": [
+          "oklch(0.15 0.003 48.717)",
+          "oklch(0.27 0.003 48.717)",
+          "oklch(0.39 0.003 48.717)",
+          "oklch(0.51 0.003 48.717)",
+          "oklch(0.63 0.003 48.717)",
+          "oklch(0.75 0.003 48.717)",
+          "oklch(0.86 0.003 48.717)",
+          "oklch(0.95 0.003 48.717)"
+        ]
+      },
+      "stone-ring": {
+        "role": "neutral",
+        "displayName": "Stone Ring",
+        "canonical": "oklch(0.709 0.01 56.259)",
+        "tonalRamp": [
+          "oklch(0.15 0.01 56.259)",
+          "oklch(0.27 0.01 56.259)",
+          "oklch(0.39 0.01 56.259)",
+          "oklch(0.51 0.01 56.259)",
+          "oklch(0.63 0.01 56.259)",
+          "oklch(0.75 0.01 56.259)",
+          "oklch(0.86 0.01 56.259)",
+          "oklch(0.95 0.01 56.259)"
+        ]
+      },
+      "sidebar-paper": {
+        "role": "neutral",
+        "displayName": "Sidebar Paper",
+        "canonical": "oklch(0.985 0.001 106.423)",
+        "tonalRamp": [
+          "oklch(0.15 0.001 106.423)",
+          "oklch(0.27 0.001 106.423)",
+          "oklch(0.39 0.001 106.423)",
+          "oklch(0.51 0.001 106.423)",
+          "oklch(0.63 0.001 106.423)",
+          "oklch(0.75 0.001 106.423)",
+          "oklch(0.86 0.001 106.423)",
+          "oklch(0.95 0.001 106.423)"
+        ]
+      },
+      "night-ground": {
+        "role": "neutral",
+        "displayName": "Night Ground",
+        "canonical": "oklch(0.147 0.004 49.25)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 49.25)",
+          "oklch(0.27 0.004 49.25)",
+          "oklch(0.39 0.004 49.25)",
+          "oklch(0.51 0.004 49.25)",
+          "oklch(0.63 0.004 49.25)",
+          "oklch(0.75 0.004 49.25)",
+          "oklch(0.86 0.004 49.25)",
+          "oklch(0.95 0.004 49.25)"
+        ]
+      },
+      "night-surface": {
+        "role": "neutral",
+        "displayName": "Night Surface",
+        "canonical": "oklch(0.216 0.006 56.043)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 56.043)",
+          "oklch(0.27 0.006 56.043)",
+          "oklch(0.39 0.006 56.043)",
+          "oklch(0.51 0.006 56.043)",
+          "oklch(0.63 0.006 56.043)",
+          "oklch(0.75 0.006 56.043)",
+          "oklch(0.86 0.006 56.043)",
+          "oklch(0.95 0.006 56.043)"
+        ]
+      },
+      "night-wash": {
+        "role": "neutral",
+        "displayName": "Night Wash",
+        "canonical": "oklch(0.268 0.007 34.298)",
+        "tonalRamp": [
+          "oklch(0.15 0.007 34.298)",
+          "oklch(0.27 0.007 34.298)",
+          "oklch(0.39 0.007 34.298)",
+          "oklch(0.51 0.007 34.298)",
+          "oklch(0.63 0.007 34.298)",
+          "oklch(0.75 0.007 34.298)",
+          "oklch(0.86 0.007 34.298)",
+          "oklch(0.95 0.007 34.298)"
+        ]
+      },
+      "night-muted-ink": {
+        "role": "neutral",
+        "displayName": "Night Muted Ink",
+        "canonical": "oklch(0.709 0.01 56.259)",
+        "tonalRamp": [
+          "oklch(0.15 0.01 56.259)",
+          "oklch(0.27 0.01 56.259)",
+          "oklch(0.39 0.01 56.259)",
+          "oklch(0.51 0.01 56.259)",
+          "oklch(0.63 0.01 56.259)",
+          "oklch(0.75 0.01 56.259)",
+          "oklch(0.86 0.01 56.259)",
+          "oklch(0.95 0.01 56.259)"
+        ]
+      },
+      "night-rule": {
+        "role": "neutral",
+        "displayName": "Night Rule",
+        "canonical": "oklch(1 0 0 / 10%)",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.27 0 0)",
+          "oklch(0.39 0 0)",
+          "oklch(0.51 0 0)",
+          "oklch(0.63 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.86 0 0)",
+          "oklch(0.95 0 0)"
+        ]
+      },
+      "signal-red": {
+        "role": "status",
+        "displayName": "Signal Red",
+        "canonical": "oklch(0.55 0.238 27.325)",
+        "tonalRamp": [
+          "oklch(0.15 0.2 27.325)",
+          "oklch(0.27 0.2 27.325)",
+          "oklch(0.39 0.2 27.325)",
+          "oklch(0.51 0.2 27.325)",
+          "oklch(0.63 0.2 27.325)",
+          "oklch(0.75 0.2 27.325)",
+          "oklch(0.86 0.2 27.325)",
+          "oklch(0.95 0.2 27.325)"
+        ]
+      },
+      "signal-green": {
+        "role": "status",
+        "displayName": "Signal Green",
+        "canonical": "oklch(0.455 0.125 150)",
+        "tonalRamp": [
+          "oklch(0.15 0.125 150)",
+          "oklch(0.27 0.125 150)",
+          "oklch(0.39 0.125 150)",
+          "oklch(0.51 0.125 150)",
+          "oklch(0.63 0.125 150)",
+          "oklch(0.75 0.125 150)",
+          "oklch(0.86 0.125 150)",
+          "oklch(0.95 0.125 150)"
+        ]
+      },
+      "signal-amber": {
+        "role": "status",
+        "displayName": "Signal Amber",
+        "canonical": "oklch(0.48 0.11 65)",
+        "tonalRamp": [
+          "oklch(0.15 0.11 65)",
+          "oklch(0.27 0.11 65)",
+          "oklch(0.39 0.11 65)",
+          "oklch(0.51 0.11 65)",
+          "oklch(0.63 0.11 65)",
+          "oklch(0.75 0.11 65)",
+          "oklch(0.86 0.11 65)",
+          "oklch(0.95 0.11 65)"
+        ]
+      },
+      "signal-blue": {
+        "role": "status",
+        "displayName": "Signal Blue",
+        "canonical": "oklch(0.475 0.16 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.16 250)",
+          "oklch(0.27 0.16 250)",
+          "oklch(0.39 0.16 250)",
+          "oklch(0.51 0.16 250)",
+          "oklch(0.63 0.16 250)",
+          "oklch(0.75 0.16 250)",
+          "oklch(0.86 0.16 250)",
+          "oklch(0.95 0.16 250)"
+        ]
+      },
+      "notice-yellow": {
+        "role": "status",
+        "displayName": "Notice Yellow",
+        "canonical": "oklch(0.87 0.16 92)",
+        "tonalRamp": [
+          "oklch(0.15 0.16 92)",
+          "oklch(0.27 0.16 92)",
+          "oklch(0.39 0.16 92)",
+          "oklch(0.51 0.16 92)",
+          "oklch(0.63 0.16 92)",
+          "oklch(0.75 0.16 92)",
+          "oklch(0.86 0.16 92)",
+          "oklch(0.95 0.16 92)"
+        ]
+      },
+      "notice-yellow-ink": {
+        "role": "status",
+        "displayName": "Notice Yellow Ink",
+        "canonical": "oklch(0.27 0.06 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.06 75)",
+          "oklch(0.27 0.06 75)",
+          "oklch(0.39 0.06 75)",
+          "oklch(0.51 0.06 75)",
+          "oklch(0.63 0.06 75)",
+          "oklch(0.75 0.06 75)",
+          "oklch(0.86 0.06 75)",
+          "oklch(0.95 0.06 75)"
+        ]
+      },
+      "mark-deep": {
+        "role": "brand",
+        "displayName": "Mark Deep",
+        "canonical": "oklch(0.36 0.069 226.5)",
+        "tonalRamp": [
+          "oklch(0.15 0.069 226.5)",
+          "oklch(0.27 0.069 226.5)",
+          "oklch(0.39 0.069 226.5)",
+          "oklch(0.51 0.069 226.5)",
+          "oklch(0.63 0.069 226.5)",
+          "oklch(0.75 0.069 226.5)",
+          "oklch(0.86 0.069 226.5)",
+          "oklch(0.95 0.069 226.5)"
+        ]
+      },
+      "mark-mid": {
+        "role": "brand",
+        "displayName": "Mark Mid",
+        "canonical": "oklch(0.523 0.099 225.3)",
+        "tonalRamp": [
+          "oklch(0.15 0.099 225.3)",
+          "oklch(0.27 0.099 225.3)",
+          "oklch(0.39 0.099 225.3)",
+          "oklch(0.51 0.099 225.3)",
+          "oklch(0.63 0.099 225.3)",
+          "oklch(0.75 0.099 225.3)",
+          "oklch(0.86 0.099 225.3)",
+          "oklch(0.95 0.099 225.3)"
+        ]
+      },
+      "mark-light": {
+        "role": "brand",
+        "displayName": "Mark Light",
+        "canonical": "oklch(0.74 0.1 218.2)",
+        "tonalRamp": [
+          "oklch(0.15 0.1 218.2)",
+          "oklch(0.27 0.1 218.2)",
+          "oklch(0.39 0.1 218.2)",
+          "oklch(0.51 0.1 218.2)",
+          "oklch(0.63 0.1 218.2)",
+          "oklch(0.75 0.1 218.2)",
+          "oklch(0.86 0.1 218.2)",
+          "oklch(0.95 0.1 218.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The screen's h1, once per screen; monospace."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section and dialog headings; monospace."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Everything editors read and type."
+      },
+      "tree-title": {
+        "displayName": "Tree Title",
+        "purpose": "Page titles in the page tree."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels and button text."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Compact language tabs only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "Default preset: every BlatUI shadow token is off; surfaces are ruled, not lifted."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent)",
+        "purpose": "Focus on buttons, inputs and the rich text frame."
+      },
+      {
+        "name": "tree-moving",
+        "value": "inset 0 0 0 1px var(--primary)",
+        "purpose": "The row being moved in move mode."
+      },
+      {
+        "name": "tree-drop-line",
+        "value": "inset 0 2px 0 0 var(--primary)",
+        "purpose": "Where a dragged page will land."
+      },
+      {
+        "name": "notice-edge",
+        "value": "0 -1px 0 color-mix(in oklab, black 12%, transparent)",
+        "purpose": "Top edge of the notification bar."
+      }
+    ],
+    "motion": [
+      {
+        "name": "tree-row",
+        "value": "120ms ease",
+        "purpose": "Row hover wash, chevron rotation and drop zone growth in the page tree."
+      },
+      {
+        "name": "control",
+        "value": "150ms ease",
+        "purpose": "Color and focus ring changes on buttons and inputs (Tailwind transition default)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "48rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action of a view: Save, Publish, Add.",
+      "html": "<button class=\"ds-btn-primary\">Save</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--primary, oklch(0.52 0.105 223.128)); color: var(--primary-foreground, oklch(0.984 0.019 200.873)); } .ds-btn-primary:hover { background: color-mix(in oklab, var(--primary, oklch(0.52 0.105 223.128)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions next to a primary: Preview, Cancel.",
+      "html": "<button class=\"ds-btn-outline\">Preview</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border-color: var(--border, oklch(0.923 0.003 48.717)); } .ds-btn-outline:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-outline:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Toolbar and row actions that stay quiet until hovered.",
+      "html": "<button class=\"ds-btn-ghost\">More</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 2.25rem; padding: 0 1rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; border: 1px solid transparent; cursor: pointer; transition: all 150ms ease; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-btn-ghost:hover { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-btn-ghost:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Outline input, 36px, with the shared focus ring and an invalid state.",
+      "html": "<input class=\"ds-input\" placeholder=\"Navigating Project Delivery\">",
+      "css": ".ds-input { height: 2.25rem; width: 100%; padding: 0.25rem 0.75rem; background: transparent; color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) - 2px); font: 400 0.875rem/1.43 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.49 0.013 58.071)); } .ds-input:focus-visible { outline: none; border-color: var(--ring, oklch(0.709 0.01 56.259)); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.709 0.01 56.259)) 50%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, oklch(0.55 0.238 27.325)); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat, bordered container for a group of settings.",
+      "html": "<section class=\"ds-card\"><h2 class=\"ds-card-title\">Status</h2><p class=\"ds-card-body\">Published in English and Português.</p></section>",
+      "css": ".ds-card { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); border: 1px solid var(--border, oklch(0.923 0.003 48.717)); border-radius: calc(var(--radius, 0.3rem) + 4px); padding: 1.5rem; } .ds-card-title { margin: 0 0 0.5rem; font: 600 1rem/1.5 var(--font-heading, ui-monospace, SFMono-Regular, Menlo, monospace); letter-spacing: 0.025em; } .ds-card-body { margin: 0; font: 400 0.875rem/1.43 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); color: var(--muted-foreground, oklch(0.49 0.013 58.071)); letter-spacing: 0.025em; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Small status label; soft success tone shown.",
+      "html": "<span class=\"ds-badge\">Published</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); font: 500 0.75rem/1rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); color: var(--success, oklch(0.455 0.125 150)); background: color-mix(in oklab, var(--success, oklch(0.455 0.125 150)) 10%, transparent); }"
+    },
+    {
+      "name": "Sidebar Item",
+      "kind": "nav",
+      "refersTo": "sidebar",
+      "description": "Icon plus label navigation entry; the active screen is washed.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" aria-current=\"page\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg><span>Pages</span></a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg><span>Templates</span></a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.5rem; width: 16rem; background: var(--sidebar, oklch(0.985 0.001 106.423)); } .ds-nav-item { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.5rem; border-radius: calc(var(--radius, 0.3rem) - 2px); color: var(--foreground, oklch(0.147 0.004 49.25)); font: 400 0.875rem/1 var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; text-decoration: none; } .ds-nav-item:hover, .ds-nav-item[aria-current=\"page\"] { background: var(--accent, oklch(0.97 0.001 106.424)); color: var(--accent-foreground, oklch(0.216 0.006 56.043)); } .ds-nav-item[aria-current=\"page\"] { font-weight: 500; } .ds-nav-item:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); }"
+    },
+    {
+      "name": "Page Tree Row",
+      "kind": "custom",
+      "refersTo": "tree-row",
+      "description": "Signature: a ruled row per page, indented per level, actions on hover.",
+      "html": "<div class=\"ds-tree\"><div class=\"ds-tree-row\" style=\"--depth:0\"><span class=\"ds-tree-chevron is-open\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></span><span class=\"ds-tree-title\">Courses</span><span class=\"ds-tree-meta\">12</span></div><div class=\"ds-tree-row\" style=\"--depth:1\"><span class=\"ds-tree-chevron\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></span><span class=\"ds-tree-title\">Navigating Project Delivery</span></div><div class=\"ds-tree-row is-hidden\" style=\"--depth:1\"><span class=\"ds-tree-chevron\"></span><span class=\"ds-tree-title\">Draft course</span></div></div>",
+      "css": ".ds-tree { font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; } .ds-tree-row { display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem 0.375rem calc(0.5rem + var(--depth, 0) * 1.5rem); border-bottom: 1px solid var(--border, oklch(0.923 0.003 48.717)); transition: background-color 120ms ease; } .ds-tree-row:hover { background: color-mix(in oklab, var(--muted, oklch(0.97 0.001 106.424)) 60%, transparent); } .ds-tree-chevron { display: inline-flex; width: 16px; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); transition: transform 120ms ease; } .ds-tree-chevron.is-open { transform: rotate(90deg); } .ds-tree-title { color: var(--foreground, oklch(0.147 0.004 49.25)); font-size: 0.9375rem; font-weight: 500; } .ds-tree-meta { margin-inline-start: auto; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font-size: 0.75rem; } .ds-tree-row.is-hidden { opacity: 0.55; }"
+    },
+    {
+      "name": "Language Tabs",
+      "kind": "custom",
+      "refersTo": "tabs",
+      "description": "Signature: per field language tabs whose dot says filled, falling back or empty.",
+      "html": "<div class=\"ds-langs\" role=\"tablist\"><button class=\"ds-lang\" role=\"tab\" aria-selected=\"true\">EN<span class=\"ds-dot is-filled\"></span></button><button class=\"ds-lang\" role=\"tab\" aria-selected=\"false\">PT<span class=\"ds-dot is-fallback\"></span></button><button class=\"ds-lang\" role=\"tab\" aria-selected=\"false\">DE<span class=\"ds-dot\"></span></button></div>",
+      "css": ".ds-langs { display: inline-flex; gap: 0.125rem; padding: 0.125rem; background: var(--muted, oklch(0.97 0.001 106.424)); border-radius: calc(var(--radius, 0.3rem) - 2px); } .ds-lang { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border: 0; border-radius: calc(var(--radius, 0.3rem) - 2px); background: transparent; color: var(--muted-foreground, oklch(0.49 0.013 58.071)); font: 500 0.625rem/0.875rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); letter-spacing: 0.025em; cursor: pointer; } .ds-lang[aria-selected=\"true\"] { background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.147 0.004 49.25)); } .ds-lang:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, oklch(0.709 0.01 56.259)); } .ds-dot { display: inline-block; width: 0.375rem; height: 0.375rem; margin-inline-start: 0.25rem; border: 1px solid var(--muted-foreground, oklch(0.49 0.013 58.071)); border-radius: 9999px; } .ds-dot.is-filled { background: var(--primary, oklch(0.52 0.105 223.128)); border-color: var(--primary, oklch(0.52 0.105 223.128)); } .ds-dot.is-fallback { border-style: dashed; }"
+    },
+    {
+      "name": "Notification Bar",
+      "kind": "custom",
+      "refersTo": "notice",
+      "description": "Signature: full width notice at the bottom of the viewport; success shown.",
+      "html": "<div class=\"ds-notice\" role=\"status\" tabindex=\"0\">Page saved <span class=\"ds-notice-close\" aria-hidden=\"true\">&times;</span></div>",
+      "css": ".ds-notice { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.75rem 1rem; background: var(--success, oklch(0.455 0.125 150)); color: var(--success-foreground, oklch(0.985 0.018 155)); font: 500 0.875rem/1.25rem var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif); cursor: pointer; box-shadow: 0 -1px 0 color-mix(in oklab, black 12%, transparent); } .ds-notice:focus-visible { outline: 3px solid var(--ring, oklch(0.709 0.01 56.259)); outline-offset: -3px; } .ds-notice-close { font-size: 1.125rem; line-height: 1; opacity: 0.8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Workbench",
+    "overview": "x",
+    "keyCharacteristics": [
+      "Flat by default: no shadows in the default preset, depth from borders and tonal washes.",
+      "One accent, used for action and state, never for decoration.",
+      "Monospace headings over an Inter body, slightly wide tracking everywhere.",
+      "Compact, consistent control heights (36px default, 32px small, 28px extra small).",
+      "Tokens only: Tailwind's raw palette is removed, so every color comes from a theme token.",
+      "Light, dark and system schemes, each user's choice remembered per browser."
+    ],
+    "rules": [
+      {
+        "name": "The Token Only Rule",
+        "body": "No raw color reaches markup. Tailwind's palette is removed (`--color-*: initial`); a color is a BlatUI token or a `--lynx-*` token defaulting to one. Black and white survive only for overlays and text on solid fills. The `--lynx-mark-*` tokens are the one exception: they hold the logo's own colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The Action Accent Rule",
+        "body": "The accent marks where something happens or has happened (an action, focus, a filled value, a drop target). If a screen uses it for decoration, the editor loses the signal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Wide Tracking Rule",
+        "body": "Letter spacing runs at +0.025em across the interface (`tracking: wide`); only the headline pulls back to neutral. Do not set per element tracking against it.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Unit Rule",
+        "body": "Every gap, padding and size is a multiple of the spacing unit, so the spacing preset scales the whole admin at once. Fixed pixel spacing breaks it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Ruled Surface Rule",
+        "body": "A surface is separated by a border or a wash, never by a shadow alone. If turning shadows off would merge two surfaces, the design is wrong.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do take every color from a token (`bg-background`, `text-muted-foreground`, `bg-primary`), so presets, client branding and host stylesheets keep working.",
+      "Do build new screens from the BlatUI components in `components/ui` and the `blat-*` native classes; patch a copied component only with a comment saying why.",
+      "Do keep controls on the 36, 32 and 28px heights and spacing on multiples of the spacing unit.",
+      "Do separate surfaces with a 1px Stone Rule border or a wash, so the design reads correctly with shadows off.",
+      "Do check every new screen in light and dark mode and with a client accent other than Lynx Teal, at WCAG AA contrast.",
+      "Do show translation state with the language dot vocabulary (filled, dashed, empty) wherever a value has languages."
+    ],
+    "donts": [
+      "Don't use Tailwind's raw palette (`bg-gray-100`, `text-blue-600`); it is removed from the build on purpose.",
+      "Don't add new `--lynx-*` tokens for anything BlatUI already has a token for; Lynx tokens exist only for the page tree, the notification bar and the Lynx mark.",
+      "Don't recolor the Lynx mark with the accent, stretch it, or show it in an admin the site has branded.",
+      "Don't rely on a shadow to separate surfaces or to show state.",
+      "Don't use the accent for decoration, illustration or large fills.",
+      "Don't hardcode fonts, radii or letter spacing on an element; they are preset dimensions the host app controls.",
+      "Don't use the Micro size for anything other than the compact language tabs."
+    ]
+  }
+}
