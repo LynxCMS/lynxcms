@@ -64,7 +64,7 @@ lynx()->pages->schedule('/news/launch', '*', publishAt: now()->addDay()); // eve
 
 With `'*'`, Lynx checks every language first, so a time that one language can't take changes nothing. In the page's **Settings** tab, one row sets every language; editors tick "Different times per language" to set each one.
 
-The command `lynx:schedule:run` applies the times that are due. Laravel's scheduler runs it every minute, so the server needs the [scheduler's cron entry](/getting-started/installation#the-scheduler).
+The command `lynx:schedule:run` applies the times that are due. Laravel's scheduler runs it every minute, so the server needs the [scheduler's cron entry](/getting-started/installation#the-scheduler). Each page it changes gets an entry in that page's activity, saying what happened and in which language.
 
 ## The trash
 

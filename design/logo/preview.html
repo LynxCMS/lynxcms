@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lynx Mark</title>
+<link rel="icon" href="favicon/favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:500,600,700">
+<style>
+  :root { --paper: #fff; --ink: #0c0a09; --muted: #57534e; --rule: #e7e5e4; --night: #0c0a09; --night-rule: #292524; --teal: #007595; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 16px 64px; background: var(--paper); color: var(--ink); font: 14px/1.5 Inter, system-ui, sans-serif; letter-spacing: 0.025em; }
+  main { max-width: 1040px; margin: 0 auto; }
+  h1, h2 { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; letter-spacing: 0; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1rem; margin: 40px 0 12px; }
+  p { color: var(--muted); margin: 0 0 16px; max-width: 65ch; }
+  code { font: 0.8125rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; }
+  .tile, .tab, .sidebar, .signin { max-width: 100%; }
+  .tab { align-self: flex-start; }
+  .tile { border: 1px solid var(--rule); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: end; gap: 12px; min-width: 140px; }
+  .tile.dark { background: var(--night); border-color: var(--night-rule); color: #fafaf9; }
+  .tile small { opacity: 0.7; font-size: 0.75rem; }
+  .tile img, .tile svg { display: block; }
+  .ramp { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; }
+  .mono { fill: currentColor; }
+  .teal { color: var(--teal); }
+  .lockup { display: flex; align-items: center; gap: 12px; }
+  .word-sans { font: 700 2.25rem/1 Inter, system-ui, sans-serif; letter-spacing: -0.01em; }
+  .word-mono { font: 600 2.1rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .tab { display: flex; align-items: center; gap: 8px; width: 220px; padding: 8px 12px; border-radius: 8px 8px 0 0; background: #f5f5f4; border: 1px solid var(--rule); border-bottom: 0; font-size: 12px; }
+  .tab.dark { background: #1c1917; border-color: var(--night-rule); color: #e7e5e4; }
+  .sidebar { width: 224px; display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid var(--rule); border-radius: 6px; background: #fafaf9; font-weight: 600; }
+  .sidebar.dark { background: #1c1917; border-color: var(--night-rule); color: #fafaf9; }
+  .signin { width: 280px; padding: 32px 24px; border: 1px solid var(--rule); border-radius: 8px; display: grid; justify-items: center; gap: 12px; text-align: center; }
+  .signin strong { font: 600 1rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .signin.dark { background: var(--night); border-color: var(--night-rule); color: #fafaf9; }
+  ul { padding-left: 20px; color: var(--muted); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- A copy of the path in lynx-mark-mono.svg, inlined so currentColor works here. -->
+  <symbol id="mono" viewBox="0 0 395 548"><path class="mono" d="M369.2 392.3L369 403L359.9 403.2L304.2 423.3L249 410.1L244.4 409.4L243.3 355.8L181 337.2L96.6 410.3L107.3 350.6L181.9 286L227.9 280.6L206.3 259.1L264.8 253.8L294 275.1L296.7 299.8L291 304.5L254.7 347.7L254.7 397.6L305.4 410.1L355.9 391.4L359.5 375.6L355.3 369L354.8 360.8L337.9 351.1L337.9 339.8L341.4 336.4L394.8 334.6L346.5 281.2L344.7 258.1L361.8 252.5L357.2 239.1L271 175.5L193.1 171.8L84.6 290.7L63.9 369.3L44.7 385.8L70 298.9L56.1 260.9L0.2 374L175.9 547.8L185.1 350.6L200.5 355L184.7 531.6L240 430.8L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1L394.8 351.2L372 376.6ZM106.4 65.4L64.2 0.2L76.9 37.3L39.8 8L90.4 71.1L65.4 155.9L64.2 242.8L76.9 278.8L105.2 247.7L178.6 168.9ZM304.7 70.8L216.8 160.2L276 165.2L313.4 191.3L321.5 68.4L324.2 15.2ZM296.1 300.1L263.4 265L230 268.4L253.8 290.5L271 288.2ZM243.8 444.5L291.4 460.7L254.9 533.4L223.3 483.2Z"/></symbol>
+</svg>
+<main>
+<h1>Lynx mark</h1>
+<p>Two drawings of one head. The full mark is for 24px and up. The 16px mark is redrawn on a pixel grid for favicons and anything smaller than 24px. Both come in colour and dark. The full mark keeps its tones on dark and only recolours the white around the eye; the 16px mark lifts every tone a step, since the deep tone does not read that small on a dark tab bar. The full mark also comes in mono (one colour, <code>currentColor</code>).</p>
+
+<h2>Full mark</h2>
+<div class="row">
+  <div class="tile"><img src="lynx-mark.svg" height="200" alt="Lynx mark"><small>lynx-mark.svg</small></div>
+  <div class="tile dark"><img src="lynx-mark-dark.svg" height="200" alt="Lynx mark for dark backgrounds"><small>lynx-mark-dark.svg</small></div>
+  <div class="tile teal"><svg height="200" width="144" role="img" aria-label="Lynx mark, one colour"><use href="#mono"/></svg><small>lynx-mark-mono.svg</small></div>
+  <div class="tile dark"><svg height="200" width="144" role="img" aria-label="Lynx mark, one colour"><use href="#mono"/></svg><small>mono, white</small></div>
+</div>
+
+<h2>16px mark</h2>
+<div class="row">
+  <div class="tile"><div class="ramp"><img src="lynx-mark-16.svg" width="16" alt=""><img src="lynx-mark-16.svg" width="32" alt=""><img src="lynx-mark-16.svg" width="96" alt="Lynx 16px mark"></div><small>lynx-mark-16.svg at 16, 32, 96</small></div>
+  <div class="tile dark"><div class="ramp"><img src="lynx-mark-16-dark.svg" width="16" alt=""><img src="lynx-mark-16-dark.svg" width="32" alt=""><img src="lynx-mark-16-dark.svg" width="96" alt=""></div><small>lynx-mark-16-dark.svg</small></div>
+</div>
+
+<h2>Sizes</h2>
+<div class="row">
+  <div class="tile"><div class="ramp"><img src="lynx-mark-16.svg" height="16" alt=""><img src="lynx-mark.svg" height="24" alt=""><img src="lynx-mark.svg" height="32" alt=""><img src="lynx-mark.svg" height="48" alt=""><img src="lynx-mark.svg" height="64" alt=""><img src="lynx-mark.svg" height="96" alt=""></div><small>16 (16px mark), then 24, 32, 48, 64, 96 (full mark)</small></div>
+  <div class="tile dark"><div class="ramp"><img src="lynx-mark-16-dark.svg" height="16" alt=""><img src="lynx-mark-dark.svg" height="24" alt=""><img src="lynx-mark-dark.svg" height="32" alt=""><img src="lynx-mark-dark.svg" height="48" alt=""><img src="lynx-mark-dark.svg" height="64" alt=""><img src="lynx-mark-dark.svg" height="96" alt=""></div><small>the same on dark</small></div>
+</div>
+
+<h2>Favicon</h2>
+<p>This page links the set, so its browser tab shows it. <code>favicon.svg</code> switches to the lifted tones when the system is in dark mode.</p>
+<div class="row">
+  <div class="tab"><img src="lynx-mark-16.svg" width="16" height="16" alt=""><span>Pages · Lynx</span></div>
+  <div class="tab dark"><img src="lynx-mark-16-dark.svg" width="16" height="16" alt=""><span>Pages · Lynx</span></div>
+  <div class="tile"><img src="favicon/apple-touch-icon.png" width="90" height="90" alt="Apple touch icon" style="border-radius:20px;border:1px solid var(--rule)"><small>apple-touch-icon.png, 180px</small></div>
+</div>
+<ul>
+  <li><code>favicon/favicon.ico</code>: 16 (16px mark), 32 and 48 (full mark)</li>
+  <li><code>favicon/favicon.svg</code>: the 16px mark, with lifted tones in dark mode</li>
+  <li><code>favicon/apple-touch-icon.png</code>: 180px on white</li>
+</ul>
+
+<h2>Lockups</h2>
+<div class="row">
+  <div class="tile"><div class="lockup"><img src="lynx-mark.svg" height="56" alt=""><span class="word-sans">Lynx</span></div><small>Inter 700</small></div>
+  <div class="tile"><div class="lockup"><img src="lynx-mark.svg" height="56" alt=""><span class="word-mono">lynx</span></div><small>monospace 600, like the admin headings</small></div>
+  <div class="tile dark"><div class="lockup"><img src="lynx-mark-dark.svg" height="56" alt=""><span class="word-sans">Lynx</span></div><small>dark</small></div>
+  <div class="tile dark"><div class="lockup"><svg height="56" width="40"><use href="#mono"/></svg><span class="word-sans">Lynx</span></div><small>mono, white</small></div>
+</div>
+
+<h2>In the admin</h2>
+<div class="row">
+  <div class="sidebar"><img src="lynx-mark.svg" height="24" alt=""><span>Lynx</span></div>
+  <div class="sidebar dark"><img src="lynx-mark-dark.svg" height="24" alt=""><span>Lynx</span></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <div class="signin"><img src="lynx-mark.svg" height="48" alt=""><strong>Sign in to Lynx</strong><small style="color:var(--muted)">Email and password</small></div>
+  <div class="signin dark"><img src="lynx-mark-dark.svg" height="48" alt=""><strong>Sign in to Lynx</strong><small style="opacity:.7">Email and password</small></div>
+</div>
+</main>
+</body>
+</html>

@@ -49,7 +49,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `auth.invitation_days` | `7` | How long an invitation link works. |
 | `theme` | `system` | `light`, `dark` or `system`. |
 | `appearance.*` | | BlatUI options: base, theme, radius, font, heading font, shadow, spacing, tracking, input style, font loading. |
-| `branding.name` | `Lynx` (`LYNX_ADMIN_NAME`) | The site's name on the sign-in screens, the sidebar and browser tabs. |
+| `branding.name` | `Lynx` (`LYNX_ADMIN_NAME`) | The site's name on the sign-in screens, the sidebar and browser tabs. With `Lynx` and no logo, the admin shows the Lynx mark and favicon. |
 | `branding.logo` | none (`LYNX_ADMIN_LOGO`) | A logo URL or a path below `public/`. |
 | `branding.background` | none (`LYNX_ADMIN_BACKGROUND`) | The sign-in screens' backdrop, as `#rrggbb`. |
 | `branding.accent` | none (`LYNX_ADMIN_BRAND_ACCENT`) | Buttons, links and focus rings, as `#rrggbb`. |

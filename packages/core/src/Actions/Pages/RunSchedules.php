@@ -42,6 +42,12 @@ final class RunSchedules extends Action
         return false;
     }
 
+    /** One run can publish many pages; each page's history shows its own part. */
+    public static function logsActivityPerPage(): bool
+    {
+        return true;
+    }
+
     public static function rules(): array
     {
         return [];
@@ -81,12 +87,15 @@ final class RunSchedules extends Action
         $language = $this->languages->all()->firstWhere('id', Value::int($entry->language_id))
             ?? throw ValidationException::withMessages(['language' => 'The language no longer exists.']);
 
-        if ($language->code === $this->languages->default()->code) {
-            $context->run(SetPageStatus::class, ['page' => $pageId, ($isPublish ? 'remove' : 'add') => ['unpublished']]);
+        $language->code === $this->languages->default()->code
+            ? $context->run(SetPageStatus::class, ['page' => $pageId, ($isPublish ? 'remove' : 'add') => ['unpublished']])
+            : $context->run(SavePage::class, ['id' => $pageId, 'names' => [$language->code => ['active' => $isPublish]]]);
 
-            return;
-        }
-
-        $context->run(SavePage::class, ['id' => $pageId, 'names' => [$language->code => ['active' => $isPublish]]]);
+        // The nested save can't say it was a schedule, or in which language a page went live.
+        $action = Value::string($entry->action);
+        $context->changes->updated('page', $pageId, "Run the scheduled {$action} of page {$pageId} [{$language->code}]", [
+            'scheduled' => $action,
+            'language' => Value::string($language->code),
+        ]);
     }
 }

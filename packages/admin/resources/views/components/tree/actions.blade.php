@@ -4,7 +4,7 @@
     $button = \LynxCms\Admin\Tree\TreeUi::button('ghost', 'xs');
     $icon = \LynxCms\Admin\Tree\TreeUi::class;
 @endphp
-{{-- The row's actions, ProcessWire style, right after the title: the main ones, then the rest behind
+{{-- The row's actions as small text, ProcessWire style, right after the title: the main ones, then the rest behind
      "More". Shown while the row is selected, and on hover or keyboard focus through admin.css
      (.lynx-tree-actions), so no per-row state is needed. Plain buttons with BlatUI's classes: every
      row has this bar, so components here are slow (TreeUi). --}}
@@ -13,7 +13,7 @@
         @if ($node->can('delete'))
             {{-- Empty trash after a second click; what stays (locked pages) is reported above the tree. --}}
             <span x-data="{ confirming: false }" class="flex items-center gap-0.5">
-                <button type="button" class="{{ $button }}" x-show="! confirming" @click="confirming = true">{{ $icon::icon('trash-2') }}<span>Empty trash</span></button>
+                <button type="button" class="{{ $button }}" x-show="! confirming" @click="confirming = true"><span>Empty trash</span></button>
                 <span x-show="confirming" x-cloak class="flex items-center gap-1 text-sm">
                     <span class="text-destructive">Delete everything in the trash for good?</span>
                     <button type="button" class="{{ \LynxCms\Admin\Tree\TreeUi::button('ghost', 'xs', 'text-destructive hover:text-destructive') }}" wire:click="emptyTrash" @click="confirming = false">Yes, empty</button>
@@ -22,24 +22,24 @@
             </span>
         @endif
     @elseif ($state['events'] !== null)
-        <button type="button" class="{{ $button }}" @click="$dispatch('{{ $state['events'] }}-edit', { id: {{ $id }} })">{{ $icon::icon('pencil') }}<span>Edit</span></button>
+        <button type="button" class="{{ $button }}" @click="$dispatch('{{ $state['events'] }}-edit', { id: {{ $id }} })"><span>Edit</span></button>
     @elseif (Route::has('lynx.admin.pages.edit') && $node->can('edit'))
-        <a href="{{ route('lynx.admin.pages.edit', $id) }}" class="{{ $button }}">{{ $icon::icon('pencil') }}<span>Edit</span></a>
+        <a href="{{ route('lynx.admin.pages.edit', $id) }}" class="{{ $button }}"><span>Edit</span></a>
     @endif
     @if ($node->isTrashed() && $node->can('delete'))
-        <button type="button" class="{{ $button }}" wire:click="restore({{ $id }})">{{ $icon::icon('undo-2') }}<span>Restore</span></button>
+        <button type="button" class="{{ $button }}" wire:click="restore({{ $id }})"><span>Restore</span></button>
     @endif
     @if ($node->hasUrl() && ! $node->isInTrash())
-        <a href="{{ $node->url }}" target="_blank" rel="noopener" class="{{ $button }}">{{ $icon::icon('external-link') }}<span>View</span></a>
+        <a href="{{ $node->url }}" target="_blank" rel="noopener" class="{{ $button }}"><span>View</span></a>
     @endif
     {{-- No New where the template allows no children (ADR-0032). --}}
     @if ($node->allowsChildren && $state['events'] !== null)
-        <button type="button" class="{{ $button }}" @click="$dispatch('{{ $state['events'] }}-new', { parent: {{ $id }} })">{{ $icon::icon('plus') }}<span>New</span></button>
+        <button type="button" class="{{ $button }}" @click="$dispatch('{{ $state['events'] }}-new', { parent: {{ $id }} })"><span>New</span></button>
     @elseif ($node->allowsChildren && Route::has('lynx.admin.pages.create') && $node->can('create') && $node->place === \LynxCms\Admin\Tree\TreeNode::SITE)
-        <a href="{{ route('lynx.admin.pages.create', ['parent' => $id]) }}" class="{{ $button }}">{{ $icon::icon('plus') }}<span>New</span></a>
+        <a href="{{ route('lynx.admin.pages.create', ['parent' => $id]) }}" class="{{ $button }}"><span>New</span></a>
     @endif
     @if ($node->canMove() && $state['sortable'])
-        <button type="button" class="{{ $button }}" wire:click="startMove({{ $id }})">{{ $icon::icon('move') }}<span>Move</span></button>
+        <button type="button" class="{{ $button }}" wire:click="startMove({{ $id }})"><span>Move</span></button>
     @endif
     @if ($node->detail !== '')
         {{-- BlatUI's outline badge. --}}
@@ -53,7 +53,7 @@
                 {{-- A locked page only lets the lock change (ADR-0027). --}}
                 @unless ($node->isLocked())
                     @if ($node->can('publish'))
-                        <button type="button" class="{{ $button }}" wire:click="toggleStatus({{ $id }}, 'unpublished')">{{ $node->isUnpublished() ? 'Pub' : 'Unpub' }}</button>
+                        <button type="button" class="{{ $button }}" wire:click="toggleStatus({{ $id }}, 'unpublished')">{{ $node->isUnpublished() ? 'Publish' : 'Unpublish' }}</button>
                     @endif
                     @if ($node->can('status'))
                         <button type="button" class="{{ $button }}" wire:click="toggleStatus({{ $id }}, 'hidden')">{{ $node->isHidden() ? 'Unhide' : 'Hide' }}</button>

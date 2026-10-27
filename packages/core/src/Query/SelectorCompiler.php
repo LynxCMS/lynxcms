@@ -31,7 +31,7 @@ final class SelectorCompiler
     private const string PAGES = Tables::PAGES;
 
     /** Names that are not fields and cannot be combined with others ("title|sort=x"). */
-    private const array RESERVED = ['sort', 'limit', 'start', 'include', 'join', 'language', 'lang', 'search'];
+    private const array RESERVED = ['sort', 'limit', 'start', 'include', 'join', 'language', 'lang', 'search', ...PageStateMatch::TERMS];
 
     private ValueJoins $joins;
 
@@ -48,6 +48,7 @@ final class SelectorCompiler
         private readonly CountClause $counts,
         private readonly SharedMatch $shared,
         private readonly SortKeys $sortKeys,
+        private readonly PageStateMatch $state,
     ) {}
 
     /**
@@ -66,6 +67,12 @@ final class SelectorCompiler
         $join = [];
 
         foreach ($clauses as $clause) {
+            if (PageStateMatch::handles($clause)) {
+                $include = [...$include, ...$this->state->apply($query, $clause)];
+
+                continue;
+            }
+
             match ($clause->field) {
                 'limit' => $limit = max(0, (int) $clause->value()),
                 'start' => $start = max(0, (int) $clause->value()),

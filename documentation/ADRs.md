@@ -954,3 +954,40 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** A field type may implement `HasDefaultValue`. `pages.save` stores its default on a new page for every template field the input leaves out, and the item normalizer does the same in a new repeater or matrix item (one without a key). A field given as empty stays empty, existing pages and items are never filled in, and importers already send every field, so imports recreate pages as exported. The admin shows a new item with its defaults already chosen. `choice` is the first type with one: the setting `default` holds an option value, or a list with `multiple`. Settings that depend on each other are checked on the merged settings through `ChecksSettings`, so `fields.update` refuses options that leave the default out. In the admin, the choices editor marks the default option, and a required select with a default offers no empty option.
 
 **Consequences:** Stored values keep selectors, search and exports consistent with what templates read. Adding a default, or a field with one, to a template does not change existing pages; templates still handle an empty value there. Other types (toggle, integer, text) can implement `HasDefaultValue` later without new decisions.
+
+## ADR-0089: The admin shows the Lynx mark until a site brands it
+
+**Status:** Accepted. Amends ADR-0084.
+
+**Context:** Without a logo, the sign-in screens and the sidebar showed the name's first letter in a square of the accent colour, and browser tabs showed no icon or the host app's. Lynx now has a mark: a faceted lynx head in three teal tones, with a 16px drawing for favicons. A fresh install should look like Lynx, but a client's admin must never carry Lynx's brand (PRODUCT.md: the client's admin, not ours).
+
+**Decision:** `Branding::usesLynxMark()` is true while the name is the default (`Lynx`) and there is no logo, from the config or uploaded. Then the brand component draws the mark inline (`<x-lynx-admin::lynx-mark>`) where the initial was, and the document links Lynx's favicon (an ICO and an SVG committed under `resources/brand`, not built), served by the admin's asset route. Once a site sets a name or a logo, the admin goes back to ADR-0084: the logo, or the initial and the name, and no Lynx favicon, so browsers fall back to the site's own `/favicon.ico`. The mark's colours are `--lynx-mark-*` tokens in `admin.css`, not BlatUI tokens: an accent does not change artwork. In dark mode the eye takes the light tone. The SVG favicon lifts every tone a step in dark mode, since the deep tone does not read on a dark tab bar at 16px.
+
+**Consequences:** New installs and the workbench show the Lynx mark and favicon. Sites that set only an accent or a background keep the mark. A site that names itself, even with no logo, loses both at once. The mark's sources live in `design/logo`; the admin's copies change only when the mark does.
+
+## ADR-0090: Selectors find pages by status, language, draft and schedule
+
+**Status:** Accepted.
+
+**Context:** The admin's page tree needs lists such as "pages with a draft", "pages with a schedule" and "pages not in Portuguese yet", and the pages API could only answer them one page at a time (`withDrafts(ids)`, `schedules(page)`). `include=hidden|unpublished` adds pages to a result but can't select only them, and `language=pt` picks the language values are compared in without filtering anything. Anything the admin can list should be a selector, so developers, the MCP server and the AI agent can ask the same question in one query.
+
+**Decision:** Four selector terms, compiled by `PageStateMatch`:
+
+- `status=hidden|unpublished|locked` matches pages with any of the statuses, `status!=` with none. Naming a status lets those pages through the status filter, so `status=unpublished` needs no `include`. Like ADR-0061, the match lists the status values rather than testing bits. `unique` and `system` are bookkeeping and can't be named.
+- `language!=pt` matches pages with no published name in Portuguese (`lynx_page_languages`). Several languages (`language!=pt|de`) mean none of them. The default language matches nothing, since every page is published in it. `language=pt` keeps its meaning (ADR-0010), so `!=` doesn't change the language values are compared in. The two read differently on purpose: one picks a language, the other filters by it.
+- `has_draft=1` matches pages with a draft (ADR-0039), `has_draft=0` (or `!=1`) pages without one.
+- `has_schedule=1` matches pages with a publish or unpublish date waiting (ADR-0036). Failed schedules don't count.
+
+`has_draft` and `has_schedule` join the reserved field names. `status` and `language` already were. The terms can't be combined with fields (`status|title=x`).
+
+**Consequences:** Each term is one `EXISTS` or `IN` clause, on SQLite and PostgreSQL alike. A site with a field named `has_draft` or `has_schedule` must rename it; no released site is known to have one. A visitor's text pasted into a selector can now also add `status=unpublished`, which the docs warn about with `include=`.
+
+## ADR-0091: An action can log one activity event per page it changed
+
+**Status:** Accepted. Amends ADR-0036's consequences.
+
+**Context:** The activity recorder writes one event per outer action, filed under its first change. A page's history lists the events filed under it. `pages.run_schedules` applies every due entry in one run, so a minute that published three pages filed all of it under the first, and the other two pages' histories never showed it. The scheduler also runs every minute, and each run with nothing due wrote an empty event.
+
+**Decision:** `Action::logsActivityPerPage()`, false by default. When an action returns true, the recorder splits its changes at each change to a different page and writes one event per part, each under the action's name and filed under its page. Changes to other subjects (paths, files) stay with the page before them, and a run with no changes writes nothing. `pages.run_schedules` returns true. Each entry it runs also records whether it published or unpublished and in which language, after the entry succeeds, since the nested `pages.status` or `pages.save` can say neither.
+
+**Consequences:** Each page's history shows its scheduled changes, and the log no longer grows by an empty row a minute. Dry runs and the action's result keep the whole change set. Other actions are unchanged: a move or a trash still logs once, under the page it moved. An app's batch action (an import, a sync) can opt in the same way.

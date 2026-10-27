@@ -7,8 +7,6 @@
     $views = collect($fields)->keyBy('name');
     // Hidden fields never show in the editor (ADR-0063).
     $isShown = fn (string $name): bool => $views->has($name) && $views[$name]->display !== \LynxCms\Core\Templates\FieldDisplay::Hidden && ($states[$name]['shown'] ?? true);
-    // With a sidebar the main column is narrower: every field of the tab puts its label above the input.
-    $stacked = $layout->hasLayout() && $layout->hasSidebar($tab);
     $errorFields = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => explode('.', $key)[1] ?? '')->all();
 @endphp
 @if (! $layout->hasLayout())

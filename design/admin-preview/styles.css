@@ -1,0 +1,133 @@
+/* The admin, refined: BlatUI's stone ground and Inter kept; the mark's three tones and its facet
+   (a parallelogram) carry language state and selection. Every tone derives from --primary, so a
+   client accent re-colours them; only the mark itself keeps its own colours. */
+:root {
+    --page: oklch(0.955 0.003 85);
+    --bg: oklch(1 0 0);
+    --fg: oklch(0.147 0.004 49.25);
+    --wash: oklch(0.97 0.001 106.424);
+    --muted-fg: oklch(0.49 0.013 58.071);
+    --border: oklch(0.923 0.003 48.717);
+    --border-strong: oklch(0.86 0.004 56);
+    --sidebar-base: oklch(0.985 0.001 106.423);
+    --primary: oklch(0.52 0.105 223.128);
+    --primary-fg: oklch(0.984 0.019 200.873);
+    --primary-text: oklch(0.47 0.1 223);
+    --ok: oklch(0.455 0.125 150);
+    --warn: oklch(0.48 0.11 65);
+    --info: oklch(0.475 0.16 250);
+    --mark-deep: #004459;
+    --mark-mid: #007595;
+    --mark-light: #56bad5;
+    --mark-eye: #fff;
+    --shadow: 0 1px 2px oklch(0.2 0.01 60 / 6%), 0 12px 32px -12px oklch(0.2 0.01 60 / 18%);
+    --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --page: oklch(0.11 0.004 50); --bg: oklch(0.155 0.004 49); --fg: oklch(0.975 0.002 90);
+        --wash: oklch(0.225 0.006 50); --muted-fg: oklch(0.72 0.01 56); --border: oklch(1 0 0 / 10%);
+        --border-strong: oklch(1 0 0 / 18%); --sidebar-base: oklch(0.185 0.005 50);
+        --primary: oklch(0.5 0.095 224); --primary-fg: oklch(0.984 0.019 200.873); --primary-text: oklch(0.78 0.1 218);
+        --ok: oklch(0.74 0.15 150); --warn: oklch(0.8 0.13 75); --info: oklch(0.74 0.13 250); --mark-eye: #56bad5;
+        --shadow: 0 1px 2px oklch(0 0 0 / 40%), 0 16px 40px -16px oklch(0 0 0 / 60%); color-scheme: dark;
+    }
+}
+:root[data-theme="dark"] {
+    --page: oklch(0.11 0.004 50); --bg: oklch(0.155 0.004 49); --fg: oklch(0.975 0.002 90);
+    --wash: oklch(0.225 0.006 50); --muted-fg: oklch(0.72 0.01 56); --border: oklch(1 0 0 / 10%);
+    --border-strong: oklch(1 0 0 / 18%); --sidebar-base: oklch(0.185 0.005 50);
+    --primary: oklch(0.5 0.095 224); --primary-fg: oklch(0.984 0.019 200.873); --primary-text: oklch(0.78 0.1 218);
+    --ok: oklch(0.74 0.15 150); --warn: oklch(0.8 0.13 75); --info: oklch(0.74 0.13 250); --mark-eye: #56bad5;
+    --shadow: 0 1px 2px oklch(0 0 0 / 40%), 0 16px 40px -16px oklch(0 0 0 / 60%); color-scheme: dark;
+}
+/* A client's accent wins in light and dark, as the admin's branding setting does. */
+.admin.client { --primary: #b4602c; --primary-fg: #fff; --primary-text: color-mix(in oklab, #b4602c 80%, var(--fg)); }
+.admin {
+    --primary-soft: color-mix(in oklab, var(--primary) 11%, var(--bg));
+    --primary-light: color-mix(in oklab, var(--primary) 45%, white);
+    --sidebar: color-mix(in oklab, var(--primary) 4%, var(--sidebar-base));
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0; background: var(--page); color: var(--fg); font: 400 14px/1.45 var(--sans);
+    font-feature-settings: "cv11", "ss01"; padding-block: 20px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+::selection { background: color-mix(in oklab, var(--primary) 28%, transparent); }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+/* Preview controls, outside the admin */
+.preview { max-width: 1320px; margin: 0 auto; display: grid; gap: 14px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.controls h1 { font-size: 15px; font-weight: 600; margin: 0 auto 0 0; display: flex; gap: 8px; align-items: center; }
+.controls h1 small { color: var(--muted-fg); font-weight: 400; }
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 8px; background: var(--wash); border: 1px solid var(--border); }
+.seg button { border: 0; background: none; padding: 5px 10px; border-radius: 6px; font-size: 13px; color: var(--muted-fg); }
+.seg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 1px 2px oklch(0 0 0 / 12%); font-weight: 500; }
+
+/* The admin frame */
+.admin {
+    display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 860px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); position: relative;
+}
+.sidebar { background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 14px 10px; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; font-weight: 650; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; color: var(--fg); }
+.brand svg { height: 30px; width: auto; }
+.brand .initial { display: none; width: 28px; height: 28px; border-radius: 7px; background: var(--primary); color: var(--primary-fg); place-items: center; font-size: 13px; }
+.client .brand svg { display: none; } .client .brand .initial { display: grid; }
+.nav { display: grid; gap: 2px; } .nav-label { font-size: 12px; color: var(--muted-fg); padding: 10px 10px 4px; font-weight: 500; }
+.nav a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 7px; color: var(--fg); text-decoration: none; font-size: 14px; position: relative; }
+.nav a:hover { background: color-mix(in oklab, var(--fg) 5%, transparent); }
+.nav a svg { color: var(--muted-fg); }
+.nav a[aria-current="page"] { background: var(--primary-soft); color: var(--fg); font-weight: 550; }
+.nav a[aria-current="page"] svg { color: var(--primary-text); }
+.nav a .count { margin-left: auto; font-size: 12px; color: var(--muted-fg); }
+.nav a[aria-current="page"]::after { content: ""; position: absolute; right: 8px; width: 7px; height: 12px; background: var(--primary); clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%); }
+.me { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); }
+.avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--wash); color: var(--fg); border: 1px solid var(--border); flex: none; }
+.me div { display: grid; line-height: 1.25; font-size: 13px; } .me small { color: var(--muted-fg); font-size: 12px; }
+
+.main { display: flex; flex-direction: column; min-width: 0; }
+.topbar { height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 20px; border-bottom: 1px solid var(--border); }
+.crumbs { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted-fg); min-width: 0; }
+.crumbs a { color: inherit; text-decoration: none; } .crumbs a:hover { color: var(--fg); } .crumbs strong { color: var(--fg); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search { margin-left: auto; display: flex; align-items: center; gap: 8px; height: 34px; width: min(320px, 40%); padding: 0 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--wash); color: var(--muted-fg); font-size: 13px; }
+.search kbd { margin-left: auto; font: 500 11px var(--sans); border: 1px solid var(--border-strong); border-radius: 4px; padding: 1px 5px; background: var(--bg); }
+.icon-btn { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 1px solid transparent; background: none; color: var(--muted-fg); }
+.icon-btn:hover { background: var(--wash); color: var(--fg); }
+.menu-btn { display: none; }
+.content { padding: 28px 32px 40px; display: grid; gap: 22px; align-content: start; }
+
+/* Shared pieces */
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 16px; }
+.head h2 { font-size: 26px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.head p { margin: 6px 0 0; color: var(--muted-fg); max-width: 60ch; }
+.head .actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg); font-weight: 500; font-size: 14px; text-decoration: none; color: var(--fg); white-space: nowrap; }
+.btn:hover { background: var(--wash); }
+.btn.primary { background: var(--primary); border-color: transparent; color: var(--primary-fg); }
+.btn.primary:hover { background: color-mix(in oklab, var(--primary) 88%, black); }
+.btn.ghost { border-color: transparent; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted-fg); white-space: nowrap; }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.status.live { color: var(--ok); } .status.draft { color: var(--warn); } .status.later { color: var(--info); } .status.hidden::before { background: none; border: 1.5px solid currentColor; }
+.status span { color: var(--muted-fg); }
+.facet { width: 11px; height: 10px; flex: none; }
+.facet { stroke-width: 1.4; stroke-linejoin: round; }
+.facet.own { fill: var(--primary); stroke: var(--primary); }
+.facet.follows { fill: var(--primary-light); stroke: var(--primary); }
+.facet.missing { fill: none; stroke: var(--muted-fg); }
+.langs { display: inline-flex; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--muted-fg); }
+.langs span { display: inline-flex; align-items: center; gap: 5px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted-fg); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.notes { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; }
+.notes h2 { font-size: 15px; margin: 0 0 8px; } .notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--muted-fg); max-width: 90ch; } .notes strong { color: var(--fg); font-weight: 550; }

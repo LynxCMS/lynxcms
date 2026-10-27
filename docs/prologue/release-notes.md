@@ -24,6 +24,28 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page picker shows the search box first and the chosen pages below it. Results float above the page, open upwards near its bottom, and can be reached with the arrow keys.
 
+- Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
+
+- The admin's default font is Geist, for headings too, instead of an Inter body and monospace headings. Set `LYNX_ADMIN_FONT=inter` and `LYNX_ADMIN_HEADING_FONT=mono` to keep the old look, or give headings any other font.
+
+- The admin wears the Lynx mark's facet: the language tabs mark a field's state with a small slanted shape (filled, light or outlined) instead of a dot, and the sidebar ends the current screen's link with one. The sidebar takes a trace of the accent colour.
+
+- The sentences under a field that explain a fallback ("visitors see the English value") are now translation hints, off by default. Turn them on under **Translation hints** in the user menu; each browser remembers the choice.
+
+- The page tree's row actions are plain text, and **Unpub** and **Pub** read **Unpublish** and **Publish**.
+
+- The page editor puts every label above its field, and shows a panel beside the fields: publishing state, how much of the page each language has its own text for, and the latest activity. Templates with their own editor sidebar keep it instead.
+
+- The page tree has a **Details** view beside the default one: each page's state in every language, its status and its last change, with who made it. Filters above it list the pages with a draft, the scheduled ones and those not yet in each language, with their counts. Each user's choice lasts for the session. Trees built on the page tree, such as the menu builder, keep the simple view.
+
+- The page's activity, in the editor's panel and on its Settings tab, says what happened in plain words: "Changed Title (Português) and Summary", "Unpublished and locked the page", "Moved under Courses", "Published the draft". Module actions that save a page, such as a menu item or a form, and the scheduler's changes read the same way: "Published in Português on schedule". The scheduler now records, for each change it runs, whether it published or unpublished and in which language. A run that changes several pages files an entry under each page instead of only the first, and a run with nothing due no longer adds an empty entry to the log every minute. Your own actions can ask for the same with `logsActivityPerPage()`. Other module actions keep their own summary.
+
+- Saving or discarding a draft now shows in the page's activity. Both were filed under the draft, which no screen lists.
+
+- **Selectors find pages by state.** `status=unpublished` (or `hidden`, `locked`) finds pages with that status, `language!=pt` finds the pages not published in Portuguese yet, `has_draft=1` the pages with a draft waiting, and `has_schedule=1` the pages with a publish or unpublish date set. See [Finding Pages](/basics/selectors#status). `has_draft` and `has_schedule` are now reserved field names.
+
+- The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).

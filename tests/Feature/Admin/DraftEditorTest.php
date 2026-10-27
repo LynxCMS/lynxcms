@@ -35,7 +35,7 @@ it('saves changes as a draft and keeps editing it', function (): void {
         ->set('values.title.default', 'Alpha draft')
         ->call('saveDraft')
         ->assertDispatched('lynx-notify', message: 'Draft saved. The live page has not changed.')
-        ->assertSee('You are editing a draft');
+        ->assertSeeHtml('data-page-draft');
 
     expect(liveTitle())->toBe('Alpha');
 
@@ -60,7 +60,7 @@ it('saves to the draft, not the live page, while a draft exists', function (): v
 it('publishes the draft', function (): void {
     lynx()->pages->saveDraft('/courses/alpha', ['title' => ['default' => 'Alpha live']]);
 
-    draftEditor()->call('publishDraft')->assertDispatched('lynx-notify', message: 'Draft published.')->assertDontSee('You are editing a draft');
+    draftEditor()->call('publishDraft')->assertDispatched('lynx-notify', message: 'Draft published.')->assertDontSeeHtml('data-page-draft');
 
     expect(liveTitle())->toBe('Alpha live');
 });
@@ -81,5 +81,5 @@ it('explains that previews need a signed in user, instead of offering a link tha
 
     draftEditor()
         ->assertDontSeeHtml('?preview=draft')
-        ->assertSee('Sign in to preview the draft');
+        ->assertSeeHtml('data-draft-preview-signin');
 });

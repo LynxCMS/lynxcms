@@ -141,6 +141,7 @@ An action has:
 | `handle()` | The work. Run other actions with `$context->run()`, so they share its transaction and log entry. Actions run this way are not checked again, so check every page your action passes on, such as one named in its input, with `$context->authorize('pages.edit', $page)`. |
 | `destructive()` | Return `true` for actions that remove data. AI tools are told to run them as a dry run first and ask the user to confirm. |
 | `exposedAsTool()` | Return `false` to keep an action out of the MCP server and the agent. |
+| `logsActivity()`, `logsActivityPerPage()` | Return `false` from the first to keep an action out of the activity log. Return `true` from the second when one run changes many pages, such as a nightly import: each page then gets its own entry in its history, and a run that changed nothing leaves none. |
 
 Register it in a service provider:
 

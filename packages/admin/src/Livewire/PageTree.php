@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
@@ -20,6 +21,9 @@ use LynxCms\Admin\Livewire\Concerns\PageQuickActions;
 use LynxCms\Admin\Livewire\Concerns\ScopedToRoot;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Admin\Tree\TreeBranch;
+use LynxCms\Admin\Tree\TreeDetails;
+use LynxCms\Admin\Tree\TreeFilters;
+use LynxCms\Admin\Tree\TreeLevel;
 use LynxCms\Admin\Tree\TreeLoader;
 use LynxCms\Admin\Tree\TreePresenter;
 use LynxCms\Core\Pages\Page;
@@ -80,6 +84,14 @@ final class PageTree extends Component
     #[Locked]
     public ?string $error = null;
 
+    /** The Details view (languages, status, last change beside each title), kept for the session. */
+    #[Session]
+    public bool $isDetailed = false;
+
+    /** The Details view's filter (TreeFilters), or empty for the tree; kept for the session. */
+    #[Session]
+    public string $filter = '';
+
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
     public function boot(): void
     {
@@ -103,6 +115,19 @@ final class PageTree extends Component
             ? array_values(array_diff($this->expanded, [$id]))
             : [...$this->expanded, $id];
         $this->remember();
+    }
+
+    /** Switch between the simple tree and the Details view. */
+    public function showDetails(bool $show): void
+    {
+        $this->isDetailed = $show;
+    }
+
+    /** Lists the pages a filter finds instead of the tree; an empty or unknown filter shows the tree. */
+    public function filterBy(string $filter): void
+    {
+        $this->filter = $this->filters()?->selector($filter) !== null ? $filter : '';
+        unset($this->pages[0]);
     }
 
     /** Pages past the end are clamped to the last page when the tree is loaded. */
@@ -134,7 +159,30 @@ final class PageTree extends Component
 
     public function render(): View
     {
-        return view('lynx-admin::livewire.page-tree', ['tree' => $this->tree(), 'usesTrash' => $this->usesTrash()]);
+        $filters = $this->filters();
+
+        return view('lynx-admin::livewire.page-tree', [
+            'tree' => $this->tree(),
+            'usesTrash' => $this->usesTrash(),
+            'canShowDetails' => $this->canShowDetails(),
+            'showsDetails' => $this->isShowingDetails(),
+            'filters' => $filters?->all() ?? [],
+            'filtered' => $this->filtered($filters),
+        ]);
+    }
+
+    /** The filters, in the Details view only. */
+    private function filters(): ?TreeFilters
+    {
+        return $this->isShowingDetails() ? new TreeFilters(app(AdminAccess::class)->treeScope()) : null;
+    }
+
+    /** The current filter's pages as one flat level, or null when the tree shows. */
+    private function filtered(?TreeFilters $filters): ?TreeLevel
+    {
+        $selector = $this->filter === '' ? null : $filters?->selector($this->filter);
+
+        return $selector === null ? null : $this->treeLoader()->flat($selector, Value::int($this->pages[0] ?? 1, 1));
     }
 
     private function tree(): TreeBranch
@@ -153,7 +201,9 @@ final class PageTree extends Component
      */
     private function treeLoader(array $pages = []): TreeLoader
     {
-        return new TreeLoader(Value::ints($this->expanded), $pages, $this->perPage, $this->presenter(), app(AdminAccess::class)->treeScope());
+        $details = $this->isShowingDetails() ? new TreeDetails : null;
+
+        return new TreeLoader(Value::ints($this->expanded), $pages, $this->perPage, $this->presenter(), app(AdminAccess::class)->treeScope(), $details);
     }
 
     /** Reordering needs every sibling in view: positions among visible rows are not real positions. */
@@ -162,6 +212,17 @@ final class PageTree extends Component
         if (! $this->treeLoader()->isComplete($parentId)) {
             throw ValidationException::withMessages(['page' => 'Some pages here are hidden from you, so pages cannot be reordered here.']);
         }
+    }
+
+    /** Only the Pages screen's own tree has a Details view; trees built on it (the menu builder) stay simple. */
+    private function canShowDetails(): bool
+    {
+        return $this->events === null && $this->presenter === null;
+    }
+
+    private function isShowingDetails(): bool
+    {
+        return $this->isDetailed && $this->canShowDetails();
     }
 
     private function presenter(): TreePresenter

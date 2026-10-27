@@ -10,13 +10,13 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Editor\ActivityEntry;
 use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
-use LynxCms\Core\Support\Value;
 
 /**
  * The read only part of the Settings tab: the page's old URLs and whether they still redirect,
@@ -65,7 +65,7 @@ final class PageHistory extends Component
             'redirects' => lynx()->pages->redirects($this->pageId),
             'backlinks' => lynx()->pages->backlinks($this->pageId, selector: app(BacklinkFilter::class)->selector())->map($this->backlink(...)),
             'isLocked' => lynx()->pages->get($this->pageId)?->hasStatus(PageStatus::LOCKED) ?? true,
-            'activity' => array_map(fn (ActivityEvent $event): array => $this->entry($event, $names), array_slice($activity, 0, $this->activityLimit)),
+            'activity' => array_map(fn (ActivityEvent $event): array => ActivityEntry::from($event, $names), array_slice($activity, 0, $this->activityLimit)),
             'hasMoreActivity' => count($activity) > $this->activityLimit,
         ]);
     }
@@ -83,22 +83,6 @@ final class PageHistory extends Component
             'id' => (int) $page->id,
             'title' => $titles->title($page),
             'context' => $template.($parent instanceof Page ? ' under '.$titles->title($parent) : ''),
-        ];
-    }
-
-    /**
-     * The first change says what the action did; the rest (e.g. one path per moved page) are counted.
-     *
-     * @return array{when: string, at: string, who: string, summary: string, more: int}
-     */
-    private function entry(ActivityEvent $event, ActorNames $names): array
-    {
-        return [
-            'when' => $event->created_at->diffForHumans(),
-            'at' => $event->created_at->toDayDateTimeString(),
-            'who' => $names->label($event->actor_kind, $event->actor_id),
-            'summary' => Value::string($event->changes[0]['summary'] ?? '', $event->action),
-            'more' => max(0, count($event->changes) - 1),
         ];
     }
 }

@@ -23,7 +23,7 @@ lynx()->fields->add('related', 'page', settings: ['templates' => ['course']]);
 
 Field names use lowercase letters, digits and underscores, and start with a letter: they become property names in your templates (`$page->related`). Each field gets its own table, `lynx_f_{name}`, created at once.
 
-Some names are taken, because pages or selectors already use them. Lynx refuses them with a message saying so, so you find out when you create the field, not when a selector misbehaves: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.
+Some names are taken, because pages or selectors already use them. Lynx refuses them with a message saying so, so you find out when you create the field, not when a selector misbehaves: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `has_draft`, `has_schedule`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.
 
 A field is created once and shared by every template that uses it. The `title` field that `lynx:install` creates is used by most templates, for example.
 
@@ -101,7 +101,7 @@ Modules keep their own content in hidden system branches, such as menus under `/
 
 ## Arranging the page editor
 
-By default the page editor shows a template's fields in order, on one tab. A template can arrange them: extra tabs next to Content, sections that group fields, and a sidebar for fields editors rarely change.
+By default the page editor shows a template's fields in order, on one tab, with a panel beside them: whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity. A template can arrange its fields: extra tabs next to Content, sections that group fields, and a sidebar for fields editors rarely change. A tab with a sidebar shows that sidebar instead of the panel.
 
 ```php
 lynx()->templates->update('project', [

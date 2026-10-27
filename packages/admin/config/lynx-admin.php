@@ -45,9 +45,9 @@ return [
         'radius' => env('LYNX_ADMIN_RADIUS', '0.3'),
         // Body font: sans (Instrument Sans), system, serif, mono, inter, geist, manrope, jakarta,
         // space-grotesk, dm-sans, outfit, sora, lora, source-serif
-        'font' => env('LYNX_ADMIN_FONT', 'inter'),
-        // Heading font: the same choices; sans follows the body font
-        'heading_font' => env('LYNX_ADMIN_HEADING_FONT', 'mono'),
+        'font' => env('LYNX_ADMIN_FONT', 'geist'),
+        // Heading font: the same choices; sans (the default) follows the body font
+        'heading_font' => env('LYNX_ADMIN_HEADING_FONT', 'sans'),
         // Shadows: none, sm, default, lg, xl
         'shadow' => env('LYNX_ADMIN_SHADOW', 'none'),
         // Density: compact, default, comfortable

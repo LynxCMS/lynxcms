@@ -155,12 +155,26 @@ To work in a language for a whole block of code, use `lynx()->language()`:
 $posts = lynx()->language('pt', fn () => lynx()->pages->find('template=post, limit=5'));
 ```
 
+`language!=pt` does something else: it finds the pages that aren't published in Portuguese yet, which is a translator's to-do list. Values still match in the request's language. Every page is published in the default language, so `language!=en` on an English site finds nothing.
+
+```php
+$untranslated = lynx()->pages->find('template=post, language!=pt');
+```
+
 ## Status
 
 Unpublished and hidden pages are left out. `include=hidden`, `include=unpublished` or `include=all` brings them back:
 
 ```php
 lynx()->pages->find('template=post, include=all');
+```
+
+`status` finds pages by their status instead: `status=unpublished`, `status=hidden|unpublished` or `status=locked`. Naming a status brings those pages back on its own, so `include` isn't needed. `status!=locked` leaves locked pages out.
+
+Two more clauses ask about a page's versions. `has_draft=1` finds pages with changes saved as a draft and not yet published, and `has_schedule=1` finds pages with a publish or unpublish date waiting ([Scheduled publishing](/basics/publishing#scheduled-publishing)). `=0` finds the others.
+
+```php
+$waiting = lynx()->pages->find('has_draft=1, sort=-modified');
 ```
 
 ## Sorting and limits
@@ -181,7 +195,7 @@ Some apps take a whole selector from a request, such as an API that lets its cli
 lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
 ```
 
-The usual case is different: your selector, with a visitor's words in it. Never paste those words in as they come, as in `"template=post, title%={$request->q}"`: a visitor could add conditions of their own, such as `include=unpublished` to list unpublished pages. Check them against what you expect (a known category name, digits for an id) before they go in. For free text, remove double quotes and put the text inside double quotes: inside them, commas, pipes and single quotes are plain text. [Visitor Input](/basics/visitor-input#words-in-a-selector) shows the whole step.
+The usual case is different: your selector, with a visitor's words in it. Never paste those words in as they come, as in `"template=post, title%={$request->q}"`: a visitor could add conditions of their own, such as `include=unpublished` or `status=unpublished` to list unpublished pages. Check them against what you expect (a known category name, digits for an id) before they go in. For free text, remove double quotes and put the text inside double quotes: inside them, commas, pipes and single quotes are plain text. [Visitor Input](/basics/visitor-input#words-in-a-selector) shows the whole step.
 
 ## Filters and pagination
 

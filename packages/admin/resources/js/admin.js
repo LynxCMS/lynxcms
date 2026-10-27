@@ -189,6 +189,25 @@ function pickedColorScheme() {
     }
 }
 
+const TRANSLATION_HINTS_KEY = 'lynx:translation-hints'
+
+/** The user menu's translation hints: on or off, remembered per browser (document.blade.php restores it). */
+window.lynxTranslationHints = {
+    isOn() {
+        return document.documentElement.dataset.lynxHints === 'on'
+    },
+
+    set(isOn) {
+        document.documentElement.dataset.lynxHints = isOn ? 'on' : 'off'
+
+        try {
+            localStorage.setItem(TRANSLATION_HINTS_KEY, isOn ? 'on' : 'off')
+        } catch {
+            // Storage blocked: the choice still applies until the next page load.
+        }
+    },
+}
+
 /** The user menu's appearance choice: current() for the menu, set() to switch and remember. */
 window.lynxColorScheme = {
     current() {

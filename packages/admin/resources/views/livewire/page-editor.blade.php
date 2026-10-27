@@ -10,69 +10,7 @@
         </x-lynx-admin::ui.breadcrumb-list>
     </x-lynx-admin::ui.breadcrumb>
 
-    <header class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-semibold tracking-tight">{{ $title }}</h1>
-            <p class="mt-1 flex flex-wrap gap-x-3 text-sm text-muted-foreground">
-                @if ($isSuperuser)
-                    <span>Template: {{ $page->template()->name }}</span>
-                @endif
-                @foreach (\LynxCms\Core\Pages\PageStatus::toNames($page->status) as $flag)
-                    <x-lynx-admin::ui.badge variant="secondary">{{ $flag }}</x-lynx-admin::ui.badge>
-                @endforeach
-            </p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-            @if ($page->template()->hasUrl())
-                <x-lynx-admin::ui.button variant="outline" :href="$page->url()" target="_blank" rel="noopener">View</x-lynx-admin::ui.button>
-            @endif
-            {{-- Links modules add for this page (EditorLinks), e.g. "Preview form". --}}
-            @foreach (app(\LynxCms\Admin\EditorLinks::class)->for($page) as $link)
-                <x-lynx-admin::ui.button variant="outline" :href="$link['url']" target="_blank" rel="noopener">{{ $link['label'] }}</x-lynx-admin::ui.button>
-            @endforeach
-            {{-- Saves the Content tab; Settings has its own buttons. --}}
-            @if (! $isLocked && $canEdit && $isFieldsTab)
-                <x-lynx-admin::ui.button variant="outline" type="button" wire:click="review">Review changes</x-lynx-admin::ui.button>
-                @if ($hasDraft)
-                    <span x-data="{ confirming: false }" class="flex items-center gap-2">
-                        <x-lynx-admin::ui.button variant="ghost" type="button" x-show="! confirming" x-on:click="confirming = true">Discard draft</x-lynx-admin::ui.button>
-                        <span x-show="confirming" x-cloak class="flex items-center gap-2 text-sm">
-                            <span class="text-destructive">Discard the draft?</span>
-                            <x-lynx-admin::ui.button variant="destructive" size="sm" type="button" wire:click="discardDraft">Yes, discard</x-lynx-admin::ui.button>
-                            <x-lynx-admin::ui.button variant="ghost" size="sm" type="button" x-on:click="confirming = false">Cancel</x-lynx-admin::ui.button>
-                        </span>
-                    </span>
-                    @if ($page->template()->hasUrl() && ! auth()->check())
-                        {{-- The site only shows drafts to signed in users who may edit the page; signed out it would show the live page. --}}
-                        <span class="text-sm text-muted-foreground">Sign in to preview the draft.</span>
-                    @elseif ($page->template()->hasUrl())
-                        {{-- One link per language the page is published in: names and URLs are live, values come from the draft. --}}
-                        @php($previews = lynx()->languages->all()->filter(fn ($language): bool => $page->isActiveIn($language)))
-                        <span class="flex items-center gap-1">
-                            @foreach ($previews as $language)
-                                <x-lynx-admin::ui.button variant="outline" :size="$previews->count() > 1 ? 'sm' : 'default'" :href="$page->localUrl($language).'?preview=draft'" target="_blank" rel="noopener" :title="'Preview the draft in '.$language->name">
-                                    {{ $previews->count() > 1 ? 'Preview '.$language->name : 'Preview draft' }}
-                                </x-lynx-admin::ui.button>
-                            @endforeach
-                        </span>
-                    @endif
-                    <x-lynx-admin::ui.button variant="outline" type="button" wire:click="publishDraft">Publish draft</x-lynx-admin::ui.button>
-                    <x-lynx-admin::ui.button type="button" wire:click="saveDraft" data-lynx-save title="Save draft (Cmd/Ctrl+S)">Save draft</x-lynx-admin::ui.button>
-                @else
-                    <x-lynx-admin::ui.button variant="outline" type="button" wire:click="saveDraft">Save as draft</x-lynx-admin::ui.button>
-                    <x-lynx-admin::ui.button type="button" wire:click="save" data-lynx-save title="Save (Cmd/Ctrl+S)">Save</x-lynx-admin::ui.button>
-                @endif
-            @endif
-        </div>
-    </header>
-
-    @if ($hasDraft)
-        <x-lynx-admin::ui.alert tone="info" role="status">
-            <x-lucide-file-pen aria-hidden="true" />
-            <x-lynx-admin::ui.alert-description>You are editing a draft. Visitors see the live page until you publish the draft.</x-lynx-admin::ui.alert-description>
-        </x-lynx-admin::ui.alert>
-    @endif
-
+    @include('lynx-admin::livewire.partials.editor-header')
 
     @if ($error)
         <p role="alert" class="text-destructive mt-1 text-sm">{{ $error }}</p>
@@ -140,6 +78,11 @@
         <livewire:lynx-admin.page-strings :page-id="$pageId" :key="'texts-'.$pageId" />
     @elseif (isset($moduleTabs[$tab]))
         @livewire($moduleTabs[$tab]['component'], ['pageId' => $pageId], key($tab.'-'.$pageId))
+    @elseif ($panel !== null)
+        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <div class="min-w-0">@include('lynx-admin::livewire.partials.editor-layout')</div>
+            @include('lynx-admin::livewire.partials.editor-panel')
+        </div>
     @else
         @include('lynx-admin::livewire.partials.editor-layout')
     @endif

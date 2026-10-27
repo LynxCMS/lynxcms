@@ -43,7 +43,6 @@ it('shows the template tabs, sections and sidebar', function (): void {
         ->assertSeeHtml('data-collapsed="true"')
         ->assertSee('Introduction')
         ->assertSeeHtml('aria-label="Sidebar"')
-        ->assertDontSeeHtml('@xl:grid-cols-[12rem_minmax(0,1fr)]') // a sidebar puts every label above its input
         ->assertSeeHtml('id="field-author"')
         ->assertDontSeeHtml('id="field-seo_title"')
         ->set('tab', 'seo')
@@ -69,6 +68,5 @@ it('keeps the single list for templates without a layout', function (): void {
     Livewire::test(PageEditor::class, ['pageId' => $this->alphaId])
         ->assertDontSeeHtml('aria-label="Sidebar"')
         ->assertDontSeeHtml('data-section=')
-        ->assertSeeHtml('@xl:grid-cols-[12rem_minmax(0,1fr)]')
         ->assertSeeHtml('aria-label="Content"');
 });

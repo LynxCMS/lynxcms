@@ -41,6 +41,15 @@ abstract class Action implements ActionContract
         return true;
     }
 
+    /**
+     * Whether a run that changes several pages is logged as one event per page (ADR-0091), so
+     * each page's history shows its part. Off by default: one event per run.
+     */
+    public static function logsActivityPerPage(): bool
+    {
+        return false;
+    }
+
     /** Whether this action is exposed as an MCP and AI tool. */
     public static function exposedAsTool(): bool
     {

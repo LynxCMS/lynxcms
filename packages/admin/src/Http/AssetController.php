@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 /**
  * Serves the prebuilt admin stylesheet from the package, so host apps need no build step
  * and no vendor:publish. The layout adds the file's mtime as a version for cache busting.
- * Also serves the logo uploaded under Settings, which the sign-in screens show to guests.
+ * Also serves the logo uploaded under Settings, which the sign-in screens show to guests,
+ * and Lynx's own favicon.
  *
  * @internal
  */
@@ -20,6 +21,14 @@ final class AssetController
     public const string STYLESHEET = __DIR__.'/../../dist/admin.css';
 
     public const string SCRIPT = __DIR__.'/../../dist/admin.js';
+
+    /** The Lynx favicons, by extension: committed with the package, not built (ADR-0089). */
+    public const array FAVICONS = [
+        'svg' => __DIR__.'/../../resources/brand/favicon.svg',
+        'ico' => __DIR__.'/../../resources/brand/favicon.ico',
+    ];
+
+    private const array FAVICON_TYPES = ['svg' => 'image/svg+xml', 'ico' => 'image/x-icon'];
 
     private const int ONE_YEAR = 31_536_000;
 
@@ -35,6 +44,14 @@ final class AssetController
     public function script(): BinaryFileResponse
     {
         return $this->file(self::SCRIPT, 'text/javascript; charset=utf-8');
+    }
+
+    /** Lynx's own favicon, which the admin links while the site has no branding of its own. */
+    public function favicon(string $extension): BinaryFileResponse
+    {
+        abort_unless(isset(self::FAVICONS[$extension]), 404);
+
+        return $this->file(self::FAVICONS[$extension], self::FAVICON_TYPES[$extension]);
     }
 
     /**

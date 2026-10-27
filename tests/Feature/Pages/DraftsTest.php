@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Pages\PublishDraft;
 use LynxCms\Core\Actions\Pages\SaveDraft;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 
 beforeEach(function (): void {
@@ -124,4 +125,13 @@ it('previews and rolls back', function (): void {
     expect(fn () => lynx()->pages->publishDraft(live()))->toThrow(ActionHalted::class)
         ->and((string) live()->get('title'))->toBe('Alpha')
         ->and(lynx()->pages->draft(live()))->not->toBeNull();
+});
+
+it('files saving and discarding a draft under the live page in the activity log', function (): void {
+    draftTitle('Alpha in draft');
+    lynx()->pages->discardDraft(live());
+
+    $actions = array_map(fn (ActivityEvent $event): string => $event->action, lynx()->pages->activity(live()));
+
+    expect($actions)->toContain('pages.save_draft')->toContain('pages.discard_draft');
 });
