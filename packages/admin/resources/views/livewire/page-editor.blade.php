@@ -13,26 +13,43 @@
     <header class="flex flex-wrap items-start justify-between gap-4">
         <div>
             <h1 class="text-2xl font-semibold tracking-tight">{{ $title }}</h1>
-            <p class="mt-1 flex flex-wrap gap-x-3 text-sm text-muted-foreground">
+            {{-- Whether the page is live and a draft waits, then the live page: the buttons beside are only actions. --}}
+            @php
+                $status = match (true) {
+                    $page->hasStatus(\LynxCms\Core\Pages\PageStatus::UNPUBLISHED) => 'unpublished',
+                    $page->hasStatus(\LynxCms\Core\Pages\PageStatus::HIDDEN) => 'hidden',
+                    default => 'published',
+                };
+            @endphp
+            <p class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                <span @class(['inline-flex items-center gap-1.5', 'text-success' => $status === 'published']) data-page-status="{{ $status }}">
+                    <span aria-hidden="true" @class(['size-1.5 rounded-full', 'bg-current' => $status !== 'hidden', 'border border-current' => $status === 'hidden'])></span>
+                    {{ ['published' => 'Published', 'unpublished' => 'Unpublished', 'hidden' => 'Hidden'][$status] }}
+                </span>
+                @if ($hasDraft)
+                    <span class="text-warning inline-flex items-center gap-1.5" data-page-draft><span class="size-1.5 rounded-full bg-current" aria-hidden="true"></span>Draft changes</span>
+                @endif
+                @if ($page->hasStatus(\LynxCms\Core\Pages\PageStatus::LOCKED))
+                    <span>Locked</span>
+                @endif
+                @if ($page->template()->hasUrl())
+                    <a href="{{ $page->url() }}" target="_blank" rel="noopener" class="hover:text-foreground inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                        View page<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" />
+                    </a>
+                @endif
                 @if ($isSuperuser)
                     <span>Template: {{ $page->template()->name }}</span>
                 @endif
-                @foreach (\LynxCms\Core\Pages\PageStatus::toNames($page->status) as $flag)
-                    <x-lynx-admin::ui.badge variant="secondary">{{ $flag }}</x-lynx-admin::ui.badge>
-                @endforeach
             </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-            @if ($page->template()->hasUrl())
-                <x-lynx-admin::ui.button variant="outline" :href="$page->url()" target="_blank" rel="noopener">View</x-lynx-admin::ui.button>
-            @endif
             {{-- Links modules add for this page (EditorLinks), e.g. "Preview form". --}}
             @foreach (app(\LynxCms\Admin\EditorLinks::class)->for($page) as $link)
                 <x-lynx-admin::ui.button variant="outline" :href="$link['url']" target="_blank" rel="noopener">{{ $link['label'] }}</x-lynx-admin::ui.button>
             @endforeach
             {{-- Saves the Content tab; Settings has its own buttons. --}}
             @if (! $isLocked && $canEdit && $isFieldsTab)
-                <x-lynx-admin::ui.button variant="outline" type="button" wire:click="review">Review changes</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button variant="ghost" type="button" wire:click="review">Review changes</x-lynx-admin::ui.button>
                 @if ($hasDraft)
                     <span x-data="{ confirming: false }" class="flex items-center gap-2">
                         <x-lynx-admin::ui.button variant="ghost" type="button" x-show="! confirming" x-on:click="confirming = true">Discard draft</x-lynx-admin::ui.button>

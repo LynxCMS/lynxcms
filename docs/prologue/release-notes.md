@@ -38,6 +38,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page tree has a **Details** view beside the default one: each page's state in every language, its status and its last change, with who made it. Each user's choice lasts for the session. Trees built on the page tree, such as the menu builder, keep the simple view.
 
+- The page editor's header says under the title whether the page is published, hidden or unpublished, marks a waiting draft, and links to the live page. The View button is gone, and **Review changes** is a quieter button.
+
 ## 0.1.23
 
 Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you use the PHPStan extension (see the [upgrade guide](/prologue/upgrade)).
