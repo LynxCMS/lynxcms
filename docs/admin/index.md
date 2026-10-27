@@ -10,7 +10,7 @@ order: 6
 
 | Screen | Does | Needs |
 | --- | --- | --- |
-| Pages | The page tree: expand, page, drag to sort or move, quick actions. | `pages.view` |
+| Pages | The page tree: expand, page, drag to sort or move, quick actions, and a Details view with each page's languages, status and last change. | `pages.view` |
 | Page editor | Fields per language, settings, drafts, history, schedule. | `pages.edit` |
 | Menus | The menu builder. | `menus.manage` |
 | SEO | SEO fields per template, structured data, an audit of titles and descriptions, the site settings. | `seo.manage` |
@@ -19,6 +19,8 @@ order: 6
 | Languages | Add, edit and delete languages; tab labels. | `schema.manage` |
 | Roles, Users | Roles, their grants and who holds them; invitations. | superuser |
 | Account security | Password, two-factor authentication and passkeys. | signed in |
+
+The page tree shows titles by default. Its **Details** view adds, beside each title, the page's state in every language (the same facets as the editor's language tabs: its own title, another language's title, or not published there), its status and its last change. Each user's choice lasts for the session.
 
 The page editor puts each field's label above its input, and beside the fields a panel shows whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity (the Settings tab has all of it). Templates that lay out their own sidebar keep it instead of the panel.
 

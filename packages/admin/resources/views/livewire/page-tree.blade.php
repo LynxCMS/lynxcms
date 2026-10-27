@@ -45,8 +45,26 @@
         </x-lynx-admin::ui.alert>
     @endif
 
+    @if ($canShowDetails)
+        {{-- Simple shows titles; Details adds languages, status and the last change to each row. --}}
+        <div class="mb-3 flex justify-end">
+            <div role="group" aria-label="Tree view" data-tree-view class="bg-muted inline-flex gap-0.5 rounded-md p-0.5 text-sm">
+                @foreach ([false => 'Simple', true => 'Details'] as $value => $label)
+                    <button type="button" wire:click="showDetails({{ $value ? 'true' : 'false' }})" aria-pressed="{{ $showsDetails === (bool) $value ? 'true' : 'false' }}"
+                            class="text-muted-foreground aria-pressed:bg-background aria-pressed:text-foreground rounded-sm px-2.5 py-1 font-medium aria-pressed:shadow-xs">{{ $label }}</button>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Framed like BlatUI's tree table; dims while Livewire works. --}}
     <div class="overflow-hidden rounded-lg border bg-card shadow-xs" wire:loading.class.delay="opacity-60">
+        @if ($showsDetails)
+            <div class="text-muted-foreground bg-muted/50 hidden items-center gap-4 border-b px-4 py-2 text-xs font-medium md:flex" data-tree-details aria-hidden="true">
+                <span>Page</span>
+                <span class="ms-auto w-56">Languages</span><span class="w-28">Status</span><span class="w-48">Last change</span>
+            </div>
+        @endif
         <ul role="tree" aria-label="Pages" class="-mb-px">
             <x-lynx-admin::tree.branch
                 :branch="$tree"

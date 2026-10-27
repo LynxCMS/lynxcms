@@ -89,4 +89,27 @@
     @else
         <x-lynx-admin::tree.actions :node="$node" :state="$state" />
     @endif
+
+    @if ($node->details !== null)
+        @php($details = $node->details)
+        @php($states = ['own' => 'has its own title', 'follows' => 'shows another language\'s title', 'missing' => 'not published'])
+        {{-- The Details view's columns (TreeDetails); the facets match the editor's language tabs. --}}
+        <span class="ms-auto hidden items-center gap-4 text-xs md:flex">
+            <span class="flex w-56 flex-wrap gap-x-3 gap-y-1 font-medium tracking-wide uppercase">
+                @foreach ($details['languages'] as $language)
+                    <span class="text-muted-foreground inline-flex items-center" data-language-state="{{ $language['state'] }}" title="{{ $language['label'] }}: {{ $states[$language['state']] }}">
+                        {{ $language['label'] }}<span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $language['state'] === 'own', 'is-fallback' => $language['state'] === 'follows'])></span>
+                        <span class="sr-only">, {{ $states[$language['state']] }}</span>
+                    </span>
+                @endforeach
+            </span>
+            <span @class(['inline-flex w-28 items-center gap-1.5 text-sm', 'text-success' => $details['status'] === 'published', 'text-muted-foreground' => $details['status'] !== 'published'])>
+                <span aria-hidden="true" @class(['size-1.5 rounded-full', 'bg-current' => $details['status'] !== 'hidden', 'border border-current' => $details['status'] === 'hidden'])></span>
+                {{ ['published' => 'Published', 'unpublished' => 'Unpublished', 'hidden' => 'Hidden'][$details['status']] }}
+            </span>
+            <span class="text-muted-foreground w-48 truncate text-sm" @if ($details['changedAt']) title="{{ $details['changedAt'] }}" @endif>
+                {{ $details['changed'] ?? '' }}@if ($details['changedBy']), {{ $details['changedBy'] }}@endif
+            </span>
+        </span>
+    @endif
 </div>

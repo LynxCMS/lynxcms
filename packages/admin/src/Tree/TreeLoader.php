@@ -11,7 +11,8 @@ use LynxCms\Core\Query\PageScope;
 
 /**
  * Builds the visible part of the page tree through the public pages API: one find() and one
- * childCounts() query per expanded level, so collapsed branches cost nothing. With a scope, only
+ * childCounts() query per expanded level, so collapsed branches cost nothing. With details, each row
+ * also carries its languages, status and last change (TreeDetails). With a scope, only
  * the pages it lets through are listed and counted (AdminAccess::treeScope()). Every status is
  * included, so a row's position is its real position among all siblings (what pages.sort expects).
  *
@@ -32,6 +33,7 @@ final class TreeLoader
         private readonly int $perPage,
         private readonly TreePresenter $presenter = new DefaultPresenter,
         private readonly ?PageScope $scope = null,
+        private readonly ?TreeDetails $details = null,
     ) {
         $hidden = app(AdminBranches::class)->rootTemplates();
         $this->selector = 'include=all'.($hidden === [] ? '' : ', template!='.implode('|', $hidden));
@@ -107,6 +109,7 @@ final class TreeLoader
             hasDraft: $hasDraft,
             markers: app(TreeMarkers::class)->for($page),
             allowsChildren: $page->template()->allowsChildren(),
+            details: $this->details?->for($page),
         );
     }
 }
