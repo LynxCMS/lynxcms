@@ -34,7 +34,7 @@ app(Navigation::class)->add('Forms', 'lynx.admin.forms', icon: 'inbox',
     badge: fn (): int => Submission::query()->where('status', 'new')->count());
 ```
 
-Links in the page editor's header for some pages, such as "Preview form" on form pages, come from `EditorLinks`:
+Links under the page's title in the editor for some pages, such as "Preview form" on form pages, come from `EditorLinks`:
 
 ```php
 app(EditorLinks::class)->add(fn (Page $page): ?array => $page->template()->name === 'report'

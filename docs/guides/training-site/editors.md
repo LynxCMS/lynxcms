@@ -27,7 +27,7 @@ Give staff their roles under **Access › Users**, where superusers also invite 
 
 ## Drafts and previews
 
-A news writer can prepare an update without changing the live page. In the editor that is **Save as draft**; in code:
+A news writer can prepare an update without changing the live page. In the editor that is **Save as draft**, in the menu beside **Save**; in code:
 
 ```php
 lynx()->pages->saveDraft('/posts/new-porto-studio/', ['summary' => ['en' => 'Classes start on Monday.']]);

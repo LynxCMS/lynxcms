@@ -81,5 +81,5 @@ it('explains that previews need a signed in user, instead of offering a link tha
 
     draftEditor()
         ->assertDontSeeHtml('?preview=draft')
-        ->assertSee('Sign in to preview the draft');
+        ->assertSeeHtml('data-draft-preview-signin');
 });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
+use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Core\Pages\PageStatus;
 
@@ -35,4 +36,26 @@ it('marks a waiting draft beside the title', function (): void {
         ->set('values.title.default', 'Alpha draft')
         ->call('saveDraft')
         ->assertSeeHtml('data-page-draft');
+});
+
+it('keeps saving as a draft and reviewing in the save button\'s menu', function (): void {
+    Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
+        ->assertSeeHtml('data-save-menu')
+        ->assertSeeHtml('wire:click="saveDraft"')
+        ->assertSeeHtml('wire:click="review"');
+});
+
+it('offers publishing beside a waiting draft, and discarding in the menu', function (): void {
+    Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
+        ->set('values.title.default', 'Alpha draft')
+        ->call('saveDraft')
+        ->assertSeeHtml('wire:click="publishDraft"')
+        ->assertSeeHtml('data-discard-draft');
+});
+
+it('lists the links modules add beside the title', function (): void {
+    app(EditorLinks::class)->add(fn (): array => ['label' => 'Module link', 'url' => 'https://example.test/module']);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
+        ->assertSeeHtml('data-page-link href="https://example.test/module"');
 });
