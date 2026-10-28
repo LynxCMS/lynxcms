@@ -9,11 +9,12 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\SettingsPerUse;
 use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
 use LynxCms\Core\Support\Value;
 
 /** References to other pages, ordered. Shared across languages. */
-final class PageReferenceType extends BaseFieldType implements DescribesPhpType, PresentsValue, ReferencesPages
+final class PageReferenceType extends BaseFieldType implements DescribesPhpType, PresentsValue, ReferencesPages, SettingsPerUse
 {
     use StoresPageReferences;
 
@@ -39,6 +40,12 @@ final class PageReferenceType extends BaseFieldType implements DescribesPhpType,
             'templates' => $schema->array()->items($schema->string())->description('Template names allowed as targets.'),
             'input' => $schema->string()->enum(self::INPUTS)->description('How editors choose: search by title (default), or select, radios or checkboxes listing the allowed pages. Lists suit short ones, such as categories.'),
         ];
+    }
+
+    /** A template or block type may set how many pages, and which templates, for its own use (ADR-0094). */
+    public function settingsPerUse(): array
+    {
+        return ['min', 'max', 'templates'];
     }
 
     public function settingsRules(): array

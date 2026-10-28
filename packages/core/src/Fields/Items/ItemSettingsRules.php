@@ -9,6 +9,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
 use LynxCms\Contracts\Fields\FieldType;
 use LynxCms\Core\Fields\FieldRegistry;
+use LynxCms\Core\Fields\UseSettings;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
 
@@ -29,6 +30,7 @@ final class ItemSettingsRules
         return [
             $prefix => [new FilledList('List at least one field.')],
             "{$prefix}.*.name" => ['required', 'string', self::subfieldExists()],
+            "{$prefix}.*" => [self::settingsPerUse()],
             "{$prefix}.*.required" => ['sometimes', 'boolean'],
             "{$prefix}.*.width" => ['sometimes', 'integer', 'min:10', 'max:100'],
             "{$prefix}.*.label" => ['sometimes', 'nullable', ...LocalizedText::rules()],
@@ -74,6 +76,20 @@ final class ItemSettingsRules
     public static function canBeSubfield(FieldType $type): bool
     {
         return ! $type instanceof StoresItems || $type instanceof NestsInItems;
+    }
+
+    /** Settings an entry sets for its field must be ones the field's type takes per use (ADR-0094). */
+    private static function settingsPerUse(): Closure
+    {
+        return function (string $attribute, mixed $entry, Closure $fail): void {
+            $entry = Value::map($entry);
+            $field = app(FieldRegistry::class)->find(Value::string($entry['name'] ?? ''));
+            $problem = $field === null ? null : UseSettings::problem($field, $entry);
+
+            if ($problem !== null) {
+                $fail($problem);
+            }
+        };
     }
 
     /** The subfield must be an existing field that does not store items itself. */

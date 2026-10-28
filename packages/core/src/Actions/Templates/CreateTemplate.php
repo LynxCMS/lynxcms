@@ -71,7 +71,7 @@ final class CreateTemplate extends Action
             'name' => $schema->string()->description('Machine name, e.g. "consulting".')->required(),
             'label' => $schema->string()->description('Name shown to editors: text, or an object of language code => text.'),
             'from' => $schema->string()->description('Name of a template whose fields and settings are copied first.'),
-            'fields' => $schema->array()->description('Fields in order: names, or objects {"name", "required", "label", "show_if", "required_if", "searchable"}. show_if and required_if are conditions such as "format=onsite|hybrid, price>0" (ADR-0030).'),
+            'fields' => $schema->array()->description('Fields in order: names, or objects {"name", "required", "label", "show_if", "required_if", "searchable"}. show_if and required_if are conditions such as "format=onsite|hybrid, price>0" (ADR-0030). A page field\'s entry may also set "min", "max" and "templates" for this template, and a repeater\'s or matrix\'s "min" and "max" (ADR-0094).'),
             'has_url' => $schema->boolean()->description('False for settings pages and reusable content that must never be served. Default true.'),
             'singleton' => $schema->boolean()->description('Only one page may use this template (e.g. global settings).'),
             'allowed_templates' => $schema->array()->items($schema->string())->description('Templates pages may switch to.'),

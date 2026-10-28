@@ -15,6 +15,7 @@ use LynxCms\Core\Fields\MergesInput;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ProvidesSearchText;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\SettingsPerUse;
 use LynxCms\Core\Fields\Types\BaseFieldType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Language;
@@ -32,8 +33,14 @@ use stdClass;
  *
  * @api
  */
-abstract class ItemFieldType extends BaseFieldType implements CarriesFiles, DescribesPhpType, MergesInput, PresentsValue, ProvidesSearchText, ReferencesPages, StoresItems
+abstract class ItemFieldType extends BaseFieldType implements CarriesFiles, DescribesPhpType, MergesInput, PresentsValue, ProvidesSearchText, ReferencesPages, SettingsPerUse, StoresItems
 {
+    /** A template may set how many items, for its own use of the field (ADR-0094). */
+    public function settingsPerUse(): array
+    {
+        return ['min', 'max'];
+    }
+
     public function __construct(
         protected readonly FieldRegistry $fields,
         private readonly ItemRows $rows,

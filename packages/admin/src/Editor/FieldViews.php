@@ -65,8 +65,8 @@ final class FieldViews
             $templateField->required(),
             $description === '' ? null : $description,
             $values,
-            // A matrix may offer only some types on this template (ADR-0045).
-            $field->config() + array_filter(['allowed_types' => $templateField->settings['allowed_types'] ?? null]),
+            // A matrix may offer only some types on this template (ADR-0045), and a template may set limits of its own (ADR-0094).
+            $templateField->config() + array_filter(['allowed_types' => $templateField->settings['allowed_types'] ?? null]),
             $notes === '' ? null : $notes,
             $page?->id,
             display: $templateField->editor(),
