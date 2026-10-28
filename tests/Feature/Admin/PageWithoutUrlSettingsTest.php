@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\Livewire\PageHistory;
@@ -100,5 +101,5 @@ it('names a unique page without a URL by its title when its name is refused', fu
     $page->name = 'footer-note';
     $page->title = 'Footer note';
 
-    expect(fn () => $page->save())->toThrow(Illuminate\Validation\ValidationException::class, '“Footer note”');
+    expect(fn () => $page->save())->toThrow(ValidationException::class, '“Footer note”');
 });
