@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Selectors leave out pages without a URL**, such as hero slides, promos, forms and settings pages, unless they ask for them: by naming their template, by reading below such a page (`children()` of a slide branch), by `id=`, or with `include=no_url` or `include=all`. A site search no longer finds a slide that links nowhere. See [Pages without a URL](/basics/selectors#pages-without-a-url) and the [upgrade guide](/prologue/upgrade).
+
 - In the admin, the pages a page field holds are a list editors put in order: drag a page by its handle, or move it with the arrows beside it. Templates read them in that order, as before.
 
 - **Drafts can go live by themselves.** `lynx()->pages->schedule($page, publishDraftAt: ...)`, the `pages.schedule` action's `publish_draft_at`, or the new **Publish the draft at** field in the Settings tab sets when a page's draft is published. The scheduler publishes it as an editor would, and the page's activity says "Published the draft on schedule". See [Scheduled publishing](/basics/publishing#scheduled-publishing).

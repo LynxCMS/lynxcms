@@ -58,9 +58,11 @@ final readonly class TreeFilters
     /** The whole selector for a filter, or null when there is no such filter. */
     public function selector(string $key): ?string
     {
+        // Pages without a URL can have drafts and schedules too, but show in every language, so they
+        // are never missing one (ADR-0096).
         $term = match (true) {
-            $key === self::DRAFTS => 'has_draft=1',
-            $key === self::SCHEDULED => 'has_schedule=1',
+            $key === self::DRAFTS => 'has_draft=1, include=no_url',
+            $key === self::SCHEDULED => 'has_schedule=1, include=no_url',
             str_starts_with($key, self::MISSING) => $this->missing(substr($key, strlen(self::MISSING))),
             default => null,
         };

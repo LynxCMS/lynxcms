@@ -177,6 +177,18 @@ Two more clauses ask about a page's versions. `has_draft=1` finds pages with cha
 $waiting = lynx()->pages->find('has_draft=1, sort=-modified');
 ```
 
+### Pages without a URL
+
+Pages whose template has no URL, such as hero slides, promos, forms or a page of site settings, only show inside other pages, so selectors leave them out. A search for "agents" finds the product and the news, not the slide that mentions them.
+
+Ask for them and you get them: name their template, read below one of them, or name them by id. `include=no_url` brings them back in any other selector, and `include=all` does too:
+
+```php
+$slides = lynx()->pages->findOne('template=hero-slides')?->children();   // below a page without a URL
+$promos = lynx()->pages->find('template=promo, sort=title');                 // their template, named
+$everything = lynx()->pages->find('has_draft=1, include=no_url');
+```
+
 ## Sorting and limits
 
 `sort` takes a field or a page property; a `-` sorts descending. Several `sort` clauses sort by each in turn. `limit` caps the number of pages, and `start` skips some, for paging through results:

@@ -41,6 +41,7 @@ final class SelectorCompiler
         private readonly LanguageRegistry $languages,
         private readonly PathResolver $paths,
         private readonly StatusFilter $status,
+        private readonly UrlFilter $urls,
         private readonly ClauseComparison $comparison,
         private readonly SubfieldCompiler $subfields,
         private readonly SearchIndex $search,
@@ -86,6 +87,7 @@ final class SelectorCompiler
         }
 
         $this->status->apply($query, $include);
+        $this->urls->apply($query, $clauses, $include, $this->pageId(...));
 
         $countQuery = clone $query;
 
