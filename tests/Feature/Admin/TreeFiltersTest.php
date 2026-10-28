@@ -6,6 +6,7 @@ use Illuminate\Auth\GenericUser;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageTree;
+use LynxCms\Admin\Tree\TreeFilters;
 
 /*
  * Filters on the page tree's Details view: pages with a draft, pages with a schedule, and pages
@@ -72,4 +73,19 @@ it('shows the tree again in the simple view', function (): void {
         ->call('filterBy', 'drafts')
         ->call('showDetails', false)
         ->assertDontSeeHtml('data-tree-filtered');
+});
+
+it('counts pages without a URL among drafts and schedules, but never as missing a language', function (): void {
+    lynx()->templates->add('snippet', fields: [['name' => 'title', 'required' => true]], hasUrl: false);
+    $snippet = lynx()->pages->new('snippet', '/');
+    $snippet->name = 'footer-note';
+    $snippet->title = 'Footer note';
+    $snippet->save();
+    lynx()->pages->saveDraft($snippet, ['title' => 'Footer note, again']);
+
+    $filters = new TreeFilters;
+    $found = fn (string $key): array => lynx()->pages->find((string) $filters->selector($key))->ids();
+
+    expect($found(TreeFilters::DRAFTS))->toContain((int) $snippet->id)
+        ->and($found(TreeFilters::MISSING.'pt'))->not->toContain((int) $snippet->id);
 });

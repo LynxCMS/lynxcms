@@ -1031,3 +1031,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `ReferenceTemplates` runs after a field's value is normalized: it compares the page references being saved with the ones stored for that page and field, and the pages a save adds must use one of the templates its use allows (the field's, or the template's or block type's own, ADR-0094). Inside repeater and matrix items, each page subfield is checked with its own settings, against the pages that subfield holds in any stored item. Pages already held are never refused. Page fields and page tables both work this way; the page table's own check on every item is gone.
 
 **Consequences:** An agent or an import can't add a page of the wrong kind, and the admin's picker and saves agree. Narrowing `templates` keeps what pages hold; the pages of other templates stay until an editor removes them. Moving a page from one item of a matrix to another counts as held. Each save of a reference field reads that field's stored value once.
+
+## ADR-0096: Selectors leave out pages without a URL unless asked for
+
+**Status:** Accepted. Extends ADR-0026's status filter.
+
+**Context:** Pages whose template has no URL (hero slides, promos, settings pages, forms) only show inside other pages, but `find()`, `children()` and `search*=` returned them like any page. A site search found a hero slide, and a link to it led nowhere. Leaving them out everywhere would break the code that reads them on purpose: a carousel reading its slides, the forms module looking up a form, a settings lookup.
+
+**Decision:** `UrlFilter` runs beside the status filter: a selector leaves out pages of templates without a URL unless it asks for them. It asks when it names such a template (`template=promo`, not `!=`), reads below a page without a URL (`parent=` or `has_parent=` it, so `children()` of a slide branch), names pages by `id=`, or adds `include=no_url` or `include=all`. Status rules still apply: `include=no_url` alone keeps leaving out unpublished pages. The admin's tree, search and picker already pass `include=all`; its draft and schedule filters add `include=no_url`, while "Not in Português" leaves these pages out, since they show in every language.
+
+**Consequences:** Site searches, lists and menus no longer offer pages visitors can't open. Code that found such pages without naming their template or parent, for example with `parent=/`, must add `include=no_url`; the upgrade guide says so. Each selector reads the templates without a URL from the registry, and one indexed query checks a `parent=`/`has_parent=` reference.
