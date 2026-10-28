@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- `lynxcms/admin` requires Livewire 4.4.8 or later, which fixes an authorization bypass in Livewire's `#[Authorize]` attribute ([GHSA-mhf7-xp6r-6qrc](https://github.com/advisories/GHSA-mhf7-xp6r-6qrc)). Lynx does not use that attribute, but your app's own components may. Update both together: `composer update "lynxcms/*" livewire/livewire`.
+
 - **Field screens for people.** A new field starts with what it holds, in plain words and groups ("Paragraphs", "Blocks", "Repeater"), then its label, with the name templates use made from it. New fields start with their own text in each language; kinds that have none, such as numbers, are the same in every language. Each field's screen has tabs: a repeater's or matrix's fields or block types, **Preview** (the field as editors see it), **Field**, and **Limits and display**. Settings have labels of their own ("Longest text", "Editors write in"), formatters are switches, and the add button's text can be set in every language. Save is at the top, and Delete on the Field tab. Modules name their field types with `FieldKinds`; see [Extending the admin](/admin/extending#field-types-the-field-form-offers).
 
 - The page cache screen has tabs: **Overview** (stored pages, in all and per template, and clearing), **Rules** (each template's rule summed up on its row, opening to edit it), **Page parts** (fragments, explained for site owners) and **Web server setup**. The tab stays in the address, so a link can open one.
