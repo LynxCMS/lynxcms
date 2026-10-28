@@ -16,6 +16,10 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The example that stores a file from code on [Images and Files](/basics/images-and-files#storing-files-from-code) puts the stored entry in the file's `values` and starts from an empty list, so it runs as written. Before, it failed with "Each file needs its stored name".
 
+- **Fix:** a page taken offline in one language linked to its address in that language, which answered 404, from lists and page fields in that language. It links to its default-language address, as a page never published there does.
+
+- `PageArray::publishedIn()` keeps the pages published in the visitor's language, or in one you name, for pages that feature others per market. Lists, searches and page fields keep the others and link to their default-language address; menus leave them out. See [Languages](/basics/languages#urls).
+
 ## 0.1.24
 
 Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page editor with a side panel and a two-button header, a Details view of the page tree, and rebuilt field and page cache screens. It requires Livewire 4.4.8, which fixes a security issue. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-23-to-0-1-24) lists two things to check.

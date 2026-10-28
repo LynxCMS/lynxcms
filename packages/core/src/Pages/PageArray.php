@@ -9,6 +9,7 @@ use Closure;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
+use LynxCms\Core\Models\Language;
 use LynxCms\Core\Support\Value;
 use Traversable;
 
@@ -96,6 +97,19 @@ final class PageArray implements Countable, IteratorAggregate, JsonSerializable
     public function filter(callable $callback): self
     {
         return new self(array_values(array_filter($this->pages, $callback)));
+    }
+
+    /**
+     * The pages published in a language, the current one by default (ADR-0093). Lists keep a page
+     * that is offline in the visitor's language and link it to its default-language URL; this
+     * drops it, for sections that feature pages per market. Pages without a URL show in every
+     * language, so they are kept.
+     */
+    public function publishedIn(Language|string|null $language = null): self
+    {
+        $language ??= lynx()->languages->current();
+
+        return $this->filter(fn (Page $page): bool => ! $page->template()->hasUrl() || $page->isActiveIn($language));
     }
 
     /**

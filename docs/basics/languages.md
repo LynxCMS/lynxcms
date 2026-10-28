@@ -50,7 +50,19 @@ Each language has its own addresses. The default language has no prefix, every o
 | Blog | `/blog` | `/pt/blogue` |
 | A post | `/blog/hello-world` | `/pt/blogue/ola-mundo` |
 
-A page is **published in a language** once it has a URL name in that language. Until then, links to it in that language point to its English address, so visitors never land on a missing page.
+A page is **published in a language** once it has a URL name in that language, and an editor can take it offline in one language from its **Settings** tab. Until it is published there, links to it in that language point to its English address, so visitors never land on a missing page.
+
+Lists keep such a page. A Portuguese visitor of the blog still sees the post that has no Portuguese version yet, linking to the English one: `find()`, `children()` and page fields list it, much as a field without a Portuguese value shows the English one. Menus, the sitemap and the links between languages leave it out, since they promise an address in Portuguese.
+
+A page that features pages for one market, such as a home page whose sections pick products, can keep only those published in the visitor's language:
+
+```blade
+@foreach ($section->cards->publishedIn() as $card)
+    <x-card :page="$card" />
+@endforeach
+```
+
+`publishedIn('pt')` names a language instead of the current one. Pages without a URL, such as a promo or a block of settings, show in every language, so `publishedIn()` keeps them.
 
 Visitors who guess an address get there too. `/pt/blog/hello-world`, which mixes the Portuguese prefix with English names, redirects to `/pt/blogue/ola-mundo` once the post has its Portuguese name. Changing a language's prefix rebuilds its URLs, and the old ones redirect.
 
