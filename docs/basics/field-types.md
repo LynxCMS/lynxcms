@@ -216,7 +216,7 @@ Each item lists fields of the site, so create them first:
 
 <<< @/snippets/field-types/repeater.php#fields{php}
 
-In the admin, the repeater's field screen lists its fields in order. Search for an existing field to add it, or create a new one on the spot.
+In the admin, the repeater's field screen opens on its fields, in order, each with **Required** and a width (Half, Third, Full…). Search for an existing field to add it, or create a new one on the spot. The **Preview** tab shows an item as editors see it, and **Limits and display** sets how many items, the add button's text in every language and whether items start open.
 
 Templates loop over the items that are switched on, in order. Each item reads its fields like a page does:
 
@@ -253,7 +253,7 @@ A block type lists fields of the site, the same way a template does. Create the 
 
 A field can appear in several block types and in templates too, such as `body` here. Listing a field that does not exist yet fails with a message naming the call that creates it.
 
-In the admin, the matrix's field screen shows each block type as a card. Open one to set its label and add its fields, from the fields you have or by creating one on the spot. Each card shows how its block will look in the page editor, and drag and drop orders types and fields.
+In the admin, the matrix's field screen opens on its block types, one under the other. Open one to set its name and add its fields, from the fields you have or by creating one on the spot; drag and drop orders types and fields. The **Preview** tab shows every block type as editors see it, with the add buttons, and **Limits and display** holds the settings for the whole field.
 
 A template can offer only some types: `['name' => 'blocks', 'allowed_types' => ['text']]`. A block that changes type keeps its other values, hidden. [Views](/basics/views#matrix-blocks) shows how to render blocks with `@matrix`. Selectors match types with `blocks.type=video`.
 

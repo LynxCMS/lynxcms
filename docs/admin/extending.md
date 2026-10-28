@@ -92,7 +92,15 @@ The button saves the post like any other write, so the save action checks `pages
 
 ## Field types the field form offers
 
-A module whose field type only its own schema creates can leave it out of the field form's type menu, as the forms module does with `options`. The type still works through the API and MCP, and existing fields of it still open in the field form.
+The New field screen asks what a field holds, and lists each type by a name for people ("Paragraphs", "Blocks"), in a group, with an icon and one sentence. Give your type the same, or it shows its type name under **Other**:
+
+```php
+app(\LynxCms\Admin\Editor\FieldKinds::class)->register('rating', 'Star rating', 'Choices', 'star', 'One to five stars.');
+```
+
+The icon is a [Lucide](https://lucide.dev/icons) name. The groups are Text, Numbers and dates, Choices, Pages and media, and Structure; a group of your own comes after them.
+
+A module whose field type only its own schema creates can leave it out of the choices, as the forms module does with `options`. The type still works through the API and MCP, and existing fields of it still open in the field form.
 
 ```php
 app(\LynxCms\Admin\Editor\FieldTypeChoices::class)->exclude('rating');

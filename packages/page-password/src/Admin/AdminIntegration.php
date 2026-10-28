@@ -8,6 +8,7 @@ use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\FieldInputs;
+use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
 use LynxCms\Admin\Tree\TreeMarkers;
@@ -30,6 +31,7 @@ final class AdminIntegration
     public static function register(): void
     {
         app(FieldInputs::class)->register(PagePasswordSchema::TYPE, 'lynx-page-password::inputs.password', PasswordConverter::class, 'lynx-page-password::values.password');
+        app(FieldKinds::class)->register(PagePasswordSchema::TYPE, 'Page password', 'Pages and media', 'key-round', 'A password visitors type to open the page.');
 
         Livewire::component('lynx-page-password.settings', PagePasswordSettings::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('schema.manage');

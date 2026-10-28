@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Field screens for people.** A new field starts with what it holds, in plain words and groups ("Paragraphs", "Blocks", "Repeater"), then its label, with the name templates use made from it. New fields start with their own text in each language; kinds that have none, such as numbers, are the same in every language. Each field's screen has tabs: a repeater's or matrix's fields or block types, **Preview** (the field as editors see it), **Field**, and **Limits and display**. Settings have labels of their own ("Longest text", "Editors write in"), formatters are switches, and the add button's text can be set in every language. Save is at the top, and Delete on the Field tab. Modules name their field types with `FieldKinds`; see [Extending the admin](/admin/extending#field-types-the-field-form-offers).
+
 - The admin sets up matrix and repeater fields. A matrix's screen shows its block types as cards, each with its label, slug, block header and fields, and a picture of the block as editors will see it. Fields are added from the site's fields, or created on the spot, and sorted by dragging. Removing a block type that pages use asks first. Before, these settings were a single text box that could not hold them.
 
 - Listing a field that does not exist in a repeater, a matrix or a template fails with a message naming `lynx()->fields->add()`, not only the `fields.create` action.

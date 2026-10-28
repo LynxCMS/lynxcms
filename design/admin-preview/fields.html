@@ -1,0 +1,166 @@
+<title>Lynx Field Screens</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="screens.css">
+<link rel="stylesheet" href="fields.css">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M21 12h-8M21 6H8M21 18h-8M3 6v4a2 2 0 0 0 2 2h3M3 10v6a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-fields" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-toggle" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="16" cy="12" r="3"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="5" rx="1.5"/><rect x="3" y="10" width="18" height="5" rx="1.5"/><path d="M3 19.5h18"/></symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="8" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-quote" viewBox="0 0 24 24"><path d="M7 7h4v6H5V9a2 2 0 0 1 2-2ZM17 7h4v6h-6V9a2 2 0 0 1 2-2ZM9 13c0 2-1 4-4 4M19 13c0 2-1 4-4 4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-facet" viewBox="0 0 11 10"><path d="M3.6.8h6.6L7.4 9.2H.8Z"/></symbol>
+</svg>
+
+<div class="preview">
+  <header class="controls">
+    <h1>Lynx field screens <small>Preview with illustrative content</small></h1>
+    <div class="seg" role="group" aria-label="Screen"><button data-screen="new" aria-pressed="true">New field</button><button data-screen="matrix" aria-pressed="false">Blocks (matrix)</button><button data-screen="repeater" aria-pressed="false">Repeater</button></div>
+    <div class="seg" role="group" aria-label="Theme"><button data-theme-pick="system" aria-pressed="true">System</button><button data-theme-pick="light" aria-pressed="false">Light</button><button data-theme-pick="dark" aria-pressed="false">Dark</button></div>
+  </header>
+
+  <div class="admin" id="admin">
+    <aside class="sidebar" aria-label="Admin">
+      <a class="brand" href="#new"><svg viewBox="0 0 395 548" aria-hidden="true"><path style="fill:var(--mark-deep)" d="M56.1 260.9L0.2 374L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1L394.8 334.6L338.2 340.1L262.6 264.1L176.9 272.9L44.7 385.8L70 298.9Z"/><path style="fill:var(--mark-mid)" d="M361.8 252.5L357.2 239.1L271 175.5L193.1 171.8L84.6 290.7L63.9 369.3L176.9 272.9L262.6 264.1L338.2 340.1L394.8 334.6L346.5 281.2L344.7 258.1ZM181 337.2L247 356.9L291 304.5L248.3 301L228 280.6L181.9 286L107.3 350.6L96.6 410.3ZM313.4 191.3L321.5 68.4L276 165.2ZM106.4 65.4L80.8 152.6L105.2 247.7L178.6 168.9Z"/><path style="fill:var(--mark-light)" d="M394.8 351.2L338.2 340.1L297.2 298.9L291 304.5L247 356.9L249.3 410.1L237.1 408.3L235.1 364.9L207.7 357L185.1 350.6L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1Z"/><path style="fill:var(--mark-eye)" d="M296.7 299.8L294 275.1L264.8 253.8L206.3 259.1L248.3 301L291 304.5Z"/><path style="fill:var(--mark-deep)" d="M105.2 247.7L76.9 278.8L64.2 242.8L65.4 155.9L90.4 71.1L39.8 8L76.9 37.3L64.2 0.2L106.4 65.4L80.8 152.6ZM216.8 160.2L276 165.2L321.5 68.4L324.2 15.2L304.7 70.8ZM394.8 334.6L341.4 336.4L337.9 339.8L337.9 351.1L354.8 360.8L355.3 369L359.5 375.6L355.9 391.4L305.4 410.1L249 396.2L249 410.1L304.2 423.3L359.9 403.2L371.9 414.3L380.2 405.4L369.2 392.3L372 376.6L394.8 351.2ZM296.1 300.1L263.4 265L230 268.4L253.8 290.5L271 288.2ZM243.8 444.5L291.4 460.7L254.9 533.4L223.3 483.2Z"/></svg><span class="brand-name">Lynx</span></a>
+      <nav class="nav">
+        <a href="#new"><svg class="i"><use href="#i-tree"/></svg>Pages</a>
+        <p class="nav-label">Settings</p>
+        <a href="#new" aria-current="page"><svg class="i"><use href="#i-fields"/></svg>Fields</a>
+        <a href="#new"><svg class="i"><use href="#i-layout"/></svg>Templates</a>
+      </nav>
+      <div class="me"><span class="avatar">AA</span><div>Ada Admin<small>Superuser</small></div></div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open the menu"><svg class="i"><use href="#i-panel"/></svg></button>
+        <nav class="crumbs" aria-label="Breadcrumbs" id="crumbs"></nav>
+        <div class="search"><svg class="i"><use href="#i-search"/></svg><span>Search pages</span><kbd>⌘K</kbd></div>
+      </div>
+
+      <!-- New field -->
+      <section class="content screen" id="screen-new" aria-label="New field">
+        <div class="head"><div><h2>New field</h2><p>A field holds one kind of content. Templates combine fields, and editors fill them in.</p></div>
+          <div class="actions"><a class="btn ghost" href="#new">Cancel</a><button class="btn primary">Create field</button></div></div>
+        <nav class="tabs" aria-label="Field sections"><a href="#" data-newtab="field" aria-current="page">Field</a><a href="#" data-newtab="preview">Preview</a></nav>
+        <div class="fields one" id="new-field">
+            <div class="group">
+              <h3>What it holds</h3>
+              <div class="kinds" role="radiogroup" aria-label="Kind of field" id="kinds"></div>
+            </div>
+            <div class="group">
+              <h3>Name</h3>
+              <div class="field"><div class="field-top"><label for="f-label">Label</label><span class="langs"><button aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button aria-pressed="false"><svg class="facet missing"><use href="#i-facet"/></svg>PT</button></span></div>
+                <input class="input" id="f-label" value="Opening hours"><p class="hint">What editors read above the input.</p></div>
+              <div class="field"><label for="f-name">Name in templates</label>
+                <div class="code-input"><span>$page-&gt;</span><input id="f-name" value="opening_hours" spellcheck="false"></div>
+                <p class="hint">Made from the label. Lowercase letters, digits and underscores; it can't change once the field exists. Rich text is HTML, so templates print it with <span class="mono">{!! $page-&gt;<span id="mock-name">opening_hours</span> !!}</span>.</p></div>
+            </div>
+            <div class="group">
+              <h3>Languages</h3>
+              <div class="choice-rows" role="radiogroup" aria-label="Languages">
+                <label class="choice-row"><input type="radio" name="lang" checked><span><b>Its own text in each language</b><small>English and Português each get a value.</small></span></label>
+                <label class="choice-row"><input type="radio" name="lang"><span><b>The same in every language</b><small>For numbers, dates and codes.</small></span></label>
+              </div>
+              <div class="field inline"><label for="f-empty">When a language has no text</label><select class="input" id="f-empty"><option>Show the English text</option><option>Show nothing</option></select></div>
+            </div>
+            <div class="group">
+              <h3>Help for editors</h3>
+              <div class="row2">
+                <div class="field"><label for="f-above">Above the input</label><textarea class="input" id="f-above" placeholder="Optional">Leave a day empty when the room is closed.</textarea></div>
+                <div class="field"><label for="f-below">Below the input</label><textarea class="input" id="f-below" placeholder="Optional">For example: 9:00 to 18:00</textarea></div>
+              </div>
+            </div>
+            <div class="group" id="kind-settings">
+              <h3>Paragraphs</h3>
+              <div class="field"><span class="label">Editors write in</span>
+                <div class="seg fit" role="group" aria-label="Format"><button aria-pressed="false">Plain text</button><button aria-pressed="true">Rich text</button><button aria-pressed="false">Markdown</button></div></div>
+              <div class="field inline"><label for="f-max">Longest text</label><div class="with-unit"><input class="input num" id="f-max" placeholder="No limit"><span>characters</span></div></div>
+              <div class="field"><span class="label">When the page is shown</span>
+                <div class="toggles">
+                  <label><input type="checkbox" checked><span><b>Smart quotes</b><small>"a" -- b... becomes “a” – b…</small></span></label>
+                  <label><input type="checkbox"><span><b>Links to other sites open in a new tab</b><small>With rel="noopener".</small></span></label>
+                  <label><input type="checkbox"><span><b>Anchors on headings</b><small>So links can point at a section.</small></span></label>
+                </div><p class="hint">The stored text never changes; these run as the page is shown, in this order.</p></div>
+            </div>
+            <details class="advanced"><summary>Advanced</summary>
+              <label class="choice-row"><input type="checkbox"><span><b>Load with the page</b><small>For fields almost every list shows. Others load the first time a template reads them, for all listed pages at once.</small></span></label></details>
+          </div>
+        <div class="limits" id="new-preview" hidden>
+          <p class="hint">The field as editors see it in the page editor.</p>
+          <div class="mocks"><div class="mock"><b id="mock-label">Opening hours</b><small>Leave a day empty when the room is closed.</small><span class="mock-input tall"></span><small>For example: 9:00 to 18:00</small></div></div>
+        </div>
+      </section>
+
+      <!-- Matrix and repeater share the item builder -->
+      <section class="content screen" id="screen-items" aria-label="Edit field" hidden>
+        <div class="head"><div><h2 id="items-title">Page blocks</h2>
+            <div class="pagemeta"><span class="mono" id="items-name">page_blocks</span><span id="items-kind">Blocks</span><span>Used by <a href="#matrix">Home</a> and <a href="#matrix">Landing page</a></span></div></div>
+          <div class="actions"><button class="btn primary">Save</button></div></div>
+        <nav class="tabs" aria-label="Field sections"><a href="#" data-tab="builder" aria-current="page" id="items-tab">Block types <span class="badge">4</span></a><a href="#" data-tab="preview">Preview</a><a href="#" data-tab="field">Field</a><a href="#" data-tab="limits">Limits and display</a></nav>
+        <div class="builder" id="builder">
+          <ol class="accordion" id="type-list" aria-label="Block types"></ol>
+          <button class="add-dashed" id="add-type"><svg class="i"><use href="#i-plus"/></svg>Add block type</button>
+        </div>
+        <div class="limits" id="previewtab" hidden>
+          <p class="hint" data-noun="Each block type as editors see it in the page editor, closed blocks first, then the one they're filling in.">Each block type as editors see it in the page editor.</p>
+          <div class="mocks" id="mocks"></div>
+        </div>
+        <div class="limits" id="fieldtab" hidden>
+          <div class="group"><h3>Name</h3>
+            <div class="field"><div class="field-top"><label for="ft-label">Label</label><span class="langs"><button aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button aria-pressed="false"><svg class="facet own"><use href="#i-facet"/></svg>PT</button></span></div><input class="input" id="ft-label" value="Page blocks"></div>
+            <p class="hint"><svg class="i lock"><use href="#i-lock"/></svg>Templates read it as <span class="mono">$page-&gt;<span id="ft-name">page_blocks</span></span>. <span data-noun="Each block holds its own languages.">Each block holds its own languages.</span></p></div>
+          <div class="group"><h3>Help for editors</h3><div class="row2"><div class="field"><label for="ft-above" data-noun="Above the blocks">Above the blocks</label><textarea class="input" id="ft-above" placeholder="Optional"></textarea></div><div class="field"><label for="ft-below" data-noun="Below the blocks">Below the blocks</label><textarea class="input" id="ft-below" placeholder="Optional"></textarea></div></div></div>
+          <details class="advanced"><summary>Advanced</summary><label class="choice-row"><input type="checkbox"><span><b>Load with the page</b><small>For fields almost every list shows.</small></span></label></details>
+          <div class="danger"><div><b>Delete this field</b><p class="hint">Removes it from 2 templates and deletes <span data-noun="the blocks">the blocks</span> of 14 pages. This can't be undone.</p></div><button class="btn danger-btn">Delete field…</button></div>
+        </div>
+        <div class="limits" id="limits" hidden>
+          <div class="group"><h3>How many</h3>
+            <p class="sentence"><span id="limits-noun">Pages have</span> at least <input class="input num small" value="1" aria-label="Fewest"> and at most <input class="input num small" placeholder="any" aria-label="Most"> <span class="unit">blocks</span>.</p>
+            <p class="sentence">Editors can indent <span data-noun="a block">a block</span> <select class="input small" aria-label="Indent levels"><option>not at all</option><option>1 level</option><option>2 levels</option></select> under the one above it.</p></div>
+          <div class="group"><h3>In the page editor</h3>
+            <div class="field"><div class="field-top"><label for="l-add">Text of the add button</label><span class="langs"><button aria-pressed="true"><svg class="facet own"><use href="#i-facet"/></svg>EN</button><button aria-pressed="false"><svg class="facet missing"><use href="#i-facet"/></svg>PT</button></span></div><input class="input" id="l-add" placeholder="Add a block"></div>
+            <div class="field"><span class="label" data-noun="Blocks start">Blocks start</span>
+              <div class="choice-rows" role="radiogroup" aria-label="Blocks start">
+                <label class="choice-row"><input type="radio" name="open" checked><span><b>Closed, except new ones</b><small>Editors see every header and open what they change.</small></span></label>
+                <label class="choice-row"><input type="radio" name="open"><span><b>Open</b><small data-noun="For a few short blocks.">For a few short blocks.</small></span></label>
+                <label class="choice-row"><input type="radio" name="open"><span><b>Closed</b><small>For long pages.</small></span></label>
+              </div></div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="notes" aria-labelledby="changes">
+    <h2 id="changes">What changed from today's field screens</h2>
+    <ul>
+      <li><strong>Kinds in plain words.</strong> The type is a choice of what the field holds, grouped and described for people ("Paragraphs", "Blocks"), instead of a select of type names with descriptions written for agents.</li>
+      <li><strong>Label first.</strong> The name templates use is made from the label, shown as <span class="mono">$page-&gt;name</span>, and locks once the field exists.</li>
+      <li><strong>Settings with real controls.</strong> Each kind's settings get labels and inputs of their own: the add button's text in every language, "At least / at most" for limits, a choice of how blocks start, instead of a form built from the agent schema.</li>
+      <li><strong>Formatters as switches.</strong> Smart quotes, new-tab links and heading anchors are things to turn on, not a wall of "Add smartypants" buttons.</li>
+      <li><strong>Blocks in one column, without nested cards.</strong> Block types are an accordion: the open one shows its name, fields and header in place. How they look to editors moves to its own Preview tab, and limits and display to theirs, so the page no longer runs 2,000 pixels.</li>
+      <li><strong>Repeaters use the same builder,</strong> with one item instead of a list of block types.</li>
+      <li><strong>Save at the top,</strong> as in the page editor, and "Used by" under the title, where it warns before an edit instead of after.</li>
+    </ul>
+  </section>
+</div>
+<script src="fields.js"></script>
