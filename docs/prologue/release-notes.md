@@ -8,23 +8,25 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.25
+
+Released October 28, 2026. Page fields hold as many pages as each use allows, in the order editors set, and check their templates on every save. Drafts can go live at a set time, and selectors leave out pages without a URL. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-24-to-0-1-25) lists two things to check.
 
 - **Selectors leave out pages without a URL**, such as hero slides, promos, forms and settings pages, unless they ask for them: by naming their template, by reading below such a page (`children()` of a slide branch), by `id=`, or with `include=no_url` or `include=all`. A site search no longer finds a slide that links nowhere. See [Pages without a URL](/basics/selectors#pages-without-a-url) and the [upgrade guide](/prologue/upgrade).
-
-- In the admin, the pages a page field holds are a list editors put in order: drag a page by its handle, or move it with the arrows beside it. Templates read them in that order, as before.
 
 - **Drafts can go live by themselves.** `lynx()->pages->schedule($page, publishDraftAt: ...)`, the `pages.schedule` action's `publish_draft_at`, or the new **Publish the draft at** field in the Settings tab sets when a page's draft is published. The scheduler publishes it as an editor would, and the page's activity says "Published the draft on schedule". See [Scheduled publishing](/basics/publishing#scheduled-publishing).
 
 - Page fields take `min` and `max`, as repeaters and matrices do: "at most 8 cards", "at least 2 related courses". Saving more or fewer fails with "Pick at most 8 pages.", from the admin, the API, MCP and the agent alike, and the admin's page search steps aside once the field is full. A template, or a block type of a matrix, can set its own `min`, `max` and `templates` for a page field, so one `cards` field holds 4 pages in one section and 8 in another; repeaters and matrices take a template's own `min` and `max` too. See [Field Types](/basics/field-types#page).
 
+- In the admin, the pages a page field holds are a list editors put in order: drag a page by its handle, or move it with the arrows beside it. Templates read them in that order, as before.
+
 - A page field's `templates` now holds on every save, not only in the admin's picker: a save that adds a page of another template, from code, the API, MCP or the agent, fails with "Pick pages that use course: [news] uses newsroom.". Pages a field already holds stay, so narrowing `templates` later never blocks an unrelated save. Page tables work the same way; before, they refused a save that kept an item of a template the field no longer listed.
 
-- The example that stores a file from code on [Images and Files](/basics/images-and-files#storing-files-from-code) puts the stored entry in the file's `values` and starts from an empty list, so it runs as written. Before, it failed with "Each file needs its stored name".
+- `PageArray::publishedIn()` keeps the pages published in the visitor's language, or in one you name, for pages that feature others per market. Lists, searches and page fields keep the others and link to their default-language address; menus leave them out. See [Languages](/basics/languages#urls).
 
 - **Fix:** a page taken offline in one language linked to its address in that language, which answered 404, from lists and page fields in that language. It links to its default-language address, as a page never published there does.
 
-- `PageArray::publishedIn()` keeps the pages published in the visitor's language, or in one you name, for pages that feature others per market. Lists, searches and page fields keep the others and link to their default-language address; menus leave them out. See [Languages](/basics/languages#urls).
+- The example that stores a file from code on [Images and Files](/basics/images-and-files#storing-files-from-code) puts the stored entry in the file's `values` and starts from an empty list, so it runs as written. Before, it failed with "Each file needs its stored name".
 
 ## 0.1.24
 
