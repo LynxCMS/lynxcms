@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Fields\Types;
 
-use Closure;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Fields\NeedsSavedPage;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
-use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Pages\PageLoader;
-use LynxCms\Core\Support\Value;
 
 /**
  * Pages made for this page and listed in a table, like ProcessWire's Page Table (ADR-0058): a
@@ -63,23 +59,7 @@ final class PageTableType extends BaseFieldType implements DescribesPhpType, Nee
 
     public function rules(array $settings): array
     {
-        return ['nullable', 'array', $this->allowedTemplates(Value::strings($settings['templates'] ?? []))];
-    }
-
-    /**
-     * Every item must use one of the field's templates.
-     *
-     * @param  list<string>  $templates
-     * @return Closure(string, mixed, Closure(string): mixed): void
-     */
-    private function allowedTemplates(array $templates): Closure
-    {
-        return function (string $attribute, mixed $value, Closure $fail) use ($templates): void {
-            foreach (app(PageLoader::class)->many(Value::ints((array) $value)) as $page) {
-                if ($page instanceof Page && ! in_array($page->template()->name, $templates, true)) {
-                    $fail("Page [{$page->name()}] uses template [{$page->template()->name}]; this table holds ".implode(', ', $templates).' pages.');
-                }
-            }
-        };
+        // Its templates are checked on save for the pages being added (ReferenceTemplates, ADR-0095).
+        return ['nullable', 'array'];
     }
 }

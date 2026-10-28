@@ -172,7 +172,7 @@ References to other pages, such as related courses or a post's category.
 | --- | --- |
 | `multiple` | Allow more than one page. Default `true`. |
 | `min`, `max` | Fewest and most pages, such as at most 8 cards on a home page section. `min` counts once editors pick any; `required` asks for at least one. A template or a block type can set its own, see below. |
-| `templates` | Templates the chosen pages may use. |
+| `templates` | Templates the chosen pages may use. Every save checks the pages it adds, from the admin or from code; pages the field already holds stay when you narrow the list later. |
 | `input` | `search` by title (default), or `select`, `radios` or `checkboxes` listing the allowed pages (up to 100), which suits short lists such as categories. |
 
 Several pages read as a `PageArray`; one page (`multiple: false`) reads as that page or `null`:
@@ -203,7 +203,7 @@ Pages made for this page and listed in a table, such as a course's sessions or a
 
 | Setting | Meaning |
 | --- | --- |
-| `templates` | Templates of the items. Required. |
+| `templates` | Templates of the items. Required. Checked like a page field's: for the pages a save adds. |
 | `parent` | Path new items are created under. Default: the page itself. |
 | `columns` | Fields the admin table shows. Default: the title. |
 | `remove` | Whether removing an item from the table keeps its page (`keep`, default) or moves it to the trash (`trash`). |

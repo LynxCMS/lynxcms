@@ -32,7 +32,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").
@@ -56,7 +56,8 @@ final readonly class ValueWriter
             foreach (array_keys($languageIds) as $languageId) {
                 // A removed value is not in $values: it falls back and needs no checks.
                 if (array_key_exists($languageId, $values[$fieldName] ?? [])) {
-                    $errors += $this->normalize($templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}");
+                    $problems = $this->normalize($templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}");
+                    $errors += $problems === [] ? $this->references->errors($page->id, $templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}") : $problems;
                     $errors += $this->disallowedTypes($templateField, $values[$fieldName][$languageId], "values.{$fieldName}");
                 }
             }
