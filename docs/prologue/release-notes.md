@@ -8,33 +8,11 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.24
 
-- `lynxcms/admin` requires Livewire 4.4.8 or later, which fixes an authorization bypass in Livewire's `#[Authorize]` attribute ([GHSA-mhf7-xp6r-6qrc](https://github.com/advisories/GHSA-mhf7-xp6r-6qrc)). Lynx does not use that attribute, but your app's own components may. Update both together: `composer update "lynxcms/*" livewire/livewire`.
+Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page editor with a side panel and a two-button header, a Details view of the page tree, and rebuilt field and page cache screens. It requires Livewire 4.4.8, which fixes a security issue. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-23-to-0-1-24) lists two things to check.
 
-- **Field screens for people.** A new field starts with what it holds, in plain words and groups ("Paragraphs", "Blocks", "Repeater"), then its label, with the name templates use made from it. New fields start with their own text in each language; kinds that have none, such as numbers, are the same in every language. Each field's screen has tabs: a repeater's or matrix's fields or block types, **Preview** (the field as editors see it), **Field**, and **Limits and display**. Settings have labels of their own ("Longest text", "Editors write in"), formatters are switches, and the add button's text can be set in every language. Save is at the top, and Delete on the Field tab. Modules name their field types with `FieldKinds`; see [Extending the admin](/admin/extending#field-types-the-field-form-offers).
-
-- The page cache screen has tabs: **Overview** (stored pages, in all and per template, and clearing), **Rules** (each template's rule summed up on its row, opening to edit it), **Page parts** (fragments, explained for site owners) and **Web server setup**. The tab stays in the address, so a link can open one.
-
-- **Pages without a URL** (forms, settings pages) get a Settings tab that fits them: one **Name in templates** instead of a name and a published switch per language, one schedule for the whole page, no Hidden status and no old URLs. Pages a module manages, such as forms, no longer offer a template or parent to change. **Unique** shows only on pages without a URL that already have it, so it can be turned off: without a URL it only keeps other pages from the name. When a unique page without a URL holds a name, the refusal names it by its title instead of "/".
-
-- The form setting **Members only, one answer each** is now **Signed-in visitors only, one answer each**, with help saying it needs visitor accounts. Installing the form builder again, or creating a form, brings the new wording to existing sites.
-
-- **Fix:** a form with a name of its own in another language disappeared from that language's pages, since its key came from the name in the visitor's language. A form's key is now its default-language name everywhere; names already set in other languages stay, unused.
-
-- The admin sets up matrix and repeater fields. A matrix's screen shows its block types as cards, each with its label, slug, block header and fields, and a picture of the block as editors will see it. Fields are added from the site's fields, or created on the spot, and sorted by dragging. Removing a block type that pages use asks first. Before, these settings were a single text box that could not hold them.
-
-- Listing a field that does not exist in a repeater, a matrix or a template fails with a message naming `lynx()->fields->add()`, not only the `fields.create` action.
-
-- The matrix example on [Field Types](/basics/field-types#matrix) creates its fields first, so it runs as written.
-
-- A matrix without block types, or a block type or repeater without fields, fails with "Add at least one block type." or "List at least one field." instead of naming the setting's path.
-
-- On a template's screen, the buttons that remove a field or a section work again.
-
-- Choice fields take a `default`: new pages and new repeater or matrix items start with that option chosen, from the admin, the API, MCP and the agent alike. Existing pages keep their values. In the admin, tick **Default** next to an option; a required select with a default no longer offers an empty option. See [Field Types](/basics/field-types#choice).
-
-- The page picker shows the search box first and the chosen pages below it. Results float above the page, open upwards near its bottom, and can be reached with the arrow keys.
+- `lynxcms/admin` requires Livewire 4.4.8 or later, which fixes an authorization bypass in Livewire's `#[Authorize]` attribute ([GHSA-mhf7-xp6r-6qrc](https://github.com/advisories/GHSA-mhf7-xp6r-6qrc)). Lynx does not use that attribute, but your app's own components may. The update command in the [upgrade guide](/prologue/upgrade#updating) brings both.
 
 - Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
 
@@ -42,9 +20,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The admin wears the Lynx mark's facet: the language tabs mark a field's state with a small slanted shape (filled, light or outlined) instead of a dot, and the sidebar ends the current screen's link with one. The sidebar takes a trace of the accent colour.
 
-- The sentences under a field that explain a fallback ("visitors see the English value") are now translation hints, off by default. Turn them on under **Translation hints** in the user menu; each browser remembers the choice.
-
-- The page tree's row actions are plain text, and **Unpub** and **Pub** read **Unpublish** and **Publish**.
+- The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.
 
 - The page editor puts every label above its field, and shows a panel beside the fields: publishing state, how much of the page each language has its own text for, and the latest activity. Templates with their own editor sidebar keep it instead.
 
@@ -56,7 +32,33 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - **Selectors find pages by state.** `status=unpublished` (or `hidden`, `locked`) finds pages with that status, `language!=pt` finds the pages not published in Portuguese yet, `has_draft=1` the pages with a draft waiting, and `has_schedule=1` the pages with a publish or unpublish date set. See [Finding Pages](/basics/selectors#status). `has_draft` and `has_schedule` are now reserved field names.
 
-- The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.
+- **Field screens for people.** A new field starts with what it holds, in plain words and groups ("Paragraphs", "Blocks", "Repeater"), then its label, with the name templates use made from it. New fields start with their own text in each language; kinds that have none, such as numbers, are the same in every language. Each field's screen has tabs: a repeater's or matrix's fields or block types, **Preview** (the field as editors see it), **Field**, and **Limits and display**. Settings have labels of their own ("Longest text", "Editors write in"), formatters are switches, and the add button's text can be set in every language. Save is at the top, and Delete on the Field tab. Modules name their field types with `FieldKinds`; see [Extending the admin](/admin/extending#field-types-the-field-form-offers).
+
+- The admin sets up matrix and repeater fields. A matrix's screen shows its block types as cards, each with its label, slug, block header and fields, and a picture of the block as editors will see it. Fields are added from the site's fields, or created on the spot, and sorted by dragging. Removing a block type that pages use asks first. Before, these settings were a single text box that could not hold them.
+
+- Choice fields take a `default`: new pages and new repeater or matrix items start with that option chosen, from the admin, the API, MCP and the agent alike. Existing pages keep their values. In the admin, tick **Default** next to an option; a required select with a default no longer offers an empty option. See [Field Types](/basics/field-types#choice).
+
+- The page picker shows the search box first and the chosen pages below it. Results float above the page, open upwards near its bottom, and can be reached with the arrow keys.
+
+- The page cache screen has tabs: **Overview** (stored pages, in all and per template, and clearing), **Rules** (each template's rule summed up on its row, opening to edit it), **Page parts** (fragments, explained for site owners) and **Web server setup**. The tab stays in the address, so a link can open one.
+
+- **Pages without a URL** (forms, settings pages) get a Settings tab that fits them: one **Name in templates** instead of a name and a published switch per language, one schedule for the whole page, no Hidden status and no old URLs. Pages a module manages, such as forms, no longer offer a template or parent to change. **Unique** shows only on pages without a URL that already have it, so it can be turned off: without a URL it only keeps other pages from the name. When a unique page without a URL holds a name, the refusal names it by its title instead of "/".
+
+- The form setting **Members only, one answer each** is now **Signed-in visitors only, one answer each**, with help saying it needs visitor accounts. Installing the form builder again, or creating a form, brings the new wording to existing sites.
+
+- **Fix:** a form with a name of its own in another language disappeared from that language's pages, since its key came from the name in the visitor's language. A form's key is now its default-language name everywhere; names already set in other languages stay, unused.
+
+- The sentences under a field that explain a fallback ("visitors see the English value") are now translation hints, off by default. Turn them on under **Translation hints** in the user menu; each browser remembers the choice.
+
+- The page tree's row actions are plain text, and **Unpub** and **Pub** read **Unpublish** and **Publish**.
+
+- On a template's screen, the buttons that remove a field or a section work again.
+
+- Listing a field that does not exist in a repeater, a matrix or a template fails with a message naming `lynx()->fields->add()`, not only the `fields.create` action.
+
+- A matrix without block types, or a block type or repeater without fields, fails with "Add at least one block type." or "List at least one field." instead of naming the setting's path.
+
+- The matrix example on [Field Types](/basics/field-types#matrix) creates its fields first, so it runs as written.
 
 ## 0.1.23
 
