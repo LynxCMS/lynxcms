@@ -139,7 +139,7 @@ final class ItemNormalizer
         }
 
         $type = $subfield->type();
-        $settings = $subfield->field->config();
+        $settings = $subfield->config();
 
         try {
             $normalized = $type->normalize($value, $settings);

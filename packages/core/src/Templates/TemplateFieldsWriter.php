@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use LynxCms\Core\Fields\FieldRegistry;
+use LynxCms\Core\Fields\UseSettings;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Tables;
@@ -22,7 +23,7 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class TemplateFieldsWriter
 {
-    private const array PIVOT_KEYS = ['required', 'label', 'show_if', 'required_if', 'description', 'notes', 'allowed_types', 'tab', 'column', 'section', 'searchable', 'editor', 'width', 'placeholder', 'icon'];
+    private const array PIVOT_KEYS = ['required', 'label', 'show_if', 'required_if', 'description', 'notes', 'allowed_types', 'tab', 'column', 'section', 'searchable', 'editor', 'width', 'placeholder', 'icon', ...UseSettings::KEYS];
 
     /** Pivot settings editors read, as LocalizedText (ADR-0043), with their maximum length. */
     private const array LOCALIZED_KEYS = ['label' => 255, 'description' => 2000, 'notes' => 500, 'placeholder' => 255];
@@ -41,12 +42,19 @@ final readonly class TemplateFieldsWriter
             $spec = is_string($spec) ? ['name' => $spec] : Value::map($spec);
             $name = Value::string($spec['name'] ?? '');
 
-            if ($this->fields->find($name) === null) {
+            $field = $this->fields->find($name);
+
+            if ($field === null) {
                 throw ValidationException::withMessages(['fields' => "Field [{$name}] does not exist. Create it first with lynx()->fields->add('{$name}', ...) or the fields.create action."]);
             }
 
             $result[$name] = array_intersect_key($spec, array_flip(self::PIVOT_KEYS));
             $this->assertLocalized($name, $result[$name]);
+            $problem = UseSettings::problem($field, $result[$name]);
+
+            if ($problem !== null) {
+                throw ValidationException::withMessages(['fields' => $problem]);
+            }
         }
 
         return $result;

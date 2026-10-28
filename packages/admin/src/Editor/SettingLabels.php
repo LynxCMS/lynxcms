@@ -44,6 +44,19 @@ final class SettingLabels
         'remove' => ['label' => 'Removing an item from the table', 'options' => ['keep' => 'Keeps its page', 'trash' => 'Moves its page to the trash']],
     ];
 
+    /**
+     * Settings whose words depend on the field type: a page field's "max" counts pages, where a
+     * number field's is its largest value.
+     *
+     * @var array<string, array<string, array{label: string, hint?: string, unit?: string}>>
+     */
+    private const array TYPE_SETTINGS = [
+        'page' => [
+            'min' => ['label' => 'Fewest pages', 'hint' => 'When editors choose any. Empty for no minimum; Required asks for at least one.', 'unit' => 'pages'],
+            'max' => ['label' => 'Most pages', 'hint' => 'Empty for no limit.', 'unit' => 'pages'],
+        ],
+    ];
+
     /** @var array<string, string> */
     private const array FORMATTERS = [
         'smartypants' => 'Smart quotes and dashes',
@@ -55,11 +68,12 @@ final class SettingLabels
 
     /**
      * @param  array{type: string, description: string, enum: list<string>}  $definition  from SchemaForm
+     * @param  string|null  $type  the field type, for settings worded per type
      * @return array{label: string, hint: string, unit: string, options: array<string, string>}
      */
-    public function for(string $setting, array $definition): array
+    public function for(string $setting, array $definition, ?string $type = null): array
     {
-        $known = self::SETTINGS[$setting] ?? null;
+        $known = self::TYPE_SETTINGS[$type ?? ''][$setting] ?? self::SETTINGS[$setting] ?? null;
         $options = [];
 
         foreach ($definition['enum'] as $value) {

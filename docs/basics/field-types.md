@@ -171,6 +171,7 @@ References to other pages, such as related courses or a post's category.
 | Setting | Meaning |
 | --- | --- |
 | `multiple` | Allow more than one page. Default `true`. |
+| `min`, `max` | Fewest and most pages, such as at most 8 cards on a home page section. `min` counts once editors pick any; `required` asks for at least one. A template or a block type can set its own, see below. |
 | `templates` | Templates the chosen pages may use. |
 | `input` | `search` by title (default), or `select`, `radios` or `checkboxes` listing the allowed pages (up to 100), which suits short lists such as categories. |
 
@@ -183,6 +184,18 @@ Several pages read as a `PageArray`; one page (`multiple: false`) reads as that 
 ```
 
 Selectors take a page's path or id: `category=/categories/news`, `related=42`. `related.count>=2` counts the references.
+
+One page field can hold a different number of pages, or offer other templates, where it is used. A template's entry, or a block type's entry in a matrix, sets `min`, `max` and `templates` for itself:
+
+```php
+lynx()->templates->add('landing', fields: ['title', ['name' => 'cards', 'max' => 8]]);
+
+lynx()->fields->add('sections', 'matrix', settings: ['types' => [
+    ['slug' => 'row', 'label' => 'Row of four', 'fields' => [['name' => 'cards', 'max' => 4]]],
+]]);
+```
+
+The field's own settings apply everywhere else. Repeaters and matrices take a template's own `min` and `max` the same way.
 
 ### `page_table`
 

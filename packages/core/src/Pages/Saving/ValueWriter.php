@@ -56,7 +56,7 @@ final readonly class ValueWriter
             foreach (array_keys($languageIds) as $languageId) {
                 // A removed value is not in $values: it falls back and needs no checks.
                 if (array_key_exists($languageId, $values[$fieldName] ?? [])) {
-                    $errors += $this->normalize($templateField->field, $values[$fieldName][$languageId], "values.{$fieldName}");
+                    $errors += $this->normalize($templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}");
                     $errors += $this->disallowedTypes($templateField, $values[$fieldName][$languageId], "values.{$fieldName}");
                 }
             }
@@ -98,14 +98,15 @@ final readonly class ValueWriter
      * Normalizes in place; returns errors keyed under $key. A type's own error keys (an item
      * field's "2.role.pt") are appended to it.
      *
+     * @param  array<string, mixed>  $settings  the field's settings on the template (ADR-0094)
      * @return array<string, string>
      */
-    private function normalize(Field $field, mixed &$value, string $key): array
+    private function normalize(Field $field, array $settings, mixed &$value, string $key): array
     {
         $type = $field->fieldType();
 
         try {
-            $normalized = $type->normalize($value, $field->config());
+            $normalized = $type->normalize($value, $settings);
         } catch (ValidationException $exception) {
             if (! $type instanceof StoresItems) {
                 return [$key => Value::string(collect($exception->errors())->flatten()->first())];
@@ -120,7 +121,7 @@ final readonly class ValueWriter
             return $errors;
         }
 
-        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($field->config())]);
+        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($settings)]);
 
         if ($validator->fails()) {
             return [$key => $validator->errors()->first('value')];

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Fields\Items;
 
 use LynxCms\Contracts\Fields\FieldType;
+use LynxCms\Core\Fields\UseSettings;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
@@ -21,6 +22,17 @@ final readonly class Subfield
      * @param  array<string, mixed>  $entry
      */
     public function __construct(public Field $field, public array $entry = []) {}
+
+    /**
+     * The field's settings in this item: its own, with the ones the block type or repeater sets
+     * for it, such as a page field's "max" (ADR-0094).
+     *
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return UseSettings::of($this->field, $this->entry);
+    }
 
     public function name(): string
     {

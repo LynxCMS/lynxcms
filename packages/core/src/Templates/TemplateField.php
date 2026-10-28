@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Templates;
 
+use LynxCms\Core\Fields\UseSettings;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
@@ -23,6 +24,17 @@ final readonly class TemplateField
         public int $sort,
         public array $settings = [],
     ) {}
+
+    /**
+     * The field's settings on this template: its own, with the ones the template sets for it,
+     * such as a page field's "max" (ADR-0094).
+     *
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return UseSettings::of($this->field, $this->settings);
+    }
 
     public function name(): string
     {

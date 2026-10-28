@@ -991,3 +991,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `Action::logsActivityPerPage()`, false by default. When an action returns true, the recorder splits its changes at each change to a different page and writes one event per part, each under the action's name and filed under its page. Changes to other subjects (paths, files) stay with the page before them, and a run with no changes writes nothing. `pages.run_schedules` returns true. Each entry it runs also records whether it published or unpublished and in which language, after the entry succeeds, since the nested `pages.status` or `pages.save` can say neither.
 
 **Consequences:** Each page's history shows its scheduled changes, and the log no longer grows by an empty row a minute. Dry runs and the action's result keep the whole change set. Other actions are unchanged: a move or a trash still logs once, under the page it moved. An app's batch action (an import, a sync) can opt in the same way.
+
+## ADR-0094: A template or block type can set a field's limits for itself
+
+**Status:** Accepted. Extends ADR-0045.
+
+**Context:** A field's settings were the same everywhere it was used, except a matrix's `allowed_types` per template (ADR-0045). Page fields gained `min` and `max`, and a site reuses one `cards` field in several sections and templates that want different limits: 4 cards in a row, 8 in a grid. Separate fields per use (`cards_row`, `cards_grid`) split one idea into several, for templates and selectors alike.
+
+**Decision:** A field type lists the settings a use may set for itself with `SettingsPerUse` (@api): page fields `min`, `max` and `templates`, repeaters and matrices `min` and `max`. A template's field entry and a block type's (or repeater's) subfield entry may set them; `UseSettings` merges them over the field's own settings, and `TemplateField::config()` and `Subfield::config()` give the result. Saving validates with it, and the admin's inputs read it, so the picker lists the use's templates and stops at its `max`. Setting one a type doesn't list, or an invalid value, fails when the template or the matrix is saved. `multiple` and `input` stay per field, since they change what the value is.
+
+**Consequences:** One field serves several uses with their own limits. A page field's `templates`, per field or per use, is still applied by the admin only, as before: saves from code do not check it. Other settings (a text's `max_length`, a number's `max`) are not per use; a type opts in by listing them.

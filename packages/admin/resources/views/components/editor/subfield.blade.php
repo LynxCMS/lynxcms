@@ -4,7 +4,7 @@
     $input = app(\LynxCms\Admin\Editor\FieldInputs::class)->for((string) $subfield->field->type);
     $codes = array_keys($values);
     $id = $field.'-'.$index.'-'.$subfield->name();
-    $view = new \LynxCms\Admin\Editor\FieldView($id, $subfield->label(), (string) $subfield->field->type, $subfield->isTranslatable(), $subfield->isRequired(), $subfield->description() ?: null, [], $subfield->field->config(), $subfield->notes() ?: null, $pageId, $subfield->name());
+    $view = new \LynxCms\Admin\Editor\FieldView($id, $subfield->label(), (string) $subfield->field->type, $subfield->isTranslatable(), $subfield->isRequired(), $subfield->description() ?: null, [], $subfield->config(), $subfield->notes() ?: null, $pageId, $subfield->name());
     $span = max(3, min(12, (int) round($subfield->width() * 12 / 100)));
     $errorKey = 'values.'.$field.'.'.$index.'.'.$subfield->name();
     // Read-only displays expect prepared values (page references as [id, title] pairs), not form values.

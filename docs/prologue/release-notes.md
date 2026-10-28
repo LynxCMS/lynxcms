@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Page fields take `min` and `max`, as repeaters and matrices do: "at most 8 cards", "at least 2 related courses". Saving more or fewer fails with "Pick at most 8 pages.", from the admin, the API, MCP and the agent alike, and the admin's page search steps aside once the field is full. A template, or a block type of a matrix, can set its own `min`, `max` and `templates` for a page field, so one `cards` field holds 4 pages in one section and 8 in another; repeaters and matrices take a template's own `min` and `max` too. See [Field Types](/basics/field-types#page).
+
 - The example that stores a file from code on [Images and Files](/basics/images-and-files#storing-files-from-code) puts the stored entry in the file's `values` and starts from an empty list, so it runs as written. Before, it failed with "Each file needs its stored name".
 
 ## 0.1.24
