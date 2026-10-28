@@ -22,7 +22,7 @@ it('lists stored fragments on the page cache screen', function (): void {
     $this->get(route('lynx.admin.page-cache'))->assertOk()->assertSeeLivewire(FragmentsList::class);
 
     Livewire::test(FragmentsList::class)
-        ->assertSee('3 stored fragments')
+        ->assertSeeHtml('data-fragments-total="3"')
         ->assertSee('menu')->assertSee('footer')->assertSee('template:home')
         ->set('search', 'foot')->assertSee('footer')->assertDontSee('menu');
 });
@@ -41,11 +41,11 @@ it('clears one fragment, every copy of a name, or all of them', function (): voi
     $this->actingAs(new GenericUser(['id' => 1]));
     $footer = FragmentEntry::query()->where('name', 'footer')->value('id');
 
-    $list = Livewire::test(FragmentsList::class)->call('clear', $footer)->assertSee('2 stored fragments');
-    $list->call('clearName', 'menu')->assertSee('0 stored fragments');
+    $list = Livewire::test(FragmentsList::class)->call('clear', $footer)->assertSeeHtml('data-fragments-total="2"');
+    $list->call('clearName', 'menu')->assertSeeHtml('data-fragments-total="0"');
 
     lynx()->cache()->remember('menu', fn (): string => 'x');
-    $list->call('clearAll')->assertSee('0 stored fragments');
+    $list->call('clearAll')->assertSeeHtml('data-fragments-total="0"');
     expect(FragmentEntry::query()->count())->toBe(0);
 });
 
