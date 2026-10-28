@@ -1021,3 +1021,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** A field type lists the settings a use may set for itself with `SettingsPerUse` (@api): page fields `min`, `max` and `templates`, repeaters and matrices `min` and `max`. A template's field entry and a block type's (or repeater's) subfield entry may set them; `UseSettings` merges them over the field's own settings, and `TemplateField::config()` and `Subfield::config()` give the result. Saving validates with it, and the admin's inputs read it, so the picker lists the use's templates and stops at its `max`. Setting one a type doesn't list, or an invalid value, fails when the template or the matrix is saved. `multiple` and `input` stay per field, since they change what the value is.
 
 **Consequences:** One field serves several uses with their own limits. A page field's `templates`, per field or per use, is still applied by the admin only, as before: saves from code do not check it. Other settings (a text's `max_length`, a number's `max`) are not per use; a type opts in by listing them.
+
+## ADR-0095: A page field's templates hold on every save, for the pages a save adds
+
+**Status:** Accepted. Amends ADR-0058 for page tables.
+
+**Context:** A page field's `templates` was applied by the admin only: its picker and lists offered pages of those templates, while saves from code, the API, MCP and the agent could reference any page. Page tables checked every item on save, so narrowing a table's templates made the next save of the page fail, even one that only fixed a title, until someone removed the old items.
+
+**Decision:** `ReferenceTemplates` runs after a field's value is normalized: it compares the page references being saved with the ones stored for that page and field, and the pages a save adds must use one of the templates its use allows (the field's, or the template's or block type's own, ADR-0094). Inside repeater and matrix items, each page subfield is checked with its own settings, against the pages that subfield holds in any stored item. Pages already held are never refused. Page fields and page tables both work this way; the page table's own check on every item is gone.
+
+**Consequences:** An agent or an import can't add a page of the wrong kind, and the admin's picker and saves agree. Narrowing `templates` keeps what pages hold; the pages of other templates stay until an editor removes them. Moving a page from one item of a matrix to another counts as held. Each save of a reference field reads that field's stored value once.
