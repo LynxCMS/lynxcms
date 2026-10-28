@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
+use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageSchedule;
 use LynxCms\Admin\Livewire\PageSettings;
 use LynxCms\Core\Actions\Roles\AssignRoles;
@@ -131,4 +132,43 @@ it('carries the one row\'s times into each language when switching to per langua
         ->set('perLanguage', true)
         ->assertSet('times.pt.publish', $publish)
         ->assertSet('times.default.publish', $publish);
+});
+
+it('offers a time for the draft to go live only while the page has one, and saves it', function (): void {
+    Livewire::test(PageSchedule::class, ['pageId' => alphaId()])->assertDontSeeHtml('data-schedule-draft');
+
+    lynx()->pages->saveDraft(alphaId(), ['summary' => ['default' => 'Later']]);
+    $at = now()->addDay()->format('Y-m-d\TH:i');
+
+    Livewire::test(PageSchedule::class, ['pageId' => alphaId()])
+        ->assertSeeHtml('data-schedule-draft')
+        ->set('draftAt', $at)
+        ->call('saveSchedule')
+        ->assertHasNoErrors();
+
+    $entries = lynx()->pages->schedules(alphaId());
+    expect($entries)->toHaveCount(1)
+        ->and($entries[0]['action'])->toBe('publish_draft')
+        ->and($entries[0]['at']->format('Y-m-d\TH:i'))->toBe($at);
+
+    Livewire::test(PageSchedule::class, ['pageId' => alphaId()])->assertSet('draftAt', $at)->set('draftAt', '')->call('saveSchedule');
+    expect(lynx()->pages->schedules(alphaId()))->toBe([]);
+});
+
+it('shows a refusal of the draft\'s time under its field', function (): void {
+    lynx()->pages->saveDraft(alphaId(), ['summary' => ['default' => 'Later']]);
+
+    Livewire::test(PageSchedule::class, ['pageId' => alphaId()])
+        ->set('draftAt', now()->subDay()->format('Y-m-d\TH:i'))
+        ->call('saveSchedule')
+        ->assertHasErrors('draftAt');
+});
+
+it('says in the editor\'s header when a scheduled draft goes live', function (): void {
+    lynx()->pages->saveDraft(alphaId(), ['summary' => ['default' => 'Later']]);
+    Livewire::test(PageEditor::class, ['pageId' => alphaId()])->assertDontSeeHtml('data-draft-goes-live');
+
+    lynx()->pages->schedule(alphaId(), publishDraftAt: now()->addDay());
+
+    Livewire::test(PageEditor::class, ['pageId' => alphaId()])->assertSeeHtml('data-draft-goes-live');
 });

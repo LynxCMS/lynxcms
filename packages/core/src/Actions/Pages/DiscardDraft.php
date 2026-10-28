@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace LynxCms\Core\Actions\Pages;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Drafts;
+use LynxCms\Core\Support\Tables;
 
 /** Deletes a page's draft (ADR-0039); the live page stays as it is. */
 final class DiscardDraft extends Action
@@ -56,6 +58,8 @@ final class DiscardDraft extends Action
         $context->authorize('pages.edit', $page);
 
         $this->drafts->delete($draftId);
+        // A draft published or discarded by hand no longer has a time to go live (ADR-0092).
+        DB::table(Tables::SCHEDULES)->where('page_id', $page->id)->where('action', SchedulePage::PUBLISH_DRAFT)->delete();
         // The live page's change first, so the activity log files the discard under it, not under the draft.
         $context->changes->updated('page', $page->id, "Discard the draft of page {$page->name()}", ['draft' => $draftId]);
         $context->changes->deleted('page', $draftId, "Delete draft {$draftId} of page {$page->name()}", ['page' => $page->id]);

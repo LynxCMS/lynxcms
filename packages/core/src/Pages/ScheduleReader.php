@@ -6,6 +6,7 @@ namespace LynxCms\Core\Pages;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use LynxCms\Core\Actions\Pages\SchedulePage;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
@@ -29,7 +30,7 @@ final readonly class ScheduleReader
 
         foreach (DB::table(Tables::SCHEDULES)->where('page_id', $pageId)->orderBy('language_id')->orderBy('action')->get() as $row) {
             $entries[] = [
-                'language' => $codes[Value::int($row->language_id)] ?? '',
+                'language' => Value::int($row->language_id) === SchedulePage::WHOLE_PAGE ? SchedulePage::ALL_LANGUAGES : ($codes[Value::int($row->language_id)] ?? ''),
                 'action' => Value::string($row->action),
                 'at' => CarbonImmutable::parse(Value::string($row->at)),
                 'error' => Value::nullableString($row->error),

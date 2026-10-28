@@ -20,7 +20,8 @@ use LynxCms\Core\Support\Value;
  * The Schedule section of the editor's Settings tab (ADR-0036): when the page is published and
  * unpublished, as date-times in the app's time zone. One row sets every language; "Different
  * times per language" shows a row per language, and opens by itself when the saved times
- * differ. An empty field clears the entry. Entries that could not run show why.
+ * differ. An empty field clears the entry. Entries that could not run show why. While the page
+ * has a draft, a last field sets when the draft goes live (ADR-0092).
  *
  * @api
  */
@@ -49,6 +50,12 @@ final class PageSchedule extends Component
     public array $loadedAll = ['publish' => '', 'unpublish' => ''];
 
     public bool $perLanguage = false;
+
+    /** When the page's draft goes live, or '' for never. */
+    public string $draftAt = '';
+
+    #[Locked]
+    public string $loadedDraftAt = '';
 
     #[Locked]
     public ?string $status = null;
@@ -80,7 +87,7 @@ final class PageSchedule extends Component
     public function saveSchedule(): void
     {
         $this->status = null;
-        $isSaved = $this->perLanguage ? $this->saveEachLanguage() : $this->saveAllLanguages();
+        $isSaved = ($this->perLanguage ? $this->saveEachLanguage() : $this->saveAllLanguages()) && $this->saveDraftTime();
 
         if ($isSaved) {
             $this->load();
@@ -97,6 +104,8 @@ final class PageSchedule extends Component
             'failed' => array_values(array_filter(lynx()->pages->schedules($this->pageId), fn (array $entry): bool => $entry['error'] !== null)),
             'canPublish' => app(AdminAccess::class)->allows('pages.publish', $page),
             'hasLanguageTimes' => ! $this->isWholePage() && lynx()->languages->isMultilingual(),
+            'hasDraft' => $this->loadedDraftAt !== '' || lynx()->pages->draft($page) !== null,
+            'canPublishDraft' => app(AdminAccess::class)->allows('pages.publish', $page) && app(AdminAccess::class)->allows('pages.edit', $page),
         ]);
     }
 
@@ -108,6 +117,23 @@ final class PageSchedule extends Component
         $language = $this->isWholePage() ? (string) lynx()->languages->default()->code : SchedulePage::ALL_LANGUAGES;
 
         return $input === [] || $this->schedule($language, $input, 'all');
+    }
+
+    private function saveDraftTime(): bool
+    {
+        if ($this->draftAt === $this->loadedDraftAt) {
+            return true;
+        }
+
+        try {
+            lynx()->run(SchedulePage::class, ['page' => $this->pageId, 'publish_draft_at' => $this->draftAt === '' ? null : $this->draftAt]);
+        } catch (ValidationException $exception) {
+            $this->addError('draftAt', Value::string(Value::array(array_first($exception->errors()) ?? [])[0] ?? ''));
+
+            return false;
+        }
+
+        return true;
     }
 
     private function saveEachLanguage(): bool
@@ -173,12 +199,17 @@ final class PageSchedule extends Component
             $times[(string) $language->code] = ['publish' => '', 'unpublish' => ''];
         }
 
+        $this->draftAt = '';
+
         foreach (lynx()->pages->schedules($this->pageId) as $entry) {
-            if (isset($times[$entry['language']])) {
+            if ($entry['action'] === SchedulePage::PUBLISH_DRAFT) {
+                $this->draftAt = $entry['at']->format(self::INPUT_FORMAT);
+            } elseif (isset($times[$entry['language']])) {
                 $times[$entry['language']][$entry['action'] === 'publish' ? 'publish' : 'unpublish'] = $entry['at']->format(self::INPUT_FORMAT);
             }
         }
 
+        $this->loadedDraftAt = $this->draftAt;
         $this->times = $times;
         $this->loaded = $times;
         $distinct = array_unique(array_map(serialize(...), $times));

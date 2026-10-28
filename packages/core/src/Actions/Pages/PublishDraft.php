@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Actions\Pages;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
@@ -16,6 +17,7 @@ use LynxCms\Core\Pages\PageGuard;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Strings\PageStringEdits;
+use LynxCms\Core\Support\Tables;
 
 /**
  * Makes a page's draft live (ADR-0039): its values and its own template strings (ADR-0048) are
@@ -73,6 +75,8 @@ final class PublishDraft extends Action
             'strings' => $this->strings->replacement((int) $page->id, $this->strings->snapshot($draftId)),
         ]);
         $this->drafts->delete($draftId);
+        // A draft published or discarded by hand no longer has a time to go live (ADR-0092).
+        DB::table(Tables::SCHEDULES)->where('page_id', $page->id)->where('action', SchedulePage::PUBLISH_DRAFT)->delete();
         $this->loader->forget($draftId);
         $context->changes->updated('page', $page->id, "Publish the draft of page {$page->name()}", ['draft' => $draftId]);
 

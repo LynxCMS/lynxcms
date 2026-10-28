@@ -6,6 +6,7 @@ use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
 use LynxCms\Admin\Editor\ActivityDescription;
 use LynxCms\Admin\Livewire\PageEditor;
+use LynxCms\Core\Actions\Pages\RunSchedules;
 use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\Page;
 
@@ -121,4 +122,21 @@ it('words every kind in the editor\'s panel', function (): void {
     Livewire::actingAs(new GenericUser(['id' => 1]))
         ->test(PageEditor::class, ['pageId' => $this->alpha->id])
         ->assertSeeHtml('data-activity-kind="created"');
+});
+
+it('describes a draft that went live on schedule, and its scheduling, without a language', function (): void {
+    lynx()->pages->saveDraft('/courses/alpha/', ['summary' => ['default' => 'Later']]);
+    lynx()->pages->schedule('/courses/alpha/', publishDraftAt: now()->addHour());
+    test()->travel(2)->hours();
+    lynx()->run(RunSchedules::class);
+
+    $describe = app(ActivityDescription::class);
+    $ran = $describe->of(ActivityEvent::query()->where('action', 'pages.run_schedules')->latest('id')->firstOrFail());
+    $scheduled = $describe->of(ActivityEvent::query()->where('action', 'pages.schedule')->latest('id')->firstOrFail());
+
+    expect($ran['kind'])->toBe('schedule_ran')
+        ->and($ran['schedule'][0]['action'])->toBe('publish_draft')
+        ->and($ran['languages'])->toBe([])
+        ->and($scheduled['schedule'][0]['action'])->toBe('publish_draft')
+        ->and($scheduled['languages'])->toBe([]);
 });

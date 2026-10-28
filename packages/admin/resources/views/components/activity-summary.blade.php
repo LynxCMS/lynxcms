@@ -8,7 +8,8 @@
     $statusWords = ['published' => 'Published', 'unpublished' => 'Unpublished', 'hidden' => 'Hid', 'shown' => 'Unhid', 'locked' => 'Locked', 'unlocked' => 'Unlocked'];
     $statuses = array_map(fn (string $status): string => $statusWords[$status] ?? $status, $what['statuses']);
     $statuses = array_map(fn (string $word, int $index): string => $index === 0 ? $word : lcfirst($word), $statuses, array_keys($statuses));
-    $schedule = array_map(fn (array $entry): string => ($entry['action'] === 'publish' ? 'publishing' : 'unpublishing').($entry['at'] === null ? ' cleared' : ' on '.$entry['at']), $what['schedule']);
+    $scheduleWords = ['publish' => 'publishing', 'unpublish' => 'unpublishing', 'publish_draft' => 'publishing the draft'];
+    $schedule = array_map(fn (array $entry): string => ($scheduleWords[$entry['action']] ?? $entry['action']).($entry['at'] === null ? ' cleared' : ' on '.$entry['at']), $what['schedule']);
 @endphp
 <span data-activity-kind="{{ $what['kind'] }}">@switch($what['kind'])
     @case('created') Created the page @break
@@ -26,7 +27,7 @@
     @case('template_switched') Changed the template @break
     @case('lock_released') Ended someone's editing session @break
     @case('translated') Translated{{ $what['languages'] === [] ? ' the page' : ' into '.$join(array_column($what['languages'], 'name')) }} @break
-    @case('schedule_ran') {{ ($what['schedule'][0]['action'] ?? '') === 'unpublish' ? 'Unpublished' : 'Published' }}{{ $what['languages'] === [] ? ' the page' : ' in '.$join(array_column($what['languages'], 'name')) }} on schedule @break
+    @case('schedule_ran') @if (($what['schedule'][0]['action'] ?? '') === 'publish_draft') Published the draft on schedule @else {{ ($what['schedule'][0]['action'] ?? '') === 'unpublish' ? 'Unpublished' : 'Published' }}{{ $what['languages'] === [] ? ' the page' : ' in '.$join(array_column($what['languages'], 'name')) }} on schedule @endif @break
     @case('scheduled') Scheduled {{ $join($schedule) }}{{ $languages($what['languages']) }} @break
     @default {{ $what['summary'] }}@if ($what['more'] > 0) <span class="text-muted-foreground">(and {{ $what['more'] }} more {{ Str::plural('change', $what['more']) }})</span>@endif
 @endswitch</span>

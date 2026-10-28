@@ -18,7 +18,8 @@ use LynxCms\Core\Support\Value;
 use stdClass;
 
 /**
- * Applies the scheduled publishing that is due (ADR-0036), oldest first. An entry that cannot
+ * Applies the scheduled publishing that is due (ADR-0036), and drafts due to go live (ADR-0092),
+ * oldest first. An entry that cannot
  * run, such as one for a locked page, is marked failed with the reason and not tried again; the
  * others still run. lynx:schedule:run calls it every minute.
  */
@@ -83,6 +84,17 @@ final class RunSchedules extends Action
     private function apply(stdClass $entry, ActionContext $context): void
     {
         $pageId = Value::int($entry->page_id);
+
+        if ($entry->action === SchedulePage::PUBLISH_DRAFT) {
+            $context->run(PublishDraft::class, ['page' => $pageId]);
+            $context->changes->updated('page', $pageId, "Run the scheduled publish of the draft of page {$pageId}", [
+                'scheduled' => SchedulePage::PUBLISH_DRAFT,
+                'language' => SchedulePage::ALL_LANGUAGES,
+            ]);
+
+            return;
+        }
+
         $isPublish = $entry->action === 'publish';
         $language = $this->languages->all()->firstWhere('id', Value::int($entry->language_id))
             ?? throw ValidationException::withMessages(['language' => 'The language no longer exists.']);
