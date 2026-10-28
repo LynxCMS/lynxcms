@@ -96,6 +96,7 @@ final class PageSchedule extends Component
             'languages' => lynx()->languages->all(),
             'failed' => array_values(array_filter(lynx()->pages->schedules($this->pageId), fn (array $entry): bool => $entry['error'] !== null)),
             'canPublish' => app(AdminAccess::class)->allows('pages.publish', $page),
+            'hasLanguageTimes' => ! $this->isWholePage() && lynx()->languages->isMultilingual(),
         ]);
     }
 
@@ -103,7 +104,10 @@ final class PageSchedule extends Component
     {
         $input = $this->changedInput($this->all, $this->loadedAll);
 
-        return $input === [] || $this->schedule(SchedulePage::ALL_LANGUAGES, $input, 'all');
+        // A page without a URL is in every language at once: its schedule is the default language's, the whole page's.
+        $language = $this->isWholePage() ? (string) lynx()->languages->default()->code : SchedulePage::ALL_LANGUAGES;
+
+        return $input === [] || $this->schedule($language, $input, 'all');
     }
 
     private function saveEachLanguage(): bool
@@ -178,9 +182,19 @@ final class PageSchedule extends Component
         $this->times = $times;
         $this->loaded = $times;
         $distinct = array_unique(array_map(serialize(...), $times));
-        $this->perLanguage = count($distinct) > 1;
-        $this->all = $this->perLanguage ? ['publish' => '', 'unpublish' => ''] : (reset($times) ?: $this->all);
+        $this->perLanguage = ! $this->isWholePage() && count($distinct) > 1;
+        $this->all = match (true) {
+            $this->isWholePage() => $times[(string) lynx()->languages->default()->code] ?? $this->all,
+            $this->perLanguage => ['publish' => '', 'unpublish' => ''],
+            default => reset($times) ?: $this->all,
+        };
         $this->loadedAll = $this->all;
+    }
+
+    /** A page without a URL shows in every language at once, so it has no times per language. */
+    private function isWholePage(): bool
+    {
+        return ! $this->page()->template()->hasUrl();
     }
 
     private function page(): Page

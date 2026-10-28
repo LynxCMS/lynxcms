@@ -4,11 +4,21 @@
         @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
 
-    {{-- Names and languages --}}
+    {{-- Names and languages; a page without a URL has one name, which templates find it by --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-names">
         @php($isMultilingual = lynx()->languages->isMultilingual())
-        <h2 id="settings-names" class="mb-4 text-base font-semibold">{{ $isMultilingual ? 'Names and languages' : 'Name' }}</h2>
-        @if ($page->parentId === null)
+        <h2 id="settings-names" class="mb-4 text-base font-semibold">{{ ! $hasUrl ? 'Name in templates' : ($isMultilingual ? 'Names and languages' : 'Name') }}</h2>
+        @if (! $hasUrl && $page->parentId !== null)
+            <div class="grid max-w-md gap-1.5" data-template-name>
+                <label for="name-{{ $defaultCode }}" class="sr-only">Name in templates</label>
+                <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
+                <p class="text-muted-foreground text-sm">Templates and code find it by this name{{ $isMultilingual ? ', in every language' : '' }}. It has no address of its own: it shows wherever a template puts it. Templates that use the name must change with it.</p>
+                @error('names.'.$defaultCode) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @if ($can['edit'])
+                    <x-lynx-admin::ui.button type="button" class="mt-2 justify-self-start" wire:click="saveNames">Save name</x-lynx-admin::ui.button>
+                @endif
+            </div>
+        @elseif ($page->parentId === null)
             <p class="text-muted-foreground text-sm">The home page has no URL name: its URL is {{ $isMultilingual ? 'the language prefix' : '/' }}.</p>
         @else
             <div class="space-y-4">
@@ -50,6 +60,8 @@
         @else
             <div class="space-y-2">
                 @php($flags = ['unpublished' => ['Unpublished', 'Not visible on the site; pages below it are offline too'], 'hidden' => ['Hidden', 'Excluded from lists, menus and searches; still reachable by URL'], 'locked' => ['Locked', 'Not editable, movable or deletable until unlocked']])
+                {{-- Hidden takes a page out of lists and menus, where a page without a URL never shows. --}}
+                @php($flags = $hasUrl ? $flags : array_diff_key($flags, ['hidden' => true]))
                 @if ($page->parentId !== null)
                     @php($flags['unique'] = ['Unique', 'Require the name “'.$page->name($defaultCode).'” to be unique across the site'.(lynx()->languages->isMultilingual() ? ' (default language only)' : '')])
                 @endif
@@ -70,7 +82,8 @@
         @endif
     </section>
 
-    {{-- Template --}}
+    {{-- Template and parent; a module's pages (forms) keep the ones it gave them --}}
+    @unless ($isModulePage)
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-template">
         <h2 id="settings-template" class="mb-4 text-base font-semibold">Template</h2>
         @if (! $canSwitch || $templates === [])
@@ -104,7 +117,6 @@
         @endif
     </section>
 
-    {{-- Parent --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-parent">
         <h2 id="settings-parent" class="mb-4 text-base font-semibold">Parent</h2>
         @if (! $canMove)
@@ -118,6 +130,8 @@
             </div>
         @endif
     </section>
+
+    @endunless
 
     <livewire:lynx-admin.page-revisions :page-id="$page->id" :key="'revisions-'.$page->id" />
 

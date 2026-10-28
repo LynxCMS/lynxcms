@@ -14,6 +14,10 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page cache screen has tabs: **Overview** (stored pages, in all and per template, and clearing), **Rules** (each template's rule summed up on its row, opening to edit it), **Page parts** (fragments, explained for site owners) and **Web server setup**. The tab stays in the address, so a link can open one.
 
+- **Pages without a URL** (forms, settings pages) get a Settings tab that fits them: one **Name in templates** instead of a name and a published switch per language, one schedule for the whole page, no Hidden status and no old URLs. Pages a module manages, such as forms, no longer offer a template or parent to change.
+
+- **Fix:** a form with a name of its own in another language disappeared from that language's pages, since its key came from the name in the visitor's language. A form's key is now its default-language name everywhere; names already set in other languages stay, unused.
+
 - The admin sets up matrix and repeater fields. A matrix's screen shows its block types as cards, each with its label, slug, block header and fields, and a picture of the block as editors will see it. Fields are added from the site's fields, or created on the spot, and sorted by dragging. Removing a block type that pages use asks first. Before, these settings were a single text box that could not hold them.
 
 - Listing a field that does not exist in a repeater, a matrix or a template fails with a message naming `lynx()->fields->add()`, not only the `fields.create` action.

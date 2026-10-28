@@ -63,6 +63,8 @@ final class PageHistory extends Component
 
         return view('lynx-admin::livewire.page-history', [
             'redirects' => lynx()->pages->redirects($this->pageId),
+            // A page without a URL has no old URLs to send on.
+            'hasUrl' => lynx()->pages->get($this->pageId)?->template()->hasUrl() ?? true,
             'backlinks' => lynx()->pages->backlinks($this->pageId, selector: app(BacklinkFilter::class)->selector())->map($this->backlink(...)),
             'isLocked' => lynx()->pages->get($this->pageId)?->hasStatus(PageStatus::LOCKED) ?? true,
             'activity' => array_map(fn (ActivityEvent $event): array => ActivityEntry::from($event, $names), array_slice($activity, 0, $this->activityLimit)),
