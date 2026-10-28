@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.24
 
-Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page editor with a side panel and a two-button header, a Details view of the page tree, and rebuilt field and page cache screens. It requires Livewire 4.4.8, which fixes a security issue. No database changes: see the [upgrade guide](/prologue/upgrade#from-0-1-23-to-0-1-24) for two things to check.
+Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page editor with a side panel and a two-button header, a Details view of the page tree, and rebuilt field and page cache screens. It requires Livewire 4.4.8, which fixes a security issue. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-23-to-0-1-24) lists two things to check.
 
 - `lynxcms/admin` requires Livewire 4.4.8 or later, which fixes an authorization bypass in Livewire's `#[Authorize]` attribute ([GHSA-mhf7-xp6r-6qrc](https://github.com/advisories/GHSA-mhf7-xp6r-6qrc)). Lynx does not use that attribute, but your app's own components may. The update command in the [upgrade guide](/prologue/upgrade#updating) brings both.
 
