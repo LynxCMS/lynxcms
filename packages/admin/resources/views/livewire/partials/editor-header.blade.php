@@ -1,5 +1,5 @@
 {{-- The page editor's header. Beside the title, a line of facts and links: whether the page is live, whether a
-     draft waits (with its previews), the live page and the links modules add (EditorLinks). On the right, the
+     draft waits (with its previews and when it goes live, if scheduled), the live page and the links modules add (EditorLinks). On the right, the
      actions: one main button with the rest in its menu, plus Publish draft while a draft waits. --}}
 @php
     $status = match (true) {
@@ -11,6 +11,7 @@
     $previews = $hasDraft && $page->template()->hasUrl() && auth()->check()
         ? lynx()->languages->all()->filter(fn ($language): bool => $page->isActiveIn($language))
         : collect();
+    $draftGoesLive = $hasDraft ? collect(lynx()->pages->schedules($page))->firstWhere('action', \LynxCms\Core\Actions\Pages\SchedulePage::PUBLISH_DRAFT) : null;
 @endphp
 <header class="flex flex-wrap items-start justify-between gap-4">
     <div class="min-w-0">
@@ -23,6 +24,9 @@
             @if ($hasDraft)
                 <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span class="text-warning inline-flex items-center gap-1.5" data-page-draft title="Visitors see the live page until you publish the draft."><span class="size-1.5 rounded-full bg-current" aria-hidden="true"></span>Draft changes</span>
+                    @if ($draftGoesLive)
+                        <span data-draft-goes-live>goes live {{ $draftGoesLive['at']->toDayDateTimeString() }}</span>
+                    @endif
                     @if ($page->template()->hasUrl() && ! auth()->check())
                         {{-- The site only shows drafts to signed in users who may edit the page; signed out it would show the live page. --}}
                         <span data-draft-preview-signin>(sign in to preview)</span>

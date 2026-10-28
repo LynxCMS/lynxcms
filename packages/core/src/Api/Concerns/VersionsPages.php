@@ -21,14 +21,16 @@ use LynxCms\Core\Pages\Page;
 trait VersionsPages
 {
     /**
-     * Schedule publishing in one language (ADR-0036). Null leaves an entry as it is, unless
-     * $clear, which removes the entries not given.
+     * Schedule publishing in one language (ADR-0036), and with $publishDraftAt when the page's
+     * draft goes live, for the whole page (ADR-0092). Null leaves an entry as it is, unless
+     * $clear, which removes the publish and unpublish entries not given.
      *
      * @return array<array-key, mixed>|ActionResult the entries changed: action => ISO time or null
      */
-    public function schedule(Page|int|string $page, ?string $language = null, ?CarbonInterface $publishAt = null, ?CarbonInterface $unpublishAt = null, bool $clear = false, bool $dryRun = false): ActionResult|array
+    public function schedule(Page|int|string $page, ?string $language = null, ?CarbonInterface $publishAt = null, ?CarbonInterface $unpublishAt = null, bool $clear = false, bool $dryRun = false, ?CarbonInterface $publishDraftAt = null): ActionResult|array
     {
-        $input = ['page' => $this->ref($page)] + ($language === null ? [] : ['language' => $language]);
+        $input = ['page' => $this->ref($page)] + ($language === null ? [] : ['language' => $language])
+            + ($publishDraftAt === null ? [] : ['publish_draft_at' => $publishDraftAt->toIso8601String()]);
 
         foreach (['publish_at' => $publishAt, 'unpublish_at' => $unpublishAt] as $key => $at) {
             if ($at !== null || $clear) {

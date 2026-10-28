@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Editor;
 
 use Illuminate\Support\Str;
+use LynxCms\Core\Actions\Pages\SchedulePage;
 use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Language;
@@ -56,7 +57,7 @@ final class ActivityDescription
             'pages.translate' => [...$parts, 'kind' => 'translated', 'languages' => $this->translatedInto($event)],
             'pages.status' => [...$parts, 'kind' => 'status', 'statuses' => $this->statuses($data)],
             'pages.move' => [...$parts, 'kind' => 'moved', 'target' => $this->title(Value::int($data['to'] ?? 0))],
-            'pages.schedule' => [...$parts, 'kind' => 'scheduled', 'schedule' => $this->schedule($data), 'languages' => $this->languages([Value::string($data['language'] ?? '')])],
+            'pages.schedule' => [...$parts, 'kind' => 'scheduled', 'schedule' => $this->schedule($data), 'languages' => Value::string($data['language'] ?? '') === SchedulePage::ALL_LANGUAGES ? [] : $this->languages([Value::string($data['language'] ?? '')])],
             'pages.run_schedules' => $this->ranSchedule($event, $parts) ?? $this->byShape($event, $change, $data, $parts),
             default => isset(self::KINDS[$event->action]) ? $parts : $this->byShape($event, $change, $data, $parts),
         };
@@ -77,7 +78,8 @@ final class ActivityDescription
 
             if (isset($data['scheduled'])) {
                 $code = Value::string($data['language'] ?? '');
-                $isDefault = $code === Value::string(lynx()->languages->default()->code);
+                // A draft goes live for the whole page, so it names no language (ADR-0092).
+                $isDefault = $code === SchedulePage::ALL_LANGUAGES || $code === Value::string(lynx()->languages->default()->code);
 
                 return [...$parts, 'kind' => 'schedule_ran', 'schedule' => [['action' => Value::string($data['scheduled']), 'at' => null]], 'languages' => $isDefault ? [] : $this->languages([$code])];
             }

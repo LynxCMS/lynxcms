@@ -992,6 +992,16 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Each page's history shows its scheduled changes, and the log no longer grows by an empty row a minute. Dry runs and the action's result keep the whole change set. Other actions are unchanged: a move or a trash still logs once, under the page it moved. An app's batch action (an import, a sync) can opt in the same way.
 
+## ADR-0092: A page's draft can be scheduled to go live
+
+**Status:** Accepted. Extends ADR-0036 and ADR-0039.
+
+**Context:** Scheduled publishing (ADR-0036) sets when a page, or one of its languages, goes online or offline. It can't put a draft live: a home page rearranged for Monday morning still needs someone to press **Publish draft** at nine. Drafts (ADR-0039) belong to the whole page, not to a language.
+
+**Decision:** `pages.schedule` takes `publish_draft_at`, a future time or null to clear it, beside `publish_at` and `unpublish_at`. It is stored in `lynx_schedules` as the action `publish_draft` with language id 0, whatever the request's `language`, and reads back as the language `*`. Scheduling it needs `pages.publish` and `pages.edit` on the page, and a draft to publish. `pages.run_schedules` runs `pages.publish_draft` for a due entry, so validation, hooks, a revision and activity ("Published the draft on schedule") apply as for an editor. It publishes the draft as it is at that time, not as it was when scheduled. Publishing or discarding the draft by other means clears the entry. An entry that can't run, such as one for a locked page, fails with the reason like any other (ADR-0036).
+
+**Consequences:** Editors can prepare a change and let it go live by itself. Who scheduled it does not review the draft's later edits: the page's history shows each save. A draft publish and a page publish are independent, so an unpublished page whose draft goes live stays unpublished unless it also has a `publish_at`. No migration is needed: the action column already holds the kind of entry.
+
 ## ADR-0094: A template or block type can set a field's limits for itself
 
 **Status:** Accepted. Extends ADR-0045.

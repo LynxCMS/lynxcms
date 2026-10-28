@@ -5,7 +5,7 @@
     @foreach ($failed as $entry)
         <x-lynx-admin::ui.alert variant="destructive" class="mb-3">
             <x-lucide-circle-alert aria-hidden="true" />
-            <x-lynx-admin::ui.alert-description>Could not {{ $entry['action'] }}: {{ $entry['error'] }} ({{ $entry['language'] }}, {{ $entry['at']->format('Y-m-d H:i') }})</x-lynx-admin::ui.alert-description>
+            <x-lynx-admin::ui.alert-description>Could not {{ $entry['action'] === \LynxCms\Core\Actions\Pages\SchedulePage::PUBLISH_DRAFT ? 'publish the draft' : $entry['action'] }}: {{ $entry['error'] }} ({{ $entry['language'] === \LynxCms\Core\Actions\Pages\SchedulePage::ALL_LANGUAGES ? 'every language' : $entry['language'] }}, {{ $entry['at']->format('Y-m-d H:i') }})</x-lynx-admin::ui.alert-description>
         </x-lynx-admin::ui.alert>
     @endforeach
 
@@ -28,6 +28,14 @@
         <label class="mt-4 flex items-center gap-2 text-sm">
             <input type="checkbox" class="blat-checkbox" wire:model.live="perLanguage" @disabled(! $canPublish)>
             Different times per language
+        </label>
+    @endif
+
+    @if ($hasDraft)
+        <label class="mt-4 grid max-w-xs gap-1 text-sm" data-schedule-draft>
+            <span class="text-muted-foreground">Publish the draft at</span>
+            <input type="datetime-local" class="blat-input" wire:model="draftAt" @disabled(! $canPublishDraft) @error('draftAt') aria-invalid="true" @enderror>
+            @error('draftAt') <span role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </label>
     @endif
 
