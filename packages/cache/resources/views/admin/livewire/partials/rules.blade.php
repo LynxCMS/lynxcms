@@ -58,10 +58,13 @@
                             </div>
                             <p class="text-muted-foreground">With none ticked, a change clears every stored page.</p>
                         </fieldset>
-                        <label class="flex cursor-pointer items-start gap-3">
-                            <input type="checkbox" class="blat-checkbox mt-0.5" wire:model="rules.{{ $name }}.csrf">
-                            <span class="grid gap-0.5"><span class="font-medium">Also store pages with forms or Livewire</span><span class="text-muted-foreground">A script swaps in a fresh security token after the page loads. Stored forms lose the honeypot's "sent too fast" check.</span></span>
-                        </label>
+                        <details class="grid gap-3 border-t pt-4" wire:ignore.self>
+                            <summary class="w-fit cursor-pointer font-medium">Advanced</summary>
+                            <label class="mt-3 flex cursor-pointer items-start gap-3">
+                                <input type="checkbox" class="blat-checkbox mt-0.5" wire:model="rules.{{ $name }}.csrf">
+                                <span class="grid gap-0.5"><span class="font-medium">Also store pages with forms or Livewire</span><span class="text-muted-foreground">A script swaps in a fresh security token after the page loads. Stored forms lose the honeypot's "sent too fast" check.</span></span>
+                            </label>
+                        </details>
                     </div>
                 </li>
             @endforeach
