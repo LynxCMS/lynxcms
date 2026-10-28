@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- The example that stores a file from code on [Images and Files](/basics/images-and-files#storing-files-from-code) puts the stored entry in the file's `values` and starts from an empty list, so it runs as written. Before, it failed with "Each file needs its stored name".
+
 ## 0.1.24
 
 Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page editor with a side panel and a two-button header, a Details view of the page tree, and rebuilt field and page cache screens. It requires Livewire 4.4.8, which fixes a security issue. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-23-to-0-1-24) lists two things to check.

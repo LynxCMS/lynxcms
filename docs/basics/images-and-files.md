@@ -112,19 +112,9 @@ See [Finding Pages](/basics/selectors#inside-repeaters-blocks-and-files) for eve
 
 To attach a file from code, such as an image an importer downloads, store it with the `media.store` action, then add the returned entry to the field:
 
-```php
-use LynxCms\Media\Actions\StoreMedia;
+<<< @/snippets/media/store-from-code.php#store{php}
 
-$entry = lynx()->run(StoreMedia::class, [
-    'page' => '/projects/documentary',
-    'field' => 'gallery',
-    'url' => 'https://example.com/still.jpg',
-])->value;
-
-$page = lynx()->pages->get('/projects/documentary');
-$page->gallery = [...$page->getUnformatted('gallery'), ['values' => ['description' => ['en' => 'On set']] + $entry]];
-$page->save();
-```
+The entry goes in the new file's `values`, next to its description. A field with no files yet reads as `null`, so the example starts from `[]` then.
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
