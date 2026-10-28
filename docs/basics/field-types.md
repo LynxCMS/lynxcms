@@ -175,7 +175,7 @@ References to other pages, such as related courses or a post's category.
 | `templates` | Templates the chosen pages may use. Every save checks the pages it adds, from the admin or from code; pages the field already holds stay when you narrow the list later. |
 | `input` | `search` by title (default), or `select`, `radios` or `checkboxes` listing the allowed pages (up to 100), which suits short lists such as categories. |
 
-Several pages read as a `PageArray`; one page (`multiple: false`) reads as that page or `null`:
+In the admin, editors search for pages to add and drag them into order, or move them with the arrows beside each one; templates read them in that order. Several pages read as a `PageArray`; one page (`multiple: false`) reads as that page or `null`:
 
 ```blade
 <p>Category: {{ $page->category?->title }}</p>

@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- In the admin, the pages a page field holds are a list editors put in order: drag a page by its handle, or move it with the arrows beside it. Templates read them in that order, as before.
+
 - **Drafts can go live by themselves.** `lynx()->pages->schedule($page, publishDraftAt: ...)`, the `pages.schedule` action's `publish_draft_at`, or the new **Publish the draft at** field in the Settings tab sets when a page's draft is published. The scheduler publishes it as an editor would, and the page's activity says "Published the draft on schedule". See [Scheduled publishing](/basics/publishing#scheduled-publishing).
 
 - Page fields take `min` and `max`, as repeaters and matrices do: "at most 8 cards", "at least 2 related courses". Saving more or fewer fails with "Pick at most 8 pages.", from the admin, the API, MCP and the agent alike, and the admin's page search steps aside once the field is full. A template, or a block type of a matrix, can set its own `min`, `max` and `templates` for a page field, so one `cards` field holds 4 pages in one section and 8 in another; repeaters and matrices take a template's own `min` and `max` too. See [Field Types](/basics/field-types#page).

@@ -24,14 +24,25 @@
             @endif
         </div>
     @endif
-    @if ($chosen !== [])
-        <ul class="flex flex-wrap gap-2" aria-label="Chosen pages">
+    {{-- The chosen pages in the order templates read them: drag a row by its handle, or use its arrows. The list is
+         always there, hidden while empty, so wire:sort is set up when the picker loads, not when the first page is added. --}}
+    @php($isSortable = $multiple && count($chosen) > 1)
+    <ul @class(['divide-y overflow-hidden rounded-md border', 'hidden' => $chosen === []]) aria-label="Chosen pages" @if ($multiple) wire:sort="sortPage" @endif>
             @foreach ($chosen as $page)
-                <li class="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md border py-0.5 ps-2.5 pe-1 text-sm">
-                    <a href="{{ route('lynx.admin.pages.edit', $page['id']) }}" class="font-medium underline-offset-4 hover:underline">{{ $page['title'] }}</a>
-                    <button type="button" wire:click="remove({{ $page['id'] }})" class="text-muted-foreground hover:text-destructive flex size-5 items-center justify-center rounded-sm" aria-label="Remove {{ $page['title'] }}"><x-lucide-x class="size-3.5" aria-hidden="true" /></button>
+                <li wire:key="chosen-{{ $page['id'] }}" @if ($multiple) wire:sort:item="{{ $page['id'] }}" @endif class="bg-card flex items-center gap-2 px-2 py-1.5 text-sm" data-chosen-page="{{ $page['id'] }}">
+                    @if ($isSortable)
+                        <span wire:sort:handle class="text-muted-foreground cursor-grab select-none" title="Drag to change the order" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span>
+                    @endif
+                    <span class="min-w-0 flex-1">
+                        <a href="{{ route('lynx.admin.pages.edit', $page['id']) }}" class="font-medium underline-offset-4 hover:underline">{{ $page['title'] }}</a>
+                        <span class="text-muted-foreground ms-2 truncate text-xs">{{ $page['url'] }}</span>
+                    </span>
+                    @if ($isSortable)
+                        <button type="button" wire:click="movePage({{ $page['id'] }}, -1)" @disabled($loop->first) class="text-muted-foreground hover:text-foreground flex size-6 items-center justify-center rounded-sm disabled:opacity-30" aria-label="Move {{ $page['title'] }} up"><x-lucide-arrow-up class="size-3.5" aria-hidden="true" /></button>
+                        <button type="button" wire:click="movePage({{ $page['id'] }}, 1)" @disabled($loop->last) class="text-muted-foreground hover:text-foreground flex size-6 items-center justify-center rounded-sm disabled:opacity-30" aria-label="Move {{ $page['title'] }} down"><x-lucide-arrow-down class="size-3.5" aria-hidden="true" /></button>
+                    @endif
+                    <button type="button" wire:click="remove({{ $page['id'] }})" class="text-muted-foreground hover:text-destructive flex size-6 items-center justify-center rounded-sm" aria-label="Remove {{ $page['title'] }}"><x-lucide-x class="size-3.5" aria-hidden="true" /></button>
                 </li>
             @endforeach
         </ul>
-    @endif
 </div>
