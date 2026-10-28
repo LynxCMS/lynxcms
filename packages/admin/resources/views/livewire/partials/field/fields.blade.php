@@ -73,7 +73,7 @@
 
     @include('lynx-admin::livewire.partials.field.settings')
 
-    <details class="{{ $section }} group" @error('settings.autoload') open @enderror>
+    <details class="{{ $section }} group" wire:ignore.self @error('settings.autoload') open @enderror>
         <summary class="w-fit cursor-pointer text-base font-semibold">Advanced</summary>
         @if ($name === 'title')
             <p class="text-sm">Always loaded with the page.</p>
