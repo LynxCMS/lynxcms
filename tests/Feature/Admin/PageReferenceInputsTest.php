@@ -129,3 +129,39 @@ it('stops offering the search once the field holds its most pages', function ():
         ->call('add', courseId('alpha'))
         ->assertSet('value', [courseId('beta'), courseId('gamma')]);
 });
+
+it('puts the chosen pages in the order an editor drags them to', function (): void {
+    $ids = [courseId('alpha'), courseId('beta'), courseId('gamma')];
+
+    Livewire::test(PagePicker::class, ['value' => $ids, 'multiple' => true, 'templates' => ['course']])
+        ->assertSeeHtml('wire:sort="sortPage"')
+        ->call('sortPage', courseId('gamma'), 0)
+        ->assertSet('value', [courseId('gamma'), courseId('alpha'), courseId('beta')])
+        ->call('sortPage', courseId('alpha'), 2)
+        ->assertSet('value', [courseId('gamma'), courseId('beta'), courseId('alpha')]);
+});
+
+it('moves a chosen page up or down from the keyboard', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [courseId('alpha'), courseId('beta')], 'multiple' => true, 'templates' => ['course']])
+        ->call('movePage', courseId('beta'), -1)
+        ->assertSet('value', [courseId('beta'), courseId('alpha')])
+        ->call('movePage', courseId('beta'), -1)
+        ->assertSet('value', [courseId('beta'), courseId('alpha')])
+        ->call('movePage', courseId('beta'), 1)
+        ->assertSet('value', [courseId('alpha'), courseId('beta')]);
+});
+
+it('ignores a page that is not chosen, and offers no sorting for one page', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [courseId('alpha')], 'multiple' => true, 'templates' => ['course']])
+        ->assertDontSeeHtml('wire:sort:handle')
+        ->call('sortPage', courseId('beta'), 0)
+        ->assertSet('value', [courseId('alpha')]);
+});
+
+it('keeps the order an editor sets when the page is saved', function (): void {
+    $page = relatedAs([]);
+    $page->related = [courseId('gamma'), courseId('beta')];
+    $page->save();
+
+    expect(lynx()->pages->get($page->id)?->related->map(fn (Page $related): string => $related->name()))->toBe(['gamma', 'beta']);
+});

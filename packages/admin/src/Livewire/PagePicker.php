@@ -89,6 +89,30 @@ final class PagePicker extends Component
         $this->search = '';
     }
 
+    /** wire:sort handler: a chosen page dropped at a 0-based position. Templates read the pages in this order. */
+    public function sortPage(int $id, int|string $position): void
+    {
+        $ids = Value::ints($this->value);
+
+        if (! in_array($id, $ids, true)) {
+            return;
+        }
+
+        $order = array_values(array_diff($ids, [$id]));
+        array_splice($order, max(0, min(count($order), Value::int($position))), 0, [$id]);
+        $this->value = $order;
+    }
+
+    /** The keyboard's way to sort: a chosen page one place up (-1) or down (1). */
+    public function movePage(int $id, int $step): void
+    {
+        $index = array_search($id, Value::ints($this->value), true);
+
+        if ($index !== false) {
+            $this->sortPage($id, $index + ($step < 0 ? -1 : 1));
+        }
+    }
+
     public function remove(int $id): void
     {
         $this->value = array_values(array_diff(Value::ints($this->value), [$id]));
