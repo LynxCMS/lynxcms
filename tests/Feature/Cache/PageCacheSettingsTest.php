@@ -94,10 +94,10 @@ it('edits rules, shows stored pages and clears them in the admin', function (): 
     $this->get(route('lynx.admin.page-cache'))->assertOk()->assertSeeLivewire(PageCacheScreen::class);
 
     Livewire::test(PageCacheScreen::class)
-        ->assertSee('1 stored page')->assertSee('localhost')->assertDontSee('value="all"', false)
+        ->assertSeeHtml('data-stored-total="1"')->assertSee('localhost')->assertDontSee('value="all"', false)
         ->set('rules.note.lifetime', '120')->set('rules.note.clear', ['self'])->set('rules.note.csrf', true)
         ->call('save')->assertHasNoErrors()->assertSet('statusFor', 'rules')
-        ->call('clearTemplate', 'note')->assertSee('0 stored pages')->assertSet('statusFor', 'stored');
+        ->call('clearTemplate', 'note')->assertSeeHtml('data-stored-total="0"')->assertSet('statusFor', 'stored');
 
     expect(app(TemplateRules::class)->for('note')?->lifetime)->toBe(120)
         ->and(app(TemplateRules::class)->for('note')?->refreshesToken)->toBeTrue();
@@ -118,7 +118,7 @@ it('links the page editor to the page cache screen for a stored page', function 
     $page = lynx()->pages->get('/a/');
 
     $this->get(route('lynx.admin.pages.edit', $page?->id))->assertSee('In the page cache')->assertSee(route('lynx.admin.page-cache', ['page' => $page?->id]), false);
-    Livewire::withQueryParams(['page' => $page?->id])->test(PageCacheScreen::class)->call('clearPage')->assertSee('0 stored pages');
+    Livewire::withQueryParams(['page' => $page?->id])->test(PageCacheScreen::class)->call('clearPage')->assertSeeHtml('data-stored-total="0"');
 });
 
 it('refuses the admin screen to users without page_cache.manage', function (): void {

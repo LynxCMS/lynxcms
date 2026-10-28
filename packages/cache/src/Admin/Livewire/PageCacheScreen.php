@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace LynxCms\Cache\Admin\Livewire;
 
+use Carbon\CarbonInterval;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
@@ -31,6 +33,9 @@ use LynxCms\Core\Support\Value;
  */
 final class PageCacheScreen extends Component
 {
+    /** What each clearing scope reaches, in words, from the changed page. */
+    public const array SCOPE_WORDS = ['self' => 'The page itself', 'parents' => 'Pages above it', 'children' => 'Pages below it', 'siblings' => 'Pages beside it', 'home' => 'The home page'];
+
     /** @var array<string, array{cache: bool, lifetime: string, parameters: string, clear: list<string>, csrf: bool}> */
     public array $rules = [];
 
@@ -121,7 +126,29 @@ final class PageCacheScreen extends Component
             'scopes' => array_values(array_diff(PageCacheSchema::SCOPES, [TemplateRule::CLEAR_ALL])),
             'hosts' => $settings->hosts(),
             'configLifetime' => Value::int(config('lynx-cache.pages.lifetime')),
+            'summaries' => array_map($this->summary(...), $this->rules),
         ]);
+    }
+
+    /**
+     * A template's rule in a line, for its row on the Rules tab: "Cached · 2 minutes · a change clears every page".
+     *
+     * @param  array{cache: bool, lifetime: string, parameters: string, clear: list<string>, csrf: bool}  $row
+     */
+    private function summary(array $row): string
+    {
+        if (! $row['cache']) {
+            return 'Not cached';
+        }
+
+        $kept = match ($row['lifetime']) {
+            '' => 'Cached for the default lifetime',
+            '0' => 'Cached until its content changes',
+            default => 'Cached for '.CarbonInterval::seconds(Value::int($row['lifetime']))->cascade()->forHumans(),
+        };
+        $cleared = array_map(fn (string $scope): string => lcfirst(self::SCOPE_WORDS[$scope] ?? $scope), $row['clear']);
+
+        return $kept.' · a change clears '.($cleared === [] ? 'every page' : Arr::join($cleared, ', ', ' and '));
     }
 
     private function report(string $for, string $status): void

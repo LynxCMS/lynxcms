@@ -197,7 +197,7 @@ With `LYNX_PAGE_CACHE_DEBUG=true`, responses carry `X-Lynx-Cache: HIT`, `MISS`, 
 
 A template missing from the list, with no `'*'` entry, is never stored.
 
-Editors with the `page_cache.manage` permission change the rules in the admin, under **Settings > Page cache**, without a deploy. Rules saved there win over the config for the same template, and a template switched off there is not stored even if the config lists it. The screen also shows how many pages are stored per template, clears them, and prints the web server rules. The page editor links to it for pages that are stored.
+Editors with the `page_cache.manage` permission change the rules in the admin, under **Settings > Page cache**, without a deploy. Rules saved there win over the config for the same template, and a template switched off there is not stored even if the config lists it. The screen has four tabs. **Overview** shows how many pages are stored, in all and per template, and clears them. **Rules** lists each template with its rule summed up ("Cached for 5 minutes · a change clears pages above it"); open one to change it. **Page parts** lists stored fragments, and **Web server setup** prints the web server rules. The page editor links to the Overview for pages that are stored.
 
 From code, MCP or the agent, the `page_cache.save_rules` action saves the same rules:
 
@@ -384,7 +384,7 @@ $html = lynx()->cache()->remember('related-'.$page->id, fn () => view('partials.
 - Signed in users always get a fresh render, so editors never see a cached draft or someone else's view.
 - A fragment holding the visitor's CSRF token is not stored. Put forms outside fragments, or in an island.
 
-The admin's page cache screen lists stored fragments: their name, language, what clears them, size and age. **View** shows what one holds, as source and as a preview without the site's styles or scripts. Clear one copy, every copy of a name, or all of them. From code, MCP or the agent, `page_cache.clear` with `fragments: true` or `fragment: "main-menu"` does the same.
+The page cache screen's **Page parts** tab lists stored fragments: their name, language, what clears them, size and age. **View** shows what one holds, as source and as a preview without the site's styles or scripts. Clear one copy, every copy of a name, or all of them. From code, MCP or the agent, `page_cache.clear` with `fragments: true` or `fragment: "main-menu"` does the same.
 
 ## Edge caches
 
