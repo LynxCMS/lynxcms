@@ -74,7 +74,7 @@ final class AdminIntegration
     {
         app(AdminBranches::class)->register(FormSchema::ROOT_TEMPLATE, fn (Page $page, Page $root): ?string => $page->id === $root->id ? route('lynx.admin.forms.builder') : null);
         app(EditorLinks::class)->add(fn (Page $page): ?array => $page->template()->name === FormSchema::FORM_TEMPLATE
-            ? ['label' => 'Preview form', 'url' => route('lynx.admin.forms.preview', $page->name())]
+            ? ['label' => 'Preview form', 'url' => route('lynx.admin.forms.preview', FormSchema::key($page))]
             : null);
         app(TemplateChoices::class)->exclude(FormSchema::ROOT_TEMPLATE, FormSchema::FORM_TEMPLATE);
         app(SchemaOwners::class)->register('Forms', array_keys(FormSchema::templates()), array_values(array_diff(array_keys(FormSchema::fields()), [FormSchema::PICKER])));

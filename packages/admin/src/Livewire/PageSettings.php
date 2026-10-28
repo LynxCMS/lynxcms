@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
+use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -135,6 +136,9 @@ final class PageSettings extends Component
             'urls' => $this->previewUrls($page),
             'templates' => $this->templateChoices($page, $choices),
             'parentTitle' => $page->parent() instanceof Page ? (new DefaultPresenter)->title($page->parent()) : null,
+            // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
+            'hasUrl' => $page->template()->hasUrl(),
+            'isModulePage' => app(AdminBranches::class)->contains($page),
             ...$this->permissions($page),
         ]);
     }

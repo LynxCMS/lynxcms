@@ -81,6 +81,8 @@ Two options change what a template is for:
 lynx()->templates->add('settings', fields: ['footer_text'], hasUrl: false, singleton: true);
 ```
 
+A page without a URL shows wherever a template puts it, in every language, so its page editor's **Settings** tab asks for one name, the one templates and code find it by, instead of a name and a published switch per language. Its schedule publishes or unpublishes the whole page, and it has no **Hidden** status or old URLs, which only matter for pages with an address.
+
 ## Where pages may go
 
 Templates can say where their pages belong in the tree. These **family rules** keep the tree tidy: the admin only offers templates that fit, and saving, moving or switching a page refuses a place the rules forbid.

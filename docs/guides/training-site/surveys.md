@@ -9,7 +9,7 @@ After each course, the school wants to know how it went. This chapter adds a fee
 
 ## Built in the admin
 
-Staff build forms in **Forms › Builder**: each question is a block (choose one, choose several, long text and so on), with its label in both languages. The survey's setting **Members only, one answer each** asks guests to sign in and refuses a second answer from the same account.
+Staff build forms in **Forms › Builder**: each question is a block (choose one, choose several, long text and so on), with its label in both languages. The survey's setting **Signed-in visitors only, one answer each** asks guests to sign in and refuses a second answer from the same account.
 
 The starter seeds the survey so it has one to show. This is what the builder stores:
 

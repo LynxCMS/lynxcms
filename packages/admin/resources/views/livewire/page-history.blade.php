@@ -1,5 +1,6 @@
 <div class="space-y-6">
     {{-- Redirects --}}
+    @if ($hasUrl)
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-redirects">
         <h2 id="settings-redirects" class="mb-1 text-base font-semibold">Old URLs</h2>
         <p class="text-muted-foreground text-sm mb-4">URLs this page had before it was renamed or moved. Visitors and search engines are sent on to its current URL.</p>
@@ -26,6 +27,7 @@
         @error('path') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
         @error('page') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
     </section>
+    @endif
 
     {{-- Backlinks --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-backlinks">

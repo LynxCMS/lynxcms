@@ -20,11 +20,11 @@
                 @include('lynx-admin::livewire.partials.schedule-row', ['label' => $language->name, 'model' => "times.{$code}", 'key' => "schedule-{$code}"])
             @endforeach
         @else
-            @include('lynx-admin::livewire.partials.schedule-row', ['label' => $languages->count() > 1 ? 'All languages' : '', 'model' => 'all', 'key' => 'schedule-all'])
+            @include('lynx-admin::livewire.partials.schedule-row', ['label' => $hasLanguageTimes ? 'All languages' : '', 'model' => 'all', 'key' => 'schedule-all'])
         @endif
     </div>
 
-    @if ($languages->count() > 1)
+    @if ($hasLanguageTimes)
         <label class="mt-4 flex items-center gap-2 text-sm">
             <input type="checkbox" class="blat-checkbox" wire:model.live="perLanguage" @disabled(! $canPublish)>
             Different times per language

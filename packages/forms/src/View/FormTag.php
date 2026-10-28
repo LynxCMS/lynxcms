@@ -9,6 +9,7 @@ use Illuminate\View\Component;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Forms\FormRegistry;
+use LynxCms\Forms\FormSchema;
 
 /**
  * <x-lynx-form :form="$page->form" />: a form picked with the form field, or named by key,
@@ -26,7 +27,7 @@ final class FormTag extends Component
     public function __construct(Page|PageArray|string|null $form = null, ?Page $page = null, public string $livewire = 'lynx-form')
     {
         $form = $form instanceof PageArray ? $form->first() : $form;
-        $key = $form instanceof Page ? $form->name() : $form;
+        $key = $form instanceof Page ? FormSchema::key($form) : $form;
         $this->key = $key !== null && $key !== '' && app(FormRegistry::class)->get($key) !== null ? $key : null;
         $this->pageId = $page?->id ?? $this->currentPageId();
     }

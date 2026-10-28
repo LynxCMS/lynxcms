@@ -38,12 +38,26 @@ final class AdminBranches
     /** Where to edit the page when its branch's module edits it elsewhere, else null. */
     public function editUrlFor(Page $page): ?string
     {
-        foreach ($this->branches as $template => $editUrl) {
+        $branch = $this->branchOf($page);
+
+        return $branch === null ? null : ($this->branches[$branch['template']])($page, $branch['root']);
+    }
+
+    /** Whether the page is in a module's branch, edited on the module's screen or not (a form). */
+    public function contains(Page $page): bool
+    {
+        return $this->branchOf($page) !== null;
+    }
+
+    /** @return array{template: string, root: Page}|null */
+    private function branchOf(Page $page): ?array
+    {
+        foreach (array_keys($this->branches) as $template) {
             foreach (lynx()->pages->find("template={$template}, include=all") as $root) {
                 $isInside = $root->id === $page->id || lynx()->pages->count("id={$page->id}, has_parent={$root->id}, include=all") === 1;
 
-                if ($isInside) {
-                    return $editUrl($page, $root);
+                if ($isInside && $root instanceof Page) {
+                    return ['template' => $template, 'root' => $root];
                 }
             }
         }

@@ -24,7 +24,7 @@ Field types: `text`, `email`, `tel`, `textarea`, `select`, `radio`, `checkboxes`
 
 Forms can also say what visitors read after sending (`successMessage()`), when sending fails (`errorMessage()`), and a confirmation mailed to the `replyTo()` address (`autoReply()`). That address is whatever the visitor typed, so anyone can make your site send its confirmation to someone else; keep the confirmation short, with nothing in it you would not send a stranger.
 
-A form that members answer once each, such as a course survey, returns `true` from `oncePerUser()`. Guests see "Sign in to answer this form" with a link to your `login` route instead of the form, and a member who already answered is told so. `forms.submit` refuses both, whoever calls it. In the builder, the same is the form's **Members only, one answer each** setting. To limit a survey to some members, such as those who booked a course, place it on a page only they can open (see [Page Access](/deeper/visibility)).
+A form that members answer once each, such as a course survey, returns `true` from `oncePerUser()`. Guests see "Sign in to answer this form" with a link to your `login` route instead of the form, and a member who already answered is told so. `forms.submit` refuses both, whoever calls it. In the builder, the same is the form's **Signed-in visitors only, one answer each** setting. It needs visitor accounts: a sign-in of your own for visitors, or users your app already has. On a site without one, only people who sign in to the admin could answer. To limit a survey to some members, such as those who booked a course, place it on a page only they can open (see [Page Access](/deeper/visibility)).
 
 ## Building forms in the admin
 
@@ -52,6 +52,8 @@ Templates let editors pick a form with the `form` field, and render it:
 <x-lynx-form form="newsletter" />                          {{-- by key --}}
 <x-lynx-form :form="$page->form" livewire="quote-request" /> {{-- with your own component --}}
 ```
+
+The key is the form's name in the default language, the one on its **Settings** tab. A form has no URL, so it shows in every language wherever a template puts it, under that same key.
 
 On a page the [page cache](/modules/page-cache) stores, a form keeps the time it was first rendered, so the honeypot's "sent too fast" check never fires. Put forms that rely on it in an island, which renders them for each visitor:
 

@@ -81,8 +81,8 @@ final readonly class PageFormValidator
             $errors['values.'.FormSchema::FIELDS] = 'Add at least one field before publishing the form.';
         }
 
-        if ($page->name() !== '' && $this->forms->codeForm($page->name()) !== null) {
-            $errors['names.'.lynx()->languages->default()->code] = "A form defined in code already uses the name [{$page->name()}].";
+        if (FormSchema::key($page) !== '' && $this->forms->codeForm(FormSchema::key($page)) !== null) {
+            $errors['names.'.lynx()->languages->default()->code] = 'A form defined in code already uses the name ['.FormSchema::key($page).'].';
         }
 
         return $errors;
