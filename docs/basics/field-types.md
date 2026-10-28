@@ -171,6 +171,7 @@ References to other pages, such as related courses or a post's category.
 | Setting | Meaning |
 | --- | --- |
 | `multiple` | Allow more than one page. Default `true`. |
+| `min`, `max` | Fewest and most pages, such as at most 8 cards on a home page section. `min` counts once editors pick any; `required` asks for at least one. |
 | `templates` | Templates the chosen pages may use. |
 | `input` | `search` by title (default), or `select`, `radios` or `checkboxes` listing the allowed pages (up to 100), which suits short lists such as categories. |
 

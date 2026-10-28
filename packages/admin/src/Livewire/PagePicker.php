@@ -34,6 +34,10 @@ final class PagePicker extends Component
     #[Locked]
     public bool $multiple = true;
 
+    /** Most pages the field holds (its "max" setting); 0 means no limit. */
+    #[Locked]
+    public int $max = 0;
+
     /** @var list<string> template names that may be chosen; empty means any */
     #[Locked]
     public array $templates = [];
@@ -62,11 +66,12 @@ final class PagePicker extends Component
      * @param  array<array-key, mixed>  $value
      * @param  array<array-key, mixed>  $templates
      */
-    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null): void
+    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0): void
     {
         $this->value = Value::ints($value);
         $this->known = $this->value;
         $this->multiple = $multiple;
+        $this->max = max(0, $max);
         $this->templates = Value::strings($templates);
         $this->placeholder = $placeholder;
     }
@@ -75,7 +80,7 @@ final class PagePicker extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $this->isAllowed($page) || app(AdminAccess::class)->viewable([$id]) === []) {
+        if (! $page instanceof Page || ! $this->isAllowed($page) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
             return;
         }
 
@@ -91,7 +96,13 @@ final class PagePicker extends Component
 
     public function render(): View
     {
-        return view('lynx-admin::livewire.page-picker', ['chosen' => $this->chosen(), 'results' => $this->results()]);
+        return view('lynx-admin::livewire.page-picker', ['chosen' => $this->chosen(), 'results' => $this->isFull() ? [] : $this->results(), 'isFull' => $this->isFull()]);
+    }
+
+    /** A field that holds several pages and has its most: removing one makes room for another. */
+    private function isFull(): bool
+    {
+        return $this->multiple && $this->max > 0 && count(Value::ints($this->value)) >= $this->max;
     }
 
     /**

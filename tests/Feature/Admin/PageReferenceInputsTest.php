@@ -6,6 +6,7 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageEditor;
+use LynxCms\Admin\Livewire\PagePicker;
 use LynxCms\Core\Pages\Page;
 
 beforeEach(function (): void {
@@ -112,4 +113,19 @@ it('lists pages for a page field inside a repeater item', function (): void {
         ->assertHasNoErrors();
 
     expect(lynx()->pages->get($page->id)->getUnformatted('credits')[0]['values'])->toBe(['partner' => [courseId('beta')]]);
+});
+
+it('stops offering the search once the field holds its most pages', function (): void {
+    $page = relatedAs(['max' => 2]);
+    $page->related = [courseId('beta'), courseId('gamma')];
+    $page->save();
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])->assertSeeHtml('data-picker-full');
+
+    Livewire::test(PagePicker::class, ['value' => [courseId('beta')], 'multiple' => true, 'templates' => ['course'], 'max' => 2])
+        ->assertDontSeeHtml('data-picker-full')
+        ->call('add', courseId('gamma'))
+        ->assertSeeHtml('data-picker-full')
+        ->call('add', courseId('alpha'))
+        ->assertSet('value', [courseId('beta'), courseId('gamma')]);
 });

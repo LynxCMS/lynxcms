@@ -11,6 +11,7 @@
         :value="$value ?? []"
         :multiple="\LynxCms\Admin\Editor\PageChoices::isMultiple($settings)"
         :templates="(array) ($settings['templates'] ?? [])"
+        :max="\LynxCms\Core\Support\Value::int($settings['max'] ?? 0)"
         :key="'picker-'.$model"
     />
 @else

@@ -10,7 +10,7 @@
     <section class="grid gap-5 border-t pt-6" aria-labelledby="field-settings">
         <h2 id="field-settings" class="text-base font-semibold">{{ $kind['label'] }}</h2>
         @foreach ($shown as $setting => $definition)
-            @php($words = $labels->for($setting, $definition))
+            @php($words = $labels->for($setting, $definition, $type))
             <div class="grid gap-1.5" wire:key="setting-{{ $type }}-{{ $setting }}">
                 @if ($type === 'choice' && $setting === 'options')
                     <span class="text-sm font-medium">Options</span>
