@@ -32,6 +32,24 @@ it('loads the paths of pages found together in one query', function (): void {
 });
 
 it('batches again for another language', function (): void {
+    lynx()->pages->get('/courses/')?->setLanguageName('pt', 'cursos')->save();
+
+    foreach (createCourses('a1', 'a2', 'a3') as $name => $course) {
+        $course->setLanguageName('pt', "{$name}-pt")->save();
+    }
+
+    $pages = lynx()->pages->find('parent=/courses/');
+
+    $queries = pathQueries(function () use ($pages): void {
+        $pages->map(fn (Page $page): string => $page->url());
+        $pages->map(fn (Page $page): string => $page->localUrl('pt'));
+    });
+
+    expect($queries)->toBe(2)
+        ->and($pages->first()->localUrl('pt'))->toBe('/pt/cursos/a1-pt');
+});
+
+it('looks up no Portuguese path for pages not published in Portuguese', function (): void {
     createCourses('a1', 'a2', 'a3');
     $pages = lynx()->pages->find('parent=/courses/');
 
@@ -40,8 +58,8 @@ it('batches again for another language', function (): void {
         $pages->map(fn (Page $page): string => $page->localUrl('pt'));
     });
 
-    // These pages have no Portuguese name, so their Portuguese URL falls back to the default one.
-    expect($queries)->toBe(2)
+    // They link to their default-language URL, which the first lookup already loaded.
+    expect($queries)->toBe(1)
         ->and($pages->first()->localUrl('pt'))->toBe('/courses/a1');
 });
 

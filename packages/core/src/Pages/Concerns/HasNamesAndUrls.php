@@ -81,14 +81,18 @@ trait HasNamesAndUrls
         return $this->localUrl($this->context()->current());
     }
 
-    /** Relative URL in a given language (falls back to the default language's URL). */
+    /**
+     * Relative URL in a given language. A page with no name there, or taken offline there, links
+     * to its default-language URL instead, which visitors can open (ADR-0093).
+     */
     public function localUrl(Language|string $language): string
     {
         $language = $this->registry()->get($language);
-        $path = $this->path($language);
+        $default = $this->registry()->default();
+        $path = $language->id === $default->id || $this->isActiveIn($language) ? $this->path($language) : null;
 
         if ($path === null) {
-            $language = $this->registry()->default();
+            $language = $default;
             $path = $this->path($language) ?? '';
         }
 

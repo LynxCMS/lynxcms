@@ -1002,6 +1002,16 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Editors can prepare a change and let it go live by itself. Who scheduled it does not review the draft's later edits: the page's history shows each save. A draft publish and a page publish are independent, so an unpublished page whose draft goes live stays unpublished unless it also has a `publish_at`. No migration is needed: the action column already holds the kind of entry.
 
+## ADR-0093: Lists keep pages not published in the visitor's language; menus leave them out
+
+**Status:** Accepted
+
+**Context:** A page is published in a language once it has a URL name there, and an editor can take it offline in one language. `find()`, `children()` and page references still list such a page in that language, linking to its default-language URL, because fallback happens at read time (rule 5). Menus leave it out. Nothing said so, and a site featuring pages per market (a Portuguese home page) had to filter by hand to drop a product taken offline in Portuguese.
+
+**Decision:** The behaviour stays and is written down. Lists, searches and references keep a page that is not published in the current language, with links to the default-language URL; menus (`lynxcms/menus`), the sitemap and hreflang leave it out, as they promise URLs in that language. `PageArray::publishedIn(?Language|string $language = null)` (@api) keeps only the pages published in a language, the current one by default. Pages without a URL are kept, since they have no URL to be published at and show in every language.
+
+**Consequences:** Existing sites list what they listed. Writing the rule down showed `Page::localUrl()` did not follow it for a page taken offline in a language (it has a name there, switched off): it linked to that language's address, which answers 404. It now links to the default-language URL, as for a page never published there, and skips that language's path lookup. A template that features pages per market writes `$section->cards->publishedIn()`. A selector term for the same filter is left for later: `language=pt` already chooses the language a selector matches in, so it would need a name of its own.
+
 ## ADR-0094: A template or block type can set a field's limits for itself
 
 **Status:** Accepted. Extends ADR-0045.
