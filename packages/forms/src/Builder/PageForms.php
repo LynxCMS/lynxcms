@@ -27,7 +27,8 @@ final class PageForms
             return null;
         }
 
-        $page = lynx()->pages->findOne('template='.FormSchema::FORM_TEMPLATE.', name='.$key.', include='.($includeUnpublished ? 'all' : 'hidden'));
+        // By the key, the default language's name, whatever the request's language (FormSchema::key()).
+        $page = lynx()->pages->findOne('template='.FormSchema::FORM_TEMPLATE.', name='.$key.', language='.lynx()->languages->default()->code.', include='.($includeUnpublished ? 'all' : 'hidden'));
 
         return $page instanceof Page ? $this->compiled($page) : null;
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms;
 
+use LynxCms\Core\Pages\Page;
+
 /**
  * Templates and fields of the form builder (ADR-0053): forms are pages under a hidden "_forms"
  * page, and their fields are blocks of the form_fields matrix, one block type per field kind.
@@ -65,6 +67,15 @@ final class FormSchema
 
     /** Block types that are form fields, as opposed to "step". */
     public const array FIELD_TYPES = ['text', 'email', 'tel', 'textarea', 'number', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'file', 'group'];
+
+    /**
+     * What templates, submissions and the admin name a form by: its page's name in the default
+     * language. A form has no URL, so a name of its own in another language changes nothing.
+     */
+    public static function key(Page $form): string
+    {
+        return $form->name(lynx()->languages->default());
+    }
 
     /**
      * Fields to create, subfields before the matrix that uses them: name => [type, translatable, label, settings].

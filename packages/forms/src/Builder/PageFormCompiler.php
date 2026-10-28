@@ -32,12 +32,12 @@ final class PageFormCompiler
             $languages->map(fn ($language): string => (string) $language->code)->all(),
             $languages->map(fn (Language|string|null $language): mixed => $page->getUnformatted($field, $language))->all(),
         ));
-        [$fields, $steps] = $this->fieldsAndSteps(self::blocks($page), $byLanguage('title') ?? $page->name());
+        [$fields, $steps] = $this->fieldsAndSteps(self::blocks($page), $byLanguage('title') ?? FormSchema::key($page));
 
         return new PageForm(
             (int) $page->id,
-            $page->name(),
-            $byLanguage('title') ?? $page->name(),
+            FormSchema::key($page),
+            $byLanguage('title') ?? FormSchema::key($page),
             $fields,
             $steps,
             $this->recipients(Value::string($page->getUnformatted(FormSchema::RECIPIENTS))),

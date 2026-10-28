@@ -70,7 +70,7 @@ final class FormList extends Component
         foreach (lynx()->pages->find('template='.FormSchema::FORM_TEMPLATE.', include=all, sort=title') as $page) {
             if ($page instanceof Page) {
                 $rows[] = [
-                    'key' => $page->name(),
+                    'key' => FormSchema::key($page),
                     'label' => Value::string($page->title),
                     'kind' => 'builder',
                     'published' => ! $page->hasStatus(PageStatus::UNPUBLISHED),
