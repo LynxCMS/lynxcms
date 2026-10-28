@@ -19,6 +19,11 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.23 to 0.1.24
+
+- Selectors now read `has_draft` and `has_schedule` as the page's state, so a field with either name can no longer be found by a selector, and new fields can't take them. If your site has one, create a field with another name, move its values with a seeder of your own, and update the templates and selectors that use it.
+- The admin's default font is Geist, for body text and headings. If you published `config/lynx-admin.php`, your copy still names Inter and monospace headings: set `appearance.font` to `geist` and `appearance.heading_font` to `sans` for the new look, or keep yours.
+
 ## From 0.1.22 to 0.1.23
 
 - Run `php artisan lynx:phpstan`. Text fields are now typed `TranslatableValue|null` (translatable) or `SharedValue|null`, as they read at runtime, so PHPStan reports code that calls a method on a field that may be empty, such as `$page->title->value()`. Use `$page->title?->value()`, cast with `(string) $page->title` (an empty field gives `''`), or check it first.
