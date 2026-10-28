@@ -1,10 +1,10 @@
 {{--
     Settings > Page cache, in tabs: Overview (what is stored, and clearing), Rules (per template),
-    Fragments and Web server. Tabs switch in the browser and keep their place in the address's
+    Page parts (fragments) and Web server setup. Tabs switch in the browser and keep their place in the address's
     hash, so a link can open one; Save shows with the Rules tab and submits its form.
 --}}
 <x-lynx-admin::layout title="Page cache">
-    @php($tabs = ['overview' => 'Overview', 'rules' => 'Rules', 'fragments' => 'Fragments', 'server' => 'Web server'])
+    @php($tabs = ['overview' => 'Overview', 'rules' => 'Rules', 'fragments' => 'Page parts', 'server' => 'Web server setup'])
     <div class="grid gap-6" x-data="{ tabs: {{ Js::from(array_keys($tabs)) }}, section: 'overview', fromHash() { const tab = location.hash.slice(1); this.section = this.tabs.includes(tab) ? tab : 'overview' } }"
          x-init="fromHash(); $watch('section', (tab) => history.replaceState(null, '', '#' + tab))" x-on:hashchange.window="fromHash()">
         <header class="flex flex-wrap items-start justify-between gap-4">

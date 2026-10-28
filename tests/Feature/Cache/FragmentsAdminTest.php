@@ -23,8 +23,8 @@ it('lists stored fragments on the page cache screen', function (): void {
 
     Livewire::test(FragmentsList::class)
         ->assertSeeHtml('data-fragments-total="3"')
-        ->assertSee('menu')->assertSee('footer')->assertSee('template:home')
-        ->set('search', 'foot')->assertSee('footer')->assertDontSee('menu');
+        ->assertSeeHtml('data-fragment="menu"')->assertSeeHtml('data-fragment="footer"')->assertSee('template:home')
+        ->set('search', 'foot')->assertSeeHtml('data-fragment="footer"')->assertDontSeeHtml('data-fragment="menu"');
 });
 
 it('shows what a fragment holds, as source and as a sandboxed preview', function (): void {

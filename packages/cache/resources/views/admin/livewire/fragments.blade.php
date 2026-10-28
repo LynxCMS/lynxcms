@@ -1,10 +1,14 @@
-{{-- The Fragments tab: parts of pages kept by @@lynxCache and lynx()->cache(), to look at and clear. --}}
-<section aria-label="Fragments" class="grid max-w-4xl gap-5">
-    <p class="text-muted-foreground max-w-2xl text-sm">Parts of pages kept by <code class="font-mono">@@lynxCache</code> and <code class="font-mono">lynx()->cache()</code>. <span data-fragments-total="{{ $total }}">{{ $total }} stored {{ $total === 1 ? 'fragment' : 'fragments' }}</span>.</p>
+{{-- The Page parts tab: parts of pages templates keep with @@lynxCache or lynx()->cache() (fragments in code), to look at and clear. --}}
+<section aria-label="Page parts" class="grid max-w-4xl gap-5">
+    <div class="grid max-w-2xl gap-2 text-sm">
+        <p>A template can store a part of a page on its own, such as the main menu or a list of courses, so it isn't built again on every visit. This also speeds up pages that aren't stored whole.</p>
+        <p class="text-muted-foreground">Each language keeps its own copy. A part is cleared when the content it shows changes, and signed in users always get a fresh one. In templates they are <code class="font-mono">@@lynxCache</code> blocks, called fragments.</p>
+        <p class="text-muted-foreground" data-fragments-total="{{ $total }}">{{ $total }} stored {{ $total === 1 ? 'part' : 'parts' }}.</p>
+    </div>
 
     <div class="flex flex-wrap items-center gap-3">
-        <input type="search" class="blat-input w-64" wire:model.live.debounce.300ms="search" placeholder="Filter by name" aria-label="Filter fragments by name">
-        <x-lynx-admin::ui.button type="button" variant="outline" wire:click="clearAll">Clear every fragment</x-lynx-admin::ui.button>
+        <input type="search" class="blat-input w-64" wire:model.live.debounce.300ms="search" placeholder="Filter by name" aria-label="Filter page parts by name">
+        <x-lynx-admin::ui.button type="button" variant="outline" wire:click="clearAll">Clear every part</x-lynx-admin::ui.button>
         @if ($status !== '') <span role="status" class="text-muted-foreground text-sm">{{ $status }}</span> @endif
     </div>
 
@@ -23,7 +27,7 @@
                 </thead>
                 <tbody>
                     @foreach ($entries as $entry)
-                        <tr class="border-t" wire:key="fragment-{{ $entry->id }}">
+                        <tr class="border-t" wire:key="fragment-{{ $entry->id }}" data-fragment="{{ $entry->name }}">
                             <td class="px-4 py-3 font-mono whitespace-nowrap">{{ $entry->name }}@if ($entry->audience !== 'guest') <span class="text-muted-foreground" title="Guests with unlocked pages">*</span>@endif</td>
                             <td class="py-2 pr-3">{{ $entry->language }}</td>
                             <td class="px-4 py-3 font-mono text-xs">{{ implode(', ', array_map(fn ($dependency) => $dependency === 'any' ? 'any change' : $dependency, $entry->dependencies())) }}</td>
