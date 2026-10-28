@@ -22,6 +22,7 @@ After `composer update`, Composer lists any Lynx package with database changes w
 ## From 0.1.24 to 0.1.25
 
 - Selectors leave out pages whose template has no URL. Selectors that name such a template (`template=promo`), read below such a page, or name pages by `id=` still find them. A selector that found them otherwise, such as `parent=/` or `title%=launch`, needs `include=no_url`.
+- A page field's `templates` now holds on every save, not only in the admin. Code that adds a page of another template to such a field, from an import, a seeder or an agent, fails with "Pick pages that use …": widen the field's `templates`, or set the template's own for that use. Pages a field already holds stay.
 
 ## From 0.1.23 to 0.1.24
 
