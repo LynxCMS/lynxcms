@@ -100,7 +100,7 @@ final class FormSchema
             self::SHOW_IF_VALUES => ['text', false, 'is one of (comma separated), compares as >= 18, or yes / no', []],
             self::FIELDS => ['matrix', false, 'Fields', ['types' => self::blockTypes(), 'max_depth' => 1]],
             self::RECIPIENTS => ['text', false, 'Send submissions to (emails, comma separated)', []],
-            self::ONCE_PER_USER => ['toggle', false, 'Members only, one answer each', []],
+            self::ONCE_PER_USER => ['toggle', false, 'Signed-in visitors only, one answer each', ['description' => 'For surveys of people who have an account on this site, such as a course\'s participants: each account answers once, and visitors who aren\'t signed in see a sign-in link instead of the form. The site needs its own sign-in for visitors; without one, only people who sign in to the admin could answer.']],
             self::SUCCESS => ['textarea', true, 'Message after sending', []],
             self::ERROR => ['textarea', true, 'Message when sending fails', []],
             self::AUTO_REPLY => ['textarea', true, 'Confirmation mailed to the visitor', []],

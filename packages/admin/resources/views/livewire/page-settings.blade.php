@@ -62,7 +62,8 @@
                 @php($flags = ['unpublished' => ['Unpublished', 'Not visible on the site; pages below it are offline too'], 'hidden' => ['Hidden', 'Excluded from lists, menus and searches; still reachable by URL'], 'locked' => ['Locked', 'Not editable, movable or deletable until unlocked']])
                 {{-- Hidden takes a page out of lists and menus, where a page without a URL never shows. --}}
                 @php($flags = $hasUrl ? $flags : array_diff_key($flags, ['hidden' => true]))
-                @if ($page->parentId !== null)
+                {{-- Unique reserves a name across the site; without a URL it does nothing else, so it only shows to be turned off. --}}
+                @if ($page->parentId !== null && ($hasUrl || $page->hasStatus(\LynxCms\Core\Pages\PageStatus::UNIQUE)))
                     @php($flags['unique'] = ['Unique', 'Require the name “'.$page->name($defaultCode).'” to be unique across the site'.(lynx()->languages->isMultilingual() ? ' (default language only)' : '')])
                 @endif
                 {{-- Publishing needs pages.publish; the other flags pages.status (ADR-0033). --}}

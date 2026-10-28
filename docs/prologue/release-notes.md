@@ -14,7 +14,9 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - The page cache screen has tabs: **Overview** (stored pages, in all and per template, and clearing), **Rules** (each template's rule summed up on its row, opening to edit it), **Page parts** (fragments, explained for site owners) and **Web server setup**. The tab stays in the address, so a link can open one.
 
-- **Pages without a URL** (forms, settings pages) get a Settings tab that fits them: one **Name in templates** instead of a name and a published switch per language, one schedule for the whole page, no Hidden status and no old URLs. Pages a module manages, such as forms, no longer offer a template or parent to change.
+- **Pages without a URL** (forms, settings pages) get a Settings tab that fits them: one **Name in templates** instead of a name and a published switch per language, one schedule for the whole page, no Hidden status and no old URLs. Pages a module manages, such as forms, no longer offer a template or parent to change. **Unique** shows only on pages without a URL that already have it, so it can be turned off: without a URL it only keeps other pages from the name. When a unique page without a URL holds a name, the refusal names it by its title instead of "/".
+
+- The form setting **Members only, one answer each** is now **Signed-in visitors only, one answer each**, with help saying it needs visitor accounts. Installing the form builder again, or creating a form, brings the new wording to existing sites.
 
 - **Fix:** a form with a name of its own in another language disappeared from that language's pages, since its key came from the name in the visitor's language. A form's key is now its default-language name everywhere; names already set in other languages stay, unused.
 

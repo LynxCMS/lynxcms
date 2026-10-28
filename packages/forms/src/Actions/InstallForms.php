@@ -99,9 +99,9 @@ final class InstallForms extends Action
             if ($existing === null) {
                 $context->run(CreateField::class, ['name' => $name, 'type' => $type, 'translatable' => $translatable, 'label' => $label, 'settings' => $settings]);
                 $installed = true;
-            } elseif ($existing->label !== $label) {
-                // The builder's own fields are read only in the admin: newer wording comes from here.
-                $context->run(UpdateField::class, ['field' => $name, 'label' => $label]);
+            } elseif ($existing->label !== $label || ($existing->config()['description'] ?? null) !== ($settings['description'] ?? null)) {
+                // The builder's own fields are read only in the admin: newer wording (label, help) comes from here.
+                $context->run(UpdateField::class, ['field' => $name, 'label' => $label, 'settings' => ['description' => $settings['description'] ?? null]]);
                 $installed = true;
             }
         }

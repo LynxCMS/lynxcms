@@ -32,11 +32,11 @@ final readonly class UniqueNames
         $owner = array_search(true, array_map(fn (int $status): bool => ($status & PageStatus::UNIQUE) !== 0, $others), true);
 
         if ($owner !== false) {
-            $this->fail($key, "The name [{$name}] belongs to the unique page {$this->url($owner)}; choose another name.");
+            $this->fail($key, "The name [{$name}] belongs to the unique page {$this->describe($owner)}; choose another name.");
         }
 
         if ($isUnique && $others !== []) {
-            $this->fail($key, "A unique page's name must not be used anywhere else, but [{$name}] is already used by {$this->url(array_key_first($others))}.");
+            $this->fail($key, "A unique page's name must not be used anywhere else, but [{$name}] is already used by {$this->describe(array_key_first($others))}.");
         }
     }
 
@@ -72,8 +72,15 @@ final readonly class UniqueNames
         return $others;
     }
 
-    private function url(int $pageId): string
+    /** The page's URL, or its title in quotes when it has none (a form, a settings page). */
+    private function describe(int $pageId): string
     {
+        $page = lynx()->pages->get($pageId);
+
+        if ($page instanceof Page && ! $page->template()->hasUrl()) {
+            return '“'.Value::string($page->getUnformatted('title'), $page->name($this->languages->default())).'”';
+        }
+
         $path = $this->paths->pathFor($pageId, $this->languages->default()) ?? '';
 
         return '/'.($path === '' ? '' : $path.'/');

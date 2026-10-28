@@ -85,3 +85,20 @@ it('leaves old URLs out of a page without one', function (): void {
         ->assertDontSeeHtml('aria-labelledby="settings-redirects"')
         ->assertSeeHtml('aria-labelledby="settings-backlinks"');
 });
+
+it('leaves Unique out of a page without a URL, unless it is set', function (): void {
+    Livewire::test(PageSettings::class, ['pageId' => $this->snippet->id])->assertDontSeeHtml("toggleStatus('unique')");
+
+    lynx()->pages->setStatus($this->snippet->id, add: ['unique']);
+
+    Livewire::test(PageSettings::class, ['pageId' => $this->snippet->id])->assertSeeHtml("toggleStatus('unique')");
+});
+
+it('names a unique page without a URL by its title when its name is refused', function (): void {
+    lynx()->pages->setStatus($this->snippet->id, add: ['unique']);
+    $page = lynx()->pages->new('course', '/courses/');
+    $page->name = 'footer-note';
+    $page->title = 'Footer note';
+
+    expect(fn () => $page->save())->toThrow(Illuminate\Validation\ValidationException::class, '“Footer note”');
+});
