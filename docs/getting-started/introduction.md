@@ -9,6 +9,9 @@ Lynx is a content management system built on Laravel. Use it on its own, as a ne
 
 A little Laravel is enough to start: if you have written a route and a Blade view, you know most of what you need. Lynx adds a few ideas of its own, which the rest of this guide introduces one at a time.
 
+> [!TIP]
+> To see a finished site first, open the [live demo](https://demo-corporate.lynxcms.org/): the website of an invented software company, in English and Portuguese. Its code is a starter you can install in about five minutes, admin included: [LynxCMS/lynx-corporate-starter](https://github.com/LynxCMS/lynx-corporate-starter).
+
 > [!NOTE]
 > Lynx is in active development and has not reached 1.0. Its APIs may still change between releases, and the [roadmap](/prologue/roadmap) lists what is planned.
 

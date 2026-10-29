@@ -12,6 +12,9 @@ hero:
       text: Get started
       link: /getting-started/introduction
     - theme: alt
+      text: See a live demo
+      link: https://demo-corporate.lynxcms.org/
+    - theme: alt
       text: Build your first site
       link: /getting-started/first-site
     - theme: alt
