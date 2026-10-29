@@ -39,6 +39,18 @@ cp -R "$SOURCE"/starter/. ./
 php -r '$f = "bootstrap/providers.php"; $s = file_get_contents($f);
     $s = str_replace("use App\\Providers\\AppServiceProvider;", "use App\\Providers\\AppServiceProvider;\nuse App\\Providers\\AtlasServiceProvider;\nuse App\\Providers\\FortifyServiceProvider;", $s);
     file_put_contents($f, str_replace("    AppServiceProvider::class,", "    AppServiceProvider::class,\n    AtlasServiceProvider::class,\n    FortifyServiceProvider::class,", $s));'
+# The skeleton names itself laravel/laravel on PHP 8.3; the starter needs Lynx's PHP 8.5, and composer
+# setup links the folder uploaded images live in, or an editor's first photo shows as a broken image.
+php -r '$f = "composer.json"; $c = json_decode(file_get_contents($f), true);
+    $c["name"] = "lynxcms/starter-training";
+    $c["description"] = "Atlas Training, a bilingual wellness school site built on Lynx CMS: the finished code of the training site guide.";
+    $c["keywords"] = ["lynx", "cms", "laravel", "starter", "multilingual"];
+    $c["require"]["php"] = "^8.5";
+    $setup = $c["scripts"]["setup"];
+    array_splice($setup, array_search("@php artisan migrate --force", $setup, true) + 1, 0, ["@php artisan storage:link --force"]);
+    $c["scripts"]["setup"] = $setup;
+    file_put_contents($f, json_encode($c, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n");'
+composer update --lock --no-interaction --quiet
 rm -f tests/Feature/ExampleTest.php tests/Unit/ExampleTest.php
 # phpunit.xml lists tests/Unit, and Git keeps no empty folder: a clone would fail to run tests.
 touch tests/Unit/.gitkeep

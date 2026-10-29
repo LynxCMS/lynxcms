@@ -16,7 +16,7 @@ php artisan db:seed
 composer dev
 ```
 
-`composer setup` installs the dependencies, creates `.env` and the SQLite database, runs the migrations and builds the CSS and JavaScript. `php artisan db:seed` adds the demo school and an owner account. `composer dev` serves the site at http://localhost:8000.
+`composer setup` installs the dependencies, creates `.env` and the SQLite database, runs the migrations, links the folder that holds uploaded images, and builds the CSS and JavaScript. `php artisan db:seed` adds the demo school and an owner account. `composer dev` serves the site at http://localhost:8000.
 
 Sign in at http://localhost:8000/login with `owner@atlas-training.example` and the password `change-me-now` (set `ATLAS_OWNER_PASSWORD` in `.env` before seeding to choose another), then open the admin at http://localhost:8000/lynx. Change the password before you put the site anywhere others can reach. Visitors create their own accounts at `/register`; they see the members area and never the admin.
 
