@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lynx CMS, a multilingual CMS for Laravel</title>
+<meta name="description" content="Add a page tree, runtime fields and a translated admin to the Laravel app you already know. People and AI agents edit through the same safe actions.">
+<link rel="canonical" href="https://lynxcms.org/">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#071a21" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lynxcms.org/">
+<meta property="og:title" content="Lynx CMS">
+<meta property="og:description" content="A multilingual CMS for Laravel. Open source, with a page tree, runtime fields and a translated admin.">
+<meta property="og:image" content="https://lynxcms.org/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/geist.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face {
+    font-family: Geist;
+    src: url(assets/geist.woff2) format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    color-scheme: light dark;
+    --ground: #ffffff;
+    --ink: #10201f;
+    --ink-soft: #4a5c61;
+    --rule: #dbe5e8;
+    --wash: #eef4f6;
+    --action: #007595;
+    --action-hover: #00627d;
+    --action-ink: #ffffff;
+    --mark-deep: #004459;
+    --mark-mid: #007595;
+    --mark-light: #56bad5;
+    --mark-eye: #ffffff;
+    --band: #004459;
+    --band-ink: #ffffff;
+    --band-ink-soft: #c3e0e8;
+    --band-link: #a9e0ef;
+    --band-rule: rgb(255 255 255 / 18%);
+    --shadow: rgb(0 25 34 / 45%);
+    --gutter: max(20px, 4vw);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ground: #071a21;
+        --ink: #f0f6f7;
+        --ink-soft: #a6bbc1;
+        --rule: #1f3741;
+        --wash: #0f2730;
+        --action: #56bad5;
+        --action-hover: #7fcde2;
+        --action-ink: #04222c;
+        --mark-eye: #56bad5;
+        --band: #00303f;
+    }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Geist, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--mark-light); color: #04222c; }
+
+a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+
+:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; border-radius: 4px; }
+.band :focus-visible { outline-color: var(--band-link); }
+
+img { display: block; max-width: 100%; height: auto; }
+
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; font-weight: 600; }
+
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); }
+
+/* Top of the page */
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 22px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+}
+
+.brand svg { width: auto; height: 34px; }
+
+.top nav { display: flex; align-items: center; gap: clamp(16px, 3vw, 32px); font-weight: 500; }
+.top nav a { text-decoration: none; }
+.top nav a:hover { color: var(--action); }
+
+.icon { width: 1.15em; height: 1.15em; flex: none; }
+
+/* Hero */
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    align-items: center;
+    gap: clamp(32px, 6vw, 88px);
+    padding-block: clamp(32px, 6vw, 72px) clamp(56px, 8vw, 104px);
+}
+
+.hero h1 {
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+}
+
+.lede {
+    max-width: 58ch;
+    margin-top: 28px;
+    color: var(--ink-soft);
+    font-size: clamp(1.125rem, 1.6vw, 1.3125rem);
+    line-height: 1.5;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
+}
+
+.button-primary { background: var(--action); color: var(--action-ink); }
+.button-primary:hover { background: var(--action-hover); }
+
+.button-quiet { box-shadow: inset 0 0 0 1px var(--rule); }
+.button-quiet:hover { background: var(--wash); }
+
+.install { max-width: 34rem; margin-top: 28px; }
+
+.command {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 10px;
+    background: var(--wash);
+}
+
+.command code {
+    min-width: 0;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.copy {
+    flex: none;
+    min-width: 66px;
+    min-height: 36px;
+    padding: 4px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.copy:hover { background: var(--ground); }
+
+.note { margin-top: 12px; color: var(--ink-soft); font-size: 0.9375rem; }
+
+.hero-mark { justify-self: end; width: 100%; max-width: 340px; }
+.hero-mark svg { display: block; width: 100%; height: auto; }
+
+/* The mark's facets settle into place once, as the page opens. */
+@media (prefers-reduced-motion: no-preference) {
+    .hero-mark path { animation: settle 900ms cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+    .hero-mark path:nth-child(1) { --from: -18px, 22px; }
+    .hero-mark path:nth-child(2) { --from: 16px, -20px; animation-delay: 70ms; }
+    .hero-mark path:nth-child(3) { --from: 22px, 18px; animation-delay: 140ms; }
+    .hero-mark path:nth-child(4) { --from: 8px, 8px; animation-delay: 300ms; }
+    .hero-mark path:nth-child(5) { --from: -12px, -18px; animation-delay: 210ms; }
+}
+
+@keyframes settle {
+    from { opacity: 0; transform: translate(var(--from)); }
+}
+
+/* The two sites */
+
+.band { background: var(--band); color: var(--band-ink); }
+
+.band-inner { padding-block: clamp(64px, 9vw, 120px); }
+
+.band h2 {
+    font-size: clamp(2rem, 4.4vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+}
+
+.band-lede { max-width: 54ch; margin-top: 16px; color: var(--band-ink-soft); font-size: 1.1875rem; }
+
+.site {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 72px);
+    margin-top: clamp(56px, 8vw, 96px);
+}
+
+.site-flipped { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+.site-flipped .site-view { order: 2; }
+
+.site-view { position: relative; margin: 0; }
+
+.shot {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 24px 56px -12px var(--shadow);
+}
+
+.lobby {
+    position: absolute;
+    bottom: -7%;
+    right: -3%;
+    width: 40%;
+    padding: 6px;
+    border-radius: 12px;
+    background: #0b0f11;
+    box-shadow: 0 18px 40px -8px var(--shadow);
+}
+
+.lobby img { width: 100%; border-radius: 7px; }
+
+.site h3 { font-size: clamp(1.625rem, 2.6vw, 2.125rem); line-height: 1.15; letter-spacing: -0.02em; }
+
+.site p { margin-top: 14px; color: var(--band-ink-soft); }
+
+.site ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 600;
+}
+
+.site li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--band-link);
+    text-decoration: none;
+}
+
+.site li a:hover { color: var(--band-ink); }
+
+.site li svg { transition: transform 160ms ease-out; }
+.site li a:hover svg { transform: translateX(3px); }
+
+/* Foot of the page */
+
+.foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 32px;
+    padding-block: 36px;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+}
+
+.foot .brand { color: var(--ink); font-size: 1.0625rem; }
+.foot .brand svg { height: 26px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.foot nav a { text-decoration: none; }
+.foot nav a:hover { color: var(--action); }
+
+@media (max-width: 860px) {
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .hero-mark { order: -1; justify-self: start; max-width: 104px; }
+    .site, .site-flipped { grid-template-columns: minmax(0, 1fr); }
+    .site-flipped .site-view { order: 0; }
+    .site-view:has(.lobby) { margin-bottom: 44px; }
+    .lobby { bottom: -44px; right: -6px; width: 56%; }
+}
+
+@media (max-width: 520px) {
+    .command code { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="lynx" viewBox="0 0 395 548">
+        <path fill="var(--mark-deep)" d="M56.1 260.9L0.2 374L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1L394.8 334.6L338.2 340.1L262.6 264.1L176.9 272.9L44.7 385.8L70 298.9Z"/>
+        <path fill="var(--mark-mid)" d="M361.8 252.5L357.2 239.1L271 175.5L193.1 171.8L84.6 290.7L63.9 369.3L176.9 272.9L262.6 264.1L338.2 340.1L394.8 334.6L346.5 281.2L344.7 258.1ZM181 337.2L247 356.9L291 304.5L248.3 301L228 280.6L181.9 286L107.3 350.6L96.6 410.3ZM313.4 191.3L321.5 68.4L276 165.2ZM106.4 65.4L80.8 152.6L105.2 247.7L178.6 168.9Z"/>
+        <path fill="var(--mark-light)" d="M394.8 351.2L338.2 340.1L297.2 298.9L291 304.5L247 356.9L249.3 410.1L237.1 408.3L235.1 364.9L207.7 357L185.1 350.6L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1Z"/>
+        <path fill="var(--mark-eye)" d="M296.7 299.8L294 275.1L264.8 253.8L206.3 259.1L248.3 301L291 304.5Z"/>
+        <path fill="var(--mark-deep)" d="M105.2 247.7L76.9 278.8L64.2 242.8L65.4 155.9L90.4 71.1L39.8 8L76.9 37.3L64.2 0.2L106.4 65.4L80.8 152.6ZM216.8 160.2L276 165.2L321.5 68.4L324.2 15.2L304.7 70.8ZM394.8 334.6L341.4 336.4L337.9 339.8L337.9 351.1L354.8 360.8L355.3 369L359.5 375.6L355.9 391.4L305.4 410.1L249 396.2L249 410.1L304.2 423.3L359.9 403.2L371.9 414.3L380.2 405.4L369.2 392.3L372 376.6L394.8 351.2ZM296.1 300.1L263.4 265L230 268.4L253.8 290.5L271 288.2ZM243.8 444.5L291.4 460.7L254.9 533.4L223.3 483.2Z"/>
+    </symbol>
+    <symbol id="github" viewBox="0 0 16 16">
+        <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 24 24">
+        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+    </symbol>
+</svg>
+
+<header class="wrap top">
+    <a class="brand" href="https://lynxcms.org/">
+        <svg viewBox="0 0 395 548" aria-hidden="true"><use href="#lynx"/></svg>
+        Lynx
+    </a>
+    <nav aria-label="Main">
+        <a href="https://lynxcms.org/cms/docs/">Docs</a>
+        <a href="https://github.com/LynxCMS/lynxcms">GitHub</a>
+    </nav>
+</header>
+
+<main>
+    <section class="wrap hero">
+        <div>
+            <h1>A multilingual CMS for Laravel</h1>
+            <p class="lede">Add a page tree, runtime fields and a translated admin to the Laravel app you already know. People and AI agents edit through the same safe actions.</p>
+            <div class="actions">
+                <a class="button button-primary" href="https://lynxcms.org/cms/docs/">
+                    Read the docs
+                    <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg>
+                </a>
+                <a class="button button-quiet" href="https://github.com/LynxCMS/lynxcms">
+                    <svg class="icon" aria-hidden="true"><use href="#github"/></svg>
+                    GitHub
+                </a>
+            </div>
+            <div class="install">
+                <div class="command">
+                    <code id="install">composer require lynxcms/core lynxcms/admin</code>
+                    <button class="copy" type="button" data-copy="install" hidden>Copy</button>
+                </div>
+                <p class="note">Open source under the MIT license. Lynx is in pre-release, so its APIs may change before 1.0.</p>
+            </div>
+        </div>
+        <div class="hero-mark">
+            <svg viewBox="0 0 395 548" role="img" aria-label="The Lynx logo: a faceted lynx head in three shades of teal">
+                <path fill="var(--mark-deep)" d="M56.1 260.9L0.2 374L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1L394.8 334.6L338.2 340.1L262.6 264.1L176.9 272.9L44.7 385.8L70 298.9Z"/>
+                <path fill="var(--mark-mid)" d="M361.8 252.5L357.2 239.1L271 175.5L193.1 171.8L84.6 290.7L63.9 369.3L176.9 272.9L262.6 264.1L338.2 340.1L394.8 334.6L346.5 281.2L344.7 258.1ZM181 337.2L247 356.9L291 304.5L248.3 301L228 280.6L181.9 286L107.3 350.6L96.6 410.3ZM313.4 191.3L321.5 68.4L276 165.2ZM106.4 65.4L80.8 152.6L105.2 247.7L178.6 168.9Z"/>
+                <path fill="var(--mark-light)" d="M394.8 351.2L338.2 340.1L297.2 298.9L291 304.5L247 356.9L249.3 410.1L237.1 408.3L235.1 364.9L207.7 357L185.1 350.6L175.9 547.8L238.1 430.1L311.3 455.6L354.9 450.9L371.1 415.2L388.8 396.2L394.8 355.1Z"/>
+                <path fill="var(--mark-eye)" d="M296.7 299.8L294 275.1L264.8 253.8L206.3 259.1L248.3 301L291 304.5Z"/>
+                <path fill="var(--mark-deep)" d="M105.2 247.7L76.9 278.8L64.2 242.8L65.4 155.9L90.4 71.1L39.8 8L76.9 37.3L64.2 0.2L106.4 65.4L80.8 152.6ZM216.8 160.2L276 165.2L321.5 68.4L324.2 15.2L304.7 70.8ZM394.8 334.6L341.4 336.4L337.9 339.8L337.9 351.1L354.8 360.8L355.3 369L359.5 375.6L355.9 391.4L305.4 410.1L249 396.2L249 410.1L304.2 423.3L359.9 403.2L371.9 414.3L380.2 405.4L369.2 392.3L372 376.6L394.8 351.2ZM296.1 300.1L263.4 265L230 268.4L253.8 290.5L271 288.2ZM243.8 444.5L291.4 460.7L254.9 533.4L223.3 483.2Z"/>
+            </svg>
+        </div>
+    </section>
+
+    <section class="band" aria-labelledby="sites">
+        <div class="wrap band-inner">
+            <h2 id="sites">Two sites built with Lynx</h2>
+            <p class="band-lede">Both are open source starter apps. Install one, change it, and read how it works.</p>
+
+            <article class="site">
+                <figure class="site-view">
+                    <a href="https://demo-corporate.lynxcms.org/" aria-label="Open the Arcturus Systems live demo">
+                        <img class="shot" src="assets/corporate-1800.webp" srcset="assets/corporate-900.webp 900w, assets/corporate-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 800px" width="1800" height="1250" loading="lazy" decoding="async" alt="The Arcturus Systems home page: a menu, a hero about a summit in Lisbon, and a row of recommended pages.">
+                    </a>
+                </figure>
+                <div>
+                    <h3>Arcturus Systems</h3>
+                    <p>A corporate website in English and Portuguese. Editors arrange the home page section by section and pick the pages each section shows.</p>
+                    <ul>
+                        <li><a href="https://demo-corporate.lynxcms.org/" aria-label="Arcturus Systems live demo">Live demo <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                        <li><a href="https://github.com/LynxCMS/lynx-corporate-starter" aria-label="Arcturus Systems code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="site site-flipped">
+                <figure class="site-view">
+                    <img class="shot" src="assets/meeting-rooms-1800.webp" srcset="assets/meeting-rooms-900.webp 900w, assets/meeting-rooms-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 800px" width="1800" height="1250" loading="lazy" decoding="async" alt="The Castor &amp; Otters home page: a wildlife law firm's headline beside drawings of a beaver and an otter.">
+                    <div class="lobby">
+                        <img src="assets/lobby-1200.webp" srcset="assets/lobby-600.webp 600w, assets/lobby-1200.webp 1200w" sizes="(max-width: 860px) 56vw, 360px" width="1200" height="675" loading="lazy" decoding="async" alt="The firm's lobby screen: Kingfisher is busy until 11:30, The Lodge is free until 11:00.">
+                    </div>
+                </figure>
+                <div>
+                    <h3>Castor &amp; Otters</h3>
+                    <p>A wildlife law firm in Vancouver and Montreal, in English and French. Staff book meeting rooms on the site, and a TV in each lobby and a tablet at each door show what is free.</p>
+                    <ul>
+                        <li><a href="https://lynxcms.org/cms/docs/guides/meeting-rooms/" aria-label="Guide to building the Castor &amp; Otters meeting rooms app">Guide <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                        <li><a href="https://github.com/LynxCMS/starter-meeting-rooms" aria-label="Castor &amp; Otters code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="wrap foot">
+    <a class="brand" href="https://lynxcms.org/">
+        <svg viewBox="0 0 395 548" aria-hidden="true"><use href="#lynx"/></svg>
+        Lynx
+    </a>
+    <nav aria-label="Footer">
+        <a href="https://lynxcms.org/cms/docs/">Docs</a>
+        <a href="https://github.com/LynxCMS/lynxcms">GitHub</a>
+        <a href="https://github.com/LynxCMS/lynxcms/blob/main/LICENSE">MIT license</a>
+    </nav>
+</footer>
+
+<script>
+    // The copy button only shows where the page can copy; the command stays selectable either way.
+    document.querySelectorAll('[data-copy]').forEach((button) => {
+        if (! navigator.clipboard) {
+            return;
+        }
+
+        button.hidden = false;
+        button.addEventListener('click', async () => {
+            const command = document.getElementById(button.dataset.copy).textContent;
+
+            try {
+                await navigator.clipboard.writeText(command);
+                button.textContent = 'Copied';
+            } catch {
+                button.textContent = 'Selected';
+                getSelection().selectAllChildren(document.getElementById(button.dataset.copy));
+            }
+
+            setTimeout(() => { button.textContent = 'Copy'; }, 2000);
+        });
+    });
+</script>
+</body>
+</html>
