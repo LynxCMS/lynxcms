@@ -13,6 +13,9 @@
 <meta property="og:title" content="Lynx CMS">
 <meta property="og:description" content="A multilingual CMS for Laravel. Open source, with a page tree, runtime fields and a translated admin.">
 <meta property="og:image" content="https://lynxcms.org/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Lynx admin editing a home page: a list of sections to drag, switch off, clone or remove.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -41,6 +44,7 @@
     --mark-light: #56bad5;
     --mark-eye: #ffffff;
     --band: #004459;
+    --band-2: #00384b;
     --band-ink: #ffffff;
     --band-ink-soft: #c3e0e8;
     --band-link: #a9e0ef;
@@ -61,6 +65,7 @@
         --action-ink: #04222c;
         --mark-eye: #56bad5;
         --band: #00303f;
+        --band-2: #002430;
     }
 }
 
@@ -82,10 +87,15 @@ body {
 
 a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 
-:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; }
 .band :focus-visible { outline-color: var(--band-link); }
 
 img { display: block; max-width: 100%; height: auto; }
+
+/* The mark has no curves: corners are cut, on the same two diagonals. */
+.button, .command, .shot, .lobby {
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+}
 
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { text-wrap: balance; font-weight: 600; }
@@ -152,7 +162,7 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
     gap: 10px;
     min-height: 52px;
     padding: 12px 26px;
-    border-radius: 10px;
+    --cut: 12px;
     font-weight: 600;
     text-decoration: none;
     transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
@@ -161,8 +171,11 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
 .button-primary { background: var(--action); color: var(--action-ink); }
 .button-primary:hover { background: var(--action-hover); }
 
-.button-quiet { box-shadow: inset 0 0 0 1px var(--rule); }
-.button-quiet:hover { background: var(--wash); }
+.button-quiet { background: var(--wash); }
+.button-quiet:hover { background: var(--rule); }
+
+/* A cut corner would clip an outline drawn outside the button. */
+.button:focus-visible { outline-color: currentColor; outline-offset: -5px; }
 
 .install { max-width: 34rem; margin-top: 28px; }
 
@@ -172,7 +185,7 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
     justify-content: space-between;
     gap: 12px;
     padding: 8px 8px 8px 16px;
-    border-radius: 10px;
+    --cut: 12px;
     background: var(--wash);
 }
 
@@ -190,7 +203,6 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
     min-height: 36px;
     padding: 4px 12px;
     border: 0;
-    border-radius: 6px;
     background: transparent;
     color: inherit;
     font: inherit;
@@ -222,9 +234,46 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
 
 /* The two sites */
 
-.band { background: var(--band); color: var(--band-ink); }
+/* Edges take the mark's shallow angles, in vw so they hold at every width. Its three teals meet at
+   one vertex on the top edge, as they do in the mark. */
+.band {
+    position: relative;
+    isolation: isolate;
+    margin-top: -4vw;
+    color: var(--band-ink);
+}
 
-.band-inner { padding-block: clamp(64px, 9vw, 120px); }
+.band::before, .band::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 12vw;
+}
+
+.band::before {
+    background: var(--mark-mid);
+    clip-path: polygon(24% 5.74vw, 62% 0, 100% 4vw, 100% 12vw, 24% 12vw);
+}
+
+.band::after {
+    background: var(--mark-light);
+    clip-path: polygon(62% 0, 100% 4vw, 100% 12vw, 68% 12vw, 68% 1.6vw);
+}
+
+.band-a {
+    padding-block: calc(8vw + clamp(48px, 6vw, 88px)) calc(9vw + clamp(48px, 6vw, 80px));
+    background: var(--band);
+    clip-path: polygon(0 8vw, 68% 1.6vw, 100% 7.6vw, 100% 100%, 0 100%);
+}
+
+.band-b {
+    position: relative;
+    margin-top: -9vw;
+    padding-block: calc(9vw + clamp(40px, 5vw, 64px)) calc(7vw + clamp(56px, 7vw, 96px));
+    background: var(--band-2);
+    clip-path: polygon(0 0, 100% 9vw, 100% calc(100% - 7vw), 0 100%);
+}
 
 .band h2 {
     font-size: clamp(2rem, 4.4vw, 3.5rem);
@@ -234,47 +283,59 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
 
 .band-lede { max-width: 54ch; margin-top: 16px; color: var(--band-ink-soft); font-size: 1.1875rem; }
 
-.site {
+.band-a .site { margin-top: clamp(56px, 8vw, 96px); }
+
+.site-text {
     display: grid;
-    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-    align-items: center;
-    gap: clamp(32px, 5vw, 72px);
-    margin-top: clamp(56px, 8vw, 96px);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: 12px clamp(32px, 5vw, 72px);
 }
 
-.site-flipped { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
-.site-flipped .site-view { order: 2; }
+.views {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(24px, 3vw, 40px);
+    margin-top: clamp(28px, 4vw, 40px);
+}
 
-.site-view { position: relative; margin: 0; }
+.view { margin: 0; }
+
+.view-frame { position: relative; filter: drop-shadow(0 20px 28px var(--shadow)); }
+
+.view-frame > a { display: block; }
 
 .shot {
     width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 24px 56px -12px var(--shadow);
+    aspect-ratio: 8 / 5;
+    object-fit: cover;
+    object-position: top;
+    --cut: clamp(16px, 2.4vw, 32px);
 }
+
+.view figcaption { margin-top: 14px; color: var(--band-ink-soft); font-size: 0.9375rem; }
 
 .lobby {
     position: absolute;
-    bottom: -7%;
-    right: -3%;
-    width: 40%;
+    bottom: -20px;
+    right: -14px;
+    width: 38%;
     padding: 6px;
-    border-radius: 12px;
+    --cut: 14px;
     background: #0b0f11;
-    box-shadow: 0 18px 40px -8px var(--shadow);
 }
 
-.lobby img { width: 100%; border-radius: 7px; }
+.lobby img { width: 100%; }
 
 .site h3 { font-size: clamp(1.625rem, 2.6vw, 2.125rem); line-height: 1.15; letter-spacing: -0.02em; }
 
-.site p { margin-top: 14px; color: var(--band-ink-soft); }
+.site p { color: var(--band-ink-soft); }
 
 .site ul {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 24px;
-    margin: 24px 0 0;
+    margin: 12px 0 0;
     padding: 0;
     list-style: none;
     font-weight: 600;
@@ -316,10 +377,9 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
 @media (max-width: 860px) {
     .hero { grid-template-columns: minmax(0, 1fr); }
     .hero-mark { order: -1; justify-self: start; max-width: 104px; }
-    .site, .site-flipped { grid-template-columns: minmax(0, 1fr); }
-    .site-flipped .site-view { order: 0; }
-    .site-view:has(.lobby) { margin-bottom: 44px; }
-    .lobby { bottom: -44px; right: -6px; width: 56%; }
+    .site-text, .views { grid-template-columns: minmax(0, 1fr); }
+    .lobby { right: -6px; width: 50%; }
+    .view:has(.lobby) figcaption { margin-top: 32px; }
 }
 
 @media (max-width: 520px) {
@@ -391,43 +451,75 @@ h1, h2, h3 { text-wrap: balance; font-weight: 600; }
     </section>
 
     <section class="band" aria-labelledby="sites">
-        <div class="wrap band-inner">
+        <div class="band-a"><div class="wrap">
             <h2 id="sites">Two sites built with Lynx</h2>
             <p class="band-lede">Both are open source starter apps. Install one, change it, and read how it works.</p>
 
             <article class="site">
-                <figure class="site-view">
-                    <a href="https://demo-corporate.lynxcms.org/" aria-label="Open the Arcturus Systems live demo">
-                        <img class="shot" src="assets/corporate-1800.webp" srcset="assets/corporate-900.webp 900w, assets/corporate-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 800px" width="1800" height="1250" loading="lazy" decoding="async" alt="The Arcturus Systems home page: a menu, a hero about a summit in Lisbon, and a row of recommended pages.">
-                    </a>
-                </figure>
-                <div>
+                <div class="site-text">
                     <h3>Arcturus Systems</h3>
-                    <p>A corporate website in English and Portuguese. Editors arrange the home page section by section and pick the pages each section shows.</p>
-                    <ul>
-                        <li><a href="https://demo-corporate.lynxcms.org/" aria-label="Arcturus Systems live demo">Live demo <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
-                        <li><a href="https://github.com/LynxCMS/lynx-corporate-starter" aria-label="Arcturus Systems code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
-                    </ul>
-                </div>
-            </article>
-
-            <article class="site site-flipped">
-                <figure class="site-view">
-                    <img class="shot" src="assets/meeting-rooms-1800.webp" srcset="assets/meeting-rooms-900.webp 900w, assets/meeting-rooms-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 800px" width="1800" height="1250" loading="lazy" decoding="async" alt="The Castor &amp; Otters home page: a wildlife law firm's headline beside drawings of a beaver and an otter.">
-                    <div class="lobby">
-                        <img src="assets/lobby-1200.webp" srcset="assets/lobby-600.webp 600w, assets/lobby-1200.webp 1200w" sizes="(max-width: 860px) 56vw, 360px" width="1200" height="675" loading="lazy" decoding="async" alt="The firm's lobby screen: Kingfisher is busy until 11:30, The Lodge is free until 11:00.">
+                    <div>
+                        <p>A corporate website in English and Portuguese. Editors arrange the home page section by section and pick the pages each section shows.</p>
+                        <ul>
+                            <li><a href="https://demo-corporate.lynxcms.org/" aria-label="Arcturus Systems live demo">Live demo <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                            <li><a href="https://github.com/LynxCMS/lynx-corporate-starter" aria-label="Arcturus Systems code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                        </ul>
                     </div>
-                </figure>
-                <div>
-                    <h3>Castor &amp; Otters</h3>
-                    <p>A wildlife law firm in Vancouver and Montreal, in English and French. Staff book meeting rooms on the site, and a TV in each lobby and a tablet at each door show what is free.</p>
-                    <ul>
-                        <li><a href="https://lynxcms.org/cms/docs/guides/meeting-rooms/" aria-label="Guide to building the Castor &amp; Otters meeting rooms app">Guide <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
-                        <li><a href="https://github.com/LynxCMS/starter-meeting-rooms" aria-label="Castor &amp; Otters code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
-                    </ul>
+                </div>
+                <div class="views">
+                    <figure class="view">
+                        <div class="view-frame">
+                            <a href="https://demo-corporate.lynxcms.org/" aria-label="Open the Arcturus Systems live demo">
+                                <img class="shot" src="assets/corporate-1800.webp" srcset="assets/corporate-900.webp 900w, assets/corporate-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 580px" width="1800" height="1125" loading="lazy" decoding="async" alt="The Arcturus Systems home page: a menu, a hero about a summit in Lisbon, and a row of recommended pages.">
+                            </a>
+                        </div>
+                        <figcaption>The website</figcaption>
+                    </figure>
+                    <figure class="view">
+                        <div class="view-frame">
+                            <a href="assets/corporate-admin-1800.webp" aria-label="Open a larger picture of the Arcturus Systems admin">
+                                <img class="shot" src="assets/corporate-admin-1800.webp" srcset="assets/corporate-admin-900.webp 900w, assets/corporate-admin-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 580px" width="1800" height="1125" loading="lazy" decoding="async" alt="The Lynx admin editing the home page: a list of sections to drag, switch off, clone or remove, and buttons to add more.">
+                            </a>
+                        </div>
+                        <figcaption>The admin: the home page as a list of sections</figcaption>
+                    </figure>
                 </div>
             </article>
-        </div>
+        </div></div>
+
+        <div class="band-b"><div class="wrap">
+            <article class="site">
+                <div class="site-text">
+                    <h3>Castor &amp; Otters</h3>
+                    <div>
+                        <p>A wildlife law firm in Vancouver and Montreal, in English and French. Its website and its meeting rooms app are one Laravel app. Staff book rooms on the site, in the admin or through an AI assistant, and a TV in each lobby and a tablet at each door show what is free.</p>
+                        <ul>
+                            <li><a href="https://lynxcms.org/cms/docs/guides/meeting-rooms/" aria-label="Guide to building the Castor &amp; Otters meeting rooms app">Guide <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                            <li><a href="https://github.com/LynxCMS/starter-meeting-rooms" aria-label="Castor &amp; Otters code on GitHub">Code <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="views">
+                    <figure class="view">
+                        <div class="view-frame">
+                            <img class="shot" src="assets/meeting-rooms-1800.webp" srcset="assets/meeting-rooms-900.webp 900w, assets/meeting-rooms-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 580px" width="1800" height="1125" loading="lazy" decoding="async" alt="The Castor &amp; Otters home page: a wildlife law firm's headline beside drawings of a beaver and an otter.">
+                            <div class="lobby">
+                                <img src="assets/lobby-1200.webp" srcset="assets/lobby-600.webp 600w, assets/lobby-1200.webp 1200w" sizes="(max-width: 860px) 50vw, 220px" width="1200" height="675" loading="lazy" decoding="async" alt="The firm's lobby screen: Kingfisher is busy until 11:30, The Lodge is free until 11:00.">
+                            </div>
+                        </div>
+                        <figcaption>The website and a lobby screen</figcaption>
+                    </figure>
+                    <figure class="view">
+                        <div class="view-frame">
+                            <a href="assets/meeting-rooms-admin-1800.webp" aria-label="Open a larger picture of the Castor &amp; Otters admin">
+                                <img class="shot" src="assets/meeting-rooms-admin-1800.webp" srcset="assets/meeting-rooms-admin-900.webp 900w, assets/meeting-rooms-admin-1800.webp 1800w" sizes="(max-width: 860px) 100vw, 580px" width="1800" height="1125" loading="lazy" decoding="async" alt="The Lynx admin with the firm's name and a Bookings screen: each room's meetings for the week.">
+                            </a>
+                        </div>
+                        <figcaption>The admin: a Bookings screen the app adds</figcaption>
+                    </figure>
+                </div>
+            </article>
+        </div></div>
     </section>
 </main>
 
