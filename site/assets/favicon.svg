@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <title>Lynx</title>
+  <style>
+    .deep { fill: #004459; } .mid { fill: #007595; } .light { fill: #56BAD5; } .eye { fill: #FFFFFF; }
+    @media (prefers-color-scheme: dark) {
+      .deep { fill: #007595; } .mid { fill: #56BAD5; } .light { fill: #C1E5EF; }
+    }
+  </style>
+  <polygon class="deep" points="4 0 5 2 8 5 11 2 12 0 12 6 13 7 12 8 14 10 14 11 13 13 9 13 7 16 2 11 4 8"/>
+  <polygon class="mid" points="5 2 8 5 5 8"/>
+  <polygon class="mid" points="11 2 12 2 12 6 10 5"/>
+  <polygon class="mid" points="8 5 10 5 12 6 13 7 12 8 14 10 12 10 11 9 10 8 8 8 4 11"/>
+  <polygon class="mid" points="8 10 9 9 10 9 9 10"/>
+  <polygon class="light" points="7 10 9 10 10 9 11 9 12 10 13 11 14 11 13 13 9 13 7 16"/>
+  <polygon class="deep" points="12 10 14 10 14 11 13 11"/>
+  <polygon class="eye" points="8 7 10 7 11 8 9 8"/>
+</svg>
