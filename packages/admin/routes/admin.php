@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use LynxCms\Admin\Http\AdminLocaleController;
 use LynxCms\Admin\Http\CreatePageController;
 use LynxCms\Admin\Http\EditFieldController;
 use LynxCms\Admin\Http\EditLanguageController;
@@ -31,3 +32,4 @@ Route::get('roles/create', EditRoleController::class)->name('roles.create');
 Route::get('roles/{role}/edit', EditRoleController::class)->where('role', '[a-z][a-z0-9_-]*')->name('roles.edit');
 Route::get('users', [SuperuserScreenController::class, 'users'])->name('users');
 Route::get('general', [SuperuserScreenController::class, 'general'])->name('general');
+Route::post('locale', AdminLocaleController::class)->name('locale');

@@ -15,6 +15,7 @@ use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\Http\InvitationController;
+use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Support\Value;
 
@@ -88,6 +89,7 @@ final class AdminAuth
         $prefix = trim(Value::string(config('lynx-admin.prefix')), '/');
         config([
             'fortify.prefix' => $prefix,
+            'fortify.middleware' => [...Value::strings(config('fortify.middleware', ['web'])), UseAdminLocale::class],
             'fortify.home' => "/{$prefix}/pages",
             'fortify.views' => true,
             'fortify.lowercase_usernames' => true,
@@ -148,7 +150,7 @@ final class AdminAuth
         Admin::routes(function (): void {
             Route::view('account/security', 'lynx-admin::account.security')->middleware('password.confirm')->name('account');
         });
-        Route::middleware(['web', 'guest'])->prefix(Value::string(config('lynx-admin.prefix')))->name('lynx.admin.')->group(function (): void {
+        Route::middleware(['web', 'guest', UseAdminLocale::class])->prefix(Value::string(config('lynx-admin.prefix')))->name('lynx.admin.')->group(function (): void {
             Route::get('invitation/{token}', [InvitationController::class, 'show'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation');
             Route::post('invitation', [InvitationController::class, 'store'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation.accept');
         });

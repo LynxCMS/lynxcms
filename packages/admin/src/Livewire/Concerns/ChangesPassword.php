@@ -41,6 +41,6 @@ trait ChangesPassword
         abort_unless($user instanceof Model, 403);
         $user->forceFill(['password' => Hash::make($this->password)])->save();
         $this->reset('currentPassword', 'password', 'password_confirmation');
-        $this->notify('Password changed.');
+        $this->notify(__('lynx-admin::account.password.changed'));
     }
 }

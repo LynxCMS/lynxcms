@@ -43,7 +43,7 @@ The admin succeeds when an editor finishes a content task without help, without 
 - Stack: Livewire 4, Alpine (with anchor, collapse and focus plugins), Tailwind CSS 4 CLI, esbuild, Tiptap 3 for rich text, Lucide icons through `mallardduck/blade-lucide-icons`, Floating UI. Assets are built into `packages/admin/dist` and never committed (ADR-0071).
 - The admin, the menus module and paid modules (in their own private repositories) are built from the same components, so they look alike. Paid modules use only `@api` code.
 - Lynx is pre release: APIs and screens may change before 1.0, and design decisions that change an accepted ADR need a new ADR.
-- Undecided: whether the admin ships translated interface strings for editors in other languages.
+- The admin ships translated interface strings in English and Portuguese, and each editor chooses theirs (ADR-0097).
 
 ## Brand Commitments
 

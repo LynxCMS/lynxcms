@@ -24,6 +24,7 @@ use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Fields\IconType;
 use LynxCms\Admin\Http\AssetController;
+use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Admin\Icons\IconSet;
 use LynxCms\Admin\Livewire\AccountSecurity;
 use LynxCms\Admin\Livewire\AdminSearch;
@@ -50,6 +51,7 @@ use LynxCms\Admin\Livewire\RoleList;
 use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Admin\Livewire\TemplateList;
 use LynxCms\Admin\Livewire\UserRoles;
+use LynxCms\Admin\Locale\SaveAdminLocale;
 use LynxCms\Admin\Tree\TreeMarkers;
 use LynxCms\Admin\Users\CreateUser;
 use LynxCms\Admin\Users\EloquentUsers;
@@ -112,13 +114,14 @@ final class AdminServiceProvider extends ServiceProvider
         // Written by the sidebar's script, so it is plain text, not one Laravel encrypted.
         EncryptCookies::except(self::SIDEBAR_COOKIE);
         Blade::anonymousComponentPath(self::ROOT.'/resources/views/components', 'lynx-admin');
-        // Admin components' updates keep the admin routes' WithoutPageVisibility (ADR-0062).
-        Livewire::addPersistentMiddleware([WithoutPageVisibility::class]);
+        $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-admin');
+        // Admin components' updates keep the admin routes' WithoutPageVisibility (ADR-0062) and language (ADR-0097).
+        Livewire::addPersistentMiddleware([WithoutPageVisibility::class, UseAdminLocale::class]);
         Livewire::component('lynx-admin.page-tree', PageTree::class);
         Livewire::component('lynx-admin.icon-picker', IconPicker::class);
         // The icon field type: an icon name from the admin's set (docs/deeper/custom-field-types.md).
         $this->app->make(FieldTypeRegistry::class)->register(IconType::class);
-        $this->app->make(ActionRegistry::class)->register(CreateUser::class, SaveBranding::class);
+        $this->app->make(ActionRegistry::class)->register(CreateUser::class, SaveBranding::class, SaveAdminLocale::class);
         Livewire::component('lynx-admin.search', AdminSearch::class);
         Livewire::component('lynx-admin.language-list', LanguageList::class);
         Livewire::component('lynx-admin.account-security', AccountSecurity::class);

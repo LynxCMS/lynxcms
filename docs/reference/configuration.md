@@ -45,6 +45,8 @@ php artisan vendor:publish --tag=lynx-admin-config
 | --- | --- | --- |
 | `prefix` | `lynx` | URL prefix of the admin. |
 | `middleware` | `['web', 'auth']` | Middleware of every admin route. |
+| `locale` | none (`LYNX_ADMIN_LOCALE`) | The admin's default language. Empty: the app's locale. See [The admin's language](/admin/#the-admin-s-language). |
+| `locales` | `en`, `pt` | The languages editors can choose in their menu, as code and name. |
 | `auth.enabled` | `auto` | Who signs users in: `auto`, `app` or `false`; see [Sign-in](/admin/sign-in#who-signs-users-in). |
 | `auth.invitation_days` | `7` | How long an invitation link works. |
 | `theme` | `system` | `light`, `dark` or `system`. |
