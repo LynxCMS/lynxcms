@@ -14,6 +14,7 @@ use LynxCms\Cache\Actions\ClearPageCache;
 use LynxCms\Cache\FragmentEntry;
 use LynxCms\Cache\Fragments\FragmentClearer;
 use LynxCms\Cache\Fragments\Fragments;
+use LynxCms\Core\Support\Value;
 
 /**
  * The fragment cache on the page cache screen: what is stored, what each fragment holds, and
@@ -55,19 +56,19 @@ final class FragmentsList extends Component
     {
         $clearer->clearEntry($id);
         $this->viewing = null;
-        $this->status = 'Fragment cleared.';
+        $this->status = Value::string(__('lynx-cache::admin.status.fragment_cleared'));
     }
 
     public function clearName(string $name): void
     {
         lynx()->run(ClearPageCache::class, ['fragment' => $name]);
-        $this->status = "Every copy of {$name} was cleared.";
+        $this->status = Value::string(__('lynx-cache::admin.status.fragment_all_copies', ['name' => $name]));
     }
 
     public function clearAll(): void
     {
         lynx()->run(ClearPageCache::class, ['fragments' => true]);
-        $this->status = 'Every fragment was cleared.';
+        $this->status = Value::string(__('lynx-cache::admin.status.fragments_cleared'));
     }
 
     public function render(Fragments $fragments): View

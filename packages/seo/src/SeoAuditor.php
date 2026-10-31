@@ -50,9 +50,9 @@ final readonly class SeoAuditor
     private function issues(SeoData $data, int $sameTitles): array
     {
         return array_values(array_filter([
-            $data->description === '' ? 'No description' : null,
-            $sameTitles > 0 ? 'Same title as '.$sameTitles.' other '.($sameTitles === 1 ? 'page' : 'pages') : null,
-            mb_strlen($data->title) > self::TITLE_LENGTH ? 'Title over '.self::TITLE_LENGTH.' characters' : null,
+            $data->description === '' ? Value::string(__('lynx-seo::admin.audit.no_description')) : null,
+            $sameTitles > 0 ? trans_choice('lynx-seo::admin.audit.same_title', $sameTitles) : null,
+            mb_strlen($data->title) > self::TITLE_LENGTH ? Value::string(__('lynx-seo::admin.audit.long_title', ['length' => self::TITLE_LENGTH])) : null,
         ]));
     }
 

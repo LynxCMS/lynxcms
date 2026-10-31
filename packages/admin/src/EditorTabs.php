@@ -12,6 +12,7 @@ use LynxCms\Core\Pages\Page;
  * "Cache" on pages the page cache may store. A tab renders a Livewire component that receives the
  * page's id as pageId. Modules register them in a service provider:
  * app(EditorTabs::class)->add('cache', 'Cache', 'lynx-cache.page-tab', fn (Page $page): bool => ...).
+ * The label can be a translation key.
  *
  * @api
  */

@@ -59,6 +59,7 @@ final class SeoServiceProvider extends ServiceProvider
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(MappingValidator::class)->check($page));
         Lynx::macro('seo', fn (Page $page, array $overrides = []): SeoData => app(SeoResolver::class)->resolve($page, array_map(Value::string(...), Value::map($overrides))));
 
+        $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-seo');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-seo');
         Blade::component('lynx-seo', SeoComponent::class);
         Blade::directive('seo', fn (string $page): string => '<?php echo app('.SeoHead::class.'::class)->html('.$page.'); ?>');

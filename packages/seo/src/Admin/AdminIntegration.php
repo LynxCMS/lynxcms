@@ -14,6 +14,7 @@ use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 use LynxCms\Seo\Admin\Http\ShowSeoPreview;
 use LynxCms\Seo\Admin\Livewire\SeoAudit;
 use LynxCms\Seo\Admin\Livewire\SeoSchemas;
@@ -37,7 +38,7 @@ final class AdminIntegration
         Livewire::component('lynx-seo.audit', SeoAudit::class);
         Livewire::component('lynx-seo.schemas', SeoSchemas::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('seo.manage');
-        app(Navigation::class)->add('SEO', 'lynx.admin.seo', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'search-check', group: Navigation::SETTINGS);
+        app(Navigation::class)->add('lynx-seo::admin.nav', 'lynx.admin.seo', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'search-check', group: Navigation::SETTINGS);
 
         Admin::routes(function (): void {
             Admin::screen('seo', 'lynx-seo::admin.index', 'seo.manage')->name('seo');
@@ -51,7 +52,7 @@ final class AdminIntegration
         app(TemplateChoices::class)->exclude(SeoSchema::SETTINGS_TEMPLATE);
         app(SchemaOwners::class)->register('SEO', [SeoSchema::SETTINGS_TEMPLATE], SeoSchema::names());
         app(EditorLinks::class)->add(fn (Page $page): ?array => $page->templateField(SeoSchema::TITLE) !== null
-            ? ['label' => 'SEO preview', 'url' => route('lynx.admin.seo.preview', $page->id)]
+            ? ['label' => Value::string(__('lynx-seo::admin.preview.title')), 'url' => route('lynx.admin.seo.preview', $page->id)]
             : null);
     }
 }
