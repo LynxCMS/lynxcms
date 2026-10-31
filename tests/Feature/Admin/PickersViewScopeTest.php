@@ -5,11 +5,15 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
+use LynxCms\Admin\Editor\LinkFiles;
+use LynxCms\Admin\Editor\LinkPages;
 use LynxCms\Admin\Livewire\LinkDialog;
 use LynxCms\Admin\Livewire\PagePicker;
 use LynxCms\Admin\Livewire\PageTableInput;
+use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Pages\Page;
 
 /*
  * Page pickers read pages for the editor, so a crafted request must not make them show pages
@@ -70,3 +74,30 @@ it('links only to pages the editor may view', function (): void {
 it('locks the page the link dialog chose', function (): void {
     Livewire::test(LinkDialog::class)->set('chosenPageId', $this->secretId);
 })->throws(CannotUpdateLockedPropertyException::class);
+
+it('keeps the link dialog from reading a page the editor may not view', function (): void {
+    app(LinkFiles::class)->add(fn (Page $page): array => [['name' => 'report-'.$page->name().'.pdf', 'url' => '/media/report.pdf']]);
+    $hidden = lynx()->actingAs(Actor::system(), function (): Page {
+        lynx()->fields->update('body', ['settings' => ['formatters' => ['heading_anchors']]]);
+        $page = lynx()->pages->new('course', '/');
+        $page->name = 'hidden';
+        $page->title = 'Hidden course';
+        $page->body = '<h2>Secret heading</h2>';
+        $page->save();
+
+        return $page;
+    });
+
+    Livewire::test(LinkDialog::class)
+        ->call('open', requestId: 'r1', pageId: (int) $hidden->id, language: 'default')
+        ->call('show', 'files')->assertDontSee('report-hidden.pdf')
+        ->call('show', 'anchors')->assertDontSee('Secret heading')
+        ->call('browse', (int) $hidden->id)->assertDontSee('Hidden course');
+
+    Livewire::test(LinkDialog::class)
+        ->call('open', requestId: 'r1', pageId: $this->alphaId, language: 'default')
+        ->call('show', 'files')->assertSee('report-alpha.pdf')
+        ->call('browse', $this->alphaId)->assertSee('Alpha');
+
+    expect(app(LinkPages::class)->files($this->secretId))->toBe([]);
+});

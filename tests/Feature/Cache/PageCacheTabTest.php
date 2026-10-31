@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\File;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Cache\Actions\SavePageCacheRules;
@@ -152,3 +153,7 @@ it('shows the language of each stored URL only when the site has several', funct
 
     Livewire::test(PageCacheTab::class, ['pageId' => cacheTabPage()->id])->assertSeeHtml('>Language</th>');
 });
+
+it('locks the page the tab reports on', function (): void {
+    Livewire::test(PageCacheTab::class, ['pageId' => cacheTabPage()->id])->set('pageId', 1);
+})->throws(CannotUpdateLockedPropertyException::class);

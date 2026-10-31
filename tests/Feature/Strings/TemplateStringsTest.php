@@ -2,18 +2,23 @@
 
 declare(strict_types=1);
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Actions\ActionHalted;
+use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Content\ImportContent;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Strings\SaveStrings;
 use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Content\ContentExporter;
 use LynxCms\Core\Strings\StringCatalog;
 use LynxCms\Core\Strings\StringScanner;
+use LynxCms\Core\Support\Tables;
 
 beforeEach(function (): void {
     courseSite();
@@ -237,4 +242,17 @@ it('reads its cache with a store that refuses to unserialize objects', function 
     $strings = app(StringCatalog::class)->forTemplate('landing');
 
     expect($strings['hero.title']->label)->toBe('Hero title')->and($strings['footer.note']->isSite())->toBeTrue();
+});
+
+it('keeps site strings from a role limited to one branch, as they change every page', function (): void {
+    lynx()->run(SaveRole::class, ['name' => 'landing-editor', 'grants' => [['permission' => 'pages.edit', 'branches' => [(int) test()->landing->id]]]]);
+    lynx()->run(AssignRoles::class, ['user' => '7', 'roles' => ['landing-editor']]);
+    $save = fn (string $key): mixed => lynx()->actingAs(Actor::user(7), fn (): mixed => saveStrings(['values' => [$key => 'Changed']]));
+
+    expect(fn (): mixed => $save('footer.note'))->toThrow(AuthorizationException::class)
+        ->and(DB::table(Tables::STRINGS)->where('key', 'footer.note')->exists())->toBeFalse();
+
+    $save('hero.title');
+
+    expect(DB::table(Tables::STRINGS)->where('key', 'hero.title')->exists())->toBeTrue();
 });

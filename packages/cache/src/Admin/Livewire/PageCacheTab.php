@@ -7,6 +7,7 @@ namespace LynxCms\Cache\Admin\Livewire;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
@@ -28,6 +29,7 @@ use LynxCms\Core\Support\Value;
  */
 final class PageCacheTab extends Component
 {
+    #[Locked]
     public int $pageId;
 
     /** What the last clear did. */

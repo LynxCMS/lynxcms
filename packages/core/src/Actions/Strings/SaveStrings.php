@@ -103,6 +103,11 @@ final class SaveStrings extends Action
             throw ValidationException::withMessages(['values' => 'Site texts are shared by every page and are not drafted: '.implode(', ', array_keys($site)).'.']);
         }
 
+        if ($site !== []) {
+            // Site strings live on the home page and change every page, so a role limited to the page named can't set them.
+            $context->authorize('pages.edit', $this->resolvePageReference($this->root->id()));
+        }
+
         $this->saveSiteStrings($site, $language, $context);
 
         if ($site !== []) {

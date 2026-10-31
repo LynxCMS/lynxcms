@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.26 to 0.1.27
+
+- `strings.save` with site texts now needs `pages.edit` on the home page, as the Site texts screen always did. A role limited to a branch or a template can still edit its own pages' texts. Give it `pages.edit` on the home page if it should change site texts through MCP or the agent.
+
 ## From 0.1.25 to 0.1.26
 
 - The admin's sign-in and account screens, sidebar, search box, link dialog, page tree, page editor, schema screens, roles, users and module screens follow the admin's language, which is the app's locale until you set one. A site with `APP_LOCALE=pt` shows them in Portuguese: set `LYNX_ADMIN_LOCALE=en` to keep them in English. See [The admin's language](/admin/#the-admin-s-language).
