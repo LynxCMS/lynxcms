@@ -125,6 +125,16 @@ Scheduled publishing and optional backups run through Laravel's scheduler. Add t
 
 Without it, pages scheduled to publish or unpublish never change.
 
+## The queue worker
+
+Lynx sends form emails through Laravel's queue, and a new Laravel app keeps queued jobs in the database until a worker runs them. Without a worker, visitors still read their thank-you message and the submission reaches the admin, but the email never goes out. Keep one running on the server, as [Laravel's queue guide](https://laravel.com/docs/queues#supervisor-configuration) describes:
+
+```bash
+php artisan queue:work
+```
+
+To send emails during the request instead, with no worker, set `QUEUE_CONNECTION=sync` in `.env`. A visitor then waits while the email goes out.
+
 ## Shared hosting
 
 Lynx runs on low cost shared and managed hosting (DreamHost, for example) as long as the plan offers PHP 8.5, SSH and cron. Without root access some things work differently:
