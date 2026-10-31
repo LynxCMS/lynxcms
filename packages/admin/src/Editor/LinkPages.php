@@ -41,17 +41,19 @@ final readonly class LinkPages
      */
     public function browse(?int $id, string $language): ?array
     {
-        $page = $id === null ? lynx()->pages->get('/') : lynx()->pages->get($id);
+        // The home page is where browsing starts for everyone, as the way to the pages below it.
+        $page = $id === null ? lynx()->pages->get('/') : $this->viewable($id);
 
         if (! $page instanceof Page) {
             return null;
         }
 
+        $parent = $page->parent();
         $children = lynx()->pages->find('parent='.$page->id.', include=all, limit='.self::BROWSE_LIMIT, scope: app(AdminAccess::class)->viewScope());
 
         return [
             'page' => $this->row($page, $language) ?? ['id' => (int) $page->id, 'title' => Value::string($page->title), 'url' => '', 'canHaveChildren' => true],
-            'parent' => $page->parent()?->id,
+            'parent' => $this->viewable($parent?->id)?->id,
             'children' => array_values(array_filter($children->map(fn (Page $child): ?array => $this->row($child, $language)))),
         ];
     }
@@ -82,7 +84,7 @@ final readonly class LinkPages
      */
     public function anchors(?int $id, string $language): array
     {
-        $page = $id === null ? null : lynx()->pages->get($id);
+        $page = $this->viewable($id);
         $anchors = [];
 
         if (! $page instanceof Page) {
@@ -104,8 +106,14 @@ final readonly class LinkPages
      */
     public function files(?int $id): array
     {
-        $page = $id === null ? null : lynx()->pages->get($id);
+        $page = $this->viewable($id);
 
         return $page instanceof Page ? $this->files->for($page) : [];
+    }
+
+    /** The page, unless the current user may not view it: ids come from a request a client can change. */
+    private function viewable(?int $id): ?Page
+    {
+        return $id === null || app(AdminAccess::class)->viewable([$id]) === [] ? null : lynx()->pages->get($id);
     }
 }
