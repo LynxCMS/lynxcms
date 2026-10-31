@@ -1,6 +1,6 @@
 <x-lynx-admin::auth-layout :title="__('lynx-admin::auth.login.title')" :description="__('lynx-admin::auth.login.description')">
     @if (Route::has('passkey.login'))
-        <div x-data="lynxPasskeyVerify({{ Js::from(['options' => route('passkey.login-options'), 'submit' => route('passkey.login')]) }})" x-show="supported" x-cloak class="grid gap-2">
+        <div x-data="lynxPasskeyVerify({{ Js::from(['options' => route('passkey.login-options'), 'submit' => route('passkey.login')]) }}, {{ Js::from(__('lynx-admin::shell.something_wrong')) }})" x-show="supported" x-cloak class="grid gap-2">
             <x-lynx-admin::ui.button type="button" variant="outline" class="w-full" x-on:click="verify()" x-bind:disabled="loading"><x-lucide-key-round aria-hidden="true" /> {{ __('lynx-admin::auth.login.passkey') }}</x-lynx-admin::ui.button>
             <p x-show="error" x-text="error" role="alert" class="text-destructive text-center text-sm"></p>
             <p class="text-muted-foreground text-center text-xs uppercase tracking-wider">{{ __('lynx-admin::auth.login.or_email') }}</p>

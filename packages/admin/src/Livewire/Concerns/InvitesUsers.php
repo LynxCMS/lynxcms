@@ -36,7 +36,7 @@ trait InvitesUsers
             ));
         }
 
-        $this->notify('Invitation sent to '.Value::string($this->invite['email']).'.');
+        $this->notify(__('lynx-admin::users.invite.sent', ['email' => Value::string($this->invite['email'])]));
         $this->invite = ['name' => '', 'email' => '', 'roles' => []];
     }
 
@@ -45,7 +45,7 @@ trait InvitesUsers
         abort_unless(AdminAuth::managesAccounts(), 404);
         $this->status = null;
         $email = lynx()->run(ResendInvitation::class, ['user' => $user])->value;
-        $this->notify('Invitation sent again to '.Value::string($email).'.');
+        $this->notify(__('lynx-admin::users.invite.sent_again', ['email' => Value::string($email)]));
     }
 
     /**

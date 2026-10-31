@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Lang;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminServiceProvider;
@@ -95,7 +96,7 @@ final class RoleForm extends Component
             return;
         }
 
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::roles.saved'));
     }
 
     public function confirmDelete(): void
@@ -120,7 +121,8 @@ final class RoleForm extends Component
         $permissions = [];
 
         foreach (lynx()->permissions()->all() as $permission => $info) {
-            $permissions[$this->key($permission)] = ['name' => $permission] + $info;
+            $key = "lynx-admin::roles.permissions.{$permission}";
+            $permissions[$this->key($permission)] = ['name' => $permission, 'label' => Value::string(__(Lang::has($key) ? $key : $info['label']))] + $info;
         }
 
         return view('lynx-admin::livewire.role-form', [

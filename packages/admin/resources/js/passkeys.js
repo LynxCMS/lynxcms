@@ -7,12 +7,12 @@ import { Passkeys } from '@laravel/passkeys'
 const CANCELLED = 'UserCancelledError'
 
 /** The error to show, or null when the person cancelled the browser's dialog. */
-function messageOf(error) {
-    return error?.constructor?.name === CANCELLED || error?.name === CANCELLED ? null : (error?.message || 'Something went wrong. Try again.')
+function messageOf(error, fallback) {
+    return error?.constructor?.name === CANCELLED || error?.name === CANCELLED ? null : (error?.message || fallback)
 }
 
 /** Account security: name and register a passkey, then refresh the Livewire list. */
-export function lynxPasskeyRegister(routes) {
+export function lynxPasskeyRegister(routes, fallback) {
     return {
         supported: Passkeys.isSupported(),
         name: '',
@@ -26,7 +26,7 @@ export function lynxPasskeyRegister(routes) {
                 this.name = ''
                 await this.$wire.passkeyAdded()
             } catch (error) {
-                this.error = messageOf(error)
+                this.error = messageOf(error, fallback)
             } finally {
                 this.loading = false
             }
@@ -35,7 +35,7 @@ export function lynxPasskeyRegister(routes) {
 }
 
 /** Sign-in screen: sign in with a passkey instead of the password. */
-export function lynxPasskeyVerify(routes) {
+export function lynxPasskeyVerify(routes, fallback) {
     return {
         supported: Passkeys.isSupported(),
         loading: false,
@@ -47,7 +47,7 @@ export function lynxPasskeyVerify(routes) {
                 const response = await Passkeys.verify({ routes })
                 window.location.assign(response?.redirect || '/')
             } catch (error) {
-                this.error = messageOf(error)
+                this.error = messageOf(error, fallback)
             } finally {
                 this.loading = false
             }

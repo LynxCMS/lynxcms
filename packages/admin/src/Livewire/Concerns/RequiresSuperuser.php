@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Permissions\Authorizer;
+use LynxCms\Core\Support\Value;
 
 /**
  * Screens that manage roles: superusers only (ADR-0033). Until any user has a role every signed
@@ -23,6 +24,6 @@ trait RequiresSuperuser
 
     private function authorizeSuperuser(): void
     {
-        abort_unless(self::currentUserIsSuperuser(), 403, 'Only superusers manage roles.');
+        abort_unless(self::currentUserIsSuperuser(), 403, Value::string(__('lynx-admin::roles.denied')));
     }
 }

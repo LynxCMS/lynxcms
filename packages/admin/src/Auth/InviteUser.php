@@ -64,7 +64,7 @@ final class InviteUser extends Action
         $email = mb_strtolower(trim((string) $input->string('email')));
 
         if ($this->users->emailExists($email)) {
-            throw ValidationException::withMessages(['email' => 'Someone with this email can already sign in.']);
+            throw ValidationException::withMessages(['email' => __('lynx-admin::users.invite.email_taken')]);
         }
 
         $user = $this->users->create($name, $email);
