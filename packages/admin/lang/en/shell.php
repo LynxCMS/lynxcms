@@ -21,6 +21,7 @@ return [
     'view_page' => 'View page',
     'not_saved' => 'Not saved: :problem',
     'not_saved_many' => 'Not saved: :problem (:count problems in all)',
+    'something_wrong' => 'Something went wrong. Try again.',
     'search' => [
         'label' => 'Search pages',
         'placeholder' => 'Search, or template=course, sort=-modified',

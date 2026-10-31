@@ -21,6 +21,7 @@ return [
     'view_page' => 'Ver página',
     'not_saved' => 'Não guardado: :problem',
     'not_saved_many' => 'Não guardado: :problem (:count problemas no total)',
+    'something_wrong' => 'Algo correu mal. Tente novamente.',
     'search' => [
         'label' => 'Pesquisar páginas',
         'placeholder' => 'Pesquisar, ou template=course, sort=-modified',

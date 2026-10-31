@@ -54,7 +54,7 @@ final class UserRoles extends Component
     {
         $this->status = null;
         lynx()->run(AssignRoles::class, ['user' => $user, 'roles' => Value::strings($this->roles[$user] ?? [])]);
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::users.saved'));
     }
 
     public function render(LynxUsers $users): View

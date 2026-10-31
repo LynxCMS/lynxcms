@@ -3,11 +3,16 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use LynxCms\Admin\Auth\InvitationNotification;
+use LynxCms\Admin\Auth\SendInvitation;
+use LynxCms\Admin\Auth\UserInvited;
 use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\Editor\SettingLabels;
 use LynxCms\Admin\Http\UseAdminLocale;
+use LynxCms\Admin\Livewire\RoleForm;
 use LynxCms\Admin\Locale\AdminLocale;
 use LynxCms\Admin\Locale\SaveAdminLocale;
 use LynxCms\Contracts\Actions\Actor;
@@ -147,4 +152,27 @@ it('names field kinds and settings in the admin language, and keeps a module\'s 
         ->and($rating['label'])->toBe('Star rating')
         ->and($rating['description'])->toBe('One to five stars.')
         ->and($moduleGroup)->toBe('Reviews');
+});
+
+it('writes the invitation in the language of the person who sends it', function (): void {
+    Notification::fake();
+    app()->setLocale('pt');
+    app(SendInvitation::class)->handle(new UserInvited('1', 'Ana', 'ana@example.com', 'token'));
+    $portuguese = new InvitationNotification('https://example.test', 'Ana', 7)->toMail(new stdClass)->subject;
+    app()->setLocale('en');
+    $english = new InvitationNotification('https://example.test', 'Ana', 7)->toMail(new stdClass)->subject;
+
+    expect($portuguese)->not->toBe($english);
+    Notification::assertSentOnDemand(InvitationNotification::class, fn (InvitationNotification $notification): bool => $notification->locale === 'pt');
+});
+
+it('names permissions in the admin language, and keeps a module\'s own label', function (): void {
+    lynx()->permissions()->register('reports.view', 'View reports');
+    app()->setLocale('pt');
+    $component = Livewire::actingAs(new GenericUser(['id' => 1]))->test(RoleForm::class);
+    $permissions = $component->viewData('permissions');
+    app()->setLocale('en');
+
+    expect(array_column($permissions, 'label', 'name')['pages.create'])->toBe(__('lynx-admin::roles.permissions.pages.create', [], 'pt'))
+        ->and(array_column($permissions, 'label', 'name')['reports.view'])->toBe('View reports');
 });

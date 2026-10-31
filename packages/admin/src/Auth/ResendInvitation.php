@@ -51,7 +51,7 @@ final class ResendInvitation extends Action
         $user = $invitation === null ? null : Auth::getProvider()->retrieveById($id);
 
         if ($invitation === null || ! $user instanceof CanResetPassword) {
-            throw ValidationException::withMessages(['user' => 'This user has no pending invitation.']);
+            throw ValidationException::withMessages(['user' => __('lynx-admin::users.invite.not_pending')]);
         }
 
         $invitation->forceFill(['sent_at' => now()])->save();

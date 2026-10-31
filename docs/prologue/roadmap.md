@@ -45,4 +45,4 @@ A text changed once for every page of a template (all courses), between the site
 
 ## Admin
 
-- The rest of the admin's interface in the editor's language (ADR-0097). The sign-in and account screens, the sidebar, the search box, the link dialog, the page tree, the page editor and the schema screens are translated today, and field and template labels follow the language pages are edited in.
+- The modules' screens in the editor's language (ADR-0097). The admin's own screens are translated today, and field and template labels follow the language pages are edited in.

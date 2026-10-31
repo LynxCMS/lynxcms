@@ -51,7 +51,7 @@ trait ManagesTemplateFamily
             'parent_templates' => array_values(Value::strings($this->parentTemplates)),
             'allowed_templates' => array_values(Value::strings($this->switchTemplates)),
         ]);
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::templates.saved'));
     }
 
     /** A dry run first; templates.delete refuses while pages use the template. */

@@ -85,7 +85,7 @@
             @else
                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::account.passkeys.empty') }}</p>
             @endif
-            <div x-data="lynxPasskeyRegister({{ Js::from(['options' => route('passkey.registration-options'), 'submit' => route('passkey.store')]) }})" class="grid gap-2">
+            <div x-data="lynxPasskeyRegister({{ Js::from(['options' => route('passkey.registration-options'), 'submit' => route('passkey.store')]) }}, {{ Js::from(__('lynx-admin::shell.something_wrong')) }})" class="grid gap-2">
                 <p x-show="!supported" x-cloak class="text-muted-foreground text-sm">{{ __('lynx-admin::account.passkeys.unsupported') }}</p>
                 <form x-show="supported" x-on:submit.prevent="register()" class="flex flex-wrap items-center gap-3">
                     <label for="passkey-name" class="sr-only">{{ __('lynx-admin::account.passkeys.name') }}</label>

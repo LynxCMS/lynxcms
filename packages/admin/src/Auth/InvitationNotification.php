@@ -32,10 +32,10 @@ final class InvitationNotification extends Notification
         $site = Value::string(config('app.name'), 'Lynx');
 
         return (new MailMessage)
-            ->subject("You are invited to {$site}")
-            ->greeting("Hello {$this->name},")
-            ->line("You have been invited to manage the content of {$site}. Choose a password to sign in.")
-            ->action('Choose your password', $this->url)
-            ->line("The link works for {$this->days} days. If you were not expecting this invitation, ignore this email.");
+            ->subject(Value::string(__('lynx-admin::users.mail.subject', ['site' => $site])))
+            ->greeting(Value::string(__('lynx-admin::users.mail.greeting', ['name' => $this->name])))
+            ->line(__('lynx-admin::users.mail.intro', ['site' => $site]))
+            ->action(Value::string(__('lynx-admin::users.mail.action')), $this->url)
+            ->line(__('lynx-admin::users.mail.outro', ['days' => $this->days]));
     }
 }
