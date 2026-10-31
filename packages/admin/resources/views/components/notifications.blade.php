@@ -23,7 +23,7 @@
     @lynx-notify.window="add($event.detail.message, $event.detail.type)"
     @toast.window="fromToast($event.detail)"
     role="region"
-    aria-label="Notifications"
+    aria-label="{{ __('lynx-admin::shell.ui.notifications') }}"
     class="lynx-notices"
 >
     <template x-for="notice in notices" :key="notice.id">
@@ -42,7 +42,7 @@
         >
             <span x-text="notice.message"></span>
             <span class="lynx-notice-close" aria-hidden="true">×</span>
-            <span class="sr-only">Close</span>
+            <span class="sr-only">{{ __('lynx-admin::shell.ui.close') }}</span>
         </button>
     </template>
 </div>

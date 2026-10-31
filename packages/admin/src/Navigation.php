@@ -10,7 +10,8 @@ use Closure;
  * Links in the admin's sidebar. Modules add their screens in a service provider:
  * app(Navigation::class)->add('Menus', 'lynx.admin.menus', order: 20, icon: 'menu').
  * Setup screens go in a group, which the sidebar shows as a closed section until opened:
- * ->add('SEO', 'lynx.admin.seo', group: Navigation::SETTINGS).
+ * ->add('SEO', 'lynx.admin.seo', group: Navigation::SETTINGS). A label can be a translation key
+ * ("acme::nav.reports"): it is read when the sidebar shows, in the admin's language (ADR-0097).
  *
  * @phpstan-type Item array{label: string, route: string, order: int, visible: (Closure(): bool)|null, icon: string|null, badge: (Closure(): (int|string|null))|null, group: string|null}
  * @phpstan-type Group array{key: string, label: string, order: int, icon: string|null, items: list<Item>}
@@ -73,7 +74,7 @@ final class Navigation
         }
 
         foreach ($grouped as $key => $items) {
-            $entries[] = $this->groups[$key] + ['items' => $this->sorted($items)];
+            $entries[] = ['label' => $this->translated($this->groups[$key]['label'])] + $this->groups[$key] + ['items' => $this->sorted($items)];
         }
 
         return $this->sorted($entries);
@@ -98,7 +99,16 @@ final class Navigation
     /** @return list<Item> */
     private function visible(): array
     {
-        return array_values(array_filter($this->items, fn (array $item): bool => $item['visible'] === null || ($item['visible'])() === true));
+        $items = array_filter($this->items, fn (array $item): bool => $item['visible'] === null || ($item['visible'])() === true);
+
+        return array_values(array_map(fn (array $item): array => ['label' => $this->translated($item['label'])] + $item, $items));
+    }
+
+    private function translated(string $label): string
+    {
+        $text = __($label);
+
+        return is_string($text) ? $text : $label;
     }
 
     /**

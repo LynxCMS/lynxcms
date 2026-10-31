@@ -4,11 +4,11 @@
      @keydown.escape="open = false; $refs.input.blur()"
      @keydown.window.meta.k.prevent="$refs.input.focus(); $refs.input.select()"
      @keydown.window.ctrl.k.prevent="$refs.input.focus(); $refs.input.select()">
-    <label for="lynx-admin-search" class="sr-only">Search pages</label>
+    <label for="lynx-admin-search" class="sr-only">{{ __('lynx-admin::shell.search.label') }}</label>
     <x-lucide-search class="text-muted-foreground pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2" aria-hidden="true" />
     <input id="lynx-admin-search" x-ref="input" type="search" autocomplete="off" spellcheck="false"
            class="blat-input h-8 ps-8 pe-12 text-sm"
-           placeholder="Search, or template=course, sort=-modified"
+           placeholder="{{ __('lynx-admin::shell.search.placeholder') }}"
            wire:model.live.debounce.300ms="query"
            @focus="open = true" @input="open = true"
            @keydown.enter.prevent="$refs.results?.querySelector('a')?.click()"
@@ -22,7 +22,7 @@
             @if ($error !== null)
                 <p role="alert" class="text-destructive px-2 py-1.5 text-sm">{{ $error }}</p>
             @elseif ($results === [])
-                <p class="text-muted-foreground px-2 py-1.5 text-sm">No pages found.</p>
+                <p class="text-muted-foreground px-2 py-1.5 text-sm">{{ __('lynx-admin::shell.search.empty') }}</p>
             @else
                 <ul class="grid">
                     @foreach ($results as $result)
@@ -36,7 +36,7 @@
                                     <span class="text-muted-foreground block truncate text-xs">{{ $result['path'] }}</span>
                                 </span>
                                 @if ($result['isUnpublished'])
-                                    <x-lynx-admin::ui.badge variant="outline">Unpublished</x-lynx-admin::ui.badge>
+                                    <x-lynx-admin::ui.badge variant="outline">{{ __('lynx-admin::shell.search.unpublished') }}</x-lynx-admin::ui.badge>
                                 @endif
                                 <span class="text-muted-foreground shrink-0 text-xs">{{ $result['template'] }}</span>
                             </a>
@@ -44,8 +44,8 @@
                     @endforeach
                 </ul>
                 <p class="text-muted-foreground border-t px-2 pt-1.5 pb-1 text-xs">
-                    {{ count($results) }} of {{ $total }} {{ $total === 1 ? 'page' : 'pages' }}.
-                    @unless ($isSelector) Searching titles and searchable fields; a selector such as <code>template=course</code> searches anything. @endunless
+                    {{ trans_choice('lynx-admin::shell.search.count', $total, ['shown' => count($results), 'total' => $total]) }}
+                    @unless ($isSelector) {!! __('lynx-admin::shell.search.hint', ['example' => '<code>template=course</code>']) !!} @endunless
                 </p>
             @endif
         </div>

@@ -6,7 +6,7 @@
 ])
 
 @php
-    $label ??= __('Popover');
+    $label ??= __('lynx-admin::shell.ui.popover');
     $placement = $side.($align === 'center' ? '' : '-'.$align);
     $anchorAttr = 'x-blat-anchor.'.$placement.'.offset.'.$sideOffset.'.no-size="$refs.trigger"';
 @endphp

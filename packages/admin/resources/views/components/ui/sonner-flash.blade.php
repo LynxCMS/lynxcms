@@ -24,14 +24,14 @@
     // Default (English) copy for known Fortify/Laravel statuses, used ONLY when the app has no
     // translation for the slug. These keys are also translatable — __() takes priority below.
     $statusDefaults = [
-        'verification-link-sent' => __('A new verification link has been emailed to you.'),
-        'profile-information-updated' => __('Profile updated.'),
-        'password-updated' => __('Password updated.'),
-        'two-factor-authentication-enabled' => __('Two-factor authentication enabled.'),
-        'two-factor-authentication-confirmed' => __('Two-factor authentication confirmed.'),
-        'two-factor-authentication-disabled' => __('Two-factor authentication disabled.'),
-        'recovery-codes-generated' => __('Recovery codes generated.'),
-        'password-confirmed' => __('Password confirmed.'),
+        'verification-link-sent' => __('lynx-admin::shell.status.verification_link_sent'),
+        'profile-information-updated' => __('lynx-admin::shell.status.profile_updated'),
+        'password-updated' => __('lynx-admin::shell.status.password_updated'),
+        'two-factor-authentication-enabled' => __('lynx-admin::shell.status.two_factor_enabled'),
+        'two-factor-authentication-confirmed' => __('lynx-admin::shell.status.two_factor_confirmed'),
+        'two-factor-authentication-disabled' => __('lynx-admin::shell.status.two_factor_disabled'),
+        'recovery-codes-generated' => __('lynx-admin::shell.status.recovery_codes_generated'),
+        'password-confirmed' => __('lynx-admin::shell.status.password_confirmed'),
     ];
     if (session()->has('status')) {
         $s = (string) session('status');

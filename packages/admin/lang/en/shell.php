@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'nav' => [
+        'label' => 'Admin',
+        'pages' => 'Pages',
+        'site_texts' => 'Site texts',
+        'settings' => 'Settings',
+        'access' => 'Access',
+        'fields' => 'Fields',
+        'templates' => 'Templates',
+        'languages' => 'Languages',
+        'general' => 'General',
+        'roles' => 'Roles',
+        'users' => 'Users',
+    ],
+    'sign_out' => 'Sign out',
+    'view_site' => 'View site',
+    'view_page' => 'View page',
+    'not_saved' => 'Not saved: :problem',
+    'not_saved_many' => 'Not saved: :problem (:count problems in all)',
+    'search' => [
+        'label' => 'Search pages',
+        'placeholder' => 'Search, or template=course, sort=-modified',
+        'empty' => 'No pages found.',
+        'unpublished' => 'Unpublished',
+        'count' => ':shown of :total page.|:shown of :total pages.',
+        'hint' => 'Searching titles and searchable fields; a selector such as :example searches anything.',
+    ],
+    'ui' => [
+        'breadcrumb' => 'Breadcrumb',
+        'close' => 'Close',
+        'hide_password' => 'Hide password',
+        'more' => 'More',
+        'notifications' => 'Notifications',
+        'popover' => 'Popover',
+        'remove_label' => 'Remove :label',
+        'select_option' => 'Select option',
+        'show_password' => 'Show password',
+        'sidebar' => 'Sidebar',
+        'toggle_sidebar' => 'Toggle sidebar',
+    ],
+    'status' => [
+        'verification_link_sent' => 'A new verification link has been emailed to you.',
+        'profile_updated' => 'Profile updated.',
+        'password_updated' => 'Password updated.',
+        'two_factor_enabled' => 'Two-factor authentication enabled.',
+        'two_factor_confirmed' => 'Two-factor authentication confirmed.',
+        'two_factor_disabled' => 'Two-factor authentication disabled.',
+        'recovery_codes_generated' => 'Recovery codes generated.',
+        'password_confirmed' => 'Password confirmed.',
+    ],
+];

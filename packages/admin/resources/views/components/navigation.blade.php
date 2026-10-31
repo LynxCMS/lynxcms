@@ -3,7 +3,7 @@
      Opening a group on the collapsed icon rail opens the sidebar first. --}}
 @php($isCurrent = fn (array $item): bool => request()->routeIs($item['route'], $item['route'].'.*'))
 @php($exists = fn (array $item): bool => Route::has($item['route']))
-<nav aria-label="Admin" class="contents">
+<nav aria-label="{{ __('lynx-admin::shell.nav.label') }}" class="contents">
     @foreach (app(\LynxCms\Admin\Navigation::class)->menu() as $entry)
         @if (isset($entry['items']))
             @php($items = array_values(array_filter($entry['items'], $exists)))

@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'nav' => [
+        'label' => 'Administração',
+        'pages' => 'Páginas',
+        'site_texts' => 'Textos do site',
+        'settings' => 'Definições',
+        'access' => 'Acesso',
+        'fields' => 'Campos',
+        'templates' => 'Modelos',
+        'languages' => 'Idiomas',
+        'general' => 'Geral',
+        'roles' => 'Funções',
+        'users' => 'Utilizadores',
+    ],
+    'sign_out' => 'Terminar sessão',
+    'view_site' => 'Ver site',
+    'view_page' => 'Ver página',
+    'not_saved' => 'Não guardado: :problem',
+    'not_saved_many' => 'Não guardado: :problem (:count problemas no total)',
+    'search' => [
+        'label' => 'Pesquisar páginas',
+        'placeholder' => 'Pesquisar, ou template=course, sort=-modified',
+        'empty' => 'Nenhuma página encontrada.',
+        'unpublished' => 'Não publicada',
+        'count' => ':shown de :total página.|:shown de :total páginas.',
+        'hint' => 'A pesquisa abrange títulos e campos pesquisáveis; um seletor como :example pesquisa em tudo.',
+    ],
+    'ui' => [
+        'breadcrumb' => 'Trilho de navegação',
+        'close' => 'Fechar',
+        'hide_password' => 'Ocultar palavra-passe',
+        'more' => 'Mais',
+        'notifications' => 'Notificações',
+        'popover' => 'Painel flutuante',
+        'remove_label' => 'Remover :label',
+        'select_option' => 'Selecionar opção',
+        'show_password' => 'Mostrar palavra-passe',
+        'sidebar' => 'Barra lateral',
+        'toggle_sidebar' => 'Mostrar ou ocultar a barra lateral',
+    ],
+    'status' => [
+        'verification_link_sent' => 'Enviámos-lhe por email uma nova ligação de verificação.',
+        'profile_updated' => 'Perfil atualizado.',
+        'password_updated' => 'Palavra-passe atualizada.',
+        'two_factor_enabled' => 'Autenticação de dois fatores ativada.',
+        'two_factor_confirmed' => 'Autenticação de dois fatores confirmada.',
+        'two_factor_disabled' => 'Autenticação de dois fatores desativada.',
+        'recovery_codes_generated' => 'Códigos de recuperação gerados.',
+        'password_confirmed' => 'Palavra-passe confirmada.',
+    ],
+];

@@ -27,6 +27,8 @@ app(Navigation::class)->add('Reports', 'lynx.admin.reports', order: 70, icon: 'c
 
 Setup screens belong in a section of the sidebar: `group: Navigation::SETTINGS` (fields, templates, languages, SEO, sitemap) or `Navigation::ACCESS` (roles, users). Sections stay closed until opened, unless the current screen is in them, and each browser remembers the ones it opened. `order` then places the link within its section. Modules can add sections of their own with `app(Navigation::class)->group('reports', 'Reports', order: 70, icon: 'chart-bar')`.
 
+A label can be a translation key, such as `'reports::nav.reports'`, so the link follows [the admin's language](/admin/#the-admin-s-language).
+
 `badge:` shows a count or short text beside the link, such as new form submissions; `0` and `null` hide it:
 
 ```php

@@ -104,14 +104,14 @@ return [
     | The Attributes tab of the rich text link dialog: where a link may open and the relations
     | editors may give it. On save, relations other than nofollow, sponsored, ugc and noreferrer
     | are dropped, and links opening a new window get noopener. Add 'ugc' for sites whose
-    | visitors write content. Empty lists hide the choice.
+    | visitors write content. Empty lists hide the choice. Labels may be translation keys.
     */
     'links' => [
-        'targets' => ['_blank' => 'New window'],
+        'targets' => ['_blank' => 'lynx-admin::link.new_window'],
         'rels' => [
-            'nofollow' => 'nofollow (search engines do not follow it)',
-            'sponsored' => 'sponsored (paid or advertising)',
-            'noreferrer' => 'noreferrer (hide where the visitor came from)',
+            'nofollow' => 'lynx-admin::link.rel_nofollow',
+            'sponsored' => 'lynx-admin::link.rel_sponsored',
+            'noreferrer' => 'lynx-admin::link.rel_noreferrer',
         ],
     ],
 

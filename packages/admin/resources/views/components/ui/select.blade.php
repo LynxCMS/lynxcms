@@ -104,7 +104,7 @@
             @endif
         @endif
         @if ($hasOptions)
-            <x-lynx-admin::ui.select-trigger :class="'w-full'.($multiple ? ' data-[size=default]:h-auto min-h-9 py-1' : '')" :ariaLabel="$placeholder !== '' ? $placeholder : __('Select option')">
+            <x-lynx-admin::ui.select-trigger :class="'w-full'.($multiple ? ' data-[size=default]:h-auto min-h-9 py-1' : '')" :ariaLabel="$placeholder !== '' ? $placeholder : __('lynx-admin::shell.ui.select_option')">
                 <x-lynx-admin::ui.select-value :placeholder="$placeholder" />
             </x-lynx-admin::ui.select-trigger>
             <x-lynx-admin::ui.select-content :indicator="$indicator">

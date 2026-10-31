@@ -109,7 +109,7 @@
             @keydown.escape.window="openMobile = false"
             role="dialog"
             aria-modal="true"
-            aria-label="{{ __('Sidebar') }}"
+            aria-label="{{ __('lynx-admin::shell.ui.sidebar') }}"
             tabindex="-1"
             x-transition:enter="transition ease-in-out duration-300"
             x-transition:enter-start="{{ $isLeft ? '-translate-x-full' : 'translate-x-full' }}"
