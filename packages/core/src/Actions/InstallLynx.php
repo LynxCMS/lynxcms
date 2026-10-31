@@ -24,12 +24,15 @@ use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Creates what every Lynx site has: the default language (code "default", name "Default",
- * no prefix, ADR-0006), the root page, and a hidden "Page not found" page shown for URLs that match
- * nothing (ADR-0085), unless someone already chose one or none. Safe to run twice.
+ * no prefix, ADR-0006), the root page, a plain template for a site's first pages, and a hidden
+ * "Page not found" page shown for URLs that match nothing (ADR-0085), unless someone already
+ * chose one or none. Safe to run twice.
  */
 final class InstallLynx extends Action
 {
     public const string NOT_FOUND_TEMPLATE = 'not-found';
+
+    public const string SIMPLE_PAGE_TEMPLATE = 'simple-page';
 
     public function __construct(
         private readonly LanguageRegistry $languages,
@@ -79,6 +82,7 @@ final class InstallLynx extends Action
         }
 
         $installed = $this->root->ensure($context) || $installed;
+        $installed = $this->ensureSimplePageTemplate($context) || $installed;
         $installed = $this->ensureNotFoundPage($context) || $installed;
         $installed = $this->ensureRoles($context) || $installed;
 
@@ -92,6 +96,18 @@ final class InstallLynx extends Action
     }
 
     /** The superuser, editor and guest roles (ADR-0033, ADR-0073), unless roles with those names exist. */
+    /** Only a title: fields are shared across a site, so it takes no names a site may want for itself. */
+    private function ensureSimplePageTemplate(ActionContext $context): bool
+    {
+        if ($this->templates->find(self::SIMPLE_PAGE_TEMPLATE) !== null) {
+            return false;
+        }
+
+        $context->run(CreateTemplate::class, ['name' => self::SIMPLE_PAGE_TEMPLATE, 'label' => 'Simple page', 'fields' => [['name' => 'title', 'required' => true]]]);
+
+        return true;
+    }
+
     /**
      * A page under the home page, with a template of its own that only has a title. A system page,
      * like the trash: it cannot be deleted or moved, stays last among its siblings and out of
