@@ -19,6 +19,10 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.27 to 0.1.28
+
+- Run `php artisan lynx:install` again to get the `simple-page` template that new sites start with. It adds only what's missing, so it's safe on a site with content. The New page screen no longer offers the `not-found` template.
+
 ## From 0.1.26 to 0.1.27
 
 - `strings.save` with site texts now needs `pages.edit` on the home page, as the Site texts screen always did. A role limited to a branch or a template can still edit its own pages' texts. Give it `pages.edit` on the home page if it should change site texts through MCP or the agent.

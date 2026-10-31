@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Templates\FamilyRules;
@@ -46,7 +47,8 @@ final class TemplateChoices
     }
 
     /**
-     * The template most used among the parent's children, or the first choice.
+     * The template most used among the parent's children, else the simple page template a new
+     * site starts with, else the first choice.
      *
      * @param  array<string, string>  $choices
      */
@@ -56,12 +58,16 @@ final class TemplateChoices
         $counts = array_count_values(array_values(array_filter($used, fn (string $name): bool => isset($choices[$name]))));
         arsort($counts);
 
-        return array_key_first($counts) ?? array_key_first($choices);
+        return array_key_first($counts)
+            ?? (isset($choices[InstallLynx::SIMPLE_PAGE_TEMPLATE]) ? InstallLynx::SIMPLE_PAGE_TEMPLATE : array_key_first($choices));
     }
 
     private function isOffered(Template $template): bool
     {
-        if (isset($this->excluded[(string) $template->name]) || app(SchemaOwners::class)->isSystemTemplate((string) $template->name)) {
+        $name = (string) $template->name;
+
+        // The 404 page's template is for that one page, not for new ones.
+        if ($name === InstallLynx::NOT_FOUND_TEMPLATE || isset($this->excluded[$name]) || app(SchemaOwners::class)->isSystemTemplate($name)) {
             return false;
         }
 
