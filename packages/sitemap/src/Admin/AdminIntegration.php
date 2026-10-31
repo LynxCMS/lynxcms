@@ -28,7 +28,7 @@ final class AdminIntegration
     {
         Livewire::component('lynx-sitemap.settings', SitemapSettings::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('sitemap.manage');
-        app(Navigation::class)->add('Sitemap', 'lynx.admin.sitemap', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'map', group: Navigation::SETTINGS);
+        app(Navigation::class)->add('lynx-sitemap::admin.title', 'lynx.admin.sitemap', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'map', group: Navigation::SETTINGS);
         Admin::routes(fn () => Admin::screen('sitemap', 'lynx-sitemap::admin.index', 'sitemap.manage')->name('sitemap'));
 
         // The settings page is edited on the sitemap screen, never as a page.

@@ -87,3 +87,9 @@ it('labels the menu button through Laravel translations', function (): void {
 
     expect(Blade::render('<x-lynx-menu name="top" view="lynx-menus::menus.dropdown" />'))->toContain('>Menu principal<');
 });
+
+it('ships the menu buttons in Portuguese', function (): void {
+    app()->setLocale('pt_PT');
+
+    expect(__('Close'))->not->toBe('Close');
+});

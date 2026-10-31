@@ -60,6 +60,9 @@ final class MenusServiceProvider extends ServiceProvider
             LynxFacade::hook($action)->after(fn (): int => app(MenuBuilds::class)->forget());
         }
 
+        $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-menus');
+        // The dropdown's buttons are plain strings, so an app's lang/{code}.json can reword them.
+        $this->loadJsonTranslationsFrom(self::ROOT.'/lang');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-menus');
         Blade::component('lynx-menu', MenuComponent::class);
 

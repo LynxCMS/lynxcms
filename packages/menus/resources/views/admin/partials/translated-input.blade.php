@@ -14,7 +14,7 @@
             class="blat-input"
             wire:model="{{ $model }}.{{ $language['code'] }}"
             x-show="tab === '{{ $language['code'] }}'"
-            placeholder="{{ $index === 0 ? ($placeholder ?? '') : 'Falls back to '.$languages[0]['name'] }}"
+            placeholder="{{ $index === 0 ? ($placeholder ?? '') : __('lynx-menus::admin.falls_back', ['language' => $languages[0]['name']]) }}"
             @if ($index === 0) aria-labelledby="{{ $id }}-label" @else aria-label="{{ $label }} ({{ $language['name'] }})" @endif
             @error($error) aria-invalid="true" @enderror
         >

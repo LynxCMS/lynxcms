@@ -39,6 +39,25 @@ return [
         'empty' => 'No roles yet. Until a user has a role, every signed in user may do everything.',
     ],
     'permissions' => [
+        'menus' => [
+            'manage' => 'Manage menus',
+        ],
+        'forms' => [
+            'view' => 'See and sort form submissions',
+            'manage' => 'Build forms and delete submissions',
+        ],
+        'seo' => [
+            'manage' => 'Manage SEO settings',
+        ],
+        'sitemap' => [
+            'manage' => 'Manage the sitemap',
+        ],
+        'page_cache' => [
+            'manage' => 'Manage the page cache',
+        ],
+        'static' => [
+            'export' => 'Export the site as static files',
+        ],
         'admin' => [
             'access' => 'Open the admin',
         ],

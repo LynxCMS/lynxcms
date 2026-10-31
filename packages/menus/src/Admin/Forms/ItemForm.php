@@ -19,7 +19,7 @@ use LynxCms\Menus\MenuSchema;
 final class ItemForm extends Form
 {
     /** Target choices the form offers besides a custom frame name. */
-    public const array TARGETS = ['' => 'Same window', '_blank' => 'New tab', 'custom' => 'Custom…'];
+    public const array TARGETS = ['' => 'same_window', '_blank' => 'new_tab', 'custom' => 'custom'];
 
     public ?int $id = null;
 
@@ -102,7 +102,7 @@ final class ItemForm extends Form
      */
     public static function relChoices(): array
     {
-        return array_intersect_key(array_map(Value::string(...), Value::map(config('lynx-admin.links.rels', []))), array_flip(LinkRel::CHOICES));
+        return array_intersect_key(array_map(fn (mixed $label): string => Value::string(__(Value::string($label))), Value::map(config('lynx-admin.links.rels', []))), array_flip(LinkRel::CHOICES));
     }
 
     public function choosePage(Page $page): void

@@ -28,7 +28,7 @@ final class AdminIntegration
     public static function register(): void
     {
         Livewire::component('lynx-menus.editor', MenuEditor::class);
-        app(Navigation::class)->add('Menus', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: fn (): bool => app(AdminAccess::class)->allows('menus.manage'), icon: 'menu');
+        app(Navigation::class)->add('lynx-menus::admin.title', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: fn (): bool => app(AdminAccess::class)->allows('menus.manage'), icon: 'menu');
         // Menus and items are created in the menu editor, never as plain pages.
         app(TemplateChoices::class)->exclude(MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE);
         // A page's menu items are not content linking to it; the menu editor shows them.
