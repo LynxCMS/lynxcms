@@ -62,7 +62,7 @@ To offer another language, list it in `config/lynx-admin.php`, with its name in 
 ],
 ```
 
-The same folder changes a line of Lynx's wording: `lang/vendor/lynx-admin/en/auth.php` holding only the lines you want to reword. With a single language in `locales`, the menu leaves the choice out.
+Each module has a folder of its own, such as `lang/vendor/lynx-forms`. The same folders change a line of Lynx's wording: `lang/vendor/lynx-admin/en/auth.php` holding only the lines you want to reword. With a single language in `locales`, the menu leaves the choice out.
 
 ## Look and feel
 
