@@ -19,6 +19,11 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+## From 0.1.25 to 0.1.26
+
+- The admin's sign-in and account screens follow the admin's language, which is the app's locale until you set one. A site with `APP_LOCALE=pt` shows them in Portuguese: set `LYNX_ADMIN_LOCALE=en` to keep them in English. See [The admin's language](/admin/#the-admin-s-language).
+- If you copied admin views into `resources/views/vendor/lynx-admin`, your copies stay in English until you compare them with the new ones.
+
 ## From 0.1.24 to 0.1.25
 
 - Selectors leave out pages whose template has no URL. Selectors that name such a template (`template=promo`), read below such a page, or name pages by `id=` still find them. A selector that found them otherwise, such as `parent=/` or `title%=launch`, needs `include=no_url`.

@@ -15,6 +15,17 @@ return [
     'middleware' => ['web', 'auth'],
 
     /*
+    | The language of the admin's own wording (ADR-0097). "locale": the default, or null for the
+    | app's locale. "locales": what editors can choose in their menu, as code => name in that
+    | language. To add one, list it here and put its files in lang/vendor/lynx-admin/{code}.
+    */
+    'locale' => env('LYNX_ADMIN_LOCALE'),
+    'locales' => [
+        'en' => 'English',
+        'pt' => 'Português',
+    ],
+
+    /*
     | Who signs users in (ADR-0074). "auto": Lynx's screens (Laravel Fortify at /{prefix}/login,
     | password reset, no registration) unless the app configures Fortify itself
     | (config/fortify.php), when the app's screens sign everyone in ("app"). Invitations and the

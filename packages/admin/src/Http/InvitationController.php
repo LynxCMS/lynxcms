@@ -63,7 +63,7 @@ final class InvitationController
         );
 
         if ($status !== Password::PASSWORD_RESET || ! $accepted instanceof Authenticatable) {
-            throw ValidationException::withMessages(['email' => $status === Password::INVALID_TOKEN ? 'This invitation has expired or was already used. Ask for a new one.' : __(Value::string($status))]);
+            throw ValidationException::withMessages(['email' => $status === Password::INVALID_TOKEN ? __('lynx-admin::auth.invitation.expired') : __(Value::string($status))]);
         }
 
         Auth::login($accepted);

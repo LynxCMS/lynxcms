@@ -29,7 +29,7 @@ trait ManagesPasskeys
     /** Livewire hook for the browser after it registers a passkey: re-render the list. */
     public function passkeyAdded(): void
     {
-        $this->notify('Passkey added.');
+        $this->notify(__('lynx-admin::account.passkeys.added'));
     }
 
     private function passkeyUser(): ?Authenticatable

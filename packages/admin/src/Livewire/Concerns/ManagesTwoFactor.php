@@ -57,7 +57,7 @@ trait ManagesTwoFactor
         try {
             $confirm($user, $this->code);
         } catch (ValidationException) {
-            $this->addError('code', 'That code is not valid. Try the newest one from your app.');
+            $this->addError('code', __('lynx-admin::account.two_factor.invalid_code'));
 
             return;
         }

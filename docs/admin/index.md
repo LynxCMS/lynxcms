@@ -42,6 +42,28 @@ The icon at the right of the top bar opens the site in a new tab. In the page ed
 - [Roles and permissions](/admin/permissions)
 - [Extending the admin](/admin/extending)
 
+## The admin's language
+
+Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording only, so a Portuguese editor can work on an English site. Lynx ships English and Portuguese.
+
+Editors who haven't chosen see the default. Set it with an environment variable, or leave it empty to use the app's locale:
+
+```ini
+LYNX_ADMIN_LOCALE=pt
+```
+
+To offer another language, list it in `config/lynx-admin.php`, with its name in that language, and add its files in `lang/vendor/lynx-admin/{code}`. Copy the English ones from `vendor/lynxcms/admin/lang/en`. A line you leave out shows in English.
+
+```php
+'locales' => [
+    'en' => 'English',
+    'pt' => 'Português',
+    'fr' => 'Français',
+],
+```
+
+The same folder changes a line of Lynx's wording: `lang/vendor/lynx-admin/en/auth.php` holding only the lines you want to reword. With a single language in `locales`, the menu leaves the choice out.
+
 ## Look and feel
 
 The admin is built on BlatUI components. Change its look without rebuilding anything in `config/lynx-admin.php`:
