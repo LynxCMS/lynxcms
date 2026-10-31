@@ -35,7 +35,7 @@
                                 @endif
                             </div>
                             @if (($active[$code] ?? true) && $urls[$code])
-                                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && '/'.trim((string) $page->localUrl($code), '/').'/' !== $urls[$code]) <span>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
                             @elseif (! ($active[$code] ?? true))
                                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
                             @endif
