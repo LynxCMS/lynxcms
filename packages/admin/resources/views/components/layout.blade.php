@@ -28,9 +28,9 @@
                             <x-lynx-admin::ui.sidebar-menu-item>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <x-lynx-admin::ui.sidebar-menu-button type="submit" tooltip="Sign out">
+                                    <x-lynx-admin::ui.sidebar-menu-button type="submit" :tooltip="__('lynx-admin::shell.sign_out')">
                                         <x-lynx-admin::ui.icon name="log-out" aria-hidden="true" />
-                                        <span>Sign out</span>
+                                        <span>{{ __('lynx-admin::shell.sign_out') }}</span>
                                     </x-lynx-admin::ui.sidebar-menu-button>
                                 </form>
                             </x-lynx-admin::ui.sidebar-menu-item>
@@ -61,7 +61,7 @@
                     <div class="ms-4 flex min-w-0 flex-1 justify-end">
                         <livewire:lynx-admin.search />
                     </div>
-                    @php($viewLabel = $viewUrl === null ? 'View site' : 'View page')
+                    @php($viewLabel = __($viewUrl === null ? 'lynx-admin::shell.view_site' : 'lynx-admin::shell.view_page'))
                     <x-lynx-admin::ui.button variant="ghost" size="icon-sm" :href="$viewUrl ?? url('/')" target="_blank" rel="noopener" :aria-label="$viewLabel" :title="$viewLabel">
                         <x-lucide-external-link aria-hidden="true" />
                     </x-lynx-admin::ui.button>

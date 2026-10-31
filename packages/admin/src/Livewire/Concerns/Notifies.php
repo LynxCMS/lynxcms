@@ -30,6 +30,9 @@ trait Notifies
 
         $count = count($e->validator->errors()->all());
         $first = (string) $e->validator->errors()->first();
-        $this->dispatch('lynx-notify', message: $count > 1 ? "Not saved: {$first} ({$count} problems in all)" : "Not saved: {$first}", type: 'error');
+        $message = $count > 1
+            ? __('lynx-admin::shell.not_saved_many', ['problem' => $first, 'count' => $count])
+            : __('lynx-admin::shell.not_saved', ['problem' => $first]);
+        $this->dispatch('lynx-notify', message: $message, type: 'error');
     }
 }

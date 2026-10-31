@@ -48,3 +48,16 @@ it('groups items and leaves out groups with nothing visible', function (): void 
         ->and(array_column($menu[1]['items'] ?? [], 'label'))->toBe(['Import', 'Export'])
         ->and(array_column($navigation->items(), 'label'))->toBe(['Pages', 'Import', 'Export']);
 });
+
+it('reads labels in the language of the request, so a module can give a translation key', function (): void {
+    app('translator')->addLines(['nav.reports' => 'Reports'], 'en', 'acme');
+    app('translator')->addLines(['nav.reports' => 'Relatórios'], 'pt', 'acme');
+    $navigation = (new Navigation)->group('reports', 'acme::nav.reports')->add('acme::nav.reports', 'lynx.admin.pages')->add('Plain label', 'lynx.admin.fields', group: 'reports');
+
+    app()->setLocale('pt');
+    $portuguese = array_column($navigation->menu(), 'label');
+    app()->setLocale('en');
+
+    expect($portuguese)->toContain('Relatórios')
+        ->and(array_column($navigation->items(), 'label'))->toContain('Reports', 'Plain label');
+});

@@ -143,7 +143,7 @@ final class LinkDialog extends Component
             'target' => ['nullable', 'in:'.implode(',', array_keys($this->targets()))],
             'rel' => ['array'],
             'rel.*' => ['in:'.implode(',', array_keys($this->rels()))],
-        ], ['href.regex' => 'Enter an address starting with https://, mailto: or tel:, a path starting with /, or an #anchor.']);
+        ], ['href.regex' => __('lynx-admin::link.invalid_address')]);
 
         $this->answer(trim($this->href));
     }
@@ -217,7 +217,7 @@ final class LinkDialog extends Component
      */
     private function targets(): array
     {
-        return array_map(Value::string(...), Value::map(config('lynx-admin.links.targets', [])));
+        return $this->labels('lynx-admin.links.targets');
     }
 
     /**
@@ -227,6 +227,16 @@ final class LinkDialog extends Component
      */
     private function rels(): array
     {
-        return array_intersect_key(array_map(Value::string(...), Value::map(config('lynx-admin.links.rels', []))), array_flip(LinkRelSanitizer::CHOICES));
+        return array_intersect_key($this->labels('lynx-admin.links.rels'), array_flip(LinkRelSanitizer::CHOICES));
+    }
+
+    /**
+     * Labels from config, which may be text or translation keys.
+     *
+     * @return array<string, string>
+     */
+    private function labels(string $key): array
+    {
+        return array_map(fn (mixed $label): string => Value::string(__(Value::string($label))), Value::map(config($key, [])));
     }
 }

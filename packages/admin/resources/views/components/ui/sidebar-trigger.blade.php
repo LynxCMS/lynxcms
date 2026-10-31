@@ -4,7 +4,7 @@
 
 @php
     // i18n-safe default: this is a translation key, localise it in your lang files.
-    $label ??= __('Toggle Sidebar');
+    $label ??= __('lynx-admin::shell.ui.toggle_sidebar');
 @endphp
 
 <button
