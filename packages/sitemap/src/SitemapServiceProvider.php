@@ -46,6 +46,7 @@ final class SitemapServiceProvider extends ServiceProvider
         // Any content change may change the sitemap: build it again on the next request.
         Event::listen(ContentChanged::class, fn () => app(SitemapCache::class)->clear());
         $this->registerRoutes();
+        $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-sitemap');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-sitemap');
 
         if (class_exists(SeoSchema::class)) {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LynxCms\Menus\Admin;
 
-use Illuminate\Support\Str;
 use LynxCms\Admin\Tree\TreePresenter;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
@@ -33,7 +32,7 @@ final class MenuItemPresenter implements TreePresenter
     public function detail(Page $page): string
     {
         if ($page->template()->name === MenuSchema::MENU_TEMPLATE) {
-            return 'Menu · '.$page->name(lynx()->languages->default());
+            return Value::string(__('lynx-menus::admin.tree.menu', ['name' => $page->name(lynx()->languages->default())]));
         }
 
         $linked = $this->linkedPage($page);
@@ -42,9 +41,9 @@ final class MenuItemPresenter implements TreePresenter
         $suffix = ($target !== '' ? " ({$target})" : '').$this->languagesNote($page);
 
         return match (true) {
-            $linked instanceof Page => 'Page · '.$linked->url().$this->childPagesNote($page).$suffix,
-            $url !== '' => "Link · {$url}{$suffix}",
-            default => 'Section'.$this->languagesNote($page),
+            $linked instanceof Page => Value::string(__('lynx-menus::admin.tree.page', ['url' => $linked->url()])).$this->childPagesNote($page).$suffix,
+            $url !== '' => Value::string(__('lynx-menus::admin.tree.link', ['url' => $url])).$suffix,
+            default => Value::string(__('lynx-menus::admin.tree.section')).$this->languagesNote($page),
         };
     }
 
@@ -57,7 +56,7 @@ final class MenuItemPresenter implements TreePresenter
 
         $options = ChildPages::of($page);
 
-        return ' + children ('.$options->depth.' '.Str::plural('level', $options->depth).', max '.$options->limit.')';
+        return Value::string(__('lynx-menus::admin.tree.children', ['depth' => trans_choice('lynx-menus::admin.tree.levels', $options->depth), 'limit' => $options->limit]));
     }
 
     /** " · only Português" for items limited to some languages. */
@@ -71,7 +70,7 @@ final class MenuItemPresenter implements TreePresenter
 
         $names = array_map(fn (string $code): string => (string) lynx()->languages->find($code)?->name, $codes);
 
-        return ' · only '.implode(', ', array_filter($names));
+        return Value::string(__('lynx-menus::admin.tree.only', ['languages' => implode(', ', array_filter($names))]));
     }
 
     private function linkedPage(Page $page): ?Page

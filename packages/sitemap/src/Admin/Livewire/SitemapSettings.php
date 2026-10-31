@@ -71,13 +71,13 @@ final class SitemapSettings extends Component
             SitemapSchema::GROUP_BY => $this->groupBy === '' ? null : $this->groupBy,
             SitemapSchema::EXCLUDE => implode(', ', $this->exclude),
         ]]);
-        $this->status = 'Saved.';
+        $this->status = Value::string(__('lynx-sitemap::admin.saved'));
     }
 
     public function clearCache(): void
     {
         lynx()->run(ClearSitemapCache::class);
-        $this->status = 'Cache cleared: the next visit builds the sitemap again.';
+        $this->status = Value::string(__('lynx-sitemap::admin.cleared'));
     }
 
     public function render(): View

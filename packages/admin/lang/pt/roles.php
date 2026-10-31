@@ -39,6 +39,25 @@ return [
         'empty' => 'Ainda não há funções. Enquanto nenhum utilizador tiver uma função, qualquer utilizador com sessão iniciada pode fazer tudo.',
     ],
     'permissions' => [
+        'menus' => [
+            'manage' => 'Gerir menus',
+        ],
+        'forms' => [
+            'view' => 'Ver e ordenar respostas a formulários',
+            'manage' => 'Criar formulários e eliminar respostas',
+        ],
+        'seo' => [
+            'manage' => 'Gerir as definições de SEO',
+        ],
+        'sitemap' => [
+            'manage' => 'Gerir o mapa do site',
+        ],
+        'page_cache' => [
+            'manage' => 'Gerir a cache de páginas',
+        ],
+        'static' => [
+            'export' => 'Exportar o site como ficheiros estáticos',
+        ],
         'admin' => [
             'access' => 'Abrir a administração',
         ],

@@ -18,6 +18,7 @@ use LynxCms\Admin\Locale\SaveAdminLocale;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Models\Setting;
+use LynxCms\Menus\Admin\Forms\ItemForm;
 
 /*
  * The language of the admin's own wording (ADR-0097): each editor's choice, then
@@ -175,4 +176,9 @@ it('names permissions in the admin language, and keeps a module\'s own label', f
 
     expect(array_column($permissions, 'label', 'name')['pages.create'])->toBe(__('lynx-admin::roles.permissions.pages.create', [], 'pt'))
         ->and(array_column($permissions, 'label', 'name')['reports.view'])->toBe('View reports');
+});
+
+it('shows the menu editor\'s link relations as words, whichever screen reads them', function (): void {
+    expect(ItemForm::relChoices())->not->toBeEmpty()
+        ->and(implode(' ', ItemForm::relChoices()))->not->toContain('lynx-admin::');
 });

@@ -54,7 +54,7 @@ final class MenuEditor extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('menus.manage'), 403, 'You may not manage menus.');
+        abort_unless(app(AdminAccess::class)->allows('menus.manage'), 403, Value::string(__('lynx-menus::admin.denied')));
     }
 
     /** An item to open, from the URL (the page editor sends menu items here). */
@@ -148,7 +148,7 @@ final class MenuEditor extends Component
 
         if ($menu instanceof Page) {
             lynx()->run(RebuildMenus::class, ['menu' => $menu->name(lynx()->languages->default())]);
-            $this->dispatch('lynx-notify', message: 'Menu rebuilt: the next visit builds it again.', type: 'success');
+            $this->dispatch('lynx-notify', message: __('lynx-menus::admin.rebuilt'), type: 'success');
         }
     }
 
