@@ -8,6 +8,30 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.26
+
+Released October 31, 2026. The admin and every module now speak the editor's language, with English and Portuguese included. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
+
+- **The admin in each editor's language.** Open the menu with your name in the sidebar and pick a language under **Language**. The choice belongs to the account, so a Portuguese editor can work on an English site. Editors who haven't chosen see `LYNX_ADMIN_LOCALE`, or the app's locale when that is empty. See [The admin's language](/admin/#the-admin-s-language).
+
+- Every screen is translated: sign-in, the sidebar, the page tree and editor, fields, templates, languages, roles, users, and the menus, media, SEO, sitemap, page cache, static export, forms and page password modules.
+
+- To offer another language, list it in `lynx-admin.locales` and add its files in `lang/vendor/lynx-admin/{code}`. Any line of Lynx's wording can be reworded the same way, and each module has a folder of its own, such as `lang/vendor/lynx-forms`.
+
+- Modules can pass translation keys, or plain text as before, to `Navigation`, `EditorTabs` and `FieldKinds`. `FieldKinds::groupLabel()` names a group in the admin's language.
+
+- The invitation email goes out in the language of the person who sends it.
+
+- The dropdown menu's **Menu** and **Close** buttons ship in Portuguese, and your own `lang/{code}.json` still rewords them.
+
+- Field and template labels still follow the language pages are edited in, and validation errors from actions stay in English, since agents read them too.
+
+- **Fix:** page settings said "the current URL will redirect" on every page. It now says so only when the name changes.
+
+- **Fix:** the Site texts screen showed "Text" where it meant to show the `@string('key', 'Text')` example.
+
+- `composer setup` in the starters links the storage folder, and the starters ask for PHP 8.5.
+
 ## 0.1.25
 
 Released October 28, 2026. Page fields hold as many pages as each use allows, in the order editors set, and check their templates on every save. Drafts can go live at a set time, and selectors leave out pages without a URL. No database changes. The [upgrade guide](/prologue/upgrade#from-0-1-24-to-0-1-25) lists two things to check.
