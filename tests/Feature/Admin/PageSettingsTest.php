@@ -214,3 +214,12 @@ it('shows the content Save button only on the Content tab', function (): void {
         ->set('tab', 'settings')
         ->assertDontSeeHtml('wire:click="save"');
 });
+
+it('says the current URL will redirect only once the name changes', function (bool $trailingSlash): void {
+    config(['lynx.trailing_slash' => $trailingSlash]);
+    $settings = settingsFor(settingsPage());
+
+    $settings->assertDontSeeHtml('data-url-will-redirect');
+
+    $settings->set('names.default', 'delivery-9')->assertSeeHtml('data-url-will-redirect');
+})->with(['without a trailing slash' => false, 'with a trailing slash' => true]);
