@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
+use LynxCms\Admin\Editor\FieldKinds;
+use LynxCms\Admin\Editor\SettingLabels;
 use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Admin\Locale\AdminLocale;
 use LynxCms\Admin\Locale\SaveAdminLocale;
@@ -126,3 +128,23 @@ it('offers the choice only when there is one', function (bool $hasChoice): void 
     expect(str_contains((string) $response->getContent(), 'data-lynx-locale'))->toBe($hasChoice)
         ->and(str_contains((string) $response->getContent(), 'value="pt"'))->toBe($hasChoice);
 })->with(['two languages' => true, 'one language' => false]);
+
+it('names field kinds and settings in the admin language, and keeps a module\'s own words', function (): void {
+    $kinds = app(FieldKinds::class);
+    $kinds->register('rating', 'Star rating', 'Choices', 'star', 'One to five stars.');
+    $words = app(SettingLabels::class)->for('max_length', ['type' => 'integer', 'description' => '', 'enum' => []]);
+    $english = [$kinds->for('text')['label'], $words['label'], app(SettingLabels::class)->formatter('markdown'), $kinds->groupLabel('Text')];
+
+    app()->setLocale('pt');
+    $portuguese = [$kinds->for('text')['label'], app(SettingLabels::class)->for('max_length', ['type' => 'integer', 'description' => '', 'enum' => []])['label'], app(SettingLabels::class)->formatter('markdown'), $kinds->groupLabel('Text')];
+    $rating = $kinds->for('rating');
+    $moduleGroup = $kinds->groupLabel('Reviews');
+    app()->setLocale('en');
+
+    expect($portuguese)->not->toBe($english)
+        ->and($portuguese[0])->not->toContain('lynx-admin::')
+        ->and($portuguese[1])->not->toContain('lynx-admin::')
+        ->and($rating['label'])->toBe('Star rating')
+        ->and($rating['description'])->toBe('One to five stars.')
+        ->and($moduleGroup)->toBe('Reviews');
+});

@@ -87,7 +87,7 @@ final class FieldForm extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage templates and fields.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
     }
 
     public function mount(?string $field = null): void
@@ -132,7 +132,7 @@ final class FieldForm extends Component
 
         if ($isNew) {
             if (! app(FieldTypeChoices::class)->offers($this->type)) {
-                throw ValidationException::withMessages(['type' => "Fields of type [{$this->type}] are created by the module that uses them."]);
+                throw ValidationException::withMessages(['type' => __('lynx-admin::fields.module_type', ['type' => $this->type])]);
             }
 
             lynx()->fields->add($this->name, $this->type, $this->typeCanTranslate() && (! $this->isMultilingual() || $this->translatable), LocalizedForm::fromForm($this->label), array_filter($settings, fn (mixed $value): bool => $value !== null));
@@ -142,7 +142,7 @@ final class FieldForm extends Component
         }
 
         lynx()->fields->update((string) $this->field, ['label' => LocalizedForm::fromForm($this->label) ?? $this->name, 'settings' => $settings]);
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::fields.saved'));
     }
 
     /** A dry run first, so the confirmation can say which templates and values go. */
@@ -174,7 +174,7 @@ final class FieldForm extends Component
         $kinds = app(FieldKinds::class);
 
         return view('lynx-admin::livewire.field-form', [
-            'title' => $this->field === null ? 'New field' : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
+            'title' => $this->field === null ? __('lynx-admin::fields.new') : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
             'sections' => $this->sections(),
             'kind' => $kinds->for($this->type),
             'kinds' => $this->field === null ? $kinds->grouped(array_keys(app(FieldTypeChoices::class)->for($types))) : [],
@@ -233,7 +233,7 @@ final class FieldForm extends Component
     /** Read only screens refuse writes on the server too, whatever the browser sends. */
     private function authorizeEditing(): void
     {
-        abort_unless($this->canEdit(), 403, 'This field cannot be changed here.');
+        abort_unless($this->canEdit(), 403, Value::string(__('lynx-admin::fields.cannot_change')));
     }
 
     /**

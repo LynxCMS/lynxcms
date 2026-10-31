@@ -261,7 +261,7 @@ trait EditsTemplateLayout
         $key = Str::slug($text, '_');
 
         if (preg_match('/^[a-z]/', $key) !== 1) {
-            throw ValidationException::withMessages(['layout' => 'Give it a name that starts with a letter.']);
+            throw ValidationException::withMessages(['layout' => __('lynx-admin::templates.layout.needs_letter')]);
         }
 
         $base = $key;

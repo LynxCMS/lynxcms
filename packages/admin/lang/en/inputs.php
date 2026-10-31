@@ -7,6 +7,14 @@ return [
     'none' => 'None',
     'setting_elsewhere' => 'This :type setting can be changed through the API or MCP.',
     'no_settings' => 'This component has no settings.',
+    'icon' => [
+        'no_icon' => 'No icon',
+        'remove' => 'Remove',
+        'search' => 'Search icons, e.g. calendar',
+        'search_label' => 'Search icons',
+        'label' => 'Icons',
+        'empty' => 'No icon matches.',
+    ],
     'items' => [
         'drag' => 'Drag to reorder',
         'off' => 'off',

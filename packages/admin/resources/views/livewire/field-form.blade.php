@@ -12,21 +12,21 @@
     @endunless
 
     @php
-        $tabLabels = ['builder' => $type === 'matrix' ? 'Block types' : 'Fields of each item', 'preview' => 'Preview', 'field' => 'Field', 'limits' => 'Limits and display'];
+        $tabLabels = ['builder' => __($type === 'matrix' ? 'lynx-admin::fields.tabs.blocks' : 'lynx-admin::fields.tabs.item_fields'), 'preview' => __('lynx-admin::fields.tabs.preview'), 'field' => __('lynx-admin::fields.tabs.field'), 'limits' => __('lynx-admin::fields.tabs.limits')];
         $errorTabs = collect($errors->keys())->map(fn ($key) => match (true) {
             str_starts_with($key, 'settings.types') || str_starts_with($key, 'settings.fields') => 'builder',
             in_array(explode('.', $key)[1] ?? '', \LynxCms\Admin\Livewire\FieldForm::ITEM_DISPLAY_SETTINGS, true) && $hasItemBuilder => 'limits',
             default => 'field',
         })->unique()->all();
     @endphp
-    <nav class="flex gap-5 overflow-x-auto border-b" aria-label="Field sections">
+    <nav class="flex gap-5 overflow-x-auto border-b" aria-label="{{ __('lynx-admin::fields.tabs.label') }}">
         @foreach ($sections as $section)
             <button type="button" data-field-tab="{{ $section }}" x-on:click="section = '{{ $section }}'"
                     class="text-muted-foreground relative -mb-px inline-flex shrink-0 items-center gap-1.5 border-b-2 whitespace-nowrap border-transparent pb-2.5 text-sm font-medium hover:text-foreground"
                     x-bind:class="section === '{{ $section }}' && 'border-primary! text-foreground'" x-bind:aria-current="section === '{{ $section }}' ? 'page' : 'false'">
                 {{ $tabLabels[$section] }}
                 @if ($section === 'builder')<span class="bg-muted rounded-full px-1.5 text-xs tabular-nums">{{ $type === 'matrix' ? count($itemTypes) : count($itemFields) }}</span>@endif
-                @if (in_array($section, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="has errors"></span>@endif
+                @if (in_array($section, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="{{ __('lynx-admin::fields.tabs.has_errors') }}"></span>@endif
             </button>
         @endforeach
     </nav>

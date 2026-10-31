@@ -1,8 +1,8 @@
-<x-lynx-admin::layout title="Fields">
-    <x-lynx-admin::ui.page-header title="Fields" description="Fields hold the content; templates combine them." class="mb-6 [&_h1]:text-2xl [&_h1]:font-semibold">
+<x-lynx-admin::layout :title="__('lynx-admin::fields.title')">
+    <x-lynx-admin::ui.page-header :title="__('lynx-admin::fields.title')" :description="__('lynx-admin::fields.description')" class="mb-6 [&_h1]:text-2xl [&_h1]:font-semibold">
         @if (app(\LynxCms\Admin\Editor\SchemaOwners::class)->isEditingEnabled())
             <x-slot:actions>
-                <x-lynx-admin::ui.button :href="route('lynx.admin.fields.create')"><x-lucide-plus aria-hidden="true" /> New field</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button :href="route('lynx.admin.fields.create')"><x-lucide-plus aria-hidden="true" /> {{ __('lynx-admin::fields.new') }}</x-lynx-admin::ui.button>
             </x-slot:actions>
         @endif
     </x-lynx-admin::ui.page-header>

@@ -11,6 +11,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Support\Value;
 
 /**
  * Setup > Templates: every template with its number of fields and pages and its flags.
@@ -23,7 +24,7 @@ final class TemplateList extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage templates and fields.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
     }
 
     /** System templates (Lynx's and modules') are listed only when asked for. */

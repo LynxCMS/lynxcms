@@ -10,6 +10,7 @@ use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Support\Value;
 
 /**
  * Setup > Languages: every language with its URL prefix, fallback and tab label (ADR-0003).
@@ -22,7 +23,7 @@ final class LanguageList extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage languages.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::languages.denied')));
     }
 
     public function render(): View

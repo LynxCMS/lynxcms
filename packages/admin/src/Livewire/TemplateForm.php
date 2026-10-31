@@ -79,7 +79,7 @@ final class TemplateForm extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage templates and fields.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
     }
 
     public function mount(?string $template = null): void
@@ -107,7 +107,7 @@ final class TemplateForm extends Component
     {
         $this->authorizeEditing();
         lynx()->templates->update((string) $this->template, ['label' => LocalizedForm::fromForm($this->label) ?? $this->name]);
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::templates.saved'));
     }
 
     public function addField(): void
@@ -137,7 +137,7 @@ final class TemplateForm extends Component
         $this->status = null;
         lynx()->templates->update((string) $this->template, ['tabs' => $this->layoutTabs(), 'fields' => $this->layoutFieldList($this->settingsOf(...))]);
         $this->loadFields();
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::templates.saved'));
     }
 
     public function render(): View
@@ -182,7 +182,7 @@ final class TemplateForm extends Component
     /** Read only screens refuse writes on the server too, whatever the browser sends. */
     private function authorizeEditing(): void
     {
-        abort_unless($this->canEdit(), 403, 'This template cannot be changed here.');
+        abort_unless($this->canEdit(), 403, Value::string(__('lynx-admin::templates.cannot_change')));
     }
 
     private function loadFields(): void

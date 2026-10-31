@@ -116,7 +116,7 @@ trait EditsItemSettings
         $type = Value::string($this->newSubfield['type']);
 
         if (! in_array($type, array_keys($this->subfieldTypes()), true)) {
-            throw ValidationException::withMessages(['newSubfield.type' => 'Choose a type that can be listed here. Repeaters and matrices cannot hold each other.']);
+            throw ValidationException::withMessages(['newSubfield.type' => __('lynx-admin::fields.subfields.item_type')]);
         }
 
         $translatable = $this->isMultilingual() ? (bool) $this->newSubfield['translatable'] : $this->typeCanTranslate($type);
