@@ -8,6 +8,16 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.29
+
+Released October 31, 2026. Forms can take a single file again. No database changes.
+
+- **Fix:** a form's file field that takes one file, the default, could not be sent. Visitors read that the field "must be an array". Fields that take several files were not affected.
+
+- **Fix:** errors on a file or a checkbox showed the form's key, such as `data.cv.0`. They now name the field by its label.
+
+- The installation guide has a section on [the queue worker](/getting-started/installation#the-queue-worker): form emails wait in the queue until one runs.
+
 ## 0.1.28
 
 Released October 31, 2026. New sites start on a plain page template. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
