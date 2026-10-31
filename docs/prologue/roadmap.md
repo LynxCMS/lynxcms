@@ -45,4 +45,4 @@ A text changed once for every page of a template (all courses), between the site
 
 ## Admin
 
-- The remaining modules' screens in the editor's language (ADR-0097). The admin's own screens and the menus, media, sitemap and static export modules are translated today, and field and template labels follow the language pages are edited in.
+- The remaining modules' screens in the editor's language (ADR-0097). The admin's own screens and the menus, media, sitemap, static export, SEO and page cache modules are translated today, and field and template labels follow the language pages are edited in.

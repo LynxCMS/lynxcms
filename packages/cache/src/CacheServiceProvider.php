@@ -79,6 +79,7 @@ final class CacheServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
+        $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-cache');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-cache');
         $this->registerRoutes();
         // The token and the refresh script, so scripts can always await window.lynxCsrfToken().

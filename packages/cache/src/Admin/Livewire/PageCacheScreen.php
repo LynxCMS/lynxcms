@@ -33,8 +33,8 @@ use LynxCms\Core\Support\Value;
  */
 final class PageCacheScreen extends Component
 {
-    /** What each clearing scope reaches, in words, from the changed page. */
-    public const array SCOPE_WORDS = ['self' => 'The page itself', 'parents' => 'Pages above it', 'children' => 'Pages below it', 'siblings' => 'Pages beside it', 'home' => 'The home page'];
+    /** Clearing scopes with words in the language file. */
+    private const array SCOPES = ['self', 'parents', 'children', 'siblings', 'home'];
 
     /** @var array<string, array{cache: bool, lifetime: string, parameters: string, clear: list<string>, csrf: bool}> */
     public array $rules = [];
@@ -86,26 +86,26 @@ final class PageCacheScreen extends Component
         }
 
         lynx()->run(SavePageCacheRules::class, ['lifetime' => $this->lifetime === '' ? null : $this->lifetime, 'templates' => $templates]);
-        $this->report('rules', 'Saved. Stored pages were cleared.');
+        $this->report('rules', Value::string(__('lynx-cache::admin.status.rules_saved')));
     }
 
     public function clearAll(): void
     {
         lynx()->run(ClearPageCache::class);
-        $this->report('stored', 'Every stored page was cleared.');
+        $this->report('stored', Value::string(__('lynx-cache::admin.status.all_cleared')));
     }
 
     public function clearTemplate(string $template): void
     {
         lynx()->run(ClearPageCache::class, ['template' => $template]);
-        $this->report('stored', "Pages of {$template} were cleared.");
+        $this->report('stored', Value::string(__('lynx-cache::admin.status.template_cleared', ['template' => $template])));
     }
 
     public function clearPage(): void
     {
         if ($this->page !== null) {
             lynx()->run(ClearPageCache::class, ['pages' => [$this->page]]);
-            $this->report('stored', 'This page was cleared.');
+            $this->report('stored', Value::string(__('lynx-cache::admin.status.page_cleared')));
         }
     }
 
@@ -138,17 +138,23 @@ final class PageCacheScreen extends Component
     private function summary(array $row): string
     {
         if (! $row['cache']) {
-            return 'Not cached';
+            return Value::string(__('lynx-cache::admin.summary.not_cached'));
         }
 
         $kept = match ($row['lifetime']) {
-            '' => 'Cached for the default lifetime',
-            '0' => 'Cached until its content changes',
-            default => 'Cached for '.CarbonInterval::seconds(Value::int($row['lifetime']))->cascade()->forHumans(),
+            '' => Value::string(__('lynx-cache::admin.summary.default')),
+            '0' => Value::string(__('lynx-cache::admin.summary.until_change')),
+            default => Value::string(__('lynx-cache::admin.summary.for', ['time' => CarbonInterval::seconds(Value::int($row['lifetime']))->cascade()->forHumans()])),
         };
-        $cleared = array_map(fn (string $scope): string => lcfirst(self::SCOPE_WORDS[$scope] ?? $scope), $row['clear']);
+        $cleared = array_map(fn (string $scope): string => lcfirst(self::scopeWords($scope)), $row['clear']);
 
-        return $kept.' · a change clears '.($cleared === [] ? 'every page' : Arr::join($cleared, ', ', ' and '));
+        return Value::string(__('lynx-cache::admin.summary.clears', ['kept' => $kept, 'what' => $cleared === [] ? __('lynx-cache::admin.summary.every_page') : Arr::join($cleared, ', ', Value::string(__('lynx-cache::admin.summary.and')))]));
+    }
+
+    /** What a clearing scope reaches, in words, from the changed page. */
+    public static function scopeWords(string $scope): string
+    {
+        return in_array($scope, self::SCOPES, true) ? Value::string(__('lynx-cache::admin.scopes.'.$scope)) : $scope;
     }
 
     private function report(string $for, string $status): void

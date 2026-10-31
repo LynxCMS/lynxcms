@@ -56,7 +56,7 @@
             {{-- Content and the template's own tabs hold fields; a dot marks one with an error. --}}
             @php($errorTabs = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => $layout->tabOf(explode('.', $key)[1] ?? ''))->unique()->all())
             {{-- Then the tabs modules add for this page (EditorTabs). --}}
-            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->key === \LynxCms\Core\Templates\Layout\LayoutTab::CONTENT ? __('lynx-admin::editor.content') : $t->label->in()])->all() + ($hasStrings ? ['texts' => __('lynx-admin::editor.tab_texts')] : []) + array_map(fn ($t) => $t['label'], $moduleTabs) + ['settings' => __('lynx-admin::editor.tab_settings')] as $value => $label)
+            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->key === \LynxCms\Core\Templates\Layout\LayoutTab::CONTENT ? __('lynx-admin::editor.content') : $t->label->in()])->all() + ($hasStrings ? ['texts' => __('lynx-admin::editor.tab_texts')] : []) + array_map(fn ($t) => __($t['label']), $moduleTabs) + ['settings' => __('lynx-admin::editor.tab_settings')] as $value => $label)
                 <x-lynx-admin::ui.tabs-trigger :value="$value" wire:click="$set('tab', '{{ $value }}')">
                     {{ $label }}
                     @if (in_array($value, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="{{ __('lynx-admin::editor.has_errors') }}"></span>@endif

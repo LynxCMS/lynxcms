@@ -19,6 +19,7 @@ use LynxCms\Cache\Admin\Livewire\PageCacheTab;
 use LynxCms\Cache\PageCacheEntry;
 use LynxCms\Cache\PageCacheSchema;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 
 /**
  * Adds the page cache screen to the admin: template rules, stored pages, clearing and the web
@@ -37,15 +38,15 @@ final class AdminIntegration
         Livewire::component('lynx-cache.fragments', FragmentsList::class);
         Livewire::component('lynx-cache.page-tab', PageCacheTab::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('page_cache.manage');
-        app(Navigation::class)->add('Page cache', 'lynx.admin.page-cache', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'zap', group: Navigation::SETTINGS);
+        app(Navigation::class)->add('lynx-cache::admin.title', 'lynx.admin.page-cache', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'zap', group: Navigation::SETTINGS);
         Admin::routes(fn () => Admin::screen('page-cache', 'lynx-cache::admin.index', 'page_cache.manage')->name('page-cache'));
         // The settings page is edited on the page cache screen, never as a page.
         app(AdminBranches::class)->register(PageCacheSchema::SETTINGS_TEMPLATE, fn (): string => route('lynx.admin.page-cache'));
         app(TemplateChoices::class)->exclude(PageCacheSchema::SETTINGS_TEMPLATE);
         app(SchemaOwners::class)->register('Page cache', [PageCacheSchema::SETTINGS_TEMPLATE], array_keys(PageCacheSchema::fields()));
-        app(EditorTabs::class)->add('cache', 'Cache', 'lynx-cache.page-tab', fn (Page $page): bool => $page->template()->hasUrl());
+        app(EditorTabs::class)->add('cache', 'lynx-cache::admin.tab', 'lynx-cache.page-tab', fn (Page $page): bool => $page->template()->hasUrl());
         app(EditorLinks::class)->add(fn (Page $page): ?array => $canManage() && PageCacheEntry::query()->where('page_id', $page->id)->exists()
-            ? ['label' => 'In the page cache', 'url' => route('lynx.admin.page-cache', ['page' => $page->id])]
+            ? ['label' => Value::string(__('lynx-cache::admin.in_cache')), 'url' => route('lynx.admin.page-cache', ['page' => $page->id])]
             : null);
     }
 }

@@ -17,6 +17,7 @@ use LynxCms\Cache\Pages\TemplateRule;
 use LynxCms\Cache\Pages\TemplateRules;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
+use LynxCms\Core\Support\Value;
 
 /**
  * The page editor's Cache tab: whether guests get a stored copy of the page, and why not when they
@@ -46,7 +47,7 @@ final class PageCacheTab extends Component
     {
         abort_unless($this->canManage(), 403);
         lynx()->run(ClearPageCache::class, ['pages' => [$this->pageId]]);
-        $this->status = 'This page was cleared. The next guest visit stores it again.';
+        $this->status = Value::string(__('lynx-cache::admin.status.tab_cleared'));
     }
 
     public function render(TemplateRules $rules, PageCacheSettings $settings): View
