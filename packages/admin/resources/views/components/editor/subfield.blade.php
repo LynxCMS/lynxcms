@@ -11,7 +11,7 @@
     $readOnly = fn (mixed $value): mixed => $disabled || ! $input ? app(\LynxCms\Admin\Editor\FieldInputs::class)->prepareDisplay((string) $subfield->field->type, $value) : $value;
 @endphp
 <div class="col-span-12 grid content-start gap-1 sm:[grid-column:span_var(--span)/span_var(--span)]" style="--span: {{ $span }}">
-    <p id="field-{{ $id }}" class="text-sm font-medium">{{ $subfield->label() }}@if ($subfield->isRequired())<span class="text-destructive" aria-label="required"> *</span>@endif</p>
+    <p id="field-{{ $id }}" class="text-sm font-medium">{{ $subfield->label() }}@if ($subfield->isRequired())<span class="text-destructive" aria-label="{{ __('lynx-admin::editor.field.required') }}"> *</span>@endif</p>
     @if ($subfield->description())
         <p class="text-muted-foreground text-xs">{{ $subfield->description() }}</p>
     @endif
@@ -19,7 +19,7 @@
         <x-lynx-admin::editor.value :type="$subfield->field->type" :value="$readOnly(reset($values))" />
     @elseif (count($codes) > 1)
         <x-lynx-admin::ui.tabs :value="$codes[0]" class="gap-1">
-            <x-lynx-admin::ui.tabs-list variant="compact" aria-label="Languages">
+            <x-lynx-admin::ui.tabs-list variant="compact" aria-label="{{ __('lynx-admin::editor.field.languages') }}">
                 @foreach (\LynxCms\Admin\Editor\LocalizedForm::languages() as $language)
                     <x-lynx-admin::ui.tabs-trigger :value="$language['code']">{{ $language['label'] }}</x-lynx-admin::ui.tabs-trigger>
                 @endforeach

@@ -2,27 +2,27 @@
     {{-- Redirects --}}
     @if ($hasUrl)
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-redirects">
-        <h2 id="settings-redirects" class="mb-1 text-base font-semibold">Old URLs</h2>
-        <p class="text-muted-foreground text-sm mb-4">URLs this page had before it was renamed or moved. Visitors and search engines are sent on to its current URL.</p>
+        <h2 id="settings-redirects" class="mb-1 text-base font-semibold">{{ __('lynx-admin::settings.redirects.title') }}</h2>
+        <p class="text-muted-foreground text-sm mb-4">{{ __('lynx-admin::settings.redirects.intro') }}</p>
         @forelse ($redirects as $old)
             @if ($loop->first) <ul class="divide-y divide-border text-sm"> @endif
             <li class="flex flex-wrap items-baseline justify-between gap-2 py-2" wire:key="redirect-{{ $old->language->code }}-{{ $old->path }}" x-data="{ confirming: false }">
                 <span><code>{{ $old->url() }}</code> <span class="text-muted-foreground">{{ $old->language->name }}</span></span>
                 <span class="flex items-baseline gap-3">
-                    <span class="{{ $old->isRedirecting ? 'text-muted-foreground' : 'text-destructive mt-1 text-sm' }}">{{ $old->isRedirecting ? 'Redirects' : 'Taken by another page' }}</span>
+                    <span class="{{ $old->isRedirecting ? 'text-muted-foreground' : 'text-destructive mt-1 text-sm' }}">{{ __($old->isRedirecting ? 'lynx-admin::settings.redirects.redirects' : 'lynx-admin::settings.redirects.taken') }}</span>
                     @unless ($isLocked)
-                        <button type="button" class="text-primary font-medium underline-offset-4 hover:underline" x-show="! confirming" @click="confirming = true">Delete</button>
+                        <button type="button" class="text-primary font-medium underline-offset-4 hover:underline" x-show="! confirming" @click="confirming = true">{{ __('lynx-admin::settings.redirects.delete') }}</button>
                         <span x-show="confirming" x-cloak>
-                            Stop redirecting?
-                            <button type="button" class="font-medium underline-offset-4 hover:underline text-destructive" wire:click="deleteRedirect(@js($old->language->code), @js($old->path))">Yes, delete</button>
-                            <button type="button" class="text-primary font-medium underline-offset-4 hover:underline" @click="confirming = false">Cancel</button>
+                            {{ __('lynx-admin::settings.redirects.confirm') }}
+                            <button type="button" class="font-medium underline-offset-4 hover:underline text-destructive" wire:click="deleteRedirect(@js($old->language->code), @js($old->path))">{{ __('lynx-admin::settings.redirects.yes_delete') }}</button>
+                            <button type="button" class="text-primary font-medium underline-offset-4 hover:underline" @click="confirming = false">{{ __('lynx-admin::settings.redirects.cancel') }}</button>
                         </span>
                     @endunless
                 </span>
             </li>
             @if ($loop->last) </ul> @endif
         @empty
-            <p class="text-muted-foreground text-sm">No old URLs.</p>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.redirects.empty') }}</p>
         @endforelse
         @error('path') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
         @error('page') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
@@ -31,8 +31,8 @@
 
     {{-- Backlinks --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-backlinks">
-        <h2 id="settings-backlinks" class="mb-1 text-base font-semibold">Linked from</h2>
-        <p class="text-muted-foreground text-sm mb-4">Pages that reference this page in a page field.</p>
+        <h2 id="settings-backlinks" class="mb-1 text-base font-semibold">{{ __('lynx-admin::settings.backlinks.title') }}</h2>
+        <p class="text-muted-foreground text-sm mb-4">{{ __('lynx-admin::settings.backlinks.intro') }}</p>
         @forelse ($backlinks as $link)
             @if ($loop->first) <ul class="divide-y divide-border text-sm"> @endif
             <li class="flex flex-wrap items-baseline justify-between gap-2 py-2" wire:key="backlink-{{ $link['id'] }}">
@@ -41,13 +41,13 @@
             </li>
             @if ($loop->last) </ul> @endif
         @empty
-            <p class="text-muted-foreground text-sm">No pages link here.</p>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.backlinks.empty') }}</p>
         @endforelse
     </section>
 
     {{-- Activity --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-activity">
-        <h2 id="settings-activity" class="mb-4 text-base font-semibold">Activity</h2>
+        <h2 id="settings-activity" class="mb-4 text-base font-semibold">{{ __('lynx-admin::settings.activity.title') }}</h2>
         @forelse ($activity as $entry)
             @if ($loop->first) <ol class="divide-y divide-border text-sm"> @endif
             <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-2">
@@ -57,10 +57,10 @@
             </li>
             @if ($loop->last) </ol> @endif
         @empty
-            <p class="text-muted-foreground text-sm">No activity yet.</p>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.activity.empty') }}</p>
         @endforelse
         @if ($hasMoreActivity)
-            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="showMoreActivity" class="mt-3">Show more</x-lynx-admin::ui.button>
+            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="showMoreActivity" class="mt-3">{{ __('lynx-admin::settings.activity.more') }}</x-lynx-admin::ui.button>
         @endif
     </section>
 </div>

@@ -57,7 +57,7 @@ final class PageRevisions extends Component
     {
         lynx()->run(RestoreRevision::class, ['page' => $this->pageId, 'revision' => $revision]);
         $this->comparing = null;
-        $this->notify('Revision restored.');
+        $this->notify(__('lynx-admin::settings.revisions.restored'));
         $this->dispatch('lynx-page-changed');
     }
 

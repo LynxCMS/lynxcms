@@ -1,6 +1,6 @@
 <form wire:submit="save" class="grid gap-4">
     @forelse ($groups as $group => $strings)
-        <section class="bg-card text-card-foreground divide-y rounded-xl border shadow-sm" aria-label="{{ $group !== '' ? \Illuminate\Support\Str::headline($group) : 'Texts' }}">
+        <section class="bg-card text-card-foreground divide-y rounded-xl border shadow-sm" aria-label="{{ $group !== '' ? \Illuminate\Support\Str::headline($group) : __('lynx-admin::pages.strings.texts') }}">
             @if ($group !== '')
                 <h2 class="px-5 py-3 text-sm font-semibold">{{ \Illuminate\Support\Str::headline($group) }}</h2>
             @endif
@@ -12,18 +12,18 @@
                         @if ($isSuperuser)
                             <p class="text-muted-foreground font-mono text-xs">{{ $key }}{{ $definition->format === 'markdown' ? ' · markdown' : '' }}</p>
                         @elseif ($definition->format === 'markdown')
-                            <p class="text-muted-foreground text-xs">Markdown</p>
+                            <p class="text-muted-foreground text-xs">{{ __('lynx-admin::pages.strings.markdown') }}</p>
                         @endif
                         @if ($definition->placeholders() !== [])
-                            <p class="text-muted-foreground text-xs">Keep {{ implode(', ', $definition->placeholders()) }}: the site fills {{ count($definition->placeholders()) === 1 ? 'it' : 'them' }} in.</p>
+                            <p class="text-muted-foreground text-xs">{{ trans_choice('lynx-admin::pages.strings.keep', count($definition->placeholders()), ['placeholders' => implode(', ', $definition->placeholders())]) }}</p>
                         @endif
                         @if ($isSuperuser && $definition->view !== '')
-                            <p class="text-muted-foreground font-mono text-xs break-all" title="Declared in this view">{{ $definition->view }}</p>
+                            <p class="text-muted-foreground font-mono text-xs break-all" title="{{ __('lynx-admin::pages.strings.declared_in') }}">{{ $definition->view }}</p>
                         @endif
                     </div>
                     <x-lynx-admin::ui.tabs :value="$languages[0]['code']" class="gap-1" aria-labelledby="string-{{ $key }}">
                         @if (count($languages) > 1)
-                            <x-lynx-admin::ui.tabs-list variant="compact" aria-label="Languages">
+                            <x-lynx-admin::ui.tabs-list variant="compact" aria-label="{{ __('lynx-admin::pages.strings.languages') }}">
                                 @foreach ($languages as $language)
                                     <x-lynx-admin::ui.tabs-trigger :value="$language['code']">{{ $language['label'] }}</x-lynx-admin::ui.tabs-trigger>
                                 @endforeach
@@ -40,9 +40,9 @@
                                 @endif
                                 <p class="text-muted-foreground text-xs">
                                     @if (($values[$position][$code] ?? '') === '')
-                                        Shows the template's text.
+                                        {{ __('lynx-admin::pages.strings.shows_template') }}
                                     @elseif ($canEdit)
-                                        Edited. <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="$set('values.{{ $position }}.{{ $code }}', '')">Use the template's text</button>
+                                        {{ __('lynx-admin::pages.strings.edited') }} <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="$set('values.{{ $position }}.{{ $code }}', '')">{{ __('lynx-admin::pages.strings.use_template') }}</button>
                                     @endif
                                 </p>
                             </div>
@@ -52,10 +52,10 @@
             @endforeach
         </section>
     @empty
-        <p class="text-muted-foreground text-sm">The templates declare no {{ $scope === 'site' ? 'site texts' : 'texts for this page' }}. Add them with <code>@string('key', 'Text')</code>.</p>
+        <p class="text-muted-foreground text-sm">{{ __($scope === 'site' ? 'lynx-admin::pages.strings.none_site' : 'lynx-admin::pages.strings.none_page') }} <code>@@string('key', 'Text')</code>.</p>
     @endforelse
     @if ($groups !== [] && $canEdit)
-        <div><x-lynx-admin::ui.button type="submit">Save texts</x-lynx-admin::ui.button></div>
+        <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::pages.strings.save') }}</x-lynx-admin::ui.button></div>
     @endif
     @error('values') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 </form>

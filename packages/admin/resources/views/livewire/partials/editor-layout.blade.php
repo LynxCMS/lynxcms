@@ -10,7 +10,7 @@
     $errorFields = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => explode('.', $key)[1] ?? '')->all();
 @endphp
 @if (! $layout->hasLayout())
-    <section class="@container bg-card text-card-foreground min-w-0 rounded-xl border shadow-sm flex flex-wrap overflow-hidden" aria-label="Content">
+    <section class="@container bg-card text-card-foreground min-w-0 rounded-xl border shadow-sm flex flex-wrap overflow-hidden" aria-label="{{ __('lynx-admin::editor.content') }}">
         @foreach ($fields as $field)
             @continue(! $isShown($field->name))
             @include('lynx-admin::livewire.partials.editor-field')
@@ -18,7 +18,7 @@
     </section>
 @else
     <div @class(['grid items-start gap-6', 'lg:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]' => $layout->hasSidebar($tab)])>
-        @foreach (['main' => 'Main', 'sidebar' => 'Sidebar'] as $column => $columnLabel)
+        @foreach (['main' => __('lynx-admin::editor.main'), 'sidebar' => __('lynx-admin::editor.sidebar')] as $column => $columnLabel)
             @continue($column === 'sidebar' && ! $layout->hasSidebar($tab))
             @php
                 // Consecutive loose fields share a card; each section is its own card.

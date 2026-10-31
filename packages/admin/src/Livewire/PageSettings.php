@@ -73,7 +73,7 @@ final class PageSettings extends Component
     public function saveNames(): void
     {
         lynx()->run(SavePage::class, ['id' => $this->pageId, 'names' => $this->namesInput(), 'expected_revision' => $this->revision]);
-        $this->changed('Names saved.');
+        $this->changed(__('lynx-admin::settings.names_saved'));
     }
 
     public function toggleStatus(string $flag): void
@@ -84,7 +84,7 @@ final class PageSettings extends Component
 
         $isSet = $this->page()->hasStatus(PageStatus::NAMES[$flag]);
         lynx()->pages->setStatus($this->pageId, ...($isSet ? ['remove' => [$flag]] : ['add' => [$flag]]));
-        $this->changed('Status saved.');
+        $this->changed(__('lynx-admin::settings.status.saved'));
     }
 
     /** A dry run of the switch, so the editor sees which fields' values would be orphaned first. */
@@ -104,7 +104,7 @@ final class PageSettings extends Component
         }
 
         lynx()->pages->switchTemplate($this->pageId, $this->template);
-        $this->changed('Template switched.', fieldsChanged: true);
+        $this->changed(__('lynx-admin::settings.template.switched'), fieldsChanged: true);
     }
 
     public function cancelTemplate(): void
@@ -118,11 +118,11 @@ final class PageSettings extends Component
         $parent = Value::ints($this->parent)[0] ?? null;
 
         if ($parent === null) {
-            throw ValidationException::withMessages(['parent' => 'Choose the new parent page first.']);
+            throw ValidationException::withMessages(['parent' => __('lynx-admin::settings.parent.choose_first')]);
         }
 
         lynx()->pages->move($this->pageId, $parent);
-        $this->changed('Page moved.');
+        $this->changed(__('lynx-admin::settings.parent.moved'));
     }
 
     public function render(TemplateChoices $choices): View

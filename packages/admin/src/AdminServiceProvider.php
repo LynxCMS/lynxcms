@@ -147,7 +147,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.not-found-page-form', NotFoundPageForm::class);
         // The page shown for addresses that match no page (ADR-0085), so editors know which it is.
         $this->app->make(TreeMarkers::class)->add('not-found', fn (Page $page): ?array => $this->app->make(NotFoundPage::class)->is($page)
-            ? ['icon' => 'file-question', 'label' => 'Shown for addresses that match no page (404)']
+            ? ['icon' => 'file-question', 'label' => __('lynx-admin::pages.tree.marker_not_found')]
             : null);
         $this->defineDefaultGate();
         AdminAuth::boot();

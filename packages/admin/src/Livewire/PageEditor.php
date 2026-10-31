@@ -109,14 +109,14 @@ final class PageEditor extends Component
         $changes = $this->changes($form);
 
         if ($changes === []) {
-            $this->notify('No changes to save.', 'warning');
+            $this->notify(__('lynx-admin::editor.no_changes'), 'warning');
 
             return;
         }
 
         lynx()->run(SavePage::class, ['id' => $this->pageId, 'values' => $changes, 'expected_revision' => $this->revision]);
         $this->load();
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::editor.saved'));
     }
 
     /**

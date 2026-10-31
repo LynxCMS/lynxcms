@@ -6,7 +6,7 @@
 @endphp
 <div class="space-y-3">
     <select class="blat-select max-w-sm" wire:model.live="{{ $model }}.component" aria-labelledby="field-{{ $field->name }}" @disabled($disabled)>
-        <option value="">None</option>
+        <option value="">{{ __('lynx-admin::inputs.none') }}</option>
         @foreach ($choices as $choice => $description)
             <option value="{{ $choice }}">{{ $choice }}</option>
         @endforeach
@@ -34,14 +34,14 @@
                     @elseif ($setting['type'] === 'string')
                         <input id="setting-{{ $field->name }}-{{ $name }}" type="text" class="blat-input" wire:model="{{ $model }}.settings.{{ $name }}" @disabled($disabled)>
                     @else
-                        <p class="text-muted-foreground text-sm">This {{ $setting['type'] }} setting can be changed through the API or MCP.</p>
+                        <p class="text-muted-foreground text-sm">{{ __('lynx-admin::inputs.setting_elsewhere', ['type' => $setting['type']]) }}</p>
                     @endif
                     @if ($setting['description'] !== '')
                         <p class="text-muted-foreground text-sm mt-1">{{ $setting['description'] }}</p>
                     @endif
                 </div>
             @empty
-                <p class="text-muted-foreground text-sm">This component has no settings.</p>
+                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::inputs.no_settings') }}</p>
             @endforelse
         </div>
     @endif

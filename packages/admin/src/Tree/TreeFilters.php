@@ -40,10 +40,10 @@ final readonly class TreeFilters
      */
     public function all(): array
     {
-        $filters = [self::DRAFTS => 'Draft changes', self::SCHEDULED => 'Scheduled'];
+        $filters = [self::DRAFTS => __('lynx-admin::pages.tree.filter_drafts'), self::SCHEDULED => __('lynx-admin::pages.tree.filter_scheduled')];
 
         foreach ($this->otherLanguages() as $language) {
-            $filters[self::MISSING.Value::string($language->code)] = 'Not in '.Value::string($language->name);
+            $filters[self::MISSING.Value::string($language->code)] = __('lynx-admin::pages.tree.filter_not_in', ['language' => Value::string($language->name)]);
         }
 
         $all = [];

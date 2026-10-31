@@ -22,7 +22,7 @@ trait ScopedToRoot
         $page = $id !== $root ? lynx()->pages->get($id) : null;
         $isInside = $page instanceof Page && lynx()->pages->count("id={$id}, has_parent={$root}, include=all") === 1;
 
-        return $isInside ? $page : throw ValidationException::withMessages(['page' => 'This page is not part of this tree.']);
+        return $isInside ? $page : throw ValidationException::withMessages(['page' => __('lynx-admin::pages.tree.outside_tree')]);
     }
 
     /** The root itself or a page below it, e.g. where a page is dropped. */

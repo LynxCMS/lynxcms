@@ -28,7 +28,7 @@
                     style="margin-inline-start: {{ ((int) ($item['depth'] ?? 0)) * 1.5 }}rem">
                     <div class="flex flex-wrap items-center gap-2 px-3 py-2 text-sm">
                         @unless ($disabled)
-                            <span wire:sort:handle class="cursor-grab select-none text-muted-foreground" title="Drag to reorder" aria-hidden="true">⠿</span>
+                            <span wire:sort:handle class="cursor-grab select-none text-muted-foreground" title="{{ __('lynx-admin::inputs.items.drag') }}" aria-hidden="true">⠿</span>
                         @endunless
                         <button type="button" class="flex min-w-0 flex-1 items-center gap-2 text-start font-medium" @click="open = ! open" :aria-expanded="open">
                             <x-lucide-chevron-right class="size-4 shrink-0 transition-transform" ::class="open && 'rotate-90'" aria-hidden="true" />
@@ -37,18 +37,18 @@
                         @if ($isMatrix)
                             <x-lynx-admin::ui.badge variant="outline">{{ $itemType->typeLabel($config, (string) ($item['type'] ?? '')) }}</x-lynx-admin::ui.badge>
                         @endif
-                        @unless ($item['enabled'] ?? true) <x-lynx-admin::ui.badge variant="secondary">off</x-lynx-admin::ui.badge> @endunless
+                        @unless ($item['enabled'] ?? true) <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-admin::inputs.items.off') }}</x-lynx-admin::ui.badge> @endunless
                         @unless ($disabled)
                             <span class="ms-auto flex flex-wrap items-center gap-3 text-xs">
-                                <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="toggleItem(@js($field->name), {{ $index }})">{{ ($item['enabled'] ?? true) ? 'Switch off' : 'Switch on' }}</button>
+                                <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="toggleItem(@js($field->name), {{ $index }})">{{ __(($item['enabled'] ?? true) ? 'lynx-admin::inputs.items.switch_off' : 'lynx-admin::inputs.items.switch_on') }}</button>
                                 @if ($maxDepth > 0)
-                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="indentItem(@js($field->name), {{ $index }}, -1)" aria-label="Outdent">←</button>
-                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="indentItem(@js($field->name), {{ $index }}, 1)" aria-label="Indent">→</button>
+                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="indentItem(@js($field->name), {{ $index }}, -1)" aria-label="{{ __('lynx-admin::inputs.items.outdent') }}">←</button>
+                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="indentItem(@js($field->name), {{ $index }}, 1)" aria-label="{{ __('lynx-admin::inputs.items.indent') }}">→</button>
                                 @endif
                                 @if ($max === 0 || count($items) < $max)
-                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="cloneItem(@js($field->name), {{ $index }})">Clone</button>
+                                    <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="cloneItem(@js($field->name), {{ $index }})">{{ __('lynx-admin::inputs.items.clone') }}</button>
                                 @endif
-                                <button type="button" class="text-destructive underline-offset-4 hover:underline" wire:click="removeItem(@js($field->name), {{ $index }})">Remove</button>
+                                <button type="button" class="text-destructive underline-offset-4 hover:underline" wire:click="removeItem(@js($field->name), {{ $index }})">{{ __('lynx-admin::inputs.items.remove') }}</button>
                             </span>
                         @endunless
                     </div>
@@ -70,7 +70,7 @@
             @endforeach
         </ol>
     @else
-        <p class="text-muted-foreground text-sm">No items yet.</p>
+        <p class="text-muted-foreground text-sm">{{ __('lynx-admin::inputs.items.empty') }}</p>
     @endif
 
     @unless ($disabled || ($max > 0 && count($items) >= $max))
@@ -80,7 +80,7 @@
                     <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }}, {{ Js::from($slug) }})"><x-lucide-plus aria-hidden="true" /> {{ $itemType->typeLabel($config, $slug) }}</x-lynx-admin::ui.button>
                 @endforeach
             @else
-                <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }})"><x-lucide-plus aria-hidden="true" /> {{ $addLabel !== '' ? $addLabel : 'Add item' }}</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }})"><x-lucide-plus aria-hidden="true" /> {{ $addLabel !== '' ? $addLabel : __('lynx-admin::inputs.items.add') }}</x-lynx-admin::ui.button>
             @endif
         </div>
     @endunless

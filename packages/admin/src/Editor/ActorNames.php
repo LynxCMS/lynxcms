@@ -23,12 +23,12 @@ final class ActorNames
         $user = $userId === null ? null : $this->user($userId);
 
         return match ($kind) {
-            Actor::USER => $user ?? 'Someone',
-            Actor::MCP => $user === null ? 'MCP' : "{$user} via MCP",
-            Actor::AI => $user === null ? 'AI agent' : "AI agent for {$user}",
-            Actor::CLI => 'Console',
-            Actor::GUEST => 'Visitor',
-            default => 'System',
+            Actor::USER => $user ?? __('lynx-admin::activity.actor.someone'),
+            Actor::MCP => $user === null ? __('lynx-admin::activity.actor.mcp') : __('lynx-admin::activity.actor.via_mcp', ['name' => $user]),
+            Actor::AI => $user === null ? __('lynx-admin::activity.actor.agent') : __('lynx-admin::activity.actor.agent_for', ['name' => $user]),
+            Actor::CLI => __('lynx-admin::activity.actor.console'),
+            Actor::GUEST => __('lynx-admin::activity.actor.visitor'),
+            default => __('lynx-admin::activity.actor.system'),
         };
     }
 
@@ -37,7 +37,7 @@ final class ActorNames
         if (! isset($this->users[$id])) {
             $user = Auth::guard()->getProvider()->retrieveById($id);
             $name = $user === null ? null : data_get($user, 'name');
-            $this->users[$id] = is_string($name) && $name !== '' ? $name : "User {$id}";
+            $this->users[$id] = is_string($name) && $name !== '' ? $name : __('lynx-admin::activity.actor.user', ['id' => $id]);
         }
 
         return $this->users[$id];

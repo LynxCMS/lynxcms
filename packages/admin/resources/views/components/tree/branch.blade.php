@@ -28,7 +28,7 @@
     @elseif ($isDropTarget)
         <ul
             role="group"
-            aria-label="Inside {{ $node->title }}"
+            aria-label="{{ __('lynx-admin::pages.tree.inside', ['page' => $node->title]) }}"
             class="lynx-tree-dropzone"
             style="--depth: {{ $depth }}"
             wire:sort="handleSort"

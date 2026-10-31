@@ -91,7 +91,7 @@ final class PageSchedule extends Component
 
         if ($isSaved) {
             $this->load();
-            $this->notify('Schedule saved.');
+            $this->notify(__('lynx-admin::settings.schedule.saved'));
         }
     }
 
