@@ -8,6 +8,16 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.28
+
+Released October 31, 2026. New sites start on a plain page template. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
+
+- **A template for a site's first pages.** `lynx:install` creates `simple-page`, with only a title, and the New page screen preselects it until a parent has pages of its own to go by.
+
+- **Fix:** the first page on a new site defaulted to the `not-found` template. That template is no longer offered for new pages.
+
+- The installation guide says when to run `storage:link`, and the meeting rooms guide links its [live demo](https://meeting-rooms.lynxcms.org/).
+
 ## 0.1.27
 
 Released October 31, 2026. A security release for sites with roles limited to some templates or branches: update soon. Sites whose editors all have full page rights are not affected. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
