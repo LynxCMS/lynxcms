@@ -1,12 +1,12 @@
-<x-lynx-admin::layout :title="'Results: '.$form->text('label')->in()" :crumbs="['Forms' => route('lynx.admin.forms')]">
-    <x-lynx-admin::ui.page-header :title="$form->text('label')->in()" :description="trans_choice(':count response, spam left out|:count responses, spam left out', $results['responses'])" class="mb-6 [&_h1]:text-2xl [&_h1]:font-semibold">
-        <x-lynx-admin::ui.button variant="outline" size="sm" :href="route('lynx.admin.forms.export', $form->key())">Export CSV</x-lynx-admin::ui.button>
+<x-lynx-admin::layout :title="__('lynx-forms::admin.results.title', ['form' => $form->text('label')->in()])" :crumbs="[__('lynx-forms::admin.title') => route('lynx.admin.forms')]">
+    <x-lynx-admin::ui.page-header :title="$form->text('label')->in()" :description="trans_choice('lynx-forms::admin.results.responses', $results['responses'])" class="mb-6 [&_h1]:text-2xl [&_h1]:font-semibold">
+        <x-lynx-admin::ui.button variant="outline" size="sm" :href="route('lynx.admin.forms.export', $form->key())">{{ __('lynx-forms::admin.results.export') }}</x-lynx-admin::ui.button>
     </x-lynx-admin::ui.page-header>
 
     {{-- A form placed on several pages, such as one survey per course, filters by page. --}}
     @if (count($pages) > 1)
-        <nav class="mb-4 flex flex-wrap gap-2" aria-label="Sent from">
-            <x-lynx-admin::ui.button size="xs" :variant="$page === null ? 'default' : 'outline'" :href="route('lynx.admin.forms.results', $form->key())">All pages</x-lynx-admin::ui.button>
+        <nav class="mb-4 flex flex-wrap gap-2" aria-label="{{ __('lynx-forms::admin.results.sent_from') }}">
+            <x-lynx-admin::ui.button size="xs" :variant="$page === null ? 'default' : 'outline'" :href="route('lynx.admin.forms.results', $form->key())">{{ __('lynx-forms::admin.results.all_pages') }}</x-lynx-admin::ui.button>
             @foreach ($pages as $pageId => $count)
                 <x-lynx-admin::ui.button size="xs" :variant="$page === $pageId ? 'default' : 'outline'" :href="route('lynx.admin.forms.results', [$form->key(), 'page' => $pageId])">
                     {{ lynx()->pages->get($pageId)?->parent()?->title ?? lynx()->pages->get($pageId)?->title ?? "#{$pageId}" }} ({{ $count }})
@@ -20,7 +20,7 @@
             <section class="bg-card grid gap-3 rounded-xl border p-5" aria-labelledby="q-{{ $question['name'] }}">
                 <div class="flex items-baseline justify-between gap-4">
                     <h2 id="q-{{ $question['name'] }}" class="font-medium">{{ $question['label'] }}</h2>
-                    <span class="text-muted-foreground text-sm">{{ $question['answered'] }} answered</span>
+                    <span class="text-muted-foreground text-sm">{{ __('lynx-forms::admin.results.answered', ['count' => $question['answered']]) }}</span>
                 </div>
 
                 @if (isset($question['options']))
@@ -34,9 +34,9 @@
                         @endforeach
                     </ul>
                 @elseif (isset($question['average']))
-                    <p class="text-sm">Average <strong>{{ $question['average'] }}</strong> · lowest {{ $question['lowest'] }} · highest {{ $question['highest'] }}</p>
+                    <p class="text-sm">{!! __('lynx-forms::admin.results.average', ['value' => '<strong>'.e($question['average']).'</strong>', 'lowest' => e($question['lowest']), 'highest' => e($question['highest'])]) !!}</p>
                 @elseif (isset($question['earliest']))
-                    <p class="text-sm">From {{ $question['earliest'] }} to {{ $question['latest'] }}</p>
+                    <p class="text-sm">{{ __('lynx-forms::admin.results.range', ['earliest' => $question['earliest'], 'latest' => $question['latest']]) }}</p>
                 @elseif (! empty($question['latest']))
                     <ul class="text-muted-foreground grid list-disc gap-1 pl-5 text-sm">
                         @foreach ($question['latest'] as $answer)
@@ -44,7 +44,7 @@
                         @endforeach
                     </ul>
                 @else
-                    <p class="text-muted-foreground text-sm">No answers yet.</p>
+                    <p class="text-muted-foreground text-sm">{{ __('lynx-forms::admin.results.none') }}</p>
                 @endif
             </section>
         @endforeach

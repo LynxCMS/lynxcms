@@ -31,22 +31,22 @@ final class AdminIntegration
     public static function register(): void
     {
         app(FieldInputs::class)->register(PagePasswordSchema::TYPE, 'lynx-page-password::inputs.password', PasswordConverter::class, 'lynx-page-password::values.password');
-        app(FieldKinds::class)->register(PagePasswordSchema::TYPE, 'Page password', 'Pages and media', 'key-round', 'A password visitors type to open the page.');
+        app(FieldKinds::class)->register(PagePasswordSchema::TYPE, 'lynx-page-password::admin.kind.label', 'Pages and media', 'key-round', 'lynx-page-password::admin.kind.description');
 
         Livewire::component('lynx-page-password.settings', PagePasswordSettings::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('schema.manage');
-        app(Navigation::class)->add('Page passwords', 'lynx.admin.page-passwords', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'key-round', group: Navigation::SETTINGS);
+        app(Navigation::class)->add('lynx-page-password::admin.nav', 'lynx.admin.page-passwords', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'key-round', group: Navigation::SETTINGS);
         Admin::routes(fn () => Admin::screen('page-passwords', 'lynx-page-password::admin.index', 'schema.manage')->name('page-passwords'));
 
         $visibility = app(PasswordVisibility::class);
         app(TreeMarkers::class)->add('page-password', fn (Page $page): ?array => $visibility->nearestRoot((int) $page->id) === (int) $page->id
-            ? ['icon' => 'key-round', 'label' => 'Password protected']
+            ? ['icon' => 'key-round', 'label' => Value::string(__('lynx-page-password::admin.protected'))]
             : null);
         app(EditorLinks::class)->add(function (Page $page) use ($visibility): ?array {
             $root = $visibility->nearestRoot((int) $page->id);
             $protector = $root !== null && $root !== (int) $page->id ? lynx()->pages->get($root) : null;
 
-            return $protector instanceof Page ? ['label' => 'Protected by '.Value::string($protector->getUnformatted('title')), 'url' => route('lynx.admin.pages.edit', $root)] : null;
+            return $protector instanceof Page ? ['label' => Value::string(__('lynx-page-password::admin.protected_by', ['page' => Value::string($protector->getUnformatted('title'))])), 'url' => route('lynx.admin.pages.edit', $root)] : null;
         });
     }
 }
