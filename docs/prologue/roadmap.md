@@ -45,4 +45,4 @@ A text changed once for every page of a template (all courses), between the site
 
 ## Admin
 
-- A guard against hardcoded wording in the admin's views (ADR-0097). The admin and every module are translated today, and field and template labels follow the language pages are edited in.
+- Field and template labels in the editor's own language (ADR-0097). The admin's wording follows the editor's choice today, while these labels follow the language pages are edited in.

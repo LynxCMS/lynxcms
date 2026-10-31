@@ -22,7 +22,7 @@
             <li wire:key="type-{{ $blockType['key'] }}" wire:sort:item="{{ $blockType['key'] }}" x-data="{ open: @js($saved === null || $hasErrors || $loop->first) }" data-block-type="{{ $saved ?? $blockType['slug'] }}"
                 @class(['bg-card min-w-0 rounded-lg border', 'border-destructive' => $hasErrors]) x-bind:class="open && ! @js($hasErrors) && 'border-foreground/20'">
                 <div class="flex items-center gap-3 px-3 py-2.5">
-                    @if ($canEdit) <span wire:sort:handle class="text-muted-foreground cursor-grab select-none active:cursor-grabbing" title="Drag to reorder" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span> @endif
+                    @if ($canEdit) <span wire:sort:handle class="text-muted-foreground cursor-grab select-none active:cursor-grabbing" title="{{ __('lynx-admin::fields.subfields.drag') }}" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span> @endif
                     <button type="button" class="flex min-w-0 flex-1 items-center gap-3 text-start" x-on:click="open = ! open" x-bind:aria-expanded="open">
                         <span class="bg-muted text-muted-foreground grid size-8 shrink-0 place-items-center rounded-md" x-bind:class="open && 'bg-primary! text-primary-foreground!'"><x-lucide-blocks class="size-4" aria-hidden="true" /></span>
                         <span class="grid min-w-0 gap-0.5">

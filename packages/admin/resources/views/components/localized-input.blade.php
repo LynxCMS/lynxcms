@@ -9,7 +9,7 @@
     @endif
 @else
     <x-lynx-admin::ui.tabs :value="$languages[0]['code']" class="gap-1">
-        <x-lynx-admin::ui.tabs-list variant="compact" aria-label="Languages">
+        <x-lynx-admin::ui.tabs-list variant="compact" aria-label="{{ __('lynx-admin::editor.field.languages') }}">
             @foreach ($languages as $language)
                 <x-lynx-admin::ui.tabs-trigger :value="$language['code']">{{ $language['label'] }}</x-lynx-admin::ui.tabs-trigger>
             @endforeach
