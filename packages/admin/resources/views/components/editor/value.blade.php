@@ -13,14 +13,14 @@
                     @if ($reference['title'] !== null)
                         <a href="{{ route('lynx.admin.pages.edit', $reference['id']) }}" class="text-primary font-medium underline-offset-4 hover:underline">{{ $reference['title'] }}</a>
                     @else
-                        <span class="text-muted-foreground text-sm">Missing page #{{ $reference['id'] }}</span>
+                        <span class="text-muted-foreground text-sm">{{ __('lynx-admin::editor.value.missing_page', ['id' => $reference['id']]) }}</span>
                     @endif
                 </li>
             @endforeach
         </ul>
         @break
     @case('toggle')
-        <p>{{ $value ? 'Yes' : 'No' }}</p>
+        <p>{{ __($value ? 'lynx-admin::editor.value.yes' : 'lynx-admin::editor.value.no') }}</p>
         @break
     @case('component')
         <pre class="lynx-code">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</pre>

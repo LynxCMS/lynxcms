@@ -94,7 +94,7 @@ trait MovesPages
             $page = $this->movablePage($id);
 
             if ($page->parentId === $this->rootPage()->id) {
-                throw ValidationException::withMessages(['page' => 'The page is already at the top level of this tree.']);
+                throw ValidationException::withMessages(['page' => __('lynx-admin::pages.tree.at_top')]);
             }
 
             $this->assertReorderable((int) lynx()->pages->get((int) $page->parentId)?->parentId);

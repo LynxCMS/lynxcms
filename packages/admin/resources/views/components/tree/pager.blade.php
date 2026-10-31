@@ -4,18 +4,18 @@
     $links = [];
 
     if ($level->page > 1) {
-        $links[] = ['label' => '‹', 'page' => $level->page - 1, 'aria' => 'Previous page', 'current' => false];
+        $links[] = ['label' => '‹', 'page' => $level->page - 1, 'aria' => __('lynx-admin::pages.tree.previous'), 'current' => false];
     }
 
     foreach ($level->pagerLinks() as $number) {
-        $links[] = ['label' => $number ?? '…', 'page' => $number, 'aria' => "Page {$number}", 'current' => $number === $level->page];
+        $links[] = ['label' => $number ?? '…', 'page' => $number, 'aria' => __('lynx-admin::pages.tree.page_number', ['number' => $number]), 'current' => $number === $level->page];
     }
 
     if ($level->page < $level->lastPage()) {
-        $links[] = ['label' => '›', 'page' => $level->page + 1, 'aria' => 'Next page', 'current' => false];
+        $links[] = ['label' => '›', 'page' => $level->page + 1, 'aria' => __('lynx-admin::pages.tree.next'), 'current' => false];
     }
 @endphp
-<nav class="lynx-tree-row lynx-tree-pager" style="--depth: {{ $depth }}" aria-label="Pages of children">
+<nav class="lynx-tree-row lynx-tree-pager" style="--depth: {{ $depth }}" aria-label="{{ __('lynx-admin::pages.tree.pager') }}">
     <ul class="ms-7 flex flex-wrap items-center gap-1">
         @foreach ($links as $link)
             <li>

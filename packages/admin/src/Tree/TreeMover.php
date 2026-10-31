@@ -77,7 +77,7 @@ final class TreeMover
         $parent = $this->page($parentId);
 
         if ($parent->parentId === null) {
-            throw ValidationException::withMessages(['page' => 'Pages cannot be placed beside the home page.']);
+            throw ValidationException::withMessages(['page' => __('lynx-admin::pages.tree.beside_home')]);
         }
 
         lynx()->pages->move($id, $parent->parentId, $parentPosition + 1);

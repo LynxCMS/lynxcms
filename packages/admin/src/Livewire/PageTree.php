@@ -210,7 +210,7 @@ final class PageTree extends Component
     protected function assertReorderable(int $parentId): void
     {
         if (! $this->treeLoader()->isComplete($parentId)) {
-            throw ValidationException::withMessages(['page' => 'Some pages here are hidden from you, so pages cannot be reordered here.']);
+            throw ValidationException::withMessages(['page' => __('lynx-admin::pages.tree.hidden_siblings')]);
         }
     }
 

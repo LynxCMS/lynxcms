@@ -30,7 +30,7 @@ trait ReviewsChanges
         $changes = $this->changes($form);
 
         if ($changes === []) {
-            $this->notify('No changes to review.', 'warning');
+            $this->notify(__('lynx-admin::editor.no_changes_review'), 'warning');
 
             return;
         }

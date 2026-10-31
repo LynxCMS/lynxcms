@@ -95,9 +95,9 @@ final class PageStrings extends Component
 
         $this->load();
         if ($changes === []) {
-            $this->notify('No changes to save.', 'warning');
+            $this->notify(__('lynx-admin::pages.strings.no_changes'), 'warning');
         } else {
-            $this->notify($isDraft ? 'Saved to the draft. The live page has not changed.' : 'Saved.');
+            $this->notify(__($isDraft ? 'lynx-admin::pages.strings.saved_draft' : 'lynx-admin::pages.strings.saved'));
         }
 
         if ($changes !== [] && ! $isDraft && $this->scope === 'page') {

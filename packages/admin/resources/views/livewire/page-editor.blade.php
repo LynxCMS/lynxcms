@@ -2,7 +2,7 @@
      @if (app(\LynxCms\Admin\AdminAccess::class)->allows('pages.edit', $page)) wire:poll.60s="renewEditLock" @endif>
     <x-lynx-admin::ui.breadcrumb>
         <x-lynx-admin::ui.breadcrumb-list>
-            <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.pages')">Pages</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
+            <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.pages')">{{ __('lynx-admin::pages.title') }}</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
             @foreach ($ancestors as $ancestor)
                 <x-lynx-admin::ui.breadcrumb-separator />
                 <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.pages.edit', $ancestor['id'])">{{ $ancestor['title'] }}</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
@@ -24,14 +24,14 @@
         {{-- Someone else saved after this form was loaded; the edits below are still in the form. --}}
         <x-lynx-admin::ui.card role="alert" class="flex flex-wrap items-center justify-between gap-4 p-4">
             <p class="text-sm text-destructive">{{ $message }}</p>
-            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="reload">Reload and discard my edits</x-lynx-admin::ui.button>
+            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="reload">{{ __('lynx-admin::editor.reload') }}</x-lynx-admin::ui.button>
         </x-lynx-admin::ui.card>
     @enderror
 
     @if ($page->hasStatus(\LynxCms\Core\Pages\PageStatus::LOCKED))
         <x-lynx-admin::ui.card role="status" class="flex flex-wrap items-center justify-between gap-4 p-4">
-            <p class="text-sm"><strong>This page is locked.</strong> It cannot be edited, moved or deleted until it is unlocked.</p>
-            @if ($canUnlock) <x-lynx-admin::ui.button variant="outline" type="button" wire:click="unlock">Unlock</x-lynx-admin::ui.button> @endif
+            <p class="text-sm"><strong>{{ __('lynx-admin::editor.locked_title') }}</strong> {{ __('lynx-admin::editor.locked_description') }}</p>
+            @if ($canUnlock) <x-lynx-admin::ui.button variant="outline" type="button" wire:click="unlock">{{ __('lynx-admin::editor.unlock') }}</x-lynx-admin::ui.button> @endif
         </x-lynx-admin::ui.card>
     @endif
 
@@ -40,26 +40,26 @@
         <x-lynx-admin::ui.alert tone="warning" role="status">
             <x-lucide-user-pen aria-hidden="true" />
             <x-lynx-admin::ui.alert-description class="flex flex-wrap items-center gap-3">
-                <span>{{ $editedBy }} is editing this page (until {{ $editedUntil }} unless they keep it open). You can view it; editing opens when they are done.</span>
+                <span>{{ __('lynx-admin::editor.edited_by', ['name' => $editedBy, 'time' => $editedUntil]) }}</span>
                 @if ($canTakeOver)
-                    <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="takeOverEditLock">Take over editing</x-lynx-admin::ui.button>
+                    <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="takeOverEditLock">{{ __('lynx-admin::editor.take_over') }}</x-lynx-admin::ui.button>
                 @endif
             </x-lynx-admin::ui.alert-description>
         </x-lynx-admin::ui.alert>
     @elseif (! $canEdit)
-        <p role="status" class="bg-card text-card-foreground rounded-xl border shadow-sm p-4 text-sm">You can view this page but not edit it.</p>
+        <p role="status" class="bg-card text-card-foreground rounded-xl border shadow-sm p-4 text-sm">{{ __('lynx-admin::editor.view_only') }}</p>
     @endif
 
     {{-- The server decides the section; the key re-creates the tabs when it changes. --}}
     <x-lynx-admin::ui.tabs :value="$tab" wire:key="editor-sections-{{ $tab }}">
-        <x-lynx-admin::ui.tabs-list variant="underline" aria-label="Editor sections">
+        <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-admin::editor.sections') }}">
             {{-- Content and the template's own tabs hold fields; a dot marks one with an error. --}}
             @php($errorTabs = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => $layout->tabOf(explode('.', $key)[1] ?? ''))->unique()->all())
             {{-- Then the tabs modules add for this page (EditorTabs). --}}
-            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->label->in()])->all() + ($hasStrings ? ['texts' => 'Texts'] : []) + array_map(fn ($t) => $t['label'], $moduleTabs) + ['settings' => 'Settings'] as $value => $label)
+            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->key === \LynxCms\Core\Templates\Layout\LayoutTab::CONTENT ? __('lynx-admin::editor.content') : $t->label->in()])->all() + ($hasStrings ? ['texts' => __('lynx-admin::editor.tab_texts')] : []) + array_map(fn ($t) => $t['label'], $moduleTabs) + ['settings' => __('lynx-admin::editor.tab_settings')] as $value => $label)
                 <x-lynx-admin::ui.tabs-trigger :value="$value" wire:click="$set('tab', '{{ $value }}')">
                     {{ $label }}
-                    @if (in_array($value, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="has errors"></span>@endif
+                    @if (in_array($value, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="{{ __('lynx-admin::editor.has_errors') }}"></span>@endif
                 </x-lynx-admin::ui.tabs-trigger>
             @endforeach
         </x-lynx-admin::ui.tabs-list>
@@ -67,8 +67,8 @@
 
     @if ($isReviewing && $isFieldsTab)
         <x-lynx-admin::editor.review :entries="$review">
-            <x-lynx-admin::ui.button type="button" wire:click="save">Save these changes</x-lynx-admin::ui.button>
-            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="closeReview">Keep editing</x-lynx-admin::ui.button>
+            <x-lynx-admin::ui.button type="button" wire:click="save">{{ __('lynx-admin::editor.save_changes') }}</x-lynx-admin::ui.button>
+            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="closeReview">{{ __('lynx-admin::editor.keep_editing') }}</x-lynx-admin::ui.button>
         </x-lynx-admin::editor.review>
     @endif
 

@@ -20,19 +20,19 @@
             <button type="button" id="field-{{ $field->name }}" class="flex items-center gap-1.5 font-medium text-start" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-controls="field-{{ $field->name }}-input">
                 <x-lynx-admin::ui.icon name="chevron-right" class="text-muted-foreground size-4 shrink-0 transition-transform" x-bind:class="open && 'rotate-90'" aria-hidden="true" />
                 @if ($field->icon)<x-lynx-admin::ui.icon :name="$field->icon" data-icon="{{ $field->icon }}" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />@endif
-                <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="required"> *</span>@endif</span>
+                <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="{{ __('lynx-admin::editor.field.required') }}"> *</span>@endif</span>
             </button>
         @else
             <p id="field-{{ $field->name }}" class="flex items-center gap-1.5 font-medium">
                 @if ($field->icon)<x-lynx-admin::ui.icon :name="$field->icon" data-icon="{{ $field->icon }}" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />@endif
-                <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="required"> *</span>@endif</span>
+                <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="{{ __('lynx-admin::editor.field.required') }}"> *</span>@endif</span>
             </p>
         @endif
         @if ($field->display === \LynxCms\Core\Templates\FieldDisplay::Locked)
-            <p class="text-muted-foreground text-xs">Set by the site, not editable here.</p>
+            <p class="text-muted-foreground text-xs">{{ __('lynx-admin::editor.field.locked') }}</p>
         @endif
         @if ($showType)
-            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', translatable' : '' }}</p>
+            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', '.__('lynx-admin::editor.field.translatable') : '' }}</p>
         @endif
         @if ($field->description)
             <p class="text-muted-foreground text-sm mt-1">{{ $field->description }}</p>
@@ -46,7 +46,7 @@
                     @php($state = $field->values[$language['code']])
                     <x-lynx-admin::ui.tabs-trigger :value="$language['code']"
                             x-on:dblclick="$dispatch('lynx-editor-language', '{{ $language['code'] }}')"
-                            :title="$state->isOwn ? 'Filled' : ($state->fallsBackTo ? 'Falls back to '.$state->fallsBackTo : 'Empty')">
+                            :title="$state->isOwn ? __('lynx-admin::editor.field.filled') : ($state->fallsBackTo ? __('lynx-admin::editor.field.falls_back_to', ['language' => $state->fallsBackTo]) : __('lynx-admin::editor.field.empty'))">
                         {{ $language['label'] }}
                         <span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $state->isOwn, 'is-fallback' => $state->fallsBackTo !== null])></span>
                     </x-lynx-admin::ui.tabs-trigger>
@@ -70,22 +70,22 @@
                     ])
                     @if ($state->fallsBackTo !== null)
                         {{-- A translation hint: the tab's state marker says it already, so it shows only when the editor turns hints on. --}}
-                        <p class="lynx-hint text-muted-foreground text-sm mt-1">Empty in this language: visitors see the {{ $state->fallsBackTo }} value.</p>
+                        <p class="lynx-hint text-muted-foreground text-sm mt-1">{{ __('lynx-admin::editor.field.empty_hint', ['language' => $state->fallsBackTo]) }}</p>
                     @endif
                     @if (($field->settings['formatters'] ?? []) !== [] && trim((string) ($current[$code] ?? '')) !== '')
                         {{-- What visitors see: the field's format and formatters (ADR-0031), cleaned by core. --}}
                         <details class="mt-2 text-sm">
-                            <summary class="cursor-pointer text-muted-foreground">Preview</summary>
+                            <summary class="cursor-pointer text-muted-foreground">{{ __('lynx-admin::editor.field.preview') }}</summary>
                             <div class="lynx-preview mt-2">{!! lynx()->formatters()->render(lynx()->fields->get($field->name), $current[$code], $code) !!}</div>
                         </details>
                     @endif
                 @elseif ($state->isOwn)
                     <x-lynx-admin::editor.value :type="$field->type" :value="$state->value" />
                 @elseif ($state->fallsBackTo)
-                    <p class="lynx-hint text-muted-foreground text-sm mb-1">Falls back to {{ $state->fallsBackTo }}:</p>
+                    <p class="lynx-hint text-muted-foreground text-sm mb-1">{{ __('lynx-admin::editor.field.falls_back_read', ['language' => $state->fallsBackTo]) }}</p>
                     <div class="lynx-fallback"><x-lynx-admin::editor.value :type="$field->type" :value="$state->value" /></div>
                 @else
-                    <p class="text-muted-foreground text-sm">Empty</p>
+                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::editor.field.empty') }}</p>
                 @endif
             </div>
         @endforeach

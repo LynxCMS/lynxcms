@@ -68,7 +68,7 @@ final class PageCreator extends Component
     public function create(TemplateChoices $choices, EditorForm $form): void
     {
         if (! array_key_exists($this->template, $choices->for($this->parent()))) {
-            throw ValidationException::withMessages(['template' => 'Choose one of the templates offered here.']);
+            throw ValidationException::withMessages(['template' => __('lynx-admin::pages.create.invalid_template')]);
         }
 
         $fields = $form->fieldsForNewPage($this->template);

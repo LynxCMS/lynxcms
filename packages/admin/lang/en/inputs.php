@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'yes' => 'Yes',
+    'none' => 'None',
+    'setting_elsewhere' => 'This :type setting can be changed through the API or MCP.',
+    'no_settings' => 'This component has no settings.',
+    'items' => [
+        'drag' => 'Drag to reorder',
+        'off' => 'off',
+        'switch_off' => 'Switch off',
+        'switch_on' => 'Switch on',
+        'outdent' => 'Outdent',
+        'indent' => 'Indent',
+        'clone' => 'Clone',
+        'remove' => 'Remove',
+        'empty' => 'No items yet.',
+        'add' => 'Add item',
+    ],
+    'rich_text' => [
+        'toolbar' => 'Formatting for :field',
+        'bold' => 'Bold',
+        'italic' => 'Italic',
+        'strike' => 'Strikethrough',
+        'heading' => 'Heading',
+        'subheading' => 'Subheading',
+        'bullet_list' => 'Bullet list',
+        'numbered_list' => 'Numbered list',
+        'quote' => 'Quote',
+        'link' => 'Link',
+        'undo' => 'Undo',
+        'redo' => 'Redo',
+    ],
+    'page_table' => [
+        'actions' => 'Actions',
+        'edit' => 'Edit',
+        'move_up' => 'Move up',
+        'move_down' => 'Move down',
+        'remove' => 'Remove',
+        'confirm_remove' => 'Remove this item and move its page to the trash?',
+        'empty' => 'No items yet.',
+        'template' => 'Template of the new item',
+        'title' => 'Title of the new item',
+        'add' => 'Add',
+        'save_first' => 'Save the page first to add items.',
+    ],
+];
