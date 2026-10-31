@@ -8,6 +8,16 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.27
+
+Released October 31, 2026. A security release for sites with roles limited to some templates or branches: update soon. Sites whose editors all have full page rights are not affected. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
+
+- **Site texts need rights on the home page.** `strings.save` checked only the page it named, so a role limited to a branch could change site texts through MCP or the agent. It now needs `pages.edit` on the home page, as the Site texts screen always did.
+
+- **The link dialog keeps to what the editor may view.** A crafted request could read titles, URLs, headings and file names of pages outside a role's scope, including unpublished ones.
+
+- **The Cache tab stays on its own page.** A crafted request could read another page's status and stored URLs.
+
 ## 0.1.26
 
 Released October 31, 2026. The admin and every module now speak the editor's language, with English and Portuguese included. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
