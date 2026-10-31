@@ -30,7 +30,7 @@ Released October 31, 2026. The admin and every module now speak the editor's lan
 
 - **Fix:** the Site texts screen showed "Text" where it meant to show the `@string('key', 'Text')` example.
 
-- `composer setup` in the starters links the storage folder, and the starters ask for PHP 8.5.
+- The training starter's `composer setup` links the storage folder, so a first uploaded photo no longer shows as a broken image, and the starter asks for PHP 8.5.
 
 ## 0.1.25
 
