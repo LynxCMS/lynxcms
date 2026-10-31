@@ -66,6 +66,7 @@ class FormComponent extends Component
             return;
         }
 
+        $this->listUpload($property);
         $key = 'data.'.substr($property, strpos($property, '.') + 1);
         $name = explode('.', $key)[1] ?? '';
         $errors = app(FormValidator::class)->make($this->definition(), $this->answers(), [$name])->errors();
@@ -181,6 +182,16 @@ class FormComponent extends Component
     protected function answers(): array
     {
         return array_replace($this->data, array_filter($this->files, fn (mixed $files): bool => $files !== [] && $files !== null));
+    }
+
+    /** An input without "multiple" sends one file: uploads are kept as lists, as forms.submit takes them. */
+    private function listUpload(string $property): void
+    {
+        $name = substr($property, strlen('files.'));
+
+        if (str_starts_with($property, 'files.') && isset($this->files[$name]) && ! is_array($this->files[$name])) {
+            $this->files[$name] = [$this->files[$name]];
+        }
     }
 
     /**

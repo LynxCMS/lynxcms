@@ -121,6 +121,10 @@ final class FormValidator
             $messages[$key.'.'.$rule] = $message->in();
         }
 
+        if (in_array($field->type, ['checkboxes', 'file'], true)) {
+            $attributes[$key.'.*'] = $field->label->in();
+        }
+
         match ($field->type) {
             'checkboxes' => $rules[$key.'.*'] = [Rule::in(array_keys($field->options))],
             'file' => $rules[$key.'.*'] = array_filter(['file', 'max:'.$field->maxKb, $field->allowedExtensions() === null ? null : 'extensions:'.implode(',', $field->allowedExtensions())]),

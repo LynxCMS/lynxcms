@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use LynxCms\Forms\Actions\SubmitForm;
+use LynxCms\Forms\Definition\Form;
+use LynxCms\Forms\Definition\FormField;
+use LynxCms\Forms\Definition\FormValidator;
 use LynxCms\Forms\Livewire\FormComponent;
 use LynxCms\Forms\Models\Submission;
 use LynxCms\Tests\Fixtures\Forms\QuoteForm;
@@ -135,4 +138,51 @@ it('sums up the earlier answers on the last step', function (): void {
         ->call('addRow', 'deliverables')->set('data.deliverables.0.format', 'Teaser')
         ->call('next')
         ->assertSee('Reveja as respostas antes de enviar.')->assertSee('Filme')->assertSee('Teaser');
+});
+
+it('takes one file from a field that holds one, which the browser sends without a list', function (): void {
+    $component = fillQuote(quoteComponent())->set('files.brief', UploadedFile::fake()->create('brief.pdf', 50, 'application/pdf'));
+    $this->travel(5)->seconds();
+
+    expect($component->get('files.brief'))->toBeArray()->toHaveCount(1);
+
+    $component->call('submit')->assertHasNoErrors()->assertSet('isSent', true);
+
+    expect(Submission::query()->sole()->files)->toHaveCount(1);
+});
+
+it('names a refused file by its label, not its form key', function (): void {
+    $component = fillQuote(quoteComponent())->set('files.brief', [UploadedFile::fake()->create('shell.php', 1)]);
+    $this->travel(5)->seconds();
+    $component->call('submit');
+
+    $errors = collect($component->errors()->all());
+
+    expect($errors)->not->toBeEmpty()
+        ->and($errors->implode(' '))->not->toContain('data.brief');
+});
+
+it('names a refused choice in a list by its label', function (): void {
+    $form = new class extends Form
+    {
+        public function key(): string
+        {
+            return 'extras';
+        }
+
+        public function label(): string
+        {
+            return 'Extras';
+        }
+
+        public function fields(): array
+        {
+            return [FormField::checkboxes('extras')->label('Extras')->options(['a' => 'A'])];
+        }
+    };
+
+    $errors = app(FormValidator::class)->make($form, ['extras' => ['nonsense']])->errors();
+
+    expect($errors->isNotEmpty())->toBeTrue()
+        ->and(collect($errors->all())->implode(' '))->not->toContain('data.extras');
 });
