@@ -7,6 +7,7 @@ namespace LynxCms\Forms\Admin\Livewire;
 use Illuminate\Support\Facades\Gate;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Builder\PageForms;
 use LynxCms\Forms\Definition\Form;
 use LynxCms\Forms\Definition\FormValidator;
@@ -34,6 +35,6 @@ final class PreviewForm extends FormComponent
     public function submit(): void
     {
         app(FormValidator::class)->make($this->definition(), $this->answers())->validate();
-        $this->problem = 'Preview: nothing was sent. The answers are valid; publish the form and pick it on a page to use it.';
+        $this->problem = Value::string(__('lynx-forms::admin.preview.done'));
     }
 }

@@ -7,7 +7,8 @@ use Symfony\Component\Finder\Finder;
 
 /*
  * Every package ships English and Portuguese wording (ADR-0097). A key added to English and
- * forgotten elsewhere would show English on a Portuguese screen, with nothing to say so.
+ * forgotten elsewhere would show English on a Portuguese screen, with nothing to say so. Other
+ * languages are held to the same standard for the files they have.
  */
 
 /** @return array<string, array{string, string, string}> [package, language, file] for every translation of an English file */
@@ -19,7 +20,7 @@ function translatedFiles(): array
         $root = dirname($file->getPath());
 
         foreach (array_unique(['pt', ...array_map(basename(...), glob("{$root}/*", GLOB_ONLYDIR) ?: [])]) as $language) {
-            if ($language !== 'en') {
+            if ($language === 'pt' || ($language !== 'en' && file_exists("{$root}/{$language}/{$file->getFilename()}"))) {
                 $cases[basename(dirname($root))."/{$language}/{$file->getFilename()}"] = [$root, $language, $file->getFilename()];
             }
         }

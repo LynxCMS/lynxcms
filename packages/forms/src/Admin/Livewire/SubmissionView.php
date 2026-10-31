@@ -11,6 +11,7 @@ use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\DeleteSubmission;
 use LynxCms\Forms\Actions\UpdateSubmission;
 use LynxCms\Forms\Models\Submission;
@@ -53,17 +54,17 @@ final class SubmissionView extends Component
     public function saveNotes(): void
     {
         lynx()->run(UpdateSubmission::class, ['submission' => $this->uuid, 'notes' => trim($this->notes) === '' ? null : $this->notes]);
-        $this->notify('Notes saved.');
+        $this->notify(Value::string(__('lynx-forms::admin.submission.notes_saved')));
     }
 
     public function setStatus(string $status): void
     {
         lynx()->run(UpdateSubmission::class, ['submission' => $this->uuid, 'status' => $status]);
         $this->notify(match ($status) {
-            'archived' => 'Archived.',
-            'spam' => 'Marked as spam.',
-            'new' => 'Marked as new.',
-            default => 'Marked as read.',
+            'archived' => Value::string(__('lynx-forms::admin.submission.archived')),
+            'spam' => Value::string(__('lynx-forms::admin.submission.spam_done')),
+            'new' => Value::string(__('lynx-forms::admin.submission.new_done')),
+            default => Value::string(__('lynx-forms::admin.submission.read_done')),
         });
     }
 

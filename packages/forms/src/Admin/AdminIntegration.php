@@ -17,6 +17,7 @@ use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Admin\Http\DownloadSubmissionFile;
 use LynxCms\Forms\Admin\Http\ExportSubmissions;
 use LynxCms\Forms\Admin\Http\ShowFormPreview;
@@ -44,7 +45,7 @@ final class AdminIntegration
         app(FieldInputs::class)->register('options', 'lynx-forms::inputs.options', OptionsConverter::class);
         // Only the form builder's schema creates options fields; editors pick choice instead.
         app(FieldTypeChoices::class)->exclude('options');
-        app(FieldKinds::class)->register('options', 'Options for visitors', 'Choices', 'list-checks', 'A list visitors pick from, such as the answers to a form question.');
+        app(FieldKinds::class)->register('options', 'lynx-forms::admin.kind.label', 'Choices', 'list-checks', 'lynx-forms::admin.kind.description');
         Livewire::component('lynx-forms.inbox', Inbox::class);
         Livewire::component('lynx-forms.submission', SubmissionView::class);
         Livewire::component('lynx-forms.list', FormList::class);
@@ -52,7 +53,7 @@ final class AdminIntegration
         self::registerBuilder();
 
         $canSee = fn (): bool => app(AdminAccess::class)->allows('forms.view');
-        app(Navigation::class)->add('Forms', 'lynx.admin.forms', order: self::NAVIGATION_ORDER, visible: $canSee, icon: 'inbox',
+        app(Navigation::class)->add('lynx-forms::admin.title', 'lynx.admin.forms', order: self::NAVIGATION_ORDER, visible: $canSee, icon: 'inbox',
             badge: fn (): int => Submission::query()->where('status', 'new')->count());
 
         Admin::routes(function (): void {
@@ -74,7 +75,7 @@ final class AdminIntegration
     {
         app(AdminBranches::class)->register(FormSchema::ROOT_TEMPLATE, fn (Page $page, Page $root): ?string => $page->id === $root->id ? route('lynx.admin.forms.builder') : null);
         app(EditorLinks::class)->add(fn (Page $page): ?array => $page->template()->name === FormSchema::FORM_TEMPLATE
-            ? ['label' => 'Preview form', 'url' => route('lynx.admin.forms.preview', FormSchema::key($page))]
+            ? ['label' => Value::string(__('lynx-forms::admin.preview.title')), 'url' => route('lynx.admin.forms.preview', FormSchema::key($page))]
             : null);
         app(TemplateChoices::class)->exclude(FormSchema::ROOT_TEMPLATE, FormSchema::FORM_TEMPLATE);
         app(SchemaOwners::class)->register('Forms', array_keys(FormSchema::templates()), array_values(array_diff(array_keys(FormSchema::fields()), [FormSchema::PICKER])));
