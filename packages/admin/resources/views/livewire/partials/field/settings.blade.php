@@ -13,9 +13,9 @@
             @php($words = $labels->for($setting, $definition, $type))
             <div class="grid gap-1.5" wire:key="setting-{{ $type }}-{{ $setting }}">
                 @if ($type === 'choice' && $setting === 'options')
-                    <span class="text-sm font-medium">Options</span>
+                    <span class="text-sm font-medium">{{ __('lynx-admin::fields.settings.options') }}</span>
                     <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" defaultable multiple-model="settings.multiple" />
-                    <p class="text-muted-foreground text-sm">Pages store an option's value, and people read its label. Leave a value empty to make it from the label. The default is chosen on new pages and items, and editors can change it.</p>
+                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.options_help') }}</p>
                 @elseif ($definition['type'] === 'boolean')
                     <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
                         <input class="blat-checkbox mt-0.5" id="setting-{{ $setting }}" type="checkbox" wire:model="settings.{{ $setting }}">
@@ -26,7 +26,7 @@
                     <div class="flex max-w-md items-center gap-2">
                         @if ($words['options'] !== [])
                             <select id="setting-{{ $setting }}" class="blat-select" wire:model="settings.{{ $setting }}">
-                                <option value="">Default</option>
+                                <option value="">{{ __('lynx-admin::fields.settings.default') }}</option>
                                 @foreach ($words['options'] as $value => $word)
                                     <option value="{{ $value }}">{{ $word }}</option>
                                 @endforeach
@@ -44,7 +44,7 @@
 
         @if ($availableFormatters !== [])
             <div class="grid gap-1.5">
-                <span class="text-sm font-medium">When the page is shown</span>
+                <span class="text-sm font-medium">{{ __('lynx-admin::fields.settings.when_shown') }}</span>
                 {{-- The ones on first, in the order they run, by dragging; then the rest. --}}
                 <ul class="divide-y overflow-hidden rounded-lg border" @if ($canEdit) wire:sort="sortFormatter" @endif>
                     @foreach ([...$formatters, ...array_keys(array_diff_key($availableFormatters, array_flip($formatters)))] as $formatter)
@@ -53,13 +53,13 @@
                             <input type="checkbox" class="blat-checkbox mt-0.5" id="formatter-{{ $formatter }}" @checked($isOn) wire:click="toggleFormatter({{ Js::from($formatter) }})">
                             <label for="formatter-{{ $formatter }}" class="grid flex-1 cursor-pointer gap-0.5">
                                 <span class="font-medium">{{ $labels->formatter($formatter) }}</span>
-                                <span class="text-muted-foreground">{{ $availableFormatters[$formatter] ?? 'Not installed.' }}</span>
+                                <span class="text-muted-foreground">{{ $availableFormatters[$formatter] ?? __('lynx-admin::fields.settings.not_installed') }}</span>
                             </label>
-                            @if ($isOn && count($formatters) > 1 && $canEdit)<span wire:sort:handle class="text-muted-foreground cursor-grab select-none" title="Drag to change the order" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span>@endif
+                            @if ($isOn && count($formatters) > 1 && $canEdit)<span wire:sort:handle class="text-muted-foreground cursor-grab select-none" title="{{ __('lynx-admin::fields.settings.drag') }}" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span>@endif
                         </li>
                     @endforeach
                 </ul>
-                <p class="text-muted-foreground text-sm">The stored text never changes: these run as the page is shown, in this order.</p>
+                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.formatters_help') }}</p>
                 @error('settings.formatters') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         @endif

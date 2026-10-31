@@ -16,6 +16,7 @@ use LynxCms\Core\Actions\Languages\CreateLanguage;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Support\Value;
 
 /**
  * Setup > Languages > New language and Edit language. Writes go through languages.create,
@@ -66,7 +67,7 @@ final class LanguageForm extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage languages.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::languages.denied')));
     }
 
     public function mount(?string $language = null): void
@@ -106,7 +107,7 @@ final class LanguageForm extends Component
             return;
         }
 
-        $this->notify('Saved.');
+        $this->notify(__('lynx-admin::languages.saved'));
     }
 
     /** A dry run first, so the confirmation can say how much content goes with the language. */
@@ -170,12 +171,12 @@ final class LanguageForm extends Component
     /** Read only screens refuse writes on the server too, whatever the browser sends. */
     private function authorizeEditing(): void
     {
-        abort_unless(app(SchemaOwners::class)->isEditingEnabled(), 403, 'Languages come from the schema files on this site.');
+        abort_unless(app(SchemaOwners::class)->isEditingEnabled(), 403, Value::string(__('lynx-admin::languages.from_files')));
     }
 
     private function authorizeDelete(): void
     {
         $this->authorizeEditing();
-        abort_if($this->language === null || $this->isDefault, 403, 'The default language cannot be deleted.');
+        abort_if($this->language === null || $this->isDefault, 403, Value::string(__('lynx-admin::languages.default_kept')));
     }
 }

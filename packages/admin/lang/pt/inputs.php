@@ -7,6 +7,14 @@ return [
     'none' => 'Nenhum',
     'setting_elsewhere' => 'Esta definição do tipo :type pode ser alterada através da API ou do MCP.',
     'no_settings' => 'Este componente não tem definições.',
+    'icon' => [
+        'no_icon' => 'Sem ícone',
+        'remove' => 'Remover',
+        'search' => 'Pesquise ícones, por exemplo calendar',
+        'search_label' => 'Pesquisar ícones',
+        'label' => 'Ícones',
+        'empty' => 'Nenhum ícone corresponde.',
+    ],
     'items' => [
         'drag' => 'Arraste para reordenar',
         'off' => 'desligado',

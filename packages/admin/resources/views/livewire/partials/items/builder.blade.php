@@ -10,10 +10,10 @@
     @else
         @include('lynx-admin::livewire.partials.items.subfields', ['list' => 'fields', 'model' => 'itemFields', 'rows' => $itemFields, 'flush' => false])
         <div class="mt-3 grid gap-1.5">
-            <label for="setting-item-header" class="text-sm font-medium">Header of a closed item</label>
+            <label for="setting-item-header" class="text-sm font-medium">{{ __('lynx-admin::fields.builder.closed_item') }}</label>
             <input id="setting-item-header" type="text" class="blat-input max-w-md font-mono" wire:model="settings.item_label" autocomplete="off"
                    placeholder="{{ isset($itemFields[0]) ? '{'.$itemFields[0]['name'].'}' : '{field}' }}">
-            <p class="text-muted-foreground text-sm">Field names in braces show their values, so editors find an item without opening it.</p>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.builder.closed_item_help') }}</p>
             @error('settings.item_label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
     @endif

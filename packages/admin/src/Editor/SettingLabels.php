@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Editor;
 
 use Illuminate\Support\Str;
+use LynxCms\Core\Support\Value;
 
 /**
  * Field type settings and formatters in words for the field form. The settings schemas describe
@@ -15,33 +16,35 @@ use Illuminate\Support\Str;
  */
 final class SettingLabels
 {
-    /** @var array<string, array{label: string, hint?: string, unit?: string, options?: array<string, string>}> */
+    private const string WORDS = 'lynx-admin::field_settings.';
+
+    /** Keys in the field_settings language file. @var array<string, array{label: string, hint?: string, unit?: string, options?: array<string, string>}> */
     private const array SETTINGS = [
-        'max_length' => ['label' => 'Longest text', 'hint' => 'Empty for no limit.', 'unit' => 'characters'],
-        'placeholder' => ['label' => 'Placeholder', 'hint' => 'Shown in the empty input.'],
-        'format' => ['label' => 'Editors write in', 'options' => ['plain' => 'Plain text', 'html' => 'Rich text', 'markdown' => 'Markdown']],
-        'multiple' => ['label' => 'Editors can choose several'],
-        'input' => ['label' => 'Editors choose with', 'options' => ['search' => 'A search', 'select' => 'A menu', 'radios' => 'Radio buttons', 'checkboxes' => 'Checkboxes']],
-        'allowed' => ['label' => 'Components editors may choose', 'hint' => 'Comma separated. Empty allows any.'],
-        'time' => ['label' => 'Also a time of day'],
-        'seconds' => ['label' => 'With seconds'],
-        'relative' => ['label' => 'Also accept a path on this site, such as /contact/'],
-        'places' => ['label' => 'Digits after the decimal point', 'hint' => '0 to 8. Empty for 2.'],
-        'min' => ['label' => 'Smallest value'],
-        'max' => ['label' => 'Largest value'],
-        'max_files' => ['label' => 'Most files', 'hint' => 'Empty for no limit. With 1, templates read a single file.'],
-        'extensions' => ['label' => 'Allowed file types', 'hint' => 'Space separated, such as pdf docx. Empty allows the usual ones.'],
-        'max_kb' => ['label' => 'Largest upload', 'unit' => 'KB', 'hint' => 'Empty for 10,240.'],
-        'tags' => ['label' => 'Tags editors may use', 'hint' => 'Comma separated. Empty allows any tag.'],
-        'private' => ['label' => 'Keep the files private', 'hint' => 'Stored off the public disk and served only to visitors who may open the page. Switching moves existing files.'],
-        'min_width' => ['label' => 'Smallest width', 'unit' => 'px'],
-        'min_height' => ['label' => 'Smallest height', 'unit' => 'px'],
-        'max_width' => ['label' => 'Scale wider images down to', 'unit' => 'px', 'hint' => 'Empty for 2,560.'],
-        'max_height' => ['label' => 'Scale taller images down to', 'unit' => 'px', 'hint' => 'Empty for 2,560.'],
-        'templates' => ['label' => 'Templates', 'hint' => 'Comma separated template names.'],
-        'parent' => ['label' => 'New items go under', 'hint' => 'A path. Empty puts them under the page itself.'],
-        'columns' => ['label' => 'Columns in the table', 'hint' => 'Comma separated field names. Empty shows the title.'],
-        'remove' => ['label' => 'Removing an item from the table', 'options' => ['keep' => 'Keeps its page', 'trash' => 'Moves its page to the trash']],
+        'max_length' => ['label' => 'max_length', 'hint' => 'empty_no_limit', 'unit' => 'units.characters'],
+        'placeholder' => ['label' => 'placeholder', 'hint' => 'placeholder_hint'],
+        'format' => ['label' => 'format', 'options' => ['plain' => 'format_plain', 'html' => 'format_html', 'markdown' => 'format_markdown']],
+        'multiple' => ['label' => 'multiple'],
+        'input' => ['label' => 'input', 'options' => ['search' => 'input_search', 'select' => 'input_select', 'radios' => 'input_radios', 'checkboxes' => 'input_checkboxes']],
+        'allowed' => ['label' => 'allowed', 'hint' => 'allowed_hint'],
+        'time' => ['label' => 'time'],
+        'seconds' => ['label' => 'seconds'],
+        'relative' => ['label' => 'relative'],
+        'places' => ['label' => 'places', 'hint' => 'places_hint'],
+        'min' => ['label' => 'min'],
+        'max' => ['label' => 'max'],
+        'max_files' => ['label' => 'max_files', 'hint' => 'max_files_hint'],
+        'extensions' => ['label' => 'extensions', 'hint' => 'extensions_hint'],
+        'max_kb' => ['label' => 'max_kb', 'unit' => 'units.kb', 'hint' => 'max_kb_hint'],
+        'tags' => ['label' => 'tags', 'hint' => 'tags_hint'],
+        'private' => ['label' => 'private', 'hint' => 'private_hint'],
+        'min_width' => ['label' => 'min_width', 'unit' => 'units.px'],
+        'min_height' => ['label' => 'min_height', 'unit' => 'units.px'],
+        'max_width' => ['label' => 'max_width', 'unit' => 'units.px', 'hint' => 'empty_2560'],
+        'max_height' => ['label' => 'max_height', 'unit' => 'units.px', 'hint' => 'empty_2560'],
+        'templates' => ['label' => 'templates', 'hint' => 'templates_hint'],
+        'parent' => ['label' => 'parent', 'hint' => 'parent_hint'],
+        'columns' => ['label' => 'columns', 'hint' => 'columns_hint'],
+        'remove' => ['label' => 'remove', 'options' => ['keep' => 'remove_keep', 'trash' => 'remove_trash']],
     ];
 
     /**
@@ -52,19 +55,13 @@ final class SettingLabels
      */
     private const array TYPE_SETTINGS = [
         'page' => [
-            'min' => ['label' => 'Fewest pages', 'hint' => 'When editors choose any. Empty for no minimum; Required asks for at least one.', 'unit' => 'pages'],
-            'max' => ['label' => 'Most pages', 'hint' => 'Empty for no limit.', 'unit' => 'pages'],
+            'min' => ['label' => 'page_min', 'hint' => 'page_min_hint', 'unit' => 'units.pages'],
+            'max' => ['label' => 'page_max', 'hint' => 'empty_no_limit', 'unit' => 'units.pages'],
         ],
     ];
 
-    /** @var array<string, string> */
-    private const array FORMATTERS = [
-        'smartypants' => 'Smart quotes and dashes',
-        'paragraphs' => 'Paragraphs from blank lines',
-        'markdown' => 'Markdown to HTML',
-        'external_links' => 'Links to other sites open in a new tab',
-        'heading_anchors' => 'Anchors on headings',
-    ];
+    /** The formatters that have words in the language file. */
+    private const array FORMATTERS = ['smartypants', 'paragraphs', 'markdown', 'external_links', 'heading_anchors'];
 
     /**
      * @param  array{type: string, description: string, enum: list<string>}  $definition  from SchemaForm
@@ -77,19 +74,24 @@ final class SettingLabels
         $options = [];
 
         foreach ($definition['enum'] as $value) {
-            $options[$value] = $known['options'][$value] ?? Str::headline($value);
+            $options[$value] = isset($known['options'][$value]) ? $this->words($known['options'][$value]) : Str::headline($value);
         }
 
         return [
-            'label' => $known['label'] ?? Str::headline($setting),
-            'hint' => $known === null ? $definition['description'] : ($known['hint'] ?? ''),
-            'unit' => $known['unit'] ?? '',
+            'label' => isset($known['label']) ? $this->words($known['label']) : Str::headline($setting),
+            'hint' => $known === null ? $definition['description'] : (isset($known['hint']) ? $this->words($known['hint']) : ''),
+            'unit' => isset($known['unit']) ? $this->words($known['unit']) : '',
             'options' => $options,
         ];
     }
 
     public function formatter(string $name): string
     {
-        return self::FORMATTERS[$name] ?? Str::headline($name);
+        return in_array($name, self::FORMATTERS, true) ? $this->words('formatters.'.$name) : Str::headline($name);
+    }
+
+    private function words(string $key): string
+    {
+        return Value::string(__(self::WORDS.$key));
     }
 }

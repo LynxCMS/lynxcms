@@ -45,7 +45,7 @@ final class BrandingForm extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(RoleList::currentUserIsSuperuser(), 403, 'Only superusers change the branding.');
+        abort_unless(RoleList::currentUserIsSuperuser(), 403, Value::string(__('lynx-admin::general.branding.denied')));
     }
 
     public function mount(): void
@@ -74,7 +74,7 @@ final class BrandingForm extends Component
         ]);
 
         $this->reset('logo', 'removeLogo');
-        $this->notify('Saved. The sign-in screens and the sidebar show it from the next page.');
+        $this->notify(__('lynx-admin::general.branding.saved'));
     }
 
     /** A raster logo previews before it is saved; an SVG is only ever served sandboxed, once saved. */

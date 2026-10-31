@@ -21,7 +21,7 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 ## From 0.1.25 to 0.1.26
 
-- The admin's sign-in and account screens, sidebar, search box, link dialog, page tree and page editor follow the admin's language, which is the app's locale until you set one. A site with `APP_LOCALE=pt` shows them in Portuguese: set `LYNX_ADMIN_LOCALE=en` to keep them in English. See [The admin's language](/admin/#the-admin-s-language).
+- The admin's sign-in and account screens, sidebar, search box, link dialog, page tree, page editor and schema screens follow the admin's language, which is the app's locale until you set one. A site with `APP_LOCALE=pt` shows them in Portuguese: set `LYNX_ADMIN_LOCALE=en` to keep them in English. See [The admin's language](/admin/#the-admin-s-language).
 - If you copied admin views into `resources/views/vendor/lynx-admin`, your copies stay in English until you compare them with the new ones.
 - If you translated the admin's BlatUI strings, such as `Show password`, in `lang/{code}.json`, move them to `lang/vendor/lynx-admin/{code}/shell.php`.
 

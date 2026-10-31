@@ -14,6 +14,7 @@ use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Support\Value;
 
 /**
  * Setup > Fields: every field with its type and the templates that use it, filtered by type,
@@ -39,7 +40,7 @@ final class FieldList extends Component
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, 'You may not manage templates and fields.');
+        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
     }
 
     public function render(): View
