@@ -13,7 +13,7 @@ Most of that is ordinary Laravel, with [Laravel Zap](https://www.laravel-zap.com
 - **Bookings are actions.** One class per change (book, move, cancel, block, check in) holds the rules, the permission, the dry run and the activity log entry. The admin, the booking page, the door screens and AI assistants all run the same classes, so a rule written once holds everywhere.
 - **The admin is extensible.** The bookings week view, the Bookings tab on a room and the Kiosk link tab on a screen are a few lines each.
 
-The finished app is a starter you can clone: [LynxCMS/starter-meeting-rooms](https://github.com/LynxCMS/starter-meeting-rooms). This guide shows the parts that matter, shortened to what each section explains; the starter has the full classes. When Lynx releases a new version, the starter is updated to it and its tests run, so its code works with the release you install.
+You can try the finished app in the [live demo](https://meeting-rooms.lynxcms.org/), [room screens](https://meeting-rooms.lynxcms.org/demo/screens) included. It is also a starter you can clone: [LynxCMS/starter-meeting-rooms](https://github.com/LynxCMS/starter-meeting-rooms). This guide shows the parts that matter, shortened to what each section explains; the starter has the full classes. When Lynx releases a new version, the starter is updated to it and its tests run, so its code works with the release you install.
 
 ## What you build
 
