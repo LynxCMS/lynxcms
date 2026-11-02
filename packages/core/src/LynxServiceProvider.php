@@ -50,6 +50,7 @@ use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\NotFoundPage;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageAncestry;
+use LynxCms\Core\Pages\PageCaster;
 use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PathResolver;
@@ -140,6 +141,7 @@ final class LynxServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->registerTinkerCaster();
         $this->app->scoped(UnknownFields::class);
         // Regional languages (pt-PT) also read the bare language's strings and files (lang/pt.json, lang/pt/*.php).
         $this->app->extend('translation.loader', fn (Loader $loader): Loader => new RegionalLoader($loader));
@@ -176,6 +178,12 @@ final class LynxServiceProvider extends ServiceProvider
 
         $this->app->tag(self::FLUSHABLE, 'lynx.flushable');
         $this->app->scoped(LanguageContext::class);
+    }
+
+    /** tinker and Tinkerwell show a page's own data, not the loader and registries it holds. */
+    private function registerTinkerCaster(): void
+    {
+        config(['tinker.casters' => [...Value::map(config('tinker.casters')), Page::class => PageCaster::class.'::cast']]);
     }
 
     public function boot(): void

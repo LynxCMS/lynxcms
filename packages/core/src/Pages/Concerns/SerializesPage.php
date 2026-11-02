@@ -66,6 +66,48 @@ trait SerializesPage
     }
 
     /**
+     * What var_dump(), print_r(), tinker and Tinkerwell show (the last two through PageCaster):
+     * the page's own data, the values loaded so far by language code (* for shared fields) and
+     * the fields not loaded yet. Without it they follow the page into its loader and print every
+     * template and field of the site. Looking never loads a field.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'id' => $this->id,
+            'template' => app(TemplateRegistry::class)->find($this->templateId)?->name,
+            'parentId' => $this->parentId,
+            'status' => PageStatus::toNames($this->status),
+            'sort' => $this->sort,
+            'revision' => $this->revision,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+            'publishedAt' => $this->publishedAt,
+            'names' => $this->byLanguageCode($this->names),
+            'values' => array_map($this->byLanguageCode(...), $this->values),
+            'notLoaded' => array_keys($this->deferredFields),
+            'unsaved' => array_keys($this->dirtyValues),
+        ];
+    }
+
+    /**
+     * @param  array<int, mixed>  $byLanguageId
+     * @return array<string, mixed>
+     */
+    private function byLanguageCode(array $byLanguageId): array
+    {
+        $byCode = [];
+
+        foreach ($byLanguageId as $languageId => $value) {
+            $byCode[$languageId === 0 ? '*' : ($this->registry()->find($languageId)->code ?? (string) $languageId)] = $value;
+        }
+
+        return $byCode;
+    }
+
+    /**
      * Translatable values keyed by language code, for agents and exports.
      *
      * @return array<string, array<string, mixed>>
