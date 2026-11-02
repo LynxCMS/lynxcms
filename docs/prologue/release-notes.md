@@ -14,6 +14,8 @@ Not released yet. No database changes.
 
 - **Cached fragments cost one cache read.** A `@lynxCache` block already in the cache also read the cache's revision, which only a block that renders needs. On the corporate starter's home page, with the cache store in the database, that was 10 of its 70 queries.
 
+- **Translated fields read faster.** Since 0.1.22, reading a translatable field worked out the language's fallback chain twice, building it from scratch each time. The chain is now kept for the request, which halves the cost of a read and brings the workbench's course list back to about 35 ms over HTTP, from 38.
+
 ## 0.1.30
 
 Released November 2, 2026. Rendered pages run fewer queries, and forms can load when visitors reach them. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
