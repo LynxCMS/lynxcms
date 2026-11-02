@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.34
+
+Released November 2, 2026. One query fewer on most pages. Nothing to do after updating, and no database changes.
+
+- **The home page is found once per request.** `lynx()->pages->get('/')` looked its id up every time, and a layout and the SEO module both ask for it on every page. The id is now kept until the next action.
+
 ## 0.1.33
 
 Released November 2, 2026. Pages read well in Tinkerwell, `dump()` and `dd()` too. Nothing to do after updating, and no database changes.
