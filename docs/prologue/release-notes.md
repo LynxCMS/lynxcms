@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.31
 
-Not released yet. No database changes.
+Released November 2, 2026. Cached fragments and translated fields cost less to read. Nothing to do after updating, and no database changes.
 
 - **Cached fragments cost one cache read.** A `@lynxCache` block already in the cache also read the cache's revision, which only a block that renders needs. On the corporate starter's home page, with the cache store in the database, that was 10 of its 70 queries.
 
