@@ -30,6 +30,14 @@ cd blog
 
 Pick SQLite or PostgreSQL when the installer asks for a database. You can also set it later in `.env`.
 
+A new Laravel app keeps its sessions (what Laravel remembers about each visitor between requests) in the database, so every page a visitor opens writes a row. SQLite takes one write at a time, so on SQLite keep sessions in files, in `.env`:
+
+```dotenv
+SESSION_DRIVER=file
+```
+
+With 10 visitors at once, that let a test server send four to six times as many pages a second ([Performance](/deeper/deployment#performance)).
+
 ## Installing Lynx
 
 Require the core and the admin with Composer, then run the migrations, which create Lynx's database tables:
@@ -139,7 +147,7 @@ To send emails during the request instead, with no worker, set `QUEUE_CONNECTION
 
 Lynx runs on low cost shared and managed hosting (DreamHost, for example) as long as the plan offers PHP 8.5, SSH and cron. Without root access some things work differently:
 
-- **Database.** These plans usually offer MySQL only, which Lynx does not support. Use SQLite: it needs no server, and it renders pages faster than a PostgreSQL server on the same machine. Its limit is many writes at the same time, which a site with a few editors never reaches. Keep the database file outside `public/`. If the host keeps sites on local disks, turn on write ahead logging in the `sqlite` connection of `config/database.php` (`'journal_mode' => 'wal'`, `'busy_timeout' => 5000`); on network storage, leave the defaults.
+- **Database.** These plans usually offer MySQL only, which Lynx does not support. Use SQLite: it needs no server, and it renders pages faster than a PostgreSQL server on the same machine. Its limit is many writes at the same time: keep sessions in files ([above](#creating-a-laravel-app)), and a site with a few editors never reaches it. Keep the database file outside `public/`. If the host keeps sites on local disks, turn on write ahead logging in the `sqlite` connection of `config/database.php` (`'journal_mode' => 'wal'`, `'busy_timeout' => 5000`); on network storage, leave the defaults.
 - **Web folder.** Point the domain's web folder at the app's `public/` folder in the hosting panel. If the panel can't, put a `.htaccess` in the app's root that forwards everything to `public/` (`RewriteEngine On` and `RewriteRule ^(.*)$ public/$1 [L]`), and keep `.env` and the rest of the app unreadable from the web.
 - **Page cache.** Most shared hosts run Apache with `mod_rewrite` and `mod_headers`. Print the rules with `php artisan lynx:page-cache:server apache` and add them to `public/.htaccess`: stored pages are then sent without PHP, with either web folder above. If the host doesn't allow them, use the `serve.php` line instead ([Page Cache](/modules/page-cache#sending-pages-without-php)).
 - **PHP version on the command line.** The `php` command over SSH and in cron may be an older version than the site uses. Call PHP 8.5 by its full path (the host's documentation gives it), in the cron entry too.
@@ -147,7 +155,7 @@ Lynx runs on low cost shared and managed hosting (DreamHost, for example) as lon
 - **Queues.** A shared plan can't keep a queue worker running. Set `QUEUE_CONNECTION=sync` so form notifications are sent during the request, or let cron run `php artisan queue:work --stop-when-empty` every minute.
 - **Extensions.** Check with `php -m` that `pdo_sqlite` and `gd` (or `imagick`, for image fields) are there, besides those Laravel needs.
 
-A shared server divides its processor among many customers, so the numbers in [Server Capacity](/deeper/server-capacity) don't apply. With the page cache on, most visitors never reach PHP, which is what makes cheap hosting work. Once the site needs PostgreSQL, a queue worker or steady performance, move to a VPS (a virtual server of your own) with root access.
+A shared server divides its processor among many customers, so the numbers in [Server capacity](/deeper/deployment#server-capacity) don't apply. With the page cache on, most visitors never reach PHP, which is what makes cheap hosting work. Once the site needs PostgreSQL, a queue worker or steady performance, move to a VPS (a virtual server of your own) with root access.
 
 ## Developing against a local checkout
 

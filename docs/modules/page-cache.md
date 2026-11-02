@@ -106,7 +106,7 @@ What the numbers mean:
 - A fragment around the course listing cut the render by about 12 ms on SQLite and 15 ms on PostgreSQL.
 - Rendered pages saturate the PHP workers first. Stored pages sent by `serve.php` or the web server leave them free for the requests that need PHP.
 
-For what these numbers mean in visitors, see [Server capacity](/deeper/server-capacity). To repeat the test on your server, compare `ab -k -n 1000 -c 10 https://your.site/page` with and without the `lynx_bypass` cookie (`-C lynx_bypass=1`), which sends the request to Laravel and skips the cache.
+For what these numbers mean in visitors, see [Server capacity](/deeper/deployment#server-capacity). To repeat the test on your server, compare `ab -k -n 1000 -c 10 https://your.site/page` with and without the `lynx_bypass` cookie (`-C lynx_bypass=1`), which sends the request to Laravel and skips the cache.
 
 ### Two cores against five
 
