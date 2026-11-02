@@ -76,6 +76,8 @@ The site wide settings are a hidden page, edited in the page editor from **SEO**
 
 Read them in templates like any settings page: `lynx()->settings('seo-settings')`.
 
+Every page uses these values, so Lynx keeps them in the app's cache (one copy per host and language) and reads the settings page again only after it is saved, a language changes, or a field or template changes. A save in the admin shows on the next page at once. If you change the settings page's rows outside Lynx, with SQL or a database restore, run `php artisan cache:clear`.
+
 ## Structured data
 
 The component also prints a JSON-LD graph that search engines read for rich results. Every page gets:

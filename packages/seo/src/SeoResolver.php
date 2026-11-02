@@ -13,6 +13,7 @@ use LynxCms\Seo\JsonLd\JsonLd;
 use LynxCms\Seo\Support\AbsoluteUrl;
 use LynxCms\Seo\Support\PageText;
 use LynxCms\Seo\Support\ShareImage;
+use LynxCms\Seo\Support\SiteSettings;
 
 /**
  * Works out a page's SEO in the current language: its own SEO fields first, then its content,
@@ -32,6 +33,7 @@ final readonly class SeoResolver
         private ShareImage $images,
         private HreflangBuilder $hreflang,
         private JsonLd $jsonLd,
+        private SiteSettings $site,
     ) {}
 
     /**
@@ -40,22 +42,21 @@ final readonly class SeoResolver
     public function resolve(Page $page, array $overrides = []): SeoData
     {
         $this->checkOverrides($overrides);
-        $settings = lynx()->settings(SeoSchema::SETTINGS_TEMPLATE);
-        $siteName = $this->text->of($settings, SeoSchema::SITE_NAME);
+        $siteName = $this->site->siteName();
         $alternates = $this->hreflang->links($page);
         $locale = $this->locale(lynx()->languages->current()->appLocale());
 
         $seo = new SeoData(
-            title: isset($overrides['title']) ? $this->text->plain($overrides['title']) : $this->title($page, $settings, $siteName),
-            description: isset($overrides['description']) ? $this->excerpt($overrides['description']) : $this->description($page, $settings),
+            title: isset($overrides['title']) ? $this->text->plain($overrides['title']) : $this->title($page, $siteName),
+            description: isset($overrides['description']) ? $this->excerpt($overrides['description']) : $this->description($page),
             canonical: isset($overrides['canonical']) ? AbsoluteUrl::of($overrides['canonical']) : $this->canonical($page),
             robots: array_key_exists('robots', $overrides) ? (trim($overrides['robots']) === '' ? null : $overrides['robots']) : ($this->isIndexable($page) ? null : self::NOINDEX),
-            image: $this->images->first([[$page, SeoSchema::IMAGE], ...$this->imageFields($page), [$settings, SeoSchema::DEFAULT_IMAGE]]),
+            image: $this->images->first([[$page, SeoSchema::IMAGE], ...$this->imageFields($page)]) ?? $this->site->defaultImage(),
             siteName: $siteName,
             locale: $locale,
             localeAlternates: $this->otherLocales($alternates, $locale),
             alternates: $alternates,
-            twitter: $this->twitter($settings),
+            twitter: $this->twitter(),
             type: $this->jsonLd->isArticle($page) ? 'article' : 'website',
         );
 
@@ -77,7 +78,7 @@ final readonly class SeoResolver
         return $this->text->excerpt($this->text->plain($text), Value::int(config('lynx-seo.description_length'), 160));
     }
 
-    private function title(Page $page, ?Page $settings, string $siteName): string
+    private function title(Page $page, string $siteName): string
     {
         $own = $this->text->of($page, SeoSchema::TITLE);
         $title = $this->text->of($page, 'title');
@@ -86,17 +87,17 @@ final readonly class SeoResolver
             return $own !== '' ? $own : $title;
         }
 
-        $pattern = $this->text->of($settings, SeoSchema::TITLE_PATTERN);
+        $pattern = $this->site->titlePattern();
         $pattern = $pattern !== '' ? $pattern : Value::string(config('lynx-seo.title_pattern'), '{title} | {site}');
 
         return strtr($pattern, ['{title}' => $title, '{site}' => $siteName]);
     }
 
-    private function description(Page $page, ?Page $settings): string
+    private function description(Page $page): string
     {
         $fields = Value::strings(config('lynx-seo.description_fields', []));
         $text = $this->text->first($page, SeoSchema::DESCRIPTION, ...$fields);
-        $text = $text !== '' ? $text : $this->text->of($settings, SeoSchema::DEFAULT_DESCRIPTION);
+        $text = $text !== '' ? $text : $this->site->defaultDescription();
 
         return $this->excerpt($text);
     }
@@ -134,9 +135,9 @@ final readonly class SeoResolver
         return array_values(array_unique(array_diff($locales, [$locale, 'x_default'])));
     }
 
-    private function twitter(?Page $settings): ?string
+    private function twitter(): ?string
     {
-        $handle = ltrim($this->text->of($settings, SeoSchema::TWITTER), '@');
+        $handle = ltrim($this->site->twitter(), '@');
 
         return $handle === '' ? null : '@'.$handle;
     }

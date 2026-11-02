@@ -32,6 +32,7 @@ use LynxCms\PagePassword\StoredPassword;
 use LynxCms\Seo\RobotsTxt;
 use LynxCms\Seo\SeoResolver;
 use LynxCms\Seo\SeoSchema;
+use LynxCms\Seo\Support\SiteSettings;
 use LynxCms\Sitemap\Sitemap;
 use LynxCms\Sitemap\SitemapPages;
 use LynxCms\Sitemap\SitemapWriter;
@@ -128,6 +129,8 @@ arch('only actions write page data')
         'LynxCms\PagePassword\Access',
         // Only defers clearing the page cache until the action's transaction commits.
         ClearOnChange::class,
+        // Only defers forgetting the cached SEO settings until the action's transaction commits.
+        SiteSettings::class,
         // Reads which files a field's values name, and defers deleting moved files to the commit.
         MovePrivateMedia::class,
         // Reads which files pages' media values name, for lynx:media:pull.

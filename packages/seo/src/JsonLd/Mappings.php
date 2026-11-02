@@ -7,6 +7,7 @@ namespace LynxCms\Seo\JsonLd;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 use LynxCms\Seo\SeoSchema;
+use LynxCms\Seo\Support\SiteSettings;
 
 /**
  * The template mappings editors keep on the SEO settings page, one matrix item each.
@@ -58,7 +59,8 @@ final class Mappings
     /** The enabled mapping for a template, if any. */
     public function for(string $template): ?Mapping
     {
-        foreach (self::items(lynx()->settings(SeoSchema::SETTINGS_TEMPLATE)) as $item) {
+        // Resolved here, not injected: JsonLd, a singleton, holds this class; the settings are per request.
+        foreach (app(SiteSettings::class)->mappings() as $item) {
             if ($item['enabled'] && $item['template'] === $template && SchemaTypes::has($item['type'])) {
                 return new Mapping($template, $item['type'], Mapping::parse($item['lines'])[0]);
             }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Seo;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LynxCms\Admin\Navigation;
@@ -12,6 +13,7 @@ use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Runner\HookRegistry;
 use LynxCms\Core\Agents\ReadToolRegistry;
+use LynxCms\Core\Events\ContentChanged;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Permissions\PermissionRegistry;
@@ -26,6 +28,7 @@ use LynxCms\Seo\Agents\InspectSeoTool;
 use LynxCms\Seo\Http\RobotsController;
 use LynxCms\Seo\JsonLd\JsonLd;
 use LynxCms\Seo\JsonLd\MappingValidator;
+use LynxCms\Seo\Support\SiteSettings;
 use LynxCms\Seo\View\SeoComponent;
 use LynxCms\Seo\View\SeoHead;
 
@@ -44,6 +47,18 @@ final class SeoServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(self::ROOT.'/config/lynx-seo.php', 'lynx-seo');
         $this->app->singleton(RobotsTxt::class);
         $this->app->singleton(JsonLd::class);
+        $this->app->scoped(SiteSettings::class);
+        $this->app->tag(SiteSettings::class, 'lynx.flushable');
+    }
+
+    /** ADR-0098: the cached site settings go when the settings page, a language or the schema changes. */
+    private function registerSettingsCache(): void
+    {
+        Event::listen(ContentChanged::class, fn (ContentChanged $event) => app(SiteSettings::class)->handle($event));
+
+        foreach (SiteSettings::SCHEMA_ACTIONS as $action) {
+            $this->app->make(HookRegistry::class)->after($action, fn () => app(SiteSettings::class)->forgetAfterCommit());
+        }
     }
 
     public function boot(): void
@@ -57,6 +72,7 @@ final class SeoServiceProvider extends ServiceProvider
         $this->app->make(ReadToolRegistry::class)->register(InspectSeoTool::class);
         // Template mappings that would make broken structured data are refused, and the save rolled back.
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(MappingValidator::class)->check($page));
+        $this->registerSettingsCache();
         Lynx::macro('seo', fn (Page $page, array $overrides = []): SeoData => app(SeoResolver::class)->resolve($page, array_map(Value::string(...), Value::map($overrides))));
 
         $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-seo');
