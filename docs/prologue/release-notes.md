@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.32
+
+Not released yet. No database changes.
+
+- **Pages read well in tinker and Tinkerwell.** A page shows its own data: its names, the values loaded so far by language, and the fields not loaded yet. Before, it also printed the loader it keeps for those fields, with every template and field of the site. `var_dump()` and `print_r()` show the same; `dump()` and `dd()` still show every property.
+
 ## 0.1.31
 
 Released November 2, 2026. Cached fragments and translated fields cost less to read. Nothing to do after updating, and no database changes.
