@@ -87,8 +87,8 @@ trait StoresPageReferences
         $pages = $visibility->only(app(PageLoader::class)->many(Value::ints((array) $value)));
 
         if ($visibility->servesVisitors()) {
-            [$publication, $trash] = [app(Publication::class), app(Trash::class)];
-            $pages = new PageArray(array_values(array_filter($pages->all(), fn (Page $page): bool => ! $trash->holds((int) $page->id) && $publication->isPublished($page))));
+            $trashed = app(Trash::class)->heldAmong(array_map(fn (Page $page): int => (int) $page->id, $pages->all()));
+            $pages = new PageArray(app(Publication::class)->published(array_values(array_filter($pages->all(), fn (Page $page): bool => ! in_array((int) $page->id, $trashed, true)))));
         }
 
         return $this->holdsSeveral($field->config()) ? $pages : $pages->first();

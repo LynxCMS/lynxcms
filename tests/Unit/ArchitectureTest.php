@@ -20,6 +20,7 @@ use LynxCms\Core\Query\SubfieldCompiler;
 use LynxCms\Core\Query\ValueJoins;
 use LynxCms\Core\Search\Engines\SqliteSearchEngine;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
+use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Forms\FormsFiles;
 use LynxCms\Media\MovePrivateMedia;
 use LynxCms\Media\Remote\MediaReferences;
@@ -111,6 +112,8 @@ arch('only actions write page data')
         'LynxCms\Core\Query',
         FieldSchemaManager::class,
         TemplateFieldsWriter::class,
+        // Reads every template's field rows in one query, so no field is hydrated twice.
+        TemplateRegistry::class,
         'LynxCms\Core\Agents',
         'LynxCms\Core\Schema',
         'LynxCms\Core\Content',
