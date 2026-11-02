@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Support\Flushable;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
@@ -20,11 +21,13 @@ use LynxCms\Core\Templates\TemplateRegistry;
  *
  * @internal
  */
-final readonly class RootPage
+final class RootPage implements Flushable
 {
+    private ?int $id = null;
+
     public function __construct(
-        private FieldRegistry $fields,
-        private TemplateRegistry $templates,
+        private readonly FieldRegistry $fields,
+        private readonly TemplateRegistry $templates,
     ) {}
 
     public function ensure(ActionContext $context): bool
@@ -46,10 +49,22 @@ final readonly class RootPage
         return true;
     }
 
+    /**
+     * Once per request: a layout and the SEO module both ask for the home page on every page. Only
+     * a found id is kept, since installing asks before it creates the page, in the same action.
+     */
     public function id(): ?int
     {
-        $id = DB::table(Tables::PAGES)->whereNull('parent_id')->whereNull('draft_of')->value('id');
+        if ($this->id === null) {
+            $id = DB::table(Tables::PAGES)->whereNull('parent_id')->whereNull('draft_of')->value('id');
+            $this->id = $id === null ? null : Value::int($id);
+        }
 
-        return $id === null ? null : Value::int($id);
+        return $this->id;
+    }
+
+    public function flush(): void
+    {
+        $this->id = null;
     }
 }

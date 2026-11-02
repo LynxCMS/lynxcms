@@ -54,6 +54,7 @@ use LynxCms\Core\Pages\PageCaster;
 use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PathResolver;
+use LynxCms\Core\Pages\RootPage;
 use LynxCms\Core\Pages\SettingsPages;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Pages\UnknownFields;
@@ -137,6 +138,7 @@ final class LynxServiceProvider extends ServiceProvider
         Authorizer::class,
         Trash::class,
         NotFoundPage::class,
+        RootPage::class,
     ];
 
     public function register(): void
