@@ -23,7 +23,7 @@ use LynxCms\Core\Support\Value;
  */
 final class Fragments
 {
-    /** @var list<array{key: ?FragmentKey, html: ?string, revision: string}> open @lynxCache blocks */
+    /** @var list<array{key: ?FragmentKey, html: ?string, revision: ?string}> open @lynxCache blocks */
     private array $open = [];
 
     public function __construct(
@@ -62,7 +62,8 @@ final class Fragments
     {
         $key = $this->keyFor($name, $options);
         $stored = $key === null ? null : $this->stored($key);
-        $this->open[] = ['key' => $key, 'html' => $stored, 'revision' => $this->generation->revision()];
+        // The revision only matters for a block that renders: a stored one costs one read.
+        $this->open[] = ['key' => $key, 'html' => $stored, 'revision' => $stored === null ? $this->generation->revision() : null];
 
         if ($stored === null) {
             ob_start();
@@ -85,7 +86,8 @@ final class Fragments
         }
 
         $html = (string) ob_get_clean();
-        $this->store($block['key'], $html, $block['revision']);
+        // A rendered block always has its revision; without one, nothing would be kept.
+        $this->store($block['key'], $html, $block['revision'] ?? '');
 
         return $html;
     }

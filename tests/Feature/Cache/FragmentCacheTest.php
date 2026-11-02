@@ -3,11 +3,14 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Cache\Events\RetrievingKey;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Cache\Actions\ClearPageCache;
 use LynxCms\Cache\FragmentEntry;
 use LynxCms\Cache\Fragments\Fragments;
+use LynxCms\Cache\Pages\Generation;
 use LynxCms\Core\Actions\Runner\ActionResult;
 
 beforeEach(function (): void {
@@ -132,4 +135,31 @@ it('clears every fragment, or one by name, through page_cache.clear', function (
 
 it('refuses to clear fragments and pages in one go', function (): void {
     expect(fn (): ActionResult => lynx()->run(ClearPageCache::class, ['fragments' => true, 'pages' => [1]]))->toThrow(ValidationException::class);
+});
+
+it('serves a stored @lynxCache block with one cache read', function (): void {
+    $template = "@lynxCache('menu')<nav>menu</nav>@endLynxCache";
+    Blade::render($template);
+    $reads = [];
+    Event::listen(RetrievingKey::class, function (RetrievingKey $event) use (&$reads): void {
+        $reads[] = $event->key;
+    });
+
+    expect(Blade::render($template))->toBe('<nav>menu</nav>')
+        ->and($reads)->toHaveCount(1);
+});
+
+it('does not keep a block rendered while content changed', function (): void {
+    $template = "@lynxCache('menu')<nav>{{ \$changes() }}</nav>@endLynxCache";
+    $changes = function (): string {
+        test()->renders++;
+        app(Generation::class)->touch();
+
+        return 'menu';
+    };
+
+    Blade::render($template, ['changes' => $changes]);
+    Blade::render($template, ['changes' => $changes]);
+
+    expect($this->renders)->toBe(2);
 });

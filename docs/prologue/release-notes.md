@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.31
+
+Not released yet. No database changes.
+
+- **Cached fragments cost one cache read.** A `@lynxCache` block already in the cache also read the cache's revision, which only a block that renders needs. On the corporate starter's home page, with the cache store in the database, that was 10 of its 70 queries.
+
 ## 0.1.30
 
 Released November 2, 2026. Rendered pages run fewer queries, and forms can load when visitors reach them. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
