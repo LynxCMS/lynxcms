@@ -8,11 +8,17 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.33
+
+Released November 2, 2026. Pages read well in Tinkerwell, `dump()` and `dd()` too. Nothing to do after updating, and no database changes.
+
+- **Fix:** Tinkerwell, `dump()` and `dd()` still printed every template and field of the site with a page, about 2,000 lines for one page. 0.1.32 only reached tinker, whose casters Tinkerwell doesn't read. A page no longer holds a way to the loader and the registries, so every dumper stops at the page: about 90 lines, its properties and then its own data by language.
+
 ## 0.1.32
 
-Released November 2, 2026. Pages read well in tinker and Tinkerwell. Nothing to do after updating, and no database changes.
+Released November 2, 2026. Pages read well in tinker. Nothing to do after updating, and no database changes.
 
-- **Pages read well in tinker and Tinkerwell.** A page shows its own data: its names, the values loaded so far by language, and the fields not loaded yet. Before, it also printed the loader it keeps for those fields, with every template and field of the site. `var_dump()` and `print_r()` show the same; `dump()` and `dd()` still show every property.
+- **Pages read well in tinker.** A page shows its own data: its names, the values loaded so far by language, and the fields not loaded yet. Before, it also printed the loader it keeps for those fields, with every template and field of the site. `var_dump()` and `print_r()` show the same. Tinkerwell, `dump()` and `dd()` still printed the loader; 0.1.33 fixes that.
 
 ## 0.1.31
 

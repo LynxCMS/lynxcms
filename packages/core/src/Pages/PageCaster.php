@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Pages;
 
 /**
- * How tinker and Tinkerwell show a page (through tinker.casters): what __debugInfo() gives,
+ * How tinker shows a page (through tinker.casters): what __debugInfo() gives,
  * instead of every property. VarDumper adds __debugInfo() to the properties rather than using it
  * in their place, so without this the loader and both registries the page holds would still show.
  *

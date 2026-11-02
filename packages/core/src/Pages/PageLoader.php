@@ -131,7 +131,7 @@ final class PageLoader implements Flushable
             }
         }
 
-        $batch = new DeferredFields($this);
+        $batch = new DeferredFields;
 
         $values = [];
 

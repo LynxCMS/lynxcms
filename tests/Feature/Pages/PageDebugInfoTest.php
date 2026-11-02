@@ -7,6 +7,8 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageLoader;
 use Psy\VarDumper\Presenter;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /*
  * tinker and Tinkerwell (through tinker.casters), var_dump() and print_r() show a page's own data,
@@ -64,4 +66,25 @@ it('keeps the loader and the registries out of what tinker shows', function (): 
     // The page's batch of fields not loaded yet leads to its loader and both registries.
     expect($dump)->toContain('notLoaded')
         ->not->toContain('DeferredFields');
+});
+
+it('keeps the loader and the registries out of dump(), dd() and Tinkerwell, which use no caster', function (): void {
+    $dump = (string) (new CliDumper)->dump((new VarCloner)->cloneVar(freshAlpha()), true);
+
+    expect($dump)->toContain('notLoaded')
+        ->not->toContain('PageLoader')
+        ->not->toContain('TemplateRegistry');
+});
+
+it('still loads a field for every page of the batch in one query', function (): void {
+    createCourses('beta', 'gamma');
+    app(PageLoader::class)->flush();
+    $courses = lynx()->pages->find('template=course');
+    DB::flushQueryLog();
+    DB::enableQueryLog();
+    $courses->first()?->summary;
+    DB::disableQueryLog();
+
+    expect(DB::getQueryLog())->toHaveCount(1)
+        ->and($courses->map(fn (Page $page): bool => $page->isDeferred('summary')))->toBe([false, false, false]);
 });
