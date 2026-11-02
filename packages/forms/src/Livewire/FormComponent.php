@@ -140,6 +140,12 @@ class FormComponent extends Component
         return null;
     }
 
+    /** Shown in place of a lazy form until it loads: give it a height in CSS to keep the page still. */
+    public function placeholder(): string
+    {
+        return '<div data-lynx-form-placeholder></div>';
+    }
+
     public function render(): View
     {
         $form = $this->definition();
