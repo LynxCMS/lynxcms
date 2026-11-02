@@ -66,10 +66,10 @@ trait SerializesPage
     }
 
     /**
-     * What var_dump(), print_r(), tinker and Tinkerwell show (the last two through PageCaster):
-     * the page's own data, the values loaded so far by language code (* for shared fields) and
-     * the fields not loaded yet. Without it they follow the page into its loader and print every
-     * template and field of the site. Looking never loads a field.
+     * The page's own data, the values loaded so far by language code (* for shared fields) and
+     * the fields not loaded yet: what var_dump(), print_r() and tinker (through PageCaster) show,
+     * and what dump(), dd() and Tinkerwell add after the page's properties. Looking never loads
+     * a field.
      *
      * @return array<string, mixed>
      */

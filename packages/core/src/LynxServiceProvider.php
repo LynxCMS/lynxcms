@@ -180,7 +180,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->scoped(LanguageContext::class);
     }
 
-    /** tinker and Tinkerwell show a page's own data, not the loader and registries it holds. */
+    /** tinker shows a page's own data only; other dumpers add it to the page's properties. */
     private function registerTinkerCaster(): void
     {
         config(['tinker.casters' => [...Value::map(config('tinker.casters')), Page::class => PageCaster::class.'::cast']]);
