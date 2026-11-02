@@ -23,6 +23,9 @@ final class LanguageRegistry implements Flushable
 
     private ?int $defaultId = null;
 
+    /** @var array<int, list<Language>> language id => its fallback chain, built once per request */
+    private array $chains = [];
+
     /**
      * @return Collection<int, Language>
      */
@@ -91,6 +94,16 @@ final class LanguageRegistry implements Flushable
     public function chain(Language|int|string $language): array
     {
         $current = $this->get($language);
+
+        // Every translatable value resolves through it, often twice per field read (ADR-0087).
+        return $this->chains[$current->id] ??= $this->buildChain($current);
+    }
+
+    /**
+     * @return list<Language>
+     */
+    private function buildChain(Language $current): array
+    {
         $chain = [];
         $seen = [];
 
@@ -121,5 +134,6 @@ final class LanguageRegistry implements Flushable
     {
         $this->languages = null;
         $this->defaultId = null;
+        $this->chains = [];
     }
 }

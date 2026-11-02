@@ -126,3 +126,15 @@ it('says which columns a language update changed', function (): void {
     Event::assertDispatched(LanguageUpdated::class, fn (LanguageUpdated $event): bool => $event->changed === ['name'] && ! $event->changedFallback());
     Event::assertDispatched(LanguageUpdated::class, fn (LanguageUpdated $event): bool => $event->changedFallback());
 });
+
+it('follows a changed fallback in the same request', function (): void {
+    lynx()->languages->add('pt', 'Português', fallback: 'default');
+    lynx()->languages->add('es', 'Español', fallback: 'default');
+    $codes = fn (): array => array_map(fn (Language $l): string => $l->code, lynx()->languages->chain('es'));
+
+    expect($codes())->toBe(['es', 'default']);
+
+    lynx()->languages->update('es', ['fallback' => 'pt']);
+
+    expect($codes())->toBe(['es', 'pt', 'default']);
+});
