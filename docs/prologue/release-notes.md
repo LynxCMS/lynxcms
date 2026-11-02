@@ -8,6 +8,22 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.30
+
+Released November 2, 2026. Rendered pages run fewer queries, and forms can load when visitors reach them. No database changes. The [upgrade guide](/prologue/upgrade) says what to check.
+
+- **Page fields check their pages together.** Showing visitors the pages a page field picks cost two queries for each of those pages: one for the pages above it, one for the trash. It now costs none while no unpublished page has children, and one otherwise. The corporate starter's home page lost 43 queries.
+
+- **Templates share their fields.** Each template built its own copy of every field it uses. There is now one copy of each field, so the corporate starter loads 117 models instead of 307, and its templates in 0.5 ms instead of 6.7.
+
+- **The SEO settings stay in the cache.** Every page read about ten fields of the SEO settings page. They are now kept in the app's cache, one copy per host and language, until the settings page, a language, a field or a template changes (ADR-0098). A save in the admin still shows on the next page.
+
+- **Forms can load lazily.** `<x-lynx-form :form="$page->form" lazy />` renders a placeholder and loads the form once the visitor scrolls to it. The tag now always hands the form the page's language, so a lazy form loads in it too.
+
+- With the first three, the corporate starter's home page runs 73 queries instead of 129, and renders in 50 ms instead of 58 on SQLite, 84 instead of 103 on PostgreSQL.
+
+- The Server capacity page is now [Deployment](/deeper/deployment), with a Performance section measured on the corporate starter: keep sessions in files on SQLite (four to six times as many pages a second with 10 visitors at once), cache the configuration, and keep the cache store out of the database. The installation guide asks for file sessions on SQLite.
+
 ## 0.1.29
 
 Released October 31, 2026. Forms can take a single file again. No database changes.

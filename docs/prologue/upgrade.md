@@ -23,6 +23,8 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 - Templates no longer come with their `fields` relation loaded. Read a template's fields with `lynx()->templates->fields($template)`, which keeps their order and the settings each template gives them. Code that reads `$template->fields` still works, at one query per template, but fails in an app that calls `Model::preventLazyLoading()`.
 - `Publication` now takes a dependency. Resolve it from the container (`app(Publication::class)` or a constructor argument) instead of writing `new Publication`.
+- If you published the forms views, compare your `components/form.blade.php` with the new one: it now mounts the form with `$parameters()`, which carries the page's language and `lazy`. Your copy keeps working, without those.
+- On SQLite, set `SESSION_DRIVER=file` in `.env` if your app keeps sessions in the database, the default of a new Laravel app ([Deployment](/deeper/deployment#keep-sessions-in-files)).
 
 ## From 0.1.27 to 0.1.28
 
