@@ -78,6 +78,23 @@ final class Trash implements Flushable
         return $pageId === $this->rootId() || $this->contains($pageId);
     }
 
+    /**
+     * Those of these pages that are the trash page or in the trash, in one query at most.
+     *
+     * @param  list<int>  $pageIds
+     * @return list<int>
+     */
+    public function heldAmong(array $pageIds): array
+    {
+        $root = $this->rootId();
+
+        if ($root === null || $pageIds === []) {
+            return [];
+        }
+
+        return Value::ints(DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $root)->whereIn('descendant_id', $pageIds)->pluck('descendant_id')->all());
+    }
+
     /** Whether the page is in the trash (below it, not the trash page itself). */
     public function contains(int $pageId): bool
     {

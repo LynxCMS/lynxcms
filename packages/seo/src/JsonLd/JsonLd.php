@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace LynxCms\Seo\JsonLd;
 
 use Closure;
-use LynxCms\Core\Fields\Choices\Choice;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Seo\SeoData;
-use LynxCms\Seo\SeoSchema;
 use LynxCms\Seo\Support\AbsoluteUrl;
 use LynxCms\Seo\Support\PageText;
+use LynxCms\Seo\Support\SiteSettings;
 
 /**
  * A page's JSON-LD graph: the site (WebSite, its Organization or Person), the page (WebPage,
@@ -104,25 +103,22 @@ final class JsonLd
     /** @return array<string, mixed>|null the site's owner, when the settings name one */
     private function organization(SeoData $seo): ?array
     {
-        $settings = lynx()->settings(SeoSchema::SETTINGS_TEMPLATE);
-        $name = $this->text->of($settings, SeoSchema::ORG_NAME);
+        // Resolved here, not injected: this class is a singleton, the settings are per request.
+        $organization = app(SiteSettings::class)->organization();
+        $name = $organization['name'] ?? '';
         $name = $name !== '' ? $name : $seo->siteName;
 
-        if ($name === '' || $settings === null) {
+        if ($name === '' || $organization === null) {
             return null;
         }
 
-        $type = $settings->templateField(SeoSchema::ORG_TYPE) === null ? null : $settings->get(SeoSchema::ORG_TYPE);
-        $isPerson = $type instanceof Choice && $type->value === SeoSchema::ORG_PERSON;
-        $logo = $settings->templateField(SeoSchema::ORG_LOGO) === null ? null : $this->converter->convert($settings->get(SeoSchema::ORG_LOGO), SchemaTypes::IMAGE, 'logo');
-
         return [
-            '@type' => $isPerson ? 'Person' : 'Organization',
+            '@type' => $organization['is_person'] ? 'Person' : 'Organization',
             '@id' => self::organizationId(),
             'name' => $name,
             'url' => AbsoluteUrl::of('/'),
-            $isPerson ? 'image' : 'logo' => $logo,
-            'sameAs' => $this->converter->convert($settings->getUnformatted(SeoSchema::ORG_SAME_AS), SchemaTypes::LINES, 'sameAs'),
+            $organization['is_person'] ? 'image' : 'logo' => $organization['logo'],
+            'sameAs' => $organization['same_as'],
         ];
     }
 

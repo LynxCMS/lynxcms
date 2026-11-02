@@ -53,6 +53,14 @@ Templates let editors pick a form with the `form` field, and render it:
 <x-lynx-form :form="$page->form" livewire="quote-request" /> {{-- with your own component --}}
 ```
 
+A form near the bottom of a page can wait until the visitor scrolls to it, so rendering the page doesn't pay for it:
+
+```blade
+<x-lynx-form :form="$page->form" lazy />
+```
+
+Until it loads, an empty `<div data-lynx-form-placeholder>` holds its place. Give the element around the form a minimum height in CSS, so the page doesn't jump when the form arrives. The form loads in the page's language, like any other.
+
 The key is the form's name in the default language, the one on its **Settings** tab. A form has no URL, so it shows in every language wherever a template puts it, under that same key.
 
 On a page the [page cache](/modules/page-cache) stores, a form keeps the time it was first rendered, so the honeypot's "sent too fast" check never fires. Put forms that rely on it in an island, which renders them for each visitor:

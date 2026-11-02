@@ -171,6 +171,12 @@ final class CourseFilter extends Component
 }
 ```
 
+A lazy component (`lazy`, which Livewire renders once it scrolls into view) mounts in that later request too, so it can't see the page's language. Pass the language with the page:
+
+```blade
+<livewire:course-filter :page-id="$page->id" :lang="lynx()->languages->current()->code" lazy />
+```
+
 ### Components editors choose
 
 A [`component` field](/basics/field-types#component) lets editors place one of your registered Livewire components on a page and fill in its settings. Render it with `@lynxComponent`, giving the page and the field's name:

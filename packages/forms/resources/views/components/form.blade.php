@@ -1,1 +1,1 @@
-@livewire($livewire, ['form' => $key, 'pageId' => $pageId], key('lynx-form-'.$key))
+@livewire($livewire, $parameters(), key('lynx-form-'.$key))
