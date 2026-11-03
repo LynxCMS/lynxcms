@@ -14,6 +14,8 @@ Not released yet. No database changes.
 
 - **The current screen stands out in the sidebar.** Its link is tinted with the admin's accent colour instead of a grey close to the sidebar's own, and the blue mark at its end is gone. Hover keeps the light grey, so the two no longer look alike. A theme can change the tint with `--lynx-sidebar-active-mix`.
 
+- **Fix:** a template's **Add a field** list offered the fields modules keep for themselves (`menu_*`, `form_*`, `seo_*`, the page cache's and the sitemap's). It now offers the site's own fields only, and adding a module's field is refused. Fields already on a template, such as the SEO fields, stay.
+
 ## 0.1.34
 
 Released November 2, 2026. One query fewer on most pages. Nothing to do after updating, and no database changes.
