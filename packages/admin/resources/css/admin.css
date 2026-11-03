@@ -49,6 +49,8 @@
     --lynx-highlight: var(--accent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
     --lynx-hidden-opacity: 0.55;
+    /* How much accent tints the current screen's link in the sidebar; dark sidebars need more. */
+    --lynx-sidebar-active-mix: 16%;
     /* Notification bar: green, yellow and red. */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);
@@ -65,6 +67,7 @@
 
 .dark {
     --lynx-mark-eye: #56bad5;
+    --lynx-sidebar-active-mix: 32%;
 }
 
 @theme {
@@ -78,6 +81,8 @@
     --color-black: #000;
     --color-white: #fff;
     --color-highlight: var(--lynx-highlight);
+    /* The current screen's link in the sidebar: a tint of the accent, stronger than the hover grey. */
+    --color-sidebar-active: color-mix(in oklab, var(--primary) var(--lynx-sidebar-active-mix), var(--sidebar));
     --color-transparent: transparent;
     --color-current: currentColor;
 }

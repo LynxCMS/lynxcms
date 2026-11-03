@@ -22,6 +22,7 @@
     --lynx-highlight: var(--accent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
     --lynx-hidden-opacity: 0.55;
+    --lynx-sidebar-active-mix: 16%; /* the current link's accent tint; 32% under .dark */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);
     --lynx-notice-warning: oklch(0.87 0.16 92);
