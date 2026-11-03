@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.35
+
+Not released yet. No database changes.
+
+- **The current screen stands out in the sidebar.** Its link is tinted with the admin's accent colour instead of a grey close to the sidebar's own, and the blue mark at its end is gone. Hover keeps the light grey, so the two no longer look alike. A theme can change the tint with `--lynx-sidebar-active-mix`.
+
 ## 0.1.34
 
 Released November 2, 2026. One query fewer on most pages. Nothing to do after updating, and no database changes.
