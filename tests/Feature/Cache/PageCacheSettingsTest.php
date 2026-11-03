@@ -46,7 +46,7 @@ it('rolls the install back when a hook halts it, and changes nothing on a dry ru
     lynx()->run(InstallPageCache::class, [], dryRun: true);
     expect(lynx()->templates->find(PageCacheSchema::SETTINGS_TEMPLATE))->toBeNull();
 
-    lynx()->hook(InstallPageCache::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(InstallPageCache::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(InstallPageCache::class))->toThrow(ActionHalted::class)
         ->and(lynx()->templates->find(PageCacheSchema::SETTINGS_TEMPLATE))->toBeNull();
 });
@@ -83,7 +83,7 @@ it('saves nothing on a dry run or when a hook halts the save', function (): void
     lynx()->run(SavePageCacheRules::class, $input, dryRun: true);
     expect(app(TemplateRules::class)->for('note'))->not->toBeNull();
 
-    lynx()->hook(SavePageCacheRules::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SavePageCacheRules::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(SavePageCacheRules::class, $input))->toThrow(ActionHalted::class)
         ->and(app(TemplateRules::class)->for('note'))->not->toBeNull();
 });

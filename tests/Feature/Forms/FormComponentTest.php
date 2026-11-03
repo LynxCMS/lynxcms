@@ -152,7 +152,7 @@ it('slows down repeated sending', function (): void {
 });
 
 it('says when sending fails for another reason', function (): void {
-    lynx()->hook(SubmitForm::class)->before(fn () => throw new RuntimeException('Disk full'));
+    lynx()->hook(SubmitForm::class)->before(fn (): never => throw new RuntimeException('Disk full'));
     $component = fillQuote(quoteComponent());
     $this->travel(5)->seconds();
 

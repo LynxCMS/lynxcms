@@ -113,7 +113,7 @@ it('changes nothing on a dry run or when it rolls back', function (): void {
 
     expect($result->changes->all())->not->toBeEmpty()->and(notFoundPage()->id())->toBe($id);
 
-    lynx()->hook(SetNotFoundPage::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SetNotFoundPage::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(SetNotFoundPage::class, ['page' => '/courses/']))->toThrow(ActionHalted::class)
         ->and(notFoundPage()->id())->toBe($id);

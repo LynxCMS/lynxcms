@@ -175,7 +175,7 @@ it('lists what a rebuild would drop on a dry run and keeps it', function (): voi
 
 it('keeps the stored menus when a hook halts the rebuild', function (): void {
     readStored();
-    lynx()->hook(RebuildMenus::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(RebuildMenus::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(RebuildMenus::class, []))->toThrow(ActionHalted::class)
         ->and(storedBuilds())->toBe(1);

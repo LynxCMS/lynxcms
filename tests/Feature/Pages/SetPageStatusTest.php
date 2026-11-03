@@ -73,7 +73,7 @@ it('reports changes on a dry run and writes nothing', function (): void {
 
 it('rolls back when a hook halts the action', function (): void {
     $page = createCourses('alpha')['alpha'];
-    lynx()->hook(SetPageStatus::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SetPageStatus::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn () => lynx()->pages->setStatus($page, add: ['hidden']))->toThrow(ActionHalted::class)
         ->and(statusOf($page))->toBe(0);

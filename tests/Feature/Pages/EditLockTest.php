@@ -100,7 +100,7 @@ it('validates, previews and rolls back', function (): void {
     lynx()->run(LockEdit::class, ['page' => lockedCourse()->id], dryRun: true);
     expect(lynx()->pages->editLock(lockedCourse()))->toBeNull();
 
-    lynx()->hook(LockEdit::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(LockEdit::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): array => lockFor(5))->toThrow(ActionHalted::class)
         ->and(lynx()->pages->editLock(lockedCourse()))->toBeNull();
 });

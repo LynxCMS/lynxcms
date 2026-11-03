@@ -122,7 +122,7 @@ it('writes nothing on a dry run', function (): void {
 });
 
 it('rolls back with the save', function (): void {
-    lynx()->hook(SavePage::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SavePage::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): Page => credit())->toThrow(ActionHalted::class)
         ->and(DB::table('lynx_f_credits')->count())->toBe(0);

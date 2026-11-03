@@ -214,7 +214,7 @@ final readonly class AgentToolkit
             return $page->toArray() + ['values_by_language' => $page->valuesByLanguage()] + ($strings === [] ? [] : ['strings' => $strings]);
         };
 
-        return $language === null ? $run() : $this->context->with($language, fn () => $run());
+        return $language === null ? $run() : $this->context->with($language, fn (): ?array => $run());
     }
 
     public static function usageGuide(): string

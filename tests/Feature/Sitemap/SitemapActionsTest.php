@@ -35,7 +35,7 @@ it('rolls the install back when a hook halts it, and changes nothing on a dry ru
     lynx()->run(InstallSitemap::class, [], dryRun: true);
     expect(lynx()->templates->find(SitemapSchema::SETTINGS_TEMPLATE))->toBeNull();
 
-    lynx()->hook(InstallSitemap::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(InstallSitemap::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(InstallSitemap::class))->toThrow(ActionHalted::class)
         ->and(lynx()->templates->find(SitemapSchema::SETTINGS_TEMPLATE))->toBeNull();
 });

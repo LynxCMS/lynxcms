@@ -91,7 +91,7 @@ it('writes nothing on a dry run and rolls back', function (): void {
     saveStrings(['values' => ['cta.label' => 'x']], dryRun: true);
     expect(DB::table('lynx_strings')->count())->toBe(0);
 
-    lynx()->hook(SaveStrings::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SaveStrings::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): mixed => saveStrings(['values' => ['cta.label' => 'x']]))->toThrow(ActionHalted::class)
         ->and(DB::table('lynx_strings')->count())->toBe(0);
 });

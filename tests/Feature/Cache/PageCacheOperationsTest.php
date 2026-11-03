@@ -66,7 +66,7 @@ it('refuses pages and a template together, and unknown templates', function (arr
 ]);
 
 it('clears nothing when a hook halts the action', function (): void {
-    lynx()->hook(ClearPageCache::class)->before(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(ClearPageCache::class)->before(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(ClearPageCache::class))->toThrow(ActionHalted::class)
         ->and(isCached('a'))->toBeTrue();

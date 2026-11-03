@@ -25,7 +25,7 @@ use Override;
  */
 final class ActivityEvent extends Model
 {
-    public const UPDATED_AT = null;
+    public const null UPDATED_AT = null;
 
     #[Override]
     protected $table = Tables::ACTIVITY;
