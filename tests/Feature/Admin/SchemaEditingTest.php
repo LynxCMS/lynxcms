@@ -48,3 +48,17 @@ it('makes every schema screen read only when schema editing is off', function ()
 it('allows schema editing by default', function (): void {
     expect(config('lynx-admin.schema_editing'))->toBeTrue();
 });
+
+it('offers a template only fields of the site, not those a module owns', function (): void {
+    lynx()->fields->add('subtitle', 'text');
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertViewHas('available', fn (array $available): bool => in_array('subtitle', $available, true) && ! in_array('menu_page', $available, true));
+});
+
+it('refuses to add a field a module owns to a template, whatever the browser sends', function (): void {
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->set('newField', 'menu_page')
+        ->call('addField')
+        ->assertSet('order', fn (array $order): bool => ! in_array('menu_page', $order, true));
+});

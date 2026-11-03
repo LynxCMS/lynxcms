@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -112,7 +113,7 @@ final class TemplateForm extends Component
 
     public function addField(): void
     {
-        if ($this->newField === '' || in_array($this->newField, $this->order, true) || ! lynx()->fields->find($this->newField) instanceof Field) {
+        if ($this->newField === '' || in_array($this->newField, $this->order, true) || ! lynx()->fields->find($this->newField) instanceof Field || app(SchemaOwners::class)->isSystemField($this->newField)) {
             return;
         }
 
@@ -146,7 +147,7 @@ final class TemplateForm extends Component
 
         return view('lynx-admin::livewire.template-form', [
             'templates' => lynx()->templates->all()->map(fn (Template $template): string => (string) $template->name)->sort()->values()->all(),
-            'available' => $fields->reject(fn (Field $field): bool => in_array($field->name, $this->order, true))->map(fn (Field $field): string => $field->name)->sort()->values()->all(),
+            'available' => $this->addableFields($fields),
             'fieldInfo' => $fields->mapWithKeys(fn (Field $field): array => [$field->name => ['label' => $field->label, 'type' => $field->type]])->all(),
             'canEdit' => $this->canEdit(),
             'owner' => $this->template === null ? null : app(SchemaOwners::class)->ownerOfTemplate($this->template),
@@ -170,6 +171,24 @@ final class TemplateForm extends Component
         $usage = app(TemplateUsage::class);
 
         return ['pageCount' => $usage->count($template), 'pagesUsing' => $usage->pages($template, self::PAGES_LISTED)];
+    }
+
+    /**
+     * Fields not on the template yet, without those a module owns: the menus, forms and SEO
+     * modules add theirs where they belong, so they are not offered here.
+     *
+     * @param  Collection<string, Field>  $fields
+     * @return list<string>
+     */
+    private function addableFields(Collection $fields): array
+    {
+        $owners = app(SchemaOwners::class);
+
+        return array_values($fields
+            ->reject(fn (Field $field): bool => in_array($field->name, $this->order, true) || $owners->isSystemField($field->name))
+            ->map(fn (Field $field): string => $field->name)
+            ->sort()
+            ->all());
     }
 
     private function canEdit(): bool
