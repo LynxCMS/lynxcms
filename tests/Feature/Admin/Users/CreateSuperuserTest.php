@@ -55,7 +55,7 @@ it('creates nothing on a dry run or when a hook halts it', function (): void {
     lynx()->run(CreateUser::class, ['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'a long password'], dryRun: true);
     expect(User::query()->count())->toBe(0);
 
-    lynx()->hook(CreateUser::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(CreateUser::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(CreateUser::class, ['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'a long password']))->toThrow(ActionHalted::class)
         ->and(User::query()->count())->toBe(0);
 });

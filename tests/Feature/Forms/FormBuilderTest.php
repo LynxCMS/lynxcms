@@ -137,7 +137,7 @@ it('writes nothing on a dry run and rolls back with its schema', function (): vo
     lynx()->run(CreateForm::class, ['name' => 'contact', 'label' => 'Contact'], dryRun: true);
     expect(lynx()->templates->find(FormSchema::FORM_TEMPLATE))->toBeNull();
 
-    lynx()->hook(CreateForm::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(CreateForm::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(CreateForm::class, ['name' => 'contact', 'label' => 'Contact']))->toThrow(ActionHalted::class)
         ->and(lynx()->templates->find(FormSchema::FORM_TEMPLATE))->toBeNull();
 });

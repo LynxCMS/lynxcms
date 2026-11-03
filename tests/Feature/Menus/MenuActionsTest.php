@@ -155,7 +155,7 @@ it('reports changes on a dry run and writes nothing', function (): void {
 });
 
 it('rolls back a new menu when a hook halts', function (): void {
-    lynx()->hook(CreateMenu::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(CreateMenu::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn () => lynx()->menus()->create('top', 'Top'))->toThrow(ActionHalted::class)
         ->and(lynx()->menus()->page('top'))->toBeNull();

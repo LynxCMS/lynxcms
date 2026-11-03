@@ -24,7 +24,7 @@ it('creates field tables at runtime', function (): void {
 });
 
 it('rolls back a failed field creation completely', function (): void {
-    lynx()->hook(CreateField::class)->after(fn () => throw new RuntimeException('after hook failed'));
+    lynx()->hook(CreateField::class)->after(fn (): never => throw new RuntimeException('after hook failed'));
 
     expect(fn () => lynx()->fields->add('doomed', 'text'))->toThrow(RuntimeException::class)
         ->and(lynx()->fields->find('doomed'))->toBeNull()

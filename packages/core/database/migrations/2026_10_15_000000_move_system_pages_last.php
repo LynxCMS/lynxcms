@@ -40,6 +40,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Sort order only: nothing to undo.
+        // Cannot be undone, and needs no undoing: it only changed the sort order of system pages.
     }
 };

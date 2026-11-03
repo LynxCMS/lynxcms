@@ -110,7 +110,7 @@ it('previews and rolls back a restore', function (): void {
     lynx()->run(RestoreRevision::class, ['page' => revised()->id, 'revision' => $first], dryRun: true);
     expect((string) revised()->get('title'))->toBe('Alpha two');
 
-    lynx()->hook(RestoreRevision::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(RestoreRevision::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(RestoreRevision::class, ['page' => revised()->id, 'revision' => $first]))->toThrow(ActionHalted::class)
         ->and((string) revised()->get('title'))->toBe('Alpha two');
 });

@@ -107,7 +107,7 @@ it('keeps pages when an action rolls back or only dry runs', function (): void {
     $isStored = visitAll();
 
     lynx()->run(CreateField::class, ['name' => 'dry', 'type' => 'text'], dryRun: true);
-    lynx()->hook(CreateField::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(CreateField::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): ActionResult => lynx()->run(CreateField::class, ['name' => 'halted', 'type' => 'text']))->toThrow(ActionHalted::class);
 
     expect($isStored('a'))->toBeTrue();

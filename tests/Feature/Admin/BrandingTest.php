@@ -83,7 +83,7 @@ it('writes nothing on a dry run, and nothing when it rolls back', function (): v
         ->and(Branding::saved())->toBe([])
         ->and(Storage::disk('local')->allFiles())->toBe([]);
 
-    lynx()->hook(SaveBranding::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SaveBranding::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(SaveBranding::class, ['name' => 'Halted', 'logo' => brandingPngLogo()]))->toThrow(ActionHalted::class)
         ->and(Branding::saved())->toBe([])

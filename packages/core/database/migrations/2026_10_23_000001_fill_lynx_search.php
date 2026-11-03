@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        // The table goes with the previous migration's down().
+        // Cannot be undone on its own: the rows go with the table, in the previous migration's down().
     }
 };

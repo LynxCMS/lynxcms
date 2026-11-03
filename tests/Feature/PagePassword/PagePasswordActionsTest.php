@@ -40,7 +40,7 @@ it('refuses a template that does not exist or has no URL', function (): void {
 });
 
 it('rolls back when a hook halts it', function (): void {
-    lynx()->hook(EnablePagePassword::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(EnablePagePassword::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(EnablePagePassword::class, ['template' => 'course']))->toThrow(ActionHalted::class)
         ->and(lynx()->fields->find(PagePasswordSchema::FIELD))->toBeNull();

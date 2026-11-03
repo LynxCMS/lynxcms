@@ -224,7 +224,7 @@ final readonly class PagesApi
             'from' => $from,
             'fields' => $fields ?: null,
             'overwrite' => $overwrite ?: null,
-        ], fn ($v): bool => $v !== null), $dryRun)->valueOrDryRun(Page::class);
+        ], fn (int|string|array|true|null $v): bool => $v !== null), $dryRun)->valueOrDryRun(Page::class);
     }
 
     private function ref(Page|int|string $page): int|string

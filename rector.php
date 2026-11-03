@@ -6,6 +6,7 @@ use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodeQuality\Rector\BooleanOr\RepeatedOrEqualToInArrayRector;
 use Rector\CodeQuality\Rector\If_\ExplicitNullableObjectInstanceRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodParameterRector;
 
 return RectorConfig::configure()
@@ -22,4 +23,9 @@ return RectorConfig::configure()
         RepeatedOrEqualToInArrayRector::class,
         // Validation callbacks passed as self::method(...) take ($attribute, $value, $fail) by position.
         RemoveUnusedPrivateMethodParameterRector::class => [__DIR__.'/packages/cache/src/Actions/SavePageCacheRules.php'],
+        // An empty #[On] method is a Livewire listener: the event re-renders the component.
+        RemoveEmptyClassMethodRector::class => [
+            __DIR__.'/packages/admin/src/Livewire/PageHistory.php',
+            __DIR__.'/packages/admin/src/Livewire/PageRevisions.php',
+        ],
     ]);

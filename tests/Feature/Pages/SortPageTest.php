@@ -95,7 +95,7 @@ it('reports changes on a dry run and writes nothing', function (): void {
 
 it('rolls back when a hook halts the action', function (): void {
     $pages = createCourses('alpha', 'beta');
-    lynx()->hook(SortPage::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SortPage::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn () => lynx()->pages->sort($pages['beta'], 0))->toThrow(ActionHalted::class)
         ->and(childNamesOf())->toBe(['alpha', 'beta']);

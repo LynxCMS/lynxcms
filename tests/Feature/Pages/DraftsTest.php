@@ -121,7 +121,7 @@ it('previews and rolls back', function (): void {
     expect(lynx()->pages->draft(live()))->toBeNull();
 
     draftTitle('Draft');
-    lynx()->hook(PublishDraft::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(PublishDraft::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn () => lynx()->pages->publishDraft(live()))->toThrow(ActionHalted::class)
         ->and((string) live()->get('title'))->toBe('Alpha')
         ->and(lynx()->pages->draft(live()))->not->toBeNull();

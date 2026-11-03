@@ -55,7 +55,7 @@ it('writes nothing on a dry run and removes the file when the action rolls back'
     lynx()->run(StoreMedia::class, ['page' => test()->alphaId, 'field' => 'gallery', 'base64' => base64_encode(jpeg(10, 10)), 'filename' => 'a.jpg'], dryRun: true);
     expect(Storage::disk('public')->allFiles())->toBe([]);
 
-    lynx()->hook(StoreMedia::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(StoreMedia::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn (): array => storeImage())->toThrow(ActionHalted::class)
         ->and(Storage::disk('public')->allFiles())->toBe([]);
 });

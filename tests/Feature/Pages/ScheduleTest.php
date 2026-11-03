@@ -107,7 +107,7 @@ it('previews a schedule without saving it, and rolls back when halted', function
     expect(lynx()->pages->schedule(alpha(), 'pt', publishAt: now()->addDay(), dryRun: true))->toBeInstanceOf(ActionResult::class)
         ->and(lynx()->pages->schedules(alpha()))->toBe([]);
 
-    lynx()->hook(SchedulePage::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SchedulePage::class)->after(fn (): never => throw new ActionHalted('No.'));
     expect(fn () => lynx()->pages->schedule(alpha(), 'pt', publishAt: now()->addDay()))->toThrow(ActionHalted::class)
         ->and(lynx()->pages->schedules(alpha()))->toBe([]);
 });

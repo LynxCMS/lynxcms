@@ -51,7 +51,7 @@ it('refuses input that is not a yes or no for the zip', function (): void {
 it('keeps the last export when a hook halts the next one', function (): void {
     lynx()->run(ExportStaticSite::class);
     $before = File::get($this->dist.'/courses/a/index.html');
-    lynx()->hook(ExportStaticSite::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(ExportStaticSite::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(ExportStaticSite::class))->toThrow(ActionHalted::class)
         ->and(File::get($this->dist.'/courses/a/index.html'))->toBe($before);

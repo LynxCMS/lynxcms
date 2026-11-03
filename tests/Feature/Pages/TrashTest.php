@@ -188,7 +188,7 @@ it('previews trashing without moving anything', function (): void {
 it('rolls back a restore that fails half way', function (): void {
     $alpha = at('/courses/alpha/');
     lynx()->pages->trash($alpha);
-    lynx()->hook(RestorePage::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(RestorePage::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn () => lynx()->pages->restore($alpha->id))->toThrow(ActionHalted::class)
         ->and(trashedIds())->toContain($alpha->id);

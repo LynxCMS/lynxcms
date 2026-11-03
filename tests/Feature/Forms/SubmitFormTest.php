@@ -82,7 +82,7 @@ it('writes nothing on a dry run', function (): void {
 });
 
 it('removes stored files when the action rolls back', function (): void {
-    lynx()->hook(SubmitForm::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(SubmitForm::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): mixed => submitQuote(validQuote()))->toThrow(ActionHalted::class)
         ->and(Storage::disk('local')->allFiles())->toBe([]);

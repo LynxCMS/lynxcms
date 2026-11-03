@@ -44,8 +44,34 @@ return new class extends Migration
         }
     }
 
+    /**
+     * Removes what up() added, unless the app's own Passkeys or Fortify migration made it: that
+     * migration owns the table or columns, and drops them on its own rollback. Left behind, the
+     * passkeys table's key on users would stop the app's users migration from rolling back.
+     */
     public function down(): void
     {
-        // The app may rely on these too: they stay.
+        $users = (new (Passkeys::userModel()))->getTable();
+
+        if (! $this->appMigrationRan('create_passkeys_table')) {
+            Schema::dropIfExists('passkeys');
+        }
+
+        if (! $this->appMigrationRan('two_factor_columns') && Schema::hasTable($users) && Schema::hasColumn($users, 'two_factor_secret')) {
+            Schema::table($users, function (Blueprint $table): void {
+                $table->dropColumn(['two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at']);
+            });
+        }
+    }
+
+    private function appMigrationRan(string $name): bool
+    {
+        foreach (app('migrator')->getRepository()->getRan() as $migration) {
+            if (str_contains((string) $migration, $name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 };

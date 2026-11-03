@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.36
+
+Released November 3, 2026. Rolling migrations back in development works on PostgreSQL and MySQL again, and many more of Lynx's commands and actions are tested. Nothing to do after updating, and no database changes.
+
+- **Fix:** rolling back every migration in development (`migrate:reset`, `migrate:refresh`) failed on PostgreSQL and MySQL: the admin's sign-in migration left the `passkeys` table it creates, whose key on `users` stopped the app's users migration. It now removes the `passkeys` table and the two-factor columns it added, and leaves them when the app's own Passkeys or Fortify migration made them. A test now runs every migration down and up again on SQLite and PostgreSQL. The [upgrade guide](/prologue/upgrade#updating) says to restore a backup instead of rolling back on a live site.
+
 ## 0.1.35
 
 Released November 3, 2026. A clearer admin sidebar, a template's field list without module fields, and full size pictures in the images field. Nothing to do after updating, and no database changes.

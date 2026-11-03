@@ -56,7 +56,7 @@ it('refuses a template that does not exist or has no URL', function (): void {
 });
 
 it('rolls back the whole install when a hook halts it', function (): void {
-    lynx()->hook(EnableSeo::class)->after(fn () => throw new ActionHalted('No.'));
+    lynx()->hook(EnableSeo::class)->after(fn (): never => throw new ActionHalted('No.'));
 
     expect(fn (): ActionResult => lynx()->run(EnableSeo::class, ['template' => 'course']))->toThrow(ActionHalted::class)
         ->and(courseFieldNames())->not->toContain(SeoSchema::TITLE)

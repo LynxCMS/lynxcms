@@ -24,7 +24,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Moving fields back to Content would undo editors' work too; the tab stays.
+        // Cannot be undone: moving fields back to Content would undo editors' work too, so the tab stays.
     }
 
     private function hasSeoFields(Template $template): bool
