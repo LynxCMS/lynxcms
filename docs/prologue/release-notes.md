@@ -16,6 +16,8 @@ Not released yet. No database changes.
 
 - **Fix:** a template's **Add a field** list offered the fields modules keep for themselves (`menu_*`, `form_*`, `seo_*`, the page cache's and the sitemap's). It now offers the site's own fields only, and adding a module's field is refused. Fields already on a template, such as the SEO fields, stay.
 
+- **Zoom a picture.** Each picture in an images field has a zoom button that opens it uncropped, at the largest size the screen allows. It also works on fields the editor may only look at.
+
 ## 0.1.34
 
 Released November 2, 2026. One query fewer on most pages. Nothing to do after updating, and no database changes.
