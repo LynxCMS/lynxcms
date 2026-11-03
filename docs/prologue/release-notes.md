@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.35
 
-Not released yet. No database changes.
+Released November 3, 2026. A clearer admin sidebar, a template's field list without module fields, and full size pictures in the images field. Nothing to do after updating, and no database changes.
 
 - **The current screen stands out in the sidebar.** Its link is tinted with the admin's accent colour instead of a grey close to the sidebar's own, and the blue mark at its end is gone. Hover keeps the light grey, so the two no longer look alike. A theme can change the tint with `--lynx-sidebar-active-mix`.
 
