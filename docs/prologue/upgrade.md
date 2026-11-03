@@ -19,6 +19,8 @@ php artisan optimize                    # if you cache config, routes and views
 
 After `composer update`, Composer lists any Lynx package with database changes waiting. `lynx:migrate` runs only Lynx's migrations, and `--force` skips its question in deploy scripts. Back up the database first; a content package is not a database backup (see [Backups](/deeper/schema-and-content#backups)).
 
+To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
+
 ## From 0.1.29 to 0.1.30
 
 - Templates no longer come with their `fields` relation loaded. Read a template's fields with `lynx()->templates->fields($template)`, which keeps their order and the settings each template gives them. Code that reads `$template->fields` still works, at one query per template, but fails in an app that calls `Model::preventLazyLoading()`.

@@ -74,6 +74,32 @@ it('adds and removes group rows', function (): void {
     expect($component->get('data.deliverables'))->toHaveCount(1);
 });
 
+it('moves a group row to where it is dropped', function (): void {
+    $component = quoteComponent()->call('addRow', 'deliverables')->call('addRow', 'deliverables')->call('addRow', 'deliverables')
+        ->set('data.deliverables.0.format', 'A')->set('data.deliverables.1.format', 'B')->set('data.deliverables.2.format', 'C');
+    $formats = fn (): array => array_column($component->get('data.deliverables'), 'format');
+    $keyOf = fn (int $index): string => (string) $component->get('data.deliverables')[$index]['_key'];
+
+    $component->call('sortRow', 'deliverables:'.$keyOf(2), 0);
+    expect($formats())->toBe(['C', 'A', 'B']);
+
+    $component->call('sortRow', 'deliverables:'.$keyOf(0), 99);
+    expect($formats())->toBe(['A', 'B', 'C']);
+});
+
+it('adds rows only to a group, and only up to its most rows', function (): void {
+    $component = quoteComponent()->call('addRow', 'type');
+    expect($component->get('data.type'))->not->toBeArray();
+
+    for ($i = 0; $i < 30; $i++) {
+        $component->call('addRow', 'deliverables');
+    }
+
+    $rows = count($component->get('data.deliverables'));
+    expect($rows)->toBeLessThan(30)
+        ->and($component->call('addRow', 'deliverables')->get('data.deliverables'))->toHaveCount($rows);
+});
+
 it('sends the answers with files and thanks the visitor in their language', function (): void {
     $component = fillQuote(quoteComponent())->set('files.brief', [UploadedFile::fake()->create('brief.pdf', 50, 'application/pdf')]);
     $this->travel(5)->seconds();
