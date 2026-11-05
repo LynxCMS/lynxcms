@@ -5,6 +5,7 @@ declare(strict_types=1);
 use LynxCms\Contracts\Translation\TranslationProvider;
 use LynxCms\Core\Actions\Pages\PublishDraft;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Query\SelectorException;
 use LynxCms\Tests\Fixtures\FakeTranslationProvider;
 
 /*
@@ -89,4 +90,21 @@ it('marks it in the draft when the draft\'s text changes, and publishing keeps i
     lynx()->run(PublishDraft::class, ['page' => $this->alphaId]);
 
     expect(outdatedInPortuguese()['title'])->toBeTrue();
+});
+
+it('finds the pages with an outdated translation in a language, the draft\'s included', function (): void {
+    ['beta' => $beta] = createCourses('beta');
+    lynx()->pages->translate($beta->id, 'pt');
+
+    expect(lynx()->pages->find('has_outdated=pt')->ids())->toBe([]);
+
+    editOutdatedAlpha('title', 'Alpha, revised');
+    lynx()->pages->saveDraft($beta->id, ['title' => ['default' => 'Beta, drafted']]);
+
+    expect(lynx()->pages->find('has_outdated=pt, sort=id')->ids())->toBe([$this->alphaId, (int) $beta->id])
+        ->and(lynx()->pages->find('template=course, has_outdated!=pt')->ids())->toBe([]);
+});
+
+it('refuses a language it does not know in has_outdated', function (): void {
+    expect(fn (): mixed => lynx()->pages->find('has_outdated=xx'))->toThrow(SelectorException::class);
 });

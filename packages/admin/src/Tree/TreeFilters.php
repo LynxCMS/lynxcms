@@ -11,7 +11,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * The filters on the page tree's Details view, each a selector (ADR-0090): pages with a draft,
- * pages with a schedule, and pages not published in each language besides the default. They cover
+ * pages with a schedule, pages not published in each language besides the default, then those
+ * modules add (TreeFilterRegistry). They cover
  * the site's pages in every status, without the trash, system pages and module branches (menus,
  * forms), which have screens of their own.
  *
@@ -46,6 +47,10 @@ final readonly class TreeFilters
             $filters[self::MISSING.Value::string($language->code)] = __('lynx-admin::pages.tree.filter_not_in', ['language' => Value::string($language->name)]);
         }
 
+        foreach ($this->moduleFilters() as $key => $filter) {
+            $filters[$key] ??= $filter['label'];
+        }
+
         $all = [];
 
         foreach ($filters as $key => $label) {
@@ -64,7 +69,7 @@ final readonly class TreeFilters
             $key === self::DRAFTS => 'has_draft=1, include=no_url',
             $key === self::SCHEDULED => 'has_schedule=1, include=no_url',
             str_starts_with($key, self::MISSING) => $this->missing(substr($key, strlen(self::MISSING))),
-            default => null,
+            default => $this->moduleFilters()[$key]['term'] ?? null,
         };
 
         return $term === null ? null : "{$this->base}, {$term}";
@@ -84,6 +89,12 @@ final readonly class TreeFilters
         }
 
         return null;
+    }
+
+    /** @return array<string, array{label: string, term: string}> */
+    private function moduleFilters(): array
+    {
+        return app(TreeFilterRegistry::class)->all();
     }
 
     /** @return list<Language> */

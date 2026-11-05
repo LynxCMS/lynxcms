@@ -1102,3 +1102,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `lynx_value_meta` gains `source_language_id` and `outdated`. `pages.translate` passes the source language to `pages.save` (`source_language`), which records it with the origin. Whenever a translatable field is written in a language, every machine translation of that field on the same page made from that language is compared with the new text: different from the hash means outdated, equal means not. Writing a translation, by machine or by hand, starts it fresh. Drafts copy the metadata whole, so a change in a draft marks the draft's translations and publishing carries the mark to the live page. `lynx()->pages->translationStates($page, $language)` (`@api`) returns each field's origin, provider and outdated flag. Item fields keep no origin (ADR-0044) and are not tracked. The migration records the default language as the source of existing machine translations, the only one `pages.translate` used without being told.
 
 **Consequences:** The admin and modules can show "source changed" next to a field and offer to translate it again. Each save of a translatable field runs two small updates on the metadata table. Selectors cannot yet find pages with outdated translations; that comes with a selector term when a screen needs it.
+
+## ADR-0103: Selectors find outdated translations, and modules add tree filters
+
+**Status:** Accepted. Extends ADR-0090 and ADR-0102.
+
+**Context:** ADR-0102 marks a machine translation outdated when its source changes, but an editor only sees that on a page they open. To find the pages that need another look, the page tree's Details view, whose filters are selectors (ADR-0090), needs a term for it, and the module that translates needs to add the filter without core knowing about it.
+
+**Decision:** `has_outdated=<code>` (and `|` for several, `!=` for none) matches pages with an outdated machine translation into a language, on the page or in its draft, since the editor shows the draft. The name is reserved for fields. `TreeFilterRegistry` (`@api`) holds closures returning filters by key, each a label and a selector term; the tree lists them after its own, over the same pages, and a module filter cannot replace a built-in key.
+
+**Consequences:** "Outdated in Português" is one module line. Each filter costs a count query when the Details view opens, as the built-in ones do. A field already named `has_outdated` would stop working in selectors, as with `has_draft` in 0.1.24; the release notes say so.
