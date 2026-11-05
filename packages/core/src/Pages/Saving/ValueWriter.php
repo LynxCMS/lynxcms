@@ -18,7 +18,6 @@ use LynxCms\Core\Models\Language;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
-use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateField;
 use LynxCms\Core\Templates\TemplateRegistry;
@@ -32,7 +31,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").
@@ -84,7 +83,8 @@ final readonly class ValueWriter
                 $this->replaceRows($pageId, $field, $languageId, $value);
 
                 if ($field->isTranslatable()) {
-                    $this->recordOrigin($pageId, $field, $languageId, $value, $input, $now);
+                    $this->origins->record($pageId, $field, $languageId, $value, $input, $now);
+                    $this->origins->sourceChanged($pageId, $field, $languageId, $value);
                 }
 
                 // With one language the code says nothing.
@@ -209,24 +209,6 @@ final readonly class ValueWriter
                 'sort' => $type->multiple() ? $sort : null,
             ], fn (?int $column): bool => $column !== null) + $row);
         }
-    }
-
-    private function recordOrigin(int $pageId, Field $field, int $languageId, mixed $value, Input $input, CarbonInterface $now): void
-    {
-        $key = ['page_id' => $pageId, 'field_id' => $field->id, 'language_id' => $languageId];
-
-        if ($value === null) {
-            DB::table(Tables::FIELD_VALUE_META)->where($key)->delete();
-
-            return;
-        }
-
-        DB::table(Tables::FIELD_VALUE_META)->updateOrInsert($key, [
-            'origin' => $input->string('origin') ?? 'human',
-            'provider' => $input->string('provider'),
-            'source_hash' => $input->get("source_hashes.{$field->name}"),
-            'updated_at' => $now,
-        ]);
     }
 
     private function code(int $languageId): string
