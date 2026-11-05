@@ -135,12 +135,13 @@ final class PageEditor extends Component
 
     /**
      * The Settings tab changed the page. Names, status and parent do not touch field values, so
-     * only the revision moves on and unsaved content stays; a template switch reloads the fields.
+     * only the revision moves on and unsaved content stays; a template switch or a restored
+     * revision reloads the fields. Without a revision, the page's own is read.
      */
     #[On('lynx-page-changed')]
-    public function settingsChanged(int $revision, bool $fieldsChanged = false): void
+    public function settingsChanged(?int $revision = null, bool $fieldsChanged = false): void
     {
-        $fieldsChanged ? $this->load() : $this->revision = $revision;
+        $fieldsChanged ? $this->load() : $this->revision = $revision ?? $this->page()->revision;
     }
 
     /** After a conflict: load the latest version, dropping the edits that could not be saved. */

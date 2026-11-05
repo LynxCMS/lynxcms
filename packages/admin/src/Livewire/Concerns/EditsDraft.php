@@ -48,7 +48,8 @@ trait EditsDraft
         lynx()->run(PublishDraft::class, ['page' => $this->pageId]);
         $this->load();
         $this->notify(__('lynx-admin::editor.draft_published'));
-        $this->dispatch('lynx-page-changed');
+        // The form already shows the published values; the rest of the editor only needs the new revision.
+        $this->dispatch('lynx-page-changed', revision: $this->revision);
     }
 
     public function discardDraft(): void

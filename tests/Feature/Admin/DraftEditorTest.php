@@ -83,3 +83,19 @@ it('explains that previews need a signed in user, instead of offering a link tha
         ->assertDontSeeHtml('?preview=draft')
         ->assertSeeHtml('data-draft-preview-signin');
 });
+
+it('tells the rest of the editor the page\'s new revision after publishing the draft', function (): void {
+    $editor = draftEditor()->set('values.title.default', 'Alpha draft')->call('saveDraft')->call('publishDraft');
+
+    $editor->assertDispatched('lynx-page-changed', revision: (int) lynx()->pages->get('/courses/alpha')?->revision);
+});
+
+it('takes a page change without a revision, reading the page\'s own', function (): void {
+    $editor = draftEditor();
+    $alpha = lynx()->pages->get('/courses/alpha') ?? throw new RuntimeException('No alpha.');
+    $alpha->title = 'Alpha renamed';
+    $alpha->save();
+
+    // A component that does not know the revision (as publishDraft once did) must not break the editor.
+    $editor->dispatch('lynx-page-changed')->assertSet('revision', (int) lynx()->pages->get('/courses/alpha')?->revision);
+});
