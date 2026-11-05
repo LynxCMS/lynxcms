@@ -46,7 +46,8 @@ it('restores a revision', function (): void {
 
     Livewire::test(PageRevisions::class, ['pageId' => revisionsPage()])
         ->call('restore', $first)
-        ->assertDispatched('lynx-page-changed')
+        // The editor on the same screen reloads its fields: the restore changed them.
+        ->assertDispatched('lynx-page-changed', revision: (int) lynx()->pages->get(revisionsPage())?->revision, fieldsChanged: true)
         ->assertDispatched('lynx-notify', message: 'Revision restored.');
 
     expect((string) lynx()->pages->get(revisionsPage())?->get('title'))->toBe('Alpha');

@@ -58,7 +58,8 @@ final class PageRevisions extends Component
         lynx()->run(RestoreRevision::class, ['page' => $this->pageId, 'revision' => $revision]);
         $this->comparing = null;
         $this->notify(__('lynx-admin::settings.revisions.restored'));
-        $this->dispatch('lynx-page-changed');
+        // The restore changed the fields: the editor reloads them instead of keeping the old values.
+        $this->dispatch('lynx-page-changed', revision: (int) lynx()->pages->get($this->pageId)?->revision, fieldsChanged: true);
     }
 
     /** A save or a rename elsewhere in the editor adds a revision: rendering again shows it. */
