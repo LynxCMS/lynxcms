@@ -1082,3 +1082,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `pages.translate` takes `draft`: the translation goes into the page's draft, created from the live page when missing, and is made from the draft's own source text, so it matches what the editor is working on. A draft names nothing (ADR-0039), so a translation into a draft never activates the page in the target language. `TranslationProviders` (`@api`) holds providers by name; `pages.translate` takes `provider`, and without it uses the container's `TranslationProvider` binding, else the first registered. `lynxcms/ai` registers `laravel-ai`. A dry run records the number of texts and characters it would send and returns before calling the provider. `Support\Value` becomes `@api`.
 
 **Consequences:** A module can offer a provider choice and a "translate into draft" button using only public API. Plan mode and estimates are free. A page translated into a draft for a language it isn't active in needs that language turned on after publishing. The action records one change with the text and character counts and the provider, which the activity log keeps.
+
+## ADR-0101: Modules add components to named slots in the admin
+
+**Status:** Accepted. Sits beside `EditorLinks` and `EditorTabs`.
+
+**Context:** A module that acts on the page being edited, such as translating it, needs a button in the page editor, and a dialog behind it. `EditorLinks` only adds links and `EditorTabs` a whole tab. When such a module writes to the page's draft, the editor's form still shows the values it loaded, and a later save would send them back over the module's work.
+
+**Decision:** `AdminSlots` (`@api`) holds Livewire components by slot name, each with an optional closure saying which pages show it. The page editor's header renders `editor.header` beside its save buttons, for people who may edit the page on its content tabs, mounting each component with the page's id. A component that changes the draft dispatches `lynx-draft-changed`; the editor then reloads from the draft and puts back the values the person changed and has not saved. More slots (a field, the tree's toolbar, Site texts) are added when a module needs them.
+
+**Consequences:** Paid and third-party modules add editor actions with public API only. An unsaved edit wins over the module's value for the same field and language, so nothing a person typed is lost; the module's value shows once that edit is undone or saved over.
