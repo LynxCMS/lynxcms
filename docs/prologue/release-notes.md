@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.39
+
+Not released yet. No database changes.
+
+- `TranslationProviders::extend()` wraps every translation provider, so a module can count characters or pass a glossary to all of them. Providers get documented options: `glossary`, `formality` and `context`, which the `laravel-ai` provider now follows.
+
 ## 0.1.38
 
 Released November 5, 2026. Find the pages whose machine translations are outdated, and read what each page tree filter finds. Nothing to do after updating, and no database changes.

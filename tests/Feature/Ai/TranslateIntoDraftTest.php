@@ -115,3 +115,39 @@ it('translates into the draft from the pages API', function (): void {
 
     expect(lynx()->pages->draft($this->alphaId)?->getLanguageValue('pt', 'title'))->toBe('[pt-PT] Alpha');
 });
+
+it('wraps every provider it hands out with the extensions modules add', function (): void {
+    $seen = [];
+    app(TranslationProviders::class)->extend(function (TranslationProvider $provider) use (&$seen): TranslationProvider {
+        $seen[] = $provider->name();
+
+        return $provider;
+    });
+
+    translateAlpha();
+    app(TranslationProviders::class)->register('second', fn (): TranslationProvider => new FakeTranslationProvider);
+    app(TranslationProviders::class)->get('second');
+
+    expect($seen)->toBe(['fake', 'fake']);
+});
+
+it('passes a module\'s options on through an extension, such as a glossary', function (): void {
+    app(TranslationProviders::class)->extend(fn (TranslationProvider $provider): TranslationProvider => new readonly class($provider) implements TranslationProvider
+    {
+        public function __construct(private TranslationProvider $inner) {}
+
+        public function name(): string
+        {
+            return $this->inner->name();
+        }
+
+        public function translate(array $texts, string $from, string $to, array $formats = [], array $options = []): array
+        {
+            return $this->inner->translate($texts, $from, $to, $formats, $options + ['glossary' => ['Alpha' => 'Alfa']]);
+        }
+    });
+
+    translateAlpha();
+
+    expect($this->provider->options[0]['glossary'] ?? null)->toBe(['Alpha' => 'Alfa']);
+});

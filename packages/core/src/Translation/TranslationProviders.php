@@ -11,7 +11,8 @@ use LynxCms\Contracts\Translation\TranslationProvider;
 /**
  * The machine translation providers a site can use, by name (ADR-0100). Packages register theirs
  * at boot; pages.translate picks one by name, or the default: the container's TranslationProvider
- * binding, else the first one registered.
+ * binding, else the first one registered. Extensions wrap every provider handed out, so a module
+ * can meter calls or add options such as a glossary to all of them (ADR-0104).
  *
  * @api
  */
@@ -19,6 +20,9 @@ final class TranslationProviders
 {
     /** @var array<string, Closure(): TranslationProvider> */
     private array $factories = [];
+
+    /** @var list<Closure(TranslationProvider): TranslationProvider> */
+    private array $extensions = [];
 
     /** @param  Closure(): TranslationProvider  $factory  called each time the provider is used */
     public function register(string $name, Closure $factory): void
@@ -33,7 +37,7 @@ final class TranslationProviders
      */
     public function names(): array
     {
-        $default = $this->hasDefault() ? $this->get()->name() : null;
+        $default = $this->hasDefault() ? $this->resolve(null)->name() : null;
 
         return array_values(array_unique(array_filter([$default, ...array_keys($this->factories)], is_string(...))));
     }
@@ -43,8 +47,29 @@ final class TranslationProviders
         return app()->bound(TranslationProvider::class) || $this->factories !== [];
     }
 
+    /**
+     * Wraps every provider handed out from now on, in the order added.
+     *
+     * @param  Closure(TranslationProvider): TranslationProvider  $extension
+     */
+    public function extend(Closure $extension): void
+    {
+        $this->extensions[] = $extension;
+    }
+
     /** The provider by name, or the default with none; refuses a name nobody registered. */
     public function get(?string $name = null): TranslationProvider
+    {
+        $provider = $this->resolve($name);
+
+        foreach ($this->extensions as $extension) {
+            $provider = $extension($provider);
+        }
+
+        return $provider;
+    }
+
+    private function resolve(?string $name): TranslationProvider
     {
         if ($name === null) {
             return $this->default();

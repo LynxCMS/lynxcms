@@ -1112,3 +1112,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `has_outdated=<code>` (and `|` for several, `!=` for none) matches pages with an outdated machine translation into a language, on the page or in its draft, since the editor shows the draft. The name is reserved for fields. `TreeFilterRegistry` (`@api`) holds closures returning filters by key, each a label and a selector term; the tree lists them after its own, over the same pages, and a module filter cannot replace a built-in key.
 
 **Consequences:** "Outdated in Português" is one module line. Each filter costs a count query when the Details view opens, as the built-in ones do. A field already named `has_outdated` would stop working in selectors, as with `has_draft` in 0.1.24; the release notes say so.
+
+## ADR-0104: Extensions wrap every translation provider
+
+**Status:** Accepted. Extends ADR-0100.
+
+**Context:** A translation module needs to see every call to a provider, whichever one the editor picked and whether the call comes from its own screens, the free `pages.translate`, an agent or MCP: to count characters against a monthly budget, and to hand every provider the site's glossary. Wrapping only the providers the module registers would miss `laravel-ai` and any other package's.
+
+**Decision:** `TranslationProviders::extend()` (`@api`) adds a closure that receives each provider `get()` hands out and returns the one to use, usually a decorator around it. Extensions apply in the order added; listing names does not apply them. The `TranslationProvider` contract documents the option keys providers should honour when they can: `provider_code`, `glossary` (source term to target term), `formality` (`more` or `less`) and `context`. The `laravel-ai` provider writes the glossary, the tone and the context into its prompt.
+
+**Consequences:** A budget or a glossary applies to every provider without core knowing about either. A decorator must keep the inner provider's `name()`, since values record it as their provider.
