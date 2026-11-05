@@ -1072,3 +1072,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `pages.save_draft` passes `origin`, `provider` and `source_hashes` on to `pages.save`, which records them on the draft. `pages.publish_draft`, after its save, replaces the live page's value metadata with the draft's. The draft started with a copy of the live page's and recorded the origin of every later save, so its rows are the true ones. Restoring a revision still records the values as human: revisions keep no origins, and a person chose to bring them back.
 
 **Consequences:** A machine translation reviewed in a draft is still a machine translation once live, so it stays replaceable by a newer translation and protected human text stays protected. A person's edit in the draft publishes as human. Publishing writes the page's metadata rows once more.
+
+## ADR-0100: Machine translation can write into a draft, and providers have names
+
+**Status:** Accepted. Extends ADR-0016 and ADR-0020; builds on ADR-0099.
+
+**Context:** Editors should read a machine translation before visitors do, but `pages.translate` wrote to the live page. A site may also use more than one provider (a translation service for prose, a local model for drafts), while the container held a single `TranslationProvider`. A dry run of `pages.translate`, and an agent's plan, called the provider for real and threw the result away, so checking cost as much as translating. A translation module needs to read loose data the way core does, through `Value`, which was internal.
+
+**Decision:** `pages.translate` takes `draft`: the translation goes into the page's draft, created from the live page when missing, and is made from the draft's own source text, so it matches what the editor is working on. A draft names nothing (ADR-0039), so a translation into a draft never activates the page in the target language. `TranslationProviders` (`@api`) holds providers by name; `pages.translate` takes `provider`, and without it uses the container's `TranslationProvider` binding, else the first registered. `lynxcms/ai` registers `laravel-ai`. A dry run records the number of texts and characters it would send and returns before calling the provider. `Support\Value` becomes `@api`.
+
+**Consequences:** A module can offer a provider choice and a "translate into draft" button using only public API. Plan mode and estimates are free. A page translated into a draft for a language it isn't active in needs that language turned on after publishing. The action records one change with the text and character counts and the provider, which the activity log keeps.

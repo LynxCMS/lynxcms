@@ -94,7 +94,17 @@ Plan mode undoes database changes only. Anything a tool does outside the databas
 
 ## Translation
 
-`pages.translate` fills a page's missing values in another language and marks them as machine translations for review. It never overwrites human translations unless asked.
+`pages.translate` fills a page's missing values in another language and marks them as machine translations. With `overwrite` it also replaces earlier machine translations; text a person wrote is never replaced.
+
+To review a translation before visitors see it, send it to the page's draft. Lynx creates the draft if the page has none, translates the draft's own text, and leaves the live page as it is until someone publishes the draft:
+
+```php
+lynx()->pages->translate('/blog/hello-world', 'pt', draft: true);
+```
+
+A draft has no URL of its own, so a page translated this way into a language it isn't published in yet still needs that language turned on in its settings.
+
+A site can have more than one provider: `lynxcms/ai` registers `laravel-ai`, and a translation module may add others. Name one with `provider: 'laravel-ai'`; without it, Lynx uses the default. A dry run (`dryRun: true`) says how many texts and characters it would send, and sends nothing, so it costs nothing.
 
 ## Laravel Boost
 

@@ -12,6 +12,9 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 Not released yet. No database changes.
 
+- `pages.translate` can write into the page's draft (`draft: true`), so an editor reviews machine translations before visitors see them, and can name the provider to use (`provider:`). Providers register by name in `TranslationProviders`; `lynxcms/ai` registers `laravel-ai`. See [Translation](/ai/#translation).
+- A dry run of `pages.translate` no longer calls the provider: it says how many texts and characters it would send, so checking costs nothing.
+- `LynxCms\Core\Support\Value` is now public API.
 - **Fix:** a machine translation saved into a draft (`pages.save_draft` with `origin`), or already on the page, became a human value once the draft was published. Publishing now keeps each value's origin, so a later translation may still replace it and human text stays protected. A person's edit in the draft still publishes as human.
 
 ## 0.1.36

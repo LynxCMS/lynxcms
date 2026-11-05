@@ -7,9 +7,10 @@ namespace LynxCms\Core\Support;
 use Stringable;
 
 /**
- * Typed reads of loosely typed values (validated input, JSON settings, database rows).
+ * Typed reads of loosely typed values (validated input, JSON settings, database rows). Modules use
+ * it too, so it is public API (ADR-0100).
  *
- * @internal
+ * @api
  */
 final class Value
 {

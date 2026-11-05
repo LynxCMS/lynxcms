@@ -9,6 +9,7 @@ use LynxCms\Ai\Console\AskCommand;
 use LynxCms\Ai\Translation\LaravelAiTranslationProvider;
 use LynxCms\Contracts\Translation\TranslationProvider;
 use LynxCms\Core\Lynx;
+use LynxCms\Core\Translation\TranslationProviders;
 
 final class AiServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,7 @@ final class AiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Lynx::macro('ai', fn (): LynxAi => app(LynxAi::class));
+        $this->app->make(TranslationProviders::class)->register('laravel-ai', fn (): TranslationProvider => $this->app->make(LaravelAiTranslationProvider::class));
 
         if ($this->app->runningInConsole()) {
             $this->commands([AskCommand::class]);
