@@ -75,3 +75,9 @@ it('leaves a field slot\'s view out of pages it is not for', function (): void {
 
     Livewire::test(PageEditor::class, ['pageId' => $this->betaId])->assertDontSeeHtml('data-field-slot');
 });
+
+it('shows a slot\'s component in the Site texts screen\'s header', function (): void {
+    app(AdminSlots::class)->add(AdminSlots::SITE_TEXTS_HEADER, 'slot-fixture');
+
+    $this->get(route('lynx.admin.site-texts'))->assertOk()->assertSee('data-slot-fixture="'.lynx()->pages->get('/')?->id.'"', escape: false);
+});

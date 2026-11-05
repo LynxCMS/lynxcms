@@ -8,6 +8,13 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.39
+
+Not released yet. No database changes.
+
+- `pages.translate` also fills the texts inside a page's values that have none in the target language: a picture's description, a form question's options, and the page's own template texts. A template text whose translation loses a placeholder is left for a person. Field types holding texts per language implement `HasTranslatableTexts`.
+- `PageStrings::untranslated()` lists a page's or the site's template texts with no text in a language yet, and modules can add components to the Site texts screen with `AdminSlots::SITE_TEXTS_HEADER`.
+
 ## 0.1.38
 
 Released November 5, 2026. Find the pages whose machine translations are outdated, and read what each page tree filter finds. Nothing to do after updating, and no database changes.

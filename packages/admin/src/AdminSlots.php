@@ -20,6 +20,9 @@ final class AdminSlots
     /** The page editor's header, beside the save buttons; shown to editors who may edit the page. */
     public const string EDITOR_HEADER = 'editor.header';
 
+    /** The Site texts screen's header, beside its title; components get the home page's id. */
+    public const string SITE_TEXTS_HEADER = 'site-texts.header';
+
     /**
      * Under each field of the page editor, in each language: a Blade view given page (Page),
      * field (the field's name), language (the language's code) and isTranslatable (bool).

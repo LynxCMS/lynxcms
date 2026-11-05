@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Strings;
 
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\RootPage;
 
@@ -85,5 +86,33 @@ final readonly class PageStrings
         }
 
         return $edits;
+    }
+
+    /**
+     * The template texts with no text in $to yet, from the page's edits or the code's texts in
+     * $from: the page's own, or with $site the site's (read from the home page). For machine
+     * translation (ADR-0105).
+     *
+     * @return array<string, array{text: string, format: string, label: string|null}> by key
+     */
+    public function untranslated(Page $page, Language $from, Language $to, bool $site = false): array
+    {
+        $definitions = $site
+            ? $this->catalog->siteStrings()
+            : array_filter($this->catalog->forTemplate((string) $page->template()->name), fn (StringDefinition $definition): bool => ! $definition->isSite());
+        $texts = [];
+
+        foreach ($definitions as $definition) {
+            $edits = $this->edits($page, $definition);
+            $code = is_array($definition->default) ? $definition->default : [$this->languages->default()->code => $definition->default];
+            $source = $edits[(string) $from->code] ?? $code[(string) $from->code] ?? null;
+            $target = $edits[(string) $to->code] ?? $code[(string) $to->code] ?? null;
+
+            if (is_string($source) && trim($source) !== '' && ($target === null || trim($target) === '')) {
+                $texts[$definition->key] = ['text' => $source, 'format' => $definition->format, 'label' => $definition->label];
+            }
+        }
+
+        return $texts;
     }
 }
