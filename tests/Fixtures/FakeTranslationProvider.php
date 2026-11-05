@@ -12,6 +12,9 @@ final class FakeTranslationProvider implements TranslationProvider
     /** @var list<array<string, string>> */
     public array $calls = [];
 
+    /** @var list<array<string, mixed>> the options of each call */
+    public array $options = [];
+
     public function name(): string
     {
         return 'fake';
@@ -20,6 +23,7 @@ final class FakeTranslationProvider implements TranslationProvider
     public function translate(array $texts, string $from, string $to, array $formats = [], array $options = []): array
     {
         $this->calls[] = $texts;
+        $this->options[] = $options;
 
         return array_map(fn (string $t): string => preg_replace('/^(<p>)?/', '$1['.$to.'] ', $t, 1) ?? $t, $texts);
     }

@@ -64,3 +64,11 @@ it('translates through the Laravel AI SDK with structured output', function (): 
     expect($result)->toBe(['title' => 'Gestão de Risco', 'body' => '<p>Corpo.</p>']);
     TranslatorAgent::assertPrompted(fn ($prompt): bool => str_contains($prompt->prompt, 'Translate from en to pt-PT'));
 });
+
+it('gives the model the glossary and the tone it is asked for', function (): void {
+    TranslatorAgent::fake([['translations' => ['title' => 'Gestão de Risco']]]);
+
+    (new LaravelAiTranslationProvider)->translate(['title' => 'Risk management'], 'en', 'pt-PT', [], ['glossary' => ['Risk' => 'Risco'], 'formality' => 'less']);
+
+    TranslatorAgent::assertPrompted(fn ($prompt): bool => str_contains($prompt->prompt, '"Risk" as "Risco"') && str_contains($prompt->prompt, 'informal'));
+});
