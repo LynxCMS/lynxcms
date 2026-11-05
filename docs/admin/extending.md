@@ -122,3 +122,31 @@ Give the root page the `system` status so it stays after the other pages.
 ## Page tree rows
 
 Implement `LynxCms\Admin\Tree\TreePresenter` (`title()`, `detail()`) and pass it to `<livewire:lynx-admin.page-tree :presenter="MyPresenter::class" />`.
+
+## A button in the page editor
+
+A module can put its own Livewire component in the page editor's header, beside the save buttons, for example a button that translates the page. Register it in a slot from your service provider's `boot()`:
+
+```php
+use Livewire\Livewire;
+use LynxCms\Admin\AdminSlots;
+use LynxCms\Core\Pages\Page;
+
+Livewire::component('translate-button', TranslateButton::class);
+
+app(AdminSlots::class)->add(
+    AdminSlots::EDITOR_HEADER,
+    'translate-button',
+    fn (Page $page): bool => $page->template()->name !== 'form',
+);
+```
+
+The editor mounts the component with the page's id as `pageId`. It shows the slot to people who may edit the page, on its content tabs, and skips the component on pages where the last argument returns `false`. Leave that argument out to show it on every page.
+
+When the component changes the page's draft, tell the editor, so it shows the new values:
+
+```php
+$this->dispatch('lynx-draft-changed');
+```
+
+The editor reloads the draft and puts back whatever the editor typed and has not saved yet.

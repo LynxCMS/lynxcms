@@ -1,6 +1,6 @@
 {{-- The page editor's header. Beside the title, a line of facts and links: whether the page is live, whether a
      draft waits (with its previews and when it goes live, if scheduled), the live page and the links modules add (EditorLinks). On the right, the
-     actions: one main button with the rest in its menu, plus Publish draft while a draft waits. --}}
+     actions: components modules add (AdminSlots), then one main button with the rest in its menu, plus Publish draft while a draft waits. --}}
 @php
     $status = match (true) {
         $page->hasStatus(\LynxCms\Core\Pages\PageStatus::UNPUBLISHED) => 'unpublished',
@@ -64,6 +64,10 @@
                 <x-lynx-admin::ui.button variant="ghost" size="sm" type="button" x-on:click="discarding = false">{{ __('lynx-admin::editor.cancel') }}</x-lynx-admin::ui.button>
             </span>
             <span x-show="! discarding" class="flex items-center gap-2">
+                {{-- Components modules add here (AdminSlots), e.g. a translate button. --}}
+                @foreach (app(\LynxCms\Admin\AdminSlots::class)->for(\LynxCms\Admin\AdminSlots::EDITOR_HEADER, $page) as $slotComponent)
+                    @livewire($slotComponent, ['pageId' => (int) $page->id], key('slot-'.$slotComponent.'-'.$page->id))
+                @endforeach
                 @if ($hasDraft)
                     <x-lynx-admin::ui.button variant="outline" type="button" wire:click="publishDraft">{{ __('lynx-admin::editor.publish_draft') }}</x-lynx-admin::ui.button>
                 @endif

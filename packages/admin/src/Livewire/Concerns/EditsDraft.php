@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire\Concerns;
 
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Core\Actions\Pages\DiscardDraft;
 use LynxCms\Core\Actions\Pages\PublishDraft;
@@ -55,5 +56,31 @@ trait EditsDraft
         lynx()->run(DiscardDraft::class, ['page' => $this->pageId]);
         $this->load();
         $this->notify(__('lynx-admin::editor.draft_discarded'));
+    }
+
+    /**
+     * A module wrote to the page's draft, such as a machine translation (AdminSlots). The form
+     * reloads from the draft, then puts back the edits not saved yet, so none is lost.
+     */
+    #[On('lynx-draft-changed')]
+    public function draftChanged(): void
+    {
+        $unsaved = [];
+
+        foreach ($this->values as $field => $byLanguage) {
+            foreach ($byLanguage as $code => $value) {
+                if ($value !== ($this->original[$field][$code] ?? null)) {
+                    $unsaved[$field][$code] = $value;
+                }
+            }
+        }
+
+        $this->load();
+
+        foreach ($unsaved as $field => $byLanguage) {
+            foreach ($byLanguage as $code => $value) {
+                $this->values[$field][$code] = $value;
+            }
+        }
     }
 }
