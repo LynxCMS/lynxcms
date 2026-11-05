@@ -35,26 +35,30 @@ final readonly class TreeFilters
     }
 
     /**
-     * Each filter with its label and how many pages it finds.
+     * Each filter with its label, a hint saying what it finds, and how many pages it finds.
      *
-     * @return list<array{key: string, label: string, count: int}>
+     * @return list<array{key: string, label: string, hint: string|null, count: int}>
      */
     public function all(): array
     {
-        $filters = [self::DRAFTS => __('lynx-admin::pages.tree.filter_drafts'), self::SCHEDULED => __('lynx-admin::pages.tree.filter_scheduled')];
+        $filters = [
+            self::DRAFTS => [__('lynx-admin::pages.tree.filter_drafts'), __('lynx-admin::pages.tree.filter_drafts_hint')],
+            self::SCHEDULED => [__('lynx-admin::pages.tree.filter_scheduled'), __('lynx-admin::pages.tree.filter_scheduled_hint')],
+        ];
 
         foreach ($this->otherLanguages() as $language) {
-            $filters[self::MISSING.Value::string($language->code)] = __('lynx-admin::pages.tree.filter_not_in', ['language' => Value::string($language->name)]);
+            $name = ['language' => Value::string($language->name)];
+            $filters[self::MISSING.Value::string($language->code)] = [__('lynx-admin::pages.tree.filter_not_in', $name), __('lynx-admin::pages.tree.filter_not_in_hint', $name)];
         }
 
         foreach ($this->moduleFilters() as $key => $filter) {
-            $filters[$key] ??= $filter['label'];
+            $filters[$key] ??= [$filter['label'], $filter['hint'] ?? null];
         }
 
         $all = [];
 
-        foreach ($filters as $key => $label) {
-            $all[] = ['key' => $key, 'label' => $label, 'count' => $this->count($key)];
+        foreach ($filters as $key => [$label, $hint]) {
+            $all[] = ['key' => $key, 'label' => Value::string($label), 'hint' => Value::nullableString($hint), 'count' => $this->count($key)];
         }
 
         return $all;
@@ -91,7 +95,7 @@ final readonly class TreeFilters
         return null;
     }
 
-    /** @return array<string, array{label: string, term: string}> */
+    /** @return array<string, array{label: string, term: string, hint?: string}> */
     private function moduleFilters(): array
     {
         return app(TreeFilterRegistry::class)->all();

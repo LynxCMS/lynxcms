@@ -107,3 +107,25 @@ it('keeps its own filters when a module uses the same key', function (): void {
 
     expect((new TreeFilters)->selector(TreeFilters::DRAFTS))->toEndWith('has_draft=1, include=no_url');
 });
+
+it('explains each filter in a hint', function (): void {
+    $hints = array_column((new TreeFilters)->all(), 'hint', 'key');
+
+    expect(array_keys($hints))->toBe(['drafts', 'scheduled', 'missing-pt'])
+        ->and(array_filter($hints))->toHaveCount(3);
+
+    detailedTree()
+        ->assertSeeHtml('data-tree-filter-hint="drafts"')
+        ->assertSeeHtml('data-tree-filter-hint="missing-pt"');
+});
+
+it('shows the hint a module gives its filter, and none when it gives none', function (): void {
+    app(TreeFilterRegistry::class)->add(fn (): array => [
+        'priced' => ['label' => 'Priced', 'term' => 'price>0', 'hint' => 'Pages with a price.'],
+        'plain' => ['label' => 'Plain', 'term' => 'price=0'],
+    ]);
+
+    expect(array_column((new TreeFilters)->all(), 'hint', 'key'))->toMatchArray(['priced' => 'Pages with a price.', 'plain' => null]);
+
+    detailedTree()->assertSeeHtml('data-tree-filter-hint="priced"')->assertDontSeeHtml('data-tree-filter-hint="plain"');
+});
