@@ -150,3 +150,13 @@ $this->dispatch('lynx-draft-changed');
 ```
 
 The editor reloads the draft and puts back whatever the editor typed and has not saved yet.
+
+### Under each field
+
+A slot can also hold a Blade view, which costs less than a component when it repeats. The editor shows the views of `editor.field` under each field's input, once per language:
+
+```php
+app(AdminSlots::class)->addView(AdminSlots::EDITOR_FIELD, 'my-module::field-note');
+```
+
+The view gets `$page`, `$field` (the field's name), `$language` (the language's code) and `$isTranslatable`. To act on the page, it can dispatch a browser event to a component you put in the header.
