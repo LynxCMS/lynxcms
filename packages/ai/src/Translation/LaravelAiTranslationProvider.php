@@ -34,7 +34,7 @@ final class LaravelAiTranslationProvider implements TranslationProvider
         }
 
         $response = new TranslatorAgent(array_keys($texts))->prompt(
-            "Translate from {$from} to {$to}. Values:\n".json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
+            "Translate from {$from} to {$to}.".$this->guidance($options)."\nValues:\n".json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
             provider: LynxAi::provider(),
             model: Value::nullableString(config('lynx.ai.translation_model') ?? config('lynx.ai.model')),
         );
@@ -46,5 +46,33 @@ final class LaravelAiTranslationProvider implements TranslationProvider
         $translations = Value::map($response->toArray()['translations'] ?? []);
 
         return array_intersect_key(array_map(Value::string(...), $translations), $texts);
+    }
+
+    /**
+     * The options the model can honour, as sentences: the glossary's terms, the tone, the site.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function guidance(array $options): string
+    {
+        $lines = [];
+        $glossary = Value::map($options['glossary'] ?? []);
+
+        if ($glossary !== []) {
+            $terms = array_map(fn (string $source, mixed $target): string => '"'.$source.'" as "'.Value::string($target).'"', array_keys($glossary), $glossary);
+            $lines[] = 'Always translate '.implode(', ', $terms).'.';
+        }
+
+        $lines[] = match ($options['formality'] ?? null) {
+            'more' => 'Address the reader formally.',
+            'less' => 'Address the reader in an informal, friendly tone.',
+            default => null,
+        };
+        $context = Value::nullableString($options['context'] ?? null);
+        $lines[] = $context === null ? null : "The site: {$context}";
+
+        $lines = array_filter($lines);
+
+        return $lines === [] ? '' : "\n".implode("\n", $lines);
     }
 }
