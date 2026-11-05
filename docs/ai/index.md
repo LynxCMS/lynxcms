@@ -113,6 +113,8 @@ lynx()->pages->translationStates($page, 'pt');
 
 Text a person wrote is never outdated. Fields inside lists (repeaters and matrices) aren't tracked yet. To find the pages that need another look, use `lynx()->pages->find('has_outdated=pt')`.
 
+Besides the page's text fields, `pages.translate` fills what is missing in the texts inside a page's values: the text fields of each repeater or matrix item, a picture's description, a form question's options, and the page's own template texts (`@string`). It never replaces those, since they don't record who wrote them. A template text whose translation loses a placeholder such as `:name` is left out, so a person translates it.
+
 A site can have more than one provider: `lynxcms/ai` registers `laravel-ai`, and a translation module may add others. Name one with `provider: 'laravel-ai'`; without it, Lynx uses the default. Every provider takes options it follows when it can: a `glossary` (`['Ledger' => 'Ledger']` keeps a product name), the `formality` (`more` or `less`) and some `context` about the site. A module can add them to every call with `app(TranslationProviders::class)->extend(...)`, which wraps each provider Lynx hands out.
 
 A dry run (`dryRun: true`) says how many texts and characters it would send, and sends nothing, so it costs nothing.

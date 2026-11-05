@@ -51,6 +51,7 @@ lynx()->pages->find('template=post, rating>=7, sort=-rating');
 
 - `PresentsValue`: return what templates read, such as a value object, instead of the stored value. `getUnformatted()` still returns the stored value.
 - `ReferencesPages`: list the page ids a value points at (eager loading), map them to page keys and back (content packages), and narrow a query to rows that reference a page (backlinks).
+- `HasTranslatableTexts`: for a shared value that holds texts per language, such as a list of choices with a label in each language. `untranslatedTexts()` returns the texts with no translation in a language yet, and `withTranslatedTexts()` puts translations back, so [machine translation](/ai/#translation) reaches them.
 - `DescribesPhpType`: the PHPDoc type templates read for a shared value, such as `'\Carbon\CarbonImmutable|null'`, for `lynx:phpstan`. Without it the field reads as `mixed`.
 
 ## Static analysis

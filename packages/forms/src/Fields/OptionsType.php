@@ -8,8 +8,10 @@ use Illuminate\Database\Schema\Blueprint;
 use LynxCms\Contracts\Fields\Comparison;
 use LynxCms\Core\Fields\ChoiceOptions;
 use LynxCms\Core\Fields\DescribesPhpType;
+use LynxCms\Core\Fields\HasTranslatableTexts;
 use LynxCms\Core\Fields\Types\BaseFieldType;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Models\Language;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -19,7 +21,7 @@ use LynxCms\Core\Support\Value;
  *
  * @api
  */
-final class OptionsType extends BaseFieldType implements DescribesPhpType
+final class OptionsType extends BaseFieldType implements DescribesPhpType, HasTranslatableTexts
 {
     public static function name(): string
     {
@@ -71,5 +73,37 @@ final class OptionsType extends BaseFieldType implements DescribesPhpType
     public function phpType(Field $field): string
     {
         return 'list<array<string, mixed>>|null';
+    }
+
+    /** Labels with no text in $to, keyed by the option's value. */
+    public function untranslatedTexts(mixed $value, Language $from, Language $to): array
+    {
+        $texts = [];
+
+        foreach (Value::list($value) as $row) {
+            $row = Value::map($row);
+            $labels = Value::map($row['label'] ?? []);
+            $source = $labels[(string) $from->code] ?? null;
+
+            if (is_string($source) && trim($source) !== '' && trim(Value::string($labels[(string) $to->code] ?? '')) === '') {
+                $texts[Value::string($row['value'] ?? '')] = $source;
+            }
+        }
+
+        return $texts;
+    }
+
+    public function withTranslatedTexts(mixed $value, Language $to, array $texts): mixed
+    {
+        return array_map(function (mixed $row) use ($to, $texts): mixed {
+            $row = Value::map($row);
+            $option = Value::string($row['value'] ?? '');
+
+            if (isset($texts[$option])) {
+                $row['label'] = [...Value::map($row['label'] ?? []), (string) $to->code => $texts[$option]];
+            }
+
+            return $row;
+        }, Value::list($value));
     }
 }

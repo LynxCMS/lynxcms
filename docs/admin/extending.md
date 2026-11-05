@@ -151,6 +151,10 @@ $this->dispatch('lynx-draft-changed');
 
 The editor reloads the draft and puts back whatever the editor typed and has not saved yet.
 
+### On the Site texts screen
+
+`AdminSlots::SITE_TEXTS_HEADER` shows components beside the Site texts screen's title, each mounted with the home page's id as `pageId`, where site texts are kept.
+
 ### Under each field
 
 A slot can also hold a Blade view, which costs less than a component when it repeats. The editor shows the views of `editor.field` under each field's input, once per language:

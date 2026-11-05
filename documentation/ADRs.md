@@ -1122,3 +1122,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `TranslationProviders::extend()` (`@api`) adds a closure that receives each provider `get()` hands out and returns the one to use, usually a decorator around it. Extensions apply in the order added; listing names does not apply them. The `TranslationProvider` contract documents the option keys providers should honour when they can: `provider_code`, `glossary` (source term to target term), `formality` (`more` or `less`) and `context`. The `laravel-ai` provider writes the glossary, the tone and the context into its prompt.
 
 **Consequences:** A budget or a glossary applies to every provider without core knowing about either. A decorator must keep the inner provider's `name()`, since values record it as their provider.
+
+## ADR-0105: Machine translation reaches texts inside values
+
+**Status:** Accepted. Extends ADR-0044 and ADR-0047.
+
+**Context:** `pages.translate` filled a page's text fields and the text subfields of its items, but a page holds other texts per language: a picture's description, a form question's option labels, and the page's own template texts. Editors translating a page by machine found those still in the source language. None of them records who wrote it, so a translation must never replace one.
+
+**Decision:** Field types whose shared value holds texts per language implement `HasTranslatableTexts` (`@api`): the texts missing in a language, and the value with translations put in. The forms module's options type does. `ItemTranslations` also translates an item field's translatable properties (`ItemProperty::isTranslatable`, a picture's description) and the texts of subfields whose type has them. `PageStrings::untranslated()` (`@api`) lists the page's own template texts, or the site's, with no text in a language from an edit or the code; `pages.translate` sends the page's own as `@strings.<key>` and saves them through `pages.save`, into the draft when asked. Only missing texts are filled; a template text whose translation drops a placeholder is left out. Site texts are not part of a page and are not drafted, so a module translates them from the Site texts screen (`AdminSlots::SITE_TEXTS_HEADER`) after a person reviews them.
+
+**Consequences:** One translation covers what a visitor reads on the page. "Also replace earlier machine translations" does not reach these texts; a person edits them or clears them first.

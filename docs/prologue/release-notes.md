@@ -13,6 +13,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 Not released yet. No database changes.
 
 - `TranslationProviders::extend()` wraps every translation provider, so a module can count characters or pass a glossary to all of them. Providers get documented options: `glossary`, `formality` and `context`, which the `laravel-ai` provider now follows.
+- `pages.translate` also fills the texts inside a page's values that have none in the target language: a picture's description, a form question's options, and the page's own template texts. A template text whose translation loses a placeholder is left for a person. Field types holding texts per language implement `HasTranslatableTexts`.
+- `PageStrings::untranslated()` lists a page's or the site's template texts with no text in a language yet, and modules can add components to the Site texts screen with `AdminSlots::SITE_TEXTS_HEADER`.
 
 ## 0.1.38
 

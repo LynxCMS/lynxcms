@@ -21,6 +21,7 @@ use LynxCms\Core\Pages\EditLocks;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGuard;
 use LynxCms\Core\Pages\PageLoader;
+use LynxCms\Core\Strings\PageStrings;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Translation\TranslationProviders;
@@ -32,10 +33,15 @@ use LynxCms\Core\Translation\TranslationProviders;
  * can be found later (ADR-0016). The page gets a name in the target language if it has none.
  * With draft, the translation goes into the page's draft for review instead, from the draft's
  * own source text, and names nothing (ADR-0100). A dry run counts the texts and calls no provider.
+ * Texts inside items, options and the page's own template texts are translated where missing
+ * (ADR-0105).
  */
 final class TranslatePage extends Action
 {
     use ResolvesPages;
+
+    /** The key prefix of the page's own template texts (ADR-0105); no field name starts with @. */
+    public const string STRINGS = '@strings';
 
     public function __construct(
         private readonly PageGuard $guard,
@@ -44,6 +50,7 @@ final class TranslatePage extends Action
         private readonly TranslationProviders $providers,
         private readonly Drafts $drafts,
         private readonly PageLoader $loader,
+        private readonly PageStrings $strings,
     ) {}
 
     public static function name(): string
@@ -126,13 +133,14 @@ final class TranslatePage extends Action
             'provider_code' => $to->provider_codes[$provider->name()] ?? null,
         ]);
 
+        $strings = $this->stringTranslations($texts, $translated);
         $saved = $context->run(SavePage::class, [
             'page' => $target,
             'origin' => 'machine',
             'provider' => $provider->name(),
             'source_language' => $from->code,
             'source_hashes' => $this->applyTranslations($target, $to, $texts, $translated, nameIt: ! $isDraft),
-        ]);
+        ] + ($strings === [] ? [] : ['strings' => [(string) $to->code => $strings]]));
 
         return $saved instanceof Page ? $saved : throw new LogicException('SavePage did not return a page.');
     }
@@ -174,7 +182,41 @@ final class TranslatePage extends Action
             }
         }
 
+        if ($only === [] || in_array(self::STRINGS, $only, true)) {
+            foreach ($this->strings->untranslated($page, $from, $to) as $key => $string) {
+                $texts[self::STRINGS.'.'.$key] = $string['text'];
+                $formats[self::STRINGS.'.'.$key] = $string['format'];
+            }
+        }
+
         return [$texts, $formats];
+    }
+
+    /**
+     * The template texts among the translations, by key, without those that lost a placeholder
+     * (":name") the template fills in: those stay for a person to translate.
+     *
+     * @param  array<string, string>  $texts
+     * @param  array<string, string>  $translated
+     * @return array<string, string>
+     */
+    private function stringTranslations(array $texts, array $translated): array
+    {
+        $strings = [];
+
+        foreach ($translated as $key => $text) {
+            if (! str_starts_with($key, self::STRINGS.'.') || ! isset($texts[$key])) {
+                continue;
+            }
+
+            preg_match_all('/(?<![\w:]):[a-z][a-z0-9_]*/i', $texts[$key], $placeholders);
+
+            if (array_all($placeholders[0], fn (string $placeholder): bool => str_contains($text, $placeholder))) {
+                $strings[substr($key, strlen(self::STRINGS) + 1)] = $text;
+            }
+        }
+
+        return $strings;
     }
 
     /** A source text exists, and the target has no value or one a machine wrote that may be replaced. */
