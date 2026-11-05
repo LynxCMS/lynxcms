@@ -6,6 +6,7 @@ use Illuminate\Auth\GenericUser;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageTree;
+use LynxCms\Admin\Tree\TreeFilterRegistry;
 use LynxCms\Admin\Tree\TreeFilters;
 
 /*
@@ -88,4 +89,21 @@ it('counts pages without a URL among drafts and schedules, but never as missing 
 
     expect($found(TreeFilters::DRAFTS))->toContain((int) $snippet->id)
         ->and($found(TreeFilters::MISSING.'pt'))->not->toContain((int) $snippet->id);
+});
+
+it('lists the filters modules add, after its own', function (): void {
+    app(TreeFilterRegistry::class)->add(fn (): array => ['priced' => ['label' => 'Priced', 'term' => 'price>0']]);
+    $this->courses['beta']->price = 5;
+    $this->courses['beta']->save();
+    $filters = new TreeFilters;
+
+    expect(array_column($filters->all(), 'count', 'key'))->toMatchArray(['priced' => 1])
+        ->and(array_key_last(array_column($filters->all(), 'key', 'key')))->toBe('priced')
+        ->and($filters->selector('priced'))->toEndWith(', price>0');
+});
+
+it('keeps its own filters when a module uses the same key', function (): void {
+    app(TreeFilterRegistry::class)->add(fn (): array => [TreeFilters::DRAFTS => ['label' => 'Mine', 'term' => 'price>0']]);
+
+    expect((new TreeFilters)->selector(TreeFilters::DRAFTS))->toEndWith('has_draft=1, include=no_url');
 });

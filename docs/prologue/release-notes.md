@@ -8,6 +8,13 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.38
+
+Not released yet. No database changes.
+
+- The selector clause `has_outdated=pt` finds pages with a machine translation into Portuguese whose source text has changed, on the page or in its draft. A field can no longer be named `has_outdated`.
+- Modules can add filters to the page tree's Details view with `TreeFilterRegistry`. See [Extending the admin](/admin/extending#page-tree-filters).
+
 ## 0.1.37
 
 Released November 5, 2026. Translation into drafts, with a choice of provider, and a way to tell when a machine translation's source has changed. Modules can add buttons to the page editor. Run `php artisan lynx:migrate` after updating.

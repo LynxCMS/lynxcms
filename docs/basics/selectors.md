@@ -177,6 +177,8 @@ Two more clauses ask about a page's versions. `has_draft=1` finds pages with cha
 $waiting = lynx()->pages->find('has_draft=1, sort=-modified');
 ```
 
+`has_outdated=pt` finds pages with a machine translation into Portuguese whose source text has changed since, on the page or in its draft ([Translation](/ai/#translation)). `has_outdated=pt|de` asks about either language, and `has_outdated!=pt` finds the pages with none.
+
 ### Pages without a URL
 
 Pages whose template has no URL, such as hero slides, promos, forms or a page of site settings, only show inside other pages, so selectors leave them out. A search for "agents" finds the product and the news, not the slide that mentions them.

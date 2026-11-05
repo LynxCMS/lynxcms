@@ -160,3 +160,17 @@ app(AdminSlots::class)->addView(AdminSlots::EDITOR_FIELD, 'my-module::field-note
 ```
 
 The view gets `$page`, `$field` (the field's name), `$language` (the language's code) and `$isTranslatable`. To act on the page, it can dispatch a browser event to a component you put in the header.
+
+## Page tree filters
+
+The page tree's Details view lists filters such as "Has a draft". A module can add its own, each a [selector](/basics/selectors) clause over the site's pages:
+
+```php
+use LynxCms\Admin\Tree\TreeFilterRegistry;
+
+app(TreeFilterRegistry::class)->add(fn (): array => [
+    'needs-review' => ['label' => 'Needs review', 'term' => 'reviewed=0'],
+]);
+```
+
+The closure runs when the tree shows its filters, so it can read the site's languages or settings. Lynx's own filters keep their keys, so a module filter with the same key is left out.

@@ -111,7 +111,7 @@ lynx()->pages->translationStates($page, 'pt');
 // ['title' => ['origin' => 'machine', 'provider' => 'laravel-ai', 'outdated' => true], ...]
 ```
 
-Text a person wrote is never outdated. Fields inside lists (repeaters and matrices) aren't tracked yet.
+Text a person wrote is never outdated. Fields inside lists (repeaters and matrices) aren't tracked yet. To find the pages that need another look, use `lynx()->pages->find('has_outdated=pt')`.
 
 A site can have more than one provider: `lynxcms/ai` registers `laravel-ai`, and a translation module may add others. Name one with `provider: 'laravel-ai'`; without it, Lynx uses the default. A dry run (`dryRun: true`) says how many texts and characters it would send, and sends nothing, so it costs nothing.
 

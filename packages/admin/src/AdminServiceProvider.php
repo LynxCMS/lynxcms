@@ -52,6 +52,7 @@ use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Admin\Livewire\TemplateList;
 use LynxCms\Admin\Livewire\UserRoles;
 use LynxCms\Admin\Locale\SaveAdminLocale;
+use LynxCms\Admin\Tree\TreeFilterRegistry;
 use LynxCms\Admin\Tree\TreeMarkers;
 use LynxCms\Admin\Users\CreateUser;
 use LynxCms\Admin\Users\EloquentUsers;
@@ -90,6 +91,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(AdminBranches::class);
         $this->app->singleton(EditorLinks::class);
         $this->app->singleton(AdminSlots::class);
+        $this->app->singleton(TreeFilterRegistry::class);
         $this->app->singleton(EditorTabs::class);
         $this->app->singleton(LinkFiles::class);
         $this->app->singleton(TemplateChoices::class);

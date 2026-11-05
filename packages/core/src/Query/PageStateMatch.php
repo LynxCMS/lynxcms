@@ -15,7 +15,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Selector terms on a page's state rather than its fields (ADR-0090): "status=hidden|unpublished",
- * "language!=pt" (not published in Portuguese), "has_draft=1" and "has_schedule=1".
+ * "language!=pt" (not published in Portuguese), "has_draft=1", "has_schedule=1" and
+ * "has_outdated=pt" (a machine translation into Portuguese whose source changed, ADR-0102).
  *
  * @internal
  */
@@ -24,7 +25,7 @@ final readonly class PageStateMatch
     private const string PAGES = Tables::PAGES;
 
     /** The terms this class answers; "language" only with !=, since language=pt picks the language to match in. */
-    public const array TERMS = ['status', 'has_draft', 'has_schedule'];
+    public const array TERMS = ['status', 'has_draft', 'has_schedule', 'has_outdated'];
 
     /** Statuses a selector may name: the others (unique, system) are bookkeeping, not states editors set. */
     private const array STATUSES = ['hidden', 'unpublished', 'locked'];
@@ -53,6 +54,7 @@ final readonly class PageStateMatch
             'has_schedule' => $this->exists($query, $clause, fn (Builder $q) => $q->from(Tables::SCHEDULES)
                 ->whereColumn(Tables::SCHEDULES.'.page_id', self::PAGES.'.id')
                 ->whereNull(Tables::SCHEDULES.'.failed_at')),
+            'has_outdated' => $this->outdated($query, $clause),
             default => $this->notInLanguages($query, $clause),
         };
     }
@@ -105,6 +107,28 @@ final readonly class PageStateMatch
 
         $wanted = ($value === '1') !== ($clause->operator === '!=');
         $query->{$wanted ? 'whereExists' : 'whereNotExists'}(fn (Builder $q) => $rows($q->select(DB::raw(1))));
+
+        return [];
+    }
+
+    /**
+     * "has_outdated=pt|de": pages with a machine translation into one of the languages whose source
+     * text changed since, on the page or in its draft, which is what the editor shows. With != the
+     * page has none.
+     *
+     * @return list<string>
+     */
+    private function outdated(Builder $query, Clause $clause): array
+    {
+        $ids = array_map(fn (mixed $code): int => (int) ($this->languages->find(Value::string($code))
+            ?? throw new SelectorException('Unknown language ['.Value::string($code).'] in has_outdated.'))->id, $clause->values);
+        $rows = fn (Builder $q) => $q->select(DB::raw(1))->from(Tables::FIELD_VALUE_META)
+            ->where(Tables::FIELD_VALUE_META.'.outdated', true)
+            ->whereIn(Tables::FIELD_VALUE_META.'.language_id', $ids)
+            ->where(fn (Builder $pages) => $pages->whereColumn(Tables::FIELD_VALUE_META.'.page_id', self::PAGES.'.id')
+                ->orWhereIn(Tables::FIELD_VALUE_META.'.page_id', fn (Builder $drafts) => $drafts->select('lynx_draft.id')
+                    ->from(self::PAGES.' as lynx_draft')->whereColumn('lynx_draft.draft_of', self::PAGES.'.id')));
+        $query->{$clause->operator === '!=' ? 'whereNotExists' : 'whereExists'}($rows);
 
         return [];
     }
