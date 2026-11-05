@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Support\Facades\View;
 use Livewire\Component;
 use Livewire\Livewire;
 use LynxCms\Admin\AdminSlots;
@@ -56,4 +57,21 @@ it('reloads the draft a module changed, keeping the editor\'s unsaved edits', fu
         ->assertSet('values.title.pt', 'Alfa')
         ->assertSet('values.price.default', 99)
         ->assertSeeHtml('data-page-draft');
+});
+
+it('shows a slot\'s view under each field, in each language', function (): void {
+    View::addLocation(__DIR__.'/../../Fixtures/views');
+    app(AdminSlots::class)->addView(AdminSlots::EDITOR_FIELD, 'partials.field-slot');
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->alphaId])
+        ->assertSeeHtml('data-field-slot="title:default:translatable:'.$this->alphaId.'"')
+        ->assertSeeHtml('data-field-slot="title:pt:translatable:'.$this->alphaId.'"')
+        ->assertSeeHtml('data-field-slot="price:default:shared:'.$this->alphaId.'"');
+});
+
+it('leaves a field slot\'s view out of pages it is not for', function (): void {
+    View::addLocation(__DIR__.'/../../Fixtures/views');
+    app(AdminSlots::class)->addView(AdminSlots::EDITOR_FIELD, 'partials.field-slot', fn (Page $page): bool => (int) $page->id === $this->alphaId);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->betaId])->assertDontSeeHtml('data-field-slot');
 });

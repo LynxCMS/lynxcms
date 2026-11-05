@@ -16,7 +16,7 @@ Not released yet. Run `php artisan lynx:migrate` after updating.
 - A dry run of `pages.translate` no longer calls the provider: it says how many texts and characters it would send, so checking costs nothing.
 - `LynxCms\Core\Support\Value` is now public API.
 - A machine translation now knows when the text it was translated from changes: `lynx()->pages->translationStates($page, 'pt')` says, for each field, who wrote it and whether it is outdated. Run `php artisan lynx:migrate`: the value metadata gains two columns. See [Translation](/ai/#translation).
-- Modules can add their own Livewire component to the page editor's header with `AdminSlots`, and tell the editor to reload a draft they changed with `lynx-draft-changed`. See [A button in the page editor](/admin/extending#a-button-in-the-page-editor).
+- Modules can add their own Livewire component to the page editor's header with `AdminSlots`, and tell the editor to reload a draft they changed with `lynx-draft-changed`. See [A button in the page editor](/admin/extending#a-button-in-the-page-editor). A view under each field, in each language, goes in `AdminSlots::EDITOR_FIELD` with `addView()`.
 - **Fix:** publishing a draft in the page editor failed with "Unable to resolve dependency [int $revision]", and restoring a revision kept the old values in the editor's form. Both now tell the editor the page's new revision, and a restore reloads the fields.
 - **Fix:** a machine translation saved into a draft (`pages.save_draft` with `origin`), or already on the page, became a human value once the draft was published. Publishing now keeps each value's origin, so a later translation may still replace it and human text stays protected. A person's edit in the draft still publishes as human.
 

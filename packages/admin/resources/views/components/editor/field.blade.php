@@ -1,12 +1,14 @@
-@props(['field', 'languages', 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false])
+@props(['field', 'languages', 'page' => null, 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false])
 {{-- showType: the field type under the label, for superusers only.
-     cell: a cell of a page editor card, which wraps fields side by side by their width (ADR-0063). --}}
+     cell: a cell of a page editor card, which wraps fields side by side by their width (ADR-0063).
+     page: the page edited; under each language, views modules add to the editor.field slot (AdminSlots) get it. --}}
 @php
     $codes = array_keys($field->values);
     $hasError = collect($errors->keys())->contains(fn (string $key): bool => $key === 'values.'.$field->name || str_starts_with($key, 'values.'.$field->name.'.'));
     $isCollapsible = $field->display->isCollapsible();
     $startsClosed = $isCollapsible && $field->startsCollapsed() && ! $hasError;
     $isNarrow = $cell && $field->width < \LynxCms\Core\Templates\EditorSettings::FULL_WIDTH;
+    $slotViews = $page instanceof \LynxCms\Core\Pages\Page ? app(\LynxCms\Admin\AdminSlots::class)->viewsFor(\LynxCms\Admin\AdminSlots::EDITOR_FIELD, $page) : [];
     $widthClass = [25 => '@xl:basis-1/4', 33 => '@xl:basis-1/3', 50 => '@xl:basis-1/2', 66 => '@xl:basis-2/3', 75 => '@xl:basis-3/4'][$field->width] ?? '';
 @endphp
 {{-- BlatUI tabs hold the language shown (tab); double-clicking a tab switches every field. The label sits above the input, so the editor reads top to bottom. --}}
@@ -87,6 +89,9 @@
                 @else
                     <p class="text-muted-foreground text-sm">{{ __('lynx-admin::editor.field.empty') }}</p>
                 @endif
+                @foreach ($slotViews as $slotView)
+                    @include($slotView, ['page' => $page, 'field' => $field->name, 'language' => $code, 'isTranslatable' => $field->isTranslatable])
+                @endforeach
             </div>
         @endforeach
 
