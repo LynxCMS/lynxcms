@@ -89,7 +89,7 @@ With `lynxcms/ai` installed, Lynx can also translate by machine. It fills only t
 lynx()->pages->translate('/blog/hello-world', 'pt');
 ```
 
-[AI](/ai/#translation) covers the settings.
+Add `draft: true` to put the translation in the page's draft, so an editor reads it before publishing. [AI](/ai/#translation) covers this and the settings.
 
 ## Fallback
 

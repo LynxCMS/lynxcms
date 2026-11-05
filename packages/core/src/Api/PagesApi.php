@@ -213,10 +213,12 @@ final readonly class PagesApi
 
     /**
      * Machine-translate missing values into a language (needs a TranslationProvider, e.g. lynxcms/ai).
+     * With $draft the translation goes into the page's draft for review; $provider names one of
+     * TranslationProviders, else the default.
      *
      * @param  list<string>  $fields
      */
-    public function translate(Page|int|string $page, string $to, ?string $from = null, array $fields = [], bool $overwrite = false, bool $dryRun = false): Page|ActionResult
+    public function translate(Page|int|string $page, string $to, ?string $from = null, array $fields = [], bool $overwrite = false, bool $dryRun = false, bool $draft = false, ?string $provider = null): Page|ActionResult
     {
         return $this->runner->run(TranslatePage::class, array_filter([
             'page' => $this->ref($page),
@@ -224,6 +226,8 @@ final readonly class PagesApi
             'from' => $from,
             'fields' => $fields ?: null,
             'overwrite' => $overwrite ?: null,
+            'draft' => $draft ?: null,
+            'provider' => $provider,
         ], fn (int|string|array|true|null $v): bool => $v !== null), $dryRun)->valueOrDryRun(Page::class);
     }
 

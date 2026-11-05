@@ -69,6 +69,7 @@ use LynxCms\Core\Strings\StringDefinition;
 use LynxCms\Core\Strings\StringStore;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
+use LynxCms\Core\Translation\TranslationProviders;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -167,6 +168,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(Lynx::class);
         $this->app->singleton(ActionRunner::class);
         $this->app->singleton(HookRegistry::class);
+        $this->app->singleton(TranslationProviders::class);
         $this->app->singleton(ActionRegistry::class);
         $this->app->singleton(ReadToolRegistry::class);
         $this->app->singleton(FieldTypeRegistry::class);
