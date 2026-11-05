@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.37
+
+Not released yet. No database changes.
+
+- **Fix:** a machine translation saved into a draft (`pages.save_draft` with `origin`), or already on the page, became a human value once the draft was published. Publishing now keeps each value's origin, so a later translation may still replace it and human text stays protected. A person's edit in the draft still publishes as human.
+
 ## 0.1.36
 
 Released November 3, 2026. Rolling migrations back in development works on PostgreSQL and MySQL again, and many more of Lynx's commands and actions are tested. Nothing to do after updating, and no database changes.

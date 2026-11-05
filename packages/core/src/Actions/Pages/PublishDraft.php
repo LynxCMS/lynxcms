@@ -22,7 +22,7 @@ use LynxCms\Core\Support\Tables;
 /**
  * Makes a page's draft live (ADR-0039): its values and its own template strings (ADR-0048) are
  * saved onto the page through pages.save, so validation, hooks, activity and a revision apply,
- * and the draft is deleted.
+ * and the draft is deleted. The values keep the origins the draft recorded (ADR-0016, ADR-0099).
  */
 final class PublishDraft extends Action
 {
@@ -74,6 +74,7 @@ final class PublishDraft extends Action
             'values' => $this->revisions->saveInput($page, $draft->valuesByLanguage()),
             'strings' => $this->strings->replacement((int) $page->id, $this->strings->snapshot($draftId)),
         ]);
+        $this->keepOrigins((int) $page->id, $draftId);
         $this->drafts->delete($draftId);
         // A draft published or discarded by hand no longer has a time to go live (ADR-0092).
         DB::table(Tables::SCHEDULES)->where('page_id', $page->id)->where('action', SchedulePage::PUBLISH_DRAFT)->delete();
@@ -81,5 +82,22 @@ final class PublishDraft extends Action
         $context->changes->updated('page', $page->id, "Publish the draft of page {$page->name()}", ['draft' => $draftId]);
 
         return $saved instanceof Page ? $saved : $page;
+    }
+
+    /**
+     * The save above records every value it writes as human. The draft began with the live page's
+     * origins and recorded each later save's, so its rows are the true ones.
+     */
+    private function keepOrigins(int $pageId, int $draftId): void
+    {
+        $rows = DB::table(Tables::FIELD_VALUE_META)->where('page_id', $draftId)->get()
+            ->map(fn (object $row): array => ['page_id' => $pageId] + (array) $row)
+            ->all();
+
+        DB::table(Tables::FIELD_VALUE_META)->where('page_id', $pageId)->delete();
+
+        foreach (array_chunk($rows, 500) as $chunk) {
+            DB::table(Tables::FIELD_VALUE_META)->insert($chunk);
+        }
     }
 }

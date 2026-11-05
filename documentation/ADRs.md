@@ -1062,3 +1062,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** A render without the page cache reads one cache entry instead of the settings page; a save in the admin shows on the next request, as before. A change made outside actions (SQL, a database restore) needs `cache:clear`. The key carries a version, bumped when the shape changes, so a deploy never reads an older release's copy. On the `database` cache store the read is still one query.
 
+
+## ADR-0099: A draft keeps the origin of its values when it is published
+
+**Status:** Accepted. Completes ADR-0016 for drafts (ADR-0039).
+
+**Context:** A value's origin (`human`, `machine`, `copied`), its provider and the hash of the text it came from decide whether a later translation may replace it and, later, whether it is out of date. `pages.save_draft` dropped the origin it was given, so a machine translation saved into a draft was recorded as human. `pages.publish_draft` saves the draft's values onto the live page through `pages.save`, which records every value it writes as human, so publishing turned all of a page's machine translations into human ones, even those the draft never touched. Translating into a draft, so an editor reviews the result before visitors see it, needs both to keep the origin.
+
+**Decision:** `pages.save_draft` passes `origin`, `provider` and `source_hashes` on to `pages.save`, which records them on the draft. `pages.publish_draft`, after its save, replaces the live page's value metadata with the draft's. The draft started with a copy of the live page's and recorded the origin of every later save, so its rows are the true ones. Restoring a revision still records the values as human: revisions keep no origins, and a person chose to bring them back.
+
+**Consequences:** A machine translation reviewed in a draft is still a machine translation once live, so it stays replaceable by a newer translation and protected human text stays protected. A person's edit in the draft publishes as human. Publishing writes the page's metadata rows once more.
