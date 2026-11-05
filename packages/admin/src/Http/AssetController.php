@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Http;
 
 use Illuminate\Support\Facades\Storage;
+use LynxCms\Admin\AdminAssets;
 use LynxCms\Admin\Branding\Branding;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
- * Serves the prebuilt admin stylesheet from the package, so host apps need no build step
- * and no vendor:publish. The layout adds the file's mtime as a version for cache busting.
+ * Serves the prebuilt admin stylesheet from the package, and modules' stylesheets (AdminAssets),
+ * so host apps need no build step and no vendor:publish. The layout adds the file's mtime as a version for cache busting.
  * Also serves the logo uploaded under Settings, which the sign-in screens show to guests,
  * and Lynx's own favicon.
  *
@@ -38,6 +39,15 @@ final class AssetController
     public function __invoke(): BinaryFileResponse
     {
         return $this->file(self::STYLESHEET, 'text/css; charset=utf-8');
+    }
+
+    /** A module's stylesheet (AdminAssets), served like the admin's own. */
+    public function module(string $name, AdminAssets $assets): BinaryFileResponse
+    {
+        $path = $assets->path($name);
+        abort_if($path === null || ! is_file($path), 404);
+
+        return $this->file($path, 'text/css; charset=utf-8');
     }
 
     /** The admin's JavaScript (the rich text editor), bundled from resources/js. */

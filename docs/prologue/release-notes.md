@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.40
+
+Not released yet. No database changes.
+
+- Modules in their own repositories can ship an admin stylesheet: build it from `resources/css/module.css` and register it with `AdminAssets`. It follows the site's appearance settings and branding. See [Styles for your screens](/admin/extending#styles-for-your-screens).
+
 ## 0.1.39
 
 Released November 5, 2026. Machine translation reaches pictures' descriptions, form options and template texts, and modules can wrap every translation provider. Nothing to do after updating, and no database changes.

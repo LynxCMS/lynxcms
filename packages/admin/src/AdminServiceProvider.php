@@ -91,6 +91,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(AdminBranches::class);
         $this->app->singleton(EditorLinks::class);
         $this->app->singleton(AdminSlots::class);
+        $this->app->singleton(AdminAssets::class);
         $this->app->singleton(TreeFilterRegistry::class);
         $this->app->singleton(EditorTabs::class);
         $this->app->singleton(LinkFiles::class);
@@ -193,6 +194,7 @@ final class AdminServiceProvider extends ServiceProvider
         Route::middleware('web')->prefix(Value::string(config('lynx-admin.prefix')))->name('lynx.admin.')->group(function (): void {
             Route::get('assets/admin.css', AssetController::class)->name('assets.css');
             Route::get('assets/admin.js', [AssetController::class, 'script'])->name('assets.js');
+            Route::get('assets/modules/{name}.css', [AssetController::class, 'module'])->where('name', '[a-z0-9-]+')->name('assets.module');
             Route::get('assets/logo/{file}', [AssetController::class, 'logo'])->where('file', '[a-z0-9.-]+')->name('assets.logo');
             Route::get('assets/favicon.{extension}', [AssetController::class, 'favicon'])->where('extension', 'svg|ico')->name('assets.favicon');
         });
