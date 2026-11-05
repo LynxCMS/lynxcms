@@ -169,8 +169,10 @@ The page tree's Details view lists filters such as "Has a draft". A module can a
 use LynxCms\Admin\Tree\TreeFilterRegistry;
 
 app(TreeFilterRegistry::class)->add(fn (): array => [
-    'needs-review' => ['label' => 'Needs review', 'term' => 'reviewed=0'],
+    'needs-review' => ['label' => 'Needs review', 'term' => 'reviewed=0', 'hint' => 'Pages nobody has reviewed yet.'],
 ]);
 ```
+
+The `hint` is optional: it shows when someone hovers over the filter or focuses it, and says what the filter finds.
 
 The closure runs when the tree shows its filters, so it can read the site's languages or settings. Lynx's own filters keep their keys, so a module filter with the same key is left out.

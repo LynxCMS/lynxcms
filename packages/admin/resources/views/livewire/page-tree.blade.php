@@ -50,13 +50,21 @@
         <div class="mb-3 flex flex-wrap items-center justify-end gap-3">
             @if ($filters !== [])
                 <div role="group" aria-label="{{ __('lynx-admin::pages.tree.show') }}" class="me-auto flex flex-wrap gap-1.5">
-                    @foreach ([['key' => '', 'label' => __('lynx-admin::pages.tree.all_pages'), 'count' => null], ...$filters] as $item)
-                        <button type="button" wire:click="filterBy('{{ $item['key'] }}')" aria-pressed="{{ $filter === $item['key'] ? 'true' : 'false' }}"
-                                @if ($item['key'] !== '') data-tree-filter="{{ $item['key'] }}" data-filter-count="{{ $item['count'] }}" @endif
-                                class="group text-muted-foreground hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background aria-pressed:border-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-sm">
-                            {{ $item['label'] }}
-                            @if ($item['count'] !== null)<b class="text-foreground group-aria-pressed:text-background font-semibold tabular-nums">{{ $item['count'] }}</b>@endif
-                        </button>
+                    @foreach ([['key' => '', 'label' => __('lynx-admin::pages.tree.all_pages'), 'hint' => null, 'count' => null], ...$filters] as $item)
+                        {{-- A filter's hint shows on hover and focus, and describes the button to screen readers. --}}
+                        <x-lynx-admin::ui.tooltip :delay="300" wire:key="tree-filter-{{ $item['key'] }}">
+                            <x-lynx-admin::ui.tooltip-trigger>
+                                <button type="button" wire:click="filterBy('{{ $item['key'] }}')" aria-pressed="{{ $filter === $item['key'] ? 'true' : 'false' }}"
+                                        @if ($item['key'] !== '') data-tree-filter="{{ $item['key'] }}" data-filter-count="{{ $item['count'] }}" @endif
+                                        class="group text-muted-foreground hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background aria-pressed:border-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-sm">
+                                    {{ $item['label'] }}
+                                    @if ($item['count'] !== null)<b class="text-foreground group-aria-pressed:text-background font-semibold tabular-nums">{{ $item['count'] }}</b>@endif
+                                </button>
+                            </x-lynx-admin::ui.tooltip-trigger>
+                            @if (($item['hint'] ?? null) !== null)
+                                <x-lynx-admin::ui.tooltip-content side="bottom" data-tree-filter-hint="{{ $item['key'] }}">{{ $item['hint'] }}</x-lynx-admin::ui.tooltip-content>
+                            @endif
+                        </x-lynx-admin::ui.tooltip>
                     @endforeach
                 </div>
             @endif

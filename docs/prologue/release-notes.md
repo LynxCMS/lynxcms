@@ -13,7 +13,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 Not released yet. No database changes.
 
 - The selector clause `has_outdated=pt` finds pages with a machine translation into Portuguese whose source text has changed, on the page or in its draft. A field can no longer be named `has_outdated`.
-- Modules can add filters to the page tree's Details view with `TreeFilterRegistry`. See [Extending the admin](/admin/extending#page-tree-filters).
+- The page tree's filters explain themselves: hover over one, or focus it, to read what it finds.
+- Modules can add filters to the page tree's Details view with `TreeFilterRegistry`, each with an optional hint. See [Extending the admin](/admin/extending#page-tree-filters).
 
 ## 0.1.37
 
