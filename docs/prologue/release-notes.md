@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.37
 
-Not released yet. Run `php artisan lynx:migrate` after updating.
+Released November 5, 2026. Translation into drafts, with a choice of provider, and a way to tell when a machine translation's source has changed. Modules can add buttons to the page editor. Run `php artisan lynx:migrate` after updating.
 
 - `pages.translate` can write into the page's draft (`draft: true`), so an editor reviews machine translations before visitors see them, and can name the provider to use (`provider:`). Providers register by name in `TranslationProviders`; `lynxcms/ai` registers `laravel-ai`. See [Translation](/ai/#translation).
 - A dry run of `pages.translate` no longer calls the provider: it says how many texts and characters it would send, so checking costs nothing.
