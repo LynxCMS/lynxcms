@@ -24,6 +24,9 @@ final class SaveDraft extends Action
 {
     use ResolvesPages;
 
+    /** The keys of pages.save that say where values come from (ADR-0016). */
+    private const array ORIGIN_KEYS = ['origin', 'provider', 'source_hashes'];
+
     public function __construct(private readonly Drafts $drafts, private readonly PageGuard $guard) {}
 
     public static function name(): string
@@ -43,7 +46,12 @@ final class SaveDraft extends Action
 
     public static function rules(): array
     {
-        return ['page' => ['required'], 'values' => ['required_without:strings', 'array'], 'strings' => ['sometimes', 'array']];
+        return [
+            'page' => ['required'],
+            'values' => ['required_without:strings', 'array'],
+            'strings' => ['sometimes', 'array'],
+            ...array_intersect_key(SavePage::rules(), array_flip(self::ORIGIN_KEYS)),
+        ];
     }
 
     public static function schema(JsonSchema $schema): array
@@ -64,8 +72,18 @@ final class SaveDraft extends Action
         $draft = $this->drafts->of((int) $page->id) ?? $this->drafts->create($page, EditLocks::holder($context->actor));
         // Recorded before the draft's own save: the activity log files an action under its first change, so under the live page.
         $context->changes->updated('page', $page->id, "Save draft of page {$page->name()}", ['draft' => $draft]);
-        $saved = $context->run(SavePage::class, ['id' => $draft, 'values' => $input->array('values'), 'strings' => $input->array('strings')]);
+        $saved = $context->run(SavePage::class, ['id' => $draft, 'values' => $input->array('values'), 'strings' => $input->array('strings')] + $this->origin($input));
 
         return $saved instanceof Page ? $saved : throw new UnexpectedValueException('pages.save did not return the draft.');
+    }
+
+    /**
+     * Where the values come from (ADR-0016), passed on so the draft keeps it until it is published.
+     *
+     * @return array<string, mixed>
+     */
+    private function origin(Input $input): array
+    {
+        return array_filter(array_intersect_key($input->all(), array_flip(self::ORIGIN_KEYS)), fn (mixed $value): bool => $value !== null);
     }
 }
