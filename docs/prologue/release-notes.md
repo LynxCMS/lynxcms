@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.39
 
-Not released yet. No database changes.
+Released November 5, 2026. Machine translation reaches pictures' descriptions, form options and template texts, and modules can wrap every translation provider. Nothing to do after updating, and no database changes.
 
 - `TranslationProviders::extend()` wraps every translation provider, so a module can count characters or pass a glossary to all of them. Providers get documented options: `glossary`, `formality` and `context`, which the `laravel-ai` provider now follows.
 - `pages.translate` also fills the texts inside a page's values that have none in the target language: a picture's description, a form question's options, and the page's own template texts. A template text whose translation loses a placeholder is left for a person. Field types holding texts per language implement `HasTranslatableTexts`.
