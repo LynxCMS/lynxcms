@@ -104,6 +104,15 @@ lynx()->pages->translate('/blog/hello-world', 'pt', draft: true);
 
 A draft has no URL of its own, so a page translated this way into a language it isn't published in yet still needs that language turned on in its settings.
 
+When someone changes the text a machine translated, the translation is marked outdated, until the text is back to what was translated or the field is translated again. Read each field's state for a language:
+
+```php
+lynx()->pages->translationStates($page, 'pt');
+// ['title' => ['origin' => 'machine', 'provider' => 'laravel-ai', 'outdated' => true], ...]
+```
+
+Text a person wrote is never outdated. Fields inside lists (repeaters and matrices) aren't tracked yet.
+
 A site can have more than one provider: `lynxcms/ai` registers `laravel-ai`, and a translation module may add others. Name one with `provider: 'laravel-ai'`; without it, Lynx uses the default. A dry run (`dryRun: true`) says how many texts and characters it would send, and sends nothing, so it costs nothing.
 
 ## Laravel Boost

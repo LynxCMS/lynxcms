@@ -28,6 +28,7 @@ use LynxCms\Core\Pages\PageReferences;
 use LynxCms\Core\Pages\PathResolver;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Pages\ScheduleReader;
+use LynxCms\Core\Pages\TranslationStates;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Query\Backlinks;
 use LynxCms\Core\Query\PageFinder;
@@ -209,6 +210,19 @@ final readonly class PagesApi
         ]), $dryRun);
 
         return $result->dryRun ? $result : array_map(Value::int(...), Value::map($result->arrayValue()));
+    }
+
+    /**
+     * How each translatable field of the page reads in a language: its origin (human, machine
+     * or copied), the provider that translated it, and whether the text it was translated from
+     * has changed since (outdated). Pass a draft (draft()) to read the draft's. Fields with no
+     * value in the language are left out.
+     *
+     * @return array<string, array{origin: string, provider: string|null, outdated: bool}>
+     */
+    public function translationStates(Page $page, string $language): array
+    {
+        return app(TranslationStates::class)->of($page, $this->languages->get($language));
     }
 
     /**

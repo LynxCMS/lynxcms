@@ -1092,3 +1092,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `AdminSlots` (`@api`) holds Livewire components by slot name, each with an optional closure saying which pages show it. The page editor's header renders `editor.header` beside its save buttons, for people who may edit the page on its content tabs, mounting each component with the page's id. A component that changes the draft dispatches `lynx-draft-changed`; the editor then reloads from the draft and puts back the values the person changed and has not saved. More slots (a field, the tree's toolbar, Site texts) are added when a module needs them.
 
 **Consequences:** Paid and third-party modules add editor actions with public API only. An unsaved edit wins over the module's value for the same field and language, so nothing a person typed is lost; the module's value shows once that edit is undone or saved over.
+
+## ADR-0102: A machine translation knows when the text it came from has changed
+
+**Status:** Accepted. Extends ADR-0016, which stored the hash of the source text for this.
+
+**Context:** A page translated by machine drifts from its source as editors change the original: the English summary is rewritten, the Portuguese one still says the old thing. ADR-0016 kept each translation's source hash so this could be found, but nothing read it back, and the hash alone does not say which language the source was in, since a page may be translated from any language.
+
+**Decision:** `lynx_value_meta` gains `source_language_id` and `outdated`. `pages.translate` passes the source language to `pages.save` (`source_language`), which records it with the origin. Whenever a translatable field is written in a language, every machine translation of that field on the same page made from that language is compared with the new text: different from the hash means outdated, equal means not. Writing a translation, by machine or by hand, starts it fresh. Drafts copy the metadata whole, so a change in a draft marks the draft's translations and publishing carries the mark to the live page. `lynx()->pages->translationStates($page, $language)` (`@api`) returns each field's origin, provider and outdated flag. Item fields keep no origin (ADR-0044) and are not tracked. The migration records the default language as the source of existing machine translations, the only one `pages.translate` used without being told.
+
+**Consequences:** The admin and modules can show "source changed" next to a field and offer to translate it again. Each save of a translatable field runs two small updates on the metadata table. Selectors cannot yet find pages with outdated translations; that comes with a selector term when a screen needs it.
