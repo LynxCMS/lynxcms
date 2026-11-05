@@ -180,3 +180,40 @@ app(TreeFilterRegistry::class)->add(fn (): array => [
 The `hint` is optional: it shows when someone hovers over the filter or focuses it, and says what the filter finds.
 
 The closure runs when the tree shows its filters, so it can read the site's languages or settings. Lynx's own filters keep their keys, so a module filter with the same key is left out.
+
+## Styles for your screens
+
+The admin's stylesheet is built from Lynx's own views, so a class only your module uses doesn't exist in it. A module in its own repository builds a small stylesheet of its own, with the admin's classes and tokens, and registers it.
+
+Start the stylesheet from the one the admin ships for modules, and point Tailwind at your views:
+
+```css
+/* resources/css/admin.css */
+@import "../../vendor/lynxcms/admin/resources/css/module.css";
+@source "../views";
+```
+
+Build it with the same Tailwind major version as the admin (4), and commit the result with your package:
+
+```bash
+npm install --save-dev tailwindcss @tailwindcss/cli
+npx tailwindcss -i resources/css/admin.css -o dist/admin.css --minify
+```
+
+Then register it from your service provider's `boot()`:
+
+```php
+use LynxCms\Admin\AdminAssets;
+
+app(AdminAssets::class)->stylesheet('reports', __DIR__.'/../dist/admin.css');
+```
+
+Every admin page then links it after the admin's own stylesheet and before the site's (`lynx-admin.stylesheets`), with a version that changes with the file, so browsers never keep an old copy.
+
+### Keeping the site's look
+
+Your classes read the same variables as the admin's, so a site's appearance settings and branding (accent colour, base colour, radius, fonts, spacing, dark mode) apply to your screens too. Three things keep it that way:
+
+- Don't define tokens in your stylesheet (`--primary`, `--radius`, `--spacing`…). `module.css` defines none, and anything you add would override the site's settings. Tailwind's own `--tw-` variables are fine.
+- Use the admin's colour classes (`bg-primary`, `text-muted-foreground`), not Tailwind's palette (`bg-blue-500`), which `module.css` leaves out.
+- Use the admin's form components (`<x-lynx-admin::ui.input>`, `ui.textarea`, `ui.select`, `ui.checkbox`, `ui.switch`) instead of raw `<input>`, `<select>` and `<textarea>` tags. They follow the site's input style (outline, fill or inset); a raw tag does not.

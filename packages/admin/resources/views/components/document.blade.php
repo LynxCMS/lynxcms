@@ -34,6 +34,10 @@
         <link rel="stylesheet" href="{{ $fonts }}">
     @endif
     <link rel="stylesheet" href="{{ route('lynx.admin.assets.css', ['v' => \LynxCms\Admin\Http\AssetController::version()], false) }}">
+    {{-- Modules' stylesheets (AdminAssets), then the site's, so a site's theme has the last word. --}}
+    @foreach (app(\LynxCms\Admin\AdminAssets::class)->stylesheets() as $moduleStylesheet => $modulePath)
+        <link rel="stylesheet" href="{{ route('lynx.admin.assets.module', ['name' => $moduleStylesheet, 'v' => \LynxCms\Admin\Http\AssetController::versionOf($modulePath)], false) }}" data-module-stylesheet="{{ $moduleStylesheet }}">
+    @endforeach
     @foreach ((array) config('lynx-admin.stylesheets', []) as $stylesheet)
         <link rel="stylesheet" href="{{ $stylesheet }}">
     @endforeach

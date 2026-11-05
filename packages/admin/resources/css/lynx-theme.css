@@ -1,0 +1,20 @@
+/*
+ * Lynx's additions to BlatUI's utilities: the compact text size and the colours BlatUI has no
+ * token for. Shared by admin.css and module.css, like blatui-theme.css.
+ */
+@theme {
+    /* Smaller than Tailwind's text-xs, for the compact language tabs. */
+    --text-xxs: 0.625rem;
+    --text-xxs--line-height: 0.875rem;
+}
+
+@theme inline {
+    /* Black and white stay: BlatUI uses them for overlays (bg-black/50) and text on solid fills. */
+    --color-black: #000;
+    --color-white: #fff;
+    --color-highlight: var(--lynx-highlight);
+    /* The current screen's link in the sidebar: a tint of the accent, stronger than the hover grey. */
+    --color-sidebar-active: color-mix(in oklab, var(--primary) var(--lynx-sidebar-active-mix), var(--sidebar));
+    --color-transparent: transparent;
+    --color-current: currentColor;
+}

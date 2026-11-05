@@ -1,0 +1,25 @@
+/*
+ * The start of a module's own admin stylesheet (ADR-0106). The admin's stylesheet is built from
+ * Lynx's views only, so a module outside the monorepo builds one for its screens:
+ *
+ *     @import "../../vendor/lynxcms/admin/resources/css/module.css";
+ *     @source "../views";
+ *
+ * It gives the module the admin's utilities (bg-primary, rounded-md, p-4, dark:…) and defines no
+ * token: every class reads the variables admin.css, the appearance presets and the branding set on
+ * <html>, so module screens follow them. No reset either; admin.css has it. Register the built
+ * file with AdminAssets.
+ *
+ * @api
+ */
+@import "tailwindcss/theme.css" layer(theme) theme(reference);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@custom-variant dark (&:is(.dark *));
+
+@theme reference {
+    --color-*: initial;
+}
+
+@import "./blatui-theme.css" theme(reference);
+@import "./lynx-theme.css" theme(reference);
