@@ -130,6 +130,7 @@ final class TranslatePage extends Action
             'page' => $target,
             'origin' => 'machine',
             'provider' => $provider->name(),
+            'source_language' => $from->code,
             'source_hashes' => $this->applyTranslations($target, $to, $texts, $translated, nameIt: ! $isDraft),
         ]);
 

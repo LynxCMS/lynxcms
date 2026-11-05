@@ -102,6 +102,7 @@ final class SavePage extends Action
             'origin' => ['sometimes', Rule::in(['human', 'machine', 'copied'])],
             'provider' => ['sometimes', 'nullable', 'string'],
             'source_hashes' => ['sometimes', 'array'],
+            'source_language' => ['sometimes', 'nullable', 'string', 'exists:'.Tables::LANGUAGES.',code'],
             'strings' => ['sometimes', 'array'],
         ];
     }

@@ -25,7 +25,7 @@ final class SaveDraft extends Action
     use ResolvesPages;
 
     /** The keys of pages.save that say where values come from (ADR-0016). */
-    private const array ORIGIN_KEYS = ['origin', 'provider', 'source_hashes'];
+    private const array ORIGIN_KEYS = ['origin', 'provider', 'source_hashes', 'source_language'];
 
     public function __construct(private readonly Drafts $drafts, private readonly PageGuard $guard) {}
 
