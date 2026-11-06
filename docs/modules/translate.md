@@ -28,7 +28,7 @@ composer require lynxcms/translate
 php artisan lynx:migrate
 ```
 
-The module needs Lynx 0.1.40 or later, with the admin, and a site with at least two [languages](/basics/languages). Set up at least one service below: until then, the Translate buttons stay hidden.
+The module needs Lynx 0.1.41 or later, with the admin, and a site with at least two [languages](/basics/languages). Set up at least one service below: until then, the Translate buttons stay hidden.
 
 ## Choosing a service
 
@@ -67,6 +67,8 @@ In the page editor, **Translate** opens a dialog:
 1. Choose **From** and **Into**. The dialog counts the texts and characters it will send. Counting sends nothing, so it costs nothing.
 2. Choose the service, if the site has more than one.
 3. Press **Translate into draft**. Each field shows its progress as it goes.
+
+On a site with a queue worker, a whole page is translated in the background: the dialog closes at once, and the editor tells you when the draft is ready. If you leave the page meanwhile, **Translations** in the sidebar shows a mark until you look at the result. A few fields, or a site without a worker, are translated while you wait.
 
 The editor then shows the draft. Read the translation in each field's language tab, or open the draft's preview link beside the title, and publish the draft when it reads well.
 

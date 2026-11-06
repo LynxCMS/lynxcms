@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.41
 
-Not released yet. No database changes.
+Released November 6, 2026. Rich text fields can turn on extra tools and show their HTML, and Review changes understands drafts. Nothing to do after updating, and no database changes.
 
 - Rich text fields can turn on extra editor tools in their settings: superscript and subscript, underline and highlight, code and code blocks, a horizontal line and text alignment. All are off by default. See [`textarea`](/basics/field-types#textarea).
 - Rich text fields have an **HTML** button: it shows the field's markup to read or edit. What you type there is saved as is, cleaned like any rich text; back in the editor, markup the editor doesn't know goes once you edit the text there.
