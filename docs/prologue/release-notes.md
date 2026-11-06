@@ -8,6 +8,12 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.41
+
+Not released yet. No database changes.
+
+- **Fix:** the admin's input style (fill or inset, under appearance) now also applies to native fields styled with BlatUI's classes (`blat-input`, `blat-textarea`, `blat-select`), which most admin screens use, not only to the form components. A few controls with classes of their own now use BlatUI's.
+
 ## 0.1.40
 
 Released November 5, 2026. Modules in their own repositories can style their admin screens, and keep the site's look. Nothing to do after updating, and no database changes.

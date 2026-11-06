@@ -5,83 +5,23 @@ declare(strict_types=1);
 use Symfony\Component\Finder\Finder;
 
 /*
- * Admin screens use the admin's form components (<x-lynx-admin::ui.input>, ui.textarea, ui.select,
- * ui.checkbox, ui.switch) instead of raw <input>, <select> and <textarea> tags: the components follow
- * the site's input style and branding (data-input-style), and a raw tag does not (ADR-0106). Hidden
- * inputs are fine. Views visitors see (a site's form, the page password screen) keep plain HTML.
- *
- * RAW_CONTROLS_LEFT lists the views that still have raw controls, with how many. The list only
- * shrinks: a view not on it may have none, a listed view may not gain one, and a view that loses
- * some must have its number lowered here, or taken off once it reaches none.
+ * Every form control in an admin view follows the site's appearance and branding: it is one of the
+ * admin's components (<x-lynx-admin::ui.input>…) or a native control with BlatUI's class for it
+ * (blat-input, blat-textarea, blat-select, blat-checkbox, blat-radio), which mirrors the component
+ * and follows the input style too. A raw control with classes of its own follows neither.
+ * Hidden and visually hidden inputs, colour pickers (a swatch, no field to style) and the control
+ * inside an input group (data-slot="input-group-control", the group is the field) are fine.
+ * Views visitors see (a site's form, the page password screen) keep plain HTML.
  */
 
-/** View (under packages/) => raw form controls it still has. */
-const RAW_CONTROLS_LEFT = [
-    'admin/resources/views/auth/login.blade.php' => 1,
-    'admin/resources/views/components/choices-editor.blade.php' => 3,
-    'admin/resources/views/components/localized-input.blade.php' => 4,
-    'admin/resources/views/inputs/choice.blade.php' => 2,
-    'admin/resources/views/inputs/component.blade.php' => 5,
-    'admin/resources/views/inputs/date.blade.php' => 1,
-    'admin/resources/views/inputs/decimal.blade.php' => 1,
-    'admin/resources/views/inputs/integer.blade.php' => 1,
-    'admin/resources/views/inputs/page.blade.php' => 2,
-    'admin/resources/views/inputs/text.blade.php' => 1,
-    'admin/resources/views/inputs/textarea.blade.php' => 1,
-    'admin/resources/views/inputs/time.blade.php' => 1,
-    'admin/resources/views/inputs/toggle.blade.php' => 1,
-    'admin/resources/views/livewire/account-security.blade.php' => 5,
-    'admin/resources/views/livewire/admin-search.blade.php' => 1,
-    'admin/resources/views/livewire/branding-form.blade.php' => 5,
-    'admin/resources/views/livewire/field-list.blade.php' => 4,
-    'admin/resources/views/livewire/icon-picker.blade.php' => 1,
-    'admin/resources/views/livewire/language-form.blade.php' => 7,
-    'admin/resources/views/livewire/link-dialog-pages.blade.php' => 1,
-    'admin/resources/views/livewire/link-dialog.blade.php' => 5,
-    'admin/resources/views/livewire/page-creator.blade.php' => 3,
-    'admin/resources/views/livewire/page-picker.blade.php' => 1,
-    'admin/resources/views/livewire/page-schedule.blade.php' => 2,
-    'admin/resources/views/livewire/page-settings.blade.php' => 5,
-    'admin/resources/views/livewire/page-strings.blade.php' => 2,
-    'admin/resources/views/livewire/page-table-input.blade.php' => 2,
-    'admin/resources/views/livewire/partials/field/fields.blade.php' => 4,
-    'admin/resources/views/livewire/partials/field/kind.blade.php' => 1,
-    'admin/resources/views/livewire/partials/field/settings.blade.php' => 4,
-    'admin/resources/views/livewire/partials/items/builder.blade.php' => 1,
-    'admin/resources/views/livewire/partials/items/create-dialog.blade.php' => 3,
-    'admin/resources/views/livewire/partials/items/limits.blade.php' => 5,
-    'admin/resources/views/livewire/partials/items/subfields.blade.php' => 3,
-    'admin/resources/views/livewire/partials/items/types.blade.php' => 2,
-    'admin/resources/views/livewire/partials/schedule-row.blade.php' => 1,
-    'admin/resources/views/livewire/partials/template-field-row.blade.php' => 7,
-    'admin/resources/views/livewire/partials/template-section.blade.php' => 2,
-    'admin/resources/views/livewire/role-form.blade.php' => 5,
-    'admin/resources/views/livewire/template-family.blade.php' => 4,
-    'admin/resources/views/livewire/template-form.blade.php' => 3,
-    'admin/resources/views/livewire/template-list.blade.php' => 1,
-    'admin/resources/views/livewire/user-roles.blade.php' => 5,
-    'cache/resources/views/admin/livewire/fragments.blade.php' => 1,
-    'cache/resources/views/admin/livewire/partials/rules.blade.php' => 6,
-    'cache/resources/views/admin/livewire/partials/server.blade.php' => 1,
-    'forms/resources/views/admin/livewire/form-list.blade.php' => 2,
-    'forms/resources/views/admin/livewire/inbox.blade.php' => 4,
-    'forms/resources/views/admin/livewire/submission.blade.php' => 1,
-    'media/resources/views/livewire/media-field.blade.php' => 3,
-    'menus/resources/views/admin/editor.blade.php' => 1,
-    'menus/resources/views/admin/partials/item-form.blade.php' => 12,
-    'menus/resources/views/admin/partials/settings.blade.php' => 1,
-    'menus/resources/views/admin/partials/translated-input.blade.php' => 1,
-    'page-password/resources/views/inputs/password.blade.php' => 1,
-    'seo/resources/views/admin/livewire/schemas.blade.php' => 3,
-    'seo/resources/views/admin/livewire/templates.blade.php' => 1,
-    'sitemap/resources/views/admin/livewire/settings.blade.php' => 5,
-];
+/** A form control's tag, its attributes allowed to hold quotes, {{ }}, ->, and directives' parentheses. */
+const FORM_CONTROL = '/<(input|select|textarea)\b((?:[^>"(){]|"[^"]*"|\{\{.*?\}\}|\{(?!\{)|\((?:[^()]|\([^()]*\))*\))*)>/s';
 
-/** @return array<string, int> raw form controls by admin view, under packages/ */
-function rawFormControls(): array
+/** @return list<string> "view:line <tag>" for each control that follows neither a component nor a blat- class */
+function unstyledFormControls(): array
 {
     $packages = dirname(__DIR__, 2).'/packages';
-    $counts = [];
+    $found = [];
 
     foreach (Finder::create()->files()->name('*.blade.php')->in($packages.'/*/resources/views') as $file) {
         $view = str_replace('\\', '/', substr($file->getPathname(), strlen($packages) + 1));
@@ -91,17 +31,24 @@ function rawFormControls(): array
         }
 
         $blade = (string) preg_replace('/\{\{--.*?--\}\}/s', '', $file->getContents());
-        preg_match_all('/<(input|select|textarea)\b([^>]*)>/s', $blade, $tags, PREG_SET_ORDER);
-        $raw = array_filter($tags, fn (array $tag): bool => $tag[1] !== 'input' || ! str_contains($tag[2], 'type="hidden"'));
+        preg_match_all(FORM_CONTROL, $blade, $tags, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
-        if ($raw !== []) {
-            $counts[$view] = count($raw);
+        foreach ($tags as $tag) {
+            if (! isStyledControl($tag[1][0], $tag[2][0])) {
+                $found[] = $view.':'.(substr_count(substr($blade, 0, $tag[0][1]), "\n") + 1)." <{$tag[1][0]}>";
+            }
         }
     }
 
-    ksort($counts);
+    return $found;
+}
 
-    return $counts;
+function isStyledControl(string $tag, string $attributes): bool
+{
+    return preg_match('/\bblat-(input|textarea|select|checkbox|radio)\b/', $attributes) === 1
+        || str_contains($attributes, 'sr-only')
+        || str_contains($attributes, 'data-slot="input-group-control"')
+        || ($tag === 'input' && preg_match('/type="(hidden|color)"/', $attributes) === 1);
 }
 
 /** The admin package's views and modules' admin screens and field inputs, not the components themselves. */
@@ -117,34 +64,22 @@ function isAdminView(string $view): bool
         || str_starts_with($view, 'media/resources/views/livewire/');
 }
 
-it('adds no raw form control to an admin view', function (): void {
-    $grown = [];
-
-    foreach (rawFormControls() as $view => $count) {
-        if ($count > (RAW_CONTROLS_LEFT[$view] ?? 0)) {
-            $grown[] = "{$view} has {$count} raw form controls; use the admin's form components";
-        }
-    }
-
-    expect($grown)->toBe([]);
+it('styles every form control in an admin view like the admin\'s components', function (): void {
+    expect(unstyledFormControls())->toBe([]);
 });
 
-it('lowers the list as views move to the form components', function (): void {
-    $found = rawFormControls();
-    $stale = [];
+it('reads tags whose attributes hold Blade and PHP', function (): void {
+    $blade = '<input id="input-{{ $field->name }}" class="blat-input" @error(\'values.\'.$field->name) aria-invalid="true" @enderror>';
+    preg_match(FORM_CONTROL, $blade, $tag);
 
-    foreach (RAW_CONTROLS_LEFT as $view => $count) {
-        if (($found[$view] ?? 0) < $count) {
-            $stale[] = "{$view}: lower RAW_CONTROLS_LEFT to ".($found[$view] ?? 0);
-        }
-    }
-
-    expect($stale)->toBe([]);
+    expect($tag[0] ?? '')->toBe($blade)
+        ->and(isStyledControl('input', $tag[2] ?? ''))->toBeTrue()
+        ->and(isStyledControl('input', ' type="text" class="border px-2"'))->toBeFalse()
+        ->and(isStyledControl('input', ' type="hidden" name="token"'))->toBeTrue();
 });
 
-it('counts raw controls and leaves hidden inputs and the components alone', function (): void {
+it('looks at admin views only', function (): void {
     expect(isAdminView('admin/resources/views/components/ui/input.blade.php'))->toBeFalse()
         ->and(isAdminView('forms/resources/views/fields/text.blade.php'))->toBeFalse()
-        ->and(isAdminView('seo/resources/views/admin/livewire/templates.blade.php'))->toBeTrue()
-        ->and(array_sum(rawFormControls()))->toBe(array_sum(RAW_CONTROLS_LEFT));
+        ->and(isAdminView('seo/resources/views/admin/livewire/templates.blade.php'))->toBeTrue();
 });
