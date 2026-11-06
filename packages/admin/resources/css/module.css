@@ -13,7 +13,13 @@
  * @api
  */
 @import "tailwindcss/theme.css" layer(theme) theme(reference);
-@import "tailwindcss/utilities.css" layer(utilities);
+/*
+ * A sub-layer of the admin's utilities: rules placed directly in a layer beat those in its
+ * sub-layers, so where the admin has a class too (hidden, md:flex…) the admin's own rules win, in the
+ * order its responsive variants need, and the module's apply where nothing else does. Loaded after
+ * admin.css in the same layer, the module's .hidden would beat the admin's md:flex.
+ */
+@import "tailwindcss/utilities.css" layer(utilities.module);
 
 @custom-variant dark (&:is(.dark *));
 

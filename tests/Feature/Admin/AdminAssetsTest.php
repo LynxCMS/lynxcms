@@ -47,6 +47,14 @@ it('refuses a stylesheet name that is not a plain slug', function (): void {
     expect(fn () => app(AdminAssets::class)->stylesheet('../evil', $this->sheet))->toThrow(InvalidArgumentException::class);
 });
 
+it('puts a module\'s utilities below the admin\'s, so the admin\'s responsive classes keep winning', function (): void {
+    $css = (string) file_get_contents(dirname(__DIR__, 3).'/packages/admin/resources/css/module.css');
+
+    // A sub-layer of utilities: the admin's own rules (hidden, md:flex) beat the module's copies.
+    expect($css)->toContain('@import "tailwindcss/utilities.css" layer(utilities.module);')
+        ->not->toContain('layer(utilities);');
+});
+
 it('starts modules from files the admin package ships', function (): void {
     $css = (string) file_get_contents(dirname(__DIR__, 3).'/packages/admin/resources/css/module.css');
     preg_match_all('/@import "\.\/([^"]+)"/', $css, $local);
