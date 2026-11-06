@@ -24,6 +24,9 @@ final class TextareaType extends BaseFieldType implements DescribesPhpType, Pres
     use PresentsSharedText;
     use ProvidesPlainSearchText;
 
+    /** Rich text tools a field can turn on (setting "tools"), all off by default (ADR-0107). */
+    public const array TOOLS = ['superscript', 'subscript', 'underline', 'highlight', 'code', 'code_block', 'horizontal_rule', 'text_align'];
+
     public function __construct(private readonly HtmlCleaner $html) {}
 
     public static function name(): string
@@ -55,6 +58,7 @@ final class TextareaType extends BaseFieldType implements DescribesPhpType, Pres
     {
         return [
             'format' => $schema->string()->enum(['plain', 'html', 'markdown'])->description('How the text is entered and rendered.'),
+            'tools' => $schema->array()->items($schema->string()->enum(self::TOOLS))->description('Rich text only: extra editor tools, off unless listed.'),
             'max_length' => $schema->integer()->description('Maximum length in characters.'),
         ];
     }
@@ -63,6 +67,8 @@ final class TextareaType extends BaseFieldType implements DescribesPhpType, Pres
     {
         return [
             'format' => ['sometimes', Rule::in(['plain', 'html', 'markdown'])],
+            'tools' => ['sometimes', 'array'],
+            'tools.*' => ['string', Rule::in(self::TOOLS)],
             'max_length' => ['sometimes', 'integer', 'min:1'],
         ];
     }

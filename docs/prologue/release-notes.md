@@ -12,6 +12,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 Not released yet. No database changes.
 
+- Rich text fields can turn on extra editor tools in their settings: superscript and subscript, underline and highlight, code and code blocks, a horizontal line and text alignment. All are off by default. See [`textarea`](/basics/field-types#textarea).
 - **Fix:** with a module that ships its own admin stylesheet (such as the translate module), the admin's sidebar could disappear: the module's copy of a class like `hidden` overrode the admin's `md:flex`. `module.css` now puts a module's classes below the admin's. Module authors rebuild their stylesheet against 0.1.41.
 - **Fix:** the admin's input style (fill or inset, under appearance) now also applies to native fields styled with BlatUI's classes (`blat-input`, `blat-textarea`, `blat-select`), which most admin screens use, not only to the form components. A few controls with classes of their own now use BlatUI's.
 

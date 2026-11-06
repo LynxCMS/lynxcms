@@ -23,6 +23,10 @@ final class SettingLabels
         'max_length' => ['label' => 'max_length', 'hint' => 'empty_no_limit', 'unit' => 'units.characters'],
         'placeholder' => ['label' => 'placeholder', 'hint' => 'placeholder_hint'],
         'format' => ['label' => 'format', 'options' => ['plain' => 'format_plain', 'html' => 'format_html', 'markdown' => 'format_markdown']],
+        'tools' => ['label' => 'tools', 'hint' => 'tools_hint', 'options' => [
+            'superscript' => 'tool_superscript', 'subscript' => 'tool_subscript', 'underline' => 'tool_underline', 'highlight' => 'tool_highlight',
+            'code' => 'tool_code', 'code_block' => 'tool_code_block', 'horizontal_rule' => 'tool_horizontal_rule', 'text_align' => 'tool_text_align',
+        ]],
         'multiple' => ['label' => 'multiple'],
         'input' => ['label' => 'input', 'options' => ['search' => 'input_search', 'select' => 'input_select', 'radios' => 'input_radios', 'checkboxes' => 'input_checkboxes']],
         'allowed' => ['label' => 'allowed', 'hint' => 'allowed_hint'],

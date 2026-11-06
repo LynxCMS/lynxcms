@@ -1144,3 +1144,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Consequences:** Module screens follow the appearance presets, the branding and dark mode, since their classes read the same variables, as long as the module defines no tokens and uses the admin's form components; Extending the admin says so. Each module adds one cached request and a few KB, some of it rules the admin already has.
 
 **Amended (0.1.41):** those repeated rules were not harmless. Loaded after `admin.css` in the same `utilities` layer, a module's `.hidden` beat the admin's `md:flex`, and the admin's sidebar disappeared. `module.css` now imports the utilities into a sub-layer, `utilities.module`: rules placed directly in a layer beat its sub-layers' rules, so wherever the admin has a class its own rules win, and a module's classes apply only where nothing else does. `module.css` and the two theme files become public API: renaming a token or variant breaks modules and needs a release note. Modules must build with the admin's Tailwind major version.
+
+## ADR-0107: Rich text fields turn on extra editor tools per field
+
+**Status:** Accepted.
+
+**Context:** Some sites need superscript and subscript (units, chemistry, footnotes), underline, highlight, code, a horizontal line or centred text. Adding them to every rich text editor lengthens every toolbar, and editors use what they see: a news site would start centring paragraphs.
+
+**Decision:** `textarea` gains the setting `tools`, a list from `TextareaType::TOOLS` (`superscript`, `subscript`, `underline`, `highlight`, `code`, `code_block`, `horizontal_rule`, `text_align`), empty by default. The field form shows it as checkboxes while the field is rich text; `SchemaForm` now reads a list's choices from its items' enum, so any type's list of choices gets checkboxes. The setting only adds toolbar buttons: the editor always loads every extension, so markup a hidden tool made (by an agent, an import or before the tool was turned off) survives a visual edit. `HtmlCleaner` keeps `sup`, `sub` and `mark` besides the tags it kept already, and a `style` on `p`, `h2`, `h3` and `h4` through `TextAlignSanitizer`, which keeps only `text-align` with `left`, `center`, `right` or `justify`, written one way (`text-align: center`).
+
+**Consequences:** Turning a tool off never changes stored text, and the editor still accepts its keyboard shortcuts and Markdown-style input rules, since the extensions stay loaded. Saved text can now carry an inline style, limited to alignment; a site's CSS styles `mark`, `sup` and `sub`. Four Tiptap packages join the admin's build, pinned to its Tiptap version.

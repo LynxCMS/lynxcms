@@ -51,10 +51,19 @@ Longer text. Can be translatable.
 | Setting | Meaning |
 | --- | --- |
 | `format` | `plain` (default), `html` for a rich text editor, or `markdown`. |
+| `tools` | Extra buttons for the rich text editor, all off by default: `superscript`, `subscript`, `underline`, `highlight`, `code`, `code_block`, `horizontal_rule`, `text_align`. |
 | `max_length` | Most characters. |
 | `formatters` | Formatters to run when the value is shown, in order, such as `['markdown', 'smartypants']`. |
 
 With `format: html`, editors get a rich text editor, and Lynx cleans the HTML on every save: it keeps a safe set of tags and attributes, and refuses links that could run script.
+
+The editor starts with bold, italic, strikethrough, headings, lists, quotes and links. A field that needs more turns them on, in **Settings › Fields** under **Extra tools**, or in code:
+
+```php
+lynx()->fields->add('body', 'textarea', settings: ['format' => 'html', 'tools' => ['superscript', 'subscript', 'text_align']]);
+```
+
+So a chemistry page can write H₂O, and a news page keeps its toolbar short. Turning a tool off hides its button only: text already written with it keeps its markup. Of all styles, the cleaner keeps only a paragraph's or heading's alignment (`style="text-align: center"`), so your site's CSS decides how the rest looks, `<mark>` included.
 
 **Formatters** change how text is shown, never what is stored. `heading_anchors` gives headings an `id` made from their text (`Opening hours` becomes `#opening-hours`), so links can point at a section. `$page->getUnformatted('body')` returns the stored value.
 

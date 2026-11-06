@@ -10,15 +10,15 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 /**
  * Cleans HTML for html textarea fields on every save, whoever sends it (the editor, the API,
  * MCP, the agent, imports): an allowlist of text markup, links limited to safe schemes, and no
- * scripts, event handlers, styles or embeds. Rendering prints stored HTML as is, so this is the
+ * scripts, event handlers, styles (but a block's text alignment) or embeds. Rendering prints stored HTML as is, so this is the
  * only line of defence against stored cross-site scripting.
  *
  * @api
  */
 final class HtmlCleaner
 {
-    /** Elements the rich text editor produces, with no attributes. */
-    public const array ELEMENTS = ['p', 'br', 'hr', 'h2', 'h3', 'h4', 'strong', 'b', 'em', 'i', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre'];
+    /** Elements the rich text editor produces, with no attributes but a text alignment. */
+    public const array ELEMENTS = ['p', 'br', 'hr', 'h2', 'h3', 'h4', 'strong', 'b', 'em', 'i', 's', 'u', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'sup', 'sub', 'mark'];
 
     public const array LINK_SCHEMES = ['http', 'https', 'mailto', 'tel'];
 
@@ -49,11 +49,13 @@ final class HtmlCleaner
             ->allowRelativeLinks()
             // Only the relations editors may choose; noopener is added above for new windows.
             ->withAttributeSanitizer(new LinkRelSanitizer)
+            // Of styles, only a block's text alignment (the editor's text_align tool).
+            ->withAttributeSanitizer(new TextAlignSanitizer)
             // The default cuts input at 20,000 characters, which would truncate long articles.
             ->withMaxInputLength(-1);
 
         foreach (self::ELEMENTS as $element) {
-            $config = $config->allowElement($element);
+            $config = $config->allowElement($element, in_array($element, TextAlignSanitizer::ELEMENTS, true) ? ['style'] : []);
         }
 
         return $this->sanitizer = new HtmlSanitizer($config);
