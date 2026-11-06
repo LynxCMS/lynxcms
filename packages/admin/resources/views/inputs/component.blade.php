@@ -28,7 +28,7 @@
                             @endforeach
                         </select>
                     @elseif ($setting['type'] === 'boolean')
-                        <input id="setting-{{ $field->name }}-{{ $name }}" type="checkbox" wire:model="{{ $model }}.settings.{{ $name }}" @disabled($disabled)>
+                        <input id="setting-{{ $field->name }}-{{ $name }}" type="checkbox" class="blat-checkbox" wire:model="{{ $model }}.settings.{{ $name }}" @disabled($disabled)>
                     @elseif (in_array($setting['type'], ['integer', 'number'], true))
                         <input id="setting-{{ $field->name }}-{{ $name }}" type="number" class="blat-input" wire:model="{{ $model }}.settings.{{ $name }}" @disabled($disabled)>
                     @elseif ($setting['type'] === 'string')

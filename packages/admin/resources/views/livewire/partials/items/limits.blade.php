@@ -42,7 +42,7 @@
             <span id="limits-start" class="text-sm font-medium">{{ __('lynx-admin::fields.limits.'.Str::plural($noun).'_start') }}</span>
             @foreach (['' => [__('lynx-admin::fields.limits.closed_new'), __('lynx-admin::fields.limits.closed_new_hint')], 'open' => [__('lynx-admin::fields.limits.open'), __('lynx-admin::fields.limits.open_'.Str::plural($noun))], 'collapsed' => [__('lynx-admin::fields.limits.closed'), __('lynx-admin::fields.limits.closed_hint')]] as $value => [$title, $hint])
                 <label class="has-checked:border-primary has-checked:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
-                    <input type="radio" class="mt-0.5 accent-primary" name="setting-collapse" value="{{ $value }}" wire:model="settings.collapse">
+                    <input type="radio" class="blat-radio mt-0.5" name="setting-collapse" value="{{ $value }}" wire:model="settings.collapse">
                     <span class="grid gap-0.5"><span class="font-medium">{{ $title }}</span><span class="text-muted-foreground">{{ $hint }}</span></span>
                 </label>
             @endforeach

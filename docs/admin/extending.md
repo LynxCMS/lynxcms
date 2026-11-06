@@ -216,4 +216,4 @@ Your classes read the same variables as the admin's, so a site's appearance sett
 
 - Don't define tokens in your stylesheet (`--primary`, `--radius`, `--spacing`…). `module.css` defines none, and anything you add would override the site's settings. Tailwind's own `--tw-` variables are fine.
 - Use the admin's colour classes (`bg-primary`, `text-muted-foreground`), not Tailwind's palette (`bg-blue-500`), which `module.css` leaves out.
-- Use the admin's form components (`<x-lynx-admin::ui.input>`, `ui.textarea`, `ui.select`, `ui.checkbox`, `ui.switch`) instead of raw `<input>`, `<select>` and `<textarea>` tags. They follow the site's input style (outline, fill or inset); a raw tag does not.
+- Use the admin's form components (`<x-lynx-admin::ui.input>`, `ui.textarea`, `ui.select`, `ui.checkbox`, `ui.switch`), or give a native control BlatUI's class for it (`blat-input`, `blat-textarea`, `blat-select`, `blat-checkbox`, `blat-radio`). Both follow the site's input style (outline, fill or inset); a control with classes of your own does not.

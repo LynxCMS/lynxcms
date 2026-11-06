@@ -15,9 +15,9 @@
         <div class="grid gap-1.5">
             <label for="field-name" class="text-sm font-medium">{{ __('lynx-admin::fields.name.in_templates') }}</label>
             @if ($field === null)
-                                <div class="bg-muted/50 flex max-w-md items-stretch overflow-hidden rounded-md border font-mono text-sm focus-within:ring-[3px] focus-within:ring-ring/50">
+                                <div data-slot="input-group" class="bg-muted/50 flex max-w-md items-stretch overflow-hidden rounded-md border font-mono text-sm focus-within:ring-[3px] focus-within:ring-ring/50">
                     <span class="text-muted-foreground grid place-items-center px-2.5">$page-&gt;</span>
-                    <input id="field-name" type="text" class="bg-background min-w-0 flex-1 border-s px-2.5 py-2 outline-none" wire:model="name" x-on:input="typed = true" autocomplete="off" spellcheck="false" @error('name') aria-invalid="true" @enderror>
+                    <input id="field-name" type="text" data-slot="input-group-control" class="bg-background min-w-0 flex-1 border-s px-2.5 py-2 outline-none" wire:model="name" x-on:input="typed = true" autocomplete="off" spellcheck="false" @error('name') aria-invalid="true" @enderror>
                 </div>
                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.name.help') }}</p>
             @else
@@ -34,7 +34,7 @@
                 <div class="grid gap-2" role="radiogroup" aria-labelledby="field-languages-heading">
                     @foreach ([true => [__('lynx-admin::fields.languages.own'), __('lynx-admin::fields.languages.own_hint')], false => [__('lynx-admin::fields.languages.same'), __('lynx-admin::fields.languages.same_hint')]] as $value => [$title, $hint])
                         <label class="has-checked:border-primary has-checked:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
-                            <input type="radio" class="mt-0.5 accent-primary" name="field-translatable" wire:click="$set('translatable', {{ $value ? 'true' : 'false' }})" @checked($translatable === (bool) $value)>
+                            <input type="radio" class="blat-radio mt-0.5" name="field-translatable" wire:click="$set('translatable', {{ $value ? 'true' : 'false' }})" @checked($translatable === (bool) $value)>
                             <span class="grid gap-0.5"><span class="font-medium">{{ $title }}</span><span class="text-muted-foreground">{{ $hint }}</span></span>
                         </label>
                     @endforeach
