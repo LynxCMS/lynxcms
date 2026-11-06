@@ -9,7 +9,8 @@ use LynxCms\Core\Support\Value;
 /**
  * A form generated from a JSON schema (a component's settings, a field type's settings): one input
  * per property, and the submitted values cast back to the schema's types. Lists are typed as
- * comma separated text. Validation stays with whoever owns the schema.
+ * comma separated text, or a set of checkboxes when their items are an enum. Validation stays with
+ * whoever owns the schema.
  *
  * @internal
  */
@@ -28,7 +29,8 @@ final class SchemaForm
             $definitions[(string) $name] = [
                 'type' => Value::string($schema['type'] ?? 'string'),
                 'description' => Value::string($schema['description'] ?? ''),
-                'enum' => Value::strings($schema['enum'] ?? []),
+                // A list's choices are its items' enum.
+                'enum' => Value::strings($schema['enum'] ?? Value::map($schema['items'] ?? [])['enum'] ?? []),
             ];
         }
 
@@ -71,7 +73,7 @@ final class SchemaForm
     }
 
     /**
-     * Stored settings as form values: lists joined with commas, numbers as text.
+     * Stored settings as form values: lists joined with commas (lists of choices stay lists), numbers as text.
      *
      * @param  array<string, array{type: string, description: string, enum: list<string>}>  $definitions
      * @param  array<array-key, mixed>  $settings
@@ -85,6 +87,7 @@ final class SchemaForm
             $value = $settings[$name] ?? null;
             $form[$name] = match (true) {
                 $definition['type'] === 'boolean' => $value === null ? null : (bool) $value,
+                $definition['type'] === 'array' && $definition['enum'] !== [] => Value::strings($value ?? []),
                 is_array($value) => implode(', ', Value::strings($value)),
                 $value === null => '',
                 default => Value::string($value),

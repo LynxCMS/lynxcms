@@ -10,18 +10,7 @@ import { lynxEditorGuard } from './editor-guard.js'
 import { lynxEditorSection } from './editor-section.js'
 import { registerBlatUI } from './blatui-core.js'
 import { lynxPasskeyRegister, lynxPasskeyVerify } from './passkeys.js'
-
-/** Toolbar buttons: command run on click and the mark or node that shows it as pressed. */
-const TOOLS = {
-    bold: ['toggleBold', 'bold'],
-    italic: ['toggleItalic', 'italic'],
-    strike: ['toggleStrike', 'strike'],
-    h2: ['toggleHeading', 'heading', { level: 2 }],
-    h3: ['toggleHeading', 'heading', { level: 3 }],
-    bulletList: ['toggleBulletList', 'bulletList'],
-    orderedList: ['toggleOrderedList', 'orderedList'],
-    blockquote: ['toggleBlockquote', 'blockquote'],
-}
+import { TOOLS, TOOL_EXTENSIONS } from './rich-text-tools.js'
 
 /** Links keep the title, target and rel the link dialog sets; no defaults are added. */
 const LynxLink = Link.extend({
@@ -68,6 +57,7 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
                         link: false,
                     }),
                     LynxLink,
+                    ...TOOL_EXTENSIONS,
                     Placeholder.configure({ placeholder: placeholder || '' }),
                 ],
                 editorProps: {
@@ -98,7 +88,7 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
         },
 
         run(tool) {
-            const [command, , attributes] = TOOLS[tool]
+            const { command, attributes } = TOOLS[tool]
             editor.chain().focus()[command](attributes).run()
             this.refresh()
         },
@@ -152,8 +142,8 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
         refresh() {
             const active = {}
 
-            for (const [tool, [, name, attributes]] of Object.entries(TOOLS)) {
-                active[tool] = editor.isActive(name, attributes)
+            for (const [tool, { isActive }] of Object.entries(TOOLS)) {
+                active[tool] = isActive(editor)
             }
 
             active.link = editor.isActive('link')

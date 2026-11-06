@@ -230,6 +230,11 @@
         @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground aria-pressed:bg-accent aria-pressed:text-accent-foreground min-w-8 cursor-pointer rounded-sm px-2 py-1 text-xs font-semibold;
     }
 
+    /* The extra tools' buttons show an icon */
+    .lynx-richtext-toolbar button:has(svg) {
+        @apply inline-flex items-center justify-center;
+    }
+
     .lynx-richtext-separator {
         @apply bg-input m-1 w-px;
     }
@@ -251,6 +256,9 @@
     .lynx-richtext-content a { color: var(--primary); text-decoration: underline; }
     .lynx-richtext-content code { padding: 0 0.25rem; font-size: 0.9em; background: var(--muted); border-radius: 0.25rem; }
     .lynx-richtext-content pre { padding: 0.75rem; overflow-x: auto; background: var(--muted); border-radius: var(--radius-md); }
+    .lynx-richtext-content pre code { padding: 0; background: none; }
+    .lynx-richtext-content hr { border-color: var(--border); }
+    .lynx-richtext-content mark { padding: 0 0.125rem; color: inherit; background: color-mix(in oklab, var(--primary) 22%, transparent); border-radius: 0.125rem; }
 
     /* Placeholder (the fallback text) while the editor is empty */
     .lynx-richtext-content p.is-editor-empty:first-child::before {

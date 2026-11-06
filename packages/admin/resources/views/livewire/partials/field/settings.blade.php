@@ -16,6 +16,20 @@
                     <span class="text-sm font-medium">{{ __('lynx-admin::fields.settings.options') }}</span>
                     <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" defaultable multiple-model="settings.multiple" />
                     <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.options_help') }}</p>
+                @elseif ($definition['type'] === 'array' && $words['options'] !== [])
+                    {{-- A rich text field's tools only matter while it is rich text. --}}
+                    <fieldset class="grid gap-1.5" @if ($type === 'textarea' && $setting === 'tools') x-show="$wire.settings.format === 'html'" @endif>
+                        <legend class="text-sm font-medium">{{ $words['label'] }}</legend>
+                        <div class="grid gap-2 sm:grid-cols-2">
+                            @foreach ($words['options'] as $value => $word)
+                                <label class="flex cursor-pointer items-center gap-2 text-sm">
+                                    <input class="blat-checkbox" type="checkbox" value="{{ $value }}" wire:model="settings.{{ $setting }}" data-setting-{{ $setting }}="{{ $value }}" @disabled(! $canEdit)>
+                                    {{ $word }}
+                                </label>
+                            @endforeach
+                        </div>
+                        @if ($words['hint'] !== '')<p class="text-muted-foreground text-sm">{{ $words['hint'] }}</p>@endif
+                    </fieldset>
                 @elseif ($definition['type'] === 'boolean')
                     <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
                         <input class="blat-checkbox mt-0.5" id="setting-{{ $setting }}" type="checkbox" wire:model="settings.{{ $setting }}">
