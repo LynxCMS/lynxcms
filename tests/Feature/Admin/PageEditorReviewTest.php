@@ -104,3 +104,57 @@ it('previews formatted output under fields that have formatters', function (): v
         ->assertSee('Preview')
         ->assertSeeHtml('A “smart” – summary');
 });
+
+it('reviews what the draft changes on the live page, saved or not', function (): void {
+    $page = reviewPage();
+    lynx()->pages->saveDraft($page->id, ['title' => ['pt' => 'Guia revisto']]);
+
+    $editor = Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->call('review')
+        ->assertSet('isReviewing', true)
+        ->assertSeeHtml('data-review-draft');
+
+    expect(array_map(fn (ReviewEntry $entry): array => [$entry->field, $entry->before, $entry->after], $editor->viewData('review')))
+        ->toBe([['title', 'Guia', 'Guia revisto']]);
+
+    // An edit not saved yet joins the draft's in the review.
+    $editor->set('values.price.default', 300)->call('review');
+
+    expect(array_map(fn (ReviewEntry $entry): string => $entry->field, $editor->viewData('review')))->toBe(['title', 'price']);
+});
+
+it('says so when the draft changes nothing on the live page', function (): void {
+    $page = reviewPage();
+    lynx()->pages->saveDraft($page->id, ['title' => ['pt' => 'Guia']]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->call('review')
+        ->assertSet('isReviewing', false)
+        ->assertDispatched('lynx-notify', type: 'warning');
+});
+
+it('shows rich text formatted in a review, with its HTML a click away', function (): void {
+    $page = reviewPage();
+    lynx()->pages->saveDraft($page->id, ['body' => ['default' => '<p>New <strong>body</strong></p>']]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])->call('review')
+        ->assertSeeHtml('data-review-raw-toggle')
+        ->assertSeeHtml('<p>New <strong>body</strong></p>')
+        ->assertSeeHtml('&lt;p&gt;New &lt;strong&gt;body&lt;/strong&gt;&lt;/p&gt;');
+});
+
+it('cleans unsaved rich text before showing it formatted', function (): void {
+    $page = reviewPage();
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->set('values.body.default', '<p>Hi</p><script>alert(1)</script>')
+        ->call('review')
+        ->assertDontSeeHtml('<script>alert(1)</script>');
+});
+
+it('offers no HTML switch when nothing under review is rich text', function (): void {
+    $page = reviewPage();
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])->set('values.price.default', 300)->call('review')
+        ->assertDontSeeHtml('data-review-raw-toggle');
+});

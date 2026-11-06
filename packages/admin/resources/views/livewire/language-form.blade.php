@@ -46,7 +46,7 @@
             <div class="grid gap-1">
                 <label for="language-fallback" class="text-sm font-medium">{{ __('lynx-admin::languages.form.fallback') }}</label>
                 <select id="language-fallback" class="blat-select max-w-sm" wire:model="fallback">
-                    <option value="">{{ __('lynx-admin::languages.form.default_language') }}</option>
+                    <option value="" data-fallback-default="{{ $defaultLanguage->code }}">{{ __('lynx-admin::languages.form.default_language_named', ['language' => $defaultLanguage->name]) }}</option>
                     @foreach ($fallbacks as $fallbackCode => $fallbackName)
                         <option value="{{ $fallbackCode }}">{{ $fallbackName }} ({{ $fallbackCode }})</option>
                     @endforeach

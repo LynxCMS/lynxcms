@@ -96,3 +96,28 @@ it('labels the editor tabs with the tab label', function (): void {
     Livewire::test(PageEditor::class, ['pageId' => (int) lynx()->pages->get('/courses/')->id])
         ->assertViewHas('languages', fn (array $languages): bool => $languages[1]['label'] === 'PT' && $languages[0]['label'] === 'Default');
 });
+
+it('offers the default language once as a fallback, by name', function (): void {
+    lynx()->languages->add('es', 'Español', fallback: 'default');
+    $default = lynx()->languages->default();
+
+    Livewire::test(LanguageForm::class, ['language' => 'es'])
+        ->assertViewHas('fallbacks', ['pt' => 'Português'])
+        ->assertSeeHtml('data-fallback-default="'.$default->code.'"');
+});
+
+it('shows a fallback set to the default language as the default option', function (): void {
+    lynx()->languages->add('es', 'Español', fallback: lynx()->languages->default()->code);
+
+    Livewire::test(LanguageForm::class, ['language' => 'es'])->assertSet('fallback', '');
+});
+
+it('names the language in the edit screen\'s heading and breadcrumb', function (): void {
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    $html = (string) $this->get(route('lynx.admin.languages.edit', 'pt'))->assertOk()->getContent();
+
+    expect($html)->toContain('<h1')
+        ->and(preg_match('/<h1[^>]*>\s*Português\s*</', $html))->toBe(1)
+        ->and(preg_match('/aria-current="page"[^>]*>\s*Português\s*</', $html))->toBe(1);
+});

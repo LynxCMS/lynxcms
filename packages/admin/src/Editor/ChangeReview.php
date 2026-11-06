@@ -59,6 +59,7 @@ final readonly class ChangeReview
                     (string) $templateField->field->type,
                     $this->views->display($templateField, $page->getLanguageValue($language, $templateField->name())),
                     $this->views->display($templateField, $after),
+                    Value::string($templateField->field->config()['format'] ?? 'plain'),
                 );
             }
         }

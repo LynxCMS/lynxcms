@@ -12,6 +12,14 @@ import { registerBlatUI } from './blatui-core.js'
 import { lynxPasskeyRegister, lynxPasskeyVerify } from './passkeys.js'
 import { TOOLS, TOOL_EXTENSIONS } from './rich-text-tools.js'
 
+/** Block tags that start a new line in the HTML view, so the markup reads one block per line. */
+const BLOCK_END = /(<\/(?:p|h[1-6]|li|ul|ol|blockquote|pre|div|table|tr)>|<hr\s*\/?>|<br\s*\/?>)(?!\n)/gi
+
+/** The editor's HTML with a line break after each block, for reading and editing it as source. */
+function readableHtml(html) {
+    return (html || '').replace(BLOCK_END, '$1\n').replace(/(<(?:ul|ol)>)(?!\n)/gi, '$1\n').trim()
+}
+
 /** Links keep the title, target and rel the link dialog sets; no defaults are added. */
 const LynxLink = Link.extend({
     addAttributes() {
@@ -43,6 +51,9 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
     return {
         value: model,
         active: {},
+        /** The HTML view: the markup in a textarea, edited as it is; the server cleans it on save. */
+        isSource: false,
+        source: '',
 
         init() {
             editor = new Editor({
@@ -85,6 +96,29 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
         destroy() {
             editor?.destroy()
             editor = null
+        },
+
+        /**
+         * Switches between the editor and its HTML. What is typed in the HTML view is the field's
+         * value as it is; back in the editor, markup the editor doesn't know stays until the text is
+         * edited there, when the editor keeps only what it knows.
+         */
+        toggleSource() {
+            if (! this.isSource) {
+                this.source = readableHtml(this.value)
+                this.isSource = true
+
+                return
+            }
+
+            this.isSource = false
+            editor.commands.setContent(this.value || '', { emitUpdate: false })
+            this.refresh()
+        },
+
+        /** Typing in the HTML view: the field's value follows, without the editor rewriting it. */
+        sourceChanged() {
+            this.value = this.source.trim()
         },
 
         run(tool) {

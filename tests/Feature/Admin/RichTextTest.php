@@ -63,3 +63,11 @@ it('saves rich text through pages.save, which cleans it', function (): void {
 
     expect((string) lynx()->pages->get($page->id)->getLanguageValue('pt', 'body'))->toBe('<p>Corpo <em>português</em></p>');
 });
+
+it('offers the rich text field\'s HTML to read and edit', function (): void {
+    $page = richPage();
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->assertSeeHtml('data-richtext-source-toggle')
+        ->assertSeeHtml('data-richtext-source');
+});

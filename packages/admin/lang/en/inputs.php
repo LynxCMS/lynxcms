@@ -51,6 +51,9 @@ return [
         'link' => 'Link',
         'undo' => 'Undo',
         'redo' => 'Redo',
+        'html' => 'HTML',
+        'html_help' => 'Show and edit the HTML',
+        'html_field' => 'HTML of :field',
     ],
     'page_table' => [
         'actions' => 'Actions',
