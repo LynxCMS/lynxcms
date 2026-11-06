@@ -13,7 +13,13 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 Not released yet. No database changes.
 
 - Rich text fields can turn on extra editor tools in their settings: superscript and subscript, underline and highlight, code and code blocks, a horizontal line and text alignment. All are off by default. See [`textarea`](/basics/field-types#textarea).
+- Rich text fields have an **HTML** button: it shows the field's markup to read or edit. What you type there is saved as is, cleaned like any rich text; back in the editor, markup the editor doesn't know goes once you edit the text there.
+- **Review changes** shows rich text formatted, with **Show HTML** to compare the markup.
+- **Preview** in the page editor is one button for the default language, with the page's other languages in its menu.
+- **Review changes** with a draft open lists what the draft, with any edit not saved yet, would change on the live page, and offers to publish it. Before, it only looked at unsaved edits, so a saved draft had "no changes to review".
+- A language's settings screen names the language in its heading and breadcrumb (Languages › Español), or gives its code when it has no name.
 - **Fix:** with a module that ships its own admin stylesheet (such as the translate module), the admin's sidebar could disappear: the module's copy of a class like `hidden` overrode the admin's `md:flex`. `module.css` now puts a module's classes below the admin's. Module authors rebuild their stylesheet against 0.1.41.
+- **Fix:** a language's **Falls back to** list showed the default language twice, as "The default language" and by name. It now shows it once: "The default language (English)".
 - **Fix:** the admin's input style (fill or inset, under appearance) now also applies to native fields styled with BlatUI's classes (`blat-input`, `blat-textarea`, `blat-select`), which most admin screens use, not only to the form components. A few controls with classes of their own now use BlatUI's.
 
 ## 0.1.40

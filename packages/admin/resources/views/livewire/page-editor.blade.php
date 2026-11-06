@@ -66,8 +66,13 @@
     </x-lynx-admin::ui.tabs>
 
     @if ($isReviewing && $isFieldsTab)
-        <x-lynx-admin::editor.review :entries="$review">
-            <x-lynx-admin::ui.button type="button" wire:click="save">{{ __('lynx-admin::editor.save_changes') }}</x-lynx-admin::ui.button>
+        <x-lynx-admin::editor.review :entries="$review" :draft="$hasDraft">
+            @if ($hasDraft)
+                {{-- Publishing saves any edit not saved yet, then makes the draft live. --}}
+                <x-lynx-admin::ui.button type="button" wire:click="publishDraft">{{ __('lynx-admin::editor.publish_draft') }}</x-lynx-admin::ui.button>
+            @else
+                <x-lynx-admin::ui.button type="button" wire:click="save">{{ __('lynx-admin::editor.save_changes') }}</x-lynx-admin::ui.button>
+            @endif
             <x-lynx-admin::ui.button variant="outline" type="button" wire:click="closeReview">{{ __('lynx-admin::editor.keep_editing') }}</x-lynx-admin::ui.button>
         </x-lynx-admin::editor.review>
     @endif

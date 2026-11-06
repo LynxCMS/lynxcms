@@ -235,6 +235,19 @@
         @apply inline-flex items-center justify-center;
     }
 
+    .lynx-richtext-toolbar button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    /* The HTML view replaces the editor inside the same frame. */
+    .lynx-richtext-source {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 12rem;
+    }
+
     .lynx-richtext-separator {
         @apply bg-input m-1 w-px;
     }

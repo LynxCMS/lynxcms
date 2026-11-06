@@ -44,7 +44,7 @@ it('saves changes as a draft and keeps editing it', function (): void {
         ->assertSeeHtml('wire:click="publishDraft"')
         ->assertSeeHtml('href="/courses/alpha?preview=draft"')
         ->assertSeeHtml('href="/pt/cursos/alfa?preview=draft"')
-        ->assertSee('Preview Português')
+        ->assertSeeHtml('data-draft-preview-menu')
         ->assertSeeHtml('wire:click="discardDraft"');
 });
 
@@ -98,4 +98,24 @@ it('takes a page change without a revision, reading the page\'s own', function (
 
     // A component that does not know the revision (as publishDraft once did) must not break the editor.
     $editor->dispatch('lynx-page-changed')->assertSet('revision', (int) lynx()->pages->get('/courses/alpha')?->revision);
+});
+
+it('previews the draft in the default language from one button, the others from its menu', function (): void {
+    $alpha = lynx()->pages->get('/courses/alpha');
+    $alpha->setLanguageName('pt', 'alfa', active: true);
+    $alpha->save();
+
+    $editor = draftEditor()->set('values.title.default', 'Alpha draft')->call('saveDraft')
+        ->assertSeeHtml('data-draft-preview-menu')
+        ->assertSeeHtml('href="/pt/cursos/alfa?preview=draft"');
+
+    // The button previews the default language; its attributes come in any order.
+    preg_match('/<a\b[^>]*data-draft-preview-main[^>]*>/', $editor->html(), $button);
+    expect($button[0] ?? '')->toContain('href="/courses/alpha?preview=draft"');
+});
+
+it('previews with one button and no menu on a page in one language', function (): void {
+    draftEditor()->set('values.title.default', 'Alpha draft')->call('saveDraft')
+        ->assertSeeHtml('data-draft-preview-main')
+        ->assertDontSeeHtml('data-draft-preview-menu');
 });

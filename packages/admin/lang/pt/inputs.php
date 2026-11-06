@@ -51,6 +51,9 @@ return [
         'link' => 'Ligação',
         'undo' => 'Anular',
         'redo' => 'Refazer',
+        'html' => 'HTML',
+        'html_help' => 'Ver e editar o HTML',
+        'html_field' => 'HTML de :field',
     ],
     'page_table' => [
         'actions' => 'Ações',

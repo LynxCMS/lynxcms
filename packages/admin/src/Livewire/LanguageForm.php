@@ -82,7 +82,9 @@ final class LanguageForm extends Component
             $this->label = $existing->label ?? '';
             $this->locale = $existing->locale ?? '';
             $this->prefix = $existing->url_prefix;
-            $this->fallback = $existing->fallback_id === null ? '' : (string) lynx()->languages->find($existing->fallback_id)?->code;
+            // Falling back to the default language is what an empty fallback means: the chain ends there.
+            $isDefault = $existing->fallback_id === null || $existing->fallback_id === lynx()->languages->default()->id;
+            $this->fallback = $isDefault ? '' : (string) lynx()->languages->find($existing->fallback_id)?->code;
             $this->active = $existing->is_active;
         }
     }
@@ -136,8 +138,10 @@ final class LanguageForm extends Component
     {
         return view('lynx-admin::livewire.language-form', [
             'canEdit' => app(SchemaOwners::class)->isEditingEnabled(),
+            // The empty option is the default language, named; the list holds the others.
+            'defaultLanguage' => lynx()->languages->default(),
             'fallbacks' => lynx()->languages->all()
-                ->reject(fn (Language $language): bool => $language->code === $this->language)
+                ->reject(fn (Language $language): bool => $language->code === $this->language || $language->isDefault())
                 ->mapWithKeys(fn (Language $language): array => [$language->code => $language->name])->all(),
         ]);
     }

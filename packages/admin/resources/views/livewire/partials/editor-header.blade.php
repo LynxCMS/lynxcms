@@ -16,7 +16,8 @@
 <header class="flex flex-wrap items-start justify-between gap-4">
     <div class="min-w-0">
         <h1 class="text-2xl font-semibold tracking-tight">{{ $title }}</h1>
-        <p class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        {{-- A div, not a p: the preview menu renders block elements, which a p can't hold. --}}
+        <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <span @class(['inline-flex items-center gap-1.5', 'text-success' => $status === 'published']) data-page-status="{{ $status }}">
                 <span aria-hidden="true" @class(['size-1.5 rounded-full', 'bg-current' => $status !== 'hidden', 'border border-current' => $status === 'hidden'])></span>
                 {{ __('lynx-admin::pages.status.'.$status) }}
@@ -31,12 +32,37 @@
                         {{-- The site only shows drafts to signed in users who may edit the page; signed out it would show the live page. --}}
                         <span data-draft-preview-signin>{{ __('lynx-admin::editor.sign_in_to_preview') }}</span>
                     @endif
-                    {{-- One link per language the page is published in: names and URLs are live, values come from the draft. --}}
-                    @foreach ($previews as $language)
-                        <a href="{{ $page->localUrl($language) }}?preview=draft" target="_blank" rel="noopener" class="{{ $link }}" title="{{ __('lynx-admin::editor.preview_in', ['language' => $language->name]) }}">
-                            {{ $previews->count() > 1 ? __('lynx-admin::editor.preview_language', ['language' => $language->tabLabel()]) : __('lynx-admin::editor.preview') }}<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" />
-                        </a>
-                    @endforeach
+                    {{-- Preview the draft: the default language on the button, the page's other published languages in its
+                         menu. Names and URLs are live, values come from the draft. --}}
+                    @if ($previews->isNotEmpty())
+                        @php
+                            $mainPreview = $previews->first(fn ($language) => $language->isDefault()) ?? $previews->first();
+                            $otherPreviews = $previews->reject(fn ($language) => $language->id === $mainPreview->id);
+                        @endphp
+                        <span class="inline-flex" role="group" aria-label="{{ __('lynx-admin::editor.previews') }}">
+                            <x-lynx-admin::ui.button size="sm" variant="outline" :href="$page->localUrl($mainPreview).'?preview=draft'" target="_blank" rel="noopener" data-draft-preview-main
+                                @class(['h-7', 'rounded-e-none' => $otherPreviews->isNotEmpty()]) :title="__('lynx-admin::editor.preview_in', ['language' => $mainPreview->name])">
+                                {{ $otherPreviews->isNotEmpty() ? __('lynx-admin::editor.preview_language', ['language' => $mainPreview->name]) : __('lynx-admin::editor.preview') }}<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" />
+                            </x-lynx-admin::ui.button>
+                            @if ($otherPreviews->isNotEmpty())
+                                {{-- The menu is teleported and ignored by Livewire, so the key renews it when the languages change. --}}
+                                <x-lynx-admin::ui.dropdown-menu wire:key="preview-menu-{{ $otherPreviews->pluck('code')->join('-') }}">
+                                    <x-lynx-admin::ui.dropdown-menu-trigger>
+                                        <x-lynx-admin::ui.button size="icon" variant="outline" type="button" class="size-7 rounded-s-none border-s-0" aria-label="{{ __('lynx-admin::editor.more_previews') }}">
+                                            <x-lucide-chevron-down aria-hidden="true" />
+                                        </x-lynx-admin::ui.button>
+                                    </x-lynx-admin::ui.dropdown-menu-trigger>
+                                    <x-lynx-admin::ui.dropdown-menu-content align="start" data-draft-preview-menu>
+                                        @foreach ($otherPreviews as $language)
+                                            <x-lynx-admin::ui.dropdown-menu-item :href="$page->localUrl($language).'?preview=draft'" target="_blank" rel="noopener">
+                                                {{ __('lynx-admin::editor.preview_in', ['language' => $language->name]) }}
+                                            </x-lynx-admin::ui.dropdown-menu-item>
+                                        @endforeach
+                                    </x-lynx-admin::ui.dropdown-menu-content>
+                                </x-lynx-admin::ui.dropdown-menu>
+                            @endif
+                        </span>
+                    @endif
                 </span>
             @endif
             @if ($page->hasStatus(\LynxCms\Core\Pages\PageStatus::LOCKED))
@@ -52,7 +78,7 @@
             @if ($isSuperuser)
                 <span>{{ __('lynx-admin::editor.template', ['name' => $page->template()->name]) }}</span>
             @endif
-        </p>
+        </div>
     </div>
 
     {{-- Saves the Content tab; Settings has its own buttons. --}}

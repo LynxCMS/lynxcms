@@ -19,5 +19,7 @@ final readonly class ReviewEntry
         public string $type,
         public mixed $before,
         public mixed $after,
+        /** The field's format: "html" values show formatted, with their markup a click away. */
+        public string $format = 'plain',
     ) {}
 }
