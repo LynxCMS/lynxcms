@@ -62,7 +62,7 @@
             @if ($moveParents === [])
                 <p class="text-muted-foreground">{{ __('lynx-admin::children.move_nowhere') }}</p>
             @else
-                <livewire:lynx-admin.page-picker wire:model="moveTo" :multiple="false" :templates="$moveParents" :exclude="$moveExcluded" :placeholder="__('lynx-admin::children.move_search')" :key="'move-picker-'.implode('-', $moving)" />
+                <livewire:lynx-admin.page-picker wire:model="moveTo" :multiple="false" :templates="$moveParents" :exclude="[$pageId]" :exclude-below="$moveExcludedBelow" :placeholder="__('lynx-admin::children.move_search')" :key="'move-picker-'.implode('-', $moving)" />
                 @error('moveTo') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             @endif
             <span class="flex flex-wrap gap-2">

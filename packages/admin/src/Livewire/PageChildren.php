@@ -125,7 +125,7 @@ final class PageChildren extends Component
             'filters' => array_keys(self::FILTERS),
             'sorts' => array_keys(self::SORTS),
             'moveParents' => $this->moveParents(),
-            'moveExcluded' => $this->moveExcluded(),
+            'moveExcludedBelow' => $this->moveExcludedBelow(),
             'canSort' => $total > 1 && $this->list()->isComplete($this->pageId),
         ]);
     }

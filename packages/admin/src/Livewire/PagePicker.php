@@ -46,6 +46,10 @@ final class PagePicker extends Component
     #[Locked]
     public array $exclude = [];
 
+    /** @var list<int> pages never offered with every page below them, e.g. the page being moved */
+    #[Locked]
+    public array $excludeBelow = [];
+
     public string $search = '';
 
     /**
@@ -70,10 +74,12 @@ final class PagePicker extends Component
      * @param  array<array-key, mixed>  $value
      * @param  array<array-key, mixed>  $templates
      * @param  array<array-key, mixed>  $exclude
+     * @param  array<array-key, mixed>  $excludeBelow
      */
-    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0, array $exclude = []): void
+    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0, array $exclude = [], array $excludeBelow = []): void
     {
         $this->exclude = Value::ints($exclude);
+        $this->excludeBelow = Value::ints($excludeBelow);
         $this->value = Value::ints($value);
         $this->known = $this->value;
         $this->multiple = $multiple;
@@ -86,7 +92,7 @@ final class PagePicker extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $this->isAllowed($page) || in_array($id, $this->exclude, true) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
+        if (! $page instanceof Page || ! $this->isAllowed($page) || $this->isExcluded($id) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
             return;
         }
 
@@ -136,7 +142,7 @@ final class PagePicker extends Component
     }
 
     /**
-     * @return list<array{id: int, title: string, url: string}>
+     * @return list<array{id: int, title: string, url: string, hint: string}>
      */
     private function chosen(): array
     {
@@ -162,27 +168,41 @@ final class PagePicker extends Component
     /**
      * Pages whose title contains the search text, leaving out chosen and excluded ones.
      *
-     * @return list<array{id: int, title: string, url: string}>
+     * @return list<array{id: int, title: string, url: string, hint: string}>
      */
     private function results(): array
     {
-        $pages = app(PageSearch::class)->find($this->search, self::SEARCH_LIMIT + count($this->value) + count($this->exclude), $this->templates);
-        $chosen = [...Value::ints($this->value), ...$this->exclude];
+        $pages = app(PageSearch::class)->find($this->search, self::SEARCH_LIMIT + count($this->value), $this->templates, $this->exclude, $this->excludeBelow);
+        $chosen = Value::ints($this->value);
         $rows = array_filter($pages->map(fn (Page $page): ?array => in_array((int) $page->id, $chosen, true) ? null : $this->row($page)));
 
         return array_slice(array_values($rows), 0, self::SEARCH_LIMIT);
     }
 
     /**
-     * @return array{id: int, title: string, url: string}
+     * A page as the picker lists it. The hint is its URL, or for a page without one the page it
+     * sits under, so two pages of the same title can be told apart (a page and a menu item).
+     *
+     * @return array{id: int, title: string, url: string, hint: string}
      */
     private function row(Page $page): array
     {
+        $hasUrl = $page->template()->hasUrl();
+        $parent = $page->parent();
+
         return [
             'id' => (int) $page->id,
             'title' => (new DefaultPresenter)->title($page),
-            'url' => $page->template()->hasUrl() ? $page->url() : '',
+            'url' => $hasUrl ? $page->url() : '',
+            'hint' => $hasUrl ? $page->url() : ($parent instanceof Page ? Value::string(__('lynx-admin::pages.picker.under', ['page' => (new DefaultPresenter)->title($parent)])) : ''),
         ];
+    }
+
+    /** An excluded page, or one below a page excluded with its branch. */
+    private function isExcluded(int $id): bool
+    {
+        return in_array($id, [...$this->exclude, ...$this->excludeBelow], true)
+            || ($this->excludeBelow !== [] && lynx()->pages->count("id={$id}, has_parent=".implode('|', $this->excludeBelow).', include=all') > 0);
     }
 
     private function isAllowed(Page $page): bool

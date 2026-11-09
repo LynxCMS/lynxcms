@@ -62,16 +62,17 @@ trait MovesChildren
             return [];
         }
 
-        return app(ParentTemplates::class)->for(lynx()->pages->find('id='.implode('|', $this->moving).', include=all'), $this->moveExcluded());
+        return app(ParentTemplates::class)->for(lynx()->pages->find('id='.implode('|', $this->moving).', include=all'), [$this->pageId], $this->moveExcludedBelow());
     }
 
     /**
-     * The page itself and the pages being moved: never a new parent.
+     * The pages being moved and modules' branches (menus, forms): never a new parent, nor anything
+     * below them. The page itself is left out too, but not its other children.
      *
      * @return list<int>
      */
-    private function moveExcluded(): array
+    private function moveExcludedBelow(): array
     {
-        return [$this->pageId, ...$this->moving];
+        return [...$this->moving, ...app(ParentTemplates::class)->moduleBranches()];
     }
 }

@@ -107,6 +107,7 @@ return [
         'invalid_template' => 'Escolha um dos modelos aqui disponíveis.',
     ],
     'picker' => [
+        'under' => 'em :page',
         'full' => 'O campo já tem o máximo de páginas (:max). Remova uma para adicionar outra.',
         'search_add' => 'Pesquise páginas pelo título para adicionar',
         'search_replace' => 'Pesquise para substituir a página escolhida',

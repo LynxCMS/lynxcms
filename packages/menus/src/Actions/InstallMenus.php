@@ -104,17 +104,36 @@ final class InstallMenus extends Action
     {
         $installed = false;
 
-        foreach (MenuSchema::templates() as $name => [$label, $fields, $singleton]) {
+        foreach (MenuSchema::templates() as $name => [$label, $fields, $singleton, $family]) {
             if (lynx()->templates->find($name) !== null) {
                 $installed = $this->addMissingFields($context, $name, $fields) || $installed;
+                $installed = $this->applyFamily($context, $name, $family) || $installed;
 
                 continue;
             }
 
-            $context->run(CreateTemplate::class, ['name' => $name, 'label' => $label, 'fields' => $fields, 'has_url' => false, 'singleton' => $singleton]);
+            $context->run(CreateTemplate::class, ['name' => $name, 'label' => $label, 'fields' => $fields, 'has_url' => false, 'singleton' => $singleton] + $family);
             $installed = true;
         }
 
         return $installed;
+    }
+
+    /**
+     * Menus installed before the family rules get them, so site pages cannot go under a menu item.
+     *
+     * @param  array{child_templates: list<string>, parent_templates: list<string>}  $family
+     */
+    private function applyFamily(ActionContext $context, string $name, array $family): bool
+    {
+        $template = lynx()->templates->get($name);
+
+        if ($template->childTemplates() === $family['child_templates'] && $template->parentTemplates() === $family['parent_templates']) {
+            return false;
+        }
+
+        $context->run(UpdateTemplate::class, ['template' => $name] + $family);
+
+        return true;
     }
 }

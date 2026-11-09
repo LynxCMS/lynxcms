@@ -107,6 +107,7 @@ return [
         'invalid_template' => 'Choose one of the templates offered here.',
     ],
     'picker' => [
+        'under' => 'in :page',
         'full' => 'The field holds its most pages (:max). Remove one to add another.',
         'search_add' => 'Search pages by title to add',
         'search_replace' => 'Search to replace the chosen page',

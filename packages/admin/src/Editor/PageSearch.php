@@ -20,8 +20,10 @@ final class PageSearch
 {
     /**
      * @param  list<string>  $templates  template names to limit to; empty means any
+     * @param  list<int>  $exclude  pages left out
+     * @param  list<int>  $excludeBelow  pages left out with every page below them
      */
-    public function find(string $text, int $limit, array $templates = []): PageArray
+    public function find(string $text, int $limit, array $templates = [], array $exclude = [], array $excludeBelow = []): PageArray
     {
         // Inside a double-quoted selector value commas and pipes are literal; only quotes could end it.
         $search = trim(str_replace(['"', "\0"], '', $text));
@@ -30,7 +32,9 @@ final class PageSearch
             return new PageArray([]);
         }
 
-        $only = ', include=all'.($templates === [] ? '' : ', template='.implode('|', $templates));
+        $only = ', include=all'.($templates === [] ? '' : ', template='.implode('|', $templates))
+            .($exclude === [] && $excludeBelow === [] ? '' : ', id!='.implode('|', [...$exclude, ...$excludeBelow]))
+            .($excludeBelow === [] ? '' : ', has_parent!='.implode('|', $excludeBelow));
         $byTitle = $this->select('title%="'.$search.'"'.$only.', limit='.$limit);
         $left = $limit - $byTitle->count();
 
