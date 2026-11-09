@@ -14,6 +14,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\EditorPanel;
 use LynxCms\Admin\Editor\FieldConditions;
@@ -202,6 +203,7 @@ final class PageEditor extends Component
             'canEdit' => app(AdminAccess::class)->allows('pages.edit', $page) && $this->editedBy === null,
             'canTakeOver' => $this->editedBy !== null && app(AdminAccess::class)->isSuperuser(),
             'canUnlock' => app(AdminAccess::class)->allows('pages.status', $page),
+            'canAddChild' => app(ChildList::class)->canAddChild($page),
             // Template and field type names are developer details.
             'isSuperuser' => app(AdminAccess::class)->isSuperuser(),
             ...$this->conditions($page),

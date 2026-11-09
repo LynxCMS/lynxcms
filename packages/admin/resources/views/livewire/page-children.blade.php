@@ -6,7 +6,7 @@
             <h2 id="children-heading" class="text-base font-semibold">{{ __('lynx-admin::children.heading') }}</h2>
             <span class="text-muted-foreground text-sm">{{ trans_choice('lynx-admin::children.count', $total) }}</span>
         </div>
-        @if ($parent?->template()->allowsChildren())
+        @if ($parent && app(\LynxCms\Admin\Editor\ChildList::class)->canAddChild($parent))
             <x-lynx-admin::ui.button size="sm" variant="outline" :href="route('lynx.admin.pages.create', ['parent' => $pageId])"><x-lucide-plus aria-hidden="true" /> {{ __('lynx-admin::children.add') }}</x-lynx-admin::ui.button>
         @endif
     </div>

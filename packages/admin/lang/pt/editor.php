@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'add_child' => 'Adicionar página filha',
     'reload' => 'Recarregar e descartar as minhas edições',
     'locked_title' => 'Esta página está bloqueada.',
     'locked_description' => 'Não pode ser editada, movida nem eliminada até ser desbloqueada.',
