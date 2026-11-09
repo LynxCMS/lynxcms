@@ -12,6 +12,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\SchemaOwners;
+use LynxCms\Admin\Livewire\Concerns\DuplicatesFields;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
@@ -24,6 +25,8 @@ use LynxCms\Core\Support\Value;
  */
 final class FieldList extends Component
 {
+    use DuplicatesFields;
+
     #[Url]
     public string $type = '';
 

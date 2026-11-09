@@ -35,6 +35,7 @@
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::fields.list.label') }}</x-lynx-admin::ui.table-head>
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::fields.list.type') }}</x-lynx-admin::ui.table-head>
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::fields.list.used_by') }}</x-lynx-admin::ui.table-head>
+                    <x-lynx-admin::ui.table-head class="px-4"><span class="sr-only">{{ __('lynx-admin::fields.list.actions') }}</span></x-lynx-admin::ui.table-head>
                 </x-lynx-admin::ui.table-row>
             </x-lynx-admin::ui.table-header>
             <x-lynx-admin::ui.table-body>
@@ -44,10 +45,15 @@
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">{{ $field->label }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ $field->type }}{{ $field->isTranslatable() && lynx()->languages->isMultilingual() ? ', '.__('lynx-admin::fields.list.translatable') : '' }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ implode(', ', $usedBy[$field->name] ?? []) ?: __('lynx-admin::fields.list.no_template') }}</x-lynx-admin::ui.table-cell>
+                        <x-lynx-admin::ui.table-cell class="px-4 py-2 text-end">
+                            <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="openDuplicate('{{ $field->name }}')" aria-label="{{ __('lynx-admin::fields.duplicate.named', ['field' => $field->name]) }}" title="{{ __('lynx-admin::fields.duplicate.title') }}"><x-lucide-copy aria-hidden="true" /></x-lynx-admin::ui.button>
+                        </x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty
-                    <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="4" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-admin::fields.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                    <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-admin::fields.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
                 @endforelse
             </x-lynx-admin::ui.table-body>
         </x-lynx-admin::ui.table>
+
+    @include('lynx-admin::livewire.partials.field-duplicate')
 </div>
