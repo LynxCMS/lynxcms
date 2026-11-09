@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'add_child' => 'Add child page',
     'reload' => 'Reload and discard my edits',
     'locked_title' => 'This page is locked.',
     'locked_description' => 'It cannot be edited, moved or deleted until it is unlocked.',
