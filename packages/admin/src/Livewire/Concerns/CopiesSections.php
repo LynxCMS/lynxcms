@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire\Concerns;
 
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
@@ -13,7 +14,8 @@ use LynxCms\Core\Templates\TemplateField;
 /**
  * The Copy to templates dialog of a section on the template board (ADR-0108): templates.copy-section
  * with the ticked templates. Each template shows why the section cannot go there, from a dry run,
- * and which of its fields would be renamed. The copy takes the section as last saved.
+ * and which of its fields would be renamed. The copy takes the section as last saved. The dry runs
+ * run when the dialog opens and when the renaming changes, not on every render of the board.
  */
 trait CopiesSections
 {
@@ -30,6 +32,14 @@ trait CopiesSections
 
     public string $copyPrefix = '';
 
+    /**
+     * Every template the section could go to, with why it cannot and what would be renamed.
+     *
+     * @var array<string, array{label: string, problem: string|null, renames: array<string, string>}>
+     */
+    #[Locked]
+    public array $copyTargets = [];
+
     public function openCopySection(string $key): void
     {
         $this->copySection = $key;
@@ -37,6 +47,7 @@ trait CopiesSections
         $this->renameConflicts = false;
         $this->copyPrefix = str_replace('-', '_', $key).'_';
         $this->isCopySectionSaved = $this->savedSectionFields() !== [];
+        $this->copyTargets = $this->workOutCopyTargets();
         $this->resetErrorBag();
         $this->dispatch('open-dialog-copy-section');
     }
@@ -44,7 +55,18 @@ trait CopiesSections
     public function closeCopySection(): void
     {
         $this->copySection = '';
+        $this->copyTargets = [];
         $this->dispatch('close-dialog-copy-section');
+    }
+
+    public function updatedRenameConflicts(): void
+    {
+        $this->copyTargets = $this->workOutCopyTargets();
+    }
+
+    public function updatedCopyPrefix(): void
+    {
+        $this->copyTargets = $this->workOutCopyTargets();
     }
 
     public function copySectionTo(): void
@@ -60,7 +82,7 @@ trait CopiesSections
      *
      * @return array<string, array{label: string, problem: string|null, renames: array<string, string>}>
      */
-    private function copyTargets(): array
+    private function workOutCopyTargets(): array
     {
         if ($this->copySection === '' || ! $this->isCopySectionSaved) {
             return [];

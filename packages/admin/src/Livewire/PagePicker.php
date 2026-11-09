@@ -42,6 +42,10 @@ final class PagePicker extends Component
     #[Locked]
     public array $templates = [];
 
+    /** @var list<int> pages never offered, e.g. a page's current parent when moving it */
+    #[Locked]
+    public array $exclude = [];
+
     public string $search = '';
 
     /**
@@ -65,9 +69,11 @@ final class PagePicker extends Component
     /**
      * @param  array<array-key, mixed>  $value
      * @param  array<array-key, mixed>  $templates
+     * @param  array<array-key, mixed>  $exclude
      */
-    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0): void
+    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0, array $exclude = []): void
     {
+        $this->exclude = Value::ints($exclude);
         $this->value = Value::ints($value);
         $this->known = $this->value;
         $this->multiple = $multiple;
@@ -80,7 +86,7 @@ final class PagePicker extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $this->isAllowed($page) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
+        if (! $page instanceof Page || ! $this->isAllowed($page) || in_array($id, $this->exclude, true) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
             return;
         }
 
@@ -154,14 +160,14 @@ final class PagePicker extends Component
     }
 
     /**
-     * Pages whose title contains the search text, leaving out chosen ones.
+     * Pages whose title contains the search text, leaving out chosen and excluded ones.
      *
      * @return list<array{id: int, title: string, url: string}>
      */
     private function results(): array
     {
-        $pages = app(PageSearch::class)->find($this->search, self::SEARCH_LIMIT + count($this->value), $this->templates);
-        $chosen = Value::ints($this->value);
+        $pages = app(PageSearch::class)->find($this->search, self::SEARCH_LIMIT + count($this->value) + count($this->exclude), $this->templates);
+        $chosen = [...Value::ints($this->value), ...$this->exclude];
         $rows = array_filter($pages->map(fn (Page $page): ?array => in_array((int) $page->id, $chosen, true) ? null : $this->row($page)));
 
         return array_slice(array_values($rows), 0, self::SEARCH_LIMIT);

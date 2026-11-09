@@ -124,11 +124,15 @@
             <p class="text-muted-foreground text-sm">{{ $parentTitle ? __('lynx-admin::settings.parent.under', ['page' => $parentTitle]).' ' : '' }}{{ __('lynx-admin::settings.parent.cannot_move') }}</p>
         @else
             <p class="mb-3 text-sm">{!! __('lynx-admin::settings.parent.under', ['page' => '<strong>'.e($parentTitle).'</strong>']) !!} {{ __('lynx-admin::settings.parent.keeps_urls') }}</p>
+            @if ($parentTemplates === [])
+                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.parent.nowhere') }}</p>
+            @else
             <div class="space-y-3">
-                <livewire:lynx-admin.page-picker wire:model="parent" :multiple="false" :placeholder="__('lynx-admin::settings.parent.search')" :key="'parent-picker-'.$page->id.'-'.$page->revision" />
+                <livewire:lynx-admin.page-picker wire:model="parent" :multiple="false" :templates="$parentTemplates" :exclude="$moveExcluded" :placeholder="__('lynx-admin::settings.parent.search')" :key="'parent-picker-'.$page->id.'-'.$page->revision" />
                 <x-lynx-admin::ui.button variant="outline" type="button" wire:click="move">{{ __('lynx-admin::settings.parent.move') }}</x-lynx-admin::ui.button>
                 @error('parent') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
+            @endif
         @endif
     </section>
 
