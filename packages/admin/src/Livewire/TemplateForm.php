@@ -13,6 +13,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaOwners;
+use LynxCms\Admin\Livewire\Concerns\CopiesSections;
 use LynxCms\Admin\Livewire\Concerns\EditsTemplateLayout;
 use LynxCms\Admin\Livewire\Concerns\ManagesTemplateFamily;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -33,6 +34,7 @@ use LynxCms\Core\Templates\TemplateField;
  */
 final class TemplateForm extends Component
 {
+    use CopiesSections;
     use EditsTemplateLayout;
     use ManagesTemplateFamily;
     use Notifies;
@@ -150,6 +152,7 @@ final class TemplateForm extends Component
             'available' => $this->addableFields($fields),
             'fieldInfo' => $fields->mapWithKeys(fn (Field $field): array => [$field->name => ['label' => $field->label, 'type' => $field->type]])->all(),
             'canEdit' => $this->canEdit(),
+            'copyTargets' => $this->copyTargets(),
             'owner' => $this->template === null ? null : app(SchemaOwners::class)->ownerOfTemplate($this->template),
             ...$this->usage(),
         ]);
