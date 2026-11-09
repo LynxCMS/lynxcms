@@ -57,6 +57,12 @@ return [
         'choose_first' => 'Choose the new parent page first.',
         'moved' => 'Page moved.',
     ],
+    'duplicate' => [
+        'title' => 'Duplicate',
+        'text' => 'Make an unpublished copy of this page next to it, with its content in every language and [Copy] before its title. The copy opens here.',
+        'children' => 'Copy the pages below it too',
+        'button' => 'Duplicate page',
+    ],
     'schedule' => [
         'title' => 'Schedule',
         'intro' => 'Publish or unpublish this page at a set time (:timezone time). Leave a field empty for no schedule.',

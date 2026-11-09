@@ -68,6 +68,7 @@ return [
         'outside_tree' => 'Esta página não faz parte desta árvore.',
         'at_top' => 'A página já está no nível superior desta árvore.',
     ],
+    'copy_prefix' => '[Cópia]',
     'actions' => [
         'empty_trash' => 'Esvaziar lixo',
         'confirm_empty_trash' => 'Eliminar definitivamente tudo o que está no lixo?',
@@ -87,6 +88,9 @@ return [
         'delete_for_good' => 'Eliminar definitivamente',
         'trash' => 'Mover para o lixo',
         'delete' => 'Eliminar',
+        'duplicate' => 'Duplicar',
+        'duplicate_branch' => 'Duplicar com as filhas',
+        'duplicate_denied' => 'Não pode criar páginas aqui.',
     ],
     'create' => [
         'heading' => 'Nova página dentro de :page',

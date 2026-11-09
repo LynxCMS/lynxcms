@@ -136,6 +136,20 @@
         @endif
     </section>
 
+    @if ($page->parentId !== null && ! $page->hasStatus(\LynxCms\Core\Pages\PageStatus::SYSTEM))
+        <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-duplicate" data-duplicate-page>
+            <h2 id="settings-duplicate" class="mb-4 text-base font-semibold">{{ __('lynx-admin::settings.duplicate.title') }}</h2>
+            <p class="mb-3 text-sm">{{ __('lynx-admin::settings.duplicate.text') }}</p>
+            <div class="flex flex-wrap items-center gap-4">
+                @if ($page->children('include=all, limit=1')->count() > 0)
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="blat-checkbox" wire:model="duplicateChildren"> {{ __('lynx-admin::settings.duplicate.children') }}</label>
+                @endif
+                <x-lynx-admin::ui.button variant="outline" type="button" wire:click="duplicate">{{ __('lynx-admin::settings.duplicate.button') }}</x-lynx-admin::ui.button>
+            </div>
+            @error('page') <p role="alert" class="text-destructive mt-2 text-sm">{{ $message }}</p> @enderror
+        </section>
+    @endif
+
     @endunless
 
     <livewire:lynx-admin.page-revisions :page-id="$page->id" :key="'revisions-'.$page->id" />

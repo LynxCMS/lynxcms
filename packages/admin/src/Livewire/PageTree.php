@@ -16,6 +16,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Livewire\Concerns\DuplicatesPages;
 use LynxCms\Admin\Livewire\Concerns\MovesPages;
 use LynxCms\Admin\Livewire\Concerns\PageQuickActions;
 use LynxCms\Admin\Livewire\Concerns\ScopedToRoot;
@@ -39,6 +40,7 @@ use UnexpectedValueException;
  */
 final class PageTree extends Component
 {
+    use DuplicatesPages;
     use MovesPages;
     use PageQuickActions;
     use ScopedToRoot;

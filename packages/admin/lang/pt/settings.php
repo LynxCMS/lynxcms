@@ -57,6 +57,12 @@ return [
         'choose_first' => 'Escolha primeiro a nova página superior.',
         'moved' => 'Página movida.',
     ],
+    'duplicate' => [
+        'title' => 'Duplicar',
+        'text' => 'Crie uma cópia não publicada desta página ao lado dela, com o conteúdo em todos os idiomas e [Cópia] antes do título. A cópia abre aqui.',
+        'children' => 'Copiar também as páginas abaixo dela',
+        'button' => 'Duplicar página',
+    ],
     'schedule' => [
         'title' => 'Agendamento',
         'intro' => 'Publique ou despublique esta página a uma hora definida (hora de :timezone). Deixe um campo vazio para não agendar.',
