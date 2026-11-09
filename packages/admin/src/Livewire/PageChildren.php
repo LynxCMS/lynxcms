@@ -32,8 +32,21 @@ final class PageChildren extends Component
     /** Status filter => the selector clause it adds. */
     public const array FILTERS = ['all' => '', 'published' => 'status!=unpublished', 'unpublished' => 'status=unpublished', 'hidden' => 'status=hidden'];
 
+    /** Sort menu choice => [what pages.sort-children sorts by, descending]. */
+    public const array SORTS = [
+        'title' => ['title', false],
+        'title_desc' => ['title', true],
+        'created_desc' => ['created', true],
+        'created' => ['created', false],
+        'modified_desc' => ['modified', true],
+        'published_desc' => ['published', true],
+    ];
+
     #[Locked]
     public int $pageId;
+
+    /** The order chosen in the Sort menu, waiting for confirmation; empty while none is. */
+    public string $sortBy = '';
 
     public string $search = '';
 
@@ -68,6 +81,19 @@ final class PageChildren extends Component
         $this->selected = [];
     }
 
+    /** Puts every child in the chosen order (pages.sort-children), then forgets the choice. */
+    public function sortChildren(): void
+    {
+        [$by, $descending] = self::SORTS[$this->sortBy] ?? [null, false];
+        $this->sortBy = '';
+
+        if ($by !== null && $this->list()->isComplete($this->pageId)) {
+            lynx()->pages->sortChildren($this->pageId, $by, $descending);
+            $this->resetList();
+            $this->notify(__('lynx-admin::children.sorted'));
+        }
+    }
+
     /** A drop in the list: the child takes that place among all its siblings. */
     public function reorder(int $id, int $position): void
     {
@@ -94,6 +120,8 @@ final class PageChildren extends Component
             'childCounts' => lynx()->pages->childCounts($children->ids(), $this->list()->everyChild(), $this->scope()),
             'drafts' => array_flip(lynx()->pages->withDrafts($children->ids())),
             'filters' => array_keys(self::FILTERS),
+            'sorts' => array_keys(self::SORTS),
+            'canSort' => $total > 1 && $this->list()->isComplete($this->pageId),
         ]);
     }
 

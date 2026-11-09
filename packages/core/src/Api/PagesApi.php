@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Pages\MovePage;
 use LynxCms\Core\Actions\Pages\PurgeOrphanedValues;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\SetPageStatus;
+use LynxCms\Core\Actions\Pages\SortChildren;
 use LynxCms\Core\Actions\Pages\SortPage;
 use LynxCms\Core\Actions\Pages\SwitchTemplate;
 use LynxCms\Core\Actions\Pages\TranslatePage;
@@ -158,6 +159,15 @@ final readonly class PagesApi
     public function setStatus(Page|int|string $page, array $add = [], array $remove = [], bool $dryRun = false): Page|ActionResult
     {
         return $this->runner->run(SetPageStatus::class, ['page' => $this->ref($page), 'add' => $add, 'remove' => $remove], $dryRun)
+            ->valueOrDryRun(Page::class);
+    }
+
+    /**
+     * Sort every child of a page at once: by "title", "created", "modified" or "published".
+     */
+    public function sortChildren(Page|int|string $page, string $by, bool $descending = false, bool $dryRun = false): Page|ActionResult
+    {
+        return $this->runner->run(SortChildren::class, ['page' => $this->ref($page), 'by' => $by, 'descending' => $descending], $dryRun)
             ->valueOrDryRun(Page::class);
     }
 

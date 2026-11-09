@@ -16,6 +16,17 @@
             <label for="children-search" class="sr-only">{{ __('lynx-admin::children.search') }}</label>
             <input id="children-search" type="search" class="blat-input" wire:model.live.debounce.300ms="search" placeholder="{{ __('lynx-admin::children.search_placeholder') }}" autocomplete="off">
         </div>
+        @if ($canSort)
+            <div class="grid gap-1 text-sm">
+                <label for="children-sort" class="font-medium">{{ __('lynx-admin::children.sort') }}</label>
+                <select id="children-sort" class="blat-select w-48" wire:model.live="sortBy">
+                    <option value="">{{ __('lynx-admin::children.sort_choose') }}</option>
+                    @foreach ($sorts as $value)
+                        <option value="{{ $value }}">{{ __('lynx-admin::children.sorts.'.$value) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
         <div class="grid gap-1 text-sm">
             <label for="children-filter" class="font-medium">{{ __('lynx-admin::children.filter') }}</label>
             <select id="children-filter" class="blat-select w-40" wire:model.live="filter">
@@ -33,6 +44,14 @@
                 <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="bulk('{{ $action }}')">{{ __('lynx-admin::children.'.$action) }}</x-lynx-admin::ui.button>
             @endforeach
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" class="hover:text-destructive" wire:click="confirmTrash({{ Js::from($selected) }})">{{ __('lynx-admin::children.trash') }}</x-lynx-admin::ui.button>
+        </div>
+    @endif
+
+    @if (in_array($sortBy, $sorts, true))
+        <div class="bg-muted/50 flex flex-wrap items-center gap-3 border-b px-5 py-3 text-sm" role="alert" data-confirm-sort>
+            <span class="me-auto">{{ trans_choice('lynx-admin::children.confirm_sort', $total, ['order' => __('lynx-admin::children.sorts.'.$sortBy)]) }}</span>
+            <x-lynx-admin::ui.button size="sm" type="button" wire:click="sortChildren">{{ __('lynx-admin::children.sort_confirm') }}</x-lynx-admin::ui.button>
+            <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="$set('sortBy', '')">{{ __('lynx-admin::children.cancel') }}</x-lynx-admin::ui.button>
         </div>
     @endif
 

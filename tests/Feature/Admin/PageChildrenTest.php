@@ -131,3 +131,17 @@ it('pages through many children', function (): void {
         ->and($tab->viewData('total'))->toBe(33)
         ->and($tab->call('goToPage', 2)->viewData('children')->count())->toBe(8);
 });
+
+it('sorts every child at once after asking', function (): void {
+    lynx()->pages->sort('/courses/gamma/', 0);
+
+    childrenTab()->set('sortBy', 'title_desc')->assertSeeHtml('data-confirm-sort')->call('sortChildren')->assertSet('sortBy', '');
+
+    expect(childNamesOf())->toBe(['gamma', 'beta', 'alpha']);
+});
+
+it('ignores a sort it does not offer', function (): void {
+    childrenTab()->set('sortBy', 'price')->call('sortChildren');
+
+    expect(childNamesOf())->toBe(['alpha', 'beta', 'gamma']);
+});

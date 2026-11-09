@@ -30,6 +30,7 @@ use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\SchedulePage;
 use LynxCms\Core\Actions\Pages\SetNotFoundPage;
 use LynxCms\Core\Actions\Pages\SetPageStatus;
+use LynxCms\Core\Actions\Pages\SortChildren;
 use LynxCms\Core\Actions\Pages\SortPage;
 use LynxCms\Core\Actions\Pages\SwitchTemplate;
 use LynxCms\Core\Actions\Pages\TranslatePage;
@@ -132,6 +133,7 @@ final class CoreRegistrations
         SavePage::class,
         MovePage::class,
         SortPage::class,
+        SortChildren::class,
         SetPageStatus::class,
         DeletePage::class,
         SchedulePage::class,
