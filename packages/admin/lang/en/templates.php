@@ -112,6 +112,7 @@ return [
         'section_placeholder' => 'Section name, e.g. Hero',
         'add_section' => 'Add section',
         'needs_letter' => 'Give it a name that starts with a letter.',
+        'copy_hint' => 'Once saved, a section can be copied to other templates, with its fields: use the copy button on its header.',
     ],
     'section' => [
         'drag' => 'Drag the section with its fields',

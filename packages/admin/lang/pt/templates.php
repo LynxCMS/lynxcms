@@ -112,6 +112,7 @@ return [
         'section_placeholder' => 'Nome, ex.: Destaque',
         'add_section' => 'Adicionar secção',
         'needs_letter' => 'Dê-lhe um nome que comece por uma letra.',
+        'copy_hint' => 'Depois de guardada, uma secção pode ser copiada para outros modelos, com os seus campos: use o botão de copiar no cabeçalho dela.',
     ],
     'section' => [
         'drag' => 'Arraste a secção com os seus campos',

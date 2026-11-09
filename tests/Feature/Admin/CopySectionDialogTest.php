@@ -70,3 +70,7 @@ it('asks to save a section the template does not have yet', function (): void {
 
     expect($targets)->toBe([]);
 });
+
+it('tells editors under Add a section that sections can be copied', function (): void {
+    Livewire::test(TemplateForm::class, ['template' => 'course'])->assertSeeHtml('data-copy-section-hint');
+});
