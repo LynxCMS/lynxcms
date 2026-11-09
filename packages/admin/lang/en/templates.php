@@ -40,6 +40,11 @@ return [
         'system' => 'system · :owner',
     ],
     'family' => [
+        'search' => 'Search templates to add',
+        'search_in' => 'Search templates to add to: :list',
+        'matching' => 'Matching templates',
+        'chosen' => 'Chosen: :list',
+        'remove' => 'Remove :template',
         'heading' => 'Family',
         'has_url' => 'Pages have a URL',
         'has_url_note' => '(off for settings and reusable content)',
@@ -48,7 +53,7 @@ return [
         'children' => 'Templates allowed for children',
         'parents' => 'Templates allowed for the parent',
         'switch' => 'Templates pages may switch to',
-        'any' => 'None checked: any template.',
+        'any' => 'None chosen: any template.',
         'save' => 'Save family',
     ],
     'pages' => [

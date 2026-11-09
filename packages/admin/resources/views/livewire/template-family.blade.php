@@ -1,5 +1,8 @@
 {{-- Part of template-form: family settings (ADR-0032), pages and delete. --}}
-@php($others = array_values(array_diff($templates, [$template])))
+@php
+    $others = array_values(array_diff($templates, [$template]));
+    $templateOptions = array_map(fn (string $name): array => ['name' => $name, 'label' => lynx()->templates->get($name)->labels()->in()], $others);
+@endphp
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm grid gap-5 p-5" aria-labelledby="template-family">
     <h2 id="template-family" class="text-base font-semibold">{{ __('lynx-admin::templates.family.heading') }}</h2>
 
@@ -15,15 +18,7 @@
         'switchTemplates' => [__('lynx-admin::templates.family.switch'), __('lynx-admin::templates.family.any'), true],
     ] as $property => [$legend, $hint, $isShown])
         @if ($isShown)
-            <fieldset class="grid gap-2">
-                <legend class="mb-1 text-sm font-medium">{{ $legend }}</legend>
-                <div class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-                    @foreach ($others as $option)
-                        <label class="flex items-center gap-2"><input class="blat-checkbox" id="family-{{ $property }}-{{ $option }}" type="checkbox" value="{{ $option }}" wire:model="{{ $property }}"> {{ $option }}</label>
-                    @endforeach
-                </div>
-                <p class="text-muted-foreground text-sm">{{ $hint }}</p>
-            </fieldset>
+            <x-lynx-admin::template-chooser :model="$property" :options="$templateOptions" :legend="$legend" :hint="$hint" />
         @endif
     @endforeach
 
