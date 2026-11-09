@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- `php artisan lynx:make:view` writes a starting view for a template, with each field printed the way its type reads; `--all` writes the missing ones. See [Views](/basics/views#starting-a-view).
 - `php artisan lynx:doctor` looks for problems in a site's setup and structure: templates whose pages have no view, unused fields, orphaned values, a scheduler that does not run and a missing `storage:link`, each with a fix. It fails on errors, so deploy scripts can stop on one; `--json` is for scripts and agents. Modules add their own checks (`DoctorChecks`). See [Artisan](/reference/artisan#checking-a-site).
 - **Duplicate** a page from the page tree or its Settings tab, alone or with the pages below it (`lynx()->pages->duplicate()`, the `pages.duplicate` action). The copy starts unpublished with **[Copy]** before its title, gets its own copies of images and files, and references between copied pages point at the copies. See [Publishing](/basics/publishing#duplicating-a-page).
 - Pages with children have a **Children** tab in the page editor: search, filter by status, drag to reorder or sort them all by title or date (`lynx()->pages->sortChildren()`, the `pages.sort-children` action), and publish, hide or trash children one at a time or several at once, or move several under another parent. See [The admin](/admin/).

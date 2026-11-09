@@ -31,6 +31,19 @@ The view receives the page as `$page`. A template without a view renders with Ly
 
 Layouts, components, `@include` and the rest of Blade work as usual. [Your First Site](/getting-started/first-site#writing-views) builds a layout component step by step.
 
+### Starting a view
+
+`lynx:make:view` writes a first view for a template, with each of its fields printed the way its type reads: text with `@field`, dates formatted, related pages and repeater items in loops, images with `<x-lynx-image>` and blocks with `@matrix`:
+
+```bash
+php artisan lynx:make:view course --layout=layouts.site
+php artisan lynx:make:view --all
+```
+
+`--layout` wraps the view in your layout component, which receives `$page`. `--all` writes a view for every template whose pages have none, and leaves the views you have alone. An existing view is never replaced without `--force`.
+
+The view follows the template's order and sections. Fields on editor tabs other than Content, such as the SEO module's, usually belong in the page's head rather than its body, so the view names them in a comment instead; `--all-tabs` prints them too. A password field is never printed. The view is a start: change it as you like, since Lynx never writes it again.
+
 ## Printing fields
 
 Fields are properties of the page: `$page->title`, `$page->published_on`, `$page->related`.
