@@ -35,6 +35,10 @@
         @endunless
     </div>
 @else
+@php($maxLength = (int) ($field->settings['max_length'] ?? 0))
+@if ($maxLength > 0)
+<div class="grid gap-1" x-data="{ count: 0 }" x-init="$nextTick(() => count = [...$refs.box.value].length)">
+@endif
 <textarea
     id="input-{{ $field->name }}-{{ $code }}"
     class="blat-textarea"
@@ -42,7 +46,12 @@
     @if ($live ?? false) wire:model.live.debounce.400ms="{{ $model }}" @else wire:model="{{ $model }}" @endif
     placeholder="{{ $placeholder }}"
     aria-labelledby="field-{{ $field->name }}"
+    @if ($maxLength > 0) x-ref="box" x-on:input="count = [...$event.target.value].length" @endif
     @disabled($disabled)
     @error('values.'.$field->name) aria-invalid="true" @enderror
 ></textarea>
+@if ($maxLength > 0)
+    @include('lynx-admin::inputs.partials.char-counter')
+</div>
+@endif
 @endif
