@@ -28,6 +28,7 @@ use LynxCms\Core\Agents\ReadToolRegistry;
 use LynxCms\Core\Components\ComponentRegistry;
 use LynxCms\Core\Console\BackupCommand;
 use LynxCms\Core\Console\ScheduleRunCommand;
+use LynxCms\Core\Doctor\DoctorChecks;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Fields\FormatterChain;
@@ -175,6 +176,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(FormatterRegistry::class);
         $this->app->singleton(PermissionRegistry::class);
         $this->app->singleton(ComponentRegistry::class);
+        $this->app->singleton(DoctorChecks::class);
 
         foreach (self::FLUSHABLE as $service) {
             $this->app->scoped($service);

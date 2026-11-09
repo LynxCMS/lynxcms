@@ -49,6 +49,7 @@ use LynxCms\Core\Console\BackupCommand;
 use LynxCms\Core\Console\BenchCommand;
 use LynxCms\Core\Console\CleanHtmlCommand;
 use LynxCms\Core\Console\DemoCommand;
+use LynxCms\Core\Console\DoctorCommand;
 use LynxCms\Core\Console\ExportCommand;
 use LynxCms\Core\Console\FindCommand;
 use LynxCms\Core\Console\ImportCommand;
@@ -175,6 +176,7 @@ final class CoreRegistrations
         ImportCommand::class,
         BackupCommand::class,
         ScanStringsCommand::class,
+        DoctorCommand::class,
         PhpStanCommand::class,
     ];
 }
