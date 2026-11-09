@@ -11,6 +11,7 @@ use Livewire\Component;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Livewire\Concerns\ChangesChildren;
+use LynxCms\Admin\Livewire\Concerns\MovesChildren;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Query\PageScope;
@@ -18,13 +19,15 @@ use LynxCms\Core\Query\PageScope;
 /**
  * The Children tab of the page editor: the page's children, with a search, a status filter and
  * pages of PER_PAGE rows, to reorder by drag and to publish, hide or trash one at a time or several
- * at once (ChangesChildren). Every change runs a pages action, which checks the permissions again.
+ * at once (ChangesChildren), or to move several under another parent (MovesChildren). Every change
+ * runs a pages action, which checks the permissions again.
  *
  * @internal
  */
 final class PageChildren extends Component
 {
     use ChangesChildren;
+    use MovesChildren;
     use Notifies;
 
     public const int PER_PAGE = 25;
@@ -121,6 +124,8 @@ final class PageChildren extends Component
             'drafts' => array_flip(lynx()->pages->withDrafts($children->ids())),
             'filters' => array_keys(self::FILTERS),
             'sorts' => array_keys(self::SORTS),
+            'moveParents' => $this->moveParents(),
+            'moveExcluded' => $this->moveExcluded(),
             'canSort' => $total > 1 && $this->list()->isComplete($this->pageId),
         ]);
     }

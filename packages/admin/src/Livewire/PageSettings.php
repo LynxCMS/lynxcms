@@ -12,6 +12,7 @@ use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Editor\ParentTemplates;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Tree\DefaultPresenter;
@@ -139,6 +140,8 @@ final class PageSettings extends Component
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
             'hasUrl' => $page->template()->hasUrl(),
             'isModulePage' => app(AdminBranches::class)->contains($page),
+            'parentTemplates' => app(ParentTemplates::class)->for([$page], $this->moveExcluded($page)),
+            'moveExcluded' => $this->moveExcluded($page),
             ...$this->permissions($page),
         ]);
     }
@@ -236,5 +239,15 @@ final class PageSettings extends Component
         $page = lynx()->pages->get($this->pageId);
 
         return $page instanceof Page ? $page : abort(404);
+    }
+
+    /**
+     * The page and its current parent: never its new parent.
+     *
+     * @return list<int>
+     */
+    private function moveExcluded(Page $page): array
+    {
+        return array_values(array_filter([(int) $page->id, (int) $page->parentId]));
     }
 }

@@ -1,4 +1,4 @@
-{{-- The Children tab: the page's children to search, filter, reorder by drag, publish, hide and trash. --}}
+{{-- The Children tab: the page's children to search, filter, reorder by drag, publish, hide, move and trash. --}}
 @php($parent = lynx()->pages->get($pageId))
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm" aria-labelledby="children-heading" data-page-children>
     <div class="flex flex-wrap items-center justify-between gap-3 border-b p-5">
@@ -43,6 +43,7 @@
             @foreach (['publish', 'unpublish', 'hide', 'show'] as $action)
                 <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="bulk('{{ $action }}')">{{ __('lynx-admin::children.'.$action) }}</x-lynx-admin::ui.button>
             @endforeach
+            <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="chooseParent">{{ __('lynx-admin::children.move') }}</x-lynx-admin::ui.button>
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" class="hover:text-destructive" wire:click="confirmTrash({{ Js::from($selected) }})">{{ __('lynx-admin::children.trash') }}</x-lynx-admin::ui.button>
         </div>
     @endif
@@ -52,6 +53,24 @@
             <span class="me-auto">{{ trans_choice('lynx-admin::children.confirm_sort', $total, ['order' => __('lynx-admin::children.sorts.'.$sortBy)]) }}</span>
             <x-lynx-admin::ui.button size="sm" type="button" wire:click="sortChildren">{{ __('lynx-admin::children.sort_confirm') }}</x-lynx-admin::ui.button>
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="$set('sortBy', '')">{{ __('lynx-admin::children.cancel') }}</x-lynx-admin::ui.button>
+        </div>
+    @endif
+
+    @if ($moving !== [])
+        <div class="bg-muted/50 grid gap-3 border-b px-5 py-3 text-sm" role="group" aria-labelledby="children-move-heading" data-move-children>
+            <span id="children-move-heading" class="font-medium">{{ trans_choice('lynx-admin::children.move_heading', count($moving)) }}</span>
+            @if ($moveParents === [])
+                <p class="text-muted-foreground">{{ __('lynx-admin::children.move_nowhere') }}</p>
+            @else
+                <livewire:lynx-admin.page-picker wire:model="moveTo" :multiple="false" :templates="$moveParents" :exclude="$moveExcluded" :placeholder="__('lynx-admin::children.move_search')" :key="'move-picker-'.implode('-', $moving)" />
+                @error('moveTo') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @endif
+            <span class="flex flex-wrap gap-2">
+                @if ($moveParents !== [])
+                    <x-lynx-admin::ui.button size="sm" type="button" wire:click="move">{{ __('lynx-admin::children.move_confirm') }}</x-lynx-admin::ui.button>
+                @endif
+                <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="cancelMove">{{ __('lynx-admin::children.cancel') }}</x-lynx-admin::ui.button>
+            </span>
         </div>
     @endif
 

@@ -175,6 +175,20 @@ it('moves the page under another parent', function (): void {
     expect(lynx()->pages->get($page->id)->parentId)->toBe((int) $archive->id);
 });
 
+it('offers only parents whose templates take the page', function (): void {
+    lynx()->templates->update('course', ['parent_templates' => ['courses']]);
+    $page = settingsPage();
+
+    expect(settingsFor($page)->viewData('parentTemplates'))->toBe([]);
+
+    $archive = lynx()->pages->new('courses', '/');
+    $archive->name = 'archive';
+    $archive->title = 'Archive';
+    $archive->save();
+
+    expect(settingsFor($page)->viewData('parentTemplates'))->toBe(['courses']);
+});
+
 it('shows core errors for an impossible move', function (): void {
     $page = settingsPage();
     $child = lynx()->pages->new('course', $page);

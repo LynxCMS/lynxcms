@@ -53,6 +53,7 @@ return [
         'keeps_urls' => 'Ao mover, os URLs antigos ficam como redirecionamentos.',
         'search' => 'Pesquise a nova página superior',
         'move' => 'Mover para aqui',
+        'nowhere' => 'Nenhuma outra página pode receber esta página: o modelo dela limita onde pode ficar.',
         'choose_first' => 'Escolha primeiro a nova página superior.',
         'moved' => 'Página movida.',
     ],

@@ -53,6 +53,7 @@ return [
         'keeps_urls' => 'Moving keeps the old URLs as redirects.',
         'search' => 'Search for the new parent page',
         'move' => 'Move here',
+        'nowhere' => 'No other page can take this page: its template limits where it goes.',
         'choose_first' => 'Choose the new parent page first.',
         'moved' => 'Page moved.',
     ],

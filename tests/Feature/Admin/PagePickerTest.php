@@ -77,3 +77,12 @@ it('keeps the search box first and the chosen pages below it, with results float
         ->assertSeeHtmlInOrder(['aria-label="Search pages"', 'aria-label="Matching pages"', 'aria-label="Chosen pages"'])
         ->assertSeeHtml('data-picker-results');
 });
+
+it('never offers or takes an excluded page', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [], 'exclude' => [pid('/courses/alpha/')]])
+        ->set('search', 'a')
+        ->assertSeeHtml('wire:click="add('.pid('/courses/beta/').')"')
+        ->assertDontSeeHtml('wire:click="add('.pid('/courses/alpha/').')"')
+        ->call('add', pid('/courses/alpha/'))
+        ->assertSet('value', []);
+});

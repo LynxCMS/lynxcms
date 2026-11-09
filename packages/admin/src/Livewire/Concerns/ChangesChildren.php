@@ -59,6 +59,7 @@ trait ChangesChildren
     public function confirmTrash(array $ids): void
     {
         $this->trashing = array_values(array_map(fn (Page $page): int => (int) $page->id, array_map($this->child(...), Value::ints($ids))));
+        $this->moving = [];
     }
 
     public function cancelTrash(): void
@@ -74,22 +75,24 @@ trait ChangesChildren
     }
 
     /**
-     * Runs the change on every selected child, counting the ones it changed and the ones refused.
+     * Runs the change on every selected child, counting the ones it changed and the ones refused,
+     * and keeping the first refusal's reason to show.
      *
      * @param  callable(Page): mixed  $change
-     * @return array{done: int, refused: int}
+     * @return array{done: int, refused: int, reason: string}
      */
     private function each(callable $change): array
     {
-        $counts = ['done' => 0, 'refused' => 0];
+        $counts = ['done' => 0, 'refused' => 0, 'reason' => ''];
 
         foreach (Value::ints($this->selected) as $id) {
             try {
                 $change($this->child($id));
                 $counts['done']++;
-            } catch (ValidationException|AuthorizationException) {
+            } catch (ValidationException|AuthorizationException $refusal) {
                 // Refused for this page (its status, a lock, the user's scope): the others go on.
                 $counts['refused']++;
+                $counts['reason'] = $counts['reason'] ?: $this->reason($refusal);
             }
         }
 
@@ -99,19 +102,24 @@ trait ChangesChildren
     }
 
     /**
-     * @param  array{done: int, refused: int}  $counts
+     * @param  array{done: int, refused: int, reason: string}  $counts
      */
     private function report(array $counts): void
     {
         $message = trans_choice('lynx-admin::children.changed', $counts['done']);
 
         if ($counts['refused'] > 0) {
-            $this->notify($message.' '.trans_choice('lynx-admin::children.refused', $counts['refused']), 'warning');
+            $this->notify(trim($message.' '.trans_choice('lynx-admin::children.refused', $counts['refused']).' '.$counts['reason']), 'warning');
 
             return;
         }
 
         $this->notify($message);
+    }
+
+    private function reason(ValidationException|AuthorizationException $refusal): string
+    {
+        return $refusal instanceof ValidationException ? (string) $refusal->validator->errors()->first() : $refusal->getMessage();
     }
 
     /** A child of the page, by an id the browser sent. */
