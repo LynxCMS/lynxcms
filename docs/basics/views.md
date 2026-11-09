@@ -19,7 +19,7 @@ Lynx registers one catch-all route after your app's routes: a route that answers
 | `blog` | `resources/views/templates/blog.blade.php` |
 | `home` | `resources/views/templates/home.blade.php` |
 
-The view receives the page as `$page`. A template without a view renders with Lynx's own `lynx::page`, which lists the page's fields, so a new template shows something before you write its view.
+The view receives the page as `$page`. A template without a view renders with Lynx's own `lynx::page`, which lists the page's fields, so a new template shows something before you write its view. With `APP_DEBUG` on, that page also names the view to create and the command that starts it, [`lynx:make:view`](#starting-a-view); visitors of a live site never see the note.
 
 ```blade
 {{-- resources/views/templates/post.blade.php --}}
