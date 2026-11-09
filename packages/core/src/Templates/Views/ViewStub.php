@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Templates\Views;
 
 use LynxCms\Core\Models\Template;
-use LynxCms\Core\Support\Value;
-use LynxCms\Core\Templates\TemplateField;
+use LynxCms\Core\Templates\FieldPlacement;
 use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
@@ -21,10 +20,7 @@ final readonly class ViewStub
 {
     private const string INDENT = '    ';
 
-    /** The editor's main tab: fields without a tab of their own (ADR-0030). */
-    private const string CONTENT_TAB = 'content';
-
-    public function __construct(private TemplateRegistry $templates, private FieldSnippet $snippets) {}
+    public function __construct(private TemplateRegistry $templates, private FieldSnippet $snippets, private FieldPlacement $placement) {}
 
     /** @param  string|null  $layout  a Blade component such as "layouts.site", given $page */
     public function for(Template $template, ?string $layout = null, bool $allTabs = false): string
@@ -34,15 +30,15 @@ final readonly class ViewStub
         $elsewhere = [];
 
         foreach ($this->templates->fields($template) as $templateField) {
-            $tab = $this->tab($template, $templateField);
+            $tab = $this->placement->tab($template, $templateField);
 
-            if (! $allTabs && $tab !== self::CONTENT_TAB) {
+            if (! $allTabs && $tab !== FieldPlacement::CONTENT_TAB) {
                 $elsewhere[$tab][] = $templateField->name();
 
                 continue;
             }
 
-            $label = $this->sectionLabel($template, $templateField);
+            $label = $this->placement->sectionLabel($template, $templateField);
 
             if ($label !== null && $label !== $section) {
                 $lines[] = '';
@@ -62,62 +58,14 @@ final readonly class ViewStub
         return $this->wrap($lines, $layout);
     }
 
-    /** The editor tab the field shows on: its own, else its section's, else Content. */
-    private function tab(Template $template, TemplateField $templateField): string
-    {
-        $own = $templateField->settings['tab'] ?? null;
-
-        if (is_string($own) && $own !== '') {
-            return $own;
-        }
-
-        $section = $this->section($template, $templateField);
-
-        return is_string($section['tab'] ?? null) && $section['tab'] !== '' ? $section['tab'] : self::CONTENT_TAB;
-    }
-
-    /**
-     * The section the field sits in, as the template stores it.
-     *
-     * @return array<string, mixed>|null
-     */
-    private function section(Template $template, TemplateField $templateField): ?array
-    {
-        $key = $templateField->settings['section'] ?? null;
-
-        foreach (Value::list($template->config()['sections'] ?? []) as $section) {
-            $section = Value::map($section);
-
-            if ($key !== null && ($section['key'] ?? null) === $key) {
-                return $section;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param  list<string>  $lines
      */
     private function wrap(array $lines, ?string $layout): string
     {
-        if ($layout === null) {
-            return implode("\n", ['<main>', ...array_map(fn (string $line): string => $line === '' ? '' : self::INDENT.$line, $lines), '</main>'])."\n";
-        }
+        $body = array_map(fn (string $line): string => $line === '' ? '' : self::INDENT.$line, $lines);
+        [$open, $close] = $layout === null ? ['<main>', '</main>'] : ["<x-{$layout} :page=\"\$page\">", "</x-{$layout}>"];
 
-        return implode("\n", ["<x-{$layout} :page=\"\$page\">", ...array_map(fn (string $line): string => $line === '' ? '' : self::INDENT.$line, $lines), "</x-{$layout}>"])."\n";
-    }
-
-    private function sectionLabel(Template $template, TemplateField $templateField): ?string
-    {
-        $section = $this->section($template, $templateField);
-
-        if ($section === null) {
-            return null;
-        }
-
-        $label = $section['label'] ?? $section['key'] ?? null;
-
-        return is_array($label) ? Value::string(reset($label)) : Value::string($label);
+        return implode("\n", [$open, ...$body, $close])."\n";
     }
 }

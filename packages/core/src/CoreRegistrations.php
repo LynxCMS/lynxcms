@@ -51,6 +51,7 @@ use LynxCms\Core\Console\CleanHtmlCommand;
 use LynxCms\Core\Console\DemoCommand;
 use LynxCms\Core\Console\DoctorCommand;
 use LynxCms\Core\Console\ExportCommand;
+use LynxCms\Core\Console\FieldsCommand;
 use LynxCms\Core\Console\FindCommand;
 use LynxCms\Core\Console\IdeHelperCommand;
 use LynxCms\Core\Console\ImportCommand;
@@ -63,6 +64,7 @@ use LynxCms\Core\Console\ScanStringsCommand;
 use LynxCms\Core\Console\ScheduleRunCommand;
 use LynxCms\Core\Console\SchemaApplyCommand;
 use LynxCms\Core\Console\SchemaExportCommand;
+use LynxCms\Core\Console\TemplatesCommand;
 use LynxCms\Core\Fields\Formatters\ExternalLinks;
 use LynxCms\Core\Fields\Formatters\HeadingAnchors;
 use LynxCms\Core\Fields\Formatters\Markdown;
@@ -167,6 +169,8 @@ final class CoreRegistrations
         InstallCommand::class,
         MigrateCommand::class,
         LanguagesCommand::class,
+        TemplatesCommand::class,
+        FieldsCommand::class,
         FindCommand::class,
         DemoCommand::class,
         BenchCommand::class,
