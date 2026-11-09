@@ -80,16 +80,17 @@ final class MenuSchema
     }
 
     /**
-     * Templates to create: name => [label, fields, singleton].
+     * Templates to create: name => [label, fields, singleton, family rules]. The rules keep site
+     * pages out of menus: a page moved under a menu item would leave the site.
      *
-     * @return array<string, array{0: string, 1: list<string|array<string, mixed>>, 2: bool}>
+     * @return array<string, array{0: string, 1: list<string|array<string, mixed>>, 2: bool, 3: array{child_templates: list<string>, parent_templates: list<string>}}>
      */
     public static function templates(): array
     {
         return [
-            self::ROOT_TEMPLATE => ['Menus', ['title'], true],
-            self::MENU_TEMPLATE => ['Menu', [['name' => 'title', 'required' => true], self::CSS_CLASS], false],
-            self::ITEM_TEMPLATE => ['Menu item', ['title', self::PAGE, self::URL, self::TARGET, self::REL, self::CHILDREN, self::DEPTH, self::LIMIT, self::CSS_CLASS, self::ICON_BEFORE, self::ICON_AFTER, self::LANGUAGES], false],
+            self::ROOT_TEMPLATE => ['Menus', ['title'], true, ['child_templates' => [self::MENU_TEMPLATE], 'parent_templates' => []]],
+            self::MENU_TEMPLATE => ['Menu', [['name' => 'title', 'required' => true], self::CSS_CLASS], false, ['child_templates' => [self::ITEM_TEMPLATE], 'parent_templates' => [self::ROOT_TEMPLATE]]],
+            self::ITEM_TEMPLATE => ['Menu item', ['title', self::PAGE, self::URL, self::TARGET, self::REL, self::CHILDREN, self::DEPTH, self::LIMIT, self::CSS_CLASS, self::ICON_BEFORE, self::ICON_AFTER, self::LANGUAGES], false, ['child_templates' => [self::ITEM_TEMPLATE], 'parent_templates' => [self::MENU_TEMPLATE, self::ITEM_TEMPLATE]]],
         ];
     }
 }

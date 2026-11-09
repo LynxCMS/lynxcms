@@ -128,7 +128,7 @@
                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.parent.nowhere') }}</p>
             @else
             <div class="space-y-3">
-                <livewire:lynx-admin.page-picker wire:model="parent" :multiple="false" :templates="$parentTemplates" :exclude="$moveExcluded" :placeholder="__('lynx-admin::settings.parent.search')" :key="'parent-picker-'.$page->id.'-'.$page->revision" />
+                <livewire:lynx-admin.page-picker wire:model="parent" :multiple="false" :templates="$parentTemplates" :exclude="array_filter([(int) $page->parentId])" :exclude-below="$moveExcludedBelow" :placeholder="__('lynx-admin::settings.parent.search')" :key="'parent-picker-'.$page->id.'-'.$page->revision" />
                 <x-lynx-admin::ui.button variant="outline" type="button" wire:click="move">{{ __('lynx-admin::settings.parent.move') }}</x-lynx-admin::ui.button>
                 @error('parent') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>

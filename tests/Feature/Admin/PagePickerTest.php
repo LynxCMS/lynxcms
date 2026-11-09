@@ -86,3 +86,32 @@ it('never offers or takes an excluded page', function (): void {
         ->call('add', pid('/courses/alpha/'))
         ->assertSet('value', []);
 });
+
+it('never offers or takes the pages below an excluded page', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [], 'excludeBelow' => [pid('/courses/')]])
+        ->set('search', 'a')
+        ->assertDontSeeHtml('wire:click="add('.pid('/courses/alpha/').')"')
+        ->call('add', pid('/courses/alpha/'))
+        ->assertSet('value', []);
+});
+
+it('still offers the pages below a page excluded on its own', function (): void {
+    Livewire::test(PagePicker::class, ['value' => [], 'exclude' => [pid('/courses/')]])
+        ->set('search', 'a')
+        ->assertSeeHtml('wire:click="add('.pid('/courses/alpha/').')"');
+});
+
+it('says where a page without a URL lives, so two pages of the same title can be told apart', function (): void {
+    lynx()->templates->add('note', fields: ['title'], hasUrl: false);
+    $note = lynx()->pages->new('note', '/courses/alpha/');
+    $note->name = 'beta-note';
+    $note->title = 'Beta';
+    $note->save();
+
+    $results = Livewire::test(PagePicker::class, ['value' => []])->set('search', 'Beta')->viewData('results');
+
+    expect(array_column($results, 'hint', 'id'))->toMatchArray([
+        pid('/courses/beta/') => lynx()->pages->get('/courses/beta/')->url,
+        (int) $note->id => __('lynx-admin::pages.picker.under', ['page' => 'Alpha']),
+    ]);
+});

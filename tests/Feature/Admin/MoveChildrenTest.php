@@ -93,3 +93,11 @@ it('offers no parent when only the current one could take the pages', function (
 
     expect(moveChildrenTab()->set('selected', childIdsOf('alpha'))->call('chooseParent')->viewData('moveParents'))->toBe([]);
 });
+
+it('never offers a module\'s pages, such as menu items, as the new parent', function (): void {
+    lynx()->menus()->create('top', 'Top');
+    lynx()->menus()->saveItem(['menu' => 'top', 'kind' => 'link', 'label' => 'Archive', 'url' => 'https://example.com']);
+    $menus = (int) lynx()->pages->findOne('template=menus, include=all')?->id;
+
+    expect(moveChildrenTab()->set('selected', childIdsOf('alpha'))->call('chooseParent')->viewData('moveExcludedBelow'))->toContain($menus);
+});

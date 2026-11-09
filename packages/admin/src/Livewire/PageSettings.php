@@ -153,8 +153,8 @@ final class PageSettings extends Component
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
             'hasUrl' => $page->template()->hasUrl(),
             'isModulePage' => app(AdminBranches::class)->contains($page),
-            'parentTemplates' => app(ParentTemplates::class)->for([$page], $this->moveExcluded($page)),
-            'moveExcluded' => $this->moveExcluded($page),
+            'parentTemplates' => app(ParentTemplates::class)->for([$page], array_filter([(int) $page->parentId]), $this->moveExcludedBelow($page)),
+            'moveExcludedBelow' => $this->moveExcludedBelow($page),
             ...$this->permissions($page),
         ]);
     }
@@ -255,12 +255,13 @@ final class PageSettings extends Component
     }
 
     /**
-     * The page and its current parent: never its new parent.
+     * The page and modules' branches (menus, forms): never the page's new parent, nor anything
+     * below them. Its current parent is left out too, but not the pages beside it.
      *
      * @return list<int>
      */
-    private function moveExcluded(Page $page): array
+    private function moveExcludedBelow(Page $page): array
     {
-        return array_values(array_filter([(int) $page->id, (int) $page->parentId]));
+        return [(int) $page->id, ...app(ParentTemplates::class)->moduleBranches()];
     }
 }

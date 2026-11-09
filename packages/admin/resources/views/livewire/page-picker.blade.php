@@ -15,7 +15,7 @@
                         <li>
                             <button type="button" wire:click="add({{ $page['id'] }})" class="flex w-full items-center gap-3 px-3 py-2 text-start text-sm hover:bg-accent hover:text-accent-foreground focus:bg-accent">
                                 <span class="min-w-0 flex-1">{{ $page['title'] }}</span>
-                                <span class="text-muted-foreground max-w-[45%] shrink-0 truncate text-xs">{{ $page['url'] }}</span>
+                                <span class="text-muted-foreground max-w-[45%] shrink-0 truncate text-xs">{{ $page['hint'] }}</span>
                             </button>
                         </li>
                     @endforeach
@@ -35,7 +35,7 @@
                     @endif
                     <span class="min-w-0 flex-1">
                         <a href="{{ route('lynx.admin.pages.edit', $page['id']) }}" class="font-medium underline-offset-4 hover:underline">{{ $page['title'] }}</a>
-                        <span class="text-muted-foreground ms-2 truncate text-xs">{{ $page['url'] }}</span>
+                        <span class="text-muted-foreground ms-2 truncate text-xs">{{ $page['hint'] }}</span>
                     </span>
                     @if ($isSortable)
                         <button type="button" wire:click="movePage({{ $page['id'] }}, -1)" @disabled($loop->first) class="text-muted-foreground hover:text-foreground flex size-6 items-center justify-center rounded-sm disabled:opacity-30" aria-label="{{ __('lynx-admin::pages.picker.move_up', ['page' => $page['title']]) }}"><x-lucide-arrow-up class="size-3.5" aria-hidden="true" /></button>
