@@ -1164,3 +1164,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** `templates.copy-section` copies a section, with its fields' settings on that template and its tab's definition, into other templates through `templates.update`, in one transaction. A template that already has one of the fields, or a section with the same key, is refused. With `rename_conflicts`, a clashing field is cloned instead as `prefix + name` (type, label, translatable and settings), once per run, and conditions inside the section that read it are rewritten (`FieldCondition::renamed()`); a clone whose name is taken is refused. The template board's section menu opens a dialog that lists the other templates, except those a module owns, with each one's reason from a dry run and the renames it would get.
 
 **Consequences:** No new entity, and nothing changes for templates after a copy: each owns its section, so a later change is made per template. Renamed fields are new fields, so values are never copied or shared. Live fieldsets stay possible later; this ADR records why they were parked.
+
+## ADR-0109: lynx:doctor runs read-only checks that modules extend
+
+**Status:** Accepted.
+
+**Context:** "Why doesn't my page show its fields?" usually has a known cause: no view for the template, a field never placed, values left from a removed field, a scheduler that never runs, a missing `storage:link`. Each is easy to find once you know where to look, and each module knows its own.
+
+**Decision:** `lynx:doctor` runs the checks in `DoctorChecks` (`@api`): Lynx's own (template views, unused fields, orphaned values, scheduler) and those modules add at boot with `add()`. A check (`Check`, `@api`) has a key, a label and `run()`, which returns `Finding`s (`@api`: a `Severity`, a message and an optional fix) and never writes. The command prints OK per passing check, or each finding with its fix; `--json` prints the report. It exits with 1 only on an error, so deploy scripts can stop on one. Only signals Lynx can read with certainty become checks: whether a queue worker runs or the search index is current cannot be told from the database, and language fallback loops are already refused by `languages.update`.
+
+**Consequences:** Checks only read, so the command is safe in production and in CI. Their wording is English, like other console output. A module's check runs wherever the module is installed; a slow one slows the whole report, so checks should use counts and existence queries, not page loads.
+

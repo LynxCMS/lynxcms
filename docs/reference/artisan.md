@@ -12,6 +12,7 @@ order: 2
 | `lynx:superuser --email= --name= --password=` | Creates a superuser's account, or makes the account with that email one. Asks for what the options don't give. Comes with `lynxcms/admin`. |
 | `lynx:migrate --force` | Lists the database changes waiting in Lynx packages, asks whether the database is backed up, then applies them; `--force` skips the question. |
 | `lynx:languages` | Lists the languages. |
+| `lynx:doctor --json` | Looks for problems in the site's setup and structure, each with a fix. See [Checking a site](#checking-a-site). |
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
 | `lynx:schema:apply --path= --dry-run --force` | Applies schema files; `--force` also deletes what the files lack. |
@@ -36,3 +37,47 @@ order: 2
 | `lynx:demo --pages= --languages=` | Builds demo content, for trying Lynx and for benchmarks. |
 | `lynx:bench --lang= --runs=` | Measures selector and page loading times. |
 | `mcp:start lynx` | Starts the MCP server over stdio. |
+
+## Checking a site
+
+When a page doesn't show what you expect, start with `lynx:doctor`:
+
+```bash
+php artisan lynx:doctor
+```
+
+It runs a list of checks and prints OK for each that passes, or what it found and how to fix it:
+
+- **Template views:** a template whose pages have URLs but no view of their own. Those pages show in Lynx's plain fallback view.
+- **Unused fields:** a field no template uses, directly or inside a repeater's or matrix's items.
+- **Orphaned values:** values kept for fields a page's template no longer has. Lynx never deletes them by itself, and `pages.purge_orphans` does.
+- **Scheduler:** scheduled publishing more than ten minutes late, which means Laravel's scheduler (the cron entry) is not running.
+- **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
+
+Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.
+
+A module adds its own checks. A check implements `LynxCms\Core\Doctor\Check`: a key, a label, and a `run()` that returns the findings, empty when all is well. It only reads.
+
+```php
+use LynxCms\Core\Doctor\Check;
+use LynxCms\Core\Doctor\DoctorChecks;
+use LynxCms\Core\Doctor\Finding;
+use LynxCms\Core\Doctor\Severity;
+
+final class MailerIsSet implements Check
+{
+    public function key(): string { return 'mailer'; }
+
+    public function label(): string { return 'Forms can send email'; }
+
+    public function run(): array
+    {
+        return config('mail.default') === 'log'
+            ? [new Finding(Severity::Warning, 'Mail goes to the log.', 'Set MAIL_MAILER in .env.')]
+            : [];
+    }
+}
+
+// In the module's service provider, in boot():
+$this->app->make(DoctorChecks::class)->add(MailerIsSet::class);
+```

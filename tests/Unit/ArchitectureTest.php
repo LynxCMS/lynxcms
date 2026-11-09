@@ -127,6 +127,8 @@ arch('only actions write page data')
         'LynxCms\Core\Search',
         'LynxCms\Core\Indexes',
         'LynxCms\PagePassword\Access',
+        // Only reads: counts and existence queries for lynx:doctor.
+        'LynxCms\Core\Doctor\Checks',
         // Only defers clearing the page cache until the action's transaction commits.
         ClearOnChange::class,
         // Only defers forgetting the cached SEO settings until the action's transaction commits.
