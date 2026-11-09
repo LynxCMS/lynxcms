@@ -70,7 +70,8 @@ it('warns about a template whose pages have no view', function (): void {
     $report = doctorReport();
 
     expect(severities($report, 'template-views'))->toBe(['warning'])
-        ->and($report['template-views']['findings'][0]['message'])->toContain('event');
+        ->and($report['template-views']['findings'][0]['message'])->toContain('event')
+        ->and($report['template-views']['findings'][0]['fix'])->toContain('lynx:make:view event');
 });
 
 it('warns about a field on no template', function (): void {

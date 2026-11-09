@@ -55,6 +55,7 @@ use LynxCms\Core\Console\FindCommand;
 use LynxCms\Core\Console\ImportCommand;
 use LynxCms\Core\Console\InstallCommand;
 use LynxCms\Core\Console\LanguagesCommand;
+use LynxCms\Core\Console\MakeViewCommand;
 use LynxCms\Core\Console\MigrateCommand;
 use LynxCms\Core\Console\PhpStanCommand;
 use LynxCms\Core\Console\ScanStringsCommand;
@@ -177,6 +178,7 @@ final class CoreRegistrations
         BackupCommand::class,
         ScanStringsCommand::class,
         DoctorCommand::class,
+        MakeViewCommand::class,
         PhpStanCommand::class,
     ];
 }

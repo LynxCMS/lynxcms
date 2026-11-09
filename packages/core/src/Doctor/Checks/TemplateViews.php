@@ -59,7 +59,7 @@ final readonly class TemplateViews implements Check
         return new Finding(
             Severity::Warning,
             "Template [{$template->name}] has no view: its {$pages} page(s) show in Lynx's plain fallback view.",
-            "Create {$path}.",
+            "Run php artisan lynx:make:view {$template->name} for a starting view, or create {$path}.",
         );
     }
 }
