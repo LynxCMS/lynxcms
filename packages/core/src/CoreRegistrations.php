@@ -17,6 +17,7 @@ use LynxCms\Core\Actions\Languages\UpdateLanguage;
 use LynxCms\Core\Actions\Pages\DeletePage;
 use LynxCms\Core\Actions\Pages\DeleteRedirect;
 use LynxCms\Core\Actions\Pages\DiscardDraft;
+use LynxCms\Core\Actions\Pages\DuplicatePage;
 use LynxCms\Core\Actions\Pages\EmptyTrash;
 use LynxCms\Core\Actions\Pages\LockEdit;
 use LynxCms\Core\Actions\Pages\MovePage;
@@ -134,6 +135,7 @@ final class CoreRegistrations
         MovePage::class,
         SortPage::class,
         SortChildren::class,
+        DuplicatePage::class,
         SetPageStatus::class,
         DeletePage::class,
         SchedulePage::class,

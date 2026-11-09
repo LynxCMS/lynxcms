@@ -3,6 +3,8 @@
     $id = $node->id;
     $button = \LynxCms\Admin\Tree\TreeUi::button('ghost', 'xs');
     $icon = \LynxCms\Admin\Tree\TreeUi::class;
+    // Only the site's tree copies pages: not the home page, the tree's root, system pages or the trash.
+    $canDuplicate = $state['events'] === null && ! $node->isRoot() && ! $node->isTreeRoot && ! $node->isSystem() && $node->place === \LynxCms\Admin\Tree\TreeNode::SITE;
 @endphp
 {{-- The row's actions as small text, ProcessWire style, right after the title: the main ones, then the rest behind
      "More". Shown while the row is selected, and on hover or keyboard focus through admin.css
@@ -46,7 +48,7 @@
         <span class="mx-1 inline-flex items-center rounded-md border px-2 py-0.5 text-xs whitespace-nowrap text-muted-foreground">{{ $node->detail }}</span>
     @endif
 
-    @if ($node->canChangeStatus() || $node->canDelete())
+    @if ($node->canChangeStatus() || $node->canDelete() || $canDuplicate)
         <button type="button" class="{{ \LynxCms\Admin\Tree\TreeUi::button('ghost', 'icon-xs') }}" @click="more = ! more" :aria-expanded="more" aria-label="{{ __('lynx-admin::pages.actions.more') }}">{{ $icon::icon('ellipsis') }}</button>
         <span x-show="more" x-cloak class="flex flex-wrap items-center gap-0.5 border-s ps-1">
             @if ($node->canChangeStatus())
@@ -61,6 +63,12 @@
                 @endunless
                 @if ($node->can('status'))
                     <button type="button" class="{{ $button }}" wire:click="toggleStatus({{ $id }}, 'locked')">{{ __($node->isLocked() ? 'lynx-admin::pages.actions.unlock' : 'lynx-admin::pages.actions.lock') }}</button>
+                @endif
+            @endif
+            @if ($canDuplicate)
+                <button type="button" class="{{ $button }}" wire:click="duplicate({{ $id }})">{{ __('lynx-admin::pages.actions.duplicate') }}</button>
+                @if ($node->childCount > 0)
+                    <button type="button" class="{{ $button }}" wire:click="duplicate({{ $id }}, true)">{{ __('lynx-admin::pages.actions.duplicate_branch') }}</button>
                 @endif
             @endif
             @if ($node->canDelete())

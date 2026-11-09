@@ -6,6 +6,7 @@ namespace LynxCms\Core\Api;
 
 use InvalidArgumentException;
 use LynxCms\Core\Actions\Pages\DeletePage;
+use LynxCms\Core\Actions\Pages\DuplicatePage;
 use LynxCms\Core\Actions\Pages\MovePage;
 use LynxCms\Core\Actions\Pages\PurgeOrphanedValues;
 use LynxCms\Core\Actions\Pages\SavePage;
@@ -134,6 +135,20 @@ final readonly class PagesApi
             'parent' => $this->ref($parent),
             'sort' => $sort,
         ], fn (string|int|null $v): bool => $v !== null), $dryRun)->valueOrDryRun(Page::class);
+    }
+
+    /**
+     * A copy of the page, unpublished, under its parent or $parent; with $children, its branch too.
+     * $titlePrefix ("[Copy]") goes before the copy's title in every language.
+     */
+    public function duplicate(Page|int|string $page, Page|int|string|null $parent = null, bool $children = false, ?string $titlePrefix = null, bool $dryRun = false): Page|ActionResult
+    {
+        return $this->runner->run(DuplicatePage::class, array_filter([
+            'page' => $this->ref($page),
+            'parent' => $parent === null ? null : $this->ref($parent),
+            'children' => $children,
+            'title_prefix' => $titlePrefix,
+        ], fn (bool|string|int|null $v): bool => $v !== null), $dryRun)->valueOrDryRun(Page::class);
     }
 
     /**

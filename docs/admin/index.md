@@ -10,7 +10,7 @@ order: 6
 
 | Screen | Does | Needs |
 | --- | --- | --- |
-| Pages | The page tree: expand, page, drag to sort or move, quick actions, and a Details view with each page's languages, status and last change. | `pages.view` |
+| Pages | The page tree: expand, page, drag to sort or move, quick actions (publish, hide, duplicate, trash), and a Details view with each page's languages, status and last change. | `pages.view` |
 | Page editor | Fields per language, settings, drafts, history, schedule. | `pages.edit` |
 | Menus | The menu builder. | `menus.manage` |
 | SEO | SEO fields per template, structured data, an audit of titles and descriptions, the site settings. | `seo.manage` |

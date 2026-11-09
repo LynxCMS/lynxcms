@@ -57,6 +57,9 @@ final class PageSettings extends Component
     /** @var list<int> the new parent chosen in the page picker */
     public array $parent = [];
 
+    /** Duplicate copies the pages below too. */
+    public bool $duplicateChildren = false;
+
     #[Locked]
     public ?string $status = null;
 
@@ -124,6 +127,16 @@ final class PageSettings extends Component
 
         lynx()->pages->move($this->pageId, $parent);
         $this->changed(__('lynx-admin::settings.parent.moved'));
+    }
+
+    /** A copy of the page next to it (pages.duplicate), opened in the editor. */
+    public function duplicate(): void
+    {
+        $copy = lynx()->pages->duplicate($this->pageId, children: $this->duplicateChildren, titlePrefix: __('lynx-admin::pages.copy_prefix'));
+
+        if ($copy instanceof Page) {
+            $this->redirectRoute('lynx.admin.pages.edit', ['page' => $copy->id], navigate: true);
+        }
     }
 
     public function render(TemplateChoices $choices): View

@@ -75,6 +75,21 @@ The draft is published as it is at that time, with any changes made after schedu
 
 The command `lynx:schedule:run` applies the times that are due. Laravel's scheduler runs it every minute, so the server needs the [scheduler's cron entry](/getting-started/installation#the-scheduler). Each page it changes gets an entry in that page's activity, saying what happened and in which language.
 
+## Duplicating a page
+
+Editors copy a page with **Duplicate** in the page tree's row menu, or in the page's **Settings** tab. The copy has the page's content in every language and starts unpublished, so nobody sees it until it is ready. It goes next to the original, named `name-copy` (then `name-copy-2`), and opens in the editor. Its title starts with **[Copy]**, in the editor's admin language, so nobody mistakes it for the original in the tree; remove it when you rename the page.
+
+```php
+$copy = lynx()->pages->duplicate('/courses/delivery/');
+$copy = lynx()->pages->duplicate('/courses/delivery/', children: true);
+$copy = lynx()->pages->duplicate('/courses/delivery/', parent: '/archive/');
+$copy = lynx()->pages->duplicate('/courses/delivery/', titlePrefix: '[Copy]');
+```
+
+With `children: true` the pages below it are copied too, and a page reference from one copied page to another points at the copy. A page table keeps only items that were copied with it, so the original's items never belong to the copy. Images and files are stored again in the copy's own folder: deleting the original leaves the copy whole. Under another parent, the copy keeps the original's name when it is free there. In code the title stays as it was unless you pass `titlePrefix`; the pages below keep their titles either way.
+
+The action is `pages.duplicate`. It creates each page with `pages.save`, so it needs `pages.create` where the copies go, and the template's rules apply (a singleton template refuses a second page).
+
 ## The trash
 
 In the page tree, editors move a page, with every page below it, to the **trash**. Trashed pages leave the site, and editors can restore them to their place, or under another parent, or delete them for good from the trash.
