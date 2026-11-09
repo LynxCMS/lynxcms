@@ -57,6 +57,33 @@ final readonly class SiblingOrder
     }
 
     /**
+     * Put a parent's ordinary children in the given order, system pages last as always. Children
+     * the list leaves out keep their order after the listed ones.
+     *
+     * @param  list<int>  $orderedIds
+     * @return array<int, array{0: int, 1: int}> page id => [old position, new position], for pages that moved
+     */
+    public function arrange(int $parentId, array $orderedIds): array
+    {
+        $before = $this->siblingIds($parentId);
+        [$pages, $system] = $this->split($this->siblings($parentId));
+        $listed = array_values(array_intersect($orderedIds, $pages));
+        $after = [...$listed, ...array_values(array_diff($pages, $listed)), ...$system];
+        $this->write($after);
+        $moved = [];
+
+        foreach ($after as $position => $id) {
+            $from = (int) array_search($id, $before, true);
+
+            if ($from !== $position) {
+                $moved[$id] = [$from, $position];
+            }
+        }
+
+        return $moved;
+    }
+
+    /**
      * Whether the parent has a system child other than $except: then a new page must go before it.
      */
     public function hasSystemChild(int $parentId, int $except): bool

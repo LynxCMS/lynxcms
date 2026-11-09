@@ -16,6 +16,7 @@ use LynxCms\Admin\Auth\AdminAuth;
 use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Admin\Console\SuperuserCommand;
 use LynxCms\Admin\Editor\BacklinkFilter;
+use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\Editor\FieldTypeChoices;
@@ -36,6 +37,7 @@ use LynxCms\Admin\Livewire\LanguageForm;
 use LynxCms\Admin\Livewire\LanguageList;
 use LynxCms\Admin\Livewire\LinkDialog;
 use LynxCms\Admin\Livewire\NotFoundPageForm;
+use LynxCms\Admin\Livewire\PageChildren;
 use LynxCms\Admin\Livewire\PageCreator;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageHistory;
@@ -149,6 +151,9 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.user-roles', UserRoles::class);
         Livewire::component('lynx-admin.branding-form', BrandingForm::class);
         Livewire::component('lynx-admin.not-found-page-form', NotFoundPageForm::class);
+        Livewire::component('lynx-admin.page-children', PageChildren::class);
+        // The Children tab, on pages that have children the user may see.
+        $this->app->make(EditorTabs::class)->add('children', 'lynx-admin::children.tab', 'lynx-admin.page-children', fn (Page $page): bool => $this->app->make(ChildList::class)->hasChildren($page));
         // The page shown for addresses that match no page (ADR-0085), so editors know which it is.
         $this->app->make(TreeMarkers::class)->add('not-found', fn (Page $page): ?array => $this->app->make(NotFoundPage::class)->is($page)
             ? ['icon' => 'file-question', 'label' => __('lynx-admin::pages.tree.marker_not_found')]

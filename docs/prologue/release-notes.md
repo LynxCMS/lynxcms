@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Pages with children have a **Children** tab in the page editor: search, filter by status, drag to reorder or sort them all by title or date (`lynx()->pages->sortChildren()`, the `pages.sort-children` action), and publish, hide or trash children one at a time or several at once. See [The admin](/admin/).
 - A template's section can be copied to other templates, with its fields and their settings: the copy button on a section in **Settings › Templates**, or `lynx()->templates->copySection()`. A template that already has one of the fields can get renamed copies of them instead. See [Copying a section to other templates](/basics/templates-and-fields#copying-a-section-to-other-templates).
 
 ## 0.1.41
