@@ -52,6 +52,7 @@ use LynxCms\Core\Console\DemoCommand;
 use LynxCms\Core\Console\DoctorCommand;
 use LynxCms\Core\Console\ExportCommand;
 use LynxCms\Core\Console\FindCommand;
+use LynxCms\Core\Console\IdeHelperCommand;
 use LynxCms\Core\Console\ImportCommand;
 use LynxCms\Core\Console\InstallCommand;
 use LynxCms\Core\Console\LanguagesCommand;
@@ -180,5 +181,6 @@ final class CoreRegistrations
         DoctorCommand::class,
         MakeViewCommand::class,
         PhpStanCommand::class,
+        IdeHelperCommand::class,
     ];
 }

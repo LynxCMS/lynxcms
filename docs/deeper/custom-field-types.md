@@ -71,6 +71,16 @@ Each field then reads as its type presents it, on pages and on repeater and matr
 
 `lynx:phpstan` writes `lynx/phpstan/types.php`. Commit it, and regenerate it after changing fields, for example in the same commit as `lynx:schema:export`. Elsewhere, point the extension at it with `parameters.lynx.types`. PHPStan 2.3 and later analyse the code that reads fields again when the file changes; with an older PHPStan, run `vendor/bin/phpstan clear-result-cache` after regenerating it, or the result cache keeps reporting the old fields.
 
+### Autocomplete in your editor
+
+PhpStorm and VS Code (with Intelephense) don't run PHPStan extensions while you type. `lynx:ide-helper` writes the same types as `@property` lines of `Page` and `Item`, which editors read, so `$page->` lists your fields with their types:
+
+```bash
+php artisan lynx:ide-helper
+```
+
+It writes `_ide_helper_lynx.php` at the root of your app (`--path` changes it). The file only declares the two classes again for editors, and stops on its first line if anything runs it; Composer never loads it. Regenerate it after changing fields, next to `lynx:phpstan`. Like the PHPStan types, it lists every field of the site on every page, since a template only decides which fields have values.
+
 ## In the admin
 
 ```php
