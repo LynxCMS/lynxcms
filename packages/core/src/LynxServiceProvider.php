@@ -197,6 +197,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->registerNotFoundPage();
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'lynx');
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'lynx');
 
         $this->publishes([__DIR__.'/../config/lynx.php' => config_path('lynx.php')], 'lynx-config');
 
