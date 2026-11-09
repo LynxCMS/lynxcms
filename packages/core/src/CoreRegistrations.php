@@ -39,6 +39,7 @@ use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\DeleteRole;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Strings\SaveStrings;
+use LynxCms\Core\Actions\Templates\CopySection;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Actions\Templates\DeleteTemplate;
 use LynxCms\Core\Actions\Templates\UpdateTemplate;
@@ -127,6 +128,7 @@ final class CoreRegistrations
         CreateTemplate::class,
         UpdateTemplate::class,
         DeleteTemplate::class,
+        CopySection::class,
         SavePage::class,
         MovePage::class,
         SortPage::class,

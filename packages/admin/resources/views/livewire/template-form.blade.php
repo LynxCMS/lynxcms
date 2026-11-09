@@ -49,6 +49,7 @@
             @error('fields') <p role="alert" class="text-destructive mt-1 text-sm px-5 pt-4">{{ $message }}</p> @enderror
 
             @include('lynx-admin::livewire.partials.template-layout')
+            @if ($canEdit) @include('lynx-admin::livewire.partials.template-copy-section') @endif
 
             @if ($canEdit)
             <div class="flex flex-wrap items-end gap-3 border-t border-border p-5">

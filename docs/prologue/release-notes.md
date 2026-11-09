@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- A template's section can be copied to other templates, with its fields and their settings: the copy button on a section in **Settings › Templates**, or `lynx()->templates->copySection()`. A template that already has one of the fields can get renamed copies of them instead. See [Copying a section to other templates](/basics/templates-and-fields#copying-a-section-to-other-templates).
+
 ## 0.1.41
 
 Released November 6, 2026. Rich text fields can turn on extra tools and show their HTML, and Review changes understands drafts. Nothing to do after updating, and no database changes.

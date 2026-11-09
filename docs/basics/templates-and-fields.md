@@ -135,6 +135,18 @@ In the admin, **Settings › Templates** edits the layout. Each tab shows a Main
 
 The layout only changes the editor. The template's fields stay one list, so values, selectors and schema files are not affected.
 
+### Copying a section to other templates
+
+When several templates need the same group of fields, such as an address, build the section once and copy it. In the admin, the copy button on a section opens **Copy section to templates**: tick the templates and choose **Copy**. In code:
+
+```php
+lynx()->templates->copySection('office', 'address', to: ['event', 'venue']);
+```
+
+Each template gets the section, its fields with their settings on the original template, and its tab when it doesn't have one. The copies are not linked: changing the section on one template later leaves the others as they are.
+
+A template that already has one of the section's fields is refused, since a field appears on a template once. With `renameConflicts: true` (**Rename fields that clash** in the admin), that template gets a new field instead, a copy of the original named with a prefix: `address_city` for `city`. The prefix defaults to the section's key and `_`, and `prefix:` changes it. New fields start empty, and conditions inside the section follow the new names. If a field with the new name already exists, the copy is refused and you choose another prefix.
+
 ## Showing fields only when needed
 
 A field of a template can show, or be required, only when other fields match. Conditions use the same syntax as [selectors](/basics/selectors):

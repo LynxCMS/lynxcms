@@ -52,6 +52,28 @@ final readonly class FieldCondition
     }
 
     /**
+     * The same condition reading other fields, as when a copied section's fields are renamed.
+     *
+     * @param  array<string, string>  $names  old field name => new field name
+     */
+    public function renamed(array $names): self
+    {
+        return new self(array_map(
+            fn (array $clause): array => ['field' => $names[$clause['field']] ?? $clause['field']] + $clause,
+            $this->clauses,
+        ));
+    }
+
+    /** The condition written as parse() reads it: "format=onsite|hybrid, price>0". */
+    public function toString(): string
+    {
+        return implode(', ', array_map(
+            fn (array $clause): string => $clause['field'].$clause['operator'].implode('|', $clause['values']),
+            $this->clauses,
+        ));
+    }
+
+    /**
      * @param  callable(string): mixed  $valueOf  a field's value (shared, or in the default language)
      */
     public function matches(callable $valueOf): bool

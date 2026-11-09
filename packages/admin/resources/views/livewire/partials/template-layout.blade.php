@@ -65,5 +65,6 @@
             </div>
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="addSection">{{ __('lynx-admin::templates.layout.add_section') }}</x-lynx-admin::ui.button>
         </div>
+        <p class="text-muted-foreground text-xs" data-copy-section-hint>{{ __('lynx-admin::templates.layout.copy_hint') }}</p>
     @endif
 </div>

@@ -17,6 +17,7 @@
                 </select>
             @endif
             <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-label="{{ __('lynx-admin::templates.section.settings_of', ['section' => $sectionLabel]) }}" title="{{ __('lynx-admin::templates.section.settings') }}"><x-lucide-sliders-horizontal aria-hidden="true" /></x-lynx-admin::ui.button>
+            @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="openCopySection({{ Js::from($key) }})" aria-label="{{ __('lynx-admin::templates.copy.open_named', ['section' => $sectionLabel]) }}" title="{{ __('lynx-admin::templates.copy.open') }}" data-copy-section="{{ $key }}"><x-lucide-copy aria-hidden="true" /></x-lynx-admin::ui.button> @endif
             @if ($canEdit) <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" class="hover:text-destructive" wire:click="removeSection({{ Js::from($key) }})" aria-label="{{ __('lynx-admin::templates.section.remove_named', ['section' => $sectionLabel]) }}" title="{{ __('lynx-admin::templates.section.remove') }}"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button> @endif
         </span>
     </div>
