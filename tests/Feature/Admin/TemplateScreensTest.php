@@ -221,3 +221,13 @@ it('saves how a field shows in the page editor', function (): void {
     expect([$fields['price']->editor()->value, $fields['price']->width(), $fields['price']->placeholder(), $fields['price']->icon()])->toBe(['locked', 50, 'In euros', 'euro'])
         ->and(array_intersect_key($fields['summary']->settings, array_flip(['editor', 'width'])))->toBe([]);
 });
+
+it('chooses family templates with a searchable chooser, not a checkbox per template', function (): void {
+    lynx()->templates->update('course', ['parent_templates' => ['courses']]);
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertSeeHtml('data-template-chooser="parentTemplates"')
+        ->assertSeeHtml('data-template-chooser="switchTemplates"')
+        ->assertDontSeeHtml('id="family-parentTemplates-courses"')
+        ->assertSet('parentTemplates', ['courses']);
+});

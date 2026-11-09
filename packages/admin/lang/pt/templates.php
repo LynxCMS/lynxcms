@@ -40,6 +40,11 @@ return [
         'system' => 'sistema · :owner',
     ],
     'family' => [
+        'search' => 'Pesquise modelos para adicionar',
+        'search_in' => 'Pesquise modelos para adicionar a: :list',
+        'matching' => 'Modelos encontrados',
+        'chosen' => 'Escolhidos: :list',
+        'remove' => 'Remover :template',
         'heading' => 'Família',
         'has_url' => 'As páginas têm URL',
         'has_url_note' => '(desligado para definições e conteúdo reutilizável)',
@@ -48,7 +53,7 @@ return [
         'children' => 'Modelos permitidos para subpáginas',
         'parents' => 'Modelos permitidos para a página superior',
         'switch' => 'Modelos para os quais as páginas podem mudar',
-        'any' => 'Nenhum selecionado: qualquer modelo.',
+        'any' => 'Nenhum escolhido: qualquer modelo.',
         'save' => 'Guardar família',
     ],
     'pages' => [
