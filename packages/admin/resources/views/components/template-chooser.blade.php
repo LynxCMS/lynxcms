@@ -31,7 +31,7 @@
 
     <ul class="divide-y overflow-hidden rounded-md border" x-show="chosen.length > 0" x-cloak aria-label="{{ __('lynx-admin::templates.family.chosen', ['list' => $legend]) }}">
         <template x-for="name in chosen" x-bind:key="name">
-            <li class="bg-card flex items-center gap-2 px-2 py-1.5 text-sm">
+            <li class="bg-card bg-muted flex items-center gap-2 px-2 py-1.5 text-sm">
                 <span class="min-w-0 flex-1">
                     <span class="font-medium" x-text="labelOf(name)"></span>
                     <span class="text-muted-foreground ms-2 font-mono text-xs" x-text="name"></span>
