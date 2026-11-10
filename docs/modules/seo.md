@@ -168,7 +168,7 @@ The **SEO** screen has these tabs:
 - **Audit**: published pages with no description, a title another page also uses, or a title over 60 characters.
 - **Settings**: opens the settings page.
 
-Pages with SEO fields get an **SEO preview** link in the page editor. It shows the saved page as a search result and as a shared link. The screens need the `seo.manage` permission; the preview needs `pages.view`.
+On pages with SEO fields, the page editor's SEO tab shows an **SEO preview** below the fields: the saved page as a search result and as a shared link. It updates when you save. The SEO audit links to the same preview on its own screen. The screens need the `seo.manage` permission; the preview needs `pages.view`.
 
 ## Agents
 

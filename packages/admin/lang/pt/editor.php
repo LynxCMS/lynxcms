@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    'add_child' => 'Adicionar página filha',
     'reload' => 'Recarregar e descartar as minhas edições',
     'locked_title' => 'Esta página está bloqueada.',
     'locked_description' => 'Não pode ser editada, movida nem eliminada até ser desbloqueada.',
@@ -28,7 +27,6 @@ return [
     'more_previews' => 'Pré-visualizar noutro idioma',
     'locked' => 'Bloqueada',
     'view_page' => 'Ver página',
-    'template' => 'Modelo: :name',
     'confirm_discard' => 'Descartar o rascunho?',
     'yes_discard' => 'Sim, descartar',
     'cancel' => 'Cancelar',

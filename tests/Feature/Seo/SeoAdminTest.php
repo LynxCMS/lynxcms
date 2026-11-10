@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
+use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageTree;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Roles\AssignRoles;
@@ -46,7 +47,9 @@ it('previews a page as a search result and a social card', function (): void {
     $alpha = lynx()->pages->get('/courses/alpha');
     lynx()->run(SavePage::class, ['id' => $alpha->id, 'values' => [SeoSchema::DESCRIPTION => ['default' => 'All about alpha.']]]);
 
-    $this->get(route('lynx.admin.pages.edit', $alpha->id))->assertSee(route('lynx.admin.seo.preview', $alpha->id));
+    Livewire::test(PageEditor::class, ['pageId' => $alpha->id])->assertDontSeeHtml('data-seo-preview')
+        ->set('tab', SeoSchema::TAB)->assertSeeHtml('data-seo-preview')->assertSee('All about alpha.')
+        ->assertDontSeeHtml(route('lynx.admin.seo.preview', $alpha->id));
     $this->get(route('lynx.admin.seo.preview', $alpha->id))->assertOk()
         ->assertSee('All about alpha.')->assertSee('localhost › courses › alpha');
 });

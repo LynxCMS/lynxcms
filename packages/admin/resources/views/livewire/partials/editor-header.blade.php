@@ -68,19 +68,13 @@
             @if ($page->hasStatus(\LynxCms\Core\Pages\PageStatus::LOCKED))
                 <span>{{ __('lynx-admin::editor.locked') }}</span>
             @endif
-            @if ($canAddChild)
-                <a href="{{ route('lynx.admin.pages.create', ['parent' => $page->id]) }}" wire:navigate class="{{ $link }}" data-add-child><x-lynx-admin::ui.icon name="plus" class="size-3.5" aria-hidden="true" />{{ __('lynx-admin::editor.add_child') }}</a>
-            @endif
             @if ($page->template()->hasUrl())
                 <a href="{{ $page->url() }}" target="_blank" rel="noopener" class="{{ $link }}">{{ __('lynx-admin::editor.view_page') }}<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" /></a>
             @endif
-            {{-- Links modules add for this page (EditorLinks), e.g. "SEO preview". --}}
+            {{-- Links modules add for this page (EditorLinks), e.g. "In cache". --}}
             @foreach (app(\LynxCms\Admin\EditorLinks::class)->for($page) as $moduleLink)
                 <a data-page-link href="{{ $moduleLink['url'] }}" target="_blank" rel="noopener" class="{{ $link }}">{{ $moduleLink['label'] }}<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" /></a>
             @endforeach
-            @if ($isSuperuser)
-                <span>{{ __('lynx-admin::editor.template', ['name' => $page->template()->name]) }}</span>
-            @endif
         </div>
     </div>
 

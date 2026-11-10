@@ -165,6 +165,17 @@ app(AdminSlots::class)->addView(AdminSlots::EDITOR_FIELD, 'my-module::field-note
 
 The view gets `$page`, `$field` (the field's name), `$language` (the language's code) and `$isTranslatable`. To act on the page, it can dispatch a browser event to a component you put in the header.
 
+### Below a tab's fields
+
+Each tab that holds fields has its own slot, `AdminSlots::editorTab()` with the tab's key. Its views show below the tab's fields, in the main column. The SEO module shows its preview of the page on the SEO tab this way:
+
+```php
+app(AdminSlots::class)->addView(AdminSlots::editorTab('seo'), 'my-module::seo-note',
+    fn (Page $page): bool => $page->template()->hasUrl());
+```
+
+The view gets `$page` and `$tab`. It renders again each time the editor does, so after a save it shows the saved page.
+
 ## Page tree filters
 
 The page tree's Details view lists filters such as "Has a draft". A module can add its own, each a [selector](/basics/selectors) clause over the site's pages:
