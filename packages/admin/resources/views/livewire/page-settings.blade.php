@@ -87,8 +87,11 @@
     @unless ($isModulePage)
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-template">
         <h2 id="settings-template" class="mb-4 text-base font-semibold">{{ __('lynx-admin::settings.template.title') }}</h2>
+        {{-- Those who manage templates get the template's name as a link to its edit screen, in a new browser tab. --}}
+        @php($templateEdit = $canEditTemplate ? route('lynx.admin.templates.edit', $page->template()->name) : null)
         @if (! $canSwitch || $templates === [])
-            <p class="text-muted-foreground text-sm">{{ __($templates === [] ? 'lynx-admin::settings.template.current' : 'lynx-admin::settings.template.fixed', ['name' => $page->template()->name]) }}</p>
+            @php($templateName = $templateEdit === null ? e($page->template()->name) : '<a href="'.e($templateEdit).'" target="_blank" rel="noopener" data-template-edit class="hover:text-foreground underline underline-offset-4">'.e($page->template()->name).'</a>')
+            <p class="text-muted-foreground text-sm">{!! __($templates === [] ? 'lynx-admin::settings.template.current' : 'lynx-admin::settings.template.fixed', ['name' => $templateName]) !!}</p>
         @else
             <div class="flex flex-wrap items-center gap-3">
                 <select class="blat-select max-w-xs" wire:model.live="template" aria-label="{{ __('lynx-admin::settings.template.title') }}" @disabled($orphans !== null)>
@@ -97,6 +100,9 @@
                         <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
+                @if ($templateEdit !== null)
+                    <a href="{{ $templateEdit }}" target="_blank" rel="noopener" data-template-edit class="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline">{{ __('lynx-admin::settings.template.edit') }}<x-lynx-admin::ui.icon name="external-link" class="size-3.5" aria-hidden="true" /></a>
+                @endif
                 @if ($template !== $page->template()->name && $orphans === null)
                     <x-lynx-admin::ui.button variant="outline" type="button" wire:click="previewTemplate">{{ __('lynx-admin::settings.template.switch') }}</x-lynx-admin::ui.button>
                 @endif

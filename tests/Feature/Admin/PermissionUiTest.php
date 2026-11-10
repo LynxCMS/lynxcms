@@ -106,11 +106,11 @@ it('offers Unlock only to users who may change the status', function (): void {
     Livewire::test(PageTree::class)->call('toggle', lynx()->pages->get('/courses/')->id)->assertSeeHtml($unlock);
 });
 
-it('shows template and field type names only to superusers', function (): void {
+it('shows field type names only to superusers', function (): void {
     $alpha = (int) lynx()->pages->get('/courses/alpha/')->id;
     $this->actingAs(new GenericUser(['id' => 1]));
-    Livewire::test(PageEditor::class, ['pageId' => $alpha])->assertSee('Template: course')->assertSeeHtml('>text, translatable<');
+    Livewire::test(PageEditor::class, ['pageId' => $alpha])->assertSeeHtml('>text, translatable<');
 
     signedInWith([['permission' => 'pages.edit']]);
-    Livewire::test(PageEditor::class, ['pageId' => $alpha])->assertSee('Alpha')->assertDontSee('Template: course')->assertDontSeeHtml('>text, translatable<');
+    Livewire::test(PageEditor::class, ['pageId' => $alpha])->assertSee('Alpha')->assertDontSeeHtml('>text, translatable<');
 });

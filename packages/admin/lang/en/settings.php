@@ -37,6 +37,7 @@ return [
     'template' => [
         'title' => 'Template',
         'current' => 'Template: :name',
+        'edit' => 'Edit template',
         'fixed' => 'Template: :name (cannot be changed for this page)',
         'current_option' => ':name (current)',
         'switch' => 'Switch template…',

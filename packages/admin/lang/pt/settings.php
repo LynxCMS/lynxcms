@@ -37,6 +37,7 @@ return [
     'template' => [
         'title' => 'Modelo',
         'current' => 'Modelo: :name',
+        'edit' => 'Editar modelo',
         'fixed' => 'Modelo: :name (não pode ser alterado nesta página)',
         'current_option' => ':name (atual)',
         'switch' => 'Mudar de modelo…',

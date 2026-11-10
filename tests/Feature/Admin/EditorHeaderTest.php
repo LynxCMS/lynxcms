@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
+use LynxCms\Admin\AdminSlots;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Core\Pages\PageStatus;
@@ -58,4 +61,21 @@ it('lists the links modules add beside the title', function (): void {
 
     Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
         ->assertSeeHtml('data-page-link href="https://example.test/module"');
+});
+
+it('shows the views modules add to a tab below that tab\'s fields', function (): void {
+    lynx()->fields->add('meta_title', 'text');
+    lynx()->templates->update('course', ['add' => [['name' => 'meta_title', 'tab' => 'seo']], 'tabs' => [['key' => 'seo', 'label' => 'SEO']]]);
+    $views = testingPath('tab-slot');
+    File::ensureDirectoryExists($views);
+    File::put($views.'/tab-note.blade.php', '<p data-tab-note="{{ $page->id }}"></p>');
+    View::addLocation($views);
+    app(AdminSlots::class)->addView(AdminSlots::editorTab('seo'), 'tab-note');
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
+        ->assertDontSeeHtml('data-tab-note')
+        ->set('tab', 'seo')
+        ->assertSeeHtml('data-tab-note="'.$this->alpha->id.'"');
+
+    File::deleteDirectory($views);
 });

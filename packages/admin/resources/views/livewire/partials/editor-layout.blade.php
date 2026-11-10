@@ -43,6 +43,12 @@
                         @include('lynx-admin::livewire.partials.editor-section', ['block' => $group])
                     @endif
                 @endforeach
+                {{-- Views modules add below this tab's fields (AdminSlots::editorTab). --}}
+                @if ($column === 'main')
+                    @foreach (app(\LynxCms\Admin\AdminSlots::class)->viewsFor(\LynxCms\Admin\AdminSlots::editorTab($tab), $page) as $tabView)
+                        @include($tabView, ['page' => $page, 'tab' => $tab])
+                    @endforeach
+                @endif
             </div>
         @endforeach
     </div>

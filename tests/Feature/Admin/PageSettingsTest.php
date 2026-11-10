@@ -9,6 +9,8 @@ use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageSettings;
 use LynxCms\Core\Actions\Pages\SavePage;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 
@@ -237,3 +239,17 @@ it('says the current URL will redirect only once the name changes', function (bo
 
     $settings->set('names.default', 'delivery-9')->assertSeeHtml('data-url-will-redirect');
 })->with(['without a trailing slash' => false, 'with a trailing slash' => true]);
+
+it('links the template to its edit screen, in a new tab, for those who manage templates', function (): void {
+    $page = settingsPage();
+    $edit = 'href="'.route('lynx.admin.templates.edit', 'course').'"';
+
+    settingsFor($page)->assertSeeHtml([$edit, 'data-template-edit']);
+    lynx()->templates->update('course', ['parent_templates' => ['courses']]);
+    settingsFor($page)->assertSeeHtml([$edit, 'data-template-edit']);
+
+    lynx()->run(SaveRole::class, ['name' => 'editor', 'grants' => [['permission' => 'admin.access'], ['permission' => 'pages.view'], ['permission' => 'pages.edit']]]);
+    lynx()->run(AssignRoles::class, ['user' => '7', 'roles' => ['editor']]);
+    $this->actingAs(new GenericUser(['id' => 7]));
+    settingsFor($page)->assertDontSeeHtml($edit);
+});

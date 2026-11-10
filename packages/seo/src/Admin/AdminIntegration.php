@@ -9,12 +9,11 @@ use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
+use LynxCms\Admin\AdminSlots;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
-use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Support\Value;
 use LynxCms\Seo\Admin\Http\ShowSeoPreview;
 use LynxCms\Seo\Admin\Livewire\SeoAudit;
 use LynxCms\Seo\Admin\Livewire\SeoSchemas;
@@ -51,8 +50,8 @@ final class AdminIntegration
         app(AdminBranches::class)->register(SeoSchema::SETTINGS_TEMPLATE, fn (): ?string => null);
         app(TemplateChoices::class)->exclude(SeoSchema::SETTINGS_TEMPLATE);
         app(SchemaOwners::class)->register('SEO', [SeoSchema::SETTINGS_TEMPLATE], SeoSchema::names());
-        app(EditorLinks::class)->add(fn (Page $page): ?array => $page->templateField(SeoSchema::TITLE) !== null
-            ? ['label' => Value::string(__('lynx-seo::admin.preview.title')), 'url' => route('lynx.admin.seo.preview', $page->id)]
-            : null);
+        // The preview of the saved page, below the SEO tab's fields.
+        app(AdminSlots::class)->addView(AdminSlots::editorTab(SeoSchema::TAB), 'lynx-seo::admin.partials.editor-preview',
+            fn (Page $page): bool => $page->templateField(SeoSchema::TITLE) !== null && $page->template()->hasUrl());
     }
 }

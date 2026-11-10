@@ -10,7 +10,8 @@ use LynxCms\Core\Pages\Page;
 /**
  * Livewire components and views modules add to named places in the admin (ADR-0101). The
  * page editor's header renders the "editor.header" slot, mounting each component with the page's
- * id (pageId); each field renders the views of "editor.field". Modules register them in a service provider:
+ * id (pageId); each field renders the views of "editor.field", and each editor tab those of
+ * AdminSlots::editorTab($key). Modules register them in a service provider:
  * app(AdminSlots::class)->add('editor.header', 'translate-button', fn (Page $page): bool => ...).
  *
  * @api
@@ -28,6 +29,15 @@ final class AdminSlots
      * field (the field's name), language (the language's code) and isTranslatable (bool).
      */
     public const string EDITOR_FIELD = 'editor.field';
+
+    /**
+     * Below the fields of one page editor tab, in its main column: the slot for views given page
+     * (Page) and tab (the tab's key), such as the SEO module's preview on the SEO tab.
+     */
+    public static function editorTab(string $tab): string
+    {
+        return 'editor.tab.'.$tab;
+    }
 
     /** @var array<string, list<array{component: string, visible: (Closure(Page): bool)|null}>> */
     private array $slots = [];

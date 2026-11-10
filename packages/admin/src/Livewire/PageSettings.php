@@ -153,6 +153,7 @@ final class PageSettings extends Component
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
             'hasUrl' => $page->template()->hasUrl(),
             'isModulePage' => app(AdminBranches::class)->contains($page),
+            'canEditTemplate' => app(AdminAccess::class)->allows('schema.manage'),
             'parentTemplates' => app(ParentTemplates::class)->for([$page], array_filter([(int) $page->parentId]), $this->moveExcludedBelow($page)),
             'moveExcludedBelow' => $this->moveExcludedBelow($page),
             ...$this->permissions($page),
