@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Duplicate a field** from the Fields screen, or with `lynx()->fields->duplicate()` (the `fields.duplicate` action): a new field with the same type, labels, translation and settings under a new name. See [Duplicating a field](/basics/templates-and-fields#duplicating-a-field).
 - A template's **Family** lists (child, parent and switch templates) are chosen with a search by label or name instead of a checkbox per template, which grew unwieldy on sites with many templates.
 - The page editor's header has **Add child page** when the page may have children and you may create them, on every tab.
 - Menus keep site pages out: menu items only hold menu items, and menus only menu items (template family rules), so moving a page under a menu item is refused everywhere, as it would take the page off the site. Sites get the rules the next time a menu is saved. Page searches in the admin now say where a page without a URL lives, such as "in Main navigation".

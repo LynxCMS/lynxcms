@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 return [
+    'duplicate' => [
+        'title' => 'Duplicate',
+        'named' => 'Duplicate :field',
+        'heading' => 'Duplicate :field',
+        'description' => 'A new field with the same type, labels, translation and settings. No template uses it yet, and no values are copied.',
+        'name' => 'Name of the new field',
+        'label' => 'Label',
+        'label_hint' => 'Left as it is, the field keeps the label in every language.',
+        'cancel' => 'Cancel',
+        'submit' => 'Duplicate',
+    ],
     'title' => 'Fields',
     'description' => 'Fields hold the content; templates combine them.',
     'new' => 'New field',
@@ -21,6 +32,7 @@ return [
         'has_errors' => 'has errors',
     ],
     'list' => [
+        'actions' => 'Actions',
         'show_system' => 'Show system fields',
         'search' => 'Search',
         'search_placeholder' => 'Name or label',

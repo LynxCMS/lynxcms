@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Fields\DeleteField;
+use LynxCms\Core\Actions\Fields\DuplicateField;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
@@ -44,6 +45,16 @@ final readonly class FieldsApi
         $input = ['name' => $name, 'type' => $type, 'translatable' => $translatable, 'settings' => $settings] + ($label === null ? [] : ['label' => $label]);
 
         return $this->runner->run(CreateField::class, $input, $dryRun)->valueOrDryRun(Field::class);
+    }
+
+    /**
+     * A new field like $field (type, labels, translation, settings) named $name; no template uses it yet.
+     *
+     * @param  string|array<string, string>|null  $label  default: the original's labels
+     */
+    public function duplicate(Field|string $field, string $name, string|array|null $label = null, bool $dryRun = false): Field|ActionResult
+    {
+        return $this->runner->run(DuplicateField::class, ['field' => $this->name($field), 'name' => $name] + ($label === null ? [] : ['label' => $label]), $dryRun)->valueOrDryRun(Field::class);
     }
 
     /**

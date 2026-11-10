@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 return [
+    'duplicate' => [
+        'title' => 'Duplicar',
+        'named' => 'Duplicar :field',
+        'heading' => 'Duplicar :field',
+        'description' => 'Um campo novo com o mesmo tipo, rótulos, tradução e definições. Nenhum modelo o usa ainda e não se copiam valores.',
+        'name' => 'Nome do campo novo',
+        'label' => 'Rótulo',
+        'label_hint' => 'Se não a mudar, o campo mantém o rótulo em todos os idiomas.',
+        'cancel' => 'Cancelar',
+        'submit' => 'Duplicar',
+    ],
     'title' => 'Campos',
     'description' => 'Os campos guardam o conteúdo; os modelos combinam-nos.',
     'new' => 'Novo campo',
@@ -21,6 +32,7 @@ return [
         'has_errors' => 'tem erros',
     ],
     'list' => [
+        'actions' => 'Ações',
         'show_system' => 'Mostrar campos de sistema',
         'search' => 'Pesquisar',
         'search_placeholder' => 'Nome ou rótulo',

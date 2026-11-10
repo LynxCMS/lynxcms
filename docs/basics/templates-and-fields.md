@@ -45,6 +45,16 @@ lynx()->fields->add('role', 'text', translatable: true,
 
 The keys are language codes (see [Languages](/basics/languages#adding-a-language) for giving the default language a code such as `en`). Editors read each text in their own language, falling back like content does.
 
+### Duplicating a field
+
+To make a field like one you have, such as a second date with the same format, duplicate it. On the **Fields** screen, the copy button beside a field asks for the new name, and the new field opens on its own screen. In code:
+
+```php
+lynx()->fields->duplicate('starts_on', 'ends_on', label: 'Ends on');
+```
+
+The new field gets the same type, labels (unless you give one), translation and settings. It is a field of its own: no template uses it until you add it, and no values are copied.
+
 ## Creating templates
 
 Create a template from a list of fields. A field in the list can be a name, or an array that adds options for this template only, such as `required`:
