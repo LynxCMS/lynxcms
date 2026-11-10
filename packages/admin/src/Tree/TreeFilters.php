@@ -79,6 +79,23 @@ final readonly class TreeFilters
         return $term === null ? null : "{$this->base}, {$term}";
     }
 
+    /**
+     * The given pages the filters cover, as a selector: for lists of pages found another way, such
+     * as the home screen's recent changes.
+     *
+     * @param  list<int>  $pageIds
+     */
+    public function among(array $pageIds): string
+    {
+        return "{$this->base}, id=".implode('|', $pageIds === [] ? [0] : $pageIds);
+    }
+
+    /** How many of the pages the filters cover match a selector term, such as "status=unpublished"; all of them for "". */
+    public function total(string $term = ''): int
+    {
+        return lynx()->pages->find($this->base.($term === '' ? '' : ", {$term}").', limit=1', scope: $this->scope)->total();
+    }
+
     private function count(string $key): int
     {
         return lynx()->pages->find($this->selector($key).', limit=1', scope: $this->scope)->total();

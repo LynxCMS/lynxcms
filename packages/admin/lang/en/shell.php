@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'nav' => [
         'label' => 'Admin',
+        'home' => 'Home',
         'pages' => 'Pages',
         'site_texts' => 'Site texts',
         'settings' => 'Settings',

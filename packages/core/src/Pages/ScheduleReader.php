@@ -25,18 +25,55 @@ final readonly class ScheduleReader
      */
     public function of(int $pageId): array
     {
-        $codes = $this->languages->all()->mapWithKeys(fn ($language): array => [(int) $language->id => (string) $language->code])->all();
-        $entries = [];
+        $codes = $this->codes();
+        $rows = DB::table(Tables::SCHEDULES)->where('page_id', $pageId)->orderBy('language_id')->orderBy('action')->get();
 
-        foreach (DB::table(Tables::SCHEDULES)->where('page_id', $pageId)->orderBy('language_id')->orderBy('action')->get() as $row) {
-            $entries[] = [
-                'language' => Value::int($row->language_id) === SchedulePage::WHOLE_PAGE ? SchedulePage::ALL_LANGUAGES : ($codes[Value::int($row->language_id)] ?? ''),
-                'action' => Value::string($row->action),
-                'at' => CarbonImmutable::parse(Value::string($row->at)),
-                'error' => Value::nullableString($row->error),
-            ];
+        return array_values(array_map(function (object $row) use ($codes): array {
+            $entry = $this->entry($row, $codes);
+            unset($entry['page']);
+
+            return $entry;
+        }, $rows->all()));
+    }
+
+    /**
+     * The next scheduled changes among the given pages, soonest first, failed ones included.
+     *
+     * @param  list<int>  $pageIds
+     * @return list<array{page: int, language: string, action: string, at: CarbonImmutable, error: string|null}>
+     */
+    public function upcoming(array $pageIds, int $limit): array
+    {
+        if ($pageIds === []) {
+            return [];
         }
 
-        return $entries;
+        $codes = $this->codes();
+        $rows = DB::table(Tables::SCHEDULES)->whereIn('page_id', $pageIds)->orderBy('at')->orderBy('id')->limit(max(1, $limit))->get();
+
+        return array_values(array_map(fn (object $row): array => $this->entry($row, $codes), $rows->all()));
+    }
+
+    /** @return array<int, string> language id => code */
+    private function codes(): array
+    {
+        return $this->languages->all()->mapWithKeys(fn ($language): array => [(int) $language->id => (string) $language->code])->all();
+    }
+
+    /**
+     * @param  array<int, string>  $codes
+     * @return array{page: int, language: string, action: string, at: CarbonImmutable, error: string|null}
+     */
+    private function entry(object $row, array $codes): array
+    {
+        $languageId = Value::int($row->language_id ?? 0);
+
+        return [
+            'page' => Value::int($row->page_id ?? 0),
+            'language' => $languageId === SchedulePage::WHOLE_PAGE ? SchedulePage::ALL_LANGUAGES : ($codes[$languageId] ?? ''),
+            'action' => Value::string($row->action ?? ''),
+            'at' => CarbonImmutable::parse(Value::string($row->at ?? '')),
+            'error' => Value::nullableString($row->error ?? null),
+        ];
     }
 }

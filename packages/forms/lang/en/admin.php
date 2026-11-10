@@ -61,6 +61,13 @@ return [
         'range' => 'From :earliest to :latest',
         'none' => 'No answers yet.',
     ],
+    'home' => [
+        'stat' => 'Submissions, last 30 days',
+        'title' => 'New submissions',
+        'see_all' => 'See all :count',
+        'empty' => 'No new submissions.',
+        'empty_help' => "Answers sent through the site's forms show here until someone reads them.",
+    ],
     'inbox' => [
         'search' => 'Search',
         'search_placeholder' => 'Name, email, any answer',

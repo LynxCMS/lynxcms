@@ -61,6 +61,13 @@ return [
         'range' => 'De :earliest a :latest',
         'none' => 'Ainda não há respostas.',
     ],
+    'home' => [
+        'stat' => 'Respostas, últimos 30 dias',
+        'title' => 'Respostas novas',
+        'see_all' => 'Ver todas (:count)',
+        'empty' => 'Nenhuma resposta nova.',
+        'empty_help' => 'As respostas enviadas pelos formulários do site aparecem aqui até alguém as ler.',
+    ],
     'inbox' => [
         'search' => 'Pesquisar',
         'search_placeholder' => 'Nome, email, resposta',

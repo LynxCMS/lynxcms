@@ -16,6 +16,7 @@ use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\UpdateSubmission;
 use LynxCms\Forms\Definition\Form;
 use LynxCms\Forms\Models\Submission;
+use LynxCms\Forms\SubmissionPresenter;
 
 /**
  * The submissions inbox: filtered by form and status, searched by text, newest first, a page at
@@ -88,17 +89,7 @@ final class Inbox extends Component
     /** "Ana Lima · ana@example.com": the first short answers, to tell rows apart. */
     public function summaryOf(Submission $submission): string
     {
-        $parts = [];
-
-        foreach ($submission->fields as $field) {
-            $value = $submission->data[(string) ($field['name'] ?? '')] ?? null;
-
-            if (in_array($field['type'] ?? '', ['text', 'email', 'tel'], true) && is_string($value) && $value !== '') {
-                $parts[] = $value;
-            }
-        }
-
-        return implode(' · ', array_slice($parts, 0, 2));
+        return (new SubmissionPresenter)->summary($submission);
     }
 
     /** @return Builder<Submission> */

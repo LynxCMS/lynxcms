@@ -15,8 +15,8 @@ it('keeps guests out of the admin', function (): void {
     $this->getJson('/lynx/pages')->assertUnauthorized();
 });
 
-it('sends the admin\'s own address to the page tree', function (): void {
-    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx')->assertRedirect(route('lynx.admin.pages'));
+it('opens the home screen at the admin\'s own address', function (): void {
+    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx')->assertOk()->assertSee('data-home-panel="drafts"', false);
 });
 
 it('sends guests asking for the admin to sign in first', function (): void {

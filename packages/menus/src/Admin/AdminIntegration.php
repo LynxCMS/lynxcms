@@ -12,6 +12,7 @@ use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
+use LynxCms\Admin\Home\HomeScreen;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Menus\MenuSchema;
@@ -28,7 +29,9 @@ final class AdminIntegration
     public static function register(): void
     {
         Livewire::component('lynx-menus.editor', MenuEditor::class);
-        app(Navigation::class)->add('lynx-menus::admin.title', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: fn (): bool => app(AdminAccess::class)->allows('menus.manage'), icon: 'menu');
+        $canManage = fn (): bool => app(AdminAccess::class)->allows('menus.manage');
+        app(Navigation::class)->add('lynx-menus::admin.title', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'menu');
+        app(HomeScreen::class)->action('menus', 'lynx-menus::admin.home_action', fn (): string => route('lynx.admin.menus'), icon: 'menu', visible: $canManage, order: 30);
         // Menus and items are created in the menu editor, never as plain pages.
         app(TemplateChoices::class)->exclude(MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE);
         // A page's menu items are not content linking to it; the menu editor shows them.
