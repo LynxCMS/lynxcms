@@ -43,3 +43,15 @@ it('redirects the default language\'s prefix to the URL in the configured form',
     config(['lynx.trailing_slash' => true]);
     $this->get('/default/courses/risk')->assertRedirect('http://localhost/courses/risk/');
 });
+
+it('reads LYNX_TRAILING_SLASH=1 as on, as .env files and phpunit.xml set it', function (string $value, bool $expected): void {
+    putenv('LYNX_TRAILING_SLASH='.$value);
+
+    try {
+        $config = require dirname(__DIR__, 3).'/packages/core/config/lynx.php';
+    } finally {
+        putenv('LYNX_TRAILING_SLASH');
+    }
+
+    expect($config['trailing_slash'])->toBe($expected);
+})->with([['1', true], ['true', true], ['0', false], ['false', false]]);

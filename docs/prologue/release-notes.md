@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Fixed: `LYNX_TRAILING_SLASH=1` (and `value="true"` in `phpunit.xml`, which arrives as `"1"`) now turns trailing slashes on; only the word `true` did before. A site that published `config/lynx.php` should cast the value there too: `(bool) env('LYNX_TRAILING_SLASH', false)`.
 - Text fields and plain or Markdown textarea fields with a `max_length` show a character counter under the input in the page editor, such as 48/60, red past the limit.
 - **Duplicate a field** from the Fields screen, or with `lynx()->fields->duplicate()` (the `fields.duplicate` action): a new field with the same type, labels, translation and settings under a new name. See [Duplicating a field](/basics/templates-and-fields#duplicating-a-field).
 - A template's **Family** lists (child, parent and switch templates) are chosen with a search by label or name instead of a checkbox per template, which grew unwieldy on sites with many templates.

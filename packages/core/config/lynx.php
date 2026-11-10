@@ -18,7 +18,7 @@ return [
     | Set true for "/courses/risk/", as ProcessWire writes them, e.g. to keep a migrated site's
     | addresses. Both forms open the page either way.
     */
-    'trailing_slash' => env('LYNX_TRAILING_SLASH', false),
+    'trailing_slash' => (bool) env('LYNX_TRAILING_SLASH', false),
 
     /*
     | Blade views for templates live at "{views_path}.{template}", e.g. templates.course.
