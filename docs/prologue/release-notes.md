@@ -24,6 +24,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 - **Duplicate** a page from the page tree or its Settings tab, alone or with the pages below it (`lynx()->pages->duplicate()`, the `pages.duplicate` action). The copy starts unpublished with **[Copy]** before its title, gets its own copies of images and files, and references between copied pages point at the copies. See [Publishing](/basics/publishing#duplicating-a-page).
 - Pages with children have a **Children** tab in the page editor: search, filter by status, drag to reorder or sort them all by title or date (`lynx()->pages->sortChildren()`, the `pages.sort-children` action), and publish, hide or trash children one at a time or several at once, or move several under another parent. See [The admin](/admin/).
 - A template's section can be copied to other templates, with its fields and their settings: the copy button on a section in **Settings › Templates**, or `lynx()->templates->copySection()`. A template that already has one of the fields can get renamed copies of them instead. See [Copying a section to other templates](/basics/templates-and-fields#copying-a-section-to-other-templates).
+- Fixed: `LYNX_PAGE_CACHE=1` now turns the page cache on, and `LYNX_FRAGMENT_CACHE=0` turns the fragment cache off, as does `LYNX_PAGE_CACHE_DEBUG` for its headers. Only the words `true` and `false` worked before. A site that published `config/lynx-cache.php` should cast the three values there too, such as `(bool) env('LYNX_PAGE_CACHE', false)`.
 
 ## 0.1.41
 

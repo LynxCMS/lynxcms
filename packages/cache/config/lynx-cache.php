@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
     'pages' => [
         // Store guest pages and serve them again until content changes (ADR-0064).
-        'enabled' => env('LYNX_PAGE_CACHE', false),
+        'enabled' => (bool) env('LYNX_PAGE_CACHE', false),
 
         // "files" keeps HTML files on this server's disk, for nginx, Apache or Caddy to serve.
         // "store" keeps them in a Laravel cache store shared by every server, e.g. Redis on
@@ -55,12 +55,12 @@ return [
         'edge_ttl' => 0,
 
         // Adds X-Lynx-Cache headers, with the reason a page was not stored.
-        'debug' => env('LYNX_PAGE_CACHE_DEBUG', false),
+        'debug' => (bool) env('LYNX_PAGE_CACHE_DEBUG', false),
     ],
 
     'fragments' => [
         // lynx()->cache()->remember() and @lynxCache keep what they wrap (ADR-0064).
-        'enabled' => env('LYNX_FRAGMENT_CACHE', true),
+        'enabled' => (bool) env('LYNX_FRAGMENT_CACHE', true),
 
         // Cache store for fragments; null uses the default store.
         'store' => null,
