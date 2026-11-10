@@ -1,65 +1,47 @@
-<div class="grid items-start gap-8 lg:grid-cols-[15rem_minmax(0,1fr)]">
-    <aside class="space-y-6" aria-label="{{ __('lynx-menus::admin.title') }}">
-        <nav>
-            <ul class="space-y-1">
-                @forelse ($this->menus as $menu)
-                    <li>
-                        <button
-                            type="button"
-                            wire:click="selectMenu({{ $menu['id'] }})"
-                            @class(['lynx-tree-row block w-full text-start', 'bg-highlight' => $menu['id'] === $menuId])
-                            @if ($menu['id'] === $menuId) aria-current="true" @endif
-                        >
-                            <span class="block font-medium">{{ $menu['title'] }}</span>
-                            <span class="block text-sm text-muted-foreground">{{ $menu['name'] }}</span>
-                        </button>
-                    </li>
-                @empty
-                    <li><x-lynx-admin::empty-state compact icon="menu" :title="__('lynx-menus::admin.empty')" :help="__('lynx-menus::admin.empty_help')" /></li>
-                @endforelse
-            </ul>
-        </nav>
-
-        <form wire:submit="createMenu" class="bg-card text-card-foreground rounded-xl border shadow-sm space-y-3 p-4" aria-labelledby="new-menu-title">
-            <h2 id="new-menu-title" class="text-sm font-semibold">{{ __('lynx-menus::admin.new') }}</h2>
-            <div>
-                <label for="new-menu-name" class="blat-label mb-2">{{ __('lynx-menus::admin.name') }}</label>
-                <input id="new-menu-name" type="text" class="blat-input" wire:model="newMenu.name" placeholder="{{ __('lynx-menus::admin.name_placeholder') }}" @error('name') aria-invalid="true" @enderror>
-                @error('name') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <span id="new-menu-title-input-label" class="blat-label mb-2">{{ __('lynx-menus::admin.title_label') }}</span>
-                @include('lynx-menus::admin.partials.translated-input', ['model' => 'newMenu.title', 'id' => 'new-menu-title-input', 'label' => __('lynx-menus::admin.title_label'), 'error' => 'title', 'languages' => $this->languages])
-                @error('title') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-            </div>
-            <x-lynx-admin::ui.button type="submit" class="w-full justify-center">{{ __('lynx-menus::admin.create') }}</x-lynx-admin::ui.button>
-        </form>
-    </aside>
-
+{{--
+    One menu (MenuEditor): its title and name with Add item, then two tabs. Items shows the tree
+    with the item form in a panel beside it (below it on small screens); Settings holds the title,
+    classes, how a template shows the menu, its stored copies and deletion.
+--}}
+<div class="grid gap-6">
     @if ($menuPage)
-        <section class="space-y-6" aria-labelledby="menu-heading">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <h2 id="menu-heading" class="text-lg font-semibold">{{ $menuTitle }}</h2>
-                <div class="flex flex-wrap gap-2">
-                    <x-lynx-admin::ui.button variant="outline" type="button" wire:click="rebuild" title="{{ __('lynx-menus::admin.rebuild_hint') }}">{{ __('lynx-menus::admin.rebuild') }}</x-lynx-admin::ui.button>
-                    <x-lynx-admin::ui.button type="button" wire:click="newItem({{ $menuId }})">{{ __('lynx-menus::admin.add_item') }}</x-lynx-admin::ui.button>
-                </div>
+        <x-lynx-admin::ui.page-header :title="$menuTitle ?: $menuName" class="[&_h1]:text-2xl [&_h1]:font-semibold">
+            <x-slot:description>
+                <span class="text-muted-foreground flex items-center gap-2 text-sm">
+                    {{ __('lynx-menus::admin.name') }} <code class="bg-muted text-foreground rounded-sm px-1.5 py-0.5 font-mono text-xs" data-menu-name>{{ $menuName }}</code>
+                </span>
+            </x-slot:description>
+            <x-slot:actions>
+                <x-lynx-admin::ui.button type="button" wire:click="newItem({{ $menuId }})" data-add-item><x-lucide-plus aria-hidden="true" /> {{ __('lynx-menus::admin.add_item') }}</x-lynx-admin::ui.button>
+            </x-slot:actions>
+        </x-lynx-admin::ui.page-header>
+
+        <x-lynx-admin::ui.tabs :value="$tab" wire:key="menu-tabs-{{ $tab }}">
+            <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-menus::admin.sections') }}" data-shortcut-tabs>
+                <x-lynx-admin::ui.tabs-trigger value="items" wire:click="$set('tab', 'items')">{{ __('lynx-menus::admin.tab_items') }}</x-lynx-admin::ui.tabs-trigger>
+                <x-lynx-admin::ui.tabs-trigger value="settings" wire:click="$set('tab', 'settings')">{{ __('lynx-menus::admin.tab_settings') }}</x-lynx-admin::ui.tabs-trigger>
+            </x-lynx-admin::ui.tabs-list>
+        </x-lynx-admin::ui.tabs>
+
+        @if ($tab === 'items')
+            <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]" data-menu-items>
+                <livewire:lynx-admin.page-tree
+                    :root="(string) $menuId"
+                    events="menu-item"
+                    :presenter="\LynxCms\Menus\Admin\MenuItemPresenter::class"
+                    :key="'menu-tree-'.$menuId"
+                />
+
+                <aside class="lg:sticky lg:top-20" aria-label="{{ __('lynx-menus::admin.item.panel') }}" data-menu-panel>
+                    @if ($isEditingItem)
+                        @include('lynx-menus::admin.partials.item-form', ['languages' => $this->languages])
+                    @else
+                        <x-lynx-admin::empty-state compact icon="mouse-pointer-click" :title="__('lynx-menus::admin.item.none')" :help="__('lynx-menus::admin.item.none_help')" />
+                    @endif
+                </aside>
             </div>
-
-            <livewire:lynx-admin.page-tree
-                :root="(string) $menuId"
-                events="menu-item"
-                :presenter="\LynxCms\Menus\Admin\MenuItemPresenter::class"
-                :key="'menu-tree-'.$menuId"
-            />
-
-            @if ($isEditingItem)
-                @include('lynx-menus::admin.partials.item-form', ['languages' => $this->languages])
-            @endif
-
+        @else
             @include('lynx-menus::admin.partials.settings', ['languages' => $this->languages])
-        </section>
-    @else
-        <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.start') }}</p>
+        @endif
     @endif
 </div>

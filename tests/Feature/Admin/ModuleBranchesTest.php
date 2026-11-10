@@ -46,14 +46,14 @@ it('sends the editor of a menu page to the menu editor', function (): void {
     $menu = lynx()->menus()->page('top');
 
     $this->get(route('lynx.admin.pages.edit', lynx()->menus()->root()?->id))->assertRedirect(route('lynx.admin.menus'));
-    $this->get(route('lynx.admin.pages.edit', $menu?->id))->assertRedirect(route('lynx.admin.menus', ['menu' => $menu?->id]));
-    $this->get(route('lynx.admin.pages.edit', menuItemId()))->assertRedirect(route('lynx.admin.menus', ['menu' => $menu?->id, 'item' => menuItemId()]));
+    $this->get(route('lynx.admin.pages.edit', $menu?->id))->assertRedirect(route('lynx.admin.menus.edit', ['menu' => $menu?->id]));
+    $this->get(route('lynx.admin.pages.edit', menuItemId()))->assertRedirect(route('lynx.admin.menus.edit', ['menu' => $menu?->id, 'item' => menuItemId()]));
     $this->get(route('lynx.admin.pages.edit', lynx()->pages->get('/courses/')?->id))->assertOk();
 });
 
 it('opens the item given in the menu editor\'s URL', function (): void {
-    Livewire::withQueryParams(['menu' => lynx()->menus()->page('top')?->id, 'item' => menuItemId()])
-        ->test(MenuEditor::class)
+    Livewire::withQueryParams(['item' => menuItemId()])
+        ->test(MenuEditor::class, ['menuId' => (int) lynx()->menus()->page('top')?->id])
         ->assertSet('isEditingItem', true)
         ->assertSee('Handbook');
 });

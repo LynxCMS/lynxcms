@@ -1,7 +1,14 @@
-<form wire:submit="saveItem" class="bg-card text-card-foreground rounded-xl border shadow-sm space-y-5 p-5" aria-labelledby="item-form-title">
+{{-- The item form in the panel beside the tree; options most items never need fold under More options. --}}
+@php
+    $advancedKeys = ['target', 'rel.*', 'icon_before', 'icon_after', 'class'];
+    $isAdvancedOpen = $item->targetChoice !== '' || $item->rel !== [] || $item->iconBefore !== '' || $item->iconAfter !== '' || $item->class !== ''
+        || collect($advancedKeys)->contains(fn (string $key): bool => $errors->has($key));
+@endphp
+<form wire:submit="saveItem" class="bg-card text-card-foreground grid gap-5 rounded-xl border p-5" aria-labelledby="item-form-title" wire:key="item-form-{{ $item->id ?? 'new-'.$item->parent }}" data-item-form
+    x-init="if (window.matchMedia('(max-width: 1023px)').matches) $el.scrollIntoView({ behavior: 'smooth', block: 'start' })">
     <div class="flex items-center justify-between gap-4">
         <h2 id="item-form-title" class="text-base font-semibold">{{ __($item->id ? 'lynx-menus::admin.item.edit' : 'lynx-menus::admin.item.new') }}</h2>
-        <button type="button" wire:click="cancelItem" class="text-primary font-medium underline-offset-4 hover:underline text-sm">{{ __('lynx-menus::admin.item.close') }}</button>
+        <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="cancelItem" aria-label="{{ __('lynx-menus::admin.item.close') }}"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button>
     </div>
 
     {{-- Errors about the item as a whole, e.g. a locked item; page choice errors show by the page field. --}}
@@ -12,9 +19,9 @@
     <fieldset>
         <legend class="blat-label mb-2">{{ __('lynx-menus::admin.item.kind') }}</legend>
         {{-- BlatUI's segmented look over native radios, so wire:model keeps working. --}}
-        <div class="bg-muted text-muted-foreground inline-flex h-9 items-center rounded-lg p-[3px]">
+        <div class="bg-muted text-muted-foreground grid h-9 grid-cols-3 items-center rounded-lg p-[3px]">
             @foreach (['section' => __('lynx-menus::admin.item.kind_section'), 'page' => __('lynx-menus::admin.item.kind_page'), 'link' => __('lynx-menus::admin.item.kind_link')] as $value => $text)
-                <label class="has-checked:bg-background has-checked:text-foreground has-checked:shadow-sm has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] inline-flex h-full cursor-pointer items-center rounded-md px-3 text-sm font-medium"><input type="radio" class="sr-only" wire:model.live="item.kind" value="{{ $value }}"> {{ $text }}</label>
+                <label class="has-checked:bg-background has-checked:text-foreground has-checked:shadow-sm has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] inline-flex h-full cursor-pointer items-center justify-center rounded-md px-2 text-sm font-medium whitespace-nowrap"><input type="radio" class="sr-only" wire:model.live="item.kind" value="{{ $value }}"> {{ $text }}</label>
             @endforeach
         </div>
         @error('kind') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
@@ -51,7 +58,7 @@
             @error('page') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model.live="item.children"> {{ __('lynx-menus::admin.item.children') }}</label>
             @if ($item->children)
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="item-depth" class="blat-label mb-2">{{ __('lynx-menus::admin.item.levels') }}</label>
                         <input id="item-depth" type="number" min="1" max="{{ \LynxCms\Menus\MenuSchema::MAX_DEPTH }}" class="blat-input" wire:model="item.depth" placeholder="{{ \LynxCms\Menus\MenuSchema::DEFAULT_DEPTH }}" @error('depth') aria-invalid="true" @enderror>
@@ -78,57 +85,6 @@
         </div>
     @endif
 
-    @if ($item->kind !== 'section')
-        <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-                <label for="item-target" class="blat-label mb-2">{{ __('lynx-menus::admin.item.open_in') }}</label>
-                <select id="item-target" class="blat-select" wire:model.live="item.targetChoice">
-                    @foreach (\LynxCms\Menus\Admin\Forms\ItemForm::TARGETS as $value => $text)
-                        <option value="{{ $value }}">{{ __('lynx-menus::admin.item.'.$text) }}</option>
-                    @endforeach
-                </select>
-            </div>
-            @if ($item->targetChoice === 'custom')
-                <div>
-                    <label for="item-target-custom" class="blat-label mb-2">{{ __('lynx-menus::admin.item.target_name') }}</label>
-                    <input id="item-target-custom" type="text" class="blat-input" wire:model="item.target" placeholder="{{ __('lynx-menus::admin.item.target_placeholder') }}" @error('target') aria-invalid="true" @enderror>
-                </div>
-            @endif
-        </div>
-        @error('target') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-
-        @if (\LynxCms\Menus\Admin\Forms\ItemForm::relChoices() !== [])
-            <fieldset class="grid gap-1.5">
-                <legend class="blat-label mb-2">{{ __('lynx-menus::admin.item.relation') }}</legend>
-                @foreach (\LynxCms\Menus\Admin\Forms\ItemForm::relChoices() as $value => $text)
-                    <label class="flex items-center gap-2 text-sm">
-                        <input id="item-rel-{{ $value }}" type="checkbox" class="blat-checkbox" value="{{ $value }}" wire:model="item.rel"> {{ $text }}
-                    </label>
-                @endforeach
-                <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.item.noopener') }}</p>
-                @error('rel.*') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
-            </fieldset>
-        @endif
-    @endif
-
-    <div class="grid gap-4 sm:grid-cols-3">
-        <div>
-            <label for="item-icon-before" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_before') }}</label>
-            <input id="item-icon-before" type="text" class="blat-input" wire:model="item.iconBefore" placeholder="{{ __('lynx-menus::admin.item.icon_before_placeholder') }}" @error('icon_before') aria-invalid="true" @enderror>
-            @error('icon_before') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-        </div>
-        <div>
-            <label for="item-icon-after" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_after') }}</label>
-            <input id="item-icon-after" type="text" class="blat-input" wire:model="item.iconAfter" placeholder="{{ __('lynx-menus::admin.item.icon_after_placeholder') }}" @error('icon_after') aria-invalid="true" @enderror>
-            @error('icon_after') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-        </div>
-        <div>
-            <label for="item-class" class="blat-label mb-2">{{ __('lynx-menus::admin.item.classes') }}</label>
-            <input id="item-class" type="text" class="blat-input" wire:model="item.class" placeholder="{{ __('lynx-menus::admin.item.optional') }}" @error('class') aria-invalid="true" @enderror>
-            @error('class') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-        </div>
-    </div>
-
     @if (count($languages) > 1)
         <fieldset>
             <legend class="blat-label mb-2">{{ __('lynx-menus::admin.item.show_in') }}</legend>
@@ -141,7 +97,68 @@
         </fieldset>
     @endif
 
-    <div class="flex gap-3">
+    {{-- Alpine keeps it open or closed across Livewire's updates, which would reset the attribute. --}}
+    <details class="group border-t pt-4" x-data="{ open: @js($isAdvancedOpen) }" x-bind:open="open" x-on:toggle="open = $el.open" data-item-advanced>
+        <summary class="hover:text-foreground text-muted-foreground flex cursor-pointer list-none items-center gap-2 text-sm font-medium select-none [&::-webkit-details-marker]:hidden">
+            <x-lucide-chevron-right class="size-4 transition-transform group-open:rotate-90 rtl:rotate-180 rtl:group-open:rotate-90" aria-hidden="true" />
+            {{ __('lynx-menus::admin.item.more') }}
+        </summary>
+        <div class="mt-4 grid gap-5">
+            @if ($item->kind !== 'section')
+                <div class="grid gap-4">
+                    <div>
+                        <label for="item-target" class="blat-label mb-2">{{ __('lynx-menus::admin.item.open_in') }}</label>
+                        <select id="item-target" class="blat-select" wire:model.live="item.targetChoice">
+                            @foreach (\LynxCms\Menus\Admin\Forms\ItemForm::TARGETS as $value => $text)
+                                <option value="{{ $value }}">{{ __('lynx-menus::admin.item.'.$text) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if ($item->targetChoice === 'custom')
+                        <div>
+                            <label for="item-target-custom" class="blat-label mb-2">{{ __('lynx-menus::admin.item.target_name') }}</label>
+                            <input id="item-target-custom" type="text" class="blat-input" wire:model="item.target" placeholder="{{ __('lynx-menus::admin.item.target_placeholder') }}" @error('target') aria-invalid="true" @enderror>
+                        </div>
+                    @endif
+                </div>
+                @error('target') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+
+                @if (\LynxCms\Menus\Admin\Forms\ItemForm::relChoices() !== [])
+                    <fieldset class="grid gap-1.5">
+                        <legend class="blat-label mb-2">{{ __('lynx-menus::admin.item.relation') }}</legend>
+                        @foreach (\LynxCms\Menus\Admin\Forms\ItemForm::relChoices() as $value => $text)
+                            <label class="flex items-center gap-2 text-sm">
+                                <input id="item-rel-{{ $value }}" type="checkbox" class="blat-checkbox" value="{{ $value }}" wire:model="item.rel"> {{ $text }}
+                            </label>
+                        @endforeach
+                        <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.item.noopener') }}</p>
+                        @error('rel.*') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    </fieldset>
+                @endif
+            @endif
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="item-icon-before" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_before') }}</label>
+                    <input id="item-icon-before" type="text" class="blat-input" wire:model="item.iconBefore" placeholder="{{ __('lynx-menus::admin.item.icon_before_placeholder') }}" @error('icon_before') aria-invalid="true" @enderror>
+                    @error('icon_before') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="item-icon-after" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_after') }}</label>
+                    <input id="item-icon-after" type="text" class="blat-input" wire:model="item.iconAfter" placeholder="{{ __('lynx-menus::admin.item.icon_after_placeholder') }}" @error('icon_after') aria-invalid="true" @enderror>
+                    @error('icon_after') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                </div>
+                <div class="col-span-2">
+                    <label for="item-class" class="blat-label mb-2">{{ __('lynx-menus::admin.item.classes') }}</label>
+                    <input id="item-class" type="text" class="blat-input" wire:model="item.class" placeholder="{{ __('lynx-menus::admin.item.optional') }}" @error('class') aria-invalid="true" @enderror>
+                    @error('class') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+        </div>
+    </details>
+
+    <div class="flex gap-2 border-t pt-4">
         <x-lynx-admin::ui.button type="submit">{{ __('lynx-menus::admin.item.save') }}</x-lynx-admin::ui.button>
         <x-lynx-admin::ui.button variant="outline" type="button" wire:click="cancelItem">{{ __('lynx-menus::admin.item.cancel') }}</x-lynx-admin::ui.button>
     </div>

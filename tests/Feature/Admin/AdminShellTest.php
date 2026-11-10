@@ -109,3 +109,10 @@ it('renders the admin before its assets are built', function (): void {
     expect(AssetController::versionOf(__DIR__.'/not-built/admin.css'))->toBe('0')
         ->and(AssetController::versionOf(AssetController::STYLESHEET))->not->toBe('0');
 });
+
+it('applies the colour scheme again after Livewire swaps in a page', function (): void {
+    // wire:navigate replaces the page's <html> without running the head script that sets "dark".
+    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk()
+        ->assertSee("addEventListener('livewire:navigating'", false)
+        ->assertSee("addEventListener('livewire:navigated'", false);
+});
