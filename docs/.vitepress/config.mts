@@ -130,6 +130,7 @@ export default defineConfig({
                     { text: 'Page Cache', link: '/modules/page-cache' },
                     { text: 'Page Passwords', link: '/modules/page-passwords' },
                     { text: 'Static Site Export', link: '/modules/static-site' },
+                    { text: 'Page Finder', link: '/modules/finder' },
                     { text: 'Translate', link: '/modules/translate' },
                 ],
             },

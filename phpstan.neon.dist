@@ -16,6 +16,7 @@ parameters:
         - packages/sitemap/src
         - packages/cache/src
         - packages/static-site/src
+        - packages/finder/src
     tmpDir: build/phpstan
     treatPhpDocTypesAsCertain: false
     universalObjectCratesClasses:
