@@ -10,6 +10,7 @@ return [
     'denied' => 'You may not manage menus.',
     'rebuilt' => 'Menu rebuilt: the next visit builds it again.',
     'empty' => 'No menus yet.',
+    'empty_help' => 'Create one with the form below, then add pages to it.',
     'new' => 'New menu',
     'name' => 'Name',
     'name_placeholder' => 'e.g. top, footer',

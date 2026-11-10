@@ -10,6 +10,7 @@ return [
         'system' => 'Sistema',
         'language' => 'Idioma',
         'translation_hints' => 'Dicas de tradução',
+        'shortcuts' => 'Atalhos de teclado',
         'security' => 'Segurança',
     ],
     'security' => [

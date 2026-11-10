@@ -1,4 +1,4 @@
-{{-- The top bar search (AdminSearch): text searches titles, a selector runs as in code. Cmd/Ctrl+K focuses it. --}}
+{{-- The top bar search (AdminSearch): text searches titles, a selector runs as in code. Cmd/Ctrl+K and "/" (shortcuts.js) focus it. --}}
 <div class="relative w-full max-w-md" x-data="{ open: false }"
      @click.outside="open = false"
      @keydown.escape="open = false; $refs.input.blur()"
@@ -6,7 +6,7 @@
      @keydown.window.ctrl.k.prevent="$refs.input.focus(); $refs.input.select()">
     <label for="lynx-admin-search" class="sr-only">{{ __('lynx-admin::shell.search.label') }}</label>
     <x-lucide-search class="text-muted-foreground pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2" aria-hidden="true" />
-    <input id="lynx-admin-search" x-ref="input" type="search" autocomplete="off" spellcheck="false"
+    <input id="lynx-admin-search" x-ref="input" data-shortcut-search type="search" autocomplete="off" spellcheck="false"
            class="blat-input h-8 ps-8 pe-12 text-sm"
            placeholder="{{ __('lynx-admin::shell.search.placeholder') }}"
            wire:model.live.debounce.300ms="query"

@@ -16,7 +16,11 @@
                     <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-end tabular-nums">{{ $row['users'] }}</x-lynx-admin::ui.table-cell>
                 </x-lynx-admin::ui.table-row>
             @empty
-                <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="4" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-admin::roles.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="4" class="whitespace-normal p-4">
+                    <x-lynx-admin::empty-state icon="shield-check" :title="__('lynx-admin::roles.list.empty')" :help="__('lynx-admin::roles.list.empty_help')" class="border-0">
+                        <x-lynx-admin::ui.button :href="route('lynx.admin.roles.create')"><x-lucide-plus aria-hidden="true" /> {{ __('lynx-admin::roles.new') }}</x-lynx-admin::ui.button>
+                    </x-lynx-admin::empty-state>
+                </x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
             @endforelse
         </x-lynx-admin::ui.table-body>
     </x-lynx-admin::ui.table>

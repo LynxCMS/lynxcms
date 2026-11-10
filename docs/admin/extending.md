@@ -36,6 +36,12 @@ app(Navigation::class)->add('Forms', 'lynx.admin.forms', icon: 'inbox',
     badge: fn (): int => Submission::query()->where('status', 'new')->count());
 ```
 
+`shortcut:` is a letter that, after `g`, opens the screen from the keyboard, and the list of shortcuts (`?`) names it. Lynx uses `h`, `p`, `s`, `f` and `t`, and the menus and forms modules `m` and `i`:
+
+```php
+app(Navigation::class)->add('Reports', 'lynx.admin.reports', icon: 'chart-bar', shortcut: 'r');
+```
+
 Links under the page's title in the editor for some pages, such as "Preview form" on form pages, come from `EditorLinks`:
 
 ```php
@@ -67,6 +73,16 @@ Wrap the view in the admin layout and use the BlatUI components:
 ```
 
 Colours come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
+
+When a list has nothing to show, say what would be there, how it gets there and, in the slot, offer the action that adds the first one. `compact` fits a panel or a narrow column:
+
+```blade
+<x-lynx-admin::empty-state icon="chart-bar" title="No reports yet." help="Reports you run show here.">
+    <x-lynx-admin::ui.button :href="route('lynx.admin.reports.create')">New report</x-lynx-admin::ui.button>
+</x-lynx-admin::empty-state>
+```
+
+When a filter or search found nothing, say so instead, and offer a button that clears it.
 
 ## Example: reviewing blog posts
 

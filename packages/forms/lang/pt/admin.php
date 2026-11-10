@@ -93,6 +93,10 @@ return [
         'submission' => 'Resposta :id',
         'files' => ':count ficheiro|:count ficheiros',
         'empty' => 'Nenhuma resposta corresponde a estes filtros.',
+        'empty_help' => 'Experimente outro estado ou formulário, ou uma pesquisa mais curta.',
+        'clear' => 'Mostrar todas as respostas',
+        'none' => 'Ainda não há respostas.',
+        'none_help' => 'As respostas enviadas pelos formulários do site aparecem aqui.',
         'newer' => 'Mais recentes',
         'older' => 'Mais antigas',
         'pages' => 'Página :page · :total no total',
@@ -114,5 +118,6 @@ return [
         'results' => 'Resultados',
         'preview' => 'Pré-visualizar',
         'empty' => 'Ainda não há formulários.',
+        'empty_help' => 'Dê um nome a um formulário acima para o começar a construir.',
     ],
 ];

@@ -18,6 +18,7 @@ return [
     'turn_on' => 'Ligar',
     'pages' => 'Páginas protegidas',
     'empty' => 'Ainda nenhuma página tem palavra-passe.',
+    'empty_help' => 'Ligue um modelo acima e depois defina a palavra-passe no editor de uma página.',
     'below' => '{0} Sem páginas abaixo|{1} 1 página abaixo|[2,*] :count páginas abaixo',
     'set' => 'Definida',
     'not_set' => 'Não definida',

@@ -43,6 +43,21 @@ Hidden and unpublished pages are included unless the selector sets `include=`. I
 
 The icon at the right of the top bar opens the site in a new tab. In the page editor it opens the page being edited.
 
+## Keyboard shortcuts
+
+Press `?` anywhere in the admin to list the shortcuts, or choose **Keyboard shortcuts** in the user menu. They work outside text fields, so typing a `g` into a title never sends anyone away.
+
+| Keys | Does |
+| --- | --- |
+| Cmd or Ctrl+K, or `/` | Search pages |
+| `?` | Show the list of shortcuts |
+| `g` then `h`, `p`, `s`, `f` or `t` | Go to Home, Pages, Site texts, Fields or Templates |
+| `g` then `m` or `i` | Go to Menus or Forms, with those modules |
+| Cmd or Ctrl+S | Save, in the page editor |
+| `[` and `]` | The previous and next tab, in the page editor |
+
+The list names only the screens the user may open.
+
 - [Sign-in and accounts](/admin/sign-in)
 - [Roles and permissions](/admin/permissions)
 - [Extending the admin](/admin/extending)

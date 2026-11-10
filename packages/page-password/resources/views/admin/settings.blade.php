@@ -27,7 +27,7 @@
             <h2 class="font-semibold">{{ __('lynx-page-password::admin.pages') }}</h2>
         </header>
         @if ($pages === [])
-            <p class="text-muted-foreground px-5 py-4 text-sm">{{ __('lynx-page-password::admin.empty') }}</p>
+            <x-lynx-admin::empty-state compact icon="key-round" :title="__('lynx-page-password::admin.empty')" :help="__('lynx-page-password::admin.empty_help')" class="m-5" />
         @else
             <ul class="divide-y divide-border">
                 @foreach ($pages as $page)

@@ -74,6 +74,7 @@
     </x-lynx-admin::ui.sidebar-provider>
     <x-lynx-admin::notifications />
     @auth
+        <x-lynx-admin::shortcuts />
         {{-- One link dialog for every rich text field on the page (LinkDialog). --}}
         <livewire:lynx-admin.link-dialog />
     @endauth

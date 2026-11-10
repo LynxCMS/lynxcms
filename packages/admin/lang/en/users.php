@@ -16,6 +16,7 @@ return [
         'pending' => 'Invitation pending',
         'resend' => 'Resend invitation',
         'empty' => 'No users match.',
+        'empty_help' => 'Try a shorter search, or part of a name or email address.',
     ],
     'invite' => [
         'heading' => 'Invite user',

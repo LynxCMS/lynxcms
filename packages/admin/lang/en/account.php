@@ -10,6 +10,7 @@ return [
         'system' => 'System',
         'language' => 'Language',
         'translation_hints' => 'Translation hints',
+        'shortcuts' => 'Keyboard shortcuts',
         'security' => 'Security',
     ],
     'security' => [

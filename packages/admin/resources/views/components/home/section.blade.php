@@ -37,7 +37,7 @@
         @endif
     </div>
     @if ($isEmpty)
-        <x-lynx-admin::home.empty :icon="$emptyIcon" :title="$emptyTitle" :help="$emptyHelp" />
+        <x-lynx-admin::empty-state compact :icon="$emptyIcon" :title="$emptyTitle" :help="$emptyHelp" data-home-empty />
     @else
         <ul class="border-t">{{ $slot }}</ul>
     @endif

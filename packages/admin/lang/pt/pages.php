@@ -35,6 +35,7 @@ return [
         'column_changed' => 'Última alteração',
         'label' => 'Páginas',
         'empty' => 'Não há páginas aqui.',
+        'empty_help' => 'Escolha outro filtro acima, ou Todas as páginas para a árvore inteira.',
         'moving' => 'A mover :page',
         'drag_to_move' => 'Arraste para mover',
         'toggle_children' => 'Mostrar ou ocultar as páginas dentro de :page',

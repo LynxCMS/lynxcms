@@ -15,7 +15,7 @@
                         </button>
                     </li>
                 @empty
-                    <li class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.empty') }}</li>
+                    <li><x-lynx-admin::empty-state compact icon="menu" :title="__('lynx-menus::admin.empty')" :help="__('lynx-menus::admin.empty_help')" /></li>
                 @endforelse
             </ul>
         </nav>

@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Keyboard shortcuts** in the admin: `?` lists them, `/` searches, `g` then a letter opens a screen (`g h` Home, `g p` Pages and the rest), and `[` and `]` step through the page editor's tabs. Modules give their screens a letter with `Navigation::add(shortcut:)`. See [Keyboard shortcuts](/admin/#keyboard-shortcuts).
+- Empty lists say what would be there and how it gets there, with the action that adds the first one (a new field, a new role), and lists a filter emptied offer to clear it (Fields, the forms inbox). Modules use the same `<x-lynx-admin::empty-state>`. See [Extending the admin](/admin/extending).
 - The admin opens on a **Home** screen: a welcome with today's date and buttons for common tasks, stats (pages, pages not published, languages, form submissions), the pages with a draft, the next scheduled changes, the pages changed last and the newest unread submissions, each limited to what the user may view. Each list's heading opens the page tree's filter, which a link can now open (`/lynx/pages?filter=drafts`). Modules and apps add stats, buttons and panels with `HomeScreen`. See [The admin](/admin/) and [The home screen](/admin/extending#the-home-screen).
 - Fixed: `LYNX_TRAILING_SLASH=1` (and `value="true"` in `phpunit.xml`, which arrives as `"1"`) now turns trailing slashes on; only the word `true` did before. A site that published `config/lynx.php` should cast the value there too: `(bool) env('LYNX_TRAILING_SLASH', false)`.
 - Text fields and plain or Markdown textarea fields with a `max_length` show a character counter under the input in the page editor, such as 48/60, red past the limit.

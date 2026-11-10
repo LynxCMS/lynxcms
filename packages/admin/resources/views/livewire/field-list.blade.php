@@ -50,7 +50,17 @@
                         </x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty
-                    <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-admin::fields.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                    <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal p-4">
+                        @if ($isFiltered)
+                            <x-lynx-admin::empty-state icon="search-x" :title="__('lynx-admin::fields.list.empty')" :help="__('lynx-admin::fields.list.empty_help')" class="border-0">
+                                <x-lynx-admin::ui.button variant="outline" type="button" wire:click="clearFilters">{{ __('lynx-admin::fields.list.clear') }}</x-lynx-admin::ui.button>
+                            </x-lynx-admin::empty-state>
+                        @else
+                            <x-lynx-admin::empty-state icon="text-cursor-input" :title="__('lynx-admin::fields.list.none')" :help="__('lynx-admin::fields.list.none_help')" class="border-0">
+                                <x-lynx-admin::ui.button :href="route('lynx.admin.fields.create')"><x-lucide-plus aria-hidden="true" /> {{ __('lynx-admin::fields.new') }}</x-lynx-admin::ui.button>
+                            </x-lynx-admin::empty-state>
+                        @endif
+                    </x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
                 @endforelse
             </x-lynx-admin::ui.table-body>
         </x-lynx-admin::ui.table>

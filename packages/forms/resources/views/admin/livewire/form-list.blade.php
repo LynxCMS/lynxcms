@@ -51,7 +51,9 @@
                     </x-lynx-admin::ui.table-cell>
                 </x-lynx-admin::ui.table-row>
             @empty
-                <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="4" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-forms::admin.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="4" class="whitespace-normal p-4">
+                    <x-lynx-admin::empty-state icon="clipboard-list" :title="__('lynx-forms::admin.list.empty')" :help="__('lynx-forms::admin.list.empty_help')" class="border-0" />
+                </x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
             @endforelse
         </x-lynx-admin::ui.table-body>
     </x-lynx-admin::ui.table>

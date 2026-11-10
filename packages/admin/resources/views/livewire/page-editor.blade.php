@@ -52,7 +52,7 @@
 
     {{-- The server decides the section; the key re-creates the tabs when it changes. --}}
     <x-lynx-admin::ui.tabs :value="$tab" wire:key="editor-sections-{{ $tab }}">
-        <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-admin::editor.sections') }}">
+        <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-admin::editor.sections') }}" data-shortcut-tabs>
             {{-- Content and the template's own tabs hold fields; a dot marks one with an error. --}}
             @php($errorTabs = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => $layout->tabOf(explode('.', $key)[1] ?? ''))->unique()->all())
             {{-- Then the tabs modules add for this page (EditorTabs). --}}

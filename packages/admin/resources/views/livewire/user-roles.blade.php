@@ -37,7 +37,9 @@
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-end"><x-lynx-admin::ui.button variant="outline" size="sm" wire:click="saveRoles({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.save') }}</x-lynx-admin::ui.button></x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty
-                    <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="3" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-admin::users.list.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                    <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="3" class="whitespace-normal p-4">
+                        <x-lynx-admin::empty-state icon="search-x" :title="__('lynx-admin::users.list.empty')" :help="__('lynx-admin::users.list.empty_help')" class="border-0" />
+                    </x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
                 @endforelse
             </x-lynx-admin::ui.table-body>
         </x-lynx-admin::ui.table>

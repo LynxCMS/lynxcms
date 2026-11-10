@@ -47,6 +47,10 @@ return [
         'translatable' => 'traduzível',
         'no_template' => 'Nenhum modelo',
         'empty' => 'Nenhum campo corresponde a estes filtros.',
+        'empty_help' => 'Experimente outro tipo ou modelo, ou uma pesquisa mais curta.',
+        'clear' => 'Limpar filtros',
+        'none' => 'Ainda não há campos seus.',
+        'none_help' => 'Um campo guarda o que os editores preenchem numa página. Crie um e junte-o a um modelo.',
     ],
     'header' => [
         'intro' => 'Um campo guarda um tipo de conteúdo. Os modelos combinam campos e os editores preenchem-nos.',
