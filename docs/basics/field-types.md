@@ -39,7 +39,7 @@ A single line of text up to 255 characters, such as a title or a name. Can be tr
 
 | Setting | Meaning |
 | --- | --- |
-| `max_length` | Most characters, up to 255. |
+| `max_length` | Most characters, up to 255. The admin shows a counter under the input, such as 48/60. |
 | `placeholder` | Hint shown in the empty input. |
 
 Templates read a text value that prints as the text, or `null` when it is empty, so `@if ($page->subtitle)` works. Print it with `@field($page->subtitle)` to mark text that comes from another language.
@@ -52,7 +52,7 @@ Longer text. Can be translatable.
 | --- | --- |
 | `format` | `plain` (default), `html` for a rich text editor, or `markdown`. |
 | `tools` | Extra buttons for the rich text editor, all off by default: `superscript`, `subscript`, `underline`, `highlight`, `code`, `code_block`, `horizontal_rule`, `text_align`. |
-| `max_length` | Most characters. |
+| `max_length` | Most characters. Plain and Markdown text show a counter under the input; rich text does not. |
 | `formatters` | Formatters to run when the value is shown, in order, such as `['markdown', 'smartypants']`. |
 
 With `format: html`, editors get a rich text editor, and Lynx cleans the HTML on every save: it keeps a safe set of tags and attributes, and refuses links that could run script.

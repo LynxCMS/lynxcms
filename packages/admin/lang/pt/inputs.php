@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'characters' => 'caracteres',
     'yes' => 'Sim',
     'none' => 'Nenhum',
     'setting_elsewhere' => 'Esta definição do tipo :type pode ser alterada através da API ou do MCP.',
