@@ -10,16 +10,36 @@ namespace LynxCms\Core\Query;
  *   template=course, price<300, title%=Delivery, sort=-title, limit=10
  *
  * Clauses are separated by commas; "|" separates alternative values (OR); values may be quoted
- * with " or ' to include commas or pipes.
+ * with " or ' to include commas or pipes. Parenthesised groups are OR alternatives (ADR-0110):
+ * "(price<20), (price>70)" matches either, and "cost=(…), cost=(…)" names a set of them.
  *
  * @api
  */
 final class SelectorParser
 {
+    /** Terms that act on the whole selector, so they have no meaning inside one alternative. */
+    private const array WHOLE_SELECTOR = ['sort', 'limit', 'start', 'include', 'join', 'search'];
+
+    /** A part that opens a named group: "cost=(". */
+    private const string NAMED_GROUP = '/^\s*([a-z_][a-z0-9_]*)\s*=\s*\(/i';
+
     /**
+     * The selector's clauses. A selector with OR groups needs parseSelector(), which keeps them.
+     *
      * @return list<Clause>
      */
     public function parse(string $selector): array
+    {
+        $parsed = $this->parseSelector($selector);
+
+        if ($parsed->groups !== []) {
+            throw new SelectorException('This selector has OR groups: read it with SelectorParser::parseSelector().');
+        }
+
+        return $parsed->clauses;
+    }
+
+    public function parseSelector(string $selector): ParsedSelector
     {
         // SQLite ends bound strings at a NUL byte, which would silently change what a value means.
         if (str_contains($selector, "\0")) {
@@ -27,18 +47,84 @@ final class SelectorParser
         }
 
         $clauses = [];
+        $sets = [];
 
-        foreach ($this->split($selector) as $part) {
-            $part = trim($part);
+        foreach ($this->parts($selector) as $part) {
+            $group = $this->group($part);
 
-            if ($part === '') {
-                continue;
+            if ($group === null) {
+                $clauses[] = $this->clause($part);
+            } else {
+                $sets[$group[0]][] = $this->alternative($group[1]);
             }
-
-            $clauses[] = $this->clause($part);
         }
 
-        return $clauses;
+        $groups = [];
+
+        foreach ($sets as $name => $alternatives) {
+            $groups[] = new OrGroupSet((string) $name, $alternatives);
+        }
+
+        return new ParsedSelector($clauses, $groups);
+    }
+
+    /**
+     * The non-empty parts between top-level commas.
+     *
+     * @return list<string>
+     */
+    private function parts(string $selector): array
+    {
+        return array_values(array_filter(array_map(trim(...), $this->split($selector)), fn (string $part): bool => $part !== ''));
+    }
+
+    /**
+     * A group's name ("" when unnamed) and what its parentheses hold, or null for a plain clause.
+     *
+     * @return array{string, string}|null
+     */
+    private function group(string $part): ?array
+    {
+        $isNamed = preg_match(self::NAMED_GROUP, $part, $m) === 1;
+
+        if (! $isNamed && ! str_starts_with($part, '(')) {
+            return null;
+        }
+
+        if (! str_ends_with($part, ')')) {
+            throw new SelectorException("Unbalanced parentheses in selector part [{$part}].");
+        }
+
+        $open = strpos($part, '(');
+
+        return [$isNamed ? strtolower($m[1]) : '', substr($part, (int) $open + 1, -1)];
+    }
+
+    /**
+     * One OR alternative: its clauses, all of which must match.
+     *
+     * @return list<Clause>
+     */
+    private function alternative(string $inner): array
+    {
+        $clauses = [];
+
+        foreach ($this->parts($inner) as $part) {
+            if ($this->group($part) !== null) {
+                throw new SelectorException("OR groups cannot hold other groups: [{$part}].");
+            }
+
+            $clause = $this->clause($part);
+            $isLanguage = in_array($clause->field, ['language', 'lang'], true) && $clause->operator !== '!=';
+
+            if (in_array($clause->field, self::WHOLE_SELECTOR, true) || $isLanguage) {
+                throw new SelectorException("[{$clause->field}] applies to the whole selector, so it cannot sit inside an OR group.");
+            }
+
+            $clauses[] = $clause;
+        }
+
+        return $clauses === [] ? throw new SelectorException('An OR group cannot be empty.') : $clauses;
     }
 
     private function clause(string $part): Clause
@@ -85,7 +171,8 @@ final class SelectorParser
     }
 
     /**
-     * Split on commas outside quotes.
+     * Split on commas outside quotes and outside OR groups. A parenthesis opens a group only at
+     * the start of a part ("(" or "name=("), so values such as "Risk (basics)" keep theirs.
      *
      * @return list<string>
      */
@@ -94,24 +181,35 @@ final class SelectorParser
         $parts = [];
         $current = '';
         $quote = null;
+        $depth = 0;
 
         foreach (mb_str_split($selector) as $char) {
             if ($quote !== null) {
                 $quote = $char === $quote ? null : $quote;
-                $current .= $char;
             } elseif ($char === '"' || $char === "'") {
                 $quote = $char;
-                $current .= $char;
-            } elseif ($char === ',') {
+            } elseif ($char === '(' && ($depth > 0 || $this->opensGroup($current))) {
+                $depth++;
+            } elseif ($char === ')' && $depth > 0) {
+                $depth--;
+            } elseif ($char === ',' && $depth === 0) {
                 $parts[] = $current;
                 $current = '';
-            } else {
-                $current .= $char;
+
+                continue;
             }
+
+            $current .= $char;
         }
 
         $parts[] = $current;
 
         return $parts;
+    }
+
+    /** Whether a parenthesis after what the part holds so far opens an OR group. */
+    private function opensGroup(string $current): bool
+    {
+        return trim($current) === '' || preg_match(self::NAMED_GROUP, $current.'(') === 1;
     }
 }

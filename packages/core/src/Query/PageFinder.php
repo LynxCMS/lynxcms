@@ -128,7 +128,8 @@ final readonly class PageFinder
 
     public function compile(string $selector): CompiledSelector
     {
-        $clauses = $this->parser->parse($selector);
+        $parsed = $this->parser->parseSelector($selector);
+        $clauses = $parsed->clauses;
         $chain = $this->context->chainIds();
 
         foreach ($clauses as $clause) {
@@ -138,7 +139,7 @@ final readonly class PageFinder
             }
         }
 
-        $compiled = $this->compiler->compile($clauses, $chain);
+        $compiled = $this->compiler->compile($clauses, $chain, $parsed->groups);
         $this->visibility->apply($compiled->query);
         $this->visibility->apply($compiled->countQuery);
 

@@ -1175,3 +1175,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Checks only read, so the command is safe in production and in CI. Their wording is English, like other console output. A module's check runs wherever the module is installed; a slow one slows the whole report, so checks should use counts and existence queries, not page loads.
 
+
+## ADR-0110: Selectors take OR groups, one level deep
+
+**Status:** Accepted.
+
+**Context:** Selectors AND every clause. OR exists between values (`template=a|b`) and between fields (`title|summary%=x`), but not between different conditions, so "tagged ai, or priced from 50" needs two queries merged in PHP, which breaks sorting, paging and counts. The planned Page Finder screen lets people group conditions and combine the groups with all or any, so the selector has to say it. ProcessWire, where Lynx's selectors come from, writes this as OR groups.
+
+**Decision:** A parenthesised part is an OR alternative: `(price<20), (price>70)` matches pages that match either group, and inside a group commas mean AND. Groups that share a name form a set of their own (`cost=(…), cost=(…)`), and every set must match, so several ORs can be combined. A parenthesis opens a group only at the start of a part, so values like `Risk (basics)` keep theirs, and a value that starts with one is quoted. Groups are one level deep. Inside a group, terms that act on the whole selector (`sort`, `limit`, `start`, `include`, `join`, `language=`, `search`) are refused; page states (`status`, `has_draft`, `language!=`…) work, and a status named inside a group lets that status through for the whole selector, as it does outside. `SelectorParser::parseSelector()` returns a `ParsedSelector` (clauses and `OrGroupSet`s, `@api`); `parse()` keeps returning clauses and refuses a selector with groups rather than drop them. `SelectorCompiler` turns each set into a nested `where` of `orWhere` alternatives, each compiled by the same clause code as the top level, so every field kind works inside groups.
+
+**Consequences:** Code, the admin search, MCP and the agent can express any one-level boolean search in one query, with sorting, paging and `total()`. Deeper nesting is not possible and is refused rather than misread. A value starting with `(` after `name=` reads as a group, so it must be quoted. OR groups over translatable fields join the same value tables as the top level, so they cost about what the same clauses cost outside a group.

@@ -31,7 +31,9 @@ function documentedSelectors(): array
 }
 
 it('documents selectors that parse', function (string $selector): void {
-    expect(app(SelectorParser::class)->parse($selector))->toBeArray()->not->toBeEmpty();
+    $parsed = app(SelectorParser::class)->parseSelector($selector);
+
+    expect([...$parsed->clauses, ...$parsed->groups])->not->toBeEmpty();
 })->with(documentedSelectors());
 
 /** A heading's anchor, as VitePress makes it. */

@@ -85,6 +85,23 @@ lynx()->pages->find('template=course, title|summary|body%=risk');
 
 With `!=`, it matches when none of them holds the value.
 
+### Either one condition or another
+
+Clauses in parentheses are alternatives: a page matches when it matches at least one group. Inside a group, commas still mean "and":
+
+```php
+// Cheap courses, or courses with an advanced summary.
+lynx()->pages->find('template=course, (price<20), (price>=50, summary%=advanced)');
+```
+
+Groups that share a name form a set of their own, and every set must match. This finds courses that are cheap or expensive, and that are also tagged or related to another course:
+
+```php
+lynx()->pages->find('template=course, cost=(price<20), cost=(price>70), links=(topics=ai), links=(related.count>0)');
+```
+
+Groups go one level deep: a group cannot hold another group. `sort`, `limit`, `start`, `include`, `join`, `language=` and `search` act on the whole selector, so they stay outside groups. [Status](#status) clauses work inside a group, and a status named there is let through for the whole selector, as it is outside groups. A value that starts with a parenthesis needs quotes: `title="(draft) Notes"`.
+
 ## Dates
 
 Date fields compare with dates, and with any words PHP understands as a date:
