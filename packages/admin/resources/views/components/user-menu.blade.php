@@ -36,8 +36,9 @@
                 @endforeach
             </form>
         @endif
+        <x-lynx-admin::ui.dropdown-menu-separator />
+        <x-lynx-admin::ui.dropdown-menu-item x-on:click="$dispatch('open-dialog-lynx-shortcuts')" data-shortcuts-open><x-lucide-keyboard aria-hidden="true" /> {{ __('lynx-admin::account.menu.shortcuts') }}<x-lynx-admin::ui.dropdown-menu-shortcut>?</x-lynx-admin::ui.dropdown-menu-shortcut></x-lynx-admin::ui.dropdown-menu-item>
         @if (Route::has('lynx.admin.account'))
-            <x-lynx-admin::ui.dropdown-menu-separator />
             <x-lynx-admin::ui.dropdown-menu-item :href="route('lynx.admin.account')"><x-lucide-shield aria-hidden="true" /> {{ __('lynx-admin::account.menu.security') }}</x-lynx-admin::ui.dropdown-menu-item>
         @endif
     </x-lynx-admin::ui.dropdown-menu-content>

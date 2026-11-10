@@ -13,7 +13,7 @@ use Closure;
  * ->add('SEO', 'lynx.admin.seo', group: Navigation::SETTINGS). A label can be a translation key
  * ("acme::nav.reports"): it is read when the sidebar shows, in the admin's language (ADR-0097).
  *
- * @phpstan-type Item array{label: string, route: string, order: int, visible: (Closure(): bool)|null, icon: string|null, badge: (Closure(): (int|string|null))|null, group: string|null}
+ * @phpstan-type Item array{label: string, route: string, order: int, visible: (Closure(): bool)|null, icon: string|null, badge: (Closure(): (int|string|null))|null, group: string|null, shortcut: string|null}
  * @phpstan-type Group array{key: string, label: string, order: int, icon: string|null, items: list<Item>}
  *
  * @api
@@ -38,10 +38,11 @@ final class Navigation
      * $badge: a count or short text beside the label, e.g. new form submissions; 0 and null hide it.
      * $group: the key of a group the item belongs to, e.g. Navigation::SETTINGS; an unknown
      * group puts the item outside groups.
+     * $shortcut: the letter that, after "g", opens the screen from the keyboard (shortcuts.js).
      */
-    public function add(string $label, string $route, int $order = 100, ?Closure $visible = null, ?string $icon = null, ?Closure $badge = null, ?string $group = null): self
+    public function add(string $label, string $route, int $order = 100, ?Closure $visible = null, ?string $icon = null, ?Closure $badge = null, ?string $group = null, ?string $shortcut = null): self
     {
-        $this->items[] = ['label' => $label, 'route' => $route, 'order' => $order, 'visible' => $visible, 'icon' => $icon, 'badge' => $badge, 'group' => $group];
+        $this->items[] = ['label' => $label, 'route' => $route, 'order' => $order, 'visible' => $visible, 'icon' => $icon, 'badge' => $badge, 'group' => $group, 'shortcut' => $shortcut];
 
         return $this;
     }

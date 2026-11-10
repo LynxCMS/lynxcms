@@ -46,6 +46,11 @@ final class FieldList extends Component
         abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
     }
 
+    public function clearFilters(): void
+    {
+        $this->reset('type', 'template', 'search');
+    }
+
     public function render(): View
     {
         $usage = app(FieldUsage::class);
@@ -61,6 +66,7 @@ final class FieldList extends Component
 
         return view('lynx-admin::livewire.field-list', [
             'fields' => $fields,
+            'isFiltered' => $this->type !== '' || $this->template !== '' || $search !== '',
             'usedBy' => $usedBy,
             'owners' => app(SchemaOwners::class),
             'types' => array_keys(lynx()->fields->types()),

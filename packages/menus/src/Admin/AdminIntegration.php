@@ -30,7 +30,7 @@ final class AdminIntegration
     {
         Livewire::component('lynx-menus.editor', MenuEditor::class);
         $canManage = fn (): bool => app(AdminAccess::class)->allows('menus.manage');
-        app(Navigation::class)->add('lynx-menus::admin.title', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'menu');
+        app(Navigation::class)->add('lynx-menus::admin.title', 'lynx.admin.menus', order: self::NAVIGATION_ORDER, visible: $canManage, icon: 'menu', shortcut: 'm');
         app(HomeScreen::class)->action('menus', 'lynx-menus::admin.home_action', fn (): string => route('lynx.admin.menus'), icon: 'menu', visible: $canManage, order: 30);
         // Menus and items are created in the menu editor, never as plain pages.
         app(TemplateChoices::class)->exclude(MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE);

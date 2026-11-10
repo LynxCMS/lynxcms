@@ -9,6 +9,7 @@ import { Placeholder } from '@tiptap/extensions'
 import { lynxEditorGuard } from './editor-guard.js'
 import { lynxEditorSection } from './editor-section.js'
 import { registerBlatUI } from './blatui-core.js'
+import { registerShortcuts } from './shortcuts.js'
 import { lynxPasskeyRegister, lynxPasskeyVerify } from './passkeys.js'
 import { TOOLS, TOOL_EXTENSIONS } from './rich-text-tools.js'
 
@@ -275,6 +276,9 @@ function configuredTheme() {
 
     return theme
 }
+
+// Once per page load: the listener stays on the document across Livewire's page changes.
+registerShortcuts()
 
 document.addEventListener('alpine:init', () => {
     const configured = configuredTheme()

@@ -36,7 +36,8 @@ return [
         'users' => 'Users',
         'superuser' => 'superuser',
         'all' => 'All',
-        'empty' => 'No roles yet. Until a user has a role, every signed in user may do everything.',
+        'empty' => 'No roles yet.',
+        'empty_help' => 'Until a user has a role, every signed in user may do everything. A role says what its users may do, and where.',
     ],
     'permissions' => [
         'menus' => [

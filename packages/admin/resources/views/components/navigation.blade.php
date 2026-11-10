@@ -30,7 +30,7 @@
                 <x-lynx-admin::ui.sidebar-menu-sub x-show="expanded" x-cloak>
                     @foreach ($items as $item)
                         <x-lynx-admin::ui.sidebar-menu-sub-item>
-                            <x-lynx-admin::ui.sidebar-menu-sub-button :href="route($item['route'])" :is-active="$isCurrent($item)" :aria-current="$isCurrent($item) ? 'page' : null">
+                            <x-lynx-admin::ui.sidebar-menu-sub-button :href="route($item['route'])" :is-active="$isCurrent($item)" :aria-current="$isCurrent($item) ? 'page' : null" :data-shortcut="$item['shortcut'] === null ? null : 'g '.$item['shortcut']">
                                 <span>{{ $item['label'] }}</span>
                             </x-lynx-admin::ui.sidebar-menu-sub-button>
                         </x-lynx-admin::ui.sidebar-menu-sub-item>
@@ -39,7 +39,7 @@
             </x-lynx-admin::ui.sidebar-menu-item>
         @elseif ($exists($entry))
             <x-lynx-admin::ui.sidebar-menu-item>
-                <x-lynx-admin::ui.sidebar-menu-button :href="route($entry['route'])" :is-active="$isCurrent($entry)" :tooltip="$entry['label']" :aria-current="$isCurrent($entry) ? 'page' : null">
+                <x-lynx-admin::ui.sidebar-menu-button :href="route($entry['route'])" :is-active="$isCurrent($entry)" :tooltip="$entry['label']" :aria-current="$isCurrent($entry) ? 'page' : null" :data-shortcut="$entry['shortcut'] === null ? null : 'g '.$entry['shortcut']">
                     @if ($entry['icon'])
                         <x-lynx-admin::ui.icon :name="$entry['icon']" aria-hidden="true" />
                     @endif

@@ -35,6 +35,7 @@ return [
         'column_changed' => 'Last change',
         'label' => 'Pages',
         'empty' => 'No pages here.',
+        'empty_help' => 'Pick another filter above, or All pages for the whole tree.',
         'moving' => 'Moving :page',
         'drag_to_move' => 'Drag to move',
         'toggle_children' => 'Show or hide the pages under :page',

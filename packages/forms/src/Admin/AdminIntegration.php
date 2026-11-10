@@ -54,7 +54,7 @@ final class AdminIntegration
 
         $canSee = fn (): bool => app(AdminAccess::class)->allows('forms.view');
         app(Navigation::class)->add('lynx-forms::admin.title', 'lynx.admin.forms', order: self::NAVIGATION_ORDER, visible: $canSee, icon: 'inbox',
-            badge: fn (): int => Submission::query()->where('status', 'new')->count());
+            badge: fn (): int => Submission::query()->where('status', 'new')->count(), shortcut: 'i');
         FormsHomePanel::register($canSee);
 
         Admin::routes(function (): void {

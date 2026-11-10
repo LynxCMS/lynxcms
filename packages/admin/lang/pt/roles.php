@@ -36,7 +36,8 @@ return [
         'users' => 'Utilizadores',
         'superuser' => 'superutilizador',
         'all' => 'Todas',
-        'empty' => 'Ainda não há funções. Enquanto nenhum utilizador tiver uma função, qualquer utilizador com sessão iniciada pode fazer tudo.',
+        'empty' => 'Ainda não há funções.',
+        'empty_help' => 'Enquanto nenhum utilizador tiver uma função, qualquer utilizador com sessão iniciada pode fazer tudo. Uma função diz o que os seus utilizadores podem fazer, e onde.',
     ],
     'permissions' => [
         'menus' => [

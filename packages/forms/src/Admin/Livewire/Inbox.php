@@ -72,6 +72,14 @@ final class Inbox extends Component
         $this->notify($count === 1 ? '1 submission updated.' : "{$count} submissions updated.");
     }
 
+    /** Every submission, in any status: what an empty filtered list offers. */
+    public function clearFilters(): void
+    {
+        $this->reset('form', 'search');
+        $this->show = 'all';
+        $this->page = 1;
+    }
+
     public function render(): View
     {
         $query = $this->query();
@@ -83,6 +91,7 @@ final class Inbox extends Component
             'forms' => array_map(fn (Form $form): string => $form->text('label')->in(), lynx()->forms()->all()),
             'hasMore' => $total > $this->page * self::PER_PAGE,
             'total' => $total,
+            'hasAny' => $total > 0 || Submission::query()->exists(),
         ]);
     }
 

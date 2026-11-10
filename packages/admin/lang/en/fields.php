@@ -47,6 +47,10 @@ return [
         'translatable' => 'translatable',
         'no_template' => 'No template',
         'empty' => 'No fields match these filters.',
+        'empty_help' => 'Try another type or template, or a shorter search.',
+        'clear' => 'Clear filters',
+        'none' => 'No fields of your own yet.',
+        'none_help' => 'A field holds what editors fill in on a page. Create one, then add it to a template.',
     ],
     'header' => [
         'intro' => 'A field holds one kind of content. Templates combine fields, and editors fill them in.',

@@ -18,6 +18,7 @@ return [
     'turn_on' => 'Turn on',
     'pages' => 'Protected pages',
     'empty' => 'No page has a password yet.',
+    'empty_help' => "Turn a template on above, then set a password in a page's editor.",
     'below' => '{0} No pages below|{1} 1 page below|[2,*] :count pages below',
     'set' => 'Set',
     'not_set' => 'Not set',

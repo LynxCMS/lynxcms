@@ -93,6 +93,10 @@ return [
         'submission' => 'Submission :id',
         'files' => ':count file|:count files',
         'empty' => 'No submissions match these filters.',
+        'empty_help' => 'Try another status or form, or a shorter search.',
+        'clear' => 'Show all submissions',
+        'none' => 'No submissions yet.',
+        'none_help' => "Answers sent through the site's forms show here.",
         'newer' => 'Newer',
         'older' => 'Older',
         'pages' => 'Page :page · :total in all',
@@ -114,5 +118,6 @@ return [
         'results' => 'Results',
         'preview' => 'Preview',
         'empty' => 'No forms yet.',
+        'empty_help' => 'Name a form above to start building it.',
     ],
 ];

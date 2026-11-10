@@ -16,6 +16,7 @@ return [
         'pending' => 'Convite pendente',
         'resend' => 'Reenviar convite',
         'empty' => 'Nenhum utilizador corresponde.',
+        'empty_help' => 'Experimente uma pesquisa mais curta, ou parte de um nome ou endereço de email.',
     ],
     'invite' => [
         'heading' => 'Convidar utilizador',

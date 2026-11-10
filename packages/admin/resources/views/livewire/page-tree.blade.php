@@ -90,7 +90,7 @@
             {{-- A filter's pages, flat and paged; nothing to reorder here. --}}
             <div role="tree" aria-label="{{ __('lynx-admin::pages.tree.label') }}" class="-mb-px" data-tree-filtered>
                 @if ($filtered->total === 0)
-                    <p class="text-muted-foreground px-4 py-6 text-sm">{{ __('lynx-admin::pages.tree.empty') }}</p>
+                    <x-lynx-admin::empty-state icon="list-filter" :title="__('lynx-admin::pages.tree.empty')" :help="__('lynx-admin::pages.tree.empty_help')" class="m-4 border-0" />
                 @else
                     <x-lynx-admin::tree.level :level="$filtered" :depth="0" :parent-position="0" :state="[...$state, 'sortable' => false]" />
                 @endif

@@ -69,7 +69,15 @@
                     </x-lynx-admin::ui.table-cell>
                 </x-lynx-admin::ui.table-row>
             @empty
-                <x-lynx-admin::ui.table-row><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal px-4 py-6 text-center text-muted-foreground">{{ __('lynx-forms::admin.inbox.empty') }}</x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
+                <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal p-4">
+                    @if ($hasAny)
+                        <x-lynx-admin::empty-state icon="search-x" :title="__('lynx-forms::admin.inbox.empty')" :help="__('lynx-forms::admin.inbox.empty_help')" class="border-0">
+                            <x-lynx-admin::ui.button variant="outline" type="button" wire:click="clearFilters">{{ __('lynx-forms::admin.inbox.clear') }}</x-lynx-admin::ui.button>
+                        </x-lynx-admin::empty-state>
+                    @else
+                        <x-lynx-admin::empty-state icon="inbox" :title="__('lynx-forms::admin.inbox.none')" :help="__('lynx-forms::admin.inbox.none_help')" class="border-0" />
+                    @endif
+                </x-lynx-admin::ui.table-cell></x-lynx-admin::ui.table-row>
             @endforelse
         </x-lynx-admin::ui.table-body>
     </x-lynx-admin::ui.table>
