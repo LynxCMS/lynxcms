@@ -8,6 +8,8 @@ order: 2
 
 Editors build the site's menus in the admin, and one Blade tag prints them in your layout. Menus come with `lynxcms/menus`. A menu is a set of pages under the system page `/_menus/`, edited in the admin's **Menus** screen. Items link to a page (optionally with its children), link to a URL, or are section labels. Labels and URLs can differ per language.
 
+The **Menus** screen lists the menus, and **New menu** asks for a title and a name. Each menu opens on a screen of its own: its items as a tree, with the item form in a panel beside it, and a **Settings** tab for the title, CSS classes, the Blade tag that shows the menu (with a copy button) and deleting it. The options most items never need (where the link opens, its relation, icons and CSS classes) fold under **More options**.
+
 ## Rendering
 
 ```blade
@@ -51,7 +53,7 @@ A menu is stored built, per language: its items, labels, URLs and child pages. V
 
 Visitors who see more than everyone else, such as one who unlocked a password protected page or a signed-in editor allowed to see it, get the menu built for them, and nothing is stored.
 
-Changes made outside Lynx, such as pages edited with SQL, need a rebuild: the **Rebuild** button in the menu editor, or the `menus.rebuild` action (one menu, or every menu without one):
+Changes made outside Lynx, such as pages edited with SQL, need a rebuild: **Rebuild** on the menu's **Settings** tab, or the `menus.rebuild` action (one menu, or every menu without one):
 
 ```php
 lynx()->run(LynxCms\Menus\Actions\RebuildMenus::class, ['menu' => 'top']);

@@ -5,10 +5,12 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageTree;
 use LynxCms\Menus\Admin\MenuEditor;
 use LynxCms\Menus\Admin\MenuItemPresenter;
+use LynxCms\Menus\Admin\MenuList;
 use LynxCms\Menus\Reading\MenuBuilds;
 
 beforeEach(function (): void {
@@ -23,24 +25,63 @@ function topMenuId(): int
 }
 
 it('adds a Menus screen to the admin', function (): void {
-    $this->get('/lynx/menus')->assertOk()->assertSeeInOrder(['Pages', 'Menus'])->assertSeeLivewire(MenuEditor::class);
+    $this->get('/lynx/menus')->assertOk()->assertSeeInOrder(['Pages', 'Menus'])->assertSeeLivewire(MenuList::class);
 });
 
-it('creates a menu and selects it', function (): void {
-    Livewire::test(MenuEditor::class)
+it('lists the menus, each opening its own screen', function (): void {
+    lynx()->menus()->create('top', 'Top bar');
+    lynx()->menus()->saveItem(['menu' => 'top', 'kind' => 'section', 'label' => 'A']);
+
+    Livewire::test(MenuList::class)
+        ->assertSeeHtml('href="'.route('lynx.admin.menus.edit', topMenuId()).'"')
+        ->assertDontSeeHtml('data-empty-state');
+    $this->get(route('lynx.admin.menus.edit', topMenuId()))->assertOk()->assertSeeLivewire(MenuEditor::class);
+});
+
+it('shows an empty state on a site without menus', function (): void {
+    Livewire::test(MenuList::class)->assertSeeHtml('data-empty-state');
+});
+
+it('creates a menu and opens it', function (): void {
+    Livewire::test(MenuList::class)
         ->set('newMenu.name', 'top')
         ->set('newMenu.title.default', 'Top bar')
         ->set('newMenu.title.pt', 'Barra')
         ->call('createMenu')
         ->assertHasNoErrors()
-        ->assertSet('menuId', fn (?int $id): bool => $id === topMenuId())
-        ->assertSee('Top bar');
+        ->assertRedirect(route('lynx.admin.menus.edit', topMenuId()));
 
     expect(lynx()->language('pt', fn () => lynx()->menus()->get('top')?->title))->toBe('Barra');
 });
 
+it('sends links from before menus had a screen each to that screen', function (): void {
+    lynx()->menus()->create('top', 'Top');
+
+    Livewire::withQueryParams(['menu' => (string) topMenuId(), 'item' => '9'])->test(MenuList::class)
+        ->assertRedirect(route('lynx.admin.menus.edit', ['menu' => topMenuId(), 'item' => 9]));
+});
+
+it('answers 404 for a page that is not a menu', function (): void {
+    $this->get(route('lynx.admin.menus.edit', lynx()->pages->get('/courses/alpha')?->id))->assertNotFound();
+});
+
+it('shows the item panel beside the tree, and the settings on their own tab', function (): void {
+    lynx()->menus()->create('top', 'Top');
+
+    Livewire::test(MenuEditor::class, ['menuId' => topMenuId()])
+        ->assertSeeHtml('data-menu-panel')
+        ->assertDontSeeHtml('data-item-form')
+        ->assertDontSeeHtml('data-menu-settings')
+        ->set('tab', 'settings')
+        ->assertSeeHtml('data-menu-settings')
+        ->assertSeeHtml('data-menu-tag')
+        ->call('newItem', topMenuId())
+        ->assertSet('tab', 'items')
+        ->assertSeeHtml('data-item-form');
+});
+
 it('shows validation errors when creating a menu', function (): void {
-    Livewire::test(MenuEditor::class)
+    Livewire::test(MenuList::class)
         ->set('newMenu.name', 'Not a slug')
         ->set('newMenu.title.default', 'X')
         ->call('createMenu')
@@ -158,7 +199,7 @@ it('deletes a menu after confirmation', function (): void {
         ->call('deleteMenu')
         ->assertSet('confirmingDelete', true)
         ->call('deleteMenu')
-        ->assertSet('menuId', null);
+        ->assertRedirect(route('lynx.admin.menus'));
 
     expect(lynx()->menus()->page('top'))->toBeNull();
 });
@@ -176,20 +217,16 @@ it('shows menu items in the tree with their kind and target', function (): void 
 it('refuses users the admin gate denies', function (): void {
     Gate::define('accessLynxAdmin', fn (): bool => false);
 
-    Livewire::test(MenuEditor::class)->assertForbidden();
+    Livewire::test(MenuList::class)->assertForbidden();
 });
 
-it('only deletes menus, whatever menuId the browser sends', function (): void {
+it('keeps the menu a screen edits, whatever menuId the browser sends', function (): void {
     lynx()->menus()->create('top', 'Top');
     $alpha = (int) lynx()->pages->get('/courses/alpha')->id;
 
-    Livewire::test(MenuEditor::class, ['menuId' => topMenuId()])
-        ->set('menuId', $alpha)
-        ->call('deleteMenu')
-        ->call('deleteMenu');
-
-    expect(lynx()->pages->get($alpha))->not->toBeNull()
-        ->and(lynx()->menus()->page('top'))->not->toBeNull();
+    expect(fn () => Livewire::test(MenuEditor::class, ['menuId' => topMenuId()])->set('menuId', $alpha))
+        ->toThrow(CannotUpdateLockedPropertyException::class);
+    expect(lynx()->pages->get($alpha))->not->toBeNull();
 });
 
 it('does not edit items of another menu', function (): void {
@@ -290,6 +327,7 @@ it('rebuilds the selected menu from the editor', function (): void {
     expect(DB::table(MenuBuilds::BUILDS)->count())->toBe(1);
 
     Livewire::test(MenuEditor::class, ['menuId' => topMenuId()])
+        ->set('tab', 'settings')
         ->assertSee('Rebuild')
         ->call('rebuild')
         ->assertDispatched('lynx-notify', message: 'Menu rebuilt: the next visit builds it again.');
