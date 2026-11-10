@@ -25,6 +25,9 @@ final class AgentSession
 
     private readonly int $seconds;
 
+    /** Set once the run passed its time, so the run stops even when laravel/ai hands tool errors back to the model. */
+    private ?PlanTookTooLong $timedOut = null;
+
     public function __construct(public readonly Actor $actor)
     {
         $this->seconds = max(1, Value::int(config('lynx.ai.plan_seconds'), self::DEFAULT_SECONDS));
@@ -33,14 +36,32 @@ final class AgentSession
 
     /**
      * Called before each tool call: the run's transaction stays open until it ends, so a run
-     * past its time stops instead of keeping other writers waiting.
+     * past its time stops instead of keeping other writers waiting. Every later call fails too.
      *
      * @throws PlanTookTooLong
      */
     public function assertTimeLeft(): void
     {
-        if (CarbonImmutable::now()->greaterThan($this->deadline)) {
-            throw PlanTookTooLong::after($this->seconds);
+        if ($this->timedOut === null && CarbonImmutable::now()->greaterThan($this->deadline)) {
+            $this->timedOut = PlanTookTooLong::after($this->seconds);
+        }
+
+        if ($this->timedOut instanceof PlanTookTooLong) {
+            throw $this->timedOut;
+        }
+    }
+
+    /**
+     * Called once the agent has answered: since laravel/ai 1.4 a tool's exception goes back to the
+     * model as a failed call instead of ending the run, so a run that timed out is stopped here,
+     * and its transaction rolled back.
+     *
+     * @throws PlanTookTooLong
+     */
+    public function assertFinishedInTime(): void
+    {
+        if ($this->timedOut instanceof PlanTookTooLong) {
+            throw $this->timedOut;
         }
     }
 

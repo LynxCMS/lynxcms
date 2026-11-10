@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Fixed: with laravel/ai 1.4 or later, an agent run that passed `lynx.ai.plan_seconds` carried on, because tool errors now go back to the model instead of ending the run. The run now stops when the agent answers, keeps nothing, and throws `PlanTookTooLong` as before; every tool call after the time is up fails without writing.
 - Fixed: screens opened through an in-admin link that loads without a full page reload (a menu from the Menus screen, a child from the Children tab) kept the light theme in dark mode until reloaded.
 - The **Menus** screen is a list of menus, and each menu opens on a screen of its own: the item form sits in a panel beside the tree instead of below it, rarely needed item options fold under **More options**, and the title, CSS classes, the Blade tag (with a copy button), **Rebuild** and **Delete** move to a **Settings** tab. **New menu** opens a dialog. Old links (`menus?menu=3`) still lead to the menu. See [Menus](/modules/menus).
 - **Keyboard shortcuts** in the admin: `?` lists them, `/` searches, `g` then a letter opens a screen (`g h` Home, `g p` Pages and the rest), and `[` and `]` step through the page editor's tabs. Modules give their screens a letter with `Navigation::add(shortcut:)`. See [Keyboard shortcuts](/admin/#keyboard-shortcuts).

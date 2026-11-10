@@ -55,6 +55,7 @@ final readonly class LynxAi
                 provider: self::provider(),
                 model: Value::nullableString(config('lynx.ai.model')),
             ));
+            $session->assertFinishedInTime();
 
             $run = new AgentRun($response->text, $session->steps(), $apply, $session);
             $apply ? DB::commit() : DB::rollBack();
