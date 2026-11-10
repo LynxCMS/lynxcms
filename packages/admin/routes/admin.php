@@ -10,10 +10,11 @@ use LynxCms\Admin\Http\EditLanguageController;
 use LynxCms\Admin\Http\EditPageController;
 use LynxCms\Admin\Http\EditRoleController;
 use LynxCms\Admin\Http\EditTemplateController;
+use LynxCms\Admin\Http\HomeController;
 use LynxCms\Admin\Http\SuperuserScreenController;
 
-// The admin's own address opens the page tree; guests sign in first, as for every screen.
-Route::get('/', fn () => redirect()->route('lynx.admin.pages'))->name('home');
+// The admin's own address opens the home screen; guests sign in first, as for every screen.
+Route::get('/', HomeController::class)->name('home');
 Route::view('pages', 'lynx-admin::pages.index')->name('pages');
 Route::get('pages/create', CreatePageController::class)->name('pages.create');
 Route::get('pages/{page}/edit', EditPageController::class)->whereNumber('page')->name('pages.edit');

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'home_action' => 'Editar menus',
     'title' => 'Menus',
     'description' => 'Menus de navegação: páginas, ligações e secções.',
     'description_languages' => 'Menus de navegação: páginas, ligações e secções, em todos os idiomas.',

@@ -16,6 +16,22 @@ use LynxCms\Forms\Models\Submission;
  */
 final class SubmissionPresenter
 {
+    /** "Ana Lima · ana@example.com": the first short answers, to tell submissions apart. */
+    public function summary(Submission $submission): string
+    {
+        $parts = [];
+
+        foreach ($submission->fields as $field) {
+            $value = $submission->data[(string) ($field['name'] ?? '')] ?? null;
+
+            if (in_array($field['type'] ?? '', ['text', 'email', 'tel'], true) && is_string($value) && $value !== '') {
+                $parts[] = $value;
+            }
+        }
+
+        return implode(' · ', array_slice($parts, 0, 2));
+    }
+
     /**
      * @return list<array{name: string, label: string, value: string}>
      */

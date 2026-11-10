@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'nav' => [
         'label' => 'Administração',
+        'home' => 'Início',
         'pages' => 'Páginas',
         'site_texts' => 'Textos do site',
         'settings' => 'Definições',

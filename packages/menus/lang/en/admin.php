@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'home_action' => 'Edit menus',
     'title' => 'Menus',
     'description' => 'Navigation menus: pages, links and sections.',
     'description_languages' => 'Navigation menus: pages, links and sections, in every language.',

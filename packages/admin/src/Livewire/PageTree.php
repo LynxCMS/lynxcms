@@ -109,6 +109,16 @@ final class PageTree extends Component
         $this->perPage = max(1, $perPage ?? Value::int(config('lynx-admin.tree.per_page'), 20));
         $this->expanded = $this->expanded !== [] ? $this->expanded : (Value::ints(session($this->sessionKey())) ?: [(int) $this->rootPage()->id]);
         $this->remember();
+        $this->openFilter(request()->query('filter'));
+    }
+
+    /** A link can open a filter, such as the home screen's "See all" (pages?filter=drafts). */
+    private function openFilter(mixed $filter): void
+    {
+        if (is_string($filter) && $this->canShowDetails()) {
+            $this->isDetailed = true;
+            $this->filterBy($filter);
+        }
     }
 
     public function toggle(int $id): void

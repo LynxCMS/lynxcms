@@ -24,6 +24,8 @@ use LynxCms\Admin\Editor\LinkFiles;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Fields\IconType;
+use LynxCms\Admin\Home\HomeDefaults;
+use LynxCms\Admin\Home\HomeScreen;
 use LynxCms\Admin\Http\AssetController;
 use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Admin\Icons\IconSet;
@@ -96,6 +98,12 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(AdminAssets::class);
         $this->app->singleton(TreeFilterRegistry::class);
         $this->app->singleton(EditorTabs::class);
+        $this->app->singleton(HomeScreen::class, function (): HomeScreen {
+            $home = new HomeScreen;
+            HomeDefaults::register($home);
+
+            return $home;
+        });
         $this->app->singleton(LinkFiles::class);
         $this->app->singleton(TemplateChoices::class);
         $this->app->singleton(FieldTypeChoices::class);
@@ -183,6 +191,7 @@ final class AdminServiceProvider extends ServiceProvider
         return (new Navigation)
             ->group(Navigation::SETTINGS, 'lynx-admin::shell.nav.settings', order: 80, icon: 'settings')
             ->group(Navigation::ACCESS, 'lynx-admin::shell.nav.access', order: 90, icon: 'shield-check')
+            ->add('lynx-admin::shell.nav.home', 'lynx.admin.home', order: 0, icon: 'house')
             ->add('lynx-admin::shell.nav.pages', 'lynx.admin.pages', order: 10, icon: 'folder-tree')
             ->add('lynx-admin::shell.nav.site_texts', 'lynx.admin.site-texts', order: 30, visible: fn (): bool => app(AdminAccess::class)->allows('pages.edit'), icon: 'type')
             ->add('lynx-admin::shell.nav.fields', 'lynx.admin.fields', order: 10, visible: $canManageSchema, icon: 'text-cursor-input', group: Navigation::SETTINGS)

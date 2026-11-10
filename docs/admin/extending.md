@@ -176,6 +176,55 @@ app(AdminSlots::class)->addView(AdminSlots::editorTab('seo'), 'my-module::seo-no
 
 The view gets `$page` and `$tab`. It renders again each time the editor does, so after a save it shows the saved page.
 
+## The home screen
+
+The admin opens on a home screen: a welcome with buttons for common tasks, a row of stats, then lists of drafts, scheduled changes and recent changes. Modules and your app add to each part through `HomeScreen`, and each entry shows only to the users its `visible` closure accepts:
+
+```php
+use LynxCms\Admin\AdminAccess;
+use LynxCms\Admin\Home\HomeScreen;
+
+$home = app(HomeScreen::class);
+$canSee = fn (): bool => app(AdminAccess::class)->allows('reports.view');
+
+// A number in the row of stats; a null value leaves it out.
+$home->stat('reports', 'Reports this week', fn (): int => Report::thisWeek()->count(),
+    url: fn (): string => route('lynx.admin.reports'), icon: 'chart-bar', visible: $canSee);
+
+// A button beside the welcome.
+$home->action('new-report', 'New report', fn (): string => route('lynx.admin.reports.create'),
+    icon: 'plus', visible: $canSee);
+
+// A panel below Lynx's own lists.
+$home->panel('reports::home-panel', $canSee, order: 30);
+```
+
+A label can be a translation key. `order` places an entry among the others of its kind, lower first; entries with the same order keep the order they were added in. Lynx's own stats (pages, pages not published, languages) and actions (New page, Edit site texts) use 10 to 30, and the forms and menus modules add theirs at 30 and 40.
+
+A stat is one number. A list, such as the most searched pages, is a panel. The panel's view gets no variables, so give it its data with a [view composer](https://laravel.com/docs/views#view-composers), a closure Laravel runs before it renders the view:
+
+```php
+View::composer('reports::home-panel', fn ($view) => $view->with('reports', Report::latest()->limit(5)->get()));
+```
+
+Build the panel from the home screen's own components, so it looks like Lynx's lists: a section with an icon, a heading linking to the full list, a count and an empty state, and a row per item, its title linking to it, details below and a date at the end:
+
+```blade
+<x-lynx-admin::home.section id="home-reports" icon="chart-bar" :href="route('lynx.admin.reports')"
+    :title="'Reports'" :count="$reports->count()"
+    :is-empty="$reports->isEmpty()" empty-icon="chart-bar"
+    empty-title="No reports yet." empty-help="Reports you run show here.">
+    @foreach ($reports as $report)
+        <x-lynx-admin::home.row :url="route('lynx.admin.reports.show', $report)" :title="$report->name">
+            {{ $report->summary }}
+            <x-slot:aside>{{ $report->created_at->isoFormat('D MMM') }}</x-slot:aside>
+        </x-lynx-admin::home.row>
+    @endforeach
+</x-lynx-admin::home.section>
+```
+
+`see-all-url` and `see-all-label` add a link to the full list, for when the panel shows only the first few.
+
 ## Page tree filters
 
 The page tree's Details view lists filters such as "Has a draft". A module can add its own, each a [selector](/basics/selectors) clause over the site's pages:

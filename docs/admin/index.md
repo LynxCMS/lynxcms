@@ -10,6 +10,7 @@ order: 6
 
 | Screen | Does | Needs |
 | --- | --- | --- |
+| Home | A welcome with buttons for common tasks, stats, pages with a draft, the next scheduled changes, the pages changed last, and what modules add (new form submissions). | signed in |
 | Pages | The page tree: expand, page, drag to sort or move, quick actions (publish, hide, duplicate, trash), and a Details view with each page's languages, status and last change. | `pages.view` |
 | Page editor | Fields per language, settings, drafts, history, schedule. | `pages.edit` |
 | Menus | The menu builder. | `menus.manage` |
@@ -19,6 +20,8 @@ order: 6
 | Languages | Add, edit and delete languages; tab labels. | `schema.manage` |
 | Roles, Users | Roles, their grants and who holds them; invitations. | superuser |
 | Account security | Password, two-factor authentication and passkeys. | signed in |
+
+The admin opens on its **Home** screen. It welcomes the user with the date and buttons for common tasks (**New page** under the home page, **Edit site texts**, and **Edit menus** with the menus module), then shows stats: how many pages there are, how many are not published and, on a site with several languages, how many languages. Below them it lists the pages with a draft, the next scheduled changes (one line for the same change in several languages) and the pages changed last, each with its latest change and who made it. Every list holds only pages the user may view, outside the trash. Each list's heading opens the full list, and when a list has more than it shows, **See all** does too: the page tree's filter for them (`/lynx/pages?filter=drafts`, `filter=scheduled`). With the forms module, a panel lists the newest unread submissions, and a stat counts the last 30 days', for those who may see them.
 
 The page tree shows titles by default. Its **Details** view adds, beside each title, the page's state in every language (the same facets as the editor's language tabs: its own title, another language's title, or not published there), its status and its last change. Each user's choice lasts for the session. Above it, filters list the pages with **Draft changes**, the **Scheduled** ones, and those **Not in** each other language, each with its count and a hint on hover saying what it finds. A filter shows its pages in one list, most recently changed first, each saying which page it sits under. The filters are [selectors](/basics/selectors#status) (`has_draft=1`, `has_schedule=1`, `language!=pt`), so your code can ask the same questions.
 
