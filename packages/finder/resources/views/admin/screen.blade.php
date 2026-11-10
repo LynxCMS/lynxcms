@@ -2,6 +2,8 @@
 @php($groups = $search['groups'])
 <div class="grid grid-cols-1 gap-8" data-finder>
     <section class="grid grid-cols-1 gap-4" aria-label="{{ __('lynx-finder::admin.title') }}">
+        @include('lynx-finder::admin.partials.saved')
+
         @if (count($groups) > 1)
             <div class="flex flex-wrap items-center gap-3">
                 <label for="finder-match" class="blat-label">{{ __('lynx-finder::admin.match.label') }}</label>

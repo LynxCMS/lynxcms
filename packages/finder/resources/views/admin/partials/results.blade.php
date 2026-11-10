@@ -15,6 +15,8 @@
         </div>
     </div>
 
+    @include('lynx-finder::admin.partials.bulk')
+
     @if ($rows === [])
         <x-lynx-admin::empty-state icon="search" :title="__('lynx-finder::admin.results.empty')" :help="__('lynx-finder::admin.results.empty_help')" />
     @else
@@ -22,6 +24,10 @@
             <table class="w-full text-sm">
                 <thead class="text-muted-foreground border-b text-start text-xs">
                     <tr>
+                        <th scope="col" class="w-10 ps-4 py-2.5">
+                            <input type="checkbox" class="blat-checkbox" aria-label="{{ __('lynx-admin::children.select_all') }}" data-finder-select-all
+                                x-on:change="$wire.set('selected', $event.target.checked ? @js(array_column($rows, 'id')) : [])" @checked(count(array_intersect($selected, array_column($rows, 'id'))) === count($rows))>
+                        </th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.title') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.template') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.status') }}</th>
@@ -31,6 +37,7 @@
                 <tbody class="divide-y">
                     @foreach ($rows as $row)
                         <tr wire:key="finder-row-{{ $row['id'] }}" data-finder-row="{{ $row['id'] }}">
+                            <td class="ps-4 py-2.5"><input type="checkbox" class="blat-checkbox" value="{{ $row['id'] }}" wire:model.live="selected" aria-label="{{ __('lynx-finder::admin.bulk.select', ['title' => $row['title']]) }}"></td>
                             <td class="px-4 py-2.5"><a href="{{ $row['url'] }}" wire:navigate class="font-medium underline-offset-4 hover:underline">{{ $row['title'] }}</a></td>
                             <td class="text-muted-foreground px-4 py-2.5">{{ $row['template'] }}</td>
                             <td class="px-4 py-2.5">

@@ -8,8 +8,11 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
+use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Query\SelectorException;
 use LynxCms\Core\Support\Value;
+use LynxCms\Finder\Admin\Concerns\ActsOnResults;
+use LynxCms\Finder\Admin\Concerns\ManagesSavedSearches;
 use LynxCms\Finder\Catalog\ConditionCatalog;
 use LynxCms\Finder\Catalog\Kind;
 use LynxCms\Finder\Catalog\Operator;
@@ -21,18 +24,27 @@ use LynxCms\Finder\Search\FinderQuery;
 /**
  * The Find pages screen: groups of conditions, each matching all or any of its conditions and
  * combined so a page matches every group or any, then the pages found and the selector the search
- * makes. The search lives in the URL, so a link opens it again.
+ * makes. The search lives in the URL, so a link opens it again. Searches can be saved
+ * (ManagesSavedSearches), the ticked results changed together (ActsOnResults) and every result
+ * exported as CSV (ExportResults).
  *
  * @internal
  */
 final class FinderScreen extends Component
 {
+    use ActsOnResults;
+    use ManagesSavedSearches;
+    use Notifies;
+
     /** @var array<array-key, mixed> the search, as FinderQuery::toArray() writes it */
     #[Url(as: 'q')]
     public array $search = [];
 
     #[Url(except: 0)]
     public int $start = 0;
+
+    /** The last notice, for screen readers and tests (Notifies). */
+    public ?string $status = null;
 
     public function boot(): void
     {
@@ -77,8 +89,8 @@ final class FinderScreen extends Component
 
     public function resetSearch(): void
     {
-        $this->search = $this->blank()->toArray();
-        $this->start = 0;
+        $this->replaceSearch($this->blank());
+        $this->forgetSavedSearch();
     }
 
     public function previous(): void
@@ -103,8 +115,7 @@ final class FinderScreen extends Component
             $this->changeGroup((int) $match[1], fn (ConditionGroup $group): ConditionGroup => $this->replaceCondition($group, (int) $match[2], new Condition(Value::string($value), $operator)));
         }
 
-        $this->search = FinderQuery::fromArray($this->search)->toArray();
-        $this->start = 0;
+        $this->replaceSearch(FinderQuery::fromArray($this->search));
     }
 
     public function render(): View
@@ -125,6 +136,10 @@ final class FinderScreen extends Component
             'selector' => $results->selector($query),
             'perPage' => FinderResults::PER_PAGE,
             'sorts' => self::sorts(),
+            'saved' => $this->savedSearches(),
+            'canShare' => $this->canShare(),
+            'canChangeSaved' => $this->canChangeSaved(),
+            'exportUrl' => route('lynx.admin.finder.export', ['q' => $this->search]),
         ]);
     }
 
@@ -179,9 +194,16 @@ final class FinderScreen extends Component
      */
     private function change(callable $change): void
     {
-        $query = $change(FinderQuery::fromArray($this->search));
+        $this->replaceSearch($change(FinderQuery::fromArray($this->search)));
+    }
+
+    /** A new search starts the results over, with nothing ticked; one without groups gets a blank group. */
+    private function replaceSearch(FinderQuery $query): void
+    {
         $this->search = ($query->groups === [] ? $this->blank() : $query)->toArray();
         $this->start = 0;
+        $this->selected = [];
+        $this->trashing = [];
     }
 
     /**
