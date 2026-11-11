@@ -89,7 +89,7 @@ The admin also offers password resets, two-factor authentication and passkeys. S
 
 ## Adding modules
 
-Modules are Composer packages, listed in the [introduction](/getting-started/introduction#the-packages). Install one with Composer. When it brings database changes, Composer's run of `package:discover` ends with a warning that names the module:
+Modules are Composer packages, listed in the [introduction](/getting-started/introduction#packages). Install one with Composer. When it brings database changes, Composer's run of `package:discover` ends with a warning that names the module:
 
 ```
 WARN  lynxcms/cache has 2 database changes waiting. Run php artisan lynx:migrate once the database is backed up.
