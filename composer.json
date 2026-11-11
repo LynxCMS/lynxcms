@@ -46,6 +46,7 @@
         "lynxcms/sitemap": "self.version",
         "lynxcms/page-password": "self.version",
         "lynxcms/cache": "self.version",
+        "lynxcms/finder": "self.version",
         "lynxcms/static-site": "self.version"
     },
     "autoload": {
@@ -62,6 +63,7 @@
             "LynxCms\\Sitemap\\": "packages/sitemap/src/",
             "LynxCms\\PagePassword\\": "packages/page-password/src/",
             "LynxCms\\Cache\\": "packages/cache/src/",
+            "LynxCms\\Finder\\": "packages/finder/src/",
             "LynxCms\\StaticSite\\": "packages/static-site/src/"
         },
         "files": [
@@ -89,6 +91,7 @@
                 "LynxCms\\Sitemap\\SitemapServiceProvider",
                 "LynxCms\\PagePassword\\PagePasswordServiceProvider",
                 "LynxCms\\Cache\\CacheServiceProvider",
+                "LynxCms\\Finder\\FinderServiceProvider",
                 "LynxCms\\StaticSite\\StaticSiteServiceProvider"
             ],
             "aliases": {

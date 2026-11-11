@@ -34,7 +34,11 @@
                         <span wire:sort:handle class="text-muted-foreground cursor-grab select-none" title="{{ __('lynx-admin::pages.picker.drag') }}" aria-hidden="true"><x-lucide-grip-vertical class="size-4" /></span>
                     @endif
                     <span class="min-w-0 flex-1">
-                        <a href="{{ route('lynx.admin.pages.edit', $page['id']) }}" class="font-medium underline-offset-4 hover:underline">{{ $page['title'] }}</a>
+                        @if ($linked)
+                            <a href="{{ route('lynx.admin.pages.edit', $page['id']) }}" class="font-medium underline-offset-4 hover:underline">{{ $page['title'] }}</a>
+                        @else
+                            <span class="font-medium">{{ $page['title'] }}</span>
+                        @endif
                         <span class="text-muted-foreground ms-2 truncate text-xs">{{ $page['hint'] }}</span>
                     </span>
                     @if ($isSortable)

@@ -19,6 +19,7 @@ providers:
   - LynxCms\Seo\SeoServiceProvider
   - LynxCms\Sitemap\SitemapServiceProvider
   - LynxCms\PagePassword\PagePasswordServiceProvider
+  - LynxCms\Finder\FinderServiceProvider
   - LynxCms\Cache\CacheServiceProvider
   - LynxCms\StaticSite\StaticSiteServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider

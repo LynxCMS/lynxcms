@@ -90,6 +90,12 @@ final readonly class TreeFilters
         return "{$this->base}, id=".implode('|', $pageIds === [] ? [0] : $pageIds);
     }
 
+    /** A selector for the pages the filters cover that also match $terms (all of them for ""), such as the finder's searches. */
+    public function within(string $terms): string
+    {
+        return $terms === '' ? $this->base : "{$this->base}, {$terms}";
+    }
+
     /** How many of the pages the filters cover match a selector term, such as "status=unpublished"; all of them for "". */
     public function total(string $term = ''): int
     {

@@ -19,6 +19,8 @@
 @source "../../../cache/resources/views/admin";
 /* The static site export screen. */
 @source "../../../static-site/resources/views/admin";
+/* The Page Finder screen. */
+@source "../../../finder/resources/views/admin";
 
 /*
  * BlatUI tokens, presets and @theme mapping (ADR-0034). Colours come only from these tokens

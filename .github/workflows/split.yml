@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [admin, ai, cache, contracts, core, forms, mcp, media, menus, page-password, seo, sitemap, static-site]
+        package: [admin, ai, cache, contracts, core, finder, forms, mcp, media, menus, page-password, seo, sitemap, static-site]
     steps:
       - uses: actions/checkout@v7
         with:

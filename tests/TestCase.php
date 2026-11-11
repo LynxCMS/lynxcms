@@ -14,6 +14,7 @@ use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Ai\AiServiceProvider;
 use LynxCms\Cache\CacheServiceProvider;
 use LynxCms\Core\LynxServiceProvider;
+use LynxCms\Finder\FinderServiceProvider;
 use LynxCms\Forms\FormsServiceProvider;
 use LynxCms\Mcp\McpServiceProvider;
 use LynxCms\Media\MediaServiceProvider;
@@ -67,6 +68,7 @@ abstract class TestCase extends Orchestra
             SeoServiceProvider::class,
             SitemapServiceProvider::class,
             PagePasswordServiceProvider::class,
+            FinderServiceProvider::class,
             CacheServiceProvider::class,
             StaticSiteServiceProvider::class,
             WorkbenchServiceProvider::class,

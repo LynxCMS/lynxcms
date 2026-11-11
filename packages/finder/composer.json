@@ -1,0 +1,18 @@
+{
+    "name": "lynxcms/finder",
+    "description": "Page Finder for the Lynx CMS admin: search every page by its fields, template, status and dates, with conditions grouped by all and any.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version",
+        "lynxcms/admin": "self.version"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Finder\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Finder\\FinderServiceProvider"]
+        }
+    }
+}
