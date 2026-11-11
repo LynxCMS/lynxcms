@@ -8,7 +8,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -43,6 +42,7 @@ use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Actions\Templates\DeleteTemplate;
 use LynxCms\Core\Events\ContentChanged;
 use LynxCms\Core\Facades\Lynx;
+use LynxCms\Core\Http\GlobalMiddleware;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Lynx as CoreLynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
@@ -99,7 +99,7 @@ final class CacheServiceProvider extends ServiceProvider
             AdminIntegration::register();
         }
         // First in the stack, so stored pages are sent before the session starts.
-        $this->app->make(Kernel::class)->prependMiddleware(PageCacheMiddleware::class);
+        $this->app->make(GlobalMiddleware::class)->prepend(PageCacheMiddleware::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishes([self::ROOT.'/config/lynx-cache.php' => config_path('lynx-cache.php')], 'lynx-cache-config');
