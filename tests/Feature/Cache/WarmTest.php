@@ -56,6 +56,21 @@ it('stores every public page in every language it is live in', function (): void
         ->and(app(PageStore::class)->get(new CacheAddress('localhost', 'pt/nota-a'))?->html)->toContain('lang="pt');
 });
 
+it('renders each warmed page in its own language, whatever the page before it was in', function (): void {
+    foreach (['a', 'b'] as $name) {
+        $page = lynx()->pages->get("/{$name}");
+        $page->setLanguageValue('pt', 'title', 'Nota '.$name);
+        $page->save();
+    }
+
+    $this->artisan('lynx:page-cache', ['--warm' => true])->assertSuccessful();
+    $html = fn (string $path): string => (string) app(PageStore::class)->get(new CacheAddress('localhost', $path))?->html;
+
+    // Visits run a, pt/nota-a, b, pt/nota-b in one process: b comes straight after a Portuguese page.
+    expect($html('b'))->toContain('lang="en')->toContain('Note b')->not->toContain('Nota b')
+        ->and($html('pt/nota-b'))->toContain('lang="pt')->toContain('Nota b');
+});
+
 it('leaves out templates without a cache rule and says why pages were skipped', function (): void {
     config(['lynx-cache.pages.templates' => ['note' => []]]);
 
