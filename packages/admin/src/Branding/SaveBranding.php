@@ -42,7 +42,7 @@ final class SaveBranding extends Action
 
     public static function description(): string
     {
-        return 'Change the name, logo and colours the admin shows on its sign-in screens and sidebar. Leave a key out to keep it; send it empty to go back to the default.';
+        return 'Change the name, logo and colors the admin shows on its sign-in screens and sidebar. Leave a key out to keep it; send it empty to go back to the default.';
     }
 
     public static function rules(): array
