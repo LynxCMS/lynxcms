@@ -50,6 +50,10 @@ final class PagePicker extends Component
     #[Locked]
     public array $excludeBelow = [];
 
+    /** False: the chosen pages show as text, not links to their editor, where a click must not leave the screen (the Page Finder). */
+    #[Locked]
+    public bool $linked = true;
+
     public string $search = '';
 
     /**
@@ -76,8 +80,9 @@ final class PagePicker extends Component
      * @param  array<array-key, mixed>  $exclude
      * @param  array<array-key, mixed>  $excludeBelow
      */
-    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0, array $exclude = [], array $excludeBelow = []): void
+    public function mount(array $value = [], bool $multiple = true, array $templates = [], ?string $placeholder = null, int $max = 0, array $exclude = [], array $excludeBelow = [], bool $linked = true): void
     {
+        $this->linked = $linked;
         $this->exclude = Value::ints($exclude);
         $this->excludeBelow = Value::ints($excludeBelow);
         $this->value = Value::ints($value);

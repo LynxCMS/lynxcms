@@ -115,3 +115,13 @@ it('says where a page without a URL lives, so two pages of the same title can be
         (int) $note->id => __('lynx-admin::pages.picker.under', ['page' => 'Alpha']),
     ]);
 });
+
+it('links the chosen pages to their editor unless told not to', function (): void {
+    $alpha = pid('/courses/alpha/');
+    $editor = 'href="'.route('lynx.admin.pages.edit', $alpha).'"';
+
+    Livewire::test(PagePicker::class, ['value' => [$alpha]])->assertSeeHtml($editor);
+    Livewire::test(PagePicker::class, ['value' => [$alpha], 'linked' => false])
+        ->assertDontSeeHtml($editor)
+        ->assertSeeHtml('data-chosen-page="'.$alpha.'"');
+});

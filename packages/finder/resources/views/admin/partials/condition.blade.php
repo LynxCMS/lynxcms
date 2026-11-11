@@ -41,7 +41,7 @@
                     @break
                 @case('pages')
                     <div class="w-full">
-                        <livewire:lynx-admin.page-picker wire:model.live="{{ $path }}.pages" :multiple="true" :placeholder="__('lynx-finder::admin.condition.pages_placeholder')" :key="$id.'-pages-'.$condition['subject']" />
+                        <livewire:lynx-admin.page-picker wire:model.live="{{ $path }}.pages" :multiple="true" :linked="false" :placeholder="__('lynx-finder::admin.condition.pages_placeholder')" :key="$id.'-pages-'.$condition['subject']" />
                     </div>
                     @break
                 @case('none')
