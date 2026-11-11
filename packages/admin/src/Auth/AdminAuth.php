@@ -103,8 +103,8 @@ final class AdminAuth
                 Features::passkeys(['confirmPassword' => true]),
             ],
             // Fortify copies this from fortify.home while it registers, usually before the admin
-            // does (tests/ProviderOrder). Fortify registers the passkey routes itself, limited by
-            // fortify.limiters.passkeys above, so passkeys.throttle is never read.
+            // does (ADR-0112, tests/ProviderOrder). Fortify registers the passkey routes itself,
+            // limited by fortify.limiters.passkeys above, so passkeys.throttle is never read.
             'passkeys.redirect' => "/{$prefix}/pages",
         ]);
         Invitations::configureBroker();
