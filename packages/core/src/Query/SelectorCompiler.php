@@ -55,8 +55,9 @@ final class SelectorCompiler
     /**
      * @param  list<Clause>  $clauses
      * @param  list<int>  $chain  language ids, current language first
+     * @param  list<OrGroupSet>  $groups  sets of OR groups (ADR-0110), each of which must match
      */
-    public function compile(array $clauses, array $chain): CompiledSelector
+    public function compile(array $clauses, array $chain, array $groups = []): CompiledSelector
     {
         // Drafts (ADR-0039) are never found: they are versions of a page, not pages.
         $query = DB::table(self::PAGES)->select(self::PAGES.'.id')->whereNull(self::PAGES.'.draft_of');
@@ -86,6 +87,10 @@ final class SelectorCompiler
             };
         }
 
+        foreach ($groups as $set) {
+            $include = [...$include, ...$this->whereAnyGroup($query, $set, $chain)];
+        }
+
         $this->status->apply($query, $include);
         $this->urls->apply($query, $clauses, $include, $this->pageId(...));
 
@@ -96,6 +101,32 @@ final class SelectorCompiler
         }
 
         return new CompiledSelector($query, $countQuery, $limit, $start, $join);
+    }
+
+    /**
+     * One set of OR groups: the page matches every clause of at least one alternative. A status a
+     * group names is let through for the whole selector, as it is outside groups.
+     *
+     * @param  list<int>  $chain
+     * @return list<string> statuses the groups name
+     */
+    private function whereAnyGroup(Builder $query, OrGroupSet $set, array $chain): array
+    {
+        $include = [];
+
+        $query->where(function (Builder $any) use ($set, $chain, &$include): void {
+            foreach ($set->alternatives as $alternative) {
+                $any->orWhere(function (Builder $all) use ($alternative, $chain, &$include): void {
+                    foreach ($alternative as $clause) {
+                        PageStateMatch::handles($clause)
+                            ? $include = [...$include, ...$this->state->apply($all, $clause)]
+                            : $this->where($all, $clause, $chain);
+                    }
+                });
+            }
+        });
+
+        return $include;
     }
 
     /**

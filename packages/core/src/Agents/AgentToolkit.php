@@ -156,7 +156,7 @@ final readonly class AgentToolkit
                 'description' => $c->description,
                 'settings' => array_map(fn (Type $s): array => $s->toArray(), $c->settingsSchema(new JsonSchemaTypeFactory)),
             ], array_values($this->components->all())),
-            'selector_help' => 'Selectors: "template=course, parent=/courses/, title%=word, price<300, sort=-title, limit=10". Operators: = != < > <= >= %= (contains) ^= (starts) $= (ends). Use | for OR values. Add "language=pt" to match on Portuguese values with fallback. find_pages returns at most '.Value::int(config('lynx.agents.max_limit', 100), 100).' pages per call; page with start=.',
+            'selector_help' => 'Selectors: "template=course, parent=/courses/, title%=word, price<300, sort=-title, limit=10". Operators: = != < > <= >= %= (contains) ^= (starts) $= (ends). Use | for OR values. Parenthesised groups are OR alternatives, commas inside meaning AND: "(price<20), (price>=50, summary%=advanced)"; groups sharing a name ("cost=(…), cost=(…)") form sets that must each match; one level deep. Add "language=pt" to match on Portuguese values with fallback. find_pages returns at most '.Value::int(config('lynx.agents.max_limit', 100), 100).' pages per call; page with start=.',
         ];
     }
 
