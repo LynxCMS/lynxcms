@@ -1,6 +1,6 @@
 ---
 title: Bookings Are Actions
-description: Chapter 3 of the meeting rooms guide. Booking, changing, cancelling and blocking rooms as Lynx actions, with the office's rules, Zap's conflict check, dry runs and the activity log.
+description: Chapter 3 of the meeting rooms guide. Booking, changing, canceling and blocking rooms as Lynx actions, with the office's rules, Zap's conflict check, dry runs and the activity log.
 ---
 
 # Bookings Are Actions

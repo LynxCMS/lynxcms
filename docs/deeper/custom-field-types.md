@@ -5,7 +5,7 @@ description: Write your own field type, with storage, validation, selectors, set
 
 # Custom Field Types
 
-Lynx's [field types](/basics/field-types) cover most content, but a site can need its own: a star rating, a colour from a brand palette, a product code checked against an external system. A field type decides how a value is stored, validated, compared in selectors and shown in templates, and every part of Lynx then works with it: saving through any action, selectors, schema files, content packages, the MCP server and the AI agent.
+Lynx's [field types](/basics/field-types) cover most content, but a site can need its own: a star rating, a color from a brand palette, a product code checked against an external system. A field type decides how a value is stored, validated, compared in selectors and shown in templates, and every part of Lynx then works with it: saving through any action, selectors, schema files, content packages, the MCP server and the AI agent.
 
 ## A first field type: star ratings
 
@@ -69,7 +69,7 @@ includes:
 
 Each field then reads as its type presents it, on pages and on repeater and matrix items: `TranslatableValue|null` for translatable fields and `SharedValue|null` for other texts (both read as `null` when empty), `int|null` for an integer, a `PageArray` for page references (`Page|null` with `multiple: false`), a single image or `null` for an images field with `max_files: 1`. Writes accept any value, as `pages.save` validates them; of the built-in properties, only `$page->name` may be set. Every field is listed, so reading a field the page's template does not have still returns `null` at runtime.
 
-`lynx:phpstan` writes `lynx/phpstan/types.php`. Commit it, and regenerate it after changing fields, for example in the same commit as `lynx:schema:export`. Elsewhere, point the extension at it with `parameters.lynx.types`. PHPStan 2.3 and later analyse the code that reads fields again when the file changes; with an older PHPStan, run `vendor/bin/phpstan clear-result-cache` after regenerating it, or the result cache keeps reporting the old fields.
+`lynx:phpstan` writes `lynx/phpstan/types.php`. Commit it, and regenerate it after changing fields, for example in the same commit as `lynx:schema:export`. Elsewhere, point the extension at it with `parameters.lynx.types`. PHPStan 2.3 and later analyze the code that reads fields again when the file changes; with an older PHPStan, run `vendor/bin/phpstan clear-result-cache` after regenerating it, or the result cache keeps reporting the old fields.
 
 ### Autocomplete in your editor
 

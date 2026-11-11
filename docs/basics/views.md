@@ -246,7 +246,7 @@ A text that holds a value, such as a name or a time, marks it with a placeholder
 <p>@string('rooms.free', ['en' => ':room is free until :time.', 'fr' => 'La salle :room est libre jusqu\'à :time.'], replace: ['room' => $room->title, 'time' => $until])</p>
 ```
 
-`:Room` capitalises the value and `:ROOM` upper-cases it. Values are escaped like the text. `replace:` is the one argument that may be code; the Texts tab lists the placeholders each text uses and asks editors to keep them.
+`:Room` capitalizes the value and `:ROOM` upper-cases it. Values are escaped like the text. `replace:` is the one argument that may be code; the Texts tab lists the placeholders each text uses and asks editors to keep them.
 
 ### Texts in Livewire components
 
@@ -288,6 +288,29 @@ lynx()->run(SetNotFoundPage::class, ['page' => '/oops/']); // or null for none
 ```
 
 Sites installed before this existed get the page the next time `php artisan lynx:install` runs; it does nothing once someone has chosen a page, or none.
+
+## Showing an edit link to editors
+
+A view can show a link to the page editor to the people allowed to edit the page, and to no one else:
+
+```blade
+@can('lynx.pages.edit', $page)
+    <a href="{{ route('lynx.admin.pages.edit', $page->id) }}">Edit this page</a>
+@endcan
+```
+
+`@can` is Laravel's Blade directive for authorization checks. Lynx answers it for every permission listed in [Roles and permissions](/admin/permissions), written with a `lynx.` prefix: `lynx.pages.publish`, `lynx.pages.delete`, or a module's own, such as `lynx.forms.view`. `@cannot` and `Gate::allows()` work the same way.
+
+The answer follows the user's roles:
+
+- **Pass the page.** A grant can be limited to some templates or to a branch of the page tree, and Lynx checks those limits against the page you pass. Without a page, `@can('lynx.pages.edit')` is true for anyone who may edit some page, so an editor of the courses section would see the link on every page.
+- **Superusers** always see the link.
+- **Visitors** who are not signed in never see it.
+- **A site with no roles yet** shows it to every signed in user when `LYNX_OPEN_UNTIL_ROLES=true`. That setting is for local work only.
+
+Hiding the link does not protect the page. The editor checks permissions again: users who may only view the page see it read only, users who may not view it get a 403 page, and saving is refused without `pages.edit` for that page.
+
+With the [page cache](/modules/page-cache), signed in users always get a freshly rendered page, and pages rendered for them are never stored. Visitors never receive a copy that shows an editor's link.
 
 ## Drafts and old URLs
 

@@ -28,11 +28,11 @@ What that gives each page:
 | Page | JSON-LD | Search engines can show |
 | --- | --- | --- |
 | A course | `Course`, provided by the school, with an offer in euros | The course and its price |
-| A session | `Event` with its start, status and an offer, at a `Place` | The date, the studio, and whether it is cancelled |
+| A session | `Event` with its start, status and an offer, at a `Place` | The date, the studio, and whether it is canceled |
 | A studio | `Place` with its address | The address |
 | The home page | `FAQPage` from the questions repeater | The questions and answers |
 
-The session's `location` is a page reference to a studio. Because the `location` template is mapped too, the studio appears once in the graph and the event links to it. `availability` is a choice whose values (`scheduled`, `cancelled`) are schema.org's event statuses, so a cancelled session is marked cancelled in search the moment staff change it.
+The session's `location` is a page reference to a studio. Because the `location` template is mapped too, the studio appears once in the graph and the event links to it. `availability` is a choice whose values (`scheduled`, `cancelled`) are schema.org's event statuses, so a canceled session is marked canceled in search the moment staff change it.
 
 Every page also gets the site, the school and its breadcrumbs. Check a page with Google's Rich Results Test, or ask Lynx: `lynx()->seo($page)->jsonLd`, or the `seo_inspect` MCP tool.
 
@@ -40,13 +40,13 @@ These mappings are actions, so the owner's AI assistant can make them too (`seo_
 
 ## Filtered lists
 
-`/courses?level=beginner` shows the same courses as part of `/courses`. Search engines should index the catalogue once, so the catalogue's view passes overrides to the layout when a filter is set:
+`/courses?level=beginner` shows the same courses as part of `/courses`. Search engines should index the catalog once, so the catalog's view passes overrides to the layout when a filter is set:
 
 ```blade
 <x-layouts.site :page="$page" :seo="isset($filters['level']) || isset($filters['q']) ? ['robots' => 'noindex, follow', 'canonical' => $page->url] : []">
 ```
 
-The filtered list asks not to be indexed, still lets crawlers follow its links to the courses, and points them at the full catalogue.
+The filtered list asks not to be indexed, still lets crawlers follow its links to the courses, and points them at the full catalog.
 
 ## The sitemap
 

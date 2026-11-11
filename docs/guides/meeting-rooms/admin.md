@@ -87,7 +87,7 @@ Only the token's hash is stored, in the app's own `kiosk_links` table and never 
 
 ## The admin's look for app views
 
-The admin ships its CSS already built, so Tailwind classes it never used are missing from it. The app's admin views get their own small stylesheet, built by Vite from the admin's colour tokens, and added to the admin's pages:
+The admin ships its CSS already built, so Tailwind classes it never used are missing from it. The app's admin views get their own small stylesheet, built by Vite from the admin's color tokens, and added to the admin's pages:
 
 ```php
 config(['lynx-admin.stylesheets' => [...Value::strings(config('lynx-admin.stylesheets', [])), Vite::asset('resources/css/admin.css')]]);

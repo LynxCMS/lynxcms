@@ -72,7 +72,7 @@ Wrap the view in the admin layout and use the BlatUI components:
 </x-lynx-admin::layout>
 ```
 
-Colours come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
+Colors come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
 
 When a list has nothing to show, say what would be there, how it gets there and, in the slot, offer the action that adds the first one. `compact` fits a panel or a narrow column:
 
@@ -288,8 +288,8 @@ Every admin page then links it after the admin's own stylesheet and before the s
 
 ### Keeping the site's look
 
-Your classes read the same variables as the admin's, so a site's appearance settings and branding (accent colour, base colour, radius, fonts, spacing, dark mode) apply to your screens too. Three things keep it that way:
+Your classes read the same variables as the admin's, so a site's appearance settings and branding (accent color, base color, radius, fonts, spacing, dark mode) apply to your screens too. Three things keep it that way:
 
 - Don't define tokens in your stylesheet (`--primary`, `--radius`, `--spacing`…). `module.css` defines none, and anything you add would override the site's settings. Tailwind's own `--tw-` variables are fine.
-- Use the admin's colour classes (`bg-primary`, `text-muted-foreground`), not Tailwind's palette (`bg-blue-500`), which `module.css` leaves out.
+- Use the admin's color classes (`bg-primary`, `text-muted-foreground`), not Tailwind's palette (`bg-blue-500`), which `module.css` leaves out.
 - Use the admin's form components (`<x-lynx-admin::ui.input>`, `ui.textarea`, `ui.select`, `ui.checkbox`, `ui.switch`), or give a native control BlatUI's class for it (`blat-input`, `blat-textarea`, `blat-select`, `blat-checkbox`, `blat-radio`). Both follow the site's input style (outline, fill or inset); a control with classes of your own does not.

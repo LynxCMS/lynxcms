@@ -83,9 +83,9 @@ lynx()->run(SavePageCacheRules::class, ['templates' => ['search' => ['cache' => 
 
 A cached copy is the same for every visitor, but a form carries a security token that must be each visitor's own. `@lynxCsrf`, which the layout has in its `<head>`, takes care of it: the cached contact page holds a placeholder, and a small script fetches each visitor's token when the page loads. Signed-in staff never get cached pages, so they always see the live site. [Page Cache](/modules/page-cache) explains how to send cached pages without PHP, which makes the site faster still.
 
-## The admin in the firm's colours
+## The admin in the firm's colors
 
-The admin's sign-in screen and sidebar can carry the firm's name, logo and colours. Superusers set them under **Settings › General**; the seeder sets them once:
+The admin's sign-in screen and sidebar can carry the firm's name, logo and colors. Superusers set them under **Settings › General**; the seeder sets them once:
 
 ```php
 use LynxCms\Admin\Branding\SaveBranding;

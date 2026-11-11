@@ -21,7 +21,7 @@ You can set up more than one and let editors pick per translation.
 
 ## Installing
 
-Your licence explains how to add the module's package repository to `composer.json`. Then install it, back up the database, and apply its migrations:
+Your license explains how to add the module's package repository to `composer.json`. Then install it, back up the database, and apply its migrations:
 
 ```bash
 composer require lynxcms/translate

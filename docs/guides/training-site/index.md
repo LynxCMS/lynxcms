@@ -23,7 +23,7 @@ The code is tested: every file the guide shows runs in Lynx's test suite, so it 
 | 6. [Leads](./leads) | An enquiry form, a newsletter form, a CRM link | An inbox of leads, and leads in their CRM |
 | 7. [Paid bookings](./bookings) | Stripe Checkout and a webhook | Revenue, with seats counted for them |
 | 8. [Members area](./members) | Sign-up, bookings, gated materials | Customers who help themselves |
-| 9. [Surveys](./surveys) | Course feedback forms for members | Answers, summarised per question |
+| 9. [Surveys](./surveys) | Course feedback forms for members | Answers, summarized per question |
 | 10. [Launch](./launch) | Caching, backups, deploys, AI tools | A fast site that is safe to run |
 
 

@@ -1,6 +1,6 @@
 ---
 title: The Front End
-description: Chapter 3 of the training site guide. Views from BlatUI's Bloom template, editable texts, menus, a language switcher and a filtered course catalogue.
+description: Chapter 3 of the training site guide. Views from BlatUI's Bloom template, editable texts, menus, a language switcher and a filtered course catalog.
 ---
 
 # The Front End
@@ -75,9 +75,9 @@ Every course appears as the same card, with its next open session:
 
 <<< @/snippets/training/resources/views/partials/course-card.blade.php{blade}
 
-## The catalogue
+## The catalog
 
-The catalogue filters courses by level and by a search, with pagination. A view composer reads the query string, validates it, and builds one selector; the template only prints. Register it in a service provider, and add the provider to `bootstrap/providers.php`:
+The catalog filters courses by level and by a search, with pagination. A view composer reads the query string, validates it, and builds one selector; the template only prints. Register it in a service provider, and add the provider to `bootstrap/providers.php`:
 
 <<< @/snippets/training/app/Providers/AtlasServiceProvider.php#views{php}
 
@@ -97,5 +97,5 @@ Prices print with Laravel's `Number::currency()` in the visitor's locale: *€2,
 
 ## What you get
 
-- **The client:** a finished-looking site in two languages, where every text, menu, figure, testimonial and question is theirs to change, and new courses appear in the catalogue, the tabs and the menus by themselves.
-- **You:** BlatUI components you own, plain Blade views that read typed values, and a catalogue built from one selector. No JavaScript build of your own beyond Tailwind and BlatUI's Alpine helpers.
+- **The client:** a finished-looking site in two languages, where every text, menu, figure, testimonial and question is theirs to change, and new courses appear in the catalog, the tabs and the menus by themselves.
+- **You:** BlatUI components you own, plain Blade views that read typed values, and a catalog built from one selector. No JavaScript build of your own beyond Tailwind and BlatUI's Alpine helpers.

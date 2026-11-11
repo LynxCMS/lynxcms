@@ -19,7 +19,7 @@ Then say which pages are kept and what a change clears:
 
 <<< @/snippets/training/database/seeders/AtlasCacheSeeder.php#rules{php}
 
-`parents` clears every page above, so a new session date reaches its course page, the catalogue and the home page's course cards in one save. Staff with `page_cache.manage` see and change these rules under **Settings › Page cache**, and the page editor's **Cache** tab says whether a page is stored, and why not.
+`parents` clears every page above, so a new session date reaches its course page, the catalog and the home page's course cards in one save. Staff with `page_cache.manage` see and change these rules under **Settings › Page cache**, and the page editor's **Cache** tab says whether a page is stored, and why not.
 
 Signed-in users never get stored pages, so members, staff and their previews always see the live site. Materials pages are personal, so they are never stored.
 
