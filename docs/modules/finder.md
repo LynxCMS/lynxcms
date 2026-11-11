@@ -1,6 +1,6 @@
 ---
 title: Page Finder
-description: An admin screen where editors find pages by their fields, template, status and dates, with conditions grouped by all and any.
+description: An admin screen where editors find pages by their fields, template, status and dates, save searches, change the pages found together and export them.
 order: 12
 ---
 
@@ -55,6 +55,35 @@ The results list each page with its template, status and last change, newest cha
 The finder searches the pages of the page tree, in every status, and leaves out the trash, system pages and the branches modules manage on screens of their own (menus, forms). A user whose role is limited to some branches finds only pages there.
 
 The whole search lives in the address bar, so a bookmark or a link sent to a colleague opens it again.
+
+## Saving searches
+
+**Save search** keeps the search on screen under a name. Saved searches are listed at the top of the screen; choosing one opens it, and saving again updates it (**Save as new** keeps both). Only the user who saved a search, or a superuser, may change or delete it.
+
+A search can be **shared** with everyone who may find pages, for users whose role has the **finder.share** permission. Shared searches run with each viewer's own permissions, so a colleague limited to one branch sees only the pages there.
+
+Saving and deleting are actions, so they also work from code, MCP and the agent:
+
+```php
+use LynxCms\Finder\Actions\SaveSearch;
+
+lynx()->run(SaveSearch::class, [
+    'name' => 'Courses without a summary',
+    'query' => ['groups' => [['conditions' => [
+        ['subject' => 'template', 'operator' => 'is', 'value' => 'course'],
+        ['subject' => 'summary', 'operator' => 'blank'],
+    ]]]],
+    'shared' => true,
+]);
+```
+
+## Changing many pages at once
+
+Tick the results to change them together: **Publish**, **Unpublish**, **Hide**, **Show** or **Move to trash** (after a confirmation). Each page goes through the same action as in the page tree, so a role that may not publish, or a locked page, is refused for that page and the others still change. The message says how many changed and why some did not.
+
+## Exporting
+
+**Export CSV** downloads every page the search finds, not only the page of results on screen: id, title, template, status, last change and address. A title that starts like a spreadsheet formula gets a leading quote, so opening the file never runs it.
 
 ## The selector
 

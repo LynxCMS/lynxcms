@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace LynxCms\Forms\Admin\Http;
+namespace LynxCms\Admin\Http;
 
 /**
- * A CSV cell a spreadsheet will show as text: a visitor's answer that starts like a formula
+ * A CSV cell a spreadsheet will show as text: a value (a visitor's answer, a page title) that starts like a formula
  * (=, +, -, @, a tab or a carriage return) gets a leading quote, so opening the export never runs
  * it (OWASP's advice for CSV injection). Plain numbers stay numbers.
  *
- * @internal
+ * @api
  */
 final class SpreadsheetCell
 {

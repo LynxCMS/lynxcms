@@ -39,7 +39,7 @@ final readonly class ResultRows
     /**
      * @return array{id: int, title: string, url: string, template: string, statuses: list<array{key: string, label: string}>, changed: string|null, changedAt: string|null}
      */
-    private function row(Page $page): array
+    public function row(Page $page): array
     {
         $changed = $page->updatedAt === null ? null : now()->parse($page->updatedAt);
         $template = $page->template();
