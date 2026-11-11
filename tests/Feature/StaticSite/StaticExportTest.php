@@ -66,6 +66,20 @@ it('exports every published page in every language as an index.html, linked to t
         ->and(File::exists($this->dist.'/.lynx-static'))->toBeTrue();
 });
 
+it('renders each exported page in its own language, whatever the page before it was in', function (): void {
+    foreach (['a', 'b'] as $name) {
+        $page = lynx()->pages->get("/{$name}");
+        $page->setLanguageValue('pt', 'title', 'Nota '.$name);
+        $page->save();
+    }
+
+    $this->artisan('lynx:static')->assertSuccessful();
+
+    // Pages are visited in one process, so b comes after a Portuguese page.
+    expect(File::get($this->dist.'/b/index.html'))->toContain('lang="en')->toContain('Note b')->not->toContain('Nota b')
+        ->and(File::get($this->dist.'/pt/nota-b/index.html'))->toContain('lang="pt')->toContain('Nota b');
+});
+
 it('leaves out pages a visitor may not see', function (): void {
     lynx()->run(EnablePagePassword::class, ['template' => 'note']);
     $locked = lynx()->pages->get('/b');

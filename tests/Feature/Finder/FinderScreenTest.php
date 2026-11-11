@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Finder\Admin\FinderScreen;
@@ -40,6 +42,13 @@ it('refuses users who may not view pages', function (): void {
     $this->actingAs(new GenericUser(['id' => 5]));
 
     $this->get('/lynx/finder')->assertForbidden();
+});
+
+it('keeps checking the admin gate on Livewire updates, which skip the admin routes', function (): void {
+    $screen = Livewire::test(FinderScreen::class);
+    Gate::define(AdminServiceProvider::GATE, fn (): bool => false);
+
+    $screen->call('next')->assertForbidden();
 });
 
 it('lists every page before any condition is set', function (): void {
