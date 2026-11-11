@@ -9,7 +9,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\View\Component;
-use Livewire\Features\SupportAutoInjectedAssets\SupportAutoInjectedAssets;
+use Livewire\LivewireManager;
 use LynxCms\Cache\Islands\Island;
 use LynxCms\Cache\Pages\PageRequest;
 use LynxCms\Core\Http\PageAttributes;
@@ -58,9 +58,9 @@ final class IslandComponent extends Component
         $type = $this->livewire === null ? Island::VIEW : Island::LIVEWIRE;
         $island = new Island($type, (string) ($this->livewire ?? $this->view), $this->with, $this->page()?->id, app(LanguageContext::class)->current()->code);
 
-        if ($type === Island::LIVEWIRE && class_exists(SupportAutoInjectedAssets::class)) {
+        if ($type === Island::LIVEWIRE && class_exists(LivewireManager::class)) {
             // No component renders on the stored page, so Livewire would leave its script out.
-            SupportAutoInjectedAssets::$forceAssetInjection = true;
+            app(LivewireManager::class)->forceAssetInjection();
         }
 
         return '<lynx-island data-island="'.e($island->encrypt()).'">'.$fallback.'</lynx-island>';
