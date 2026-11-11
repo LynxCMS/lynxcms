@@ -6,6 +6,7 @@ namespace LynxCms\Finder\Catalog;
 
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Contracts\Fields\Comparison;
+use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
@@ -13,8 +14,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * What a finder condition can look at: the page's template, place in the tree, status and dates,
- * then every field selectors can compare (Comparison::None fields, such as repeaters and
- * passwords, are left out). Each comes with the operators its kind offers.
+ * then every field selectors can compare (Comparison::None fields, such as passwords, are left
+ * out; fields of items, such as images and repeaters, are compared by how many items they hold). Each comes with the operators its kind offers.
  *
  * @api
  */
@@ -119,6 +120,11 @@ final class ConditionCatalog
     private function kindOf(Field $field): ?Kind
     {
         $type = $field->fieldType();
+
+        // Items can hold page references too, but are found by how many items they hold.
+        if ($type instanceof ItemFieldType) {
+            return Kind::Items;
+        }
 
         if ($type instanceof ReferencesPages) {
             return Kind::Pages;

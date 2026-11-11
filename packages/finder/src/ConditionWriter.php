@@ -30,11 +30,12 @@ final readonly class ConditionWriter
         $name = $subject->name;
 
         return match (true) {
+            $subject->kind === Kind::Items && ! $operator->takesValue() => [$name.($operator === Operator::Blank ? '.count=0' : '.count>0')],
             ! $operator->takesValue() => [$name.$this->presence($operator)],
             $subject->kind === Kind::Text => $this->compare($name, $operator, $this->text($condition->value)),
             $subject->kind === Kind::Number => $this->number($name, $operator, $condition),
             $subject->kind === Kind::Date, $subject->kind === Kind::Moment => $this->date($name, $operator, $condition),
-            $subject->kind === Kind::Pages && $operator === Operator::AtLeast => $this->compare("{$name}.count", $operator, $this->digits($condition->value)),
+            $operator === Operator::AtLeast => $this->compare("{$name}.count", $operator, $this->digits($condition->value)),
             $subject->kind === Kind::Template, $subject->kind === Kind::Status => $this->compare($name, $operator, array_key_exists($condition->value, $subject->options) ? $condition->value : null),
             default => $this->compare($name, $operator, $condition->pages === [] ? null : implode('|', $condition->pages)),
         };

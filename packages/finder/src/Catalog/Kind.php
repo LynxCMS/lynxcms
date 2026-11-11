@@ -6,7 +6,8 @@ namespace LynxCms\Finder\Catalog;
 
 /**
  * What a finder condition looks at, which decides its operators and the input its value takes.
- * Moment is a page's own created, modified or published time; Date is a date field.
+ * Moment is a page's own created, modified or published time; Date is a date field; Items is a
+ * field of items (images, files, repeaters, matrices), found by how many it holds.
  *
  * @api
  */
@@ -18,6 +19,7 @@ enum Kind: string
     case Date = 'date';
     case Moment = 'moment';
     case Pages = 'pages';
+    case Items = 'items';
     case Template = 'template';
     case Status = 'status';
     case Parent = 'parent';
@@ -38,6 +40,7 @@ enum Kind: string
             self::Date => [Operator::Day, Operator::Before, Operator::After, Operator::Between, Operator::LastDays, ...$presence],
             self::Moment => [Operator::LastDays, Operator::Day, Operator::Before, Operator::After, Operator::Between],
             self::Pages => [Operator::Is, Operator::Not, Operator::AtLeast, ...$presence],
+            self::Items => [Operator::Filled, Operator::Blank, Operator::AtLeast],
             self::Template, self::Status, self::Parent => [Operator::Is, Operator::Not],
         };
     }

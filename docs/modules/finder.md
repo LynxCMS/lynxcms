@@ -42,8 +42,9 @@ Each condition can look at the page itself, or at any field:
 | Date fields | on the day, before, after, between, in the last days, is blank, is not blank |
 | On and off fields | is on, is off (a page whose switch was never set counts as off) |
 | Page reference fields | is (any of the chosen pages), is not, has at least, is blank, is not blank |
+| Images, files, repeaters and matrices | is not blank, is blank, has at least (items switched off do not count) |
 
-Fields selectors cannot compare, such as repeaters and passwords, are not offered. Text comparisons use the value visitors see in the admin's current language, with [fallback](/basics/languages), as selectors do.
+Fields selectors cannot compare, such as passwords, are not offered. Text comparisons use the value visitors see in the admin's current language, with [fallback](/basics/languages), as selectors do.
 
 A condition that is not complete yet, such as a number field without a number, is left out of the search until it is.
 
