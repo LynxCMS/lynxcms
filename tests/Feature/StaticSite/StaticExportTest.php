@@ -219,6 +219,30 @@ it('exports pages Livewire marks no-store for the back button, with a warning', 
     expect(File::exists($this->dist.'/live/index.html'))->toBeTrue();
 });
 
+it('gives every exported page Livewire\'s script, not only the first', function (): void {
+    Livewire::component('cache-probe', new class extends Component
+    {
+        public function render(): string
+        {
+            return '<div>probe</div>';
+        }
+    });
+    lynx()->templates->add('live-probe', fields: [['name' => 'title', 'required' => true]]);
+
+    foreach (['one', 'two'] as $name) {
+        $page = lynx()->pages->new('live-probe', '/');
+        $page->name = $name;
+        $page->title = $name;
+        $page->save();
+    }
+
+    $this->artisan('lynx:static')->assertSuccessful();
+
+    foreach (['one', 'two'] as $path) {
+        expect(File::get($this->dist."/{$path}/index.html"))->toContain('data-update-uri=');
+    }
+});
+
 it('writes scripts and styles that the site sends from a route', function (): void {
     Route::get('routed/app.js', fn (): ResponseFactory|Response => response('console.log(1)', 200, ['Content-Type' => 'text/javascript']));
     Route::get('routed/file.js', fn () => response()->file($this->public.'/build/app.css', ['Content-Type' => 'text/javascript']));

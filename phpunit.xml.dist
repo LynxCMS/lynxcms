@@ -14,6 +14,9 @@
         <testsuite name="AppAuth">
             <directory>tests/AppAuth</directory>
         </testsuite>
+        <testsuite name="ProviderOrder">
+            <directory>tests/ProviderOrder</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

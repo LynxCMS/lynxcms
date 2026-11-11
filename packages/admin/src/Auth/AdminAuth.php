@@ -102,9 +102,10 @@ final class AdminAuth
                 Features::twoFactorAuthentication(['confirm' => true, 'confirmPassword' => true]),
                 Features::passkeys(['confirmPassword' => true]),
             ],
-            // Fortify copies these when it registers, which may be before Lynx does.
+            // Fortify copies this from fortify.home while it registers, usually before the admin
+            // does (ADR-0112, tests/ProviderOrder). Fortify registers the passkey routes itself,
+            // limited by fortify.limiters.passkeys above, so passkeys.throttle is never read.
             'passkeys.redirect' => "/{$prefix}/pages",
-            'passkeys.throttle' => 'throttle:lynx-passkeys',
         ]);
         Invitations::configureBroker();
     }
