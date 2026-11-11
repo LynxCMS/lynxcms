@@ -18,7 +18,7 @@ return [
     ],
     'branding' => [
         'heading' => 'Branding',
-        'intro' => 'The site\'s name, logo and colours on the sign-in screens and at the top of the sidebar. Leave a field empty for the default.',
+        'intro' => 'The site\'s name, logo and colors on the sign-in screens and at the top of the sidebar. Leave a field empty for the default.',
         'name' => 'Name',
         'name_help' => 'Shown next to the initial when there is no logo, in browser tabs, and read out instead of the logo.',
         'logo' => 'Logo',
