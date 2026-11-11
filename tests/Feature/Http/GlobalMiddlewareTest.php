@@ -37,10 +37,14 @@ function foreignKernel(): Kernel
     };
 }
 
-/** @return list<array{severity: string, message: string, fix: string|null}> */
-function globalMiddlewareFindings(int $exit): array
+/**
+ * This check's findings only: the exit code also counts other checks, such as media's storage link.
+ *
+ * @return list<array{severity: string, message: string, fix: string|null}>
+ */
+function globalMiddlewareFindings(): array
 {
-    expect(Artisan::call('lynx:doctor', ['--json' => true]))->toBe($exit);
+    Artisan::call('lynx:doctor', ['--json' => true]);
 
     return collect(json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR))->firstWhere('key', 'global-middleware')['findings'];
 }
@@ -57,7 +61,7 @@ it('runs the visitor marker on every request, and the page cache before anything
 });
 
 it('reports nothing when Laravel\'s kernel took every middleware', function (): void {
-    expect(globalMiddlewareFindings(exit: 0))->toBe([]);
+    expect(globalMiddlewareFindings())->toBe([]);
 });
 
 it('names the middleware a kernel of another kind could not take, and how to add it', function (): void {
@@ -66,7 +70,7 @@ it('names the middleware a kernel of another kind could not take, and how to add
     $middleware->append(ServeAsVisitor::class);
     $middleware->prepend(PageCacheMiddleware::class);
 
-    $findings = globalMiddlewareFindings(exit: 1);
+    $findings = globalMiddlewareFindings();
 
     expect(array_column($findings, 'severity'))->toBe(['error', 'error'])
         ->and($findings[0]['fix'])->toContain('bootstrap/app.php')->toContain('->append(\\'.ServeAsVisitor::class.'::class)')
