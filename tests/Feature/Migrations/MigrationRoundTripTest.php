@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
+use LynxCms\Tests\Fixtures\AppAuth\Member;
 
 /*
  * Every migration can be rolled back and run again, as migrate:rollback and migrate:refresh do in
@@ -35,6 +37,27 @@ it('rolls every migration back, leaving no Lynx table, and runs them again', fun
 
     expect(Artisan::call('migrate', ['--force' => true]))->toBe(0)
         ->and(lynxTables())->toBe($tables);
+});
+
+it('adds the language column to the table of the app\'s user model when it is not users', function (): void {
+    Schema::create('members', fn (Blueprint $table) => $table->id());
+    config(['auth.providers.users.model' => Member::class]);
+    $migration = require dirname(__DIR__, 3).'/packages/core/database/migrations/2026_11_12_000000_add_lynx_language_to_user_model_table.php';
+
+    $migration->up();
+    expect(Schema::hasColumn('members', 'lynx_language_id'))->toBeTrue();
+
+    $migration->down();
+    expect(Schema::hasColumn('members', 'lynx_language_id'))->toBeFalse()
+        ->and(Schema::hasColumn('users', 'lynx_language_id'))->toBeTrue();
+});
+
+it('leaves the users table to the first migration', function (): void {
+    $migration = require dirname(__DIR__, 3).'/packages/core/database/migrations/2026_11_12_000000_add_lynx_language_to_user_model_table.php';
+
+    $migration->down();
+
+    expect(Schema::hasColumn('users', 'lynx_language_id'))->toBeTrue();
 });
 
 it('leaves passkeys and two-factor columns to the app when its own migrations made them', function (): void {
