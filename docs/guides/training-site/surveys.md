@@ -15,7 +15,7 @@ The starter seeds the survey so it has one to show. This is what the builder sto
 
 <<< @/snippets/training/database/seeders/AtlasSurveySeeder.php#survey{php}
 
-A form built here is used like a form written in PHP: by its name, in the visitor's language, through the same validation, spam protection and inbox. A code form gets the same behaviour from `oncePerUser()` (see [Forms](/modules/forms#defining-a-form)).
+A form built here is used like a form written in PHP: by its name, in the visitor's language, through the same validation, spam protection and inbox. A code form gets the same behavior from `oncePerUser()` (see [Forms](/modules/forms#defining-a-form)).
 
 ## Only for the people who took the course
 

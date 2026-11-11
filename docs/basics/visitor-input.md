@@ -31,7 +31,7 @@ $category = request()->query('category');
 $category = in_array($category, $categories, true) ? $category : null;
 ```
 
-`in_array()` with `true` compares exactly, so an array sent as `?category[]=yoga`, or a value with extra characters, doesn't match. The visitor then sees the unfiltered list, which is what an address you don't recognise should show.
+`in_array()` with `true` compares exactly, so an array sent as `?category[]=yoga`, or a value with extra characters, doesn't match. The visitor then sees the unfiltered list, which is what an address you don't recognize should show.
 
 In a controller, Laravel's validation does the same with rules, such as `'page' => ['integer', 'min:1']`. Use whichever fits: the result is a value you know.
 

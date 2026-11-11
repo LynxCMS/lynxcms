@@ -17,7 +17,7 @@ The layout only changes the editor. Values, selectors and schema files stay the 
 
 ## Roles for the staff
 
-`lynx:install` made a `superuser` role for the owner and an `editor` role that can work on every page. Atlas wants narrower ones: a course manager who runs the catalogue and nothing else, and a news writer:
+`lynx:install` made a `superuser` role for the owner and an `editor` role that can work on every page. Atlas wants narrower ones: a course manager who runs the catalog and nothing else, and a news writer:
 
 <<< @/snippets/training/database/seeders/AtlasEditorsSeeder.php#roles{php}
 

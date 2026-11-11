@@ -46,7 +46,7 @@ Spam is handled for you. A hidden honeypot field and a timing check catch bots, 
 
 ## The team's inbox
 
-**Forms** in the admin's sidebar shows how many enquiries are new. The inbox lists them newest first, with a filter by status and form, a search across every answer, notes for the team, and a CSV export. Give the front desk a role with `forms.view`. Agents can read and sort submissions too: ask "summarise this week's enquiries" (see [Forms](/modules/forms#agents)).
+**Forms** in the admin's sidebar shows how many enquiries are new. The inbox lists them newest first, with a filter by status and form, a search across every answer, notes for the team, and a CSV export. Give the front desk a role with `forms.view`. Agents can read and sort submissions too: ask "summarize this week's enquiries" (see [Forms](/modules/forms#agents)).
 
 ## Leads to the CRM
 

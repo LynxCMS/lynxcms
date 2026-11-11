@@ -46,7 +46,7 @@ return [
         'code_block' => 'Code block',
         'horizontal_rule' => 'Horizontal line',
         'align_left' => 'Align left',
-        'align_center' => 'Centre',
+        'align_center' => 'Center',
         'align_right' => 'Align right',
         'align_justify' => 'Justify',
         'link' => 'Link',

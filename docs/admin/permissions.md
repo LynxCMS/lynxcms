@@ -63,6 +63,8 @@ Set `LYNX_REGISTRATION_ROLE` to give sign-ups another role, such as one with gra
 Gate::allows('lynx.pages.edit', $page);
 ```
 
+In Blade, `@can('lynx.pages.edit', $page)` does the same. [Showing an edit link to editors](/basics/views#showing-an-edit-link-to-editors) explains how the answer depends on the page you pass.
+
 ## Your own permissions
 
 Register a permission in a service provider. It then shows in the Roles screen, and roles grant it like the built-in ones:

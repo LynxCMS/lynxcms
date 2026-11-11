@@ -68,7 +68,7 @@ Lynx finds these texts through the component's view ([Texts in Livewire componen
 
 ## Mail after the commit
 
-Booking, changing and cancelling a meeting mails each person concerned an `.ics` invite their calendar app reads. The mail must not go out for a dry run, nor for a booking a later hook rolls back. So the actions don't send it: they record an event with `$context->event()`, which Lynx dispatches once the action's transaction commits, and never for a dry run:
+Booking, changing and canceling a meeting mails each person concerned an `.ics` invite their calendar app reads. The mail must not go out for a dry run, nor for a booking a later hook rolls back. So the actions don't send it: they record an event with `$context->event()`, which Lynx dispatches once the action's transaction commits, and never for a dry run:
 
 ```php
 $context->event(new MeetingChanged(

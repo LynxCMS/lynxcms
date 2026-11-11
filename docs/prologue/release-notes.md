@@ -92,7 +92,7 @@ Released November 3, 2026. Rolling migrations back in development works on Postg
 
 Released November 3, 2026. A clearer admin sidebar, a template's field list without module fields, and full size pictures in the images field. Nothing to do after updating, and no database changes.
 
-- **The current screen stands out in the sidebar.** Its link is tinted with the admin's accent colour instead of a grey close to the sidebar's own, and the blue mark at its end is gone. Hover keeps the light grey, so the two no longer look alike. A theme can change the tint with `--lynx-sidebar-active-mix`.
+- **The current screen stands out in the sidebar.** Its link is tinted with the admin's accent color instead of a gray close to the sidebar's own, and the blue mark at its end is gone. Hover keeps the light gray, so the two no longer look alike. A theme can change the tint with `--lynx-sidebar-active-mix`.
 
 - **Fix:** a template's **Add a field** list offered the fields modules keep for themselves (`menu_*`, `form_*`, `seo_*`, the page cache's and the sitemap's). It now offers the site's own fields only, and adding a module's field is refused. Fields already on a template, such as the SEO fields, stay.
 
@@ -220,11 +220,11 @@ Released October 28, 2026. A clearer admin: the Lynx logo and Geist, a page edit
 
 - `lynxcms/admin` requires Livewire 4.4.8 or later, which fixes an authorization bypass in Livewire's `#[Authorize]` attribute ([GHSA-mhf7-xp6r-6qrc](https://github.com/advisories/GHSA-mhf7-xp6r-6qrc)). Lynx does not use that attribute, but your app's own components may. The update command in the [upgrade guide](/prologue/upgrade#updating) brings both.
 
-- Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
+- Lynx has a logo. Until a site sets its own name or logo, the admin's sign-in screens and sidebar show the Lynx mark instead of an "L", and browser tabs show the Lynx icon. Sites with their own branding look as before. See [The site's name, logo and colors](/admin/#the-site-s-name-logo-and-colors).
 
 - The admin's default font is Geist, for headings too, instead of an Inter body and monospace headings. Set `LYNX_ADMIN_FONT=inter` and `LYNX_ADMIN_HEADING_FONT=mono` to keep the old look, or give headings any other font.
 
-- The admin wears the Lynx mark's facet: the language tabs mark a field's state with a small slanted shape (filled, light or outlined) instead of a dot, and the sidebar ends the current screen's link with one. The sidebar takes a trace of the accent colour.
+- The admin wears the Lynx mark's facet: the language tabs mark a field's state with a small slanted shape (filled, light or outlined) instead of a dot, and the sidebar ends the current screen's link with one. The sidebar takes a trace of the accent color.
 
 - The page editor's header says under the title whether the page is published, hidden or unpublished, and marks a waiting draft with links to preview it. The live page and the links modules add (such as **SEO preview**) sit there too. On the right, at most two buttons: **Save** (or **Save draft**) with a menu holding **Save as draft**, **Review changes** and **Discard draft**, and **Publish draft** while a draft waits. The blue "You are editing a draft" box is gone; the header's **Draft changes** says it.
 
@@ -272,7 +272,7 @@ Released October 26, 2026. Run `php artisan lynx:phpstan` after updating if you 
 
 - `lynx:phpstan` types text fields as they read: `TranslatableValue|null` for translatable fields and `SharedValue|null` for other texts and textareas, since empty ones read as `null`.
 
-- PHPStan analyses again after `lynx:phpstan` rewrites `lynx/phpstan/types.php`, instead of reporting fields you just added as undefined until `phpstan clear-result-cache`. This needs PHPStan 2.3 or later; older versions behave as before.
+- PHPStan analyzes again after `lynx:phpstan` rewrites `lynx/phpstan/types.php`, instead of reporting fields you just added as undefined until `phpstan clear-result-cache`. This needs PHPStan 2.3 or later; older versions behave as before.
 
 - `trans_choice()` on a language with a regional locale such as `fr-CA` reads the plural forms from `lang/fr`, and picks them with French plural rules. Before, it checked `lang/fr-CA` only and showed the fallback language's plurals, and a hyphenated locale always took the first form.
 
@@ -300,7 +300,7 @@ Released October 26, 2026. Nothing to run after updating; templates are scanned 
 Released October 25, 2026. Run `php artisan lynx:install` after updating to get the page not found (see the [upgrade guide](/prologue/upgrade)).
 
 - **The page not found is a page in the tree.** `lynx:install` creates `/not-found/`, a system page with a `not-found` template, which Lynx shows with status 404 and `noindex` for any front-end address that matches no page, in the visitor's language. Editors write it like any page. Superusers pick another page, or none, under **Settings > General** (`pages.set_not_found`). See [The page not found](/basics/views#the-page-not-found).
-- **The site's name, logo and colours in the admin.** Superusers set them under **Settings > General**, with a preview; developers set defaults in `config/lynx-admin.php` (`LYNX_ADMIN_NAME`, `LYNX_ADMIN_LOGO`, `LYNX_ADMIN_BACKGROUND`, `LYNX_ADMIN_BRAND_ACCENT`). They show on the sign-in screens, in the sidebar and in the browser's tab titles. See [The site's name, logo and colours](/admin/#the-site-s-name-logo-and-colours).
+- **The site's name, logo and colors in the admin.** Superusers set them under **Settings > General**, with a preview; developers set defaults in `config/lynx-admin.php` (`LYNX_ADMIN_NAME`, `LYNX_ADMIN_LOGO`, `LYNX_ADMIN_BACKGROUND`, `LYNX_ADMIN_BRAND_ACCENT`). They show on the sign-in screens, in the sidebar and in the browser's tab titles. See [The site's name, logo and colors](/admin/#the-site-s-name-logo-and-colors).
 - The admin's sidebar keeps its state, open or collapsed, between pages and visits, and no longer flashes open on each page.
 - **French for visitors.** The forms and page password modules ship French strings next to English and Portuguese, so a `fr` language (or a regional locale such as `fr-CA`) shows them without a published copy.
 - A form's default success and error messages (when it doesn't define `successMessage()` or `errorMessage()`) come from `lynx-forms::forms.sent` and `.failed`, in the visitor's language. They were English for everyone.
@@ -330,7 +330,7 @@ Released October 24, 2026. Security hardening, and media from production for dev
 
 Released October 24, 2026. A security release: update soon.
 
-- **Closed by default.** A user without a role has no rights. Before, every signed in user of the app could do everything until someone was given a role, including making themselves a superuser. `lynx:install` warns when nobody is a superuser, and `LYNX_OPEN_UNTIL_ROLES=true` keeps the old behaviour on your own machine. See the [upgrade guide](/prologue/upgrade#from-0-1-16-to-0-1-17).
+- **Closed by default.** A user without a role has no rights. Before, every signed in user of the app could do everything until someone was given a role, including making themselves a superuser. `lynx:install` warns when nobody is a superuser, and `LYNX_OPEN_UNTIL_ROLES=true` keeps the old behavior on your own machine. See the [upgrade guide](/prologue/upgrade#from-0-1-16-to-0-1-17).
 - **The installer creates your superuser.** `lynx:install` asks for the first superuser's name, email and password when nobody is one, so a new app needs no account made beforehand. `php artisan lynx:superuser` does the same at any time, or makes an existing account a superuser, and `--user` now takes an email too. See [Installation](/getting-started/installation#running-the-installer).
 - **Visitors are not the system.** Actions run in a web request with nobody signed in act as a visitor, allowed only what is open to everyone. Code that writes for a visitor uses `lynx()->actingAs(Actor::system(), ...)`.
 - **Exports from the admin are a guest's.** A static export started from the admin rendered pages as the signed-in editor, so pages for members and parts of templates for signed-in users ended up in the public copy. Each export now lists and renders pages as a visitor who is not signed in, and leaves the editor's session as it was.

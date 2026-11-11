@@ -86,7 +86,7 @@ Real sites mix both. When 90% of page views come from the cache, PHP renders onl
 
 - Company and brochure sites, in one language or many.
 - Blogs, news and magazines. A sudden spike on one article is sent from the cache.
-- Catalogues and course listings.
+- Catalogs and course listings.
 - Landing pages for campaigns.
 
 ### Where to be careful

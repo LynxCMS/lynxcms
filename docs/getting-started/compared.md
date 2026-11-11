@@ -56,7 +56,7 @@ In Statamic, each language is a site, and a translated entry inherits what it do
 
 ### One page tree
 
-Statamic organises content in collections, some of which can be ordered as trees. In Lynx, every page, of every template, lives in one tree.
+Statamic organizes content in collections, some of which can be ordered as trees. In Lynx, every page, of every template, lives in one tree.
 
 - **For developers:** URLs, breadcrumbs and menus follow the tree, and permissions can be limited to a branch (`pages.edit` under `/courses`, for example) instead of being set per content type.
 - **For clients and editors:** the admin shows the site the way visitors navigate it, so editors find a page where they expect it, and a team can be given exactly its own section of the site.

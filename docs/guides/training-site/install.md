@@ -7,7 +7,7 @@ description: Chapter 1 of the training site guide. The site map, a Laravel app w
 
 ## The site map
 
-Atlas Training has a home page, a course catalogue, a page per course with its dated sessions, instructors, studios, news and a few plain pages. In Lynx each of those is a page in one tree, and each page uses a **template** that says which fields it has:
+Atlas Training has a home page, a course catalog, a page per course with its dated sessions, instructors, studios, news and a few plain pages. In Lynx each of those is a page in one tree, and each page uses a **template** that says which fields it has:
 
 ```
 /                              home

@@ -93,7 +93,7 @@ The views use `lynx-form-*` classes. Import the default stylesheet and set its v
 
 Or publish the views (`php artisan vendor:publish --tag=lynx-forms-views`) and style them yourself.
 
-### Adding behaviour
+### Adding behavior
 
 Extend the component for live extras, such as a price estimate, and show them beside the form:
 
@@ -148,7 +148,7 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 ## Agents
 
-MCP clients and the built-in agent read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarise this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
+MCP clients and the built-in agent read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
 
 ## Permissions
 

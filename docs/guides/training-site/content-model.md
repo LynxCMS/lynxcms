@@ -32,7 +32,7 @@ A few choices worth explaining:
 
 **Sessions are child pages of their course**, not rows in a table of your own. That gives each session a URL to book from (chapter 7), a place in the admin's tree right under its course, and selectors like `template=session, starts>=now` for free. A course lists its sessions with `$course->children('template=session')`.
 
-**Family rules** keep the tree tidy: under the catalogue, staff can only add courses; under a course, only sessions. The admin offers only those templates, and the API refuses the rest. Modules' own hidden branches, such as menus, are not bound by these rules.
+**Family rules** keep the tree tidy: under the catalog, staff can only add courses; under a course, only sessions. The admin offers only those templates, and the API refuses the rest. Modules' own hidden branches, such as menus, are not bound by these rules.
 
 ## Demo content
 

@@ -336,7 +336,7 @@ if (window.livewireScriptConfig?.csrf === 'lynx-cache-csrf-placeholder') {
 ### What you trade
 
 - A cached form keeps the time it was first rendered, so the honeypot's "sent too fast" check never triggers on it. The honeypot field and rate limits still work. **If a form relies on the timing check, put it in an island**, which renders it fresh for every visitor, or set its template to `'csrf' => 'skip'`.
-- Livewire marks every page with a component `no-store`, to keep stale components out of the back button cache. The page cache recognises those exact headers and ignores them; any other `no-store`, such as a password protected page's, still keeps the page out.
+- Livewire marks every page with a component `no-store`, to keep stale components out of the back button cache. The page cache recognizes those exact headers and ignores them; any other `no-store`, such as a password protected page's, still keeps the page out.
 
 ## Islands
 
