@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace LynxCms\Core\Migrations;
 
 use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Console\OutputStyle;
-use Illuminate\Console\View\Components\Warn;
 use Throwable;
 
 /**
@@ -33,11 +31,10 @@ final readonly class DiscoverWarning
             return;
         }
 
-        $warn = new Warn(new OutputStyle($event->input, $event->output));
-
+        // Written with Symfony's output alone: Laravel's console view components are not public API.
         foreach ($pending as $package => $names) {
             $count = count($names);
-            $warn->render("{$package} has {$count} database ".($count === 1 ? 'change' : 'changes').' waiting. Run php artisan lynx:migrate once the database is backed up');
+            $event->output->writeln("  <bg=yellow;fg=black> WARN </> {$package} has {$count} database ".($count === 1 ? 'change' : 'changes').' waiting. Run php artisan lynx:migrate once the database is backed up.');
         }
     }
 }
