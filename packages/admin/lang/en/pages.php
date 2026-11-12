@@ -16,6 +16,25 @@ return [
         'unpublished' => 'Unpublished',
         'hidden' => 'Hidden',
     ],
+    'status_changed' => [
+        'saved' => 'Status saved.',
+        'hidden' => [
+            'on' => 'Page hidden.',
+            'off' => 'Page shown.',
+        ],
+        'unpublished' => [
+            'on' => 'Page unpublished.',
+            'off' => 'Page published.',
+        ],
+        'locked' => [
+            'on' => 'Page locked.',
+            'off' => 'Page unlocked.',
+        ],
+        'unique' => [
+            'on' => 'Unique name required.',
+            'off' => 'Unique name no longer required.',
+        ],
+    ],
     'tree' => [
         'deleted' => 'Deleted :count branch.|Deleted :count branches.',
         'kept_locked' => 'Kept because a page is locked:',

@@ -2,8 +2,10 @@
     The admin's notification bar: full width, floating at the bottom of the viewport. Green for
     success, yellow for warnings, red for errors; click one to close it before it times out.
     Livewire components send them with notify() (Livewire\Concerns\Notifies, event "lynx-notify");
-    BlatUI's window.toast() events show here too.
+    BlatUI's window.toast() events show here too. A notice flashed to the session before a redirect
+    (session key "lynx-notify", as the publish button's menu does) shows on the next screen.
 --}}
+@php($flashed = session('lynx-notify'))
 <div
     x-data="{
         notices: [],
@@ -22,6 +24,10 @@
     }"
     @lynx-notify.window="add($event.detail.message, $event.detail.type)"
     @toast.window="fromToast($event.detail)"
+    @if (is_array($flashed) && is_string($flashed['message'] ?? null))
+        x-init="add(@js($flashed['message']), @js($flashed['type'] ?? 'success'))"
+        data-flashed-notice="{{ $flashed['type'] ?? 'success' }}"
+    @endif
     role="region"
     aria-label="{{ __('lynx-admin::shell.ui.notifications') }}"
     class="lynx-notices"

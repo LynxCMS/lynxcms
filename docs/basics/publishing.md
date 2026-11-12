@@ -15,7 +15,7 @@ A page's status flags change how visitors and editors see it:
 
 | Status | Effect |
 | --- | --- |
-| `unpublished` | The page and every page below it return 404 and leave lists. |
+| `unpublished` | The page and every page below it return 404 and leave lists. Signed in users who may view the page in the admin still see it, with a bar saying it is not published. |
 | `hidden` | Reachable by its URL, but left out of lists, menus and searches. Pages below it are not affected. |
 | `locked` | Can't be saved, moved, sorted, translated, switched to another template or deleted until it is unlocked. |
 | `unique` | No other page anywhere may use its default language URL name. |
@@ -64,7 +64,7 @@ lynx()->pages->schedule('/news/launch', '*', publishAt: now()->addDay()); // eve
 
 With `'*'`, Lynx checks every language first, so a time that one language can't take changes nothing. In the page's **Settings** tab, one row sets every language; editors tick "Different times per language" to set each one.
 
-A draft can go live at a set time too, so a rearranged home page appears on Monday morning without anyone pressing **Publish draft**. A draft belongs to the whole page, so this time is for every language:
+A draft can go live at a set time too, so a rearranged home page appears on Monday morning without anyone pressing **Publish**. A draft belongs to the whole page, so this time is for every language:
 
 ```php
 lynx()->pages->saveDraft('/', ['sections' => $mondaySections]);

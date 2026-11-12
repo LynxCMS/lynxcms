@@ -44,6 +44,8 @@ return [
         'on' => 'Ligado',
         'off' => 'Desligado',
         'empty' => 'Ainda não há modelos com URL.',
+        'turned_on' => 'Campos de SEO ligados em :template.',
+        'turned_off' => 'Campos de SEO desligados em :template.',
     ],
     'audit' => [
         'checked' => 'Verificada :count página publicada.|Verificadas :count páginas publicadas.',

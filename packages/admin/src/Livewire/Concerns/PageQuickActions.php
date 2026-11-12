@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 
 use Closure;
 use Livewire\Attributes\Locked;
+use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
@@ -34,7 +35,7 @@ trait PageQuickActions
     #[Locked]
     public ?array $trashReport = null;
 
-    /** Flip one editable flag: hidden, unpublished or locked. */
+    /** Flip one editable flag: hidden, unpublished or locked. It applies at once, so a notice says so. */
     public function toggleStatus(int $id, string $flag): void
     {
         $bit = PageStatus::NAMES[$flag] ?? 0;
@@ -44,6 +45,7 @@ trait PageQuickActions
 
             if ($bit !== 0) {
                 lynx()->pages->setStatus($id, ...($page->hasStatus($bit) ? ['remove' => [$flag]] : ['add' => [$flag]]));
+                $this->notify((new StatusNotice)->for($id, $flag));
             }
         });
     }
@@ -147,6 +149,8 @@ trait PageQuickActions
 
     /** Run a write; a validation failure becomes the visible error instead of a 500. */
     abstract protected function attempt(Closure $write): void;
+
+    abstract protected function notify(string $message, string $type = 'success'): void;
 
     /** The page, when it may be changed from this tree. */
     abstract protected function movablePage(int $id): Page;

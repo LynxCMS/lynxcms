@@ -62,7 +62,9 @@ final readonly class PageController
         [$pageId, $active] = $match;
         $page = $this->loader->find($pageId);
 
-        abort_if($page === null || ! $page->template()->hasUrl() || ! $this->publication->isPublished($page), 404);
+        abort_if($page === null || ! $page->template()->hasUrl(), 404);
+        $isPublished = $this->publication->isPublished($page);
+        abort_unless($isPublished || $this->mayViewUnpublished($page), 404);
         abort_unless($page->isActiveIn($language) || $language->id === $this->languages->default()->id, 404);
 
         if (! $active) {
@@ -79,19 +81,21 @@ final readonly class PageController
         $isPreviewing = $this->isPreviewingDrafts($request);
         $preview = $isPreviewing ? $this->draftPreview($page) : null;
 
-        if (! $isPreviewing) {
+        if (! $isPreviewing && $isPublished) {
             // The page that answers, for middleware and components such as a page cache (ADR-0064).
             $request->attributes->set(PageAttributes::PAGE, $page);
         }
 
         $html = TemplateView::render($page, $this->views, $preview);
 
-        if (! $isPreviewing) {
+        if (! $isPreviewing && $isPublished) {
             return $this->notFound->is($page) ? response($html, Response::HTTP_NOT_FOUND)->header('X-Robots-Tag', 'noindex') : response($html);
         }
 
-        // Drafts are for the editor's eyes only: never cached, never indexed.
-        return response($this->withPreviewBar($html, $request, $preview !== null))
+        // Drafts and unpublished pages are for the editor's eyes only: never cached, never indexed.
+        $html = $isPublished ? $html : $this->withUnpublishedBar($html);
+
+        return response($isPreviewing ? $this->withPreviewBar($html, $request, $preview !== null) : $html)
             ->header('Cache-Control', 'no-store, private')
             ->header('X-Robots-Tag', 'noindex');
     }
@@ -124,6 +128,32 @@ final readonly class PageController
             .'<a href="'.e($request->url().'?preview=live').'" style="color:#fff;text-decoration:underline">Exit preview</a></div>';
 
         return str_contains($html, '</body>') ? str_replace('</body>', $bar.'</body>', $html) : $html.$bar;
+    }
+
+    /**
+     * A signed in user who may view the page in the admin sees it before it is published, so
+     * View page works for a new page (ADR-0113). Pages in the trash stay out of reach.
+     */
+    private function mayViewUnpublished(Page $page): bool
+    {
+        if (! Gate::allows('lynx.pages.view', $page)) {
+            return false;
+        }
+
+        $trash = lynx()->pages->trashId();
+
+        return $trash === null || lynx()->pages->count("id={$page->id}, has_parent={$trash}, include=all") === 0;
+    }
+
+    /** A bar at the top of an unpublished page, so nobody mistakes it for what visitors see. */
+    private function withUnpublishedBar(string $html): string
+    {
+        $bar = '<div data-lynx-unpublished style="position:sticky;top:0;z-index:2147483647;padding:.5rem 1rem;text-align:center;font:14px/1.4 system-ui,sans-serif;color:#fff;background:#b45309">'
+            .'<strong>Not published.</strong> Visitors get a "not found" page here. You see it because you are signed in.</div>';
+
+        return preg_match('/<body[^>]*>/i', $html, $body, PREG_OFFSET_CAPTURE) === 1
+            ? substr_replace($html, $body[0][0].$bar, $body[0][1], strlen($body[0][0]))
+            : $bar.$html;
     }
 
     /** The page with its draft's values, for a signed in user who may edit it (ADR-0039). */

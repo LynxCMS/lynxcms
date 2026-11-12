@@ -69,7 +69,7 @@
         <x-lynx-admin::editor.review :entries="$review" :draft="$hasDraft">
             @if ($hasDraft)
                 {{-- Publishing saves any edit not saved yet, then makes the draft live. --}}
-                <x-lynx-admin::ui.button type="button" wire:click="publishDraft">{{ __('lynx-admin::editor.publish_draft') }}</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button type="button" wire:click="publish">{{ __('lynx-admin::editor.publish_draft') }}</x-lynx-admin::ui.button>
             @else
                 <x-lynx-admin::ui.button type="button" wire:click="save">{{ __('lynx-admin::editor.save_changes') }}</x-lynx-admin::ui.button>
             @endif

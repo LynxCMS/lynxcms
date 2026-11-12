@@ -32,7 +32,6 @@ return [
         'unique_help' => 'Require the name “:name” to be unique across the site',
         'unique_help_languages' => 'Require the name “:name” to be unique across the site (default language only)',
         'denied' => 'You may not change the status of this page.',
-        'saved' => 'Status saved.',
     ],
     'template' => [
         'title' => 'Template',

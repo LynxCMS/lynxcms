@@ -41,7 +41,7 @@ it('saves changes as a draft and keeps editing it', function (): void {
 
     draftEditor()
         ->assertSet('values.title.default', 'Alpha draft')
-        ->assertSeeHtml('wire:click="publishDraft"')
+        ->assertSeeHtml('data-publish="publish"')
         ->assertSeeHtml('href="/courses/alpha?preview=draft"')
         ->assertSeeHtml('href="/pt/cursos/alfa?preview=draft"')
         ->assertSeeHtml('data-draft-preview-menu')

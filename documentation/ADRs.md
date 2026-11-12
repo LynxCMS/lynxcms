@@ -1210,3 +1210,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 - The admin's migration keeps adding the two-factor columns and the passkeys table only when the app's own Fortify or passkeys migrations have not run. `SignInSchemaTest` runs those upstream migrations and compares the tables with the admin's, column by column, with indexes and foreign keys.
 
 **Consequences:** A Lynx release can change the sign-in screens for every site at once, and sites keep no Fortify files of their own in `lynx` mode. A Fortify or passkeys release that reads its settings at another time or changes its tables fails CI instead of reaching sites. Lynx still depends on how Fortify reads its config, so a Fortify major needs these tests green before the constraint widens. Apps with their own `config/fortify.php` are untouched (ADR-0074).
+
+## ADR-0113: Signed in users who may view a page see it on the site before it is published
+
+**Status:** Accepted (extends ADR-0039)
+
+**Context:** An unpublished page, and every page below one, answered 404 to everyone. New pages start unpublished, so the editor's **View page** link led a superuser to "not found" until the page went live. Draft previews (ADR-0039) already show signed in editors what visitors cannot see yet, but only for a draft's values on a published page.
+
+**Decision:** The site's page route shows an unpublished page, or a page below one, to a signed in user the `lynx.pages.view` gate allows for that page (superusers always). The response carries a bar at the top saying the page is not published, `Cache-Control: no-store, private` and `X-Robots-Tag: noindex`, and does not set the request's page attribute, so the page cache never stores it (ADR-0064). Pages in the trash still answer 404 to everyone, so a trashed page's old URL never redirects into the trash (ADR-0035). Visitors, signed in users without `pages.view` on the page, static exports and cache warming (which run as a visitor, ADR-0078) get 404 as before. Unique name shortcuts and other-language paths still lead only to published pages.
+
+**Consequences:** **View page** works for a new page, and editors check a page on the site before publishing it. Lists, menus and selectors still leave unpublished pages out, so links to the page from elsewhere on the site appear only once it is published. A signed in editor no longer sees the 404 a visitor gets; the bar says so.

@@ -6,9 +6,11 @@ namespace LynxCms\Seo\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Models\Template;
 use LynxCms\Seo\Actions\DisableSeo;
 use LynxCms\Seo\Actions\EnableSeo;
@@ -21,17 +23,24 @@ use LynxCms\Seo\SeoSchema;
  */
 final class SeoTemplates extends Component
 {
+    use Notifies;
+
+    /** The last notice, for screen readers and tests (Notifies). */
+    #[Locked]
+    public ?string $status = null;
+
     public function boot(): void
     {
         Gate::authorize(AdminServiceProvider::GATE);
         abort_unless(app(AdminAccess::class)->allows('seo.manage'), 403);
     }
 
-    /** Turns SEO on when the template lacks the fields, off when it has them. */
+    /** Turns SEO on when the template lacks the fields, off when it has them. It applies at once, so a notice says so. */
     public function toggle(string $template): void
     {
-        $action = $this->hasSeo($template) ? DisableSeo::class : EnableSeo::class;
-        lynx()->run($action, ['template' => $template]);
+        $isOn = $this->hasSeo($template);
+        lynx()->run($isOn ? DisableSeo::class : EnableSeo::class, ['template' => $template]);
+        $this->notify(__($isOn ? 'lynx-seo::admin.templates.turned_off' : 'lynx-seo::admin.templates.turned_on', ['template' => $template]));
     }
 
     public function render(): View

@@ -26,7 +26,9 @@ it('turns SEO on and off per template', function (): void {
     $this->get(route('lynx.admin.seo'))->assertOk()->assertSeeLivewire(SeoTemplates::class);
 
     Livewire::test(SeoTemplates::class)->assertSee('course')->assertDontSee(SeoSchema::SETTINGS_TEMPLATE)
-        ->call('toggle', 'course')->assertHasNoErrors();
+        ->call('toggle', 'course')->assertHasNoErrors()
+        // The tick applies at once, so a notice says so.
+        ->assertDispatched('lynx-notify', type: 'success');
     expect(lynx()->templates->fields('course')->keys()->all())->toContain(SeoSchema::TITLE);
 
     Livewire::test(SeoTemplates::class)->call('toggle', 'course');

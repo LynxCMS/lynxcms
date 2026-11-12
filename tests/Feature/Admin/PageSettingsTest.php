@@ -222,13 +222,13 @@ it('keeps the editor saving without a conflict after its own settings changes', 
     expect(lynx()->pages->get($page->id)->price)->toBe(300);
 });
 
-it('shows the content Save button only on the Content tab', function (): void {
+it('shows the content publish button only on the Content tab', function (): void {
     $page = settingsPage();
 
     Livewire::test(PageEditor::class, ['pageId' => $page->id])
-        ->assertSeeHtml('wire:click="save"')
+        ->assertSeeHtml('data-lynx-save')
         ->set('tab', 'settings')
-        ->assertDontSeeHtml('wire:click="save"');
+        ->assertDontSeeHtml('data-lynx-save');
 });
 
 it('says the current URL will redirect only once the name changes', function (bool $trailingSlash): void {
