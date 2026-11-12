@@ -9,6 +9,8 @@ use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\DatabaseTransactionsManager;
+use Illuminate\Database\DetectsConcurrencyErrors;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 use LynxCms\Contracts\Actions\Actor;
@@ -20,12 +22,19 @@ use Throwable;
 
 /**
  * Runs every write in Lynx: validation, transaction, before-hooks, the action, after-hooks,
- * dry-run rollback and domain events after commit.
+ * dry-run rollback and domain events after commit. An outer action that opened the outermost
+ * transaction runs again when the database ends it to break a deadlock, as
+ * DB::transaction($callback, attempts:) does.
  *
  * @api
  */
 final class ActionRunner
 {
+    use DetectsConcurrencyErrors;
+
+    /** Tries of an outer action that keeps meeting deadlocks or serialization failures. */
+    public const int ATTEMPTS = 3;
+
     private int $depth = 0;
 
     private ?ChangeSet $changes = null;
@@ -55,6 +64,28 @@ final class ActionRunner
             throw new InvalidArgumentException("[{$action}] is not a Lynx action.");
         }
 
+        // Inside someone else's transaction a deadlock has ended theirs too: only they can retry.
+        $mayRetry = $this->depth === 0 && $this->opensOutermostTransaction();
+
+        for ($try = 1; ; $try++) {
+            try {
+                return $this->attempt($action, $input, $dryRun);
+            } catch (Throwable $e) {
+                if (! $mayRetry || $try >= self::ATTEMPTS || ! $this->causedByConcurrencyError($e)) {
+                    throw $e;
+                }
+            }
+        }
+    }
+
+    /**
+     * One try: a failed one rolls back its writes and drops its changes and events (finish()).
+     *
+     * @param  class-string<Action>  $action
+     * @param  array<string, mixed>|Input  $input
+     */
+    private function attempt(string $action, array|Input $input, bool $dryRun): ActionResult
+    {
         $outer = $this->depth === 0;
 
         if ($outer) {
@@ -83,7 +114,7 @@ final class ActionRunner
 
         try {
             // Permissions first (ADR-0033); nested actions were authorized with their outer action.
-            if ($outer && is_subclass_of($action, Action::class)) {
+            if ($outer) {
                 $this->container->make(Authorizer::class)->authorizeAction($context->actor, $action::permission(), $action::name());
             }
 
@@ -127,6 +158,18 @@ final class ActionRunner
         }
 
         return new ActionResult($action, $value, $changes, $context->dryRun);
+    }
+
+    /**
+     * Whether the transaction an action opens now is the outermost one, by the rule Laravel's
+     * transaction manager keeps (a test's own transaction does not count).
+     */
+    private function opensOutermostTransaction(): bool
+    {
+        $level = $this->db->connection()->transactionLevel();
+        $transactions = $this->container->bound('db.transactions') ? $this->container->make('db.transactions') : null;
+
+        return $transactions instanceof DatabaseTransactionsManager ? $transactions->afterCommitCallbacksShouldBeExecuted($level) : $level === 0;
     }
 
     /**
