@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Translation;
 
 use Closure;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Translation\TranslationProvider;
 
@@ -23,6 +24,8 @@ final class TranslationProviders
 
     /** @var list<Closure(TranslationProvider): TranslationProvider> */
     private array $extensions = [];
+
+    public function __construct(private readonly Container $container) {}
 
     /** @param  Closure(): TranslationProvider  $factory  called each time the provider is used */
     public function register(string $name, Closure $factory): void
@@ -44,7 +47,7 @@ final class TranslationProviders
 
     public function hasDefault(): bool
     {
-        return app()->bound(TranslationProvider::class) || $this->factories !== [];
+        return $this->container->bound(TranslationProvider::class) || $this->factories !== [];
     }
 
     /**
@@ -88,8 +91,10 @@ final class TranslationProviders
 
     private function default(): TranslationProvider
     {
-        if (app()->bound(TranslationProvider::class)) {
-            return app(TranslationProvider::class);
+        $bound = $this->container->bound(TranslationProvider::class) ? $this->container->make(TranslationProvider::class) : null;
+
+        if ($bound instanceof TranslationProvider) {
+            return $bound;
         }
 
         $first = array_key_first($this->factories)

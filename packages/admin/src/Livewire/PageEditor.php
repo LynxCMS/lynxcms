@@ -81,8 +81,12 @@ final class PageEditor extends Component
     public string $tab = 'content';
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -92,7 +96,7 @@ final class PageEditor extends Component
         $this->load();
         $this->nextPageId = app(ChildList::class)->next($this->page());
 
-        if (app(AdminAccess::class)->allows('pages.edit', $this->page())) {
+        if ($this->access->allows('pages.edit', $this->page())) {
             $this->takeEditLock();
         }
     }
@@ -211,13 +215,13 @@ final class PageEditor extends Component
             // The Texts tab: strings the template declares with @string (ADR-0047).
             'hasStrings' => array_filter(app(StringCatalog::class)->forTemplate((string) $page->template()->name), fn (StringDefinition $s): bool => ! $s->isSite()) !== [],
             'isLocked' => $page->hasStatus(PageStatus::LOCKED),
-            'canEdit' => app(AdminAccess::class)->allows('pages.edit', $page) && $this->editedBy === null,
-            'canTakeOver' => $this->editedBy !== null && app(AdminAccess::class)->isSuperuser(),
-            'canUnlock' => app(AdminAccess::class)->allows('pages.status', $page),
+            'canEdit' => $this->access->allows('pages.edit', $page) && $this->editedBy === null,
+            'canTakeOver' => $this->editedBy !== null && $this->access->isSuperuser(),
+            'canUnlock' => $this->access->allows('pages.status', $page),
             'canPublish' => $this->canPublish(),
             'followUps' => $this->followUps($page),
             // Template and field type names are developer details.
-            'isSuperuser' => app(AdminAccess::class)->isSuperuser(),
+            'isSuperuser' => $this->access->isSuperuser(),
             ...$this->conditions($page),
             'review' => $this->reviewedChanges($page),
             'languages' => lynx()->languages->all()->map(fn ($language): array => ['code' => Value::string($language->code), 'name' => Value::string($language->name), 'label' => $language->tabLabel()])->values()->all(),

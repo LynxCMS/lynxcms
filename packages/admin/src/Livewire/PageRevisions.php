@@ -35,8 +35,12 @@ final class PageRevisions extends Component
     #[Locked]
     public ?string $status = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -77,7 +81,7 @@ final class PageRevisions extends Component
         return view('lynx-admin::livewire.page-revisions', [
             'revisions' => $revisions,
             'review' => $this->comparing === null ? [] : $this->review($page, $this->comparing),
-            'canRestore' => app(AdminAccess::class)->allows('pages.edit', $page),
+            'canRestore' => $this->access->allows('pages.edit', $page),
         ]);
     }
 

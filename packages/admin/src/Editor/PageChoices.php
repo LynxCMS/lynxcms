@@ -16,8 +16,10 @@ use LynxCms\Core\Support\Value;
  *
  * @internal
  */
-final class PageChoices
+final readonly class PageChoices
 {
+    public function __construct(private AdminAccess $access) {}
+
     public const int LIMIT = 100;
 
     /**
@@ -67,7 +69,7 @@ final class PageChoices
     {
         $templates = Value::strings($settings['templates'] ?? []);
         $selector = 'include=all, sort=title, limit='.self::LIMIT.($templates === [] ? '' : ', template='.implode('|', $templates));
-        $options = lynx()->pages->find($selector, scope: app(AdminAccess::class)->viewScope())->map($this->option(...));
+        $options = lynx()->pages->find($selector, scope: $this->access->viewScope())->map($this->option(...));
         $missing = array_values(array_diff($chosen, array_column($options, 'id')));
 
         if ($missing !== []) {

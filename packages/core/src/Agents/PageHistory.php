@@ -22,7 +22,11 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class PageHistory
 {
-    public function __construct(private LanguageRegistry $languages) {}
+    public function __construct(
+        private LanguageRegistry $languages,
+        private Authorizer $authorizer,
+        private ActionRunner $runner,
+    ) {}
 
     /**
      * @return array<string, mixed>|null null when no page matches the reference
@@ -35,7 +39,7 @@ final readonly class PageHistory
             return null;
         }
 
-        app(Authorizer::class)->authorize(app(ActionRunner::class)->actor(), 'pages.view', $page);
+        $this->authorizer->authorize($this->runner->actor(), 'pages.view', $page);
 
         return [
             'page' => ['id' => $page->id, 'path' => $this->url($page)],

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire\Concerns;
 
 use Livewire\Attributes\Locked;
-use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\FollowUp;
@@ -19,6 +18,7 @@ use LynxCms\Core\Pages\PageStatus;
  * is published with the edits not saved yet. Without pages.publish the button saves instead. Its
  * menu publishes, then leaves the editor (FollowUp). The Save button beside it (save(), and
  * Cmd/Ctrl+S) never publishes.
+ * Reads the rights from the component's $access, which its boot() sets.
  *
  * @internal
  */
@@ -65,7 +65,7 @@ trait PublishesPage
 
     protected function canPublish(): bool
     {
-        return app(AdminAccess::class)->allows('pages.publish', $this->page());
+        return $this->access->allows('pages.publish', $this->page());
     }
 
     private function hasWorkToPublish(EditorForm $form): bool

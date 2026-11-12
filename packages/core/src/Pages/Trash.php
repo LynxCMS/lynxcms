@@ -31,7 +31,11 @@ final class Trash implements Flushable
 
     private bool $isRootLoaded = false;
 
-    public function __construct(private readonly TemplateRegistry $templates, private readonly RootPage $root) {}
+    public function __construct(
+        private readonly TemplateRegistry $templates,
+        private readonly RootPage $root,
+        private readonly LanguageRegistry $languages,
+    ) {}
 
     /** The trash page's id, creating it (and its template) the first time. */
     public function ensureRoot(ActionContext $context): int
@@ -47,7 +51,7 @@ final class Trash implements Flushable
         $page = $context->run(SavePage::class, [
             'template' => self::TEMPLATE,
             'parent' => (int) $this->root->id(),
-            'names' => [(string) app(LanguageRegistry::class)->default()->code => self::NAME],
+            'names' => [(string) $this->languages->default()->code => self::NAME],
             'values' => ['title' => 'Trash'],
             'status' => ['hidden', 'unpublished', 'system'],
         ]);

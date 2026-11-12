@@ -31,8 +31,12 @@ final class AdminSearch extends Component
 
     public string $query = '';
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -71,7 +75,7 @@ final class AdminSearch extends Component
         }
 
         try {
-            $pages = lynx()->pages->find(self::selector($this->query), maxLimit: self::MAX_LIMIT, defaultLimit: self::LIMIT, scope: app(AdminAccess::class)->viewScope());
+            $pages = lynx()->pages->find(self::selector($this->query), maxLimit: self::MAX_LIMIT, defaultLimit: self::LIMIT, scope: $this->access->viewScope());
         } catch (SelectorException $exception) {
             return [[], 0, $exception->getMessage()];
         }

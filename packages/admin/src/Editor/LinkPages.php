@@ -22,7 +22,7 @@ final readonly class LinkPages
 
     private const int BROWSE_LIMIT = 100;
 
-    public function __construct(private PageSearch $search, private LinkFiles $files) {}
+    public function __construct(private PageSearch $search, private LinkFiles $files, private AdminAccess $access) {}
 
     /**
      * Linkable pages matching the words.
@@ -49,7 +49,7 @@ final readonly class LinkPages
         }
 
         $parent = $page->parent();
-        $children = lynx()->pages->find('parent='.$page->id.', include=all, limit='.self::BROWSE_LIMIT, scope: app(AdminAccess::class)->viewScope());
+        $children = lynx()->pages->find('parent='.$page->id.', include=all, limit='.self::BROWSE_LIMIT, scope: $this->access->viewScope());
 
         return [
             'page' => $this->row($page, $language) ?? ['id' => (int) $page->id, 'title' => Value::string($page->title), 'url' => '', 'canHaveChildren' => true],
@@ -114,6 +114,6 @@ final readonly class LinkPages
     /** The page, unless the current user may not view it: ids come from a request a client can change. */
     private function viewable(?int $id): ?Page
     {
-        return $id === null || app(AdminAccess::class)->viewable([$id]) === [] ? null : lynx()->pages->get($id);
+        return $id === null || $this->access->viewable([$id]) === [] ? null : lynx()->pages->get($id);
     }
 }

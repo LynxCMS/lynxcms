@@ -62,8 +62,12 @@ final class PageSettings extends Component
     #[Locked]
     public ?string $status = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -152,7 +156,7 @@ final class PageSettings extends Component
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
             'hasUrl' => $page->template()->hasUrl(),
             'isModulePage' => app(AdminBranches::class)->contains($page),
-            'canEditTemplate' => app(AdminAccess::class)->allows('schema.manage'),
+            'canEditTemplate' => $this->access->allows('schema.manage'),
             'parentTemplates' => app(ParentTemplates::class)->for([$page], array_filter([(int) $page->parentId]), $this->moveExcludedBelow($page)),
             'moveExcludedBelow' => $this->moveExcludedBelow($page),
             ...$this->permissions($page),
@@ -241,7 +245,7 @@ final class PageSettings extends Component
      */
     private function permissions(Page $page): array
     {
-        $can = app(AdminAccess::class)->onPage($page);
+        $can = $this->access->onPage($page);
         $isMovable = $page->parentId !== null && ! $page->hasStatus(PageStatus::SYSTEM) && ! $page->hasStatus(PageStatus::LOCKED);
 
         return ['can' => $can, 'canMove' => $isMovable && $can['move'], 'canSwitch' => $isMovable && $can['template']];

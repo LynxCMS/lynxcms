@@ -7,7 +7,6 @@ namespace LynxCms\Admin\Livewire\Concerns;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
-use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Core\Actions\Pages\LockEdit;
 use LynxCms\Core\Actions\Pages\UnlockEdit;
@@ -16,6 +15,7 @@ use LynxCms\Core\Actions\Pages\UnlockEdit;
  * The page editor's edit lock (ADR-0037): taken on open, renewed by a poll every minute. While
  * someone else holds it, the editor is read only and says who; the same poll picks the lock up
  * once they are gone. Superusers may take over.
+ * Reads the rights from the component's $access, which its boot() sets.
  *
  * @internal
  */
@@ -39,7 +39,7 @@ trait HoldsEditLock
 
     public function takeOverEditLock(): void
     {
-        if (! app(AdminAccess::class)->isSuperuser()) {
+        if (! $this->access->isSuperuser()) {
             return;
         }
 

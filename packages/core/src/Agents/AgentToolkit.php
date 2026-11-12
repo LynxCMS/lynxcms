@@ -46,6 +46,7 @@ final readonly class AgentToolkit
         private TemplateRegistry $templates,
         private ComponentRegistry $components,
         private Authorizer $authorizer,
+        private PageStrings $strings,
     ) {}
 
     /**
@@ -209,7 +210,7 @@ final readonly class AgentToolkit
 
             $this->authorizer->authorize($this->runner->actor(), 'pages.view', $page);
 
-            $strings = app(PageStrings::class)->describe($page);
+            $strings = $this->strings->describe($page);
 
             return $page->toArray() + ['values_by_language' => $page->valuesByLanguage()] + ($strings === [] ? [] : ['strings' => $strings]);
         };

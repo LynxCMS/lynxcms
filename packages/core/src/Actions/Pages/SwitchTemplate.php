@@ -34,6 +34,7 @@ final class SwitchTemplate extends Action
         private readonly TemplateRegistry $templates,
         private readonly PathBuilder $paths,
         private readonly FamilyRules $family,
+        private readonly Drafts $drafts,
     ) {}
 
     public static function name(): string
@@ -72,7 +73,7 @@ final class SwitchTemplate extends Action
         $page = $this->resolvePageReference($input->get('page'));
         $this->guard->assertMovable($page, 'switched to another template');
 
-        if (app(Drafts::class)->of((int) $page->id) !== null) {
+        if ($this->drafts->of((int) $page->id) !== null) {
             throw ValidationException::withMessages(['page' => "Page [{$page->name()}] has a draft on its current template. Publish or discard the draft first."]);
         }
 

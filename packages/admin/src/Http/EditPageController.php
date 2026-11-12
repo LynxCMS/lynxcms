@@ -17,14 +17,14 @@ use LynxCms\Core\Pages\Page;
  */
 final class EditPageController
 {
-    public function __invoke(int $page): View|RedirectResponse
+    public function __invoke(AdminAccess $access, AdminBranches $branches, int $page): View|RedirectResponse
     {
         $found = lynx()->pages->get($page);
         abort_unless($found instanceof Page, 404);
-        abort_unless(app(AdminAccess::class)->allows('pages.view', $found), 403);
+        abort_unless($access->allows('pages.view', $found), 403);
 
         // Pages a module edits on its own screen (menus) open there instead.
-        $moduleScreen = app(AdminBranches::class)->editUrlFor($found);
+        $moduleScreen = $branches->editUrlFor($found);
 
         if ($moduleScreen !== null) {
             return redirect($moduleScreen);

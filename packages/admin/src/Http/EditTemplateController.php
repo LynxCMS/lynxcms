@@ -15,9 +15,9 @@ use LynxCms\Core\Models\Template;
  */
 final class EditTemplateController
 {
-    public function __invoke(?string $template = null): View
+    public function __invoke(SchemaOwners $owners, ?string $template = null): View
     {
-        abort_if($template === null && ! app(SchemaOwners::class)->isEditingEnabled(), 403);
+        abort_if($template === null && ! $owners->isEditingEnabled(), 403);
         abort_unless($template === null || lynx()->templates->find($template) instanceof Template, 404);
 
         return view('lynx-admin::templates.edit', ['template' => $template]);

@@ -51,8 +51,12 @@ final class PageStrings extends Component
     #[Locked]
     public ?string $status = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -65,7 +69,7 @@ final class PageStrings extends Component
 
     public function save(): void
     {
-        abort_unless(app(AdminAccess::class)->allows('pages.edit', $this->page()), 403);
+        abort_unless($this->access->allows('pages.edit', $this->page()), 403);
         $this->status = null;
         $changes = [];
 
@@ -124,9 +128,9 @@ final class PageStrings extends Component
         return view('lynx-admin::livewire.page-strings', [
             'groups' => $groups,
             'languages' => LocalizedForm::languages(),
-            'canEdit' => app(AdminAccess::class)->allows('pages.edit', $this->page()),
+            'canEdit' => $this->access->allows('pages.edit', $this->page()),
             // String keys and the views declaring them are developer details.
-            'isSuperuser' => app(AdminAccess::class)->isSuperuser(),
+            'isSuperuser' => $this->access->isSuperuser(),
         ]);
     }
 

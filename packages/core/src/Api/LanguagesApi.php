@@ -30,6 +30,7 @@ final readonly class LanguagesApi
         private ActionRunner $runner,
         private LanguageRegistry $registry,
         private LanguageContext $context,
+        private LanguageSwitcher $switcher,
     ) {}
 
     /**
@@ -113,7 +114,7 @@ final readonly class LanguagesApi
      */
     public function switcher(Page $page, ?Request $request = null): array
     {
-        return app(LanguageSwitcher::class)->links($page, $request);
+        return $this->switcher->links($page, $request);
     }
 
     public function default(): Language

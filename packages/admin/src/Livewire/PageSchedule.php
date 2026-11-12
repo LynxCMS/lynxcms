@@ -58,8 +58,12 @@ final class PageSchedule extends Component
     #[Locked]
     public ?string $status = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -100,10 +104,10 @@ final class PageSchedule extends Component
         return view('lynx-admin::livewire.page-schedule', [
             'languages' => lynx()->languages->all(),
             'failed' => array_values(array_filter(lynx()->pages->schedules($this->pageId), fn (array $entry): bool => $entry['error'] !== null)),
-            'canPublish' => app(AdminAccess::class)->allows('pages.publish', $page),
+            'canPublish' => $this->access->allows('pages.publish', $page),
             'hasLanguageTimes' => ! $this->isWholePage() && lynx()->languages->isMultilingual(),
             'hasDraft' => $this->loadedDraftAt !== '' || lynx()->pages->draft($page) !== null,
-            'canPublishDraft' => app(AdminAccess::class)->allows('pages.publish', $page) && app(AdminAccess::class)->allows('pages.edit', $page),
+            'canPublishDraft' => $this->access->allows('pages.publish', $page) && $this->access->allows('pages.edit', $page),
         ]);
     }
 

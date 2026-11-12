@@ -64,6 +64,7 @@ final readonly class PagesApi
         private EditLocks $editLocks,
         private Revisions $revisionStore,
         private Drafts $drafts,
+        private TranslationStates $translationStates,
     ) {}
 
     /** A new, unsaved page. Set values and names, then save(). */
@@ -247,7 +248,7 @@ final readonly class PagesApi
      */
     public function translationStates(Page $page, string $language): array
     {
-        return app(TranslationStates::class)->of($page, $this->languages->get($language));
+        return $this->translationStates->of($page, $this->languages->get($language));
     }
 
     /**
