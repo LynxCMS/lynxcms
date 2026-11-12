@@ -9,7 +9,6 @@ use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -148,7 +147,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->registerTinkerCaster();
         $this->app->scoped(UnknownFields::class);
         // Regional languages (pt-PT) also read the bare language's strings and files (lang/pt.json, lang/pt/*.php).
-        $this->app->extend('translation.loader', fn (Loader $loader): Loader => new RegionalLoader($loader));
+        $this->app->extend('translation.loader', RegionalLoader::widen(...));
         // Page gates and visibility rules (ADR-0062): registered by modules at boot.
         $this->app->singleton(PageGates::class);
         $this->app->singleton(PageVisibility::class);
