@@ -45,7 +45,7 @@ The admin also creates a `passkeys` table with a foreign key to your users table
 
 ## Deleting a user
 
-Without a foreign key, deleting a user leaves their roles behind in `lynx_role_user`. Nobody can sign in as a deleted user, so the rows grant nothing. Most apps can leave them there: auto-incrementing ids, UUIDs, and ULIDs are never given to another user.
+Without a foreign key, deleting a user leaves their roles behind in `lynx_role_user`. Nobody can sign in as a deleted user, so the rows grant nothing. A deleted superuser doesn't count as one either: Lynx refuses to remove the last superuser whose account still exists. Most apps can leave them there: auto-incrementing ids, UUIDs, and ULIDs are never given to another user.
 
 The rows matter when an id can come back, such as an id that an external sign-in provider assigns. A new user with an old id would get the old user's roles. An app like that removes a user's roles when it deletes the user. This listener sets the user's roles to none:
 

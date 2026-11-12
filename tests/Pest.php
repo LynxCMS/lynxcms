@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\ParallelTesting;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Lynx;
@@ -10,6 +11,7 @@ use LynxCms\Menus\Reading\MenuItem;
 use LynxCms\Tests\AppFortifyTestCase;
 use LynxCms\Tests\ProviderOrderTestCase;
 use LynxCms\Tests\TestCase;
+use Workbench\App\Models\User;
 
 pest()->extend(TestCase::class)->in('Feature', 'Unit');
 pest()->extend(AppFortifyTestCase::class)->in('AppAuth');
@@ -111,4 +113,12 @@ function jpeg(int $width, int $height): string
     imagejpeg($image);
 
     return (string) ob_get_clean();
+}
+
+/** An account in the workbench's users table, for tests that need a user who exists; returns its id. */
+function userAccount(string $name = 'Ana'): string
+{
+    $user = User::query()->forceCreate(['name' => $name, 'email' => mb_strtolower($name).'@example.com', 'password' => Hash::make('correct horse')]);
+
+    return (string) $user->getKey();
 }

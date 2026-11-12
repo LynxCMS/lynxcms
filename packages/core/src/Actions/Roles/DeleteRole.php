@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Permissions\Role;
+use LynxCms\Core\Permissions\Superusers;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -17,6 +18,8 @@ use LynxCms\Core\Support\Value;
  */
 final class DeleteRole extends Action
 {
+    public function __construct(private readonly Superusers $superusers) {}
+
     public static function name(): string
     {
         return 'roles.delete';
@@ -51,7 +54,7 @@ final class DeleteRole extends Action
     {
         $name = (string) $input->string('role');
         $role = Role::query()->where('name', $name)->first() ?? throw ValidationException::withMessages(['role' => "Role [{$name}] does not exist."]);
-        LastSuperuser::assertKept(array_values(array_map(Value::int(...), $role->assignments()->pluck('id')->all())), 'role');
+        $this->superusers->assertKept(array_values(array_map(Value::int(...), $role->assignments()->pluck('id')->all())), 'role');
 
         $users = $role->assignments()->count();
         $role->delete();

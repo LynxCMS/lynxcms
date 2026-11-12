@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Permissions\RoleAssignment;
+use LynxCms\Core\Permissions\Superusers;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -18,6 +19,8 @@ use LynxCms\Core\Support\Value;
  */
 final class AssignRoles extends Action
 {
+    public function __construct(private readonly Superusers $superusers) {}
+
     public static function name(): string
     {
         return 'roles.assign';
@@ -60,7 +63,7 @@ final class AssignRoles extends Action
         }
 
         $removed = RoleAssignment::query()->where('user_id', $user)->whereNotIn('role_id', $roles->modelKeys())->pluck('id')->all();
-        LastSuperuser::assertKept(array_values(array_map(Value::int(...), $removed)), 'roles');
+        $this->superusers->assertKept(array_values(array_map(Value::int(...), $removed)), 'roles');
 
         RoleAssignment::query()->whereKey($removed)->delete();
         foreach ($roles as $role) {
