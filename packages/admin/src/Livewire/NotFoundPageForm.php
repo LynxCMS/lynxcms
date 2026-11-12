@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Pages\SetNotFoundPage;
 use LynxCms\Core\Pages\NotFoundPage;
@@ -31,10 +30,9 @@ final class NotFoundPageForm extends Component
     public ?string $status = null;
 
     /** Runs on mount and on every Livewire update, so the checks also guard /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(RoleList::currentUserIsSuperuser(), 403, Value::string(__('lynx-admin::general.not_found.denied')));
+        $access->authorizeSuperuser(Value::string(__('lynx-admin::general.not_found.denied')));
     }
 
     public function mount(NotFoundPage $notFound): void

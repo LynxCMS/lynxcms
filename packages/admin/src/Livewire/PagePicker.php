@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\PageSearch;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Pages\Page;
@@ -69,9 +67,9 @@ final class PagePicker extends Component
     #[Locked]
     public ?string $placeholder = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     /**

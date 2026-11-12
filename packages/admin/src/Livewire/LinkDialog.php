@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\LinkPages;
 use LynxCms\Core\Fields\LinkRelSanitizer;
 use LynxCms\Core\Pages\Page;
@@ -74,9 +72,9 @@ final class LinkDialog extends Component
     /** The page whose children "Select page" lists; null starts at the home page. */
     public ?int $browseId = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     #[On('lynx-link-open')]

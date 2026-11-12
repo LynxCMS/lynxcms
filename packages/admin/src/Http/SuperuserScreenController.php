@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Http;
 
 use Illuminate\Contracts\View\View;
-use LynxCms\Admin\Livewire\RoleList;
+use LynxCms\Admin\AdminAccess;
 
 /**
  * The Roles, Users and General screens, superusers only. A controller rather than closures so route:cache
@@ -15,24 +15,24 @@ use LynxCms\Admin\Livewire\RoleList;
  */
 final class SuperuserScreenController
 {
-    public function roles(): View
+    public function roles(AdminAccess $access): View
     {
-        abort_unless(RoleList::currentUserIsSuperuser(), 403);
+        abort_unless($access->isSuperuser(), 403);
 
         return view('lynx-admin::roles.index');
     }
 
-    public function users(): View
+    public function users(AdminAccess $access): View
     {
-        abort_unless(RoleList::currentUserIsSuperuser(), 403);
+        abort_unless($access->isSuperuser(), 403);
 
         return view('lynx-admin::users.index');
     }
 
     /** Settings > General: the admin's branding and the page not found. */
-    public function general(): View
+    public function general(AdminAccess $access): View
     {
-        abort_unless(RoleList::currentUserIsSuperuser(), 403);
+        abort_unless($access->isSuperuser(), 403);
 
         return view('lynx-admin::general');
     }

@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Support\Facades\File;
+use Illuminate\Translation\FileLoader;
+use LynxCms\Core\Languages\RegionalLoader;
 
 beforeEach(function (): void {
     courseSite();
@@ -88,4 +91,32 @@ describe('PHP translation files', function (): void {
 
         expect(lynx()->language('pt', fn (): string => trans_choice('rooms.rooms', 2)))->toBe('2 rooms');
     });
+});
+
+it('keeps Laravel\'s file loader a file loader, for code that checks', function (): void {
+    $loader = app('translator')->getLoader();
+
+    expect($loader)->toBeInstanceOf(FileLoader::class)
+        ->and($loader->jsonPaths())->toBe(app('translation.loader')->jsonPaths());
+});
+
+it('widens a loader of another kind by wrapping it', function (): void {
+    $other = new class implements Loader
+    {
+        public function load($locale, $group, $namespace = null): array
+        {
+            return $locale === 'pt' ? ['hello' => 'Olá'] : [];
+        }
+
+        public function addNamespace($namespace, $hint): void {}
+
+        public function addJsonPath($path): void {}
+
+        public function namespaces(): array
+        {
+            return [];
+        }
+    };
+
+    expect(RegionalLoader::widen($other)->load('pt-PT', '*', '*'))->toBe(['hello' => 'Olá']);
 });

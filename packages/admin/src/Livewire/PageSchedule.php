@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Pages\SchedulePage;
 use LynxCms\Core\Pages\Page;
@@ -60,9 +58,9 @@ final class PageSchedule extends Component
     #[Locked]
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(int $pageId): void

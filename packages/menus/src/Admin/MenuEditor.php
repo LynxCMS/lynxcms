@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace LynxCms\Menus\Admin;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\PageSearch;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
@@ -52,10 +50,9 @@ final class MenuEditor extends Component
     #[Locked]
     public bool $confirmingDelete = false;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('menus.manage'), 403, Value::string(__('lynx-menus::admin.denied')));
+        $access->authorizeScreen('menus.manage', Value::string(__('lynx-menus::admin.denied')));
     }
 
     /** An item to open, from the URL (the page editor sends menu items here). */

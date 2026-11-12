@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Livewire\Concerns\ChangesChildren;
 use LynxCms\Admin\Livewire\Concerns\MovesChildren;
@@ -57,9 +56,9 @@ final class PageChildren extends Component
 
     public int $page = 1;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(int $pageId): void

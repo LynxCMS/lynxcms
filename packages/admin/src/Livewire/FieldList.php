@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Livewire\Concerns\DuplicatesFields;
@@ -40,10 +38,9 @@ final class FieldList extends Component
     public bool $showSystem = false;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403, Value::string(__('lynx-admin::fields.denied')));
+        $access->authorizeScreen('schema.manage', Value::string(__('lynx-admin::fields.denied')));
     }
 
     public function clearFilters(): void

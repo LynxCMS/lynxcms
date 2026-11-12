@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Finder\Admin;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Query\SelectorException;
 use LynxCms\Core\Support\Value;
@@ -49,10 +47,9 @@ final class FinderScreen extends Component
     public ?string $status = null;
 
     /** Every request, updates included: they reach /livewire/update, outside the admin's routes and their gate. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('pages.view'), 403);
+        $access->authorizeScreen('pages.view');
     }
 
     public function mount(): void

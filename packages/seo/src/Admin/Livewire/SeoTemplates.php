@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Seo\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Models\Template;
 use LynxCms\Seo\Actions\DisableSeo;
@@ -29,10 +27,9 @@ final class SeoTemplates extends Component
     #[Locked]
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('seo.manage'), 403);
+        $access->authorizeScreen('seo.manage');
     }
 
     /** Turns SEO on when the template lacks the fields, off when it has them. It applies at once, so a notice says so. */

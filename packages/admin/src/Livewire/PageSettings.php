@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\ParentTemplates;
 use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Admin\Editor\TemplateChoices;
@@ -64,9 +62,9 @@ final class PageSettings extends Component
     #[Locked]
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(int $pageId): void

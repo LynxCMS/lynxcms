@@ -100,7 +100,7 @@ Register everything in a service provider. The permission and the tool work with
 
 <<< @/snippets/review/views/blog/review.blade.php{blade}
 
-The tab is a Livewire component. Livewire sends every click to its own endpoint, which is outside the admin's routes and their middleware. So the component checks access itself in `boot()`, which runs on every request, not only the first one:
+The tab is a Livewire component. Livewire sends every click to its own endpoint, which is outside the admin's routes and their middleware. So the component checks access itself in `boot()`, which runs on every request, not only the first one. `AdminAccess::authorizeScreen()` checks the admin gate, then the permission you name, and answers 403 when either says no; `authorizeSuperuser()` does the same for screens only superusers use:
 
 <<< @/snippets/review/ChecklistTab.php#tab{php}
 

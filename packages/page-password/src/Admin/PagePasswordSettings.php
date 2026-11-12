@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\PagePassword\Admin;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageLoader;
@@ -26,10 +24,9 @@ use LynxCms\PagePassword\PagePasswordSchema;
  */
 final class PagePasswordSettings extends Component
 {
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403);
+        $access->authorizeScreen('schema.manage');
     }
 
     public function enable(string $template): void

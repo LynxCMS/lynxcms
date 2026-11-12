@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ActivityEntry;
 use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Admin\Editor\BacklinkFilter;
@@ -35,9 +34,9 @@ final class PageHistory extends Component
     public int $activityLimit = self::ACTIVITY_PER_PAGE;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function showMoreActivity(): void

@@ -6,11 +6,9 @@ namespace LynxCms\Sitemap\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Fields\Choices\Choice;
 use LynxCms\Core\Models\Template;
@@ -39,10 +37,9 @@ final class SitemapSettings extends Component
     /** What the last action did, shown beside the buttons. */
     public string $status = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('sitemap.manage'), 403);
+        $access->authorizeScreen('sitemap.manage');
     }
 
     public function mount(): void

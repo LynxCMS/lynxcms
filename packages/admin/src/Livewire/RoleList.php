@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
-use LynxCms\Admin\Livewire\Concerns\RequiresSuperuser;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Support\Value;
 
@@ -19,13 +17,10 @@ use LynxCms\Core\Support\Value;
  */
 final class RoleList extends Component
 {
-    use RequiresSuperuser;
-
     /** Runs on mount and on every Livewire update, so the checks also guard /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        $this->authorizeSuperuser();
+        $access->authorizeSuperuser(Value::string(__('lynx-admin::roles.denied')));
     }
 
     public function render(): View

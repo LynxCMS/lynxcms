@@ -6,11 +6,9 @@ namespace App\Livewire;
 
 use App\Blog\PostChecks;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Pages\Page;
 
 // #region tab
@@ -24,12 +22,11 @@ final class ChecklistTab extends Component
 
     /**
      * Livewire sends every click to its own endpoint, outside the admin's routes, so the
-     * component checks access itself, on every request.
+     * component checks access itself, on every request: the admin gate, then blog.review.
      */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('blog.review'), 403);
+        $access->authorizeScreen('blog.review');
     }
 
     /** A save like any other: the action checks pages.edit and logs the change. */

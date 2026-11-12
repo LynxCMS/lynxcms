@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Menus\Admin;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 use LynxCms\Menus\Admin\Forms\MenuForm;
@@ -23,10 +21,9 @@ final class MenuList extends Component
 {
     public MenuForm $newMenu;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('menus.manage'), 403, Value::string(__('lynx-menus::admin.denied')));
+        $access->authorizeScreen('menus.manage', Value::string(__('lynx-menus::admin.denied')));
     }
 
     /** Links from before menus had a screen each (menus?menu=3&item=9) open that menu's screen. */

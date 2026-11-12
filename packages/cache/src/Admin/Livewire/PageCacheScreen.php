@@ -8,11 +8,9 @@ use Carbon\CarbonInterval;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Cache\Actions\ClearPageCache;
 use LynxCms\Cache\Actions\SavePageCacheRules;
 use LynxCms\Cache\PageCacheEntry;
@@ -54,10 +52,9 @@ final class PageCacheScreen extends Component
     /** Where the status shows: "stored" (clearing) or "rules" (saving). */
     public string $statusFor = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('page_cache.manage'), 403);
+        $access->authorizeScreen('page_cache.manage');
     }
 
     public function mount(TemplateRules $rules): void

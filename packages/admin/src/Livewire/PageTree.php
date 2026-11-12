@@ -7,7 +7,6 @@ namespace LynxCms\Admin\Livewire;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -15,7 +14,6 @@ use Livewire\Attributes\Session;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\DuplicatesPages;
 use LynxCms\Admin\Livewire\Concerns\MovesPages;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -101,9 +99,9 @@ final class PageTree extends Component
     public string $filter = '';
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(string $root = '/', bool $sortable = true, ?int $perPage = null, ?string $presenter = null, ?string $events = null): void
