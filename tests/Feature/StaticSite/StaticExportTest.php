@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -78,6 +80,21 @@ it('renders each exported page in its own language, whatever the page before it 
     // Pages are visited in one process, so b comes after a Portuguese page.
     expect(File::get($this->dist.'/b/index.html'))->toContain('lang="en')->toContain('Note b')->not->toContain('Nota b')
         ->and(File::get($this->dist.'/pt/nota-b/index.html'))->toContain('lang="pt')->toContain('Nota b');
+});
+
+it('gives each exported page fresh request scoped services, as a new request would get', function (): void {
+    // A scoped binding lives for one request; visits share a process, so they must start fresh.
+    app()->scoped('tests.request-probe', fn (): stdClass => new stdClass);
+    $seen = [];
+    Event::listen(RequestHandled::class, function () use (&$seen): void {
+        // Kept, so a freed instance's id is never reused for a new one.
+        $seen[] = app('tests.request-probe');
+    });
+
+    $this->artisan('lynx:static')->assertSuccessful();
+
+    expect(count($seen))->toBeGreaterThan(1)
+        ->and(array_unique(array_map(spl_object_id(...), $seen)))->toHaveCount(count($seen));
 });
 
 it('leaves out pages a visitor may not see', function (): void {

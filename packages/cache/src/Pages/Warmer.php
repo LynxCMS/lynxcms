@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace LynxCms\Cache\Pages;
 
 use Closure;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Livewire\LivewireManager;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
@@ -27,7 +29,7 @@ final readonly class Warmer
     /** Pages loaded per query. */
     private const int CHUNK = 200;
 
-    public function __construct(private Kernel $kernel, private CookieJar $cookies, private TemplateRules $rules, private PageStore $store, private RequestRules $requestRules, private PageVisibility $visibility, private PageUrls $urls) {}
+    public function __construct(private Container $container, private Kernel $kernel, private Router $router, private CookieJar $cookies, private TemplateRules $rules, private PageStore $store, private RequestRules $requestRules, private PageVisibility $visibility, private PageUrls $urls) {}
 
     /**
      * @param  (Closure(string): void)|null  $visiting  told each URL before it is rendered, for progress
@@ -85,10 +87,18 @@ final readonly class Warmer
         // Visits share one process: cookies queued by the last one (the cookie session driver
         // queues its data) would otherwise be sent with this one and make it look personal.
         $this->cookies->flushQueuedCookies();
+        // Scoped services (the language, loaded pages, resolved paths) live for one request, as
+        // the queue worker and Octane reset them; a visit must not see the last one's.
+        $this->container->forgetScopedInstances();
+        // The router keeps each route's controller once built, with the services it was given;
+        // Octane flushes them between requests too.
+        foreach ($this->router->getRoutes()->getRoutes() as $route) {
+            $route->flushController();
+        }
         // Livewire keeps per request flags (scripts printed, components rendered) until reset,
         // as Octane does between requests; without this only the first page gets its script.
-        if (class_exists(LivewireManager::class) && app()->bound(LivewireManager::class)) {
-            app(LivewireManager::class)->flushState();
+        if (class_exists(LivewireManager::class) && $this->container->bound(LivewireManager::class)) {
+            $this->container->make(LivewireManager::class)->flushState();
         }
 
         // A console process has visibility rules off; visitors do not, and stored pages are for visitors.

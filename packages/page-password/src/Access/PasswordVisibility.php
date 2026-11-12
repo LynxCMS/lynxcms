@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\PagePassword\Access;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,9 +31,8 @@ final readonly class PasswordVisibility implements VariesByVisitor, VisibilityRu
     public function __construct(
         private ProtectedRoots $roots,
         private Unlocks $unlocks,
-        private PageLoader $loader,
-        private Authorizer $authorizer,
         private ActionRunner $runner,
+        private Container $container,
     ) {}
 
     /** Null while every protected page is locked for this visitor, as for anyone without a cookie or account. */
@@ -109,15 +109,19 @@ final readonly class PasswordVisibility implements VariesByVisitor, VisibilityRu
         return Value::ints($request->attributes->get(self::LOCKED));
     }
 
-    /** Signed-in users see the pages their roles let them view in the admin (ADR-0033). */
+    /**
+     * Signed-in users see the pages their roles let them view in the admin (ADR-0033). The page
+     * loader and the authorizer live for one request and this rule for the process, so they are
+     * resolved here, each time.
+     */
     private function canView(int $pageId): bool
     {
         if (Auth::user() === null) {
             return false;
         }
 
-        $page = $this->loader->find($pageId);
+        $page = $this->container->make(PageLoader::class)->find($pageId);
 
-        return $page instanceof Page && $this->authorizer->allows($this->runner->actor(), 'pages.view', $page);
+        return $page instanceof Page && $this->container->make(Authorizer::class)->allows($this->runner->actor(), 'pages.view', $page);
     }
 }

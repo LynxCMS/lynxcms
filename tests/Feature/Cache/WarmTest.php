@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Http\Events\RequestHandled;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Livewire\Component;
@@ -69,6 +71,21 @@ it('renders each warmed page in its own language, whatever the page before it wa
     // Visits run a, pt/nota-a, b, pt/nota-b in one process: b comes straight after a Portuguese page.
     expect($html('b'))->toContain('lang="en')->toContain('Note b')->not->toContain('Nota b')
         ->and($html('pt/nota-b'))->toContain('lang="pt')->toContain('Nota b');
+});
+
+it('gives each warmed page fresh request scoped services, as a new request would get', function (): void {
+    // A scoped binding lives for one request; visits share a process, so they must start fresh.
+    app()->scoped('tests.request-probe', fn (): stdClass => new stdClass);
+    $seen = [];
+    Event::listen(RequestHandled::class, function () use (&$seen): void {
+        // Kept, so a freed instance's id is never reused for a new one.
+        $seen[] = app('tests.request-probe');
+    });
+
+    $this->artisan('lynx:page-cache', ['--warm' => true])->assertSuccessful();
+
+    expect(count($seen))->toBeGreaterThan(1)
+        ->and(array_unique(array_map(spl_object_id(...), $seen)))->toHaveCount(count($seen));
 });
 
 it('leaves out templates without a cache rule and says why pages were skipped', function (): void {
