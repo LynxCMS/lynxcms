@@ -19,8 +19,11 @@ use TailwindMerge\TailwindMerge;
  */
 final class TailwindMergeMacros
 {
+    /** Merged strings kept at most: the admin's components use a few hundred; Octane keeps the process. */
+    public const int MAX_CACHED = 1000;
+
     /**
-     * Merged class strings by input. Rows repeat the same classes, and merging is slow.
+     * Merged class strings by input, oldest first. Rows repeat the same classes, and merging is slow.
      *
      * @var array<string, string>
      */
@@ -66,6 +69,26 @@ final class TailwindMergeMacros
         $strings = array_map(static fn (mixed $class): string => is_string($class) ? $class : '', [...$classes, $last]);
         $key = implode("\0", $strings);
 
-        return self::$merged[$key] ??= Value::string(app(TailwindMergeContract::class)->merge(...$strings));
+        if (isset(self::$merged[$key])) {
+            return self::$merged[$key];
+        }
+
+        if (count(self::$merged) >= self::MAX_CACHED) {
+            unset(self::$merged[array_key_first(self::$merged)]);
+        }
+
+        return self::$merged[$key] = Value::string(app(TailwindMergeContract::class)->merge(...$strings));
+    }
+
+    /** How many merged strings are kept, for tests. */
+    public static function cached(): int
+    {
+        return count(self::$merged);
+    }
+
+    /** Drops every merged string. */
+    public static function forget(): void
+    {
+        self::$merged = [];
     }
 }
