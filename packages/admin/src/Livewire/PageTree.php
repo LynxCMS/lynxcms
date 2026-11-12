@@ -18,6 +18,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\DuplicatesPages;
 use LynxCms\Admin\Livewire\Concerns\MovesPages;
+use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Livewire\Concerns\PageQuickActions;
 use LynxCms\Admin\Livewire\Concerns\ScopedToRoot;
 use LynxCms\Admin\Tree\DefaultPresenter;
@@ -42,6 +43,7 @@ final class PageTree extends Component
 {
     use DuplicatesPages;
     use MovesPages;
+    use Notifies;
     use PageQuickActions;
     use ScopedToRoot;
 
@@ -85,6 +87,10 @@ final class PageTree extends Component
 
     #[Locked]
     public ?string $error = null;
+
+    /** The last notice, for screen readers and tests (Notifies). */
+    #[Locked]
+    public ?string $status = null;
 
     /** The Details view (languages, status, last change beside each title), kept for the session. */
     #[Session]

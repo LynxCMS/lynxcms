@@ -1,6 +1,6 @@
 {{-- The page editor's header. Beside the title, a line of facts and links: whether the page is live, whether a
      draft waits (with its previews and when it goes live, if scheduled), the live page and the links modules add (EditorLinks). On the right, the
-     actions: components modules add (AdminSlots), then one main button with the rest in its menu, plus Publish draft while a draft waits. --}}
+     actions: components modules add (AdminSlots), then Save, and Publish with the rest in its menu. --}}
 @php
     $status = match (true) {
         $page->hasStatus(\LynxCms\Core\Pages\PageStatus::UNPUBLISHED) => 'unpublished',
@@ -91,31 +91,56 @@
                 @foreach (app(\LynxCms\Admin\AdminSlots::class)->for(\LynxCms\Admin\AdminSlots::EDITOR_HEADER, $page) as $slotComponent)
                     @livewire($slotComponent, ['pageId' => (int) $page->id], key('slot-'.$slotComponent.'-'.$page->id))
                 @endforeach
-                @if ($hasDraft)
-                    <x-lynx-admin::ui.button variant="outline" type="button" wire:click="publishDraft">{{ __('lynx-admin::editor.publish_draft') }}</x-lynx-admin::ui.button>
+                {{-- Save (save(), Cmd/Ctrl+S) saves the fields, or the draft while one waits; it never publishes. Publish
+                     (PublishesPage) shows only when there is something to publish, an unpublished page or a waiting draft, and
+                     its menu publishes and then leaves the editor. Otherwise, and without the publish permission, there is one
+                     Save button with the same menu. --}}
+                @php
+                    $isUnpublished = $page->hasStatus(\LynxCms\Core\Pages\PageStatus::UNPUBLISHED);
+                    $showsPublish = $canPublish && ($hasDraft || $isUnpublished);
+                    $verb = $showsPublish ? 'publish' : 'save';
+                    $saveHint = match (true) {
+                        $hasDraft => 'save_draft_hint',
+                        ! $canPublish => 'save_hint',
+                        $isUnpublished => 'save_hint_unpublished',
+                        default => 'save_hint_live',
+                    };
+                    $publishHint = $hasDraft ? 'publish_hint_draft' : 'publish_hint_unpublished';
+                    $icons = ['exit' => 'x', 'view' => 'eye', 'add' => 'circle-plus', 'next' => 'arrow-right'];
+                @endphp
+                @if ($showsPublish)
+                    <x-lynx-admin::ui.button variant="outline" type="button" wire:click="save" data-save="{{ $hasDraft ? 'draft' : 'page' }}" title="{{ __('lynx-admin::editor.'.$saveHint) }}">
+                        {{ __('lynx-admin::editor.save') }}
+                    </x-lynx-admin::ui.button>
                 @endif
-                {{-- A split button: the main save, then a menu with the other ways to save. --}}
-                <span class="flex" role="group" aria-label="{{ __('lynx-admin::editor.save_group') }}">
-                    @if ($hasDraft)
-                        <x-lynx-admin::ui.button type="button" class="rounded-e-none" wire:click="saveDraft" data-lynx-save title="{{ __('lynx-admin::editor.save_draft_hint') }}">{{ __('lynx-admin::editor.save_draft') }}</x-lynx-admin::ui.button>
+                <span class="flex" role="group" aria-label="{{ __('lynx-admin::editor.'.$verb.'_group') }}" data-lynx-save>
+                    @if ($showsPublish)
+                        <x-lynx-admin::ui.button type="button" class="rounded-e-none" wire:click="publish" data-publish="publish" title="{{ __('lynx-admin::editor.'.$publishHint) }}">{{ __('lynx-admin::editor.publish') }}</x-lynx-admin::ui.button>
                     @else
-                        <x-lynx-admin::ui.button type="button" class="rounded-e-none" wire:click="save" data-lynx-save title="{{ __('lynx-admin::editor.save_hint') }}">{{ __('lynx-admin::editor.save') }}</x-lynx-admin::ui.button>
+                        <x-lynx-admin::ui.button type="button" class="rounded-e-none" wire:click="save" data-publish="save" data-save="{{ $hasDraft ? 'draft' : 'page' }}" title="{{ __('lynx-admin::editor.'.$saveHint) }}">{{ __($hasDraft ? 'lynx-admin::editor.save_draft' : 'lynx-admin::editor.save') }}</x-lynx-admin::ui.button>
                     @endif
                     {{-- The menu is teleported and ignored by Livewire, so the key renews it when its items change. --}}
-                    <x-lynx-admin::ui.dropdown-menu wire:key="save-menu-{{ $hasDraft ? 'draft' : 'live' }}">
+                    <x-lynx-admin::ui.dropdown-menu wire:key="publish-menu-{{ $verb }}-{{ $hasDraft ? 'draft' : 'live' }}-{{ $isUnpublished ? 'off' : 'on' }}">
                         <x-lynx-admin::ui.dropdown-menu-trigger>
                             <x-lynx-admin::ui.button type="button" size="icon" class="border-primary-foreground/20 w-8 rounded-s-none border-s" aria-label="{{ __('lynx-admin::editor.more_saves') }}">
                                 <x-lucide-chevron-down aria-hidden="true" />
                             </x-lynx-admin::ui.button>
                         </x-lynx-admin::ui.dropdown-menu-trigger>
-                        <x-lynx-admin::ui.dropdown-menu-content align="end" class="min-w-44" data-save-menu>
-                            @unless ($hasDraft)
-                                <x-lynx-admin::ui.dropdown-menu-item wire:click="saveDraft">{{ __('lynx-admin::editor.save_as_draft') }}</x-lynx-admin::ui.dropdown-menu-item>
-                            @endunless
-                            <x-lynx-admin::ui.dropdown-menu-item wire:click="review">{{ __('lynx-admin::editor.review_changes') }}</x-lynx-admin::ui.dropdown-menu-item>
+                        <x-lynx-admin::ui.dropdown-menu-content align="end" class="min-w-52" data-save-menu>
+                            @foreach ($followUps as $followUp)
+                                <x-lynx-admin::ui.dropdown-menu-item wire:click="publish('{{ $followUp->value }}')" data-publish-then="{{ $followUp->value }}">
+                                    <x-lynx-admin::ui.icon :name="$icons[$followUp->value]" aria-hidden="true" />{{ __('lynx-admin::editor.then.'.$verb.'.'.$followUp->value) }}
+                                </x-lynx-admin::ui.dropdown-menu-item>
+                            @endforeach
+                            <x-lynx-admin::ui.dropdown-menu-separator />
+                            @if (! $hasDraft && ! $isUnpublished)
+                                {{-- Save goes live on a published page, so starting a draft is a choice of its own. --}}
+                                <x-lynx-admin::ui.dropdown-menu-item inset wire:click="saveDraft">{{ __('lynx-admin::editor.save_as_draft') }}</x-lynx-admin::ui.dropdown-menu-item>
+                            @endif
+                            <x-lynx-admin::ui.dropdown-menu-item inset wire:click="review">{{ __('lynx-admin::editor.review_changes') }}</x-lynx-admin::ui.dropdown-menu-item>
                             @if ($hasDraft)
                                 <x-lynx-admin::ui.dropdown-menu-separator />
-                                <x-lynx-admin::ui.dropdown-menu-item variant="destructive" data-discard-draft x-on:click="discarding = true">{{ __('lynx-admin::editor.discard_draft') }}</x-lynx-admin::ui.dropdown-menu-item>
+                                <x-lynx-admin::ui.dropdown-menu-item inset variant="destructive" data-discard-draft x-on:click="discarding = true">{{ __('lynx-admin::editor.discard_draft') }}</x-lynx-admin::ui.dropdown-menu-item>
                             @endif
                         </x-lynx-admin::ui.dropdown-menu-content>
                     </x-lynx-admin::ui.dropdown-menu>

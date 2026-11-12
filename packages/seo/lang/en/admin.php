@@ -44,6 +44,8 @@ return [
         'on' => 'On',
         'off' => 'Off',
         'empty' => 'No templates with URLs yet.',
+        'turned_on' => 'SEO fields on for :template.',
+        'turned_off' => 'SEO fields off for :template.',
     ],
     'audit' => [
         'checked' => 'Checked :count published page.|Checked :count published pages.',

@@ -13,6 +13,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\ParentTemplates;
+use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Tree\DefaultPresenter;
@@ -88,7 +89,7 @@ final class PageSettings extends Component
 
         $isSet = $this->page()->hasStatus(PageStatus::NAMES[$flag]);
         lynx()->pages->setStatus($this->pageId, ...($isSet ? ['remove' => [$flag]] : ['add' => [$flag]]));
-        $this->changed(__('lynx-admin::settings.status.saved'));
+        $this->changed((new StatusNotice)->for($this->pageId, $flag));
     }
 
     /** A dry run of the switch, so the editor sees which fields' values would be orphaned first. */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire\Concerns;
 
 use Illuminate\Validation\ValidationException;
+use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 
@@ -18,7 +19,7 @@ trait ChangesChildren
 
     public ?string $status = null;
 
-    /** Flip a child's unpublished or hidden flag. */
+    /** Flip a child's unpublished or hidden flag. It applies at once, so a notice says so. */
     public function toggle(int $id, string $flag): void
     {
         if (! in_array($flag, ['unpublished', 'hidden'], true)) {
@@ -28,6 +29,7 @@ trait ChangesChildren
         $page = $this->child($id);
         $has = $page->hasStatus(PageStatus::NAMES[$flag]);
         lynx()->pages->setStatus($page, ...($has ? ['remove' => [$flag]] : ['add' => [$flag]]));
+        $this->notify((new StatusNotice)->for($page, $flag));
     }
 
     private function changeablePage(int $id): Page

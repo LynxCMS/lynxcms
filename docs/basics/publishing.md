@@ -64,7 +64,7 @@ lynx()->pages->schedule('/news/launch', '*', publishAt: now()->addDay()); // eve
 
 With `'*'`, Lynx checks every language first, so a time that one language can't take changes nothing. In the page's **Settings** tab, one row sets every language; editors tick "Different times per language" to set each one.
 
-A draft can go live at a set time too, so a rearranged home page appears on Monday morning without anyone pressing **Publish draft**. A draft belongs to the whole page, so this time is for every language:
+A draft can go live at a set time too, so a rearranged home page appears on Monday morning without anyone pressing **Publish**. A draft belongs to the whole page, so this time is for every language:
 
 ```php
 lynx()->pages->saveDraft('/', ['sections' => $mondaySections]);

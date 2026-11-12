@@ -41,18 +41,18 @@ it('marks a waiting draft beside the title', function (): void {
         ->assertSeeHtml('data-page-draft');
 });
 
-it('keeps saving as a draft and reviewing in the save button\'s menu', function (): void {
+it('keeps saving as a draft and reviewing in the publish button\'s menu', function (): void {
     Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
         ->assertSeeHtml('data-save-menu')
         ->assertSeeHtml('wire:click="saveDraft"')
         ->assertSeeHtml('wire:click="review"');
 });
 
-it('offers publishing beside a waiting draft, and discarding in the menu', function (): void {
+it('publishes a waiting draft from the main button, and offers discarding in the menu', function (): void {
     Livewire::test(PageEditor::class, ['pageId' => $this->alpha->id])
         ->set('values.title.default', 'Alpha draft')
         ->call('saveDraft')
-        ->assertSeeHtml('wire:click="publishDraft"')
+        ->assertSeeHtml('data-publish="publish"')
         ->assertSeeHtml('data-discard-draft');
 });
 

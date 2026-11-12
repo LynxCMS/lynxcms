@@ -14,6 +14,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\EditorPanel;
 use LynxCms\Admin\Editor\FieldConditions;
@@ -24,6 +25,7 @@ use LynxCms\Admin\Livewire\Concerns\EditsDraft;
 use LynxCms\Admin\Livewire\Concerns\HoldsEditLock;
 use LynxCms\Admin\Livewire\Concerns\ManagesItems;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Admin\Livewire\Concerns\PublishesPage;
 use LynxCms\Admin\Livewire\Concerns\ReviewsChanges;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Actions\Pages\SavePage;
@@ -38,8 +40,8 @@ use Throwable;
 
 /**
  * The page editor: every field of the page's template with language tabs and fallback previews.
- * Fields with a registered input (FieldInputs) are editable; Save sends only what changed to
- * pages.save, whose validation errors show next to their field. Review changes runs the save as a
+ * Fields with a registered input (FieldInputs) are editable; Publish (PublishesPage) and Save
+ * send only what changed to pages.save, whose validation errors show next to their field. Review changes runs the save as a
  * dry run and lists each change before and after (ChangeReview).
  *
  * @api
@@ -50,6 +52,7 @@ final class PageEditor extends Component
     use HoldsEditLock;
     use ManagesItems;
     use Notifies;
+    use PublishesPage;
     use ReviewsChanges;
 
     #[Locked]
@@ -89,13 +92,18 @@ final class PageEditor extends Component
     {
         $this->pageId = $pageId;
         $this->load();
+        $this->nextPageId = app(ChildList::class)->next($this->page());
 
         if (app(AdminAccess::class)->allows('pages.edit', $this->page())) {
             $this->takeEditLock();
         }
     }
 
-    /** Saves changed fields through pages.save; its ValidationException fills the error bag. */
+    /**
+     * The Save button and Cmd/Ctrl+S: saves changed fields to the page, or into the draft while
+     * one waits. It never publishes an unpublished page (Publish does). Its ValidationException
+     * fills the error bag.
+     */
     public function save(EditorForm $form): void
     {
         if ($this->hasDraft) {
@@ -104,6 +112,12 @@ final class PageEditor extends Component
             return;
         }
 
+        $this->saveFields($form);
+    }
+
+    /** Saves changed fields to the page itself through pages.save. */
+    private function saveFields(EditorForm $form): void
+    {
         $this->status = null;
         $this->isReviewing = false;
         $changes = $this->changes($form);
@@ -202,6 +216,8 @@ final class PageEditor extends Component
             'canEdit' => app(AdminAccess::class)->allows('pages.edit', $page) && $this->editedBy === null,
             'canTakeOver' => $this->editedBy !== null && app(AdminAccess::class)->isSuperuser(),
             'canUnlock' => app(AdminAccess::class)->allows('pages.status', $page),
+            'canPublish' => $this->canPublish(),
+            'followUps' => $this->followUps($page),
             // Template and field type names are developer details.
             'isSuperuser' => app(AdminAccess::class)->isSuperuser(),
             ...$this->conditions($page),

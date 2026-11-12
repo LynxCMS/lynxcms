@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Editor;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\PageScope;
 
 /**
@@ -18,7 +19,10 @@ use LynxCms\Core\Query\PageScope;
  */
 final readonly class ChildList
 {
-    public function __construct(private AdminAccess $access, private AdminBranches $branches, private TemplateChoices $choices) {}
+    /** Siblings after the page that next() checks against the user's tree scope. */
+    private const int NEXT_CANDIDATES = 25;
+
+    public function __construct(private AdminAccess $access, private AdminBranches $branches, private TemplateChoices $choices, private PageFinder $finder) {}
 
     /** Selector clauses for every child the tree lists, without the parent. */
     public function everyChild(): string
@@ -34,6 +38,28 @@ final readonly class ChildList
     public function selector(int $parentId): string
     {
         return 'parent='.$parentId.', '.$this->everyChild();
+    }
+
+    /**
+     * The id of the page after this one among its siblings, in the tree's order and within the
+     * pages the user sees there; null for the last one. Ids are cheap to list, so only the few
+     * after the page are loaded to apply the scope.
+     */
+    public function next(Page $page): ?int
+    {
+        if ($page->id === null || $page->parentId === null) {
+            return null;
+        }
+
+        $ids = $this->finder->ids($this->selector($page->parentId));
+        $position = array_search($page->id, $ids, true);
+        $after = $position === false ? [] : array_slice($ids, $position + 1, self::NEXT_CANDIDATES);
+
+        if ($after === []) {
+            return null;
+        }
+
+        return lynx()->pages->find('id='.implode('|', $after).', '.$this->everyChild().', limit=1', scope: $this->scope())->first()?->id;
     }
 
     public function hasChildren(Page $page): bool

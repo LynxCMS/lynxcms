@@ -32,7 +32,6 @@ return [
         'unique_help' => 'Exigir que o nome “:name” seja único em todo o site',
         'unique_help_languages' => 'Exigir que o nome “:name” seja único em todo o site (apenas no idioma predefinido)',
         'denied' => 'Não pode alterar o estado desta página.',
-        'saved' => 'Estado guardado.',
     ],
     'template' => [
         'title' => 'Modelo',

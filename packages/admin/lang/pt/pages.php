@@ -16,6 +16,25 @@ return [
         'unpublished' => 'Não publicada',
         'hidden' => 'Oculta',
     ],
+    'status_changed' => [
+        'saved' => 'Estado guardado.',
+        'hidden' => [
+            'on' => 'Página oculta.',
+            'off' => 'Página visível.',
+        ],
+        'unpublished' => [
+            'on' => 'Página despublicada.',
+            'off' => 'Página publicada.',
+        ],
+        'locked' => [
+            'on' => 'Página bloqueada.',
+            'off' => 'Página desbloqueada.',
+        ],
+        'unique' => [
+            'on' => 'Nome único obrigatório.',
+            'off' => 'Nome único já não obrigatório.',
+        ],
+    ],
     'tree' => [
         'deleted' => ':count ramo eliminado.|:count ramos eliminados.',
         'kept_locked' => 'Mantidos porque uma página está bloqueada:',
