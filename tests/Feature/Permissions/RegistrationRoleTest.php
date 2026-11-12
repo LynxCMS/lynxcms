@@ -66,7 +66,7 @@ it('switches role enforcement on with the first sign-up, and says how to get bac
 
 it('does not warn when a superuser exists', function (): void {
     installLynx();
-    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    lynx()->run(AssignRoles::class, ['user' => userAccount(), 'roles' => ['superuser']]);
     Log::spy();
 
     registerVisitor(50);

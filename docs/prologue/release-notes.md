@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Fixed: a deleted superuser still counted as one, because Lynx keeps their roles after the app deletes the account. With another superuser left, Lynx let that superuser's role go and nobody could manage roles any more. Only superusers whose account still exists count now, for that check and for the hints that say a site has no superuser yet. See [Users](/deeper/users#deleting-a-user).
 - An action that meets a database deadlock or serialization failure runs again from the start, up to three times, when it opened the outermost transaction, as `DB::transaction($callback, attempts: 3)` does. A failed try leaves no writes, changes or events behind. Inside a transaction of your own, the error reaches your code as before.
 - Page cache warming and the static export start each page with fresh request scoped services and route controllers, as Octane does between requests, so nothing one page loaded can show on the next.
 - Fixed under Octane: page password checks for signed in editors kept the page loader and permissions of the first request the worker served.

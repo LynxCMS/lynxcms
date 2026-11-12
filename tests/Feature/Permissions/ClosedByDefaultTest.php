@@ -56,10 +56,11 @@ it('gives no hint without debugging', function (): void {
 
 it('gives no hint once someone is a superuser', function (): void {
     config(['app.debug' => true]);
-    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    $owner = userAccount();
+    lynx()->run(AssignRoles::class, ['user' => $owner, 'roles' => ['superuser']]);
 
     $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:superuser');
-    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk();
+    $this->actingAs(new GenericUser(['id' => (int) $owner]))->get('/lynx/pages')->assertOk();
 });
 
 it('shows a user without a role the live page, not the draft', function (): void {
@@ -124,5 +125,5 @@ it('keeps the old open mode for signed in users, never for visitors, when asked'
 
 it('warns on install when no one is a superuser, and not once someone is', function (): void {
     $this->artisan('lynx:install', ['--no-interaction' => true])->expectsOutputToContain('No one is a superuser yet')->assertSuccessful();
-    $this->artisan('lynx:install', ['--user' => '1'])->doesntExpectOutputToContain('No one is a superuser yet')->assertSuccessful();
+    $this->artisan('lynx:install', ['--user' => userAccount()])->doesntExpectOutputToContain('No one is a superuser yet')->assertSuccessful();
 });
