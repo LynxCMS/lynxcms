@@ -10,6 +10,12 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- An action that meets a database deadlock or serialization failure runs again from the start, up to three times, when it opened the outermost transaction, as `DB::transaction($callback, attempts: 3)` does. A failed try leaves no writes, changes or events behind. Inside a transaction of your own, the error reaches your code as before.
+- Page cache warming and the static export start each page with fresh request scoped services and route controllers, as Octane does between requests, so nothing one page loaded can show on the next.
+- Fixed under Octane: page password checks for signed in editors kept the page loader and permissions of the first request the worker served.
+- The admin's merged class cache keeps at most 1,000 entries, so it no longer grows for the life of an Octane worker.
+- Admin screens check access the same way: `AdminAccess::authorizeScreen('permission')` checks the admin gate and then the permission, and `authorizeSuperuser()` does the same for superuser screens. Modules can call them from a Livewire component's `boot()`. See [Extending the admin](/admin/extending).
+- With Laravel's own translation loader, the translator's loader is still a `FileLoader` after Lynx widens it to regional locales, for packages that check.
 - Fixed: **View page** on an unpublished page answered 404, even for superusers. Signed in users who may view a page in the admin now see it on the site before it is published, with a bar saying so; visitors still get 404, and the page is never cached or indexed (ADR-0113).
 - The page editor's **Save** works as before: a published page's changes go live at once, and it never publishes. A **Publish** button shows beside it when there is something to publish: on an unpublished page it saves and publishes in one step (no trip to the Settings tab), and while a draft waits it publishes the draft. The menu beside the last button saves or publishes and then goes back to the page tree, opens the page on the site, opens a new page under the same parent, or opens the next page; it also keeps **Save as draft** and **Review changes**. The separate **Publish draft** button is gone. See [The admin](/admin/).
 - Status changes that apply at once (in the page tree, the Children tab and the Settings tab) and the SEO screen's per-template switch now show a notice with the new state, such as "Page unpublished".
