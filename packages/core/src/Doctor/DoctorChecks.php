@@ -6,6 +6,7 @@ namespace LynxCms\Core\Doctor;
 
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
+use LynxCms\Core\Doctor\Checks\GlobalMiddlewareRegistered;
 use LynxCms\Core\Doctor\Checks\OrphanedValues;
 use LynxCms\Core\Doctor\Checks\Scheduler;
 use LynxCms\Core\Doctor\Checks\TemplateViews;
@@ -19,7 +20,7 @@ use LynxCms\Core\Doctor\Checks\UnusedFields;
 final class DoctorChecks
 {
     /** @var list<class-string<Check>> */
-    private const array CORE = [TemplateViews::class, UnusedFields::class, OrphanedValues::class, Scheduler::class];
+    private const array CORE = [TemplateViews::class, UnusedFields::class, OrphanedValues::class, Scheduler::class, GlobalMiddlewareRegistered::class];
 
     /** @var list<class-string<Check>|Check> */
     private array $added = [];

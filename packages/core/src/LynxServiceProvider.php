@@ -9,7 +9,6 @@ use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Request;
@@ -34,6 +33,7 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Fields\FormatterChain;
 use LynxCms\Core\Fields\FormatterRegistry;
 use LynxCms\Core\Http\Controllers\PageController;
+use LynxCms\Core\Http\GlobalMiddleware;
 use LynxCms\Core\Http\Middleware\DetectLocale;
 use LynxCms\Core\Http\Middleware\MarkPageRoute;
 use LynxCms\Core\Http\Middleware\RedirectDefaultLocale;
@@ -82,7 +82,7 @@ final class LynxServiceProvider extends ServiceProvider
         $router->aliasMiddleware('lynx.locale', DetectLocale::class);
         $router->aliasMiddleware('lynx.locale-session', RememberLocale::class);
         $router->aliasMiddleware('lynx.locale-redirect', RedirectDefaultLocale::class);
-        $this->app->make(Kernel::class)->pushMiddleware(ServeAsVisitor::class);
+        $this->app->make(GlobalMiddleware::class)->append(ServeAsVisitor::class);
 
         if (! config('lynx.routes.enabled', true)) {
             return;
@@ -177,6 +177,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(PermissionRegistry::class);
         $this->app->singleton(ComponentRegistry::class);
         $this->app->singleton(DoctorChecks::class);
+        $this->app->singleton(GlobalMiddleware::class);
 
         foreach (self::FLUSHABLE as $service) {
             $this->app->scoped($service);

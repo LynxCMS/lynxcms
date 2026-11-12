@@ -56,6 +56,7 @@ It runs a list of checks and prints OK for each that passes, or what it found an
 - **Unused fields:** a field no template uses, directly or inside a repeater's or matrix's items.
 - **Orphaned values:** values kept for fields a page's template no longer has. Lynx never deletes them by itself, and `pages.purge_orphans` does.
 - **Scheduler:** scheduled publishing more than ten minutes late, which means Laravel's scheduler (the cron entry) is not running.
+- **Global middleware:** middleware Lynx runs on every request that could not be added, because the app's HTTP kernel is not Laravel's own. The fix names the line to add in `bootstrap/app.php`.
 - **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
 
 Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.
