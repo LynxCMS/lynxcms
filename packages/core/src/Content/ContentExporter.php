@@ -45,6 +45,7 @@ final readonly class ContentExporter
         private RootPage $root,
         private Trash $trash,
         private PackageFiles $files,
+        private PageStrings $strings,
     ) {}
 
     /**
@@ -141,7 +142,7 @@ final readonly class ContentExporter
             'status' => array_values(array_diff(PageStatus::toNames($page->status), ['system'])),
             'names' => $names,
             'values' => $this->values($page, $keys),
-        ] + (($strings = app(PageStrings::class)->pageEdits($page)) === [] ? [] : ['strings' => $strings]);
+        ] + (($strings = $this->strings->pageEdits($page)) === [] ? [] : ['strings' => $strings]);
     }
 
     /**

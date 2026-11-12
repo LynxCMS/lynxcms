@@ -16,8 +16,10 @@ use LynxCms\Core\Pages\PageArray;
  *
  * @internal
  */
-final class PageSearch
+final readonly class PageSearch
 {
+    public function __construct(private AdminAccess $access) {}
+
     /**
      * @param  list<string>  $templates  template names to limit to; empty means any
      * @param  list<int>  $exclude  pages left out
@@ -52,6 +54,6 @@ final class PageSearch
 
     private function select(string $selector): PageArray
     {
-        return lynx()->pages->find($selector, scope: app(AdminAccess::class)->viewScope());
+        return lynx()->pages->find($selector, scope: $this->access->viewScope());
     }
 }

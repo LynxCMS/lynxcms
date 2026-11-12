@@ -28,6 +28,7 @@ final class RootPage implements Flushable
     public function __construct(
         private readonly FieldRegistry $fields,
         private readonly TemplateRegistry $templates,
+        private readonly LanguageRegistry $languages,
     ) {}
 
     public function ensure(ActionContext $context): bool
@@ -44,7 +45,7 @@ final class RootPage implements Flushable
             $context->run(CreateTemplate::class, ['name' => 'home', 'label' => 'Home', 'fields' => [['name' => 'title', 'required' => true]]]);
         }
 
-        $context->run(SavePage::class, ['template' => 'home', 'values' => ['title' => 'Home'], 'names' => [(string) app(LanguageRegistry::class)->default()->code => '']]);
+        $context->run(SavePage::class, ['template' => 'home', 'values' => ['title' => 'Home'], 'names' => [(string) $this->languages->default()->code => '']]);
 
         return true;
     }

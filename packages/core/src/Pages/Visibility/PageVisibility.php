@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Pages\Visibility;
 
 use Closure;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Query\Builder;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
@@ -28,6 +29,8 @@ final class PageVisibility
 
     private int $asVisitor = 0;
 
+    public function __construct(private readonly Application $app) {}
+
     public function add(VisibilityRule $rule): void
     {
         $this->rules[] = $rule;
@@ -48,7 +51,7 @@ final class PageVisibility
      */
     public function servesVisitors(): bool
     {
-        return $this->suspended === 0 && ($this->asVisitor > 0 || ! app()->runningInConsole() || app()->runningUnitTests());
+        return $this->suspended === 0 && ($this->asVisitor > 0 || ! $this->app->runningInConsole() || $this->app->runningUnitTests());
     }
 
     /**

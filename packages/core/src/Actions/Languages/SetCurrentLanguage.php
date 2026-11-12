@@ -22,7 +22,7 @@ final class SetCurrentLanguage extends Action
 {
     public const string SESSION_KEY = 'lynx.language';
 
-    public function __construct(private readonly LanguageContext $context) {}
+    public function __construct(private readonly LanguageContext $context, private readonly Request $request) {}
 
     public static function name(): string
     {
@@ -67,13 +67,11 @@ final class SetCurrentLanguage extends Action
         $language = $this->context->set(Value::string($input->get('language')));
 
         if ($input->bool('remember')) {
-            $request = app(Request::class);
-
-            if ($request->hasSession()) {
-                $request->session()->put(self::SESSION_KEY, $language->code);
+            if ($this->request->hasSession()) {
+                $this->request->session()->put(self::SESSION_KEY, $language->code);
             }
 
-            $user = $request->user();
+            $user = $this->request->user();
 
             if ($user !== null && Schema::hasColumn($user->getTable(), 'lynx_language_id')) {
                 $user->forceFill(['lynx_language_id' => $language->id])->saveQuietly();

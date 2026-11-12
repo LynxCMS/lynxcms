@@ -17,17 +17,17 @@ use LynxCms\Core\Models\Language;
  */
 final class EditLanguageController
 {
-    public function index(): View
+    public function index(AdminAccess $access): View
     {
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403);
+        abort_unless($access->allows('schema.manage'), 403);
 
         return view('lynx-admin::languages.index');
     }
 
-    public function edit(?string $language = null): View
+    public function edit(AdminAccess $access, SchemaOwners $owners, ?string $language = null): View
     {
-        abort_unless(app(AdminAccess::class)->allows('schema.manage'), 403);
-        abort_if($language === null && ! app(SchemaOwners::class)->isEditingEnabled(), 403);
+        abort_unless($access->allows('schema.manage'), 403);
+        abort_if($language === null && ! $owners->isEditingEnabled(), 403);
         abort_unless($language === null || lynx()->languages->find($language) instanceof Language, 404);
 
         return view('lynx-admin::languages.edit', ['language' => $language]);

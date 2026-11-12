@@ -25,7 +25,7 @@ final class DeletePage extends Action
 {
     use ResolvesPages;
 
-    public function __construct(private readonly PageGuard $guard, private readonly FieldRegistry $fields) {}
+    public function __construct(private readonly PageGuard $guard, private readonly FieldRegistry $fields, private readonly Drafts $drafts) {}
 
     public static function name(): string
     {
@@ -89,7 +89,7 @@ final class DeletePage extends Action
         DB::table(Tables::REVISIONS)->whereIn('page_id', $ids)->delete();
 
         foreach (DB::table(Tables::PAGES)->whereIn('draft_of', $ids)->pluck('id') as $draft) {
-            app(Drafts::class)->delete(Value::int($draft));
+            $this->drafts->delete(Value::int($draft));
         }
 
         foreach ($ids as $id) {

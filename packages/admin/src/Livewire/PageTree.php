@@ -99,8 +99,12 @@ final class PageTree extends Component
     public string $filter = '';
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -190,7 +194,7 @@ final class PageTree extends Component
     /** The filters, in the Details view only. */
     private function filters(): ?TreeFilters
     {
-        return $this->isShowingDetails() ? new TreeFilters(app(AdminAccess::class)->treeScope()) : null;
+        return $this->isShowingDetails() ? new TreeFilters($this->access->treeScope()) : null;
     }
 
     /** The current filter's pages as one flat level, or null when the tree shows. */
@@ -219,7 +223,7 @@ final class PageTree extends Component
     {
         $details = $this->isShowingDetails() ? new TreeDetails : null;
 
-        return new TreeLoader(Value::ints($this->expanded), $pages, $this->perPage, $this->presenter(), app(AdminAccess::class)->treeScope(), $details);
+        return new TreeLoader(Value::ints($this->expanded), $pages, $this->perPage, $this->presenter(), $this->access->treeScope(), $details);
     }
 
     /** Reordering needs every sibling in view: positions among visible rows are not real positions. */

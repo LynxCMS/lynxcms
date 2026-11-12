@@ -38,9 +38,9 @@ final readonly class HomeOverview
 
     private ?PageScope $scope;
 
-    public function __construct(private ScheduleReader $schedules, private ActorNames $names = new ActorNames)
+    public function __construct(AdminAccess $access, private ScheduleReader $schedules, private ActorNames $names = new ActorNames)
     {
-        $this->scope = app(AdminAccess::class)->viewScope();
+        $this->scope = $access->viewScope();
         $this->filters = new TreeFilters($this->scope);
     }
 

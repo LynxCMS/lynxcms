@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Agents;
 
+use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Permissions\Authorizer;
@@ -18,6 +19,8 @@ final class ReadToolRegistry
 {
     /** @var list<class-string<AgentReadTool>> */
     private array $tools = [];
+
+    public function __construct(private readonly Container $container) {}
 
     /** @param class-string<AgentReadTool> ...$tools */
     public function register(string ...$tools): void
@@ -48,10 +51,10 @@ final class ReadToolRegistry
         $permission = $tool::permission();
 
         if ($permission !== null) {
-            app(Authorizer::class)->authorize(app(ActionRunner::class)->actor(), $permission);
+            $this->container->make(Authorizer::class)->authorize($this->container->make(ActionRunner::class)->actor(), $permission);
         }
 
-        $instance = app()->make($tool);
+        $instance = $this->container->make($tool);
 
         if (! $instance instanceof AgentReadTool) {
             throw new InvalidArgumentException("[{$tool}] is not an AgentReadTool.");

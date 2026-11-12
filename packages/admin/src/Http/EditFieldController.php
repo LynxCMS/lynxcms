@@ -15,9 +15,9 @@ use LynxCms\Core\Models\Field;
  */
 final class EditFieldController
 {
-    public function __invoke(?string $field = null): View
+    public function __invoke(SchemaOwners $owners, ?string $field = null): View
     {
-        abort_if($field === null && ! app(SchemaOwners::class)->isEditingEnabled(), 403);
+        abort_if($field === null && ! $owners->isEditingEnabled(), 403);
         abort_unless($field === null || lynx()->fields->find($field) instanceof Field, 404);
 
         return view('lynx-admin::fields.edit', ['field' => $field]);

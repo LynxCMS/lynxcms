@@ -72,8 +72,12 @@ final class LinkDialog extends Component
     /** The page whose children "Select page" lists; null starts at the home page. */
     public ?int $browseId = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -107,7 +111,7 @@ final class LinkDialog extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $page->template()->hasUrl() || app(AdminAccess::class)->viewable([$id]) === []) {
+        if (! $page instanceof Page || ! $page->template()->hasUrl() || $this->access->viewable([$id]) === []) {
             return;
         }
 

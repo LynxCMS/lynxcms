@@ -67,8 +67,12 @@ final class PagePicker extends Component
     #[Locked]
     public ?string $placeholder = null;
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -95,7 +99,7 @@ final class PagePicker extends Component
     {
         $page = lynx()->pages->get($id);
 
-        if (! $page instanceof Page || ! $this->isAllowed($page) || $this->isExcluded($id) || $this->isFull() || app(AdminAccess::class)->viewable([$id]) === []) {
+        if (! $page instanceof Page || ! $this->isAllowed($page) || $this->isExcluded($id) || $this->isFull() || $this->access->viewable([$id]) === []) {
             return;
         }
 
@@ -150,7 +154,7 @@ final class PagePicker extends Component
     private function chosen(): array
     {
         $ids = Value::ints($this->value);
-        $viewable = app(AdminAccess::class)->viewable(array_values(array_diff($ids, $this->known)));
+        $viewable = $this->access->viewable(array_values(array_diff($ids, $this->known)));
         $ids = array_values(array_filter($ids, fn (int $id): bool => in_array($id, $this->known, true) || in_array($id, $viewable, true)));
 
         if ($ids === []) {

@@ -68,8 +68,12 @@ final class PageTableInput extends Component
 
     public string $title = '';
 
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -134,7 +138,7 @@ final class PageTableInput extends Component
 
     public function render(): View
     {
-        $viewable = app(AdminAccess::class)->viewable(array_values(array_diff($this->value, $this->known)));
+        $viewable = $this->access->viewable(array_values(array_diff($this->value, $this->known)));
         $pages = app(PageLoader::class)->many(array_values(array_filter($this->value, fn (int $id): bool => in_array($id, $this->known, true) || in_array($id, $viewable, true))));
         $rows = [];
 

@@ -45,8 +45,12 @@ final class PageCreator extends Component
     public bool $publish = false;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
+    /** Set by boot() on every request: the signed in user's rights. */
+    private AdminAccess $access;
+
     public function boot(AdminAccess $access): void
     {
+        $this->access = $access;
         $access->authorizeScreen();
     }
 
@@ -88,7 +92,7 @@ final class PageCreator extends Component
             'choices' => $choices->for($this->parent()),
             ...$this->visibleFields($form),
             'inputs' => app(FieldInputs::class),
-            'isSuperuser' => app(AdminAccess::class)->isSuperuser(),
+            'isSuperuser' => $this->access->isSuperuser(),
             'languages' => lynx()->languages->all()->map(fn ($language): array => ['code' => Value::string($language->code), 'name' => Value::string($language->name), 'label' => $language->tabLabel()])->values()->all(),
             'url' => $this->previewUrl(),
             'defaultCode' => Value::string(lynx()->languages->default()->code),
