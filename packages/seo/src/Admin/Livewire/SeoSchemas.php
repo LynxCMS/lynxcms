@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Seo\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
@@ -45,10 +43,9 @@ final class SeoSchemas extends Component
     /** @var array<string, string> property (dots as DOT) => source */
     public array $sources = [];
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('seo.manage'), 403);
+        $access->authorizeScreen('seo.manage');
     }
 
     public function mount(): void

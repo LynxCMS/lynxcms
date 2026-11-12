@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\DeleteSubmission;
@@ -34,10 +32,9 @@ final class SubmissionView extends Component
 
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('forms.view'), 403);
+        $access->authorizeScreen('forms.view');
     }
 
     public function mount(string $uuid): void

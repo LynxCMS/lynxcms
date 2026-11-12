@@ -6,13 +6,11 @@ namespace LynxCms\Admin\Livewire;
 
 use DateTimeInterface;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\TrashPage;
 use LynxCms\Core\Fields\Choices\Choice;
@@ -70,9 +68,9 @@ final class PageTableInput extends Component
 
     public string $title = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     /**

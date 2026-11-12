@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms\Admin\Livewire;
 
-use Illuminate\Support\Facades\Gate;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Builder\PageForms;
 use LynxCms\Forms\Definition\Form;
@@ -21,10 +19,9 @@ use LynxCms\Forms\Livewire\FormComponent;
  */
 final class PreviewForm extends FormComponent
 {
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('forms.view'), 403);
+        $access->authorizeScreen('forms.view');
     }
 
     public function definition(): Form

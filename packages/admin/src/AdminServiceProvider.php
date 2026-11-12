@@ -186,20 +186,21 @@ final class AdminServiceProvider extends ServiceProvider
     /** The core screens: content first, then the Settings and Access sections, closed by default. */
     private function navigation(): Navigation
     {
-        $canManageSchema = fn (): bool => app(AdminAccess::class)->allows('schema.manage');
+        $canManageSchema = fn (): bool => $this->app->make(AdminAccess::class)->allows('schema.manage');
+        $superuser = fn (): bool => $this->app->make(AdminAccess::class)->isSuperuser();
 
         return (new Navigation)
             ->group(Navigation::SETTINGS, 'lynx-admin::shell.nav.settings', order: 80, icon: 'settings')
             ->group(Navigation::ACCESS, 'lynx-admin::shell.nav.access', order: 90, icon: 'shield-check')
             ->add('lynx-admin::shell.nav.home', 'lynx.admin.home', order: 0, icon: 'house', shortcut: 'h')
             ->add('lynx-admin::shell.nav.pages', 'lynx.admin.pages', order: 10, icon: 'folder-tree', shortcut: 'p')
-            ->add('lynx-admin::shell.nav.site_texts', 'lynx.admin.site-texts', order: 30, visible: fn (): bool => app(AdminAccess::class)->allows('pages.edit'), icon: 'type', shortcut: 's')
+            ->add('lynx-admin::shell.nav.site_texts', 'lynx.admin.site-texts', order: 30, visible: fn (): bool => $this->app->make(AdminAccess::class)->allows('pages.edit'), icon: 'type', shortcut: 's')
             ->add('lynx-admin::shell.nav.fields', 'lynx.admin.fields', order: 10, visible: $canManageSchema, icon: 'text-cursor-input', group: Navigation::SETTINGS, shortcut: 'f')
             ->add('lynx-admin::shell.nav.templates', 'lynx.admin.templates', order: 20, visible: $canManageSchema, icon: 'layout-template', group: Navigation::SETTINGS, shortcut: 't')
             ->add('lynx-admin::shell.nav.languages', 'lynx.admin.languages', order: 50, visible: $canManageSchema, icon: 'languages', group: Navigation::SETTINGS)
-            ->add('lynx-admin::shell.nav.general', 'lynx.admin.general', order: 60, visible: RoleList::currentUserIsSuperuser(...), icon: 'settings', group: Navigation::SETTINGS)
-            ->add('lynx-admin::shell.nav.roles', 'lynx.admin.roles', order: 10, visible: RoleList::currentUserIsSuperuser(...), icon: 'shield-check', group: Navigation::ACCESS)
-            ->add('lynx-admin::shell.nav.users', 'lynx.admin.users', order: 20, visible: UserRoles::currentUserIsSuperuser(...), icon: 'users', group: Navigation::ACCESS);
+            ->add('lynx-admin::shell.nav.general', 'lynx.admin.general', order: 60, visible: $superuser, icon: 'settings', group: Navigation::SETTINGS)
+            ->add('lynx-admin::shell.nav.roles', 'lynx.admin.roles', order: 10, visible: $superuser, icon: 'shield-check', group: Navigation::ACCESS)
+            ->add('lynx-admin::shell.nav.users', 'lynx.admin.users', order: 20, visible: $superuser, icon: 'users', group: Navigation::ACCESS);
     }
 
     /** The stylesheet and script are public: the sign-in screens load them before anyone is signed in. */

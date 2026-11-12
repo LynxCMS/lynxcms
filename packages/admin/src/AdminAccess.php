@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin;
 
+use Illuminate\Support\Facades\Gate;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Models\Template;
@@ -75,6 +76,24 @@ final readonly class AdminAccess
         $covered = $scope->covering($pageIds);
 
         return array_values(array_filter($pageIds, fn (int $id): bool => in_array($id, $covered, true)));
+    }
+
+    /**
+     * Refuses (403) a user the admin gate turns away, or who lacks $permission. Admin screens call
+     * it from boot(): Livewire runs boot() on its own update requests too, which skip the admin's
+     * routes and their middleware.
+     */
+    public function authorizeScreen(?string $permission = null, string $denied = ''): void
+    {
+        Gate::authorize(AdminServiceProvider::GATE);
+        abort_if($permission !== null && ! $this->allows($permission), 403, $denied);
+    }
+
+    /** Like authorizeScreen(), for screens only superusers use (roles, branding). */
+    public function authorizeSuperuser(string $denied = ''): void
+    {
+        Gate::authorize(AdminServiceProvider::GATE);
+        abort_unless($this->isSuperuser(), 403, $denied);
     }
 
     public function isSuperuser(): bool

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Auth\TwoFactorState;
 use LynxCms\Admin\Livewire\Concerns\ChangesPassword;
 use LynxCms\Admin\Livewire\Concerns\ManagesPasskeys;
@@ -33,9 +32,9 @@ final class AccountSecurity extends Component
     public ?string $status = null;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function render(): View

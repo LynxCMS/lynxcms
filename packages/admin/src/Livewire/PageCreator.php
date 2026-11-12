@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\FieldConditions;
 use LynxCms\Admin\Editor\FieldInputs;
@@ -47,9 +45,9 @@ final class PageCreator extends Component
     public bool $publish = false;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(int $parentId, TemplateChoices $choices): void

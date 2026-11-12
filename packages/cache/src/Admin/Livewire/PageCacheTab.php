@@ -6,11 +6,9 @@ namespace LynxCms\Cache\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Cache\Actions\ClearPageCache;
 use LynxCms\Cache\PageCacheEntry;
 use LynxCms\Cache\Pages\PageCacheSettings;
@@ -35,9 +33,9 @@ final class PageCacheTab extends Component
     /** What the last clear did. */
     public string $status = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(): void

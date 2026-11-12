@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Lang;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
-use LynxCms\Admin\Livewire\Concerns\RequiresSuperuser;
 use LynxCms\Core\Actions\Roles\DeleteRole;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Models\Template;
@@ -31,7 +29,6 @@ use LynxCms\Core\Support\Value;
 final class RoleForm extends Component
 {
     use Notifies;
-    use RequiresSuperuser;
 
     #[Locked]
     public ?string $role = null;
@@ -55,10 +52,9 @@ final class RoleForm extends Component
     public int $deleteUsers = 0;
 
     /** Runs on mount and on every Livewire update, so the checks also guard /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        $this->authorizeSuperuser();
+        $access->authorizeSuperuser(Value::string(__('lynx-admin::roles.denied')));
     }
 
     public function mount(?string $role = null): void

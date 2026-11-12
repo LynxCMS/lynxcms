@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Admin\Editor\ChangeReview;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -37,9 +35,9 @@ final class PageRevisions extends Component
     #[Locked]
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     public function mount(int $pageId): void

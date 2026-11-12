@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Http;
 
 use Illuminate\Contracts\View\View;
-use LynxCms\Admin\Livewire\RoleForm;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Permissions\Role;
 
 /**
@@ -15,9 +15,9 @@ use LynxCms\Core\Permissions\Role;
  */
 final class EditRoleController
 {
-    public function __invoke(?string $role = null): View
+    public function __invoke(AdminAccess $access, ?string $role = null): View
     {
-        abort_unless(RoleForm::currentUserIsSuperuser(), 403);
+        abort_unless($access->isSuperuser(), 403);
         abort_unless($role === null || Role::query()->where('name', $role)->exists(), 404);
 
         return view('lynx-admin::roles.edit', ['role' => $role]);

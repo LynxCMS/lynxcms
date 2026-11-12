@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
@@ -33,9 +31,9 @@ final class AdminSearch extends Component
 
     public string $query = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
+        $access->authorizeScreen();
     }
 
     /** The selector a query runs: an index search for text, the query itself for a selector. */

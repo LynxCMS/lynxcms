@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Value;
@@ -30,10 +28,9 @@ final class FormList extends Component
 
     public string $label = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('forms.view'), 403);
+        $access->authorizeScreen('forms.view');
     }
 
     public function create(): void

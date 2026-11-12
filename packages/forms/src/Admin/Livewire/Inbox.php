@@ -6,11 +6,9 @@ namespace LynxCms\Forms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\UpdateSubmission;
@@ -47,10 +45,9 @@ final class Inbox extends Component
 
     public ?string $status = null;
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('forms.view'), 403);
+        $access->authorizeScreen('forms.view');
     }
 
     public function updated(string $property): void

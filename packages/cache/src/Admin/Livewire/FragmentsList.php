@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Cache\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 use LynxCms\Admin\AdminAccess;
-use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Cache\Actions\ClearPageCache;
 use LynxCms\Cache\FragmentEntry;
 use LynxCms\Cache\Fragments\FragmentClearer;
@@ -35,10 +33,9 @@ final class FragmentsList extends Component
 
     public string $status = '';
 
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(app(AdminAccess::class)->allows('page_cache.manage'), 403);
+        $access->authorizeScreen('page_cache.manage');
     }
 
     public function updatedSearch(): void

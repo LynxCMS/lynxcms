@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
-use LynxCms\Admin\AdminServiceProvider;
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Branding\Branding;
 use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -42,10 +41,9 @@ final class BrandingForm extends Component
     public ?string $status = null;
 
     /** Runs on mount and on every Livewire update, so the checks also guard /livewire/update. */
-    public function boot(): void
+    public function boot(AdminAccess $access): void
     {
-        Gate::authorize(AdminServiceProvider::GATE);
-        abort_unless(RoleList::currentUserIsSuperuser(), 403, Value::string(__('lynx-admin::general.branding.denied')));
+        $access->authorizeSuperuser(Value::string(__('lynx-admin::general.branding.denied')));
     }
 
     public function mount(): void
