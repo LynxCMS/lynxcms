@@ -45,9 +45,9 @@ The admin also creates a `passkeys` table with a foreign key to your users table
 
 ## Deleting a user
 
-Without a foreign key, deleting a user leaves their roles behind in `lynx_role_user`. Nobody can sign in as a deleted user, so the rows grant nothing on their own. They matter when an id can come back, such as an id that an external sign-in provider assigns. A new user with an old id would get the old user's roles.
+Without a foreign key, deleting a user leaves their roles behind in `lynx_role_user`. Nobody can sign in as a deleted user, so the rows grant nothing. Most apps can leave them there: auto-incrementing ids, UUIDs, and ULIDs are never given to another user.
 
-Remove a user's roles when your app deletes the user. This listener sets the user's roles to none:
+The rows matter when an id can come back, such as an id that an external sign-in provider assigns. A new user with an old id would get the old user's roles. An app like that removes a user's roles when it deletes the user. This listener sets the user's roles to none:
 
 <<< @/snippets/advanced/ForgetLynxRoles.php{php}
 
@@ -60,6 +60,8 @@ protected static function booted(): void
 }
 ```
 
-The listener runs as the system, since the person deleting the account may not hold the right to change roles. It listens to `deleting`, before the row goes, because Lynx never removes the last superuser: when the user is the site's only superuser, the action fails and the user is not deleted.
+The listener runs as the system, since the person deleting the account may not hold the right to change roles. It runs before the row goes, because Lynx never removes the last superuser: when the user is the site's only superuser, the action fails and the user is not deleted.
+
+If your user model uses soft deletes, register the listener with `static::forceDeleting()` instead. `deleting` also runs on a soft delete, and a restored user would come back without their roles.
 
 The author columns and the activity log keep the deleted user's id on purpose, so the history of each page stays complete.
