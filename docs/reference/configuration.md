@@ -21,7 +21,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `routes.middleware` | `['web']` | Middleware of the page route. |
 | `trailing_slash` | `false` (`LYNX_TRAILING_SLASH`) | End page URLs with a slash (`/courses/risk/`), for example to keep the addresses of a site moved from another system. By default they have none (`/courses/risk`), as Laravel writes them. Both forms open the page. |
 | `views_path` | `templates` | Where template views live. |
-| `localization.remember` | `true` | Remember the visitor's language in the session and on the user. |
+| `localization.remember` | `true` | Keep the language of each page a visitor views in their session. |
 | `localization.accept_language` | `false` | Use the browser's language on a first visit. |
 | `localization.redirect_default_prefix` | `true` | Redirect URLs that carry the default language's prefix. |
 | `backups.path` | `storage/app/lynx/backups` | Where `lynx:backup` writes. |

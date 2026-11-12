@@ -119,13 +119,15 @@ A translatable field can turn fallback off in its settings ("When a translation 
 
 ## The current language
 
-On the site, the URL prefix decides the language: `/pt/blogue` is Portuguese. On a URL without a prefix, Lynx uses the language the visitor chose before (kept in the session, and on their account when they are signed in), and otherwise the default language. Three settings change this, in `config/lynx.php`:
+On the site, the URL prefix decides the language: `/pt/blogue` is Portuguese. On a URL without a prefix, Lynx uses the language kept in the visitor's session, then the language saved on their account when they are signed in, and otherwise the default language. Three settings change this, in `config/lynx.php`:
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| `localization.remember` | `true` | Remember the visitor's language in the session and on the user. |
+| `localization.remember` | `true` | Keep the language of each page a visitor views in their session. |
 | `localization.accept_language` | `false` | Use the browser's language on a first visit. |
 | `localization.redirect_default_prefix` | `true` | Redirect URLs that carry the default language's prefix, such as `/en/blog`, to `/blog`. |
+
+A language switcher of your own saves the visitor's choice with `lynx()->languages->setCurrent($code, remember: true)`. It keeps the language in the session and, for a signed in user, on their account ([Users](/deeper/users#columns-on-your-users-table)).
 
 In code, `lynx()->languages->current()` is the language of the request. To run code in another language, use `lynx()->language()`: it switches the language for the callback, and back afterwards.
 
