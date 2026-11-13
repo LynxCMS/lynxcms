@@ -2,6 +2,8 @@
 @php
     $settings = (array) $field->settings;
     $style = \LynxCms\Admin\Editor\PageChoices::style($settings);
+    // A page never refers to itself: the page being edited is never offered.
+    $self = isset($page) && $page?->id !== null ? [(int) $page->id] : [];
 @endphp
 @if ($disabled)
     <x-lynx-admin::editor.value type="page" :value="$readOnly ?? []" />
@@ -12,12 +14,13 @@
         :multiple="\LynxCms\Admin\Editor\PageChoices::isMultiple($settings)"
         :templates="(array) ($settings['templates'] ?? [])"
         :max="\LynxCms\Core\Support\Value::int($settings['max'] ?? 0)"
+        :exclude="$self"
         :key="'picker-'.$model"
     />
 @else
     @php
         $isMultiple = ! \LynxCms\Admin\Editor\PageChoices::holdsOne($settings);
-        $options = app(\LynxCms\Admin\Editor\PageChoices::class)->options($settings, \LynxCms\Core\Support\Value::ints((array) ($value ?? [])));
+        $options = app(\LynxCms\Admin\Editor\PageChoices::class)->options($settings, \LynxCms\Core\Support\Value::ints((array) ($value ?? [])), $self);
         $wire = ($live ?? false) ? 'wire:model.live' : 'wire:model';
     @endphp
     @if ($options === [])

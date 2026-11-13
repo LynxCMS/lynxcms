@@ -11,6 +11,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 ## Unreleased
 
 - Fixed: a page field shown as checkboxes, radios or a select was an empty box when the templates it allows had no pages yet, as on a new site. It now says so, naming the templates: "No Project pages yet. Add one, then choose it here."
+- A page field no longer offers the page being edited: a project's related projects leave the project itself out, in the search picker and in checkboxes, radios and selects.
 
 ## 0.1.43
 

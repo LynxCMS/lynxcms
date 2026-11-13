@@ -173,3 +173,18 @@ it('says there are no pages to choose yet when the allowed templates have none',
     Livewire::test(PageEditor::class, ['pageId' => $page->id])
         ->assertSee('No Project pages yet. Add one, then choose it here.');
 })->with(['checkboxes', 'radios', 'select']);
+
+it('never offers the page being edited as a choice', function (string $input): void {
+    $page = relatedAs(['input' => $input]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->assertDontSeeHtml('value="'.courseId('alpha').'"')
+        ->assertSeeHtml('value="'.courseId('beta').'"');
+})->with(['checkboxes', 'radios', 'select']);
+
+it('leaves the page being edited out of the search picker\'s results', function (): void {
+    $page = lynx()->pages->get('/courses/alpha/');
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->assertSeeHtml('&quot;exclude&quot;:[['.courseId('alpha'));
+});
