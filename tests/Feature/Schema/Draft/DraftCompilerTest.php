@@ -110,3 +110,55 @@ it('refuses a family rule naming an unknown template', function (): void {
 it('refuses a field defined twice in different ways', function (): void {
     compileDraft(['fields' => ['teacher' => 'text'], 'templates' => ['course' => ['fields' => ['title*', ['teacher' => 'textarea']]]]]);
 })->throws(DraftError::class, 'Field [teacher] is defined twice');
+
+/*
+ * A template the site has keeps the settings each field has there (label, description, tab,
+ * width...) when the draft only names the field, as labels and field settings are kept.
+ */
+
+function courseWithUseSettings(): void
+{
+    lynx()->templates->update('course', ['fields' => [
+        ['name' => 'title', 'required' => true],
+        ['name' => 'summary', 'description' => 'One line for listings.', 'width' => 50],
+        'body', 'price', 'related',
+    ]]);
+}
+
+/** @return list<mixed> the compiled field list of course */
+function courseEntries(array $fields): array
+{
+    return compileDraft(['templates' => ['course' => ['fields' => $fields]]])->templates[0]['fields'];
+}
+
+it('keeps the settings a field has on a template when the draft only names it', function (): void {
+    courseWithUseSettings();
+
+    expect(courseEntries(['title', 'summary', 'body', 'price', 'related']))->toBe([
+        ['name' => 'title', 'required' => true],
+        ['name' => 'summary', 'description' => 'One line for listings.', 'width' => 50],
+        'body', 'price', 'related',
+    ]);
+});
+
+it('lets the draft change one setting of a field on a template and keeps the others', function (): void {
+    courseWithUseSettings();
+
+    expect(courseEntries(['title*', ['name' => 'summary', 'width' => 100], 'body', 'price', 'related'])[1])
+        ->toBe(['name' => 'summary', 'description' => 'One line for listings.', 'width' => 100]);
+});
+
+it('clears a setting of a field on a template that the draft sets to null', function (): void {
+    courseWithUseSettings();
+
+    expect(courseEntries(['title*', ['name' => 'summary', 'description' => null], 'body', 'price', 'related'])[1])
+        ->toBe(['name' => 'summary', 'width' => 50]);
+});
+
+it('places a field where the draft puts it, not in its old section', function (): void {
+    lynx()->templates->update('course', ['fields' => [
+        'title', ['section' => 'extra', 'label' => 'Extra', 'fields' => ['summary']], 'body', 'price', 'related',
+    ]]);
+
+    expect(courseEntries(['title', 'summary', 'body', 'price', 'related']))->toBe(['title', 'summary', 'body', 'price', 'related']);
+});

@@ -259,6 +259,16 @@ A build runs in one transaction, through the same actions as the admin, so it al
 
 For a template the site already has, the draft's `fields` list becomes the template's list, in the draft's order. A draft that leaves out a field the template has is refused, and the error names the fields. List them to keep them, or build with `--prune-fields` to take them off the template; the plan then shows `remove field body from template course` for each. The fields and their values stay in the site.
 
+A field the draft only names keeps the settings it has on that template, such as its label, description, tab, width or whether it is required. So adding a field to a template means listing its current fields by name, plus the new one, where you want it:
+
+```yaml
+templates:
+  home:
+    fields: [title*, sections, hero_text, seo_title, seo_description]
+```
+
+Settings the draft gives win, and `null` clears one: `{ name: seo_title, description: null }`. Where a field sits is the draft's to say, so a field the draft lists outside its old section leaves that section. `--from-site` writes each template's full list, which is the quickest place to copy it from.
+
 After building, `lynx:draft` also keeps the files the site already has up to date: the draft's fields and templates in `lynx/schema`, and the types `lynx:phpstan` and `lynx:ide-helper` wrote. It starts none of them, so a site without a `lynx/schema` folder is told to run `lynx:schema:export`. The draft itself is a starting point: `lynx/schema` stays the record, and you can delete the draft once it is built.
 
 Two more options help with an existing site:
