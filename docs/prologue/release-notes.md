@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- A draft that only names a field on a template the site has keeps that field's settings there (label, description, tab, width, required), so adding a field to a template no longer drops the others' settings, such as the SEO fields' tab. Set a setting in the draft to change it, or to `null` to clear it. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
+
 ## 0.1.42
 
 Released November 13, 2026. Drafts build templates and fields from a short YAML file, schema editing off now locks the schema for agents and MCP too, and the admin gains a Home screen, Page Finder and keyboard shortcuts. Run `php artisan lynx:migrate` after updating: Page Finder keeps saved searches in a new table, and apps whose users live in a table not named `users` get the language column. Read the [upgrade guide](/prologue/upgrade#from-0-1-41-to-0-1-42) if you export with `--without-files` or set `LYNX_ADMIN_SCHEMA_EDITING`.
