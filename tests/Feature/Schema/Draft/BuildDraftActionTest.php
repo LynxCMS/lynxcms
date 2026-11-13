@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Schema\BuildDraft;
+use LynxCms\Core\Lynx;
 use LynxCms\Core\Permissions\Role;
 
 /*
@@ -15,7 +16,7 @@ use LynxCms\Core\Permissions\Role;
  * database schema only, never files, after a dry run the agent shows to the person.
  */
 
-beforeEach(fn () => courseSite());
+beforeEach(fn (): Lynx => courseSite());
 
 const ACTION_DRAFT = "fields:\n  seats: integer min:1\ntemplates:\n  workshop:\n    fields: [title*, seats]\n";
 
@@ -63,6 +64,14 @@ it('refuses a draft that leaves fields out of a template, unless prune_fields is
     lynx()->run(BuildDraft::class, ['draft' => $draft, 'prune_fields' => true]);
 
     expect(lynx()->templates->fields('course')->keys()->all())->toBe(['title', 'summary']);
+});
+
+it('is refused to people, MCP clients and the agent where schema editing is off', function (): void {
+    config(['lynx.schema_editing' => false]);
+
+    expect(fn (): mixed => lynx()->actingAs(draftActor(6, ['schema.manage']), fn (): ActionResult => lynx()->run(BuildDraft::class, ['draft' => ACTION_DRAFT])))
+        ->toThrow(AuthorizationException::class, 'schema editing is turned off');
+    expect(lynx()->fields->find('seats'))->toBeNull();
 });
 
 it('is offered as a tool', function (): void {

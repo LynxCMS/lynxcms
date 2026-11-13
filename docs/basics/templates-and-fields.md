@@ -266,7 +266,7 @@ Two more options help with an existing site:
 - `php artisan lynx:draft --from-site` writes the site's own fields and templates as a draft, in the short form wherever it fits. It is a quick way to read a site's schema, and building it changes nothing.
 - `php artisan lynx:draft --json-schema` writes `lynx/draft.schema.json`. Editors with a YAML language server (the YAML extension in VS Code, or PhpStorm) then check a draft as you type and suggest types, settings and template keys. A draft written by `--stub` or `--from-site` already points to it on its first line.
 
-An AI agent connected through MCP can build a draft too, with the `schema.draft` tool. It shows you what would change first, needs your agreement (`prune_fields`) to take fields off a template, and it only changes the database: the views, `lynx/schema` and the type files stay yours to update.
+An AI agent connected through MCP can build a draft too, with the `schema.draft` tool. It shows you what would change first, needs your agreement (`prune_fields`) to take fields off a template, and it only changes the database: the views, `lynx/schema` and the type files stay yours to update. Where schema editing is off ([On production](/deeper/schema-and-content#on-production)), the tool is refused, as every schema change by an agent is.
 
 ## Keeping the schema in Git
 

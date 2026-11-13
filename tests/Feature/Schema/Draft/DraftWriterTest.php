@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LynxCms\Core\Lynx;
 use LynxCms\Core\Schema\Draft\DraftBuilder;
 use LynxCms\Core\Schema\Draft\DraftCompiler;
 use LynxCms\Core\Schema\Draft\DraftOptions;
@@ -14,7 +15,7 @@ use LynxCms\Core\Schema\Draft\DraftWriter;
  * draft changes nothing.
  */
 
-beforeEach(fn () => courseSite());
+beforeEach(fn (): Lynx => courseSite());
 
 /** @return list<string> the plan of building a draft written from the site */
 function roundTripPlan(): array

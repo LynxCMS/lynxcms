@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LynxCms\Core\Lynx;
 use LynxCms\Core\Schema\Draft\CompiledDraft;
 use LynxCms\Core\Schema\Draft\DraftCompiler;
 use LynxCms\Core\Schema\Draft\DraftError;
@@ -11,7 +12,7 @@ use LynxCms\Core\Schema\Draft\DraftError;
  * kept, new items get new ones, and nothing that apply would refuse gets through.
  */
 
-beforeEach(fn () => courseSite());
+beforeEach(fn (): Lynx => courseSite());
 
 /** @param  array<string, mixed>  $draft */
 function compileDraft(array $draft): CompiledDraft

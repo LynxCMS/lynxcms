@@ -14,12 +14,14 @@ use LynxCms\Core\Schema\Draft\DraftCompiler;
 use LynxCms\Core\Schema\Draft\DraftError;
 use LynxCms\Core\Schema\Draft\DraftOptions;
 use LynxCms\Core\Schema\Draft\DraftReader;
+use Override;
 
 /**
  * Builds a draft of templates and fields (ADR-0116) for the MCP server and the agent: the database
  * schema only, never files, so an agent can't rewrite a site's schema files, views or types. The
  * agent runs it with dry_run first and shows the plan. A draft that leaves fields out of a
- * template the site has is refused unless prune_fields is given.
+ * template the site has is refused unless prune_fields is given. Where schema editing is off,
+ * the runner refuses it as it does every schema action (ADR-0117).
  */
 final class BuildDraft extends Action
 {
@@ -37,6 +39,12 @@ final class BuildDraft extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string
