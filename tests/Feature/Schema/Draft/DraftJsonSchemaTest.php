@@ -50,7 +50,10 @@ it('writes the schema beside the draft with lynx:draft --json-schema', function 
     $dir = testingPath('draft-json');
     File::deleteDirectory($dir);
 
-    $this->artisan('lynx:draft', ['path' => $dir.'/draft.yaml', '--json-schema' => true])->assertSuccessful();
+    $this->artisan('lynx:draft', ['path' => $dir.'/draft.yaml', '--json-schema' => true])
+        ->expectsOutputToContain('the YAML extension in VS Code, or PhpStorm')
+        ->expectsOutputToContain('# yaml-language-server: $schema=./draft.schema.json')
+        ->assertSuccessful();
 
     expect(json_decode(File::get($dir.'/draft.schema.json'), true))->toHaveKey('$defs');
     File::deleteDirectory($dir);

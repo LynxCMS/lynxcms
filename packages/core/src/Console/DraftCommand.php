@@ -136,7 +136,8 @@ final class DraftCommand extends Command
     {
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $schema->toJson());
-        $this->components->info("Wrote {$path}. Drafts beside it that start with the yaml-language-server line are checked as you type.");
+        $this->components->info("Wrote {$path}. Editors with a YAML language server (the YAML extension in VS Code, or PhpStorm) check drafts in this folder as you type, when their first line is:");
+        $this->line('  '.DraftJsonSchema::MODELINE);
 
         return self::SUCCESS;
     }
