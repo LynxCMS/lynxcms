@@ -132,4 +132,4 @@ lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5
 
 On a site with more than one language, the same menu has **Translation hints**. Each language tab already marks a field's state (filled for its own text, light when it shows another language's, an outline when empty); with hints on, a sentence under the field also says which language visitors see instead.
 
-Set `LYNX_ADMIN_SCHEMA_EDITING=false` to make the schema screens read only, for sites whose schema comes from [schema files](/deeper/schema-and-content).
+With `LYNX_SCHEMA_EDITING=false`, the schema screens are read only, for sites whose schema comes from [schema files](/deeper/schema-and-content#on-production).

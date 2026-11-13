@@ -69,7 +69,7 @@ it('never offers to delete the default language', function (): void {
 });
 
 it('is read only when schema editing is off', function (): void {
-    config(['lynx-admin.schema_editing' => false]);
+    config(['lynx.schema_editing' => false]);
 
     $this->get('/lynx/languages')->assertOk()->assertDontSee('New language');
     $this->get('/lynx/languages/create')->assertForbidden();

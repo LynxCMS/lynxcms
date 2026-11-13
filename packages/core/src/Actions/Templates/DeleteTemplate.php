@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\TemplateUsage;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Override;
 
 /**
  * Deletes a template that no page uses.
@@ -28,6 +29,12 @@ final class DeleteTemplate extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

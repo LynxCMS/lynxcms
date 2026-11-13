@@ -16,6 +16,7 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Override;
 
 /**
  * Deletes a field, removes it from every template and drops its table with all values. Refuses
@@ -37,6 +38,12 @@ final class DeleteField extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

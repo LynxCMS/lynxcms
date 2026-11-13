@@ -21,6 +21,15 @@ return [
     'trailing_slash' => (bool) env('LYNX_TRAILING_SLASH', false),
 
     /*
+    | Whether people, MCP clients and the agent may change templates, fields and languages
+    | (ADR-0117). Turn it off where the schema comes from YAML files in Git, typically production:
+    | the actions that change the schema refuse them, and the admin's schema screens are read only.
+    | php artisan lynx:schema:apply and other commands still change it. LYNX_ADMIN_SCHEMA_EDITING
+    | is the old name, still read.
+    */
+    'schema_editing' => (bool) env('LYNX_SCHEMA_EDITING', env('LYNX_ADMIN_SCHEMA_EDITING', true)),
+
+    /*
     | Blade views for templates live at "{views_path}.{template}", e.g. templates.course.
     */
     'views_path' => 'templates',

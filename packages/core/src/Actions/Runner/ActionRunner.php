@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Permissions\Authorizer;
+use LynxCms\Core\Schema\SchemaEditing;
 use LynxCms\Core\Support\Flushable;
 use LynxCms\Core\Support\Value;
 use Throwable;
@@ -116,6 +117,11 @@ final class ActionRunner
             // Permissions first (ADR-0033); nested actions were authorized with their outer action.
             if ($outer) {
                 $this->container->make(Authorizer::class)->authorizeAction($context->actor, $action::permission(), $action::name());
+            }
+
+            // At any depth: a module's action may create fields inside (ADR-0117).
+            if ($action::changesSchema()) {
+                $this->container->make(SchemaEditing::class)->authorize($context->actor, $action::name());
             }
 
             $input = $this->hooks->runBefore($action, $input, $context);

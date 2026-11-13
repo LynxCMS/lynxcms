@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
+use Override;
 
 /**
  * A new field like another: its type, labels, translation and settings under a new name, made with
@@ -30,6 +31,12 @@ final class DuplicateField extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Schema editing off now locks the schema for everyone but commands: the actions that change templates, fields and languages refuse people, MCP clients and the agent, at any depth, where before only the admin's screens were read only. The setting moved to core as `lynx.schema_editing` (`LYNX_SCHEMA_EDITING`; the old env name is still read), so it works without the admin. Actions say they change the schema with `changesSchema()`. See the [upgrade guide](/prologue/upgrade) (ADR-0117).
+
 - `lynx:export` leaves media files out unless you add `--with-files`, since copying a large site's media can take long and weigh gigabytes. `--without-files` is gone. See the [upgrade guide](/prologue/upgrade).
 - `lynx:backup` says after each run that it holds content only, not a database backup.
 - `lynx:templates` and `lynx:fields` list the site's templates and fields first, and those Lynx and its modules own (menus, forms, trash, SEO, sitemap and page cache settings) in a second table with their owner. With `--json`, each row has an `owner`, `null` for the site's. Their tables wrap long cells to fit the terminal, where a field used by many templates made every line wider than the window.

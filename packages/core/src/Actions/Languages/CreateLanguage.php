@@ -18,6 +18,7 @@ use LynxCms\Core\Models\Setting;
 use LynxCms\Core\Pages\RootPage;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
+use Override;
 
 /**
  * Adds a language at runtime. One INSERT, no schema change (ADR-0003).
@@ -38,6 +39,12 @@ final class CreateLanguage extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

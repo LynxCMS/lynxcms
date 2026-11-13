@@ -34,7 +34,7 @@ it('labels module fields in the list', function (): void {
 });
 
 it('makes every schema screen read only when schema editing is off', function (): void {
-    config(['lynx-admin.schema_editing' => false]);
+    config(['lynx.schema_editing' => false]);
 
     $this->get('/lynx/fields')->assertOk()->assertDontSee('New field')->assertSee('lynx:schema:apply');
     $this->get('/lynx/templates')->assertOk()->assertDontSee('New template');
@@ -46,7 +46,7 @@ it('makes every schema screen read only when schema editing is off', function ()
 });
 
 it('allows schema editing by default', function (): void {
-    expect(config('lynx-admin.schema_editing'))->toBeTrue();
+    expect(config('lynx.schema_editing'))->toBeTrue();
 });
 
 it('offers a template only fields of the site, not those a module owns', function (): void {

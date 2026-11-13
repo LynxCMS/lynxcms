@@ -31,11 +31,13 @@ Applying creates and updates what the files describe, through the same actions a
 
 ### On production
 
-On production, make the admin's schema screens read only, so the schema only changes through the files and nobody's edit is overwritten by the next deploy:
+On production, turn schema editing off, so the schema only changes through the files and nobody's edit is overwritten by the next deploy:
 
 ```dotenv
-LYNX_ADMIN_SCHEMA_EDITING=false
+LYNX_SCHEMA_EDITING=false
 ```
+
+The admin's schema screens become read only, and every action that changes templates, fields or languages refuses people, MCP clients and the agent, including a module that would add a field to a template. Commands still change the schema, so `lynx:schema:apply` and `lynx:install` work.
 
 ### Deploying
 

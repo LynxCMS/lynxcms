@@ -16,6 +16,8 @@ return [
     'templates_help' => 'As páginas destes modelos têm um campo Palavra-passe na barra lateral do editor. Desligar um modelo mantém as palavras-passe, mas as suas páginas ficam públicas.',
     'turn_off' => 'Desligar',
     'turn_on' => 'Ligar',
+    'on' => 'Ligado',
+    'off' => 'Desligado',
     'pages' => 'Páginas protegidas',
     'empty' => 'Ainda nenhuma página tem palavra-passe.',
     'empty_help' => 'Ligue um modelo acima e depois defina a palavra-passe no editor de uma página.',

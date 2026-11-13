@@ -18,6 +18,7 @@ use LynxCms\Core\Templates\Layout\FieldListInput;
 use LynxCms\Core\Templates\Layout\LayoutRules;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Override;
 
 /**
  * Creates a template, optionally copying another template's fields and settings ("from").
@@ -37,6 +38,12 @@ final class CreateTemplate extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

@@ -16,6 +16,8 @@ return [
     'templates_help' => 'Pages of these templates have a Password field in the page editor\'s sidebar. Turning a template off keeps the passwords, but its pages become public.',
     'turn_off' => 'Turn off',
     'turn_on' => 'Turn on',
+    'on' => 'On',
+    'off' => 'Off',
     'pages' => 'Protected pages',
     'empty' => 'No page has a password yet.',
     'empty_help' => "Turn a template on above, then set a password in a page's editor.",
