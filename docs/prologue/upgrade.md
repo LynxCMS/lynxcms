@@ -23,6 +23,7 @@ To go back to the previous version on a live site, restore that database backup.
 
 ## From 0.1.41 to 0.1.42
 
+- Run `php artisan lynx:migrate`: Page Finder keeps saved searches in a new table, and apps whose user model keeps users in a table not named `users` get the `lynx_language_id` column.
 - `lynx:export` no longer copies media files by default. Add `--with-files` where you need them, such as a production export for a developer's machine or a content folder that CI builds a static site from. Drop `--without-files` from scripts: the option is gone, and the default now does what it did.
 - Modules that call the admin's `SchemaOwners::register()` should call `LynxCms\Core\Schema\SchemaOwners::register()` from their service provider instead (ADR-0115). The admin's method still works and is deprecated.
 - Schema editing is now a core setting, `lynx.schema_editing` (env `LYNX_SCHEMA_EDITING`), and it covers every way of changing the schema, not only the admin's screens (ADR-0117). Rename `LYNX_ADMIN_SCHEMA_EDITING` in `.env`; the old name is still read. If you published `config/lynx-admin.php` and set `schema_editing` there, move it to `config/lynx.php`: the admin no longer reads it. Where schema editing is off, an MCP client or the agent that changed templates or fields before is now refused, and so is enabling a module that adds fields to a template from the admin (such as page passwords): add those to the schema files instead.

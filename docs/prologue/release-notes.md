@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.42
+
+Released November 13, 2026. Drafts build templates and fields from a short YAML file, schema editing off now locks the schema for agents and MCP too, and the admin gains a Home screen, Page Finder and keyboard shortcuts. Run `php artisan lynx:migrate` after updating: Page Finder keeps saved searches in a new table, and apps whose users live in a table not named `users` get the language column. Read the [upgrade guide](/prologue/upgrade#from-0-1-41-to-0-1-42) if you export with `--without-files` or set `LYNX_ADMIN_SCHEMA_EDITING`.
 
 - Schema editing off now locks the schema for everyone but commands: the actions that change templates, fields and languages refuse people, MCP clients and the agent, at any depth, where before only the admin's screens were read only. The setting moved to core as `lynx.schema_editing` (`LYNX_SCHEMA_EDITING`; the old env name is still read), so it works without the admin. Actions say they change the schema with `changesSchema()`. See the [upgrade guide](/prologue/upgrade) (ADR-0117).
 - **Drafts.** Describe fields and templates in a short YAML file and build them with `php artisan lynx:draft`, with a starting view for each new template, in one transaction. `--dry-run` shows what would change, `--from-site` writes the site's schema as a draft, `--json-schema` lets editors check a draft as you type, and the `schema.draft` MCP tool lets an agent build one after showing you the plan. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
