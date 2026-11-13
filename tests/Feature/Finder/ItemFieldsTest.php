@@ -56,5 +56,5 @@ it('finds pages with images and pages without', function (): void {
 it('counts the items to write the selector', function (): void {
     $query = FinderQuery::fromArray(['groups' => [['match' => 'any', 'conditions' => [['subject' => 'gallery', 'operator' => 'blank'], ['subject' => 'gallery', 'operator' => 'at_least', 'value' => '3']]]]]);
 
-    expect(app(SelectorWriter::class)->terms($query))->toBe('(gallery.count=0), (gallery.count>=3)');
+    expect(app(SelectorWriter::class)->terms($query))->toBe('(gallery.count=0, template=course), (gallery.count>=3)');
 });

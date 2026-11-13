@@ -54,13 +54,12 @@ final class FinderScreen extends Component
 
     public function mount(): void
     {
-        $query = FinderQuery::fromArray($this->search);
-        $this->search = ($query->groups === [] ? $this->blank() : $query)->toArray();
+        $this->search = $this->withAGroup(FinderQuery::fromArray($this->search))->toArray();
     }
 
     public function addGroup(): void
     {
-        $this->change(fn (FinderQuery $query): FinderQuery => new FinderQuery($query->matchAll, [...$query->groups, new ConditionGroup(conditions: [$this->blankCondition()])], $query->sort));
+        $this->change(fn (FinderQuery $query): FinderQuery => $query->withGroups([...$query->groups, new ConditionGroup(conditions: [$this->blankCondition()])]));
     }
 
     public function removeGroup(int $group): void
@@ -69,7 +68,7 @@ final class FinderScreen extends Component
             $groups = $query->groups;
             unset($groups[$group]);
 
-            return new FinderQuery($query->matchAll, array_values($groups), $query->sort);
+            return $query->withGroups(array_values($groups));
         });
     }
 
@@ -106,10 +105,16 @@ final class FinderScreen extends Component
 
     /**
      * A new subject keeps nothing of the old one: its operator becomes the subject's first, and the
-     * value is cleared. Any change starts the results over.
+     * value is cleared. Any change but the columns starts the results over.
      */
     public function updatedSearch(mixed $value, string $key): void
     {
+        if (str_starts_with($key, 'columns')) {
+            $this->search = FinderQuery::fromArray($this->search)->toArray();
+
+            return;
+        }
+
         if (preg_match('/^groups\.(\d+)\.conditions\.(\d+)\.subject$/', $key, $match) === 1) {
             $subject = app(ConditionCatalog::class)->find(Value::string($value));
             $operator = $subject?->kind->operators()[0]->value ?? '';
@@ -123,17 +128,20 @@ final class FinderScreen extends Component
     {
         $query = FinderQuery::fromArray($this->search);
         $results = app(FinderResults::class);
+        $catalog = app(ConditionCatalog::class);
+        $columns = $catalog->chosenColumns($query->columns);
 
         try {
             $pages = $results->find($query, $this->start);
-            $found = ['rows' => (new ResultRows)->from($pages), 'total' => $pages->total(), 'error' => null];
+            $found = ['rows' => (new ResultRows)->from($pages, array_column($columns, 'key')), 'total' => $pages->total(), 'error' => null];
         } catch (SelectorException $exception) {
             $found = ['rows' => [], 'total' => 0, 'error' => $exception->getMessage()];
         }
 
         return view('lynx-finder::admin.screen', [
             ...$found,
-            'catalog' => app(ConditionCatalog::class),
+            'catalog' => $catalog,
+            'columns' => $columns,
             'selector' => $results->selector($query),
             'perPage' => FinderResults::PER_PAGE,
             'sorts' => self::sorts(),
@@ -174,6 +182,12 @@ final class FinderScreen extends Component
         return new FinderQuery(groups: [new ConditionGroup(conditions: [$this->blankCondition()])]);
     }
 
+    /** The search, with a blank group when it has none. */
+    private function withAGroup(FinderQuery $query): FinderQuery
+    {
+        return $query->groups === [] ? $query->withGroups($this->blank()->groups) : $query;
+    }
+
     private function blankCondition(): Condition
     {
         return new Condition('', '');
@@ -201,7 +215,7 @@ final class FinderScreen extends Component
     /** A new search starts the results over, with nothing ticked; one without groups gets a blank group. */
     private function replaceSearch(FinderQuery $query): void
     {
-        $this->search = ($query->groups === [] ? $this->blank() : $query)->toArray();
+        $this->search = $this->withAGroup($query)->toArray();
         $this->start = 0;
         $this->selected = [];
         $this->trashing = [];
@@ -219,7 +233,7 @@ final class FinderScreen extends Component
                 $groups[$index] = $change($groups[$index]);
             }
 
-            return new FinderQuery($query->matchAll, $groups, $query->sort);
+            return $query->withGroups($groups);
         });
     }
 }

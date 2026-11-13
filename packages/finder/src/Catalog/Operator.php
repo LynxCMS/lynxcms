@@ -38,6 +38,12 @@ enum Operator: string
         return ! in_array($this, [self::Blank, self::Filled, self::On, self::Off], true);
     }
 
+    /** Whether a page with no value matches: "is not", "is blank" and "is off". */
+    public function matchesMissing(): bool
+    {
+        return in_array($this, [self::Not, self::Blank, self::Off], true);
+    }
+
     /** The selector operator for a plain comparison, or null for those written another way. */
     public function selectorOperator(): ?string
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Finder\Admin;
 
+use LynxCms\Admin\Fields\ShortValue;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
@@ -11,7 +12,8 @@ use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Value;
 
 /**
- * The finder's results as table rows: title and editor link, template, status and last change.
+ * The finder's results as table rows: title and editor link, template, status, last change and the
+ * chosen field columns as short text.
  *
  * @internal
  */
@@ -23,24 +25,32 @@ final readonly class ResultRows
     public function __construct(private DefaultPresenter $presenter = new DefaultPresenter) {}
 
     /**
-     * @return list<array{id: int, title: string, url: string, template: string, statuses: list<array{key: string, label: string}>, changed: string|null, changedAt: string|null}>
+     * @param  list<string>  $columns  the fields shown as columns
+     * @return list<array{id: int, title: string, url: string, template: string, statuses: list<array{key: string, label: string}>, changed: string|null, changedAt: string|null, cells: array<string, string>}>
      */
-    public function from(PageArray $pages): array
+    public function from(PageArray $pages, array $columns = []): array
     {
         $rows = [];
 
         foreach ($pages as $page) {
-            $rows[] = $this->row($page);
+            $rows[] = $this->row($page, $columns);
         }
 
         return $rows;
     }
 
     /**
-     * @return array{id: int, title: string, url: string, template: string, statuses: list<array{key: string, label: string}>, changed: string|null, changedAt: string|null}
+     * @param  list<string>  $columns  the fields shown as columns
+     * @return array{id: int, title: string, url: string, template: string, statuses: list<array{key: string, label: string}>, changed: string|null, changedAt: string|null, cells: array<string, string>}
      */
-    public function row(Page $page): array
+    public function row(Page $page, array $columns = []): array
     {
+        $cells = [];
+
+        foreach ($columns as $column) {
+            $cells[$column] = ShortValue::of($page, $column);
+        }
+
         $changed = $page->updatedAt === null ? null : now()->parse($page->updatedAt);
         $template = $page->template();
 
@@ -52,6 +62,7 @@ final readonly class ResultRows
             'statuses' => $this->statuses($page),
             'changed' => $changed?->isoFormat('ll'),
             'changedAt' => $changed?->toDayDateTimeString(),
+            'cells' => $cells,
         ];
     }
 

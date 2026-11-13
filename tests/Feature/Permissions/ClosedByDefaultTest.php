@@ -59,7 +59,7 @@ it('gives no hint once someone is a superuser', function (): void {
     $owner = userAccount();
     lynx()->run(AssignRoles::class, ['user' => $owner, 'roles' => ['superuser']]);
 
-    $this->actingAs(new GenericUser(['id' => 7]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:superuser');
+    $this->actingAs(new GenericUser(['id' => (int) $owner + 1]))->get('/lynx/pages')->assertForbidden()->assertDontSee('lynx:superuser');
     $this->actingAs(new GenericUser(['id' => (int) $owner]))->get('/lynx/pages')->assertOk();
 });
 

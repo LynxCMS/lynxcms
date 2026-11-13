@@ -6,16 +6,20 @@ namespace LynxCms\Finder\Catalog;
 
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Contracts\Fields\Comparison;
+use LynxCms\Core\Fields\ChoiceOptions;
 use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\Types\ChoiceType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
 
 /**
  * What a finder condition can look at: the page's template, place in the tree, status and dates,
  * then every field selectors can compare (Comparison::None fields, such as passwords, are left
- * out; fields of items, such as images and repeaters, are compared by how many items they hold). Each comes with the operators its kind offers.
+ * out; fields of items, such as images and repeaters, are compared by how many items they hold;
+ * choice fields offer their options). Each comes with the operators its kind offers.
  *
  * @api
  */
@@ -58,6 +62,33 @@ final class ConditionCatalog
     }
 
     /**
+     * The fields the results can show as columns: all but fields of items, which have no short text.
+     *
+     * @return list<Subject>
+     */
+    public function columns(): array
+    {
+        return array_values(array_filter($this->fields(), fn (Subject $subject): bool => $subject->kind !== Kind::Items));
+    }
+
+    /**
+     * The chosen columns the results can show, in the order chosen.
+     *
+     * @param  list<string>  $keys
+     * @return list<Subject>
+     */
+    public function chosenColumns(array $keys): array
+    {
+        $offered = [];
+
+        foreach ($this->columns() as $subject) {
+            $offered[$subject->key] = $subject;
+        }
+
+        return array_values(array_filter(array_map(fn (string $key): ?Subject => $offered[$key] ?? null, $keys)));
+    }
+
+    /**
      * @return array<string, Subject>
      */
     public function all(): array
@@ -89,26 +120,32 @@ final class ConditionCatalog
     }
 
     /**
-     * The fields of the searched templates, by label.
+     * The fields of the searched templates, by label. Each names the templates that have it when
+     * some searched templates lack it, so a condition that a missing value would match ("is not",
+     * "is blank") keeps to pages that can hold one.
      *
      * @return list<Subject>
      */
     private function fieldSubjects(): array
     {
-        $used = [];
+        $searched = array_keys($this->searchedTemplates());
+        $holders = [];
 
-        foreach (array_keys($this->searchedTemplates()) as $template) {
-            $used += lynx()->templates->fields($template)->all();
+        foreach ($searched as $template) {
+            foreach (array_keys(lynx()->templates->fields($template)->all()) as $field) {
+                $holders[$field][] = $template;
+            }
         }
 
         $subjects = [];
 
         foreach (lynx()->fields->all() as $field) {
             $name = Value::string($field->name);
-            $kind = isset($used[$name]) ? $this->kindOf($field) : null;
+            $kind = isset($holders[$name]) ? $this->kindOf($field) : null;
 
             if ($kind instanceof Kind) {
-                $subjects[] = new Subject($name, Value::string($field->label) ?: $name, $kind, $name);
+                $templates = count($holders[$name]) < count($searched) ? $holders[$name] : [];
+                $subjects[] = new Subject($name, Value::string($field->label) ?: $name, $kind, $name, $kind === Kind::Choice ? $this->options($field) : [], $templates);
             }
         }
 
@@ -130,6 +167,10 @@ final class ConditionCatalog
             return Kind::Pages;
         }
 
+        if ($type instanceof ChoiceType) {
+            return Kind::Choice;
+        }
+
         return match ($type->comparison()) {
             Comparison::Text => Kind::Text,
             Comparison::Integer, Comparison::Decimal => Kind::Number,
@@ -137,6 +178,16 @@ final class ConditionCatalog
             Comparison::Date => Kind::Date,
             Comparison::None => null,
         };
+    }
+
+    /**
+     * A choice field's option labels by value, in the current language.
+     *
+     * @return array<string, string>
+     */
+    private function options(Field $field): array
+    {
+        return array_map(fn (string|array $label): string => LocalizedText::from($label)->in(), ChoiceOptions::labels($field->config()['options'] ?? []));
     }
 
     /**
