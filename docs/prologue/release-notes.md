@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- `lynx:make:view` and `lynx:draft` write a starting view for each block type of a template's matrix fields, at `templates/fields/{field}/{type}.blade.php` where `@matrix` looks, with the type's fields read from `$block`. `lynx:make:view` keeps block views that exist unless you add `--force`, fills in the missing ones even when the template's view exists, and skips them with `--no-blocks`; a draft only writes missing ones. See [Matrix blocks](/basics/views#matrix-blocks).
+
 ## 0.1.42
 
 Released November 13, 2026. Drafts build templates and fields from a short YAML file, schema editing off now locks the schema for agents and MCP too, and the admin gains a Home screen, Page Finder and keyboard shortcuts. Run `php artisan lynx:migrate` after updating: Page Finder keeps saved searches in a new table, and apps whose users live in a table not named `users` get the language column. Read the [upgrade guide](/prologue/upgrade#from-0-1-41-to-0-1-42) if you export with `--without-files` or set `LYNX_ADMIN_SCHEMA_EDITING`.
