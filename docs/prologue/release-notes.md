@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.43
+
+Released November 13, 2026. Fixes a crash when creating a page on a template without a title, such as site settings, and makes drafts gentler: fields only named on a template keep their settings there, and matrix block types get starting views. Nothing to do after updating, and no database changes.
 
 - Fixed: creating a page whose template has no `title` field, such as a site settings template, without typing a URL name failed with "Template [site-settings] has no field [title]". The name was derived from the title without checking the template has one. The New page screen now asks for the name under its input instead.
 - The field form chooses a page or page table field's templates with the same template chooser as a template's family lists (search by label or name, remove with one click), where it took template names as comma separated text. Field type settings mark template names with the JSON Schema format `lynx-template` (`SettingFormats::TEMPLATE`), so a module's own settings get the chooser too, and MCP clients see what the strings hold.
