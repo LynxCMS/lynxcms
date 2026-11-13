@@ -63,6 +63,7 @@ use LynxCms\Core\Pages\Visibility\PageVisibility;
 use LynxCms\Core\Permissions\AssignRegistrationRole;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\PermissionRegistry;
+use LynxCms\Core\Schema\Draft\DraftPaths;
 use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Search\SearchServiceProvider;
 use LynxCms\Core\Strings\StringCatalog;
@@ -178,6 +179,8 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(ComponentRegistry::class);
         $this->app->singleton(DoctorChecks::class);
         $this->app->singleton(GlobalMiddleware::class);
+        // Where a draft build keeps the schema folder and types up to date (ADR-0116); tests point it elsewhere.
+        $this->app->bindIf(DraftPaths::class, DraftPaths::defaults(...));
         // Schema that belongs to Lynx or a module, not the site (ADR-0115). The trash page's template is Lynx's own (ADR-0035).
         $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {
             $owners = new SchemaOwners;

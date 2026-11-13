@@ -49,6 +49,8 @@ Here is what each call does:
 
 Open **Settings › Templates** in the admin to see both templates, and click one to see its fields.
 
+You can also describe fields and templates in a short YAML file and build them with `php artisan lynx:draft`. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
+
 ### Keeping the schema in Git
 
 Fields and templates live in the database, but you can keep them in your repository like migrations. Export them as YAML files:

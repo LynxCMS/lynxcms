@@ -17,6 +17,7 @@ use LynxCms\Core\Actions\Languages\UpdateLanguage;
 use LynxCms\Core\Actions\Pages\PurgeOrphanedValues;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Actions\Schema\BuildDraft;
 use LynxCms\Core\Actions\Search\RebuildSearchIndex;
 use LynxCms\Core\Actions\Templates\CopySection;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
@@ -117,7 +118,7 @@ it('leaves actions that need schema.manage but change no schema alone', function
 })->throwsNoExceptions();
 
 it('marks the actions that change the schema, and only those', function (): void {
-    $changing = [CreateField::class, UpdateField::class, DeleteField::class, DuplicateField::class, CreateTemplate::class, UpdateTemplate::class, DeleteTemplate::class, CopySection::class, CreateLanguage::class, UpdateLanguage::class, DeleteLanguage::class];
+    $changing = [CreateField::class, UpdateField::class, DeleteField::class, DuplicateField::class, CreateTemplate::class, UpdateTemplate::class, DeleteTemplate::class, CopySection::class, CreateLanguage::class, UpdateLanguage::class, DeleteLanguage::class, BuildDraft::class];
     $other = [RebuildSearchIndex::class, PurgeOrphanedValues::class, CleanHtmlValues::class, AddsAFieldInside::class];
 
     expect(array_filter($changing, fn (string $action): bool => ! $action::changesSchema()))->toBe([])

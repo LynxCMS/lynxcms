@@ -203,6 +203,71 @@ lynx()->pages->switchTemplate('/courses/old', 'archived-course');
 lynx()->pages->purgeOrphans(template: 'course', dryRun: true);
 ```
 
+## Drafting the schema
+
+For a new site, or a batch of new templates, it is often quicker to write them down than to click through the admin. A draft is a short YAML file that `php artisan lynx:draft` turns into fields and templates, with a starting view for each new template that has a URL.
+
+```yaml
+fields:
+  intro: textarea translatable
+  starts_on: date
+  ticket_price: decimal:2 min:0
+  topics: choice:Design,Development,"Product management" multiple
+
+templates:
+  events:
+    children: [event]
+    fields: [title*, intro]
+  event:
+    parents: [events]
+    fields:
+      - title*
+      - intro
+      - starts_on*
+      - venue: text:120
+      - section: Practical details
+        fields: [ticket_price, topics]
+```
+
+A field is its type, then what you want to change about it:
+
+- `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
+- `translatable` gives the field a value per language.
+- A word on its own, such as `multiple`, turns a setting on. `key:value` sets any other setting, and a list is written with commas: `templates:course,workshop`.
+- `label:"Ticket price (EUR)"` sets the label. Without one, `ticket_price` is labelled "Ticket price".
+- Anything the short form can't say, such as a repeater's fields or labels in several languages, goes in the long form: the field as a map of `type`, `label`, `translatable` and its settings.
+
+```yaml
+fields:
+  speaker_name: text
+  speakers:
+    type: repeater
+    label: { en: Speakers, pt: Oradores }
+    fields: [speaker_name*, intro]
+    max: 6
+```
+
+In a template, `title*` makes a field required there, and `venue: text:120` defines a field in place. `url: false` makes a template for settings or reusable content, `singleton: true` allows one page, and `children`, `parents` and `allowed` set where pages may go. Sections and tabs work as in [Arranging the page editor](#arranging-the-page-editor).
+
+```bash
+php artisan lynx:draft --stub        # writes lynx/draft.yaml to start from
+php artisan lynx:draft --dry-run     # lists what would change, and changes nothing
+php artisan lynx:draft               # builds it, after asking in a terminal
+```
+
+A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or whether it is translatable, and it can't touch what Lynx or a module owns, such as menus.
+
+For a template the site already has, the draft's `fields` list becomes the template's list, in the draft's order. A draft that leaves out a field the template has is refused, and the error names the fields. List them to keep them, or build with `--prune-fields` to take them off the template; the plan then shows `remove field body from template course` for each. The fields and their values stay in the site.
+
+After building, `lynx:draft` also keeps the files the site already has up to date: the draft's fields and templates in `lynx/schema`, and the types `lynx:phpstan` and `lynx:ide-helper` wrote. It starts none of them, so a site without a `lynx/schema` folder is told to run `lynx:schema:export`. The draft itself is a starting point: `lynx/schema` stays the record, and you can delete the draft once it is built.
+
+Two more options help with an existing site:
+
+- `php artisan lynx:draft --from-site` writes the site's own fields and templates as a draft, in the short form wherever it fits. It is a quick way to read a site's schema, and building it changes nothing.
+- `php artisan lynx:draft --json-schema` writes `lynx/draft.schema.json`. Editors with a YAML language server (the YAML extension in VS Code, or PhpStorm) then check a draft as you type and suggest types, settings and template keys. A draft written by `--stub` or `--from-site` already points to it on its first line.
+
+An AI agent connected through MCP can build a draft too, with the `schema.draft` tool. It shows you what would change first, needs your agreement (`prune_fields`) to take fields off a template, and it only changes the database: the views, `lynx/schema` and the type files stay yours to update. Where schema editing is off ([On production](/deeper/schema-and-content#on-production)), the tool is refused, as every schema change by an agent is.
+
 ## Keeping the schema in Git
 
 Fields and templates live in the database, but you can keep them in your repository, like migrations. `php artisan lynx:schema:export` writes them as YAML files, and `php artisan lynx:schema:apply` applies the files on another machine. [Schema and Content Packages](/deeper/schema-and-content) covers both, and how to make the admin's schema screens read only in production.
