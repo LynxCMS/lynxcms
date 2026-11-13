@@ -154,7 +154,7 @@ A `quote` block on a page that uses the `project` template renders `resources/vi
 </blockquote>
 ```
 
-With `APP_DEBUG` on, a block without a view leaves an HTML comment naming the view to create. For full control, loop over `$page->blocks` yourself; `$block->type()` gives each block's slug.
+`php artisan lynx:make:view` writes a starting view for each block type of a template's matrix fields along with the template's view, its fields read from `$block`, and fills in the missing ones when the template's view already exists. Block views that exist are kept unless you add `--force`, and `--no-blocks` skips them. With `APP_DEBUG` on, a block without a view leaves an HTML comment naming the view to create. For full control, loop over `$page->blocks` yourself; `$block->type()` gives each block's slug.
 
 ## Livewire components
 

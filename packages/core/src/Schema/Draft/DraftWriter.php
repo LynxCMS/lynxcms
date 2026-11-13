@@ -26,7 +26,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 final readonly class DraftWriter
 {
-    private const string HEADER = "# yaml-language-server: \$schema=./draft.schema.json\n# The site's own templates and fields, written by php artisan lynx:draft --from-site.\n\n";
+    private const string HEADER = DraftJsonSchema::MODELINE."\n# The site's own templates and fields, written by php artisan lynx:draft --from-site.\n\n";
 
     /** Yaml::dump nesting from which lists and maps are written inline. */
     private const int INLINE_LEVEL = 4;

@@ -24,7 +24,8 @@ final class MakeViewCommand extends Command
         {--all : Write the missing view of every template with pages}
         {--layout= : A layout component to wrap the view in, e.g. layouts.site}
         {--all-tabs : Also print the fields on other editor tabs, such as SEO}
-        {--force : Replace a view that exists}';
+        {--force : Replace views that exist, the template\'s and its blocks\'}
+        {--no-blocks : Write no views for the blocks of matrix fields}';
 
     #[Override]
     protected $description = 'Write a starting Blade view for a template, with its fields';
@@ -39,6 +40,8 @@ final class MakeViewCommand extends Command
                 if (! $views->exists((string) $template->name)) {
                     $this->components->info('Wrote '.$views->write($template, $layout, $allTabs).'.');
                 }
+
+                $this->writeBlocks($views, $template, force: false);
             }
 
             return self::SUCCESS;
@@ -52,15 +55,39 @@ final class MakeViewCommand extends Command
             return self::FAILURE;
         }
 
-        if ($views->exists((string) $template->name) && ! $this->option('force')) {
+        $isKept = $views->exists((string) $template->name) && ! $this->option('force');
+
+        if (! $isKept) {
+            $this->components->info('Wrote '.$views->write($template, $layout, $allTabs).'.');
+        }
+
+        // A view that exists still gets the block views it is missing; with nothing to write, say why.
+        if ($this->writeBlocks($views, $template, (bool) $this->option('force')) === 0 && $isKept) {
             $this->components->error('The view exists: '.$views->path((string) $template->name).'. Add --force to replace it.');
 
             return self::FAILURE;
         }
 
-        $this->components->info('Wrote '.$views->write($template, $layout, $allTabs).'.');
-
         return self::SUCCESS;
+    }
+
+    /** Views for the template's block types that have none, or all of them when forced; how many. */
+    private function writeBlocks(ViewWriter $views, Template $template, bool $force): int
+    {
+        if ($this->option('no-blocks')) {
+            return 0;
+        }
+
+        $written = 0;
+
+        foreach ($views->blocks($template) as ['field' => $field, 'type' => $type]) {
+            if ($force || ! $views->blockExists((string) $field->name, $type)) {
+                $this->components->info('Wrote '.$views->writeBlock($field, $type).'.');
+                $written++;
+            }
+        }
+
+        return $written;
     }
 
     /**

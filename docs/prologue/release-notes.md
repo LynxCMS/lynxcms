@@ -11,6 +11,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 ## Unreleased
 
 - The field form chooses a page or page table field's templates with the same template chooser as a template's family lists (search by label or name, remove with one click), where it took template names as comma separated text. Field type settings mark template names with the JSON Schema format `lynx-template` (`SettingFormats::TEMPLATE`), so a module's own settings get the chooser too, and MCP clients see what the strings hold.
+- `lynx:make:view` and `lynx:draft` write a starting view for each block type of a template's matrix fields, at `templates/fields/{field}/{type}.blade.php` where `@matrix` looks, with the type's fields read from `$block`. `lynx:make:view` keeps block views that exist unless you add `--force`, fills in the missing ones even when the template's view exists, and skips them with `--no-blocks`; a draft only writes missing ones. See [Matrix blocks](/basics/views#matrix-blocks).
+- A draft that only names a field on a template the site has keeps that field's settings there (label, description, tab, width, required), so adding a field to a template no longer drops the others' settings, such as the SEO fields' tab. Set a setting in the draft to change it, or to `null` to clear it. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
 
 ## 0.1.42
 
