@@ -82,6 +82,9 @@ return [
         'previous' => 'Previous',
         'next' => 'Next',
         'range' => ':from to :to of :total',
+        'columns' => 'Columns',
+        'columns_help' => 'Shows up to :max fields as columns.',
+        'no_columns' => 'No fields to show.',
     ],
     'sorts' => [
         'modified_desc' => 'Changed last',

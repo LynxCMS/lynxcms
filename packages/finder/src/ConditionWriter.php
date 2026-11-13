@@ -14,7 +14,8 @@ use LynxCms\Finder\Search\Condition;
  * Writes one finder condition as selector clauses, after checking its value: numbers and dates
  * must be numbers and dates, choices must be among the subject's options, and text loses its
  * double quotes and goes inside quotes, so it can never add terms of its own. An empty list means
- * the condition is incomplete or its value is refused.
+ * the condition is incomplete or its value is refused. Conditions a missing value would match also
+ * name the templates that have the field.
  *
  * @internal
  */
@@ -27,6 +28,21 @@ final readonly class ConditionWriter
      */
     public function clauses(Subject $subject, Operator $operator, Condition $condition): array
     {
+        $clauses = $this->compared($subject, $operator, $condition);
+
+        // A page whose template lacks the field holds no value, which "is not" and "is blank" would match.
+        if ($clauses !== [] && $subject->templates !== [] && $operator->matchesMissing()) {
+            $clauses[] = 'template='.implode('|', $subject->templates);
+        }
+
+        return $clauses;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function compared(Subject $subject, Operator $operator, Condition $condition): array
+    {
         $name = $subject->name;
 
         return match (true) {
@@ -36,7 +52,7 @@ final readonly class ConditionWriter
             $subject->kind === Kind::Number => $this->number($name, $operator, $condition),
             $subject->kind === Kind::Date, $subject->kind === Kind::Moment => $this->date($name, $operator, $condition),
             $operator === Operator::AtLeast => $this->compare("{$name}.count", $operator, $this->digits($condition->value)),
-            $subject->kind === Kind::Template, $subject->kind === Kind::Status => $this->compare($name, $operator, array_key_exists($condition->value, $subject->options) ? $condition->value : null),
+            $subject->kind === Kind::Template, $subject->kind === Kind::Status, $subject->kind === Kind::Choice => $this->compare($name, $operator, array_key_exists($condition->value, $subject->options) ? $condition->value : null),
             default => $this->compare($name, $operator, $condition->pages === [] ? null : implode('|', $condition->pages)),
         };
     }

@@ -50,7 +50,7 @@ final class SaveSearch extends Action
         return [
             'search' => $schema->integer()->description('The id of a saved search to change; leave out to save a new one.'),
             'name' => $schema->string()->description('What the search is called in the finder.')->required(),
-            'query' => $schema->object()->description('The search: {"match": "all"|"any", "groups": [{"match": "all"|"any", "conditions": [{"subject", "operator", "value", "to", "pages"}]}], "sort"}.')->required(),
+            'query' => $schema->object()->description('The search: {"match": "all"|"any", "groups": [{"match": "all"|"any", "conditions": [{"subject", "operator", "value", "to", "pages"}]}], "sort", "columns": [field names shown in the results]}.')->required(),
             'shared' => $schema->boolean()->description('Show the search to everyone who may use the finder (needs finder.share).'),
         ];
     }

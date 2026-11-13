@@ -7,7 +7,8 @@ namespace LynxCms\Finder\Catalog;
 /**
  * What a finder condition looks at, which decides its operators and the input its value takes.
  * Moment is a page's own created, modified or published time; Date is a date field; Items is a
- * field of items (images, files, repeaters, matrices), found by how many it holds.
+ * field of items (images, files, repeaters, matrices), found by how many it holds; Choice is a
+ * choice field, compared with one of its options.
  *
  * @api
  */
@@ -18,6 +19,7 @@ enum Kind: string
     case Boolean = 'boolean';
     case Date = 'date';
     case Moment = 'moment';
+    case Choice = 'choice';
     case Pages = 'pages';
     case Items = 'items';
     case Template = 'template';
@@ -34,11 +36,12 @@ enum Kind: string
         $presence = [Operator::Blank, Operator::Filled];
 
         return match ($this) {
-            self::Text => [Operator::Contains, Operator::Is, Operator::Not, Operator::StartsWith, Operator::EndsWith, Operator::Words, ...$presence],
+            self::Text => [Operator::Contains, Operator::Is, Operator::StartsWith, Operator::EndsWith, Operator::Words, ...$presence],
             self::Number => [Operator::Is, Operator::Not, Operator::Less, Operator::LessOrEqual, Operator::Greater, Operator::GreaterOrEqual, Operator::Between, ...$presence],
             self::Boolean => [Operator::On, Operator::Off],
             self::Date => [Operator::Day, Operator::Before, Operator::After, Operator::Between, Operator::LastDays, ...$presence],
             self::Moment => [Operator::LastDays, Operator::Day, Operator::Before, Operator::After, Operator::Between],
+            self::Choice => [Operator::Is, Operator::Not, ...$presence],
             self::Pages => [Operator::Is, Operator::Not, Operator::AtLeast, ...$presence],
             self::Items => [Operator::Filled, Operator::Blank, Operator::AtLeast],
             self::Template, self::Status, self::Parent => [Operator::Is, Operator::Not],
@@ -54,7 +57,7 @@ enum Kind: string
             $this === self::Date, $this === self::Moment => 'date',
             $this === self::Number => 'number',
             $this === self::Pages, $this === self::Parent => 'pages',
-            $this === self::Template, $this === self::Status => 'choice',
+            $this === self::Template, $this === self::Status, $this === self::Choice => 'choice',
             default => 'text',
         };
     }

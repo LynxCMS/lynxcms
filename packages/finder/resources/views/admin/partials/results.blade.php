@@ -1,11 +1,12 @@
-{{-- The pages found: count, order, a row per page linking to its editor, and paging. --}}
+{{-- The pages found: count, order, field columns, a row per page linking to its editor, and paging. --}}
 <section class="grid grid-cols-1 gap-3" aria-labelledby="finder-results-heading" wire:loading.class="opacity-60" data-finder-results="{{ $total }}">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 id="finder-results-heading" class="text-base font-semibold">
             {{ __('lynx-finder::admin.results.heading') }}
             <span class="text-muted-foreground ms-1 text-sm font-normal tabular-nums">{{ trans_choice('lynx-finder::admin.results.count', $total) }}</span>
         </h2>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+            @include('lynx-finder::admin.partials.columns')
             <label for="finder-sort" class="blat-label">{{ __('lynx-finder::admin.results.sort') }}</label>
             <select id="finder-sort" class="blat-select w-auto" wire:model.live="search.sort" data-finder-sort>
                 @foreach ($sorts as $value => $label)
@@ -32,13 +33,16 @@
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.template') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.status') }}</th>
                         <th scope="col" class="px-4 py-2.5 text-start font-medium">{{ __('lynx-finder::admin.results.changed') }}</th>
+                        @foreach ($columns as $column)
+                            <th scope="col" class="px-4 py-2.5 text-start font-medium" data-finder-column="{{ $column->key }}">{{ $column->label }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody class="divide-y">
                     @foreach ($rows as $row)
                         <tr wire:key="finder-row-{{ $row['id'] }}" data-finder-row="{{ $row['id'] }}">
                             <td class="ps-4 py-2.5"><input type="checkbox" class="blat-checkbox" value="{{ $row['id'] }}" wire:model.live="selected" aria-label="{{ __('lynx-finder::admin.bulk.select', ['title' => $row['title']]) }}"></td>
-                            <td class="px-4 py-2.5"><a href="{{ $row['url'] }}" wire:navigate class="font-medium underline-offset-4 hover:underline">{{ $row['title'] }}</a></td>
+                            <td class="min-w-48 px-4 py-2.5"><a href="{{ $row['url'] }}" wire:navigate class="font-medium underline-offset-4 hover:underline">{{ $row['title'] }}</a></td>
                             <td class="text-muted-foreground px-4 py-2.5">{{ $row['template'] }}</td>
                             <td class="px-4 py-2.5">
                                 <span class="flex flex-wrap gap-1">
@@ -52,6 +56,9 @@
                                     <time title="{{ $row['changedAt'] }}">{{ $row['changed'] }}</time>
                                 @endif
                             </td>
+                            @foreach ($columns as $column)
+                                <td class="max-w-64 px-4 py-2.5 @if (in_array($column->kind->value, ['number', 'date'], true)) whitespace-nowrap tabular-nums @endif" data-finder-cell="{{ $row['id'] }}-{{ $column->key }}">{{ $row['cells'][$column->key] ?? '' }}</td>
+                            @endforeach
                         </tr>
                     @endforeach
                 </tbody>

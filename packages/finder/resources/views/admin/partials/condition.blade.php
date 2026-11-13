@@ -5,7 +5,7 @@
     $path = "search.groups.{$g}.conditions.{$c}";
     $id = "finder-{$g}-{$c}";
 @endphp
-<li class="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(0,12rem)_minmax(0,13rem)_minmax(0,1fr)_auto] sm:items-start" wire:key="finder-condition-{{ $g }}-{{ $c }}-{{ $condition['subject'] }}" data-finder-condition="{{ $g }}-{{ $c }}">
+<li class="grid grid-cols-[minmax(0,1fr)_auto] gap-2 max-sm:not-first:border-t max-sm:not-first:pt-3 sm:grid-cols-[minmax(0,12rem)_minmax(0,13rem)_minmax(0,1fr)_auto] sm:items-start" wire:key="finder-condition-{{ $g }}-{{ $c }}-{{ $condition['subject'] }}" data-finder-condition="{{ $g }}-{{ $c }}">
     <select id="{{ $id }}-subject" class="blat-select" wire:model.live="{{ $path }}.subject" aria-label="{{ __('lynx-finder::admin.condition.subject') }}" data-finder-subject>
         <option value="">{{ __('lynx-finder::admin.condition.choose') }}</option>
         <optgroup label="{{ __('lynx-finder::admin.condition.page') }}">

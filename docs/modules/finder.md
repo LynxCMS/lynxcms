@@ -37,20 +37,25 @@ Each condition can look at the page itself, or at any field:
 | Template, status | is, is not |
 | Below the page | is, is not (any page further down the tree, through the page search) |
 | Created, last changed, published | in the last days, on the day, before, after, between |
-| Text fields | contains, is, is not, starts with, ends with, has every word, is blank, is not blank |
+| Text fields | contains, is, starts with, ends with, has every word, is blank, is not blank |
 | Number fields | is, is not, less than, at most, more than, at least, between, is blank, is not blank |
 | Date fields | on the day, before, after, between, in the last days, is blank, is not blank |
 | On and off fields | is on, is off (a page whose switch was never set counts as off) |
+| Choice fields | is, is not (one of the field's options), is blank, is not blank. A field that allows several options matches when one of them is the chosen one. |
 | Page reference fields | is (any of the chosen pages), is not, has at least, is blank, is not blank |
 | Images, files, repeaters and matrices | is not blank, is blank, has at least (items switched off do not count) |
 
 Fields selectors cannot compare, such as passwords, are not offered. Text comparisons use the value visitors see in the admin's current language, with [fallback](/basics/languages), as selectors do.
+
+A condition on a field only finds pages whose template has the field. Without that, **is not**, **is blank**, and **is off** would also match every page of the other templates, which hold no value for it. The selector shows this as a `template=` clause, such as `kind!=report, template=promo|resource`.
 
 A condition that is not complete yet, such as a number field without a number, is left out of the search until it is.
 
 ## The results
 
 The results list each page with its template, status and last change, newest change first. **Sort** orders them by title, creation or publishing date instead. Each title opens the page editor.
+
+**Columns** adds up to 6 fields to the table, such as a price or a choice field's option. Each cell shows the value as short text: option labels, page titles, the date, yes or no for a switch, and the first 80 characters of text. Images, files, repeaters, and matrices have no short form, so they are not offered as columns. The columns are part of the search, so its link, a saved copy, and the export keep them.
 
 The finder searches the pages of the page tree, in every status, and leaves out the trash, system pages and the branches modules manage on screens of their own (menus, forms). A user whose role is limited to some branches finds only pages there.
 
@@ -83,7 +88,7 @@ Tick the results to change them together: **Publish**, **Unpublish**, **Hide**, 
 
 ## Exporting
 
-**Export CSV** downloads every page the search finds, not only the page of results on screen: id, title, template, status, last change and address. A title that starts like a spreadsheet formula gets a leading quote, so opening the file never runs it.
+**Export CSV** downloads every page the search finds, not only the page of results on screen: id, title, template, status, last change, address, and the search's columns. A cell that starts like a spreadsheet formula gets a leading quote, so opening the file never runs it.
 
 ## The selector
 

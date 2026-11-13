@@ -143,6 +143,7 @@ it('leaves out conditions that are not complete or not allowed', function (array
     'not a date' => [['subject' => 'starts_on', 'operator' => 'before', 'value' => 'soon']],
     'unknown field' => [['subject' => 'nope', 'operator' => 'is', 'value' => 'x']],
     'operator the field lacks' => [['subject' => 'price', 'operator' => 'contains', 'value' => '1']],
+    'is not on a text field' => [['subject' => 'summary', 'operator' => 'not', 'value' => 'Risk']],
     'unknown template' => [['subject' => 'template', 'operator' => 'is', 'value' => 'course, include=all']],
     'unknown status' => [['subject' => 'status', 'operator' => 'is', 'value' => 'system']],
     'no page chosen' => [['subject' => 'related', 'operator' => 'is', 'pages' => []]],
