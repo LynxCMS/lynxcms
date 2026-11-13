@@ -80,6 +80,23 @@ final readonly class PageChoices
     }
 
     /**
+     * What an empty list says: which templates' pages to add first, by label.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    public function emptyNote(array $settings): string
+    {
+        $labels = array_map(
+            fn (string $name): string => lynx()->templates->find($name)?->labels()->in() ?? $name,
+            Value::strings($settings['templates'] ?? []),
+        );
+
+        return $labels === []
+            ? Value::string(__('lynx-admin::inputs.page_empty_any'))
+            : Value::string(__('lynx-admin::inputs.page_empty', ['templates' => implode(Value::string(__('lynx-admin::inputs.page_empty_or')), $labels)]));
+    }
+
+    /**
      * @return array{id: int, title: string}
      */
     private function option(Page $page): array

@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Fixed: a page field shown as checkboxes, radios or a select was an empty box when the templates it allows had no pages yet, as on a new site. It now says so, naming the templates: "No Project pages yet. Add one, then choose it here."
+
 ## 0.1.43
 
 Released November 13, 2026. Fixes a crash when creating a page on a template without a title, such as site settings, and makes drafts gentler: fields only named on a template keep their settings there, and matrix block types get starting views. Nothing to do after updating, and no database changes.

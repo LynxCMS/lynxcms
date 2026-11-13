@@ -165,3 +165,11 @@ it('keeps the order an editor sets when the page is saved', function (): void {
 
     expect(lynx()->pages->get($page->id)?->related->map(fn (Page $related): string => $related->name()))->toBe(['gamma', 'beta']);
 });
+
+it('says there are no pages to choose yet when the allowed templates have none', function (string $input): void {
+    lynx()->templates->add('project', fields: ['title'], label: 'Project');
+    $page = relatedAs(['input' => $input, 'templates' => ['project']]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $page->id])
+        ->assertSee('No Project pages yet. Add one, then choose it here.');
+})->with(['checkboxes', 'radios', 'select']);
