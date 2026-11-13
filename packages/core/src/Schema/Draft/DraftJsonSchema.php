@@ -18,6 +18,9 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
  */
 final readonly class DraftJsonSchema
 {
+    /** The first line that points a draft in the same folder to its schema, for the YAML language server. */
+    public const string MODELINE = '# yaml-language-server: $schema=./draft.schema.json';
+
     private const string DIALECT = 'https://json-schema.org/draft/2020-12/schema';
 
     private const string ITEM_NAME_PATTERN = '^[a-z][a-z0-9_]*\*?$';
