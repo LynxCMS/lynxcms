@@ -68,6 +68,8 @@
 }
 
 .dark {
+    /* Native controls (checkboxes, date pickers, scrollbars) follow the dark theme too. */
+    color-scheme: dark;
     --lynx-mark-eye: #56bad5;
     --lynx-sidebar-active-mix: 32%;
 }
