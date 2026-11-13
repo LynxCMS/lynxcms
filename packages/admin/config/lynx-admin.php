@@ -95,12 +95,6 @@ return [
     'stylesheets' => [],
 
     /*
-    | Whether the Templates and Fields screens may change the schema. Turn it off where the schema
-    | comes from YAML files in Git (php artisan lynx:schema:apply); the screens become read only.
-    */
-    'schema_editing' => (bool) env('LYNX_ADMIN_SCHEMA_EDITING', true),
-
-    /*
     | The Attributes tab of the rich text link dialog: where a link may open and the relations
     | editors may give it. On save, relations other than nofollow, sponsored, ugc and noreferrer
     | are dropped, and links opening a new window get noopener. Add 'ugc' for sites whose

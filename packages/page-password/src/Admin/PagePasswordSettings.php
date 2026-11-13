@@ -10,6 +10,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageLoader;
+use LynxCms\Core\Schema\SchemaEditing;
 use LynxCms\Core\Support\Value;
 use LynxCms\PagePassword\Access\ProtectedRoots;
 use LynxCms\PagePassword\Actions\DisablePagePassword;
@@ -18,7 +19,8 @@ use LynxCms\PagePassword\PagePasswordSchema;
 
 /**
  * Settings > Page passwords: which templates' pages may have a password, and the pages that
- * have one, with how many pages below each share it.
+ * have one, with how many pages below each share it. Turning passwords on or off changes a
+ * template's fields, so where schema editing is off (ADR-0117) the templates are read only.
  *
  * @internal
  */
@@ -31,11 +33,13 @@ final class PagePasswordSettings extends Component
 
     public function enable(string $template): void
     {
+        abort_unless(app(SchemaEditing::class)->isEnabled(), 403);
         lynx()->run(EnablePagePassword::class, ['template' => $template]);
     }
 
     public function disable(string $template): void
     {
+        abort_unless(app(SchemaEditing::class)->isEnabled(), 403);
         lynx()->run(DisablePagePassword::class, ['template' => $template]);
     }
 
@@ -48,6 +52,7 @@ final class PagePasswordSettings extends Component
                 ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->label, 'isOn' => lynx()->templates->fields($template)->has(PagePasswordSchema::FIELD)])
                 ->values()->all(),
             'pages' => $this->protectedPages(),
+            'canChange' => app(SchemaEditing::class)->isEnabled(),
         ]);
     }
 

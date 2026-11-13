@@ -35,6 +35,17 @@ it('turns SEO on and off per template', function (): void {
     expect(lynx()->templates->fields('course')->keys()->all())->not->toContain(SeoSchema::TITLE);
 });
 
+it('shows the templates read only where schema editing is off', function (): void {
+    config(['lynx.schema_editing' => false]);
+
+    Livewire::test(SeoTemplates::class)
+        ->assertSee('lynx:schema:apply')
+        ->assertDontSeeHtml('wire:click="toggle(')
+        ->call('toggle', 'course')
+        ->assertForbidden();
+    expect(lynx()->templates->fields('course')->keys()->all())->not->toContain(SeoSchema::TITLE);
+});
+
 it('edits the settings in the page editor, out of the page tree', function (): void {
     lynx()->run(EnableSeo::class, ['template' => 'course']);
     $settings = lynx()->settings(SeoSchema::SETTINGS_TEMPLATE);

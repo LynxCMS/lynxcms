@@ -22,6 +22,7 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
+use Override;
 
 /**
  * Creates a field and its table at runtime (ADR-0004). No migration.
@@ -49,6 +50,12 @@ final class CreateField extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

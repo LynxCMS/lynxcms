@@ -1,5 +1,9 @@
 {{-- Settings > Page passwords: templates on or off, and the protected pages. --}}
 <div class="grid gap-6">
+    @unless ($canChange)
+        <x-lynx-admin::schema-readonly />
+    @endunless
+
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm">
         <header class="border-b px-5 py-4">
             <h2 class="font-semibold">{{ __('lynx-page-password::admin.templates') }}</h2>
@@ -11,7 +15,9 @@
                     <span class="font-medium">{{ $template['label'] }}</span>
                     <span class="text-muted-foreground font-mono text-xs">{{ $template['name'] }}</span>
                     <span class="ms-auto">
-                        @if ($template['isOn'])
+                        @if (! $canChange)
+                            <span class="text-muted-foreground text-sm">{{ $template['isOn'] ? __('lynx-page-password::admin.on') : __('lynx-page-password::admin.off') }}</span>
+                        @elseif ($template['isOn'])
                             <x-lynx-admin::ui.button variant="outline" size="sm" type="button" wire:click="disable(@js($template['name']))">{{ __('lynx-page-password::admin.turn_off') }}</x-lynx-admin::ui.button>
                         @else
                             <x-lynx-admin::ui.button variant="outline" size="sm" type="button" wire:click="enable(@js($template['name']))">{{ __('lynx-page-password::admin.turn_on') }}</x-lynx-admin::ui.button>

@@ -16,6 +16,7 @@ use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
+use Override;
 
 /**
  * Removes a language and every value, name and path stored in it. The default language
@@ -36,6 +37,12 @@ final class DeleteLanguage extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

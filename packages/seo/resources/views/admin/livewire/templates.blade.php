@@ -1,6 +1,10 @@
 <div class="space-y-4">
     <p class="text-muted-foreground max-w-prose text-sm">{{ __('lynx-seo::admin.templates.intro') }}</p>
 
+    @unless ($canChange)
+        <x-lynx-admin::schema-readonly />
+    @endunless
+
     <x-lynx-admin::ui.table variant="card">
         <x-lynx-admin::ui.table-header>
             <x-lynx-admin::ui.table-row class="hover:bg-transparent">
@@ -18,10 +22,14 @@
                     </x-lynx-admin::ui.table-cell>
                     <x-lynx-admin::ui.table-cell class="px-4 py-2 tabular-nums">{{ $row['pages'] }}</x-lynx-admin::ui.table-cell>
                     <x-lynx-admin::ui.table-cell class="px-4 py-2">
-                        <label class="inline-flex items-center gap-2 text-sm">
-                            <input type="checkbox" class="blat-checkbox" @checked($row['isOn']) wire:click="toggle(@js($row['name']))" wire:loading.attr="disabled">
-                            {{ __($row['isOn'] ? 'lynx-seo::admin.templates.on' : 'lynx-seo::admin.templates.off') }}
-                        </label>
+                        @if ($canChange)
+                            <label class="inline-flex items-center gap-2 text-sm">
+                                <input type="checkbox" class="blat-checkbox" @checked($row['isOn']) wire:click="toggle(@js($row['name']))" wire:loading.attr="disabled">
+                                {{ __($row['isOn'] ? 'lynx-seo::admin.templates.on' : 'lynx-seo::admin.templates.off') }}
+                            </label>
+                        @else
+                            <span class="text-muted-foreground text-sm">{{ __($row['isOn'] ? 'lynx-seo::admin.templates.on' : 'lynx-seo::admin.templates.off') }}</span>
+                        @endif
                     </x-lynx-admin::ui.table-cell>
                 </x-lynx-admin::ui.table-row>
             @empty

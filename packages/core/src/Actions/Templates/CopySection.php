@@ -17,6 +17,7 @@ use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\SectionCopy;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Override;
 
 /**
  * Copies a template's section, with its fields and their settings, into other templates (ADR-0108).
@@ -39,6 +40,12 @@ final class CopySection extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

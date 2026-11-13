@@ -50,7 +50,7 @@ Gate::define('accessLynxAdmin', fn (User $user): bool => $user->is_editor);
 
 ## Configuration
 
-Publish with `php artisan vendor:publish --tag=lynx-admin-config`. Keys: `prefix`, `middleware` (keep `auth` in production), `theme` (`light`, `dark` or `system`), `appearance`, `stylesheets`, `schema_editing` and `tree.per_page`.
+Publish with `php artisan vendor:publish --tag=lynx-admin-config`. Keys: `prefix`, `middleware` (keep `auth` in production), `theme` (`light`, `dark` or `system`), `appearance`, `stylesheets` and `tree.per_page`.
 
 ## Components and theming
 
@@ -115,7 +115,7 @@ In the monorepo `dist/` is not committed: `composer assets` builds it, and the s
 
 **Templates** (`/lynx/templates`) lists every template with its number of fields and pages. **New template** asks for the name, label and, optionally, a template to copy fields from. Editing a template orders its fields by dragging, adds and removes fields (a removed field's values stay on the pages until purged), and sets overrides for this template only: label, description, required, show if and required if (conditions such as `format=onsite|hybrid`, ADR-0030). **Save fields** saves the whole list at once. The **Family** section sets whether pages have a URL, whether only one page may use the template, whether its pages may have children, the templates allowed for children and for the parent (ADR-0032), and the templates pages may switch to. The New page screen only offers templates the parent allows. A template no page uses can be deleted, after a summary of what goes.
 
-Modules mark the templates and fields they depend on from their service provider with `app(\LynxCms\Core\Schema\SchemaOwners::class)->register('My module', templates: [...], fields: [...])` (ADR-0115); the screens show them read only, and `lynx:templates` and `lynx:fields` list them apart from the site's. Sites whose schema comes from YAML in Git set `LYNX_ADMIN_SCHEMA_EDITING=false` (config `lynx-admin.schema_editing`) where it should not change, typically production: the Templates and Fields screens become read only there and point to `php artisan lynx:schema:apply`.
+Modules mark the templates and fields they depend on from their service provider with `app(\LynxCms\Core\Schema\SchemaOwners::class)->register('My module', templates: [...], fields: [...])` (ADR-0115); the screens show them read only, and `lynx:templates` and `lynx:fields` list them apart from the site's. Sites whose schema comes from YAML in Git set `LYNX_SCHEMA_EDITING=false` (core config `lynx.schema_editing`, ADR-0117) where it should not change, typically production: the schema actions refuse people, MCP clients and the agent there, and the Templates, Fields and Languages screens become read only and point to `php artisan lynx:schema:apply`.
 
 ## Who may use the admin
 

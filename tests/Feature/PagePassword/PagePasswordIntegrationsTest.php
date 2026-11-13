@@ -81,6 +81,18 @@ it('turns passwords on and off per template, and lists protected pages', functio
     expect(lynx()->templates->fields('course')->has(PagePasswordSchema::FIELD))->toBeTrue();
 });
 
+it('shows the templates read only where schema editing is off', function (): void {
+    config(['lynx.schema_editing' => false]);
+    $this->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(PagePasswordSettings::class)
+        ->assertSee('lynx:schema:apply')
+        ->assertDontSee('Turn off')
+        ->call('disable', 'course')
+        ->assertForbidden();
+    expect(lynx()->templates->fields('course')->has(PagePasswordSchema::FIELD))->toBeTrue();
+});
+
 it('lists the screen under Settings', function (): void {
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 

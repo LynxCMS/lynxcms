@@ -35,6 +35,15 @@ abstract class Action implements ActionContract
         return false;
     }
 
+    /**
+     * Whether the action changes templates, fields or languages: the runner refuses it, at any
+     * depth, to people, MCP clients and the agent where schema editing is off (ADR-0117).
+     */
+    public static function changesSchema(): bool
+    {
+        return false;
+    }
+
     /** Whether runs of this action are written to the activity log. */
     public static function logsActivity(): bool
     {

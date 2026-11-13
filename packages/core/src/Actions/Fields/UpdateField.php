@@ -14,6 +14,7 @@ use LynxCms\Core\Fields\FieldSettings;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
+use Override;
 
 /**
  * Changes a field's label or settings. Renaming and changing scope come later (they move data).
@@ -30,6 +31,12 @@ final class UpdateField extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

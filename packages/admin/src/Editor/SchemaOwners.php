@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Core\Schema\SchemaEditing;
 use LynxCms\Core\Schema\SchemaOwners as CoreSchemaOwners;
 
 /**
- * Who may change templates and fields in the admin. Which module owns a template or field comes
- * from core's registry (ADR-0115), and the screens show owned schema read only; the
- * lynx-admin.schema_editing flag turns every schema screen read only, for sites whose schema
- * comes from YAML (lynx:schema:apply).
+ * Who may change templates and fields in the admin, as core decides it: which module owns a
+ * template or field comes from core's registry (ADR-0115), and lynx.schema_editing off makes
+ * every schema screen read only, as the actions refuse the change anyway (ADR-0117).
  *
  * @api
  */
 final readonly class SchemaOwners
 {
-    public function __construct(private CoreSchemaOwners $owners) {}
+    public function __construct(private CoreSchemaOwners $owners, private SchemaEditing $editing) {}
 
     /**
      * @deprecated Register on LynxCms\Core\Schema\SchemaOwners from the module's service provider,
@@ -53,16 +53,16 @@ final readonly class SchemaOwners
 
     public function isEditingEnabled(): bool
     {
-        return (bool) config('lynx-admin.schema_editing', true);
+        return $this->editing->isEnabled();
     }
 
     public function canEditTemplate(string $template): bool
     {
-        return $this->isEditingEnabled() && $this->ownerOfTemplate($template) === null;
+        return $this->editing->canEditTemplate($template);
     }
 
     public function canEditField(string $field): bool
     {
-        return $this->isEditingEnabled() && $this->ownerOfField($field) === null;
+        return $this->editing->canEditField($field);
     }
 }

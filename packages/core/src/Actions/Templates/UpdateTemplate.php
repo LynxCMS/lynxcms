@@ -16,6 +16,7 @@ use LynxCms\Core\Templates\Layout\FieldListInput;
 use LynxCms\Core\Templates\Layout\LayoutRules;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
+use Override;
 
 /**
  * Changes a template's label, flags or fields. Removing a field keeps its values as orphaned
@@ -36,6 +37,12 @@ final class UpdateTemplate extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string

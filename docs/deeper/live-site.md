@@ -77,7 +77,7 @@ php artisan lynx:schema:export
 git add lynx/schema && git commit
 ```
 
-The deploy script applies them on production after the migrations (see [Deploying](/deeper/schema-and-content#deploying)). Keep the admin's schema screens read only there (`LYNX_ADMIN_SCHEMA_EDITING=false`), so the files are the only way the schema changes and a deploy never overwrites an edit made live.
+The deploy script applies them on production after the migrations (see [Deploying](/deeper/schema-and-content#deploying)). Turn schema editing off there (`LYNX_SCHEMA_EDITING=false`), so the files are the only way the schema changes and a deploy never overwrites an edit made live.
 
 ## Refreshing your content
 

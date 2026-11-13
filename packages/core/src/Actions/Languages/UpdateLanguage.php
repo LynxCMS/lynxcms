@@ -15,6 +15,7 @@ use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Schema\LocalizedSchemaText;
 use LynxCms\Core\Support\Value;
+use Override;
 
 /**
  * Renames a language or changes its code, locale, fallback, prefix or active state.
@@ -35,6 +36,12 @@ final class UpdateLanguage extends Action
     public static function permission(): string
     {
         return 'schema.manage';
+    }
+
+    #[Override]
+    public static function changesSchema(): bool
+    {
+        return true;
     }
 
     public static function description(): string
