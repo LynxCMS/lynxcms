@@ -12,6 +12,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - Fixed: a page field shown as checkboxes, radios or a select was an empty box when the templates it allows had no pages yet, as on a new site. It now says so, naming the templates: "No Project pages yet. Add one, then choose it here."
 - A page field no longer offers the page being edited: a project's related projects leave the project itself out, in the search picker and in checkboxes, radios and selects.
+- Fixed: `lynx:draft` wrote views only for templates it created, so a draft that filled in `lynx:install`'s `home` template left it without a view. It now writes a starting view, and block views, for every template with a URL it creates or changes that has none. Views that exist are kept, and `--force-views` still replaces only new templates' views.
 
 ## 0.1.43
 
