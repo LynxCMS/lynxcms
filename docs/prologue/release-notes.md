@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Fixed: `lynx:draft` wrote views only for templates it created, so a draft that filled in `lynx:install`'s `home` template left it without a view. It now writes a starting view, and block views, for every template with a URL it creates or changes that has none. Views that exist are kept, and `--force-views` still replaces only new templates' views.
+
 ## 0.1.43
 
 Released November 13, 2026. Fixes a crash when creating a page on a template without a title, such as site settings, and makes drafts gentler: fields only named on a template keep their settings there, and matrix block types get starting views. Nothing to do after updating, and no database changes.
