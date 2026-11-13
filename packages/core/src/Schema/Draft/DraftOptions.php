@@ -20,10 +20,11 @@ final readonly class DraftOptions
         public bool $forceViews = false,
         public bool $writeFiles = true,
         public bool $pruneFields = false,
+        public bool $pages = true,
     ) {}
 
     public function asDryRun(): self
     {
-        return new self(true, $this->views, $this->forceViews, $this->writeFiles, $this->pruneFields);
+        return new self(true, $this->views, $this->forceViews, $this->writeFiles, $this->pruneFields, $this->pages);
     }
 }

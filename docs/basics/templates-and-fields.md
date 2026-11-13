@@ -271,6 +271,20 @@ Settings the draft gives win, and `null` clears one: `{ name: seo_title, descrip
 
 After building, `lynx:draft` also keeps the files the site already has up to date: the draft's fields and templates in `lynx/schema`, and the types `lynx:phpstan` and `lynx:ide-helper` wrote. It starts none of them, so a site without a `lynx/schema` folder is told to run `lynx:schema:export`. The draft itself is a starting point: `lynx/schema` stays the record, and you can delete the draft once it is built.
 
+A draft can also create pages, so a new site has its tree to fill in. List them by URL path under `pages`:
+
+```yaml
+pages:
+  /events: Events                    # a title; the template is the one named like the last segment
+  /about: { template: page, title: About }
+  /events/launch:
+    template: event
+    title: Launch party
+    starts_on: 2026-12-01            # required fields need a value
+```
+
+Pages are created unpublished, after the fields and templates, with the title and the values you give; every other field stays empty. The template defaults to the one named like the path's last segment, and the title to the segment itself (`/about` is titled "About"). A parent must exist or come earlier in the list. Everything a save would refuse is reported before anything changes: a required field without a value (files can wait until the page is saved), a field the template lacks, a place the family rules refuse, or a second page on a singleton template. A path the site already has is left as it is, so building the draft again creates nothing. `--from-site` doesn't write pages, and the `schema.draft` tool refuses a draft that has them.
+
 Two more options help with an existing site:
 
 - `php artisan lynx:draft --from-site` writes the site's own fields and templates as a draft, in the short form wherever it fits. It is a quick way to read a site's schema, and building it changes nothing.

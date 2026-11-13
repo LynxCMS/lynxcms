@@ -19,9 +19,9 @@ function draftJsonSchema(): array
     return json_decode(app(DraftJsonSchema::class)->toJson(), true, flags: JSON_THROW_ON_ERROR);
 }
 
-it('describes a draft as fields and templates, and nothing else', function (): void {
+it('describes a draft as fields, templates and pages, and nothing else', function (): void {
     expect(draftJsonSchema())->toMatchArray(['type' => 'object', 'additionalProperties' => false])
-        ->and(array_keys(draftJsonSchema()['properties']))->toBe(['fields', 'templates']);
+        ->and(array_keys(draftJsonSchema()['properties']))->toBe(['fields', 'templates', 'pages']);
 });
 
 it('lists every registered field type with its settings in the long form', function (): void {
@@ -61,4 +61,12 @@ it('writes the schema beside the draft with lynx:draft --json-schema', function 
 
 it('names each type\'s argument in the short form\'s description', function (): void {
     expect(draftJsonSchema()['$defs']['shortField']['description'])->toContain('decimal:places', 'choice:options');
+});
+
+it('describes the pages section: a title, nothing, or a template, a title and field values', function (): void {
+    $pages = draftJsonSchema()['properties']['pages'];
+
+    expect($pages['type'])->toBe('object')
+        ->and($pages['propertyNames']['pattern'])->toStartWith('^/')
+        ->and($pages['additionalProperties']['anyOf'][2]['properties'])->toHaveKeys(['template', 'title']);
 });

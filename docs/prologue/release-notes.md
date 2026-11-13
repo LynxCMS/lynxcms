@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- A draft can create pages: list them by URL path under `pages`, with a title, a template and any field values. They are created unpublished after the fields and templates, everything else empty; required fields need a value, and a path the site has is left alone. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
+
 ## 0.1.43
 
 Released November 13, 2026. Fixes a crash when creating a page on a template without a title, such as site settings, and makes drafts gentler: fields only named on a template keep their settings there, and matrix block types get starting views. Nothing to do after updating, and no database changes.

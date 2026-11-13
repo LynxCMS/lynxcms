@@ -30,7 +30,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class DraftCompiler
 {
-    public const array KEYS = ['fields', 'templates'];
+    public const array KEYS = ['fields', 'templates', 'pages'];
 
     /** Template settings that come from the field list, not from the settings themselves. */
     private const array DERIVED_TEMPLATE_SETTINGS = ['sections' => true];
@@ -41,6 +41,7 @@ final readonly class DraftCompiler
         private TemplateRegistry $templates,
         private SchemaOwners $owners,
         private DraftUseSettings $useSettings,
+        private DraftPages $pages,
     ) {}
 
     /**
@@ -68,8 +69,10 @@ final readonly class DraftCompiler
         }
 
         $this->check(array_values($fields), $templates);
+        $fieldItems = array_map($this->withFieldUuid(...), array_values($fields));
+        $templateItems = array_map($this->withTemplateUuid(...), $templates);
 
-        return new CompiledDraft(array_map($this->withFieldUuid(...), array_values($fields)), array_map($this->withTemplateUuid(...), $templates));
+        return new CompiledDraft($fieldItems, $templateItems, $this->pages->compile(Value::map($draft['pages'] ?? []), $fieldItems, $templateItems));
     }
 
     /** @param  array<array-key, mixed>  $draft */
@@ -77,7 +80,7 @@ final readonly class DraftCompiler
     {
         foreach (array_keys($draft) as $key) {
             if (! in_array($key, self::KEYS, true)) {
-                throw new DraftError("A draft has fields and templates, not [{$key}].".DraftError::suggestion((string) $key, self::KEYS));
+                throw new DraftError("A draft has fields, templates and pages, not [{$key}].".DraftError::suggestion((string) $key, self::KEYS));
             }
         }
     }

@@ -42,6 +42,18 @@ final readonly class DraftPlan
         return array_filter($this->steps, fn (array $step): bool => in_array($step['action'], [self::CREATE, self::UPDATE], true)) !== [];
     }
 
+    /** Whether the draft creates a page. */
+    public function createsPages(): bool
+    {
+        return array_filter($this->steps, fn (array $step): bool => $step['action'] === self::CREATE && $step['kind'] === 'page') !== [];
+    }
+
+    /** Whether building changes anything: the schema or a page. */
+    public function changesSite(): bool
+    {
+        return $this->changesSchema() || $this->createsPages();
+    }
+
     /** @return list<string> names of the templates the draft creates */
     public function createdTemplates(): array
     {

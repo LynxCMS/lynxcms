@@ -6,6 +6,7 @@
 # A field is "type[:argument]" followed by flags and key:value settings:
 #   textarea translatable    decimal:2 min:0    choice:Small,Medium,"Extra large" multiple
 # In a template, "name*" makes a field required there, and {name: type} defines it in place.
+# Pages are created unpublished, by URL path; required fields other than the title need a value.
 
 fields:
   intro: textarea translatable
@@ -26,3 +27,6 @@ templates:
       - starts_on*
       - section: Practical details
         fields: [venue, ticket_price, topics]
+
+pages:
+  /events: Events
