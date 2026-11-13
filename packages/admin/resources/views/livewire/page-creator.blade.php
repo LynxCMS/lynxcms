@@ -42,7 +42,7 @@
                 <label for="new-page-name" class="font-medium">{{ __('lynx-admin::pages.create.url_name') }}</label>
             </div>
             <div>
-                <input id="new-page-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="name" placeholder="{{ __('lynx-admin::pages.create.url_name_placeholder') }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
+                <input id="new-page-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="name" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 @if ($url)
                     <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-admin::pages.create.url') }} <span class="text-foreground">{{ $url }}</span></p>
                 @endif

@@ -118,7 +118,6 @@ return [
         'template' => 'Template',
         'add_later' => 'Add :fields once the page exists: files are stored with the page. It is created unpublished until then.',
         'url_name' => 'URL name',
-        'url_name_placeholder' => 'from the title',
         'url' => 'URL:',
         'submit' => 'Create page',
         'publish_now' => 'Publish now',
