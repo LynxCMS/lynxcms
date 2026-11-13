@@ -11,9 +11,7 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Schema\SchemaExporter;
 use LynxCms\Core\Schema\SchemaSync;
-use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
-use LynxCms\Core\Templates\Views\ViewWriter;
 
 /**
  * Builds a compiled draft (ADR-0116): its fields and templates through schema sync, in one
@@ -34,7 +32,7 @@ final readonly class DraftBuilder
         private SchemaExporter $exporter,
         private FieldRegistry $fields,
         private TemplateRegistry $templates,
-        private ViewWriter $views,
+        private DraftViews $views,
         private SchemaTypes $types,
         private DraftPaths $paths,
     ) {}
@@ -49,7 +47,7 @@ final readonly class DraftBuilder
             return new DraftResult($plan, $sync);
         }
 
-        $this->writeViews($plan, $options);
+        $this->views->write($plan, $options);
         $notes = $this->writeSchemaFiles($draft, $plan);
         $this->refreshTypes($plan);
 
@@ -69,7 +67,7 @@ final readonly class DraftBuilder
             return $schema;
         }
 
-        return new DraftPlan([...$schema->steps, ...$this->viewSteps($draft, $schema, $options), ...$this->fileSteps($draft, $schema)]);
+        return new DraftPlan([...$schema->steps, ...$this->views->steps($draft, $schema, $options), ...$this->fileSteps($draft, $schema)]);
     }
 
     /**
@@ -161,26 +159,6 @@ final readonly class DraftBuilder
     }
 
     /**
-     * A view for each new template with a URL; one that exists is kept unless replacing is asked.
-     *
-     * @return list<array{action: string, kind: string, name: string}>
-     */
-    private function viewSteps(CompiledDraft $draft, DraftPlan $schema, DraftOptions $options): array
-    {
-        if (! $options->views) {
-            return [];
-        }
-
-        $hasUrl = array_column(array_map(fn (array $t): array => [$t['name'], Value::bool($t['settings']['has_url'] ?? true, true)], $draft->templates), 1, 0);
-
-        return array_values(array_map(fn (string $name): array => [
-            'action' => $this->views->exists($name) && ! $options->forceViews ? DraftPlan::KEEP : DraftPlan::WRITE,
-            'kind' => 'view',
-            'name' => $this->views->relativePath($name),
-        ], array_filter($schema->createdTemplates(), fn (string $name): bool => $hasUrl[$name] ?? true)));
-    }
-
-    /**
      * Schema files and types, rewritten when the schema changes and the site keeps them.
      *
      * @return list<array{action: string, kind: string, name: string}>
@@ -200,21 +178,6 @@ final readonly class DraftBuilder
         }
 
         return $steps;
-    }
-
-    private function writeViews(DraftPlan $plan, DraftOptions $options): void
-    {
-        if (! $options->views) {
-            return;
-        }
-
-        foreach ($plan->createdTemplates() as $name) {
-            $template = $this->templates->find($name);
-            $isWanted = $template instanceof Template && $template->hasUrl() && ($options->forceViews || ! $this->views->exists($name));
-            if ($isWanted) {
-                $this->views->write($template);
-            }
-        }
     }
 
     /** @return list<string> notes for the developer */

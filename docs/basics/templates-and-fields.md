@@ -205,7 +205,7 @@ lynx()->pages->purgeOrphans(template: 'course', dryRun: true);
 
 ## Drafting the schema
 
-For a new site, or a batch of new templates, it is often quicker to write them down than to click through the admin. A draft is a short YAML file that `php artisan lynx:draft` turns into fields and templates, with a starting view for each new template that has a URL.
+For a new site, or a batch of new templates, it is often quicker to write them down than to click through the admin. A draft is a short YAML file that `php artisan lynx:draft` turns into fields and templates, with a starting view for each new template that has a URL and for each block type of its matrix fields.
 
 ```yaml
 fields:
