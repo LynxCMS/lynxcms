@@ -255,19 +255,37 @@ A field that almost every list shows can load with every page instead: turn on *
 
 ## Large sites
 
-Sorting by a translatable field compares the value each language shows, fallback included. For the fields named in `lynx.sort_keys` (the title, by default), Lynx stores that value per page and language, so sorting reads an index. After adding a field to `sort_keys`, or changing a field's fallback setting, rebuild the keys:
+Most selectors read an index, however many pages you have. Two don't: sorting by a translatable field, and the text operators. Both look at every page they could match. You won't notice on a few hundred pages, but a template with tens of thousands of them will feel it, and that's what the two fixes below are for.
+
+### Sorting by a translatable field
+
+`sort=title` sorts by the title a visitor actually sees. A page without a Portuguese title sorts, in Portuguese, by the title it falls back to. The database never stores that fallback value, so it can't index it, and Lynx has to work it out for every page on every sort.
+
+Sort keys store it in advance, per page and language. Sorting then reads an index. The title has them by default; add any field you sort by often to `sort_keys` in `config/lynx.php`:
+
+```php
+'sort_keys' => ['title', 'surname'],
+```
+
+Lynx updates the keys as pages, templates and languages change. Run this after adding a field to the list, or after changing a field's **When a language has no text** setting:
 
 ```bash
 php artisan lynx:sort-keys
 ```
 
-On PostgreSQL, trigram indexes speed up `%=`, `*=`, `~=`, `^=` and `$=` on text fields. Install them, and set `LYNX_TRIGRAM=true` so new fields get them too:
+A field you've just added still sorts correctly before the rebuild, only slowly. Fields that aren't translatable have one value per page and sort fine without keys.
+
+### Text operators on PostgreSQL
+
+The text operators (`%=`, `*=`, `~=`, `^=` and `$=`) can't use an ordinary index, so PostgreSQL checks every value of the field. A trigram index (from the `pg_trgm` extension) serves all five. Install the extension and index your existing text fields with:
 
 ```bash
 php artisan lynx:trigram
 ```
 
-Rare words become much faster to find (from 90 ms to 6 ms on 50,000 pages); words that match thousands of pages get a little slower (from 3 ms to 26 ms), and saving text costs a little more.
+Then add `LYNX_TRIGRAM=true` to `.env`, or fields you create later won't get the index.
+
+It isn't free. On 50,000 pages, a search for a rare word dropped from 90 ms to 6 ms, but one that matched thousands of pages went from 3 ms to 26 ms, and every save has one more index to update. So it pays off when people search for specific words, and costs you when most searches match much of the site. SQLite has no trigram indexes; there, `lynx:trigram` stops with an error.
 
 ## Debugging
 
