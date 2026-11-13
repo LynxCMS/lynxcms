@@ -17,6 +17,7 @@ use LynxCms\Core\Events\ContentChanged;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Permissions\PermissionRegistry;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Support\Value;
 use LynxCms\Seo\Actions\DisableSeo;
 use LynxCms\Seo\Actions\EnableSeo;
@@ -84,6 +85,9 @@ final class SeoServiceProvider extends ServiceProvider
         if ((bool) config('lynx-seo.robots.enabled', true)) {
             Route::get('robots.txt', RobotsController::class)->name('lynx.robots');
         }
+
+        // The schema this module installs is its own, not the site's (ADR-0115).
+        $this->app->make(SchemaOwners::class)->register('SEO', [SeoSchema::SETTINGS_TEMPLATE], SeoSchema::names());
 
         if ($this->app->bound(Navigation::class)) {
             AdminIntegration::register();

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Livewire\FieldList;
 use LynxCms\Admin\Livewire\PageTree;
 use LynxCms\Admin\Livewire\RoleList;
 use LynxCms\Core\Permissions\Role;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Forms\Actions\SubmitForm;
 use LynxCms\Forms\Admin\Livewire\Inbox;
 use LynxCms\Tests\Fixtures\Forms\QuoteForm;

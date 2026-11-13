@@ -8,7 +8,6 @@ use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Navigation;
 use LynxCms\Sitemap\Admin\Livewire\SitemapSettings;
@@ -34,6 +33,5 @@ final class AdminIntegration
         // The settings page is edited on the sitemap screen, never as a page.
         app(AdminBranches::class)->register(SitemapSchema::SETTINGS_TEMPLATE, fn (): string => route('lynx.admin.sitemap'));
         app(TemplateChoices::class)->exclude(SitemapSchema::SETTINGS_TEMPLATE);
-        app(SchemaOwners::class)->register('Sitemap', [SitemapSchema::SETTINGS_TEMPLATE], array_keys(SitemapSchema::fields()));
     }
 }

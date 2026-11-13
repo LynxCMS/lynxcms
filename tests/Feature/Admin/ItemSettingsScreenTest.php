@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Livewire\FieldForm;
 use LynxCms\Core\Actions\Pages\SavePage;
+use LynxCms\Core\Schema\SchemaOwners;
 
 beforeEach(function (): void {
     courseSite();

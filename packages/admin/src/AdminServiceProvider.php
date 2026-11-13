@@ -67,7 +67,6 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Pages\NotFoundPage;
 use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
 
@@ -109,13 +108,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->singleton(FieldTypeChoices::class);
         $this->app->singleton(FieldKinds::class);
         $this->app->singleton(BacklinkFilter::class);
-        // The trash page's template is Lynx's own (ADR-0035): a system template.
-        $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {
-            $owners = new SchemaOwners;
-            $owners->register('Lynx', [Trash::TEMPLATE]);
-
-            return $owners;
-        });
+        $this->app->singleton(SchemaOwners::class);
         $this->app->bindIf(LynxUsers::class, EloquentUsers::class);
         $this->app->singleton(IconSet::class);
         $this->app->singleton(TreeMarkers::class);
