@@ -34,6 +34,9 @@
         "pestphp/pest-plugin-laravel": "^4.0|^5.0",
         "rector/rector": "^2.8.4"
     },
+    "conflict": {
+        "brianium/paratest": "7.28.0"
+    },
     "replace": {
         "lynxcms/contracts": "self.version",
         "lynxcms/core": "self.version",
