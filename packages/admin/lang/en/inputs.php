@@ -6,6 +6,9 @@ return [
     'characters' => 'characters',
     'yes' => 'Yes',
     'none' => 'None',
+    'page_empty' => 'No :templates pages yet. Add one, then choose it here.',
+    'page_empty_any' => 'No pages yet. Add one, then choose it here.',
+    'page_empty_or' => ' or ',
     'setting_elsewhere' => 'This :type setting can be changed through the API or MCP.',
     'no_settings' => 'This component has no settings.',
     'icon' => [

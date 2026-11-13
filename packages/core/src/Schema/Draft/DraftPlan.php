@@ -63,6 +63,15 @@ final readonly class DraftPlan
         ));
     }
 
+    /** @return list<string> names of the templates the draft creates or updates */
+    public function changedTemplates(): array
+    {
+        return array_values(array_map(
+            fn (array $step): string => $step['name'],
+            array_filter($this->steps, fn (array $step): bool => in_array($step['action'], [self::CREATE, self::UPDATE], true) && $step['kind'] === 'template'),
+        ));
+    }
+
     public function isEmpty(): bool
     {
         return $this->steps === [];

@@ -69,6 +69,7 @@
                         'live' => $live,
                         'value' => $current[$code] ?? null,
                         'readOnly' => $state->value,
+                        'page' => $page,
                     ])
                     @if ($state->fallsBackTo !== null)
                         {{-- A translation hint: the tab's state marker says it already, so it shows only when the editor turns hints on. --}}

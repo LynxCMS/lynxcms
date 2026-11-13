@@ -6,6 +6,9 @@ return [
     'characters' => 'caracteres',
     'yes' => 'Sim',
     'none' => 'Nenhum',
+    'page_empty' => 'Ainda não há páginas :templates. Crie uma e escolha-a aqui.',
+    'page_empty_any' => 'Ainda não há páginas. Crie uma e escolha-a aqui.',
+    'page_empty_or' => ' ou ',
     'setting_elsewhere' => 'Esta definição do tipo :type pode ser alterada através da API ou do MCP.',
     'no_settings' => 'Este componente não tem definições.',
     'icon' => [

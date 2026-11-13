@@ -158,6 +158,31 @@ it('writes a view for each block type of a new template\'s matrix, keeping one t
         ->and(File::get($this->dir.'/views/templates/fields/blocks/note.blade.php'))->toBe('My note');
 });
 
+it('writes a view for a template the draft changes when it has none, and never replaces one', function (): void {
+    $draft = draftFile("fields:\n  seats: integer\ntemplates:\n  course:\n    fields: [title*, summary, body, price, related, seats]\n");
+
+    $this->artisan('lynx:draft', ['path' => $draft, '--dry-run' => true])
+        ->expectsOutputToContain('write view templates/course.blade.php')
+        ->assertSuccessful();
+    $this->artisan('lynx:draft', ['path' => $draft])->assertSuccessful();
+
+    expect(File::get($this->dir.'/views/templates/course.blade.php'))->toContain('@field($page->title)');
+
+    File::put($this->dir.'/views/templates/course.blade.php', 'Mine');
+    $changed = draftFile("fields:\n  seats: integer\n  room: text\ntemplates:\n  course:\n    fields: [title*, summary, body, price, related, seats, room]\n");
+    $this->artisan('lynx:draft', ['path' => $changed, '--force-views' => true])
+        ->expectsOutputToContain('keep view templates/course.blade.php')
+        ->assertSuccessful();
+
+    expect(File::get($this->dir.'/views/templates/course.blade.php'))->toBe('Mine');
+});
+
+it('writes no view for a template the draft leaves as it is', function (): void {
+    $this->artisan('lynx:draft', ['path' => draftFile(COURSE_SITE_DRAFT)])->assertSuccessful();
+
+    expect(File::exists($this->dir.'/views/templates/course.blade.php'))->toBeFalse();
+});
+
 it('writes no views with --no-views', function (): void {
     $this->artisan('lynx:draft', ['path' => draftFile(WORKSHOP_DRAFT), '--no-views' => true])->assertSuccessful();
 
