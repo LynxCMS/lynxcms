@@ -44,6 +44,7 @@ final readonly class DraftJsonSchema
             'properties' => [
                 'fields' => ['type' => 'object', 'additionalProperties' => ['$ref' => '#/$defs/field']],
                 'templates' => ['type' => 'object', 'additionalProperties' => ['$ref' => '#/$defs/template']],
+                'pages' => $this->pages(),
             ],
             '$defs' => [
                 'field' => ['anyOf' => [['$ref' => '#/$defs/shortField'], ['$ref' => '#/$defs/longField']]],
@@ -111,6 +112,29 @@ final readonly class DraftJsonSchema
         }
 
         return $settings;
+    }
+
+    /**
+     * Pages by URL path: a title, nothing (the title from the path), or a template, a title and
+     * field values.
+     *
+     * @return array<string, mixed>
+     */
+    private function pages(): array
+    {
+        return [
+            'type' => 'object',
+            'description' => 'Pages to create, unpublished, by URL path. A path the site has is kept as it is.',
+            'propertyNames' => ['pattern' => '^/[a-z0-9_/-]+$'],
+            'additionalProperties' => ['anyOf' => [
+                ['type' => 'string', 'description' => 'The title; the template is the one named like the last segment.'],
+                ['type' => 'null'],
+                ['type' => 'object', 'properties' => [
+                    'template' => ['type' => 'string', 'description' => 'Default: the template named like the last segment.'],
+                    'title' => ['$ref' => '#/$defs/label'],
+                ], 'additionalProperties' => true, 'description' => 'Other keys are field values; required fields need one.'],
+            ]],
+        ];
     }
 
     /** @return array<string, mixed> */

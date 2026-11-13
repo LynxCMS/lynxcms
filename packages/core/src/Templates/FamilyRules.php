@@ -7,6 +7,7 @@ namespace LynxCms\Core\Templates;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\PageLoader;
+use LynxCms\Core\Support\Value;
 
 /**
  * Which templates may sit under which (ADR-0032), like ProcessWire's family settings: a parent
@@ -41,10 +42,25 @@ final readonly class FamilyRules
 
     private function refusal(Template $parent, Template $child): ?string
     {
+        return self::refusalBetween((string) $parent->name, $parent->config(), (string) $child->name, $child->config());
+    }
+
+    /**
+     * Why a page using $child may not sit under one using $parent, from the templates' settings,
+     * or null: also for templates that exist only in a draft so far (lynx:draft's pages).
+     *
+     * @param  array<string, mixed>  $parentConfig
+     * @param  array<string, mixed>  $childConfig
+     */
+    public static function refusalBetween(string $parent, array $parentConfig, string $child, array $childConfig): ?string
+    {
+        $children = Value::strings($parentConfig['child_templates'] ?? []);
+        $parents = Value::strings($childConfig['parent_templates'] ?? []);
+
         return match (true) {
-            ! $parent->allowsChildren() => "Pages using [{$parent->name}] cannot have children.",
-            $parent->childTemplates() !== [] && ! in_array($child->name, $parent->childTemplates(), true) => "Under [{$parent->name}] pages may only use: ".implode(', ', $parent->childTemplates()).'.',
-            $child->parentTemplates() !== [] && ! in_array($parent->name, $child->parentTemplates(), true) => "Pages using [{$child->name}] may only be placed under: ".implode(', ', $child->parentTemplates()).'.',
+            ! (bool) ($parentConfig['allow_children'] ?? true) => "Pages using [{$parent}] cannot have children.",
+            $children !== [] && ! in_array($child, $children, true) => "Under [{$parent}] pages may only use: ".implode(', ', $children).'.',
+            $parents !== [] && ! in_array($parent, $parents, true) => "Pages using [{$child}] may only be placed under: ".implode(', ', $parents).'.',
             default => null,
         };
     }

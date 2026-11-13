@@ -75,10 +75,16 @@ final class BuildDraft extends Action
      */
     public function handle(Input $input, ActionContext $context): array
     {
-        $options = new DraftOptions(views: false, writeFiles: false, pruneFields: $input->bool('prune_fields'));
+        $options = new DraftOptions(views: false, writeFiles: false, pruneFields: $input->bool('prune_fields'), pages: false);
 
         try {
-            $result = $this->builder->build($this->compiler->compile($this->reader->parse((string) $input->string('draft'))), $options);
+            $draft = $this->compiler->compile($this->reader->parse((string) $input->string('draft')));
+
+            if ($draft->pages !== []) {
+                throw new DraftError('schema.draft builds fields and templates only. Leave pages out, and create pages with pages.save once the schema is built.');
+            }
+
+            $result = $this->builder->build($draft, $options);
         } catch (DraftError $e) {
             throw ValidationException::withMessages(['draft' => $e->getMessage()]);
         }

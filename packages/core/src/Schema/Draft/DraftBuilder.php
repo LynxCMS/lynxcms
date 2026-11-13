@@ -33,6 +33,7 @@ final readonly class DraftBuilder
         private FieldRegistry $fields,
         private TemplateRegistry $templates,
         private DraftViews $views,
+        private DraftPageWriter $pages,
         private SchemaTypes $types,
         private DraftPaths $paths,
     ) {}
@@ -42,6 +43,10 @@ final readonly class DraftBuilder
         $this->assertKeepsFields($draft, $options);
         $plan = $this->plan($draft, $options);
         $sync = $this->sync->applyItems($draft->fields, $draft->templates, $options->dryRun);
+
+        if ($sync->applied && ! $options->dryRun && $options->pages) {
+            $this->pages->create($draft->pages);
+        }
 
         if (! $sync->applied || ! $options->writeFiles) {
             return new DraftResult($plan, $sync);
@@ -63,11 +68,13 @@ final readonly class DraftBuilder
         ];
         $schema = new DraftPlan(array_values($steps));
 
+        $pages = $options->pages ? $this->pages->steps($draft->pages) : [];
+
         if (! $options->writeFiles) {
-            return $schema;
+            return new DraftPlan([...$schema->steps, ...$pages]);
         }
 
-        return new DraftPlan([...$schema->steps, ...$this->views->steps($draft, $schema, $options), ...$this->fileSteps($draft, $schema)]);
+        return new DraftPlan([...$schema->steps, ...$pages, ...$this->views->steps($draft, $schema, $options), ...$this->fileSteps($draft, $schema)]);
     }
 
     /**

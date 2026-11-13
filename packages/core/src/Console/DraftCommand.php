@@ -108,7 +108,7 @@ final class DraftCommand extends Command
         }
 
         $this->components->info(match (true) {
-            ! $result->plan->changesSchema() => 'The site already matches the draft.',
+            ! $result->plan->changesSite() => 'The site already matches the draft.',
             $options->dryRun => 'Dry run: nothing was changed.',
             default => 'Built.',
         });
@@ -122,7 +122,7 @@ final class DraftCommand extends Command
     {
         $preview = $builder->build($draft, $options->asDryRun());
 
-        if ($preview->hasErrors() || ! $preview->plan->changesSchema()) {
+        if ($preview->hasErrors() || ! $preview->plan->changesSite()) {
             return true;
         }
 
