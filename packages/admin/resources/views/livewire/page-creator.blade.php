@@ -40,10 +40,9 @@
         <div class="grid gap-2 p-5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">
             <div>
                 <label for="new-page-name" class="font-medium">{{ __('lynx-admin::pages.create.url_name') }}</label>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::pages.create.url_name_help') }}</p>
             </div>
             <div>
-                <input id="new-page-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="name" placeholder="{{ __('lynx-admin::pages.create.url_name_placeholder') }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
+                <input id="new-page-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="name" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 @if ($url)
                     <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-admin::pages.create.url') }} <span class="text-foreground">{{ $url }}</span></p>
                 @endif

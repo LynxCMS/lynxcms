@@ -118,8 +118,6 @@ return [
         'template' => 'Modelo',
         'add_later' => 'Adicione :fields depois de a página existir: os ficheiros são guardados com a página. Até lá, é criada sem ser publicada.',
         'url_name' => 'Nome do URL',
-        'url_name_help' => 'Opcional: é criado a partir do título.',
-        'url_name_placeholder' => 'a partir do título',
         'url' => 'URL:',
         'submit' => 'Criar página',
         'publish_now' => 'Publicar agora',

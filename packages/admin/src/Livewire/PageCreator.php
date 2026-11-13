@@ -23,8 +23,8 @@ use LynxCms\Core\Pages\PageUrl;
 use LynxCms\Core\Support\Value;
 
 /**
- * The New page screen: a template, the title and the template's other required fields, and an
- * optional URL name (derived from the title by default). The page is created through pages.save,
+ * The New page screen: a template, the title and the template's other required fields, and a
+ * URL name (derived from the title when left empty and the template has one). The page is created through pages.save,
  * unpublished unless "publish now" is ticked, and opens in the editor. Required files cannot be
  * uploaded before the page exists, so a template with any always creates it unpublished.
  *
