@@ -8,7 +8,6 @@ use Livewire\Livewire;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\EditorTabs;
@@ -43,7 +42,6 @@ final class AdminIntegration
         // The settings page is edited on the page cache screen, never as a page.
         app(AdminBranches::class)->register(PageCacheSchema::SETTINGS_TEMPLATE, fn (): string => route('lynx.admin.page-cache'));
         app(TemplateChoices::class)->exclude(PageCacheSchema::SETTINGS_TEMPLATE);
-        app(SchemaOwners::class)->register('Page cache', [PageCacheSchema::SETTINGS_TEMPLATE], array_keys(PageCacheSchema::fields()));
         app(EditorTabs::class)->add('cache', 'lynx-cache::admin.tab', 'lynx-cache.page-tab', fn (Page $page): bool => $page->template()->hasUrl());
         app(EditorLinks::class)->add(fn (Page $page): ?array => $canManage() && PageCacheEntry::query()->where('page_id', $page->id)->exists()
             ? ['label' => Value::string(__('lynx-cache::admin.in_cache')), 'url' => route('lynx.admin.page-cache', ['page' => $page->id])]

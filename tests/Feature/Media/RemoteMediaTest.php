@@ -106,7 +106,7 @@ it('exports a content package without its files', function (): void {
     File::deleteDirectory($folder);
     Storage::disk('public')->put('lynx/99/notes.pdf', '%PDF-1.4 notes');
 
-    $this->artisan('lynx:export', ['path' => $folder, '--without-files' => true])->assertSuccessful();
+    $this->artisan('lynx:export', ['path' => $folder])->assertSuccessful();
 
     expect(File::isDirectory($folder.'/files'))->toBeFalse()
         ->and(File::get($folder.'/pages.jsonl'))->toContain('99/notes.pdf');

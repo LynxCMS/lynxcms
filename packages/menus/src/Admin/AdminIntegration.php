@@ -10,7 +10,6 @@ use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\Editor\BacklinkFilter;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Home\HomeScreen;
 use LynxCms\Admin\Navigation;
@@ -37,8 +36,6 @@ final class AdminIntegration
         app(TemplateChoices::class)->exclude(MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE);
         // A page's menu items are not content linking to it; the menu editor shows them.
         app(BacklinkFilter::class)->exclude(MenuSchema::ITEM_TEMPLATE);
-        // Menus depend on these; the Templates and Fields screens show them read only.
-        app(SchemaOwners::class)->register('Menus', [MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE], array_keys(MenuSchema::fields()));
         Admin::routes(function (): void {
             Route::view('menus', 'lynx-menus::admin.index')->name('menus');
             Route::view('menus/{menu}', 'lynx-menus::admin.edit')->whereNumber('menu')->name('menus.edit');

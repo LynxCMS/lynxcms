@@ -10,6 +10,10 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- `lynx:export` leaves media files out unless you add `--with-files`, since copying a large site's media can take long and weigh gigabytes. `--without-files` is gone. See the [upgrade guide](/prologue/upgrade).
+- `lynx:backup` says after each run that it holds content only, not a database backup.
+- `lynx:templates` and `lynx:fields` list the site's templates and fields first, and those Lynx and its modules own (menus, forms, trash, SEO, sitemap and page cache settings) in a second table with their owner. With `--json`, each row has an `owner`, `null` for the site's. Their tables wrap long cells to fit the terminal, where a field used by many templates made every line wider than the window.
+- Which module owns a template or field is now known to core, with or without the admin: modules register it on `LynxCms\Core\Schema\SchemaOwners` from their service provider (ADR-0115). The admin's `SchemaOwners::register()` still works, forwards to core, and is deprecated.
 - **Page Finder**: conditions on a choice field pick one of its options. **Is not**, **is blank**, and **is off** conditions on a field now find only pages whose template has the field, where they also listed every page of other templates. **Columns** adds up to 6 fields to the results, as short text; a search's link, saved copy, and CSV export keep them. See [Page Finder](/modules/finder#the-results).
 - Fixed: in dark mode, the admin's native controls (checkboxes, date pickers, and scrollbars) stayed light. The dark theme now sets `color-scheme: dark`.
 - The page table input shows an on and off field as Yes or No, a single page reference as the page's title, and a date in the admin language's format (with the time only when the field keeps one).

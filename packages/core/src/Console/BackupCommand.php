@@ -46,6 +46,7 @@ final class BackupCommand extends Command
         $this->prune();
 
         $this->components->info("Backed up {$count} page(s) to {$zip}.");
+        $this->line('  Content only, not a database backup: users, revisions, the activity log and your app\'s tables are not in it.');
 
         return self::SUCCESS;
     }

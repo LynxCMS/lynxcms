@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Artisan;
+use LynxCms\Core\Schema\SchemaOwners;
 
 /*
  * lynx:templates and lynx:fields list the schema like route:list does routes: templates with
@@ -56,6 +57,59 @@ it('lists only the unused fields when asked', function (): void {
 
 it('refuses an unknown template', function (): void {
     $this->artisan('lynx:templates', ['template' => 'nope'])->assertFailed();
+});
+
+it('names the owner of system templates', function (): void {
+    lynx()->menus()->create('top', 'Top');
+    $templates = collect(listed('lynx:templates'))->keyBy('name');
+
+    expect($templates['course']['owner'])->toBeNull()
+        ->and($templates['menu-item']['owner'])->toBe('Menus');
+});
+
+it('lists system templates apart from the site\'s', function (): void {
+    lynx()->menus()->create('top', 'Top');
+    Artisan::call('lynx:templates');
+    $output = Artisan::output();
+    $system = (int) strpos($output, 'System');
+
+    expect($system)->toBeGreaterThan(0)
+        ->and(strpos($output, '| course'))->toBeLessThan($system)
+        ->and(strpos($output, '| menu-item'))->toBeGreaterThan($system);
+});
+
+it('names the owner of system fields and lists them apart', function (): void {
+    app(SchemaOwners::class)->register('Demo', fields: ['subtitle']);
+
+    $fields = collect(listed('lynx:fields'))->keyBy('name');
+    Artisan::call('lynx:fields');
+    $output = Artisan::output();
+    $system = (int) strpos($output, 'System');
+
+    expect($fields['subtitle']['owner'])->toBe('Demo')
+        ->and($fields['price']['owner'])->toBeNull()
+        ->and(strpos($output, '| price'))->toBeLessThan($system)
+        ->and(strpos($output, '| subtitle'))->toBeGreaterThan($system);
+});
+
+it('wraps the fields table to the terminal width', function (): void {
+    foreach (range(1, 12) as $number) {
+        lynx()->templates->add("landing-page-variant-{$number}", fields: ['caption']);
+    }
+
+    putenv('COLUMNS=100');
+
+    try {
+        Artisan::call('lynx:fields');
+    } finally {
+        putenv('COLUMNS');
+    }
+
+    $output = Artisan::output();
+    $widest = max(array_map(mb_strwidth(...), explode("\n", trim($output))));
+
+    expect($widest)->toBeLessThanOrEqual(100)
+        ->and($output)->toContain('landing-page-variant-12');
 });
 
 it('prints tables', function (): void {

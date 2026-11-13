@@ -10,7 +10,6 @@ use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\AdminSlots;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
@@ -49,7 +48,6 @@ final class AdminIntegration
         // The settings page stays in the page editor, but out of the page tree.
         app(AdminBranches::class)->register(SeoSchema::SETTINGS_TEMPLATE, fn (): ?string => null);
         app(TemplateChoices::class)->exclude(SeoSchema::SETTINGS_TEMPLATE);
-        app(SchemaOwners::class)->register('SEO', [SeoSchema::SETTINGS_TEMPLATE], SeoSchema::names());
         // The preview of the saved page, below the SEO tab's fields.
         app(AdminSlots::class)->addView(AdminSlots::editorTab(SeoSchema::TAB), 'lynx-seo::admin.partials.editor-preview',
             fn (Page $page): bool => $page->templateField(SeoSchema::TITLE) !== null && $page->template()->hasUrl());

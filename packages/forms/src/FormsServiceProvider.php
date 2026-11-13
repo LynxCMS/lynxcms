@@ -17,6 +17,7 @@ use LynxCms\Core\Agents\ReadToolRegistry;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Forms\Actions\CreateForm;
 use LynxCms\Forms\Actions\DeleteSubmission;
 use LynxCms\Forms\Actions\InstallForms;
@@ -76,6 +77,9 @@ final class FormsServiceProvider extends ServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('lynx-form', FormComponent::class);
         }
+
+        // The schema this module installs is its own, not the site's (ADR-0115).
+        $this->app->make(SchemaOwners::class)->register('Forms', array_keys(FormSchema::templates()), array_values(array_diff(array_keys(FormSchema::fields()), [FormSchema::PICKER])));
 
         // The inbox needs the Livewire admin; without it submissions are still mailed and stored.
         if ($this->app->bound(Navigation::class)) {

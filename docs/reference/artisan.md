@@ -12,17 +12,17 @@ order: 2
 | `lynx:superuser --email= --name= --password=` | Creates a superuser's account, or makes the account with that email one. Asks for what the options don't give. Comes with `lynxcms/admin`. |
 | `lynx:migrate --force` | Lists the database changes waiting in Lynx packages, asks whether the database is backed up, then applies them; `--force` skips the question. |
 | `lynx:languages` | Lists the languages. |
-| `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view; with a template, its fields in order with their type, section and tab. |
-| `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices; `--unused` keeps those nothing uses. |
+| `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view, the site's first and those Lynx and its modules own (menus, trash, settings) in a second table with their owner; with a template, its fields in order with their type, section and tab. Tables wrap to fit the terminal. |
+| `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices, with module fields in a table of their own; `--unused` keeps those nothing uses. With `--json`, each template or field has an `owner`, `null` for the site's. |
 | `lynx:doctor --json` | Looks for problems in the site's setup and structure, each with a fix. See [Checking a site](#checking-a-site). |
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
 | `lynx:schema:apply --path= --dry-run --force` | Applies schema files; `--force` also deletes what the files lack. |
 | `lynx:phpstan --path=` | Writes the field types Lynx's PHPStan extension reads, so `$page->field` and `$item->field` are checked (default `lynx/phpstan/types.php`). |
 | `lynx:ide-helper --path=` | Writes `_ide_helper_lynx.php`, so editors autocomplete `$page->field` and `$item->field` with their types. See [Autocomplete in your editor](/deeper/custom-field-types#autocomplete-in-your-editor). |
-| `lynx:export path --without-files` | Writes a content package (a directory or a `.zip`); `--without-files` leaves media files out, for machines that [download them from production](/deeper/live-site#media-from-production). |
+| `lynx:export path --with-files` | Writes a content package (a directory or a `.zip`). Media files stay out unless `--with-files` asks for them, as a large site's media can take long to copy; machines can [download them from production](/deeper/live-site#media-from-production) instead. |
 | `lynx:import path --with-schema --prune --dry-run` | Imports a content package. |
-| `lynx:backup` | Writes a content backup and keeps the newest ones. |
+| `lynx:backup` | Writes a content backup, files included, and keeps the newest ones. Content only: back up the database as well. |
 | `lynx:schedule:run` | Applies due publishing schedules (the scheduler runs it every minute). |
 | `lynx:clean-html --field= --dry-run` | Cleans stored HTML the way a save would. |
 | `lynx:search-index --template=` | Rebuilds the search index, for every page or one template's pages. |

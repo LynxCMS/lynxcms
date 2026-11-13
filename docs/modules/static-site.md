@@ -102,7 +102,7 @@ The export folder is replaced as a whole: it is built beside the old one and swa
 The content can also live in the repository, as with flat file CMSs: export it as a content package folder, commit it, and let CI build the site from it on every push. Editors work in a local or private Lynx and commit the changes.
 
 ```bash
-php artisan lynx:export content      # the schema, every page as a line of content/pages.jsonl, and their files
+php artisan lynx:export content --with-files   # the schema, every page as a line of content/pages.jsonl, and their files
 git add content && git commit -m "Update content"
 ```
 

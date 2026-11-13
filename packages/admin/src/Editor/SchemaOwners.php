@@ -4,51 +4,51 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Core\Schema\SchemaOwners as CoreSchemaOwners;
+
 /**
- * Who may change templates and fields in the admin. Modules register the schema they own (the
- * menus module owns its menu templates and menu_* fields), which the screens show read only; and
- * the lynx-admin.schema_editing flag turns every schema screen read only, for sites whose schema
+ * Who may change templates and fields in the admin. Which module owns a template or field comes
+ * from core's registry (ADR-0115), and the screens show owned schema read only; the
+ * lynx-admin.schema_editing flag turns every schema screen read only, for sites whose schema
  * comes from YAML (lynx:schema:apply).
  *
  * @api
  */
-final class SchemaOwners
+final readonly class SchemaOwners
 {
-    /** @var array<string, string> template name => module */
-    private array $templates = [];
-
-    /** @var array<string, string> field name => module */
-    private array $fields = [];
+    public function __construct(private CoreSchemaOwners $owners) {}
 
     /**
+     * @deprecated Register on LynxCms\Core\Schema\SchemaOwners from the module's service provider,
+     *             so the schema is known without the admin too (ADR-0115).
+     *
      * @param  list<string>  $templates
      * @param  list<string>  $fields
      */
     public function register(string $module, array $templates = [], array $fields = []): void
     {
-        $this->templates += array_fill_keys($templates, $module);
-        $this->fields += array_fill_keys($fields, $module);
+        $this->owners->register($module, $templates, $fields);
     }
 
     public function ownerOfTemplate(string $template): ?string
     {
-        return $this->templates[$template] ?? null;
+        return $this->owners->ownerOfTemplate($template);
     }
 
     public function ownerOfField(string $field): ?string
     {
-        return $this->fields[$field] ?? null;
+        return $this->owners->ownerOfField($field);
     }
 
     /** System templates belong to Lynx or a module: hidden from lists unless asked, never offered for new pages. */
     public function isSystemTemplate(string $template): bool
     {
-        return $this->ownerOfTemplate($template) !== null;
+        return $this->owners->isSystemTemplate($template);
     }
 
     public function isSystemField(string $field): bool
     {
-        return $this->ownerOfField($field) !== null;
+        return $this->owners->isSystemField($field);
     }
 
     public function isEditingEnabled(): bool
