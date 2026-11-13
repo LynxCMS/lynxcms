@@ -109,6 +109,35 @@ final readonly class SchemaSync
         return $result;
     }
 
+    /**
+     * These fields and templates only, in one transaction and without deletes: what lynx:draft
+     * builds (ADR-0116). With $dryRun everything is rolled back.
+     *
+     * @param  list<FieldItem>  $fields
+     * @param  list<TemplateItem>  $templates
+     */
+    public function applyItems(array $fields, array $templates, bool $dryRun = false): SchemaSyncResult
+    {
+        $result = new SchemaSyncResult;
+        DB::beginTransaction();
+
+        try {
+            $this->applyFields($fields, $result);
+            $this->applyTemplates($templates, $result);
+            $dryRun || $result->hasErrors() ? DB::rollBack() : DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
+        } finally {
+            $this->runner->flushCaches();
+        }
+
+        $result->applied = ! $dryRun && ! $result->hasErrors();
+
+        return $result;
+    }
+
     /** The roles in the files, inside the caller's transaction and without deletes. */
     public function applyRoles(string $directory): SchemaSyncResult
     {

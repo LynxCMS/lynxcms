@@ -41,6 +41,7 @@ use LynxCms\Core\Actions\Pages\UnlockEdit;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\DeleteRole;
 use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Actions\Schema\BuildDraft;
 use LynxCms\Core\Actions\Strings\SaveStrings;
 use LynxCms\Core\Actions\Templates\CopySection;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
@@ -51,6 +52,7 @@ use LynxCms\Core\Console\BenchCommand;
 use LynxCms\Core\Console\CleanHtmlCommand;
 use LynxCms\Core\Console\DemoCommand;
 use LynxCms\Core\Console\DoctorCommand;
+use LynxCms\Core\Console\DraftCommand;
 use LynxCms\Core\Console\ExportCommand;
 use LynxCms\Core\Console\FieldsCommand;
 use LynxCms\Core\Console\FindCommand;
@@ -125,6 +127,7 @@ final class CoreRegistrations
     public const array ACTIONS = [
         SaveStrings::class,
         InstallLynx::class,
+        BuildDraft::class,
         SetNotFoundPage::class,
         CreateLanguage::class,
         UpdateLanguage::class,
@@ -178,6 +181,7 @@ final class CoreRegistrations
         BenchCommand::class,
         SchemaExportCommand::class,
         SchemaApplyCommand::class,
+        DraftCommand::class,
         CleanHtmlCommand::class,
         ScheduleRunCommand::class,
         ExportCommand::class,

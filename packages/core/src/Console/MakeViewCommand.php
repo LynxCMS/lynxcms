@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
-use LynxCms\Core\Templates\Views\ViewStub;
+use LynxCms\Core\Templates\Views\ViewWriter;
 use Override;
 
 /**
@@ -30,14 +29,15 @@ final class MakeViewCommand extends Command
     #[Override]
     protected $description = 'Write a starting Blade view for a template, with its fields';
 
-    public function handle(TemplateRegistry $templates, ViewStub $stub): int
+    public function handle(TemplateRegistry $templates, ViewWriter $views): int
     {
         $layout = Value::nullableString($this->option('layout'));
+        $allTabs = (bool) $this->option('all-tabs');
 
         if ($this->option('all')) {
             foreach ($this->templatesWithPages($templates) as $template) {
-                if (! File::exists($this->path($template))) {
-                    $this->write($template, $stub->for($template, $layout, (bool) $this->option('all-tabs')));
+                if (! $views->exists((string) $template->name)) {
+                    $this->components->info('Wrote '.$views->write($template, $layout, $allTabs).'.');
                 }
             }
 
@@ -52,29 +52,15 @@ final class MakeViewCommand extends Command
             return self::FAILURE;
         }
 
-        if (File::exists($this->path($template)) && ! $this->option('force')) {
-            $this->components->error('The view exists: '.$this->path($template).'. Add --force to replace it.');
+        if ($views->exists((string) $template->name) && ! $this->option('force')) {
+            $this->components->error('The view exists: '.$views->path((string) $template->name).'. Add --force to replace it.');
 
             return self::FAILURE;
         }
 
-        $this->write($template, $stub->for($template, $layout, (bool) $this->option('all-tabs')));
+        $this->components->info('Wrote '.$views->write($template, $layout, $allTabs).'.');
 
         return self::SUCCESS;
-    }
-
-    private function write(Template $template, string $contents): void
-    {
-        File::ensureDirectoryExists(dirname($this->path($template)));
-        File::put($this->path($template), $contents);
-        $this->components->info('Wrote '.$this->path($template).'.');
-    }
-
-    private function path(Template $template): string
-    {
-        $base = Value::string(Value::list(config('view.paths'))[0] ?? resource_path('views'));
-
-        return $base.'/'.str_replace('.', '/', Value::string(config('lynx.views_path', 'templates'))).'/'.$template->name.'.blade.php';
     }
 
     /**

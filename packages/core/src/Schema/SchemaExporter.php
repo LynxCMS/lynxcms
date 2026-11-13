@@ -72,6 +72,32 @@ final readonly class SchemaExporter
     }
 
     /**
+     * Write the files of these fields and templates only, leaving the others in the directory as
+     * they are (lynx:draft, ADR-0116).
+     *
+     * @param  list<Field>  $fields
+     * @param  list<Template>  $templates
+     * @return int number of files written
+     */
+    public function exportItems(string $directory, array $fields, array $templates): int
+    {
+        $sets = [
+            'fields' => array_map(fn (Field $f): array => [$f->name, $this->fieldData($f)], $fields),
+            'templates' => array_map(fn (Template $t): array => [$t->name, $this->templateData($t)], $templates),
+        ];
+
+        foreach ($sets as $kind => $items) {
+            $this->files->ensureDirectoryExists(rtrim($directory, '/')."/{$kind}");
+
+            foreach ($items as [$name, $item]) {
+                $this->files->put(rtrim($directory, '/')."/{$kind}/{$name}.yaml", Yaml::dump($item, 4, 2));
+            }
+        }
+
+        return count($fields) + count($templates);
+    }
+
+    /**
      * @return LanguageItem
      */
     private function languageData(Language $language): array
@@ -93,7 +119,7 @@ final readonly class SchemaExporter
     /**
      * @return FieldItem
      */
-    private function fieldData(Field $field): array
+    public function fieldData(Field $field): array
     {
         return [
             'uuid' => $field->uuid,
