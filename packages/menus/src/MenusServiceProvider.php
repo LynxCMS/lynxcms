@@ -18,6 +18,7 @@ use LynxCms\Core\Events\ContentChanged;
 use LynxCms\Core\Facades\Lynx as LynxFacade;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Menus\Actions\CreateMenu;
 use LynxCms\Menus\Actions\InstallMenus;
 use LynxCms\Menus\Actions\RebuildMenus;
@@ -65,6 +66,9 @@ final class MenusServiceProvider extends ServiceProvider
         $this->loadJsonTranslationsFrom(self::ROOT.'/lang');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-menus');
         Blade::component('lynx-menu', MenuComponent::class);
+
+        // The schema this module installs is its own, not the site's (ADR-0115).
+        $this->app->make(SchemaOwners::class)->register('Menus', [MenuSchema::ROOT_TEMPLATE, MenuSchema::MENU_TEMPLATE, MenuSchema::ITEM_TEMPLATE], array_keys(MenuSchema::fields()));
 
         // The editor needs the Livewire admin; without it menus still work from code, MCP and the agent.
         if ($this->app->bound(Navigation::class)) {

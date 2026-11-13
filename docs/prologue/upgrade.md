@@ -21,6 +21,10 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.41 to the next release
+
+- Modules that call the admin's `SchemaOwners::register()` should call `LynxCms\Core\Schema\SchemaOwners::register()` from their service provider instead (ADR-0115). The admin's method still works and is deprecated.
+
 ## From 0.1.36 to 0.1.37
 
 - Run `php artisan lynx:migrate`: machine translations record the language they came from, so Lynx can tell when that text changes. Existing machine translations are taken as translated from the default language.

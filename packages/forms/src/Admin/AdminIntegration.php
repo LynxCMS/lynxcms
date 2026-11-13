@@ -12,7 +12,6 @@ use LynxCms\Admin\AdminBranches;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\Editor\FieldTypeChoices;
-use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Editor\TemplateChoices;
 use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
@@ -79,6 +78,5 @@ final class AdminIntegration
             ? ['label' => Value::string(__('lynx-forms::admin.preview.title')), 'url' => route('lynx.admin.forms.preview', FormSchema::key($page))]
             : null);
         app(TemplateChoices::class)->exclude(FormSchema::ROOT_TEMPLATE, FormSchema::FORM_TEMPLATE);
-        app(SchemaOwners::class)->register('Forms', array_keys(FormSchema::templates()), array_values(array_diff(array_keys(FormSchema::fields()), [FormSchema::PICKER])));
     }
 }

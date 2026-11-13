@@ -63,6 +63,7 @@ use LynxCms\Core\Pages\Visibility\PageVisibility;
 use LynxCms\Core\Permissions\AssignRegistrationRole;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\PermissionRegistry;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Search\SearchServiceProvider;
 use LynxCms\Core\Strings\StringCatalog;
 use LynxCms\Core\Strings\StringDefinition;
@@ -177,6 +178,13 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(ComponentRegistry::class);
         $this->app->singleton(DoctorChecks::class);
         $this->app->singleton(GlobalMiddleware::class);
+        // Schema that belongs to Lynx or a module, not the site (ADR-0115). The trash page's template is Lynx's own (ADR-0035).
+        $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {
+            $owners = new SchemaOwners;
+            $owners->register('Lynx', [Trash::TEMPLATE]);
+
+            return $owners;
+        });
 
         foreach (self::FLUSHABLE as $service) {
             $this->app->scoped($service);

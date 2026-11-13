@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- `lynx:templates` and `lynx:fields` list the site's templates and fields first, and those Lynx and its modules own (menus, forms, trash, SEO, sitemap and page cache settings) in a second table with their owner. With `--json`, each row has an `owner`, `null` for the site's. Their tables wrap long cells to fit the terminal, where a field used by many templates made every line wider than the window.
+- Which module owns a template or field is now known to core, with or without the admin: modules register it on `LynxCms\Core\Schema\SchemaOwners` from their service provider (ADR-0115). The admin's `SchemaOwners::register()` still works, forwards to core, and is deprecated.
 - Fixed: a deleted superuser still counted as one, because Lynx keeps their roles after the app deletes the account. With another superuser left, Lynx let that superuser's role go and nobody could manage roles any more. Only superusers whose account still exists count now, for that check and for the hints that say a site has no superuser yet. See [Users](/deeper/users#deleting-a-user).
 - An action that meets a database deadlock or serialization failure runs again from the start, up to three times, when it opened the outermost transaction, as `DB::transaction($callback, attempts: 3)` does. A failed try leaves no writes, changes or events behind. Inside a transaction of your own, the error reaches your code as before.
 - Page cache warming and the static export start each page with fresh request scoped services and route controllers, as Octane does between requests, so nothing one page loaded can show on the next.

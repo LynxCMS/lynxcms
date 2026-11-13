@@ -12,8 +12,8 @@ order: 2
 | `lynx:superuser --email= --name= --password=` | Creates a superuser's account, or makes the account with that email one. Asks for what the options don't give. Comes with `lynxcms/admin`. |
 | `lynx:migrate --force` | Lists the database changes waiting in Lynx packages, asks whether the database is backed up, then applies them; `--force` skips the question. |
 | `lynx:languages` | Lists the languages. |
-| `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view; with a template, its fields in order with their type, section and tab. |
-| `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices; `--unused` keeps those nothing uses. |
+| `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view, the site's first and those Lynx and its modules own (menus, trash, settings) in a second table with their owner; with a template, its fields in order with their type, section and tab. Tables wrap to fit the terminal. |
+| `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices, with module fields in a table of their own; `--unused` keeps those nothing uses. With `--json`, each template or field has an `owner`, `null` for the site's. |
 | `lynx:doctor --json` | Looks for problems in the site's setup and structure, each with a fix. See [Checking a site](#checking-a-site). |
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
