@@ -59,16 +59,20 @@ final readonly class PageChoices
 
     /**
      * Pages of the allowed templates the user may view, by title, then chosen pages the list does
-     * not offer (another template, or past the limit), so saving keeps them.
+     * not offer (another template, or past the limit), so saving keeps them. Excluded pages, such as
+     * the page being edited, are left out unless already chosen.
      *
      * @param  array<array-key, mixed>  $settings
      * @param  list<int>  $chosen
+     * @param  list<int>  $exclude
      * @return list<array{id: int, title: string}>
      */
-    public function options(array $settings, array $chosen): array
+    public function options(array $settings, array $chosen, array $exclude = []): array
     {
         $templates = Value::strings($settings['templates'] ?? []);
-        $selector = 'include=all, sort=title, limit='.self::LIMIT.($templates === [] ? '' : ', template='.implode('|', $templates));
+        $selector = 'include=all, sort=title, limit='.self::LIMIT
+            .($templates === [] ? '' : ', template='.implode('|', $templates))
+            .implode('', array_map(fn (int $id): string => ', id!='.$id, $exclude));
         $options = lynx()->pages->find($selector, scope: $this->access->viewScope())->map($this->option(...));
         $missing = array_values(array_diff($chosen, array_column($options, 'id')));
 
@@ -77,6 +81,23 @@ final readonly class PageChoices
         }
 
         return $options;
+    }
+
+    /**
+     * What an empty list says: which templates' pages to add first, by label.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    public function emptyNote(array $settings): string
+    {
+        $labels = array_map(
+            fn (string $name): string => lynx()->templates->find($name)?->labels()->in() ?? $name,
+            Value::strings($settings['templates'] ?? []),
+        );
+
+        return $labels === []
+            ? Value::string(__('lynx-admin::inputs.page_empty_any'))
+            : Value::string(__('lynx-admin::inputs.page_empty', ['templates' => implode(Value::string(__('lynx-admin::inputs.page_empty_or')), $labels)]));
     }
 
     /**
