@@ -60,7 +60,7 @@ final readonly class DraftPageWriter
                 'parent' => $page->parent,
                 'names' => [$language => $page->name],
                 'language' => $language,
-                'values' => ['title' => $page->title, ...$page->values],
+                'values' => $page->values,
                 'status' => self::STATUS,
             ]);
         } catch (ValidationException $e) {

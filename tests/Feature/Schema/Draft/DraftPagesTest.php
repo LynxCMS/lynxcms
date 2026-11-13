@@ -106,3 +106,15 @@ it('refuses a draft before changing anything', function (string $pages, string $
 it('is refused by the schema.draft action, which builds schema only', function (): void {
     lynx()->run(BuildDraft::class, ['draft' => "pages:\n  /courses: Courses\n"]);
 })->throws(ValidationException::class, 'pages.save');
+
+it('creates a page on a template without a title, and refuses a title for it', function (): void {
+    File::put($this->dir.'/draft.yaml', "fields:\n  contact_email: email\ntemplates:\n  site-settings:\n    url: false\n    singleton: true\n    fields: [contact_email]\npages:\n  /site-settings:\n");
+    $this->artisan('lynx:draft', ['path' => $this->dir.'/draft.yaml'])->assertSuccessful();
+
+    expect(lynx()->pages->findOne('template=site-settings, include=all')?->name())->toBe('site-settings');
+
+    File::put($this->dir.'/draft.yaml', "pages:\n  /footer: { template: site-settings, title: Footer }\n");
+    $this->artisan('lynx:draft', ['path' => $this->dir.'/draft.yaml'])
+        ->expectsOutputToContain('Page [/footer]: template [site-settings] has no field [title].')
+        ->assertFailed();
+});

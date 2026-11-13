@@ -81,16 +81,17 @@ final class DraftPages
         $existing = lynx()->pages->get($path.'/');
         $entry = is_string($entry) ? ['title' => $entry] : Value::map($entry);
         $template = $existing instanceof Page ? (string) $existing->template()->name : $this->templateOf($path, $name, $entry);
-        $title = Value::string($entry['title'] ?? DraftShorthand::label($name));
-        $values = array_diff_key($entry, ['template' => true, 'title' => true]);
+        $values = array_diff_key($entry, ['template' => true]);
 
         if (! $existing instanceof Page) {
+            // The title comes from the path when the template has one; a template without one takes none.
+            $values = array_key_exists('title', $this->uses($template)) ? ['title' => DraftShorthand::label($name), ...$values] : $values;
             $this->assertPlaceable($path, $parent, $template, $values);
         }
 
         $this->placed[$path] = $template;
 
-        return new DraftPage($path, $parent, $name, $template, $title, $values);
+        return new DraftPage($path, $parent, $name, $template, $values);
     }
 
     private function assertName(string $path, string $name): void
@@ -156,7 +157,7 @@ final class DraftPages
         }
 
         foreach ($uses as $field => $isRequired) {
-            if ($isRequired && $field !== 'title' && ! isset($values[$field]) && ! $this->mayWait($field)) {
+            if ($isRequired && ! isset($values[$field]) && ! $this->mayWait($field)) {
                 throw new DraftError("Page [{$path}]: {$this->label($field)} is required.");
             }
         }
