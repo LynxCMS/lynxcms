@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Livewire;
 
-use DateTimeInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
+use LynxCms\Admin\Fields\ShortValue;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\TrashPage;
-use LynxCms\Core\Fields\Choices\Choice;
-use LynxCms\Core\Fields\Choices\ChoiceList;
 use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Support\Value;
-use Stringable;
 
 /**
  * The page table input (ADR-0058): the field's pages in a table with the chosen columns, a form
@@ -144,7 +140,7 @@ final class PageTableInput extends Component
 
         foreach ($pages as $page) {
             if ($page instanceof Page) {
-                $rows[] = ['id' => (int) $page->id, 'cells' => array_map(fn (string $column): string => $this->cell($page, $column), $this->columns)];
+                $rows[] = ['id' => (int) $page->id, 'cells' => array_map(fn (string $column): string => ShortValue::of($page, $column), $this->columns)];
             }
         }
 
@@ -153,24 +149,5 @@ final class PageTableInput extends Component
             'labels' => array_map(fn (string $column): string => Value::string(lynx()->fields->find($column)?->label, $column), $this->columns),
             'canCreate' => ! $this->disabled && ($this->parent !== '' || $this->pageId !== null),
         ]);
-    }
-
-    /** A column's value as short text. */
-    private function cell(Page $page, string $column): string
-    {
-        if ($page->templateField($column) === null) {
-            return '';
-        }
-
-        $value = $page->get($column);
-
-        return match (true) {
-            $value instanceof Choice => $value->label(),
-            $value instanceof ChoiceList => implode(', ', $value->labels()),
-            $value instanceof PageArray => implode(', ', $value->map(fn (Page $item): string => Value::string($item->getUnformatted('title')))),
-            $value instanceof DateTimeInterface => $value->format('Y-m-d H:i'),
-            is_scalar($value), $value instanceof Stringable => mb_strimwidth(strip_tags((string) $value), 0, 80, '…'),
-            default => '',
-        };
     }
 }
