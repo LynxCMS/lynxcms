@@ -23,6 +23,7 @@ use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -188,7 +189,24 @@ final class FieldForm extends Component
             'subfieldChoices' => $this->hasItemBuilder() ? $this->subfieldChoices() : [],
             'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
             'typeUsage' => $this->typeUsage(),
+            'templateOptions' => $this->templateOptions(),
         ]);
+    }
+
+    /**
+     * The site's templates, for settings that name templates (SettingFormats::TEMPLATE); those
+     * Lynx and its modules own are left out, as the New page screen leaves them out.
+     *
+     * @return list<array{name: string, label: string}>
+     */
+    private function templateOptions(): array
+    {
+        $owners = app(SchemaOwners::class);
+
+        return array_values(lynx()->templates->all()
+            ->reject(fn (Template $template): bool => $owners->isSystemTemplate((string) $template->name))
+            ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->labels()->in()])
+            ->sortBy('label')->all());
     }
 
     /**
@@ -236,7 +254,7 @@ final class FieldForm extends Component
     /**
      * The type's settings for the generic form, without the ones the builder and the choices editor edit.
      *
-     * @return array<string, array{type: string, description: string, enum: list<string>}>
+     * @return array<string, array{type: string, description: string, enum: list<string>, format: string}>
      */
     private function definitions(): array
     {

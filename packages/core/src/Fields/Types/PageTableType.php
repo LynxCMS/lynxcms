@@ -9,6 +9,7 @@ use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Fields\NeedsSavedPage;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\SettingFormats;
 use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
 
 /**
@@ -38,7 +39,7 @@ final class PageTableType extends BaseFieldType implements DescribesPhpType, Nee
     public function settingsSchema(JsonSchema $schema): array
     {
         return [
-            'templates' => $schema->array()->items($schema->string())->description('Templates of the items. At least one.')->required(),
+            'templates' => $schema->array()->items($schema->string()->format(SettingFormats::TEMPLATE))->description('Templates of the items. At least one.')->required(),
             'parent' => $schema->string()->description('Path new items are created under. Default: the page itself.'),
             'columns' => $schema->array()->items($schema->string())->description('Fields shown as columns in the admin table. Default: title.'),
             'remove' => $schema->string()->enum(self::REMOVE)->description('Removing an item from the table keeps its page (default) or trashes it.'),

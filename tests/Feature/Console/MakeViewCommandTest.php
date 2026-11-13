@@ -115,6 +115,70 @@ it('writes the missing views of every template with pages', function (): void {
         ->and(File::exists($this->views.'/templates/venue.blade.php'))->toBeFalse();
 });
 
+function courseWithBlocks(): void
+{
+    lynx()->fields->add('caption', 'text');
+    lynx()->fields->add('quote_text', 'textarea');
+    lynx()->fields->add('blocks', 'matrix', settings: ['types' => [
+        ['slug' => 'quote', 'label' => 'Quote', 'fields' => [['name' => 'quote_text'], ['name' => 'caption']]],
+        ['slug' => 'note', 'fields' => [['name' => 'caption']]],
+    ]]);
+    lynx()->templates->update('course', ['add' => ['blocks']]);
+}
+
+function madeBlockView(string $field, string $type): string
+{
+    return File::get(test()->views.'/templates/fields/'.$field.'/'.$type.'.blade.php');
+}
+
+it('writes a view for each block type of a matrix field, its fields read from $block', function (): void {
+    courseWithBlocks();
+
+    $this->artisan('lynx:make:view', ['template' => 'course'])->assertSuccessful();
+
+    expect(madeBlockView('blocks', 'quote'))->toContain('Quote', '<p>@field($block->quote_text)</p>', '@field($block->caption)')->not->toContain('$page->')
+        ->and(madeBlockView('blocks', 'note'))->toContain('@field($block->caption)');
+});
+
+it('writes block views that render the page\'s blocks', function (): void {
+    lynx()->fields->add('caption', 'text');
+    lynx()->fields->add('blocks', 'matrix', settings: ['types' => [['slug' => 'note', 'fields' => [['name' => 'caption']]]]]);
+    // Its own template: Blade would reuse another test's compiled view of the same path.
+    lynx()->templates->add('studio', fields: ['title', 'blocks']);
+    $studio = lynx()->pages->new('studio', '/');
+    $studio->name = 'pottery';
+    $studio->title = 'Pottery';
+    $studio->blocks = [['type' => 'note', 'values' => ['caption' => 'Bring an apron']]];
+    $studio->save();
+
+    $this->artisan('lynx:make:view', ['template' => 'studio'])->assertSuccessful();
+
+    $this->get('/pottery')->assertOk()->assertSee('Bring an apron');
+});
+
+it('keeps block views that exist unless forced, and fills in the missing ones', function (): void {
+    courseWithBlocks();
+    File::ensureDirectoryExists($this->views.'/templates/fields/blocks');
+    File::put($this->views.'/templates/course.blade.php', 'Mine');
+    File::put($this->views.'/templates/fields/blocks/quote.blade.php', 'My quote');
+
+    $this->artisan('lynx:make:view', ['template' => 'course'])->assertSuccessful();
+    expect(madeView('course'))->toBe('Mine')
+        ->and(madeBlockView('blocks', 'quote'))->toBe('My quote')
+        ->and(madeBlockView('blocks', 'note'))->toContain('@field($block->caption)');
+
+    $this->artisan('lynx:make:view', ['template' => 'course', '--force' => true])->assertSuccessful();
+    expect(madeBlockView('blocks', 'quote'))->toContain('@field($block->quote_text)');
+});
+
+it('writes no block views with --no-blocks', function (): void {
+    courseWithBlocks();
+
+    $this->artisan('lynx:make:view', ['template' => 'course', '--no-blocks' => true])->assertSuccessful();
+
+    expect(File::isDirectory($this->views.'/templates/fields'))->toBeFalse();
+});
+
 it('refuses an unknown template', function (): void {
     $this->artisan('lynx:make:view', ['template' => 'nope'])->assertFailed();
 });

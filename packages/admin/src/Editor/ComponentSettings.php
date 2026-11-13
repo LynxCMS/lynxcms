@@ -41,7 +41,7 @@ final readonly class ComponentSettings
     public function __construct(private SchemaForm $form = new SchemaForm) {}
 
     /**
-     * @return array<string, array{type: string, description: string, enum: list<string>}> setting name => definition
+     * @return array<string, array{type: string, description: string, enum: list<string>, format: string}> setting name => definition
      */
     public function fields(string $alias): array
     {

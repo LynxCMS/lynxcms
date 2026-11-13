@@ -40,6 +40,7 @@ final readonly class DraftCompiler
         private FieldRegistry $fields,
         private TemplateRegistry $templates,
         private SchemaOwners $owners,
+        private DraftUseSettings $useSettings,
     ) {}
 
     /**
@@ -236,7 +237,7 @@ final readonly class DraftCompiler
             'name' => Value::string($template['name']),
             'label' => LocalizedText::from($template['label'])->toStorage(),
             'settings' => $existing instanceof Template ? [...array_diff_key($existing->config(), self::DERIVED_TEMPLATE_SETTINGS), ...$settings] : $settings,
-            'fields' => Value::list($template['fields']),
+            'fields' => $this->useSettings->merge($existing, Value::list($template['fields'])),
         ];
     }
 }
