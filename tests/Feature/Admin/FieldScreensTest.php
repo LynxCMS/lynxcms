@@ -58,12 +58,25 @@ it('shows the action\'s errors next to the inputs', function (): void {
 
 it('takes lists as comma separated text', function (): void {
     Livewire::test(FieldForm::class)
-        ->set('name', 'mentors')->set('type', 'page')
-        ->set('settings.templates', 'course, courses')->set('settings.multiple', false)
+        ->set('name', 'sessions')->set('type', 'page_table')
+        ->set('settings.templates', ['course'])->set('settings.columns', 'title, price')
         ->call('save')->assertHasNoErrors();
 
-    expect(lynx()->fields->get('mentors')->config())->toMatchArray(['templates' => ['course', 'courses'], 'multiple' => false]);
+    expect(lynx()->fields->get('sessions')->config())->toMatchArray(['templates' => ['course'], 'columns' => ['title', 'price']]);
 });
+
+it('chooses the templates of a page or page table field from the site\'s templates', function (string $type): void {
+    Livewire::test(FieldForm::class)
+        ->set('name', 'mentors')->set('type', $type)
+        ->assertSeeHtml('data-template-chooser="settings.templates"')
+        ->assertSee('Course')
+        ->set('settings.templates', ['course', 'courses'])
+        ->call('save')->assertHasNoErrors();
+
+    expect(lynx()->fields->get('mentors')->config()['templates'])->toBe(['course', 'courses']);
+
+    Livewire::test(FieldForm::class, ['field' => 'mentors'])->assertSet('settings.templates', ['course', 'courses']);
+})->with(['page', 'page_table']);
 
 it('edits label, description and settings, with name and type fixed', function (): void {
     $this->get(route('lynx.admin.fields.edit', 'summary'))->assertOk()->assertSeeLivewire(FieldForm::class);
