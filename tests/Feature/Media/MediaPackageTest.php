@@ -49,6 +49,21 @@ it('copies the files a page\'s values use into the package', function (): void {
         ->and(File::exists($this->package.'/files/'.$this->nested['file']))->toBeTrue();
 });
 
+it('lynx:export leaves files out unless asked, as a large site\'s media can take long to copy', function (): void {
+    $this->artisan('lynx:export', ['path' => $this->package])
+        ->expectsOutputToContain('--with-files')
+        ->assertSuccessful();
+
+    expect(File::isDirectory($this->package.'/files'))->toBeFalse()
+        ->and(File::get($this->package.'/pages.jsonl'))->toContain($this->top['file']);
+});
+
+it('lynx:export copies the files with --with-files', function (): void {
+    $this->artisan('lynx:export', ['path' => $this->package, '--with-files' => true])->assertSuccessful();
+
+    expect(File::exists($this->package.'/files/'.$this->top['file']))->toBeTrue();
+});
+
 it('brings the files into a site that does not have the page', function (): void {
     app(ContentExporter::class)->export($this->package);
     lynx()->pages->delete('/courses/alpha/');

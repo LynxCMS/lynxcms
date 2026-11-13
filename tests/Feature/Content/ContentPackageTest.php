@@ -106,6 +106,14 @@ it('refuses a directory that is not a content package', function (): void {
     $this->artisan('lynx:import', ['path' => $this->dir])->expectsOutputToContain('not a Lynx content package')->assertFailed();
 });
 
+it('says a backup holds content only, not the database', function (): void {
+    config(['lynx.backups.path' => $this->dir]);
+
+    $this->artisan('lynx:backup')
+        ->expectsOutputToContain('not a database backup')
+        ->assertSuccessful();
+});
+
 it('backs up to a zip, keeps the newest ones, and restores from it', function (): void {
     config(['lynx.backups.path' => $this->dir, 'lynx.backups.keep' => 2]);
 

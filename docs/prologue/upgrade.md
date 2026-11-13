@@ -23,6 +23,7 @@ To go back to the previous version on a live site, restore that database backup.
 
 ## From 0.1.41 to the next release
 
+- `lynx:export` no longer copies media files by default. Add `--with-files` where you need them, such as a production export for a developer's machine or a content folder that CI builds a static site from. Drop `--without-files` from scripts: the option is gone, and the default now does what it did.
 - Modules that call the admin's `SchemaOwners::register()` should call `LynxCms\Core\Schema\SchemaOwners::register()` from their service provider instead (ADR-0115). The admin's method still works and is deprecated.
 
 ## From 0.1.36 to 0.1.37

@@ -32,7 +32,7 @@ php artisan migrate
 Then bring the content down. On production, export it, or take the newest daily backup from `storage/app/lynx/backups` if `LYNX_BACKUPS_SCHEDULE` is on:
 
 ```bash
-php artisan lynx:export storage/app/site.zip        # on production
+php artisan lynx:export storage/app/site.zip --with-files   # on production
 ```
 
 Copy the zip to your machine (with `scp`, or your host's file manager), and import it with its schema:
@@ -42,14 +42,14 @@ php artisan lynx:import site.zip --with-schema
 php artisan lynx:superuser                          # your own account: users are not in packages
 ```
 
-The package carries the images and files of its pages, private ones included, so the site looks as it does live. Page ids are new on your machine, which is why the package keys pages by their path. On a site with a lot of media, leave the files out and let your machine download them as you need them (see [Media from production](#media-from-production)).
+With `--with-files` the package carries the images and files of its pages, private ones included, so the site looks as it does live. Page ids are new on your machine, which is why the package keys pages by their path. On a site with a lot of media, leave `--with-files` off and let your machine download the files as you need them (see [Media from production](#media-from-production)).
 
 ## Media from production
 
-A content package with every image of a large site can weigh gigabytes. Export it without its files instead, and tell your machine where production keeps them:
+A content package with every image of a large site can weigh gigabytes and take long to write. Export it without its files instead (the default), and tell your machine where production keeps them:
 
 ```bash
-php artisan lynx:export storage/app/site.zip --without-files   # on production
+php artisan lynx:export storage/app/site.zip   # on production
 ```
 
 ```dotenv

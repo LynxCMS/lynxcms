@@ -66,7 +66,7 @@ php artisan lynx:import site.zip --with-schema
 
 An import creates the pages that are missing and updates the ones that differ, and importing a site's own export changes nothing. `--prune` moves pages the package doesn't have to the trash. In a terminal, `--prune` first counts the pages it would trash and asks before importing, and `lynx:import` without a path offers the backups from `lynx:backup`, newest first. Drafts and the trash are left out of packages.
 
-With the media package installed, a package also carries the images and files its pages use, in a `files` folder. An import stores them with the page they land on, and reuses a file the page already has with the same name and contents.
+With the media package installed, `lynx:export --with-files` and `lynx:backup` also put the images and files the pages use in a `files` folder. Without `--with-files`, an export leaves them out, as copying a large site's media can take long; the values still name them. An import stores the files with the page they land on, and reuses a file the page already has with the same name and contents.
 
 This is also how to start a new environment, such as a new staging server or a developer's machine. Migrate, import a package exported from an existing environment with `--with-schema`, and only then run `lynx:install` to make your user a superuser:
 
