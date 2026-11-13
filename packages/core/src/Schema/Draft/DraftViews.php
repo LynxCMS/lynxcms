@@ -14,9 +14,11 @@ use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Core\Templates\Views\ViewWriter;
 
 /**
- * The starting views a draft writes (ADR-0116): one for each new template with a URL, kept when
- * it exists unless replacing is asked, and one for each block type of those templates' matrix
- * fields. Block views belong to the field, which other templates may use too, so a draft only
+ * The starting views a draft writes (ADR-0116): one for each template with a URL that the draft
+ * creates or changes and that has none, such as the home template lynx:install made, and one for
+ * each block type of those templates' matrix fields. Only a new template's view is replaced, and
+ * only when asked; templates the draft leaves as they are get nothing, so building it again
+ * writes nothing. Block views belong to the field, which other templates may use too, so a draft only
  * writes the missing ones and never replaces one.
  *
  * @phpstan-import-type TemplateItem from SchemaSync
@@ -43,9 +45,10 @@ final readonly class DraftViews
             return [];
         }
 
-        $templates = $this->newTemplatesWithUrl($draft, $schema);
+        $templates = $this->changedTemplatesWithUrl($draft, $schema);
+        $created = $schema->createdTemplates();
         $steps = array_map(fn (array $template): array => [
-            'action' => $this->views->exists($template['name']) && ! $options->forceViews ? DraftPlan::KEEP : DraftPlan::WRITE,
+            'action' => $this->isWritten($template['name'], in_array($template['name'], $created, true), $options) ? DraftPlan::WRITE : DraftPlan::KEEP,
             'kind' => 'view',
             'name' => $this->views->relativePath($template['name']),
         ], $templates);
@@ -53,25 +56,33 @@ final readonly class DraftViews
         return [...$steps, ...$this->blockSteps($draft, $templates)];
     }
 
-    /** After building: the views of the new templates and of their blocks. */
+    /** After building: the views of the templates the draft created or changed, and of their blocks. */
     public function write(DraftPlan $plan, DraftOptions $options): void
     {
         if (! $options->views) {
             return;
         }
 
-        foreach ($plan->createdTemplates() as $name) {
+        $created = $plan->createdTemplates();
+
+        foreach ($plan->changedTemplates() as $name) {
             $template = $this->templates->find($name);
 
             if ($template instanceof Template && $template->hasUrl()) {
-                $this->writeTemplate($template, $options);
+                $this->writeTemplate($template, in_array($name, $created, true), $options);
             }
         }
     }
 
-    private function writeTemplate(Template $template, DraftOptions $options): void
+    /** A view that is missing, or a new template's when replacing is asked. */
+    private function isWritten(string $template, bool $isNew, DraftOptions $options): bool
     {
-        if ($options->forceViews || ! $this->views->exists((string) $template->name)) {
+        return ! $this->views->exists($template) || ($isNew && $options->forceViews);
+    }
+
+    private function writeTemplate(Template $template, bool $isNew, DraftOptions $options): void
+    {
+        if ($this->isWritten((string) $template->name, $isNew, $options)) {
             $this->views->write($template);
         }
 
@@ -85,13 +96,13 @@ final readonly class DraftViews
     /**
      * @return list<TemplateItem>
      */
-    private function newTemplatesWithUrl(CompiledDraft $draft, DraftPlan $schema): array
+    private function changedTemplatesWithUrl(CompiledDraft $draft, DraftPlan $schema): array
     {
-        $created = $schema->createdTemplates();
+        $changed = $schema->changedTemplates();
 
         return array_values(array_filter(
             $draft->templates,
-            fn (array $template): bool => in_array($template['name'], $created, true) && Value::bool($template['settings']['has_url'] ?? true, true),
+            fn (array $template): bool => in_array($template['name'], $changed, true) && Value::bool($template['settings']['has_url'] ?? true, true),
         ));
     }
 
