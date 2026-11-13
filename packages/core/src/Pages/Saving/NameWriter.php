@@ -79,7 +79,9 @@ final readonly class NameWriter
      */
     private function deriveDefault(Page $page, Language $default, array &$names, array &$errors): void
     {
-        $derived = PageName::from(Value::string($page->getLanguageValue($default, 'title')));
+        // A template without a title (site settings, a footer) gives nothing to derive a name from.
+        $hasTitle = $page->templateField('title') !== null;
+        $derived = $hasTitle ? PageName::from(Value::string($page->getLanguageValue($default, 'title'))) : '';
 
         if ($derived !== '') {
             $names[$default->id] = ['name' => $derived, 'status' => 'published'];
@@ -88,7 +90,7 @@ final readonly class NameWriter
             return;
         }
 
-        $errors['names.'.$default->code] = $page->templateField('title') === null
+        $errors['names.'.$default->code] = ! $hasTitle
             ? 'A name in the default language is required.'
             : 'A name or a title in the default language is required.';
     }

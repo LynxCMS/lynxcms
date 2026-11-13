@@ -135,3 +135,26 @@ it('refuses a template the screen does not offer', function (): void {
 
     expect(lynx()->pages->findOne('name=sneaky, include=all'))->toBeNull();
 });
+
+it('creates a page whose template has no title, such as site settings, from the name typed', function (): void {
+    lynx()->fields->add('contact_email', 'email');
+    lynx()->templates->add('site-settings', fields: ['contact_email'], hasUrl: false, singleton: true);
+    $home = (int) lynx()->pages->get('/')->id;
+
+    // Without a title to build it from, the name must be typed: an error on the form, not a crash.
+    Livewire::test(PageCreator::class, ['parentId' => $home])
+        ->set('template', 'site-settings')
+        ->call('create')
+        ->assertSee('A name in the default language is required.');
+
+    $creator = Livewire::test(PageCreator::class, ['parentId' => $home])
+        ->set('template', 'site-settings')
+        ->set('name', 'site-settings')
+        ->call('create')
+        ->assertHasNoErrors();
+
+    $page = lynx()->pages->findOne('template=site-settings, include=all');
+    expect($page)->not->toBeNull();
+    $creator->assertRedirect(route('lynx.admin.pages.edit', $page->id));
+    $this->get(route('lynx.admin.pages.edit', $page->id))->assertOk();
+});

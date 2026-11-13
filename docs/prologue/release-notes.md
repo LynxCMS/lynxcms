@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Fixed: creating a page whose template has no `title` field, such as a site settings template, without typing a URL name failed with "Template [site-settings] has no field [title]". The name was derived from the title without checking the template has one. The New page screen now asks for the name under its input instead.
+
 ## 0.1.42
 
 Released November 13, 2026. Drafts build templates and fields from a short YAML file, schema editing off now locks the schema for agents and MCP too, and the admin gains a Home screen, Page Finder and keyboard shortcuts. Run `php artisan lynx:migrate` after updating: Page Finder keeps saved searches in a new table, and apps whose users live in a table not named `users` get the language column. Read the [upgrade guide](/prologue/upgrade#from-0-1-41-to-0-1-42) if you export with `--without-files` or set `LYNX_ADMIN_SCHEMA_EDITING`.
