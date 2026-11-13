@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.44
+
+Released November 13, 2026. Drafts can create pages, and write views for templates they change, such as the home template. Page fields say when there are no pages to choose yet, and never offer the page being edited. Nothing to do after updating, and no database changes.
 
 - A draft can create pages: list them by URL path under `pages`, with a title, a template and any field values. They are created unpublished after the fields and templates, everything else empty; required fields need a value, and a path the site has is left alone. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
 - Fixed: a page field shown as checkboxes, radios or a select was an empty box when the templates it allows had no pages yet, as on a new site. It now says so, naming the templates: "No Project pages yet. Add one, then choose it here."
