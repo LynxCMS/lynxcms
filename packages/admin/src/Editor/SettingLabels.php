@@ -68,7 +68,7 @@ final class SettingLabels
     private const array FORMATTERS = ['smartypants', 'paragraphs', 'markdown', 'external_links', 'heading_anchors'];
 
     /**
-     * @param  array{type: string, description: string, enum: list<string>}  $definition  from SchemaForm
+     * @param  array{type: string, description: string, enum: list<string>, format: string}  $definition  from SchemaForm
      * @param  string|null  $type  the field type, for settings worded per type
      * @return array{label: string, hint: string, unit: string, options: array<string, string>}
      */

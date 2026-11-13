@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Core\Fields\SettingFormats;
 use LynxCms\Core\Support\Value;
 
 /**
  * A form generated from a JSON schema (a component's settings, a field type's settings): one input
  * per property, and the submitted values cast back to the schema's types. Lists are typed as
- * comma separated text, or a set of checkboxes when their items are an enum. Validation stays with
+ * comma separated text, a set of checkboxes when their items are an enum, or a template chooser when
+ * their items have the template format (SettingFormats). Validation stays with
  * whoever owns the schema.
  *
  * @internal
@@ -18,7 +20,7 @@ final class SchemaForm
 {
     /**
      * @param  array<array-key, mixed>  $properties  property name => JSON schema as an array
-     * @return array<string, array{type: string, description: string, enum: list<string>}>
+     * @return array<string, array{type: string, description: string, enum: list<string>, format: string}>
      */
     public function definitions(array $properties): array
     {
@@ -31,6 +33,8 @@ final class SchemaForm
                 'description' => Value::string($schema['description'] ?? ''),
                 // A list's choices are its items' enum.
                 'enum' => Value::strings($schema['enum'] ?? Value::map($schema['items'] ?? [])['enum'] ?? []),
+                // What the strings hold, such as template names (SettingFormats), the list's from its items.
+                'format' => Value::string($schema['format'] ?? Value::map($schema['items'] ?? [])['format'] ?? ''),
             ];
         }
 
@@ -41,7 +45,7 @@ final class SchemaForm
      * Form values to typed settings. Empty values are dropped, or kept as null when $emptyAsNull,
      * so an update can remove a setting.
      *
-     * @param  array<string, array{type: string, description: string, enum: list<string>}>  $definitions
+     * @param  array<string, array{type: string, description: string, enum: list<string>, format: string}>  $definitions
      * @param  array<array-key, mixed>  $values
      * @return array<string, mixed>
      */
@@ -73,9 +77,9 @@ final class SchemaForm
     }
 
     /**
-     * Stored settings as form values: lists joined with commas (lists of choices stay lists), numbers as text.
+     * Stored settings as form values: lists joined with commas (lists of choices or templates stay lists), numbers as text.
      *
-     * @param  array<string, array{type: string, description: string, enum: list<string>}>  $definitions
+     * @param  array<string, array{type: string, description: string, enum: list<string>, format: string}>  $definitions
      * @param  array<array-key, mixed>  $settings
      * @return array<string, mixed>
      */
@@ -87,7 +91,7 @@ final class SchemaForm
             $value = $settings[$name] ?? null;
             $form[$name] = match (true) {
                 $definition['type'] === 'boolean' => $value === null ? null : (bool) $value,
-                $definition['type'] === 'array' && $definition['enum'] !== [] => Value::strings($value ?? []),
+                $definition['type'] === 'array' && ($definition['enum'] !== [] || $definition['format'] === SettingFormats::TEMPLATE) => Value::strings($value ?? []),
                 is_array($value) => implode(', ', Value::strings($value)),
                 $value === null => '',
                 default => Value::string($value),

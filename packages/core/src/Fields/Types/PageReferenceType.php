@@ -9,6 +9,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Fields\PresentsValue;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\SettingFormats;
 use LynxCms\Core\Fields\SettingsPerUse;
 use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
 use LynxCms\Core\Support\Value;
@@ -37,7 +38,7 @@ final class PageReferenceType extends BaseFieldType implements DescribesPhpType,
             'multiple' => $schema->boolean()->description('Allow more than one page. Default true.'),
             'min' => $schema->integer()->description('Fewest pages when the field holds any (0 = no minimum; "required" asks for at least one).'),
             'max' => $schema->integer()->description('Most pages (0 = no limit).'),
-            'templates' => $schema->array()->items($schema->string())->description('Template names allowed as targets.'),
+            'templates' => $schema->array()->items($schema->string()->format(SettingFormats::TEMPLATE))->description('Template names allowed as targets.'),
             'input' => $schema->string()->enum(self::INPUTS)->description('How editors choose: search by title (default), or select, radios or checkboxes listing the allowed pages. Lists suit short ones, such as categories.'),
         ];
     }

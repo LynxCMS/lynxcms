@@ -16,6 +16,8 @@
                     <span class="text-sm font-medium">{{ __('lynx-admin::fields.settings.options') }}</span>
                     <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" defaultable multiple-model="settings.multiple" />
                     <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.options_help') }}</p>
+                @elseif ($definition['type'] === 'array' && $definition['format'] === \LynxCms\Core\Fields\SettingFormats::TEMPLATE)
+                    <x-lynx-admin::template-chooser :model="'settings.'.$setting" :options="$templateOptions" :legend="$words['label']" :hint="$words['hint']" />
                 @elseif ($definition['type'] === 'array' && $words['options'] !== [])
                     {{-- A rich text field's tools only matter while it is rich text. --}}
                     <fieldset class="grid gap-1.5" @if ($type === 'textarea' && $setting === 'tools') x-show="$wire.settings.format === 'html'" @endif>

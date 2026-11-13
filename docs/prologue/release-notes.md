@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- The field form chooses a page or page table field's templates with the same template chooser as a template's family lists (search by label or name, remove with one click), where it took template names as comma separated text. Field type settings mark template names with the JSON Schema format `lynx-template` (`SettingFormats::TEMPLATE`), so a module's own settings get the chooser too, and MCP clients see what the strings hold.
+
 ## 0.1.42
 
 Released November 13, 2026. Drafts build templates and fields from a short YAML file, schema editing off now locks the schema for agents and MCP too, and the admin gains a Home screen, Page Finder and keyboard shortcuts. Run `php artisan lynx:migrate` after updating: Page Finder keeps saved searches in a new table, and apps whose users live in a table not named `users` get the language column. Read the [upgrade guide](/prologue/upgrade#from-0-1-41-to-0-1-42) if you export with `--without-files` or set `LYNX_ADMIN_SCHEMA_EDITING`.
