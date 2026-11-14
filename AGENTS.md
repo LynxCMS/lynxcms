@@ -97,8 +97,10 @@ The docs aim to be as easy to follow as Laravel's. The reader is a PHP developer
 Keep the loop short; CI is the safety net.
 
 - Before pushing code: Pint, PHPStan and the tests of what changed (`vendor/bin/pest tests/Feature/...`). The full suite and Rector run in CI. Docs, wording and CI changes need only Pint where PHP changed.
-- Pull requests run SQLite tests and the quality job; PostgreSQL and the table prefix run on `main` after the merge. Fix a failure there right away.
-- Releases come in batches, when something worth shipping has gathered, not after every pull request. A release is a commit on `main` that turns "Unreleased" into the version heading, then the tag; no pull request of its own.
+- Small, low risk changes go straight to `main` once the local checks pass, without a pull request. The split workflow publishes them to `dev-main` within minutes, and CI runs after the push without blocking anything. Never add `[skip ci]`: it skips the split too, so `dev-main` would not update.
+- Changes to storage, migrations, security or the public API get a pull request, for review rather than for CI. Merge once reviewed, without waiting for checks unless the change is risky.
+- Pull requests run SQLite tests and the quality job; PostgreSQL and the table prefix run on `main` after every push or merge. Fix a failure there right away.
+- Releases come in batches, when something worth shipping has gathered, not after every change. Before tagging, check that every test run on `main` for the commit passed, on all drivers (`gh run list --commit <sha>`). A release is a commit on `main` that turns "Unreleased" into the version heading, then the tag; no pull request of its own.
 
 ## Commands
 
