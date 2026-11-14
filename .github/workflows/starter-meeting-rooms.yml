@@ -58,12 +58,7 @@ jobs:
         working-directory: starter
         run: |
           for package in $(jq -r '.require | keys[] | select(startswith("lynxcms/"))' composer.json); do
-            for attempt in $(seq 1 90); do  # 30 minutes: Packagist can be slow
-              curl -sf "https://repo.packagist.org/p2/${package}.json" | grep -q "\"${TAG}\"" && continue 2
-              sleep 20
-            done
-            echo "${package} ${TAG} is not on Packagist yet." >&2
-            exit 1
+            ../.github/scripts/wait-for-packagist.sh "${package}" "${TAG}"
           done
         env:
           TAG: ${{ steps.version.outputs.tag }}
