@@ -91,7 +91,8 @@ final readonly class DraftCompiler
      */
     private function define(array $fields, string $name, mixed $definition): array
     {
-        $field = $this->shorthand->field($name, $definition, $this->fields->find($name)?->labels()->toStorage());
+        $existing = $this->fields->find($name);
+        $field = $this->shorthand->field($name, $definition, $existing?->labels()->toStorage(), $existing?->isTranslatable());
 
         if (isset($fields[$name]) && $fields[$name] != $field) {
             throw new DraftError("Field [{$name}] is defined twice, in different ways. Define it once, under fields or in one template.");

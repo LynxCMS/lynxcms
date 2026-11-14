@@ -17,9 +17,14 @@ use LynxCms\Core\Support\Value;
 /**
  * Reads one field of a draft (ADR-0116). The short form is "type[:argument] token token": the
  * argument fills the type's main setting ("decimal:2" is two places), a bare token is
- * "translatable" or a true setting ("multiple"), label:"Text" is the label, and "key:value" sets a setting, with list
- * settings split on commas. The long form is the field as an array: type, label, translatable,
- * and its settings beside them. Repeater and matrix fields list their item fields, "name*" for a
+ * "translatable" or a true setting ("multiple"), label:"Text" is the label, translatable:false keeps one value
+ * for every language, and "key:value" sets a setting,
+ * with list settings split on commas. The long form is the field as an array: type, label, translatable,
+ * and its settings beside them.
+ *
+ * A field is translatable when its type can be, as the admin makes it on a site with one language,
+ * because that can't change later: translatable:false opts out. A field the site has keeps its own choice
+ * unless the draft states one. Repeater and matrix fields list their item fields, "name*" for a
  * required one.
  *
  * @phpstan-import-type FieldItem from SchemaSync
@@ -45,17 +50,24 @@ final readonly class DraftShorthand
 
     /**
      * @param  string|array<string, string>|null  $label  the label when the draft gives none: the site's, for a field it has
+     * @param  bool|null  $translatable  whether the field is translatable when the draft doesn't say: the site's, for a field it has
      * @return array{name: string, type: string, label: string|array<string, string>, translatable: bool, settings: array<string, mixed>}
      *
      * @throws DraftError
      */
-    public function field(string $name, mixed $definition, string|array|null $label = null): array
+    public function field(string $name, mixed $definition, string|array|null $label = null, ?bool $translatable = null): array
     {
         $label ??= self::label($name);
 
         return is_array($definition)
-            ? $this->longForm($name, Value::map($definition), $label)
-            : $this->shortForm($name, Value::string($definition), $label);
+            ? $this->longForm($name, Value::map($definition), $label, $translatable)
+            : $this->shortForm($name, Value::string($definition), $label, $translatable);
+    }
+
+    /** Whether a new field of the type is translatable when the draft doesn't say: when the type can be. */
+    public function translatesByDefault(string $type): bool
+    {
+        return $this->types->has($type) && $this->fieldType($type)->supportsTranslation();
     }
 
     /**
@@ -102,13 +114,13 @@ final readonly class DraftShorthand
      * @param  string|array<string, string>  $label
      * @return array{name: string, type: string, label: string|array<string, string>, translatable: bool, settings: array<string, mixed>}
      */
-    private function shortForm(string $name, string $definition, string|array $label): array
+    private function shortForm(string $name, string $definition, string|array $label, ?bool $translatable): array
     {
         preg_match_all('/(?:[^\s"]+|"[^"]*")+/', trim($definition), $matches);
         $tokens = $matches[0];
         [$type, $argument] = array_pad(explode(':', (string) array_shift($tokens), 2), 2, null);
         $type = $this->knownType($name, (string) $type);
-        $field = ['name' => $name, 'type' => $type, 'label' => $label, 'translatable' => false, 'settings' => []];
+        $field = ['name' => $name, 'type' => $type, 'label' => $label, 'translatable' => $translatable ?? $this->translatesByDefault($type), 'settings' => []];
 
         if ($argument !== null) {
             $field['settings'] = $this->argument($name, $type, $argument);
@@ -117,6 +129,7 @@ final readonly class DraftShorthand
         foreach ($tokens as $token) {
             match (true) {
                 $token === self::TRANSLATABLE => $field['translatable'] = true,
+                str_starts_with($token, self::TRANSLATABLE.':') => $field['translatable'] = $this->isTrue(substr($token, strlen(self::TRANSLATABLE) + 1)),
                 str_starts_with($token, self::LABEL_TOKEN) => $field['label'] = trim(substr($token, strlen(self::LABEL_TOKEN)), '"'),
                 default => $field['settings'] = [...$field['settings'], ...$this->token($name, $type, $token)],
             };
@@ -130,7 +143,7 @@ final readonly class DraftShorthand
      * @param  string|array<string, string>  $label
      * @return array{name: string, type: string, label: string|array<string, string>, translatable: bool, settings: array<string, mixed>}
      */
-    private function longForm(string $name, array $definition, string|array $label): array
+    private function longForm(string $name, array $definition, string|array $label, ?bool $translatable): array
     {
         $type = $this->knownType($name, Value::string($definition['type'] ?? null));
         $settings = [...Value::map($definition['settings'] ?? []), ...array_diff_key($definition, array_flip(['type', 'label', 'translatable', 'settings']))];
@@ -140,7 +153,7 @@ final readonly class DraftShorthand
             'name' => $name,
             'type' => $type,
             'label' => isset($definition['label']) ? LocalizedText::from($definition['label'])->toStorage() : $label,
-            'translatable' => Value::bool($definition['translatable'] ?? false),
+            'translatable' => isset($definition['translatable']) ? Value::bool($definition['translatable']) : $translatable ?? $this->translatesByDefault($type),
             'settings' => $this->itemFields($this->options($name, $settings)),
         ];
     }
@@ -192,11 +205,16 @@ final readonly class DraftShorthand
         $value = trim($value, '"');
 
         return match ($kind) {
-            'boolean' => ! in_array(strtolower($value), ['false', '0', 'no'], true),
+            'boolean' => $this->isTrue($value),
             'integer' => (int) $value,
             'number' => is_numeric($value) ? $value + 0 : $value,
             default => $value,
         };
+    }
+
+    private function isTrue(string $value): bool
+    {
+        return ! in_array(strtolower(trim($value, '"')), ['false', '0', 'no'], true);
     }
 
     /**

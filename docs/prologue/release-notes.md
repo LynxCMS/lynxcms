@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- A draft makes text, textarea and URL fields translatable unless they say `translatable:false`, as the admin does on a site with one language. Before, a field was shared unless marked `translatable`, so a draft built on a site with one language left fields that could never be translated once a language was added. Fields the site has keep their choice, so drafts you have built still build without changes. A new text field that must have one value in every language, such as a product code, now needs `translatable:false` in the draft. `--from-site` writes `translatable:false` where needed, and no longer writes `translatable`. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
+
 ## 0.1.44
 
 Released November 13, 2026. Drafts can create pages, and write views for templates they change, such as the home template. Page fields say when there are no pages to choose yet, and never offer the page being edited. Nothing to do after updating, and no database changes.

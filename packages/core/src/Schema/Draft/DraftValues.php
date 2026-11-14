@@ -22,6 +22,8 @@ final readonly class DraftValues
 {
     private const string PLAIN = '/^[^\s",]+$/';
 
+    public function __construct(private DraftShorthand $shorthand) {}
+
     /**
      * @param  FieldItem  $item
      */
@@ -52,8 +54,9 @@ final readonly class DraftValues
     private function tokens(array $item, array $settings, string $head): ?string
     {
         $tokens = [$head];
-        if ($item['translatable']) {
-            $tokens[] = 'translatable';
+
+        if ($item['translatable'] !== $this->shorthand->translatesByDefault($item['type'])) {
+            $tokens[] = $item['translatable'] ? 'translatable' : 'translatable:false';
         }
 
         if ($item['label'] !== DraftShorthand::label($item['name'])) {

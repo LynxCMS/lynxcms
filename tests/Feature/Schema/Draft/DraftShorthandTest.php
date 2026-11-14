@@ -37,8 +37,26 @@ it('reads choice options, quoted ones with spaces too', function (): void {
     ]);
 });
 
-it('marks a field translatable', function (): void {
+it('makes a field translatable when its type can be', function (): void {
+    expect(draftField('summary', 'textarea')['translatable'])->toBeTrue()
+        ->and(draftField('summary', ['type' => 'textarea'])['translatable'])->toBeTrue()
+        ->and(draftField('seats', 'integer')['translatable'])->toBeFalse();
+});
+
+it('keeps one value for every language with translatable:false', function (): void {
+    expect(draftField('code', 'text translatable:false')['translatable'])->toBeFalse()
+        ->and(draftField('code', 'text translatable:true')['translatable'])->toBeTrue()
+        ->and(draftField('code', ['type' => 'text', 'translatable' => false])['translatable'])->toBeFalse();
+});
+
+it('still reads the word translatable', function (): void {
     expect(draftField('summary', 'textarea translatable')['translatable'])->toBeTrue();
+});
+
+it('keeps the site\'s choice for a field the draft leaves unsaid', function (): void {
+    expect(app(DraftShorthand::class)->field('code', 'text', translatable: false)['translatable'])->toBeFalse()
+        ->and(app(DraftShorthand::class)->field('code', ['type' => 'text'], translatable: false)['translatable'])->toBeFalse()
+        ->and(app(DraftShorthand::class)->field('code', 'text translatable', translatable: false)['translatable'])->toBeTrue();
 });
 
 it('turns a flag into a true setting', function (): void {

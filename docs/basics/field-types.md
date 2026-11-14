@@ -17,7 +17,7 @@ lynx()->fields->add('price', 'decimal', settings: ['places' => 2, 'min' => 0]);
 
 ## Shared and translatable
 
-Text, textarea and URL fields can be **translatable**, holding one value per language. Every other type is **shared**: one value for every language. A date is the same date in English and Portuguese, and a page reference points at the same page. Where a shared type has text of its own, such as a choice's labels or an image's description, that text is per language.
+A **translatable** field holds one value per language. A **shared** field holds one value that is the same in every language: the languages share it, hence the name, and editors enter it once. Text, textarea and URL fields can be either, chosen when the field is created (in a draft, `translatable:false` makes one shared). Every other type is always shared. A date is the same date in English and Portuguese, and a page reference points at the same page. Where a shared type has text of its own, such as a choice's labels or an image's description, that text is per language.
 
 ## Available types
 
