@@ -234,11 +234,14 @@ final readonly class SchemaSync
      */
     private function deleteMissing(array $files, bool $force, SchemaSyncResult $result): void
     {
-        $uuids = fn (string $kind): array => array_column($files[$kind], 'uuid');
+        // Apply matches an item by uuid, or by name (code for languages) when the uuid differs, as
+        // after a fresh install; an item matched either way is in the files and stays.
+        $inFiles = fn (string $kind, string $key, string $uuid, string $name): bool => in_array($uuid, array_column($files[$kind], 'uuid'), true)
+            || in_array($name, array_column($files[$kind], $key), true);
         $deletions = [
-            [DeleteTemplate::class, 'template', $this->templates->all()->reject(fn (Template $t): bool => in_array($t->uuid, $uuids('templates'), true))->map(fn (Template $t): string => $t->name)],
-            [DeleteField::class, 'field', $this->fields->all()->reject(fn (Field $f): bool => in_array($f->uuid, $uuids('fields'), true))->map(fn (Field $f): string => $f->name)],
-            [DeleteLanguage::class, 'language', $this->languages->all()->reject(fn (Language $l): bool => in_array($l->uuid, $uuids('languages'), true))->map(fn (Language $l): string => $l->code)],
+            [DeleteTemplate::class, 'template', $this->templates->all()->reject(fn (Template $t): bool => $inFiles('templates', 'name', (string) $t->uuid, (string) $t->name))->map(fn (Template $t): string => $t->name)],
+            [DeleteField::class, 'field', $this->fields->all()->reject(fn (Field $f): bool => $inFiles('fields', 'name', (string) $f->uuid, (string) $f->name))->map(fn (Field $f): string => $f->name)],
+            [DeleteLanguage::class, 'language', $this->languages->all()->reject(fn (Language $l): bool => $inFiles('languages', 'code', (string) $l->uuid, (string) $l->code))->map(fn (Language $l): string => $l->code)],
         ];
 
         foreach ($deletions as [$action, $key, $names]) {

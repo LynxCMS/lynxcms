@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Schema\SchemaSync;
@@ -100,6 +101,22 @@ it('only deletes missing items with force', function (): void {
 
     sync()->apply($this->dir, force: true);
     expect(lynx()->fields->find('scratch'))->toBeNull();
+});
+
+it('keeps items it matched by name when deleting with force, as after a fresh install', function (): void {
+    sync()->export($this->dir);
+    // A fresh install creates its title field, home template and languages under new uuids.
+    DB::table('lynx_fields')->where('name', 'title')->update(['uuid' => (string) Str::uuid()]);
+    DB::table('lynx_templates')->where('name', 'home')->update(['uuid' => (string) Str::uuid()]);
+    DB::table('lynx_languages')->where('code', 'pt-br')->update(['uuid' => (string) Str::uuid()]);
+    app(ActionRunner::class)->flushCaches();
+
+    $result = sync()->apply($this->dir, force: true);
+
+    expect($result->errors)->toBe([])
+        ->and(lynx()->fields->find('title'))->not->toBeNull()
+        ->and(lynx()->templates->find('home'))->not->toBeNull()
+        ->and(lynx()->languages->find('pt-br'))->not->toBeNull();
 });
 
 it('runs from Artisan', function (): void {
