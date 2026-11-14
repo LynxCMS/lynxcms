@@ -75,6 +75,11 @@ final readonly class DraftJsonSchema
     {
         $settings = array_map(fn (Type $schema): array => $schema->toArray(), $this->types->get($type)->settingsSchema(new JsonSchemaTypeFactory));
         $settings = array_intersect_key($settings, array_flip(['fields', 'types'])) === [] ? $settings : $this->withItemFields($settings);
+
+        if (isset($settings['options'])) {
+            // Or a map of default language labels to their translations (DraftChoiceOptions).
+            $settings['options'] = ['anyOf' => [$settings['options'], ['type' => 'object', 'additionalProperties' => ['type' => ['object', 'null'], 'additionalProperties' => ['type' => 'string']]]]];
+        }
         $class = $this->types->all()[$type];
 
         return [

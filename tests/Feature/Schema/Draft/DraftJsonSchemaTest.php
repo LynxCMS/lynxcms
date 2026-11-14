@@ -19,6 +19,13 @@ function draftJsonSchema(): array
     return json_decode(app(DraftJsonSchema::class)->toJson(), true, flags: JSON_THROW_ON_ERROR);
 }
 
+it('accepts choice options as a list or as a map of labels to their translations', function (): void {
+    $choice = collect(draftJsonSchema()['$defs']['longField']['anyOf'])->firstWhere('properties.type.const', 'choice');
+    $options = $choice['properties']['options'] ?? [];
+
+    expect($options['anyOf'][1] ?? null)->toBe(['type' => 'object', 'additionalProperties' => ['type' => ['object', 'null'], 'additionalProperties' => ['type' => 'string']]]);
+});
+
 it('describes a draft as fields, templates and pages, and nothing else', function (): void {
     expect(draftJsonSchema())->toMatchArray(['type' => 'object', 'additionalProperties' => false])
         ->and(array_keys(draftJsonSchema()['properties']))->toBe(['fields', 'templates', 'pages']);

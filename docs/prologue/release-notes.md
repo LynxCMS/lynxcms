@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- A draft can translate a choice field's options: `options: {Beginner: {pt: Iniciante}}` gives each option's label in the default language and its translations, and `--from-site` writes translated options that way. An option the site has keeps its translations when the draft gives its label in one language only, so options translated in the admin survive building a draft again; before, the draft replaced them. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
+
 - **Make a shared field translatable** from its screen in the admin, with `lynx()->fields->makeTranslatable()`, or with the `fields.make_translatable` action. Every value becomes the default language's, on pages, drafts and repeater and matrix items, and other languages fall back to it until translated. Revisions and content packages saved before read their values the same way. `lynx:schema:apply` and drafts now make a shared field translatable when the schema file or draft says so; making a translatable field shared is still refused. See [Making a field translatable](/basics/templates-and-fields#making-a-field-translatable) (ADR-0118).
 
 ## 0.1.45

@@ -113,6 +113,31 @@ it('refuses to make a translatable field of the site shared', function (): void 
     compileDraft(['fields' => ['summary' => 'textarea translatable:false']]);
 })->throws(DraftError::class, 'with translatable changed');
 
+function translatedLevels(): void
+{
+    lynx()->fields->add('level', 'choice', settings: ['options' => [
+        ['value' => 'beginner', 'label' => ['default' => 'Beginner', 'pt' => 'Iniciante']],
+        ['value' => 'advanced', 'label' => ['default' => 'Advanced', 'pt' => 'Avançado']],
+    ]]);
+}
+
+it('keeps the translations of options the site has when the draft gives one language', function (): void {
+    translatedLevels();
+
+    expect(compileDraft(['fields' => ['level' => 'choice:Beginner,Advanced']])->fields[0]['settings']['options'])
+        ->toBe(lynx()->fields->get('level')->config()['options']);
+});
+
+it('changes an option\'s label in the default language and keeps its translations', function (): void {
+    translatedLevels();
+    $options = compileDraft(['fields' => ['level' => ['type' => 'choice', 'options' => [['value' => 'beginner', 'label' => 'Novice'], 'Expert']]]])->fields[0]['settings']['options'];
+
+    expect($options)->toBe([
+        ['value' => 'beginner', 'label' => ['default' => 'Novice', 'pt' => 'Iniciante']],
+        ['value' => 'expert', 'label' => 'Expert'],
+    ]);
+});
+
 it('refuses a template or field that a module owns', function (): void {
     lynx()->menus()->create('top', 'Top');
 

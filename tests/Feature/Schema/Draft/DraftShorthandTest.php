@@ -59,6 +59,14 @@ it('keeps the site\'s choice for a field the draft leaves unsaid', function (): 
         ->and(app(DraftShorthand::class)->field('code', 'text translatable', translatable: false)['translatable'])->toBeTrue();
 });
 
+it('reads options as a map of labels to their translations', function (): void {
+    installLynx();
+    expect(draftField('level', ['type' => 'choice', 'options' => ['Beginner' => ['pt' => 'Iniciante'], 'Very advanced' => null]])['settings']['options'])->toBe([
+        ['value' => 'beginner', 'label' => ['default' => 'Beginner', 'pt' => 'Iniciante']],
+        ['value' => 'very-advanced', 'label' => 'Very advanced'],
+    ]);
+});
+
 it('turns a flag into a true setting', function (): void {
     expect(draftField('related', 'page multiple')['settings'])->toBe(['multiple' => true]);
 });

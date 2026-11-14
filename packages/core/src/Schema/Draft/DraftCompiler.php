@@ -42,6 +42,7 @@ final readonly class DraftCompiler
         private SchemaOwners $owners,
         private DraftUseSettings $useSettings,
         private DraftPages $pages,
+        private DraftChoiceOptions $choices,
     ) {}
 
     /**
@@ -218,6 +219,10 @@ final readonly class DraftCompiler
     {
         $existing = $this->fields->find(Value::string($field['name']));
         $settings = Value::map($field['settings']);
+
+        if (isset($settings['options'], $existing?->config()['options'])) {
+            $settings['options'] = $this->choices->keepTranslations(Value::list($settings['options']), Value::list($existing->config()['options']));
+        }
 
         return [
             'uuid' => $existing->uuid ?? (string) Str::uuid(),

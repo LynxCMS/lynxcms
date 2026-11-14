@@ -14,6 +14,8 @@ fields:
   starts_on: date
   venue: text:120
   ticket_price: decimal:2 min:0
+  seats: integer min:1
+  sold_out: toggle
   topics: choice:Design,Development,"Product management" multiple
 
 templates:
@@ -27,7 +29,7 @@ templates:
       - intro
       - starts_on*
       - section: Practical details
-        fields: [venue, ticket_price, topics]
+        fields: [venue, ticket_price, seats, sold_out, topics]
 
 pages:
   /events: Events

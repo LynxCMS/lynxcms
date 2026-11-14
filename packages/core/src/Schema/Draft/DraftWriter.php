@@ -40,6 +40,7 @@ final readonly class DraftWriter
         private SchemaOwners $owners,
         private DraftShorthand $shorthand,
         private DraftValues $values,
+        private DraftChoiceOptions $choices,
     ) {}
 
     public function write(): string
@@ -91,6 +92,8 @@ final readonly class DraftWriter
     private function longForm(array $item): array
     {
         $settings = $item['settings'];
+        $settings['options'] = isset($settings['options']) ? $this->choices->map(Value::list($settings['options'])) ?? $settings['options'] : null;
+        $settings = array_filter($settings, fn (mixed $value, string $key): bool => $key !== 'options' || $value !== null, ARRAY_FILTER_USE_BOTH);
 
         if (isset($settings['fields'])) {
             $settings['fields'] = array_map($this->itemEntry(...), Value::list($settings['fields']));

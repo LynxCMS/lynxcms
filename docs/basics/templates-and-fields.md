@@ -226,6 +226,8 @@ fields:
   intro: textarea
   starts_on: date
   ticket_price: decimal:2 min:0
+  seats: integer min:1
+  sold_out: toggle
   topics: choice:Design,Development,"Product management" multiple
 
 templates:
@@ -240,10 +242,10 @@ templates:
       - starts_on*
       - venue: text:120
       - section: Practical details
-        fields: [ticket_price, topics]
+        fields: [ticket_price, seats, sold_out, topics]
 ```
 
-A field is its type, then what you want to change about it:
+A field is its type, then what you want to change about it. Pick the type that matches the data, since a field's type can't change later: `toggle` for yes or no, `integer` for whole numbers such as a year, `decimal` for prices, `date` and `time`, `choice` for a fixed list, `page` for links to other pages. They store and filter as what they are, so `sold_out=0` and `year>=2020` compare real values. [Field Types](/basics/field-types#available-types) lists them all.
 
 - `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
 - Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language, so a language added later can be translated without changing any field. `translatable:false` makes the field [shared](/basics/field-types#shared-and-translatable), with one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says so: `translatable` makes a shared field translatable, keeping its values as the default language's.
@@ -260,6 +262,19 @@ fields:
     fields: [speaker_name*, intro]
     max: 6
 ```
+
+A choice field's options can be translated in the long form: each option is its label in the default language, followed by its other languages. The stored value is the label made URL safe (`Beginner` is `beginner`), as in the short form.
+
+```yaml
+fields:
+  level:
+    type: choice
+    options:
+      Beginner: { pt: Iniciante }
+      Advanced: { pt: Avançado }
+```
+
+An option the site has keeps its translations when the draft gives it in one language only, as in `choice:Beginner,Advanced`, so options translated in the admin survive building the draft again. Giving a translation in the draft replaces the site's.
 
 In a template, `title*` makes a field required there, and `venue: text:120` defines a field in place. `url: false` makes a template for settings or reusable content, `singleton: true` allows one page, and `children`, `parents` and `allowed` set where pages may go. Sections and tabs work as in [Arranging the page editor](#arranging-the-page-editor).
 
