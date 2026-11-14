@@ -129,7 +129,7 @@ final readonly class DraftShorthand
         foreach ($tokens as $token) {
             match (true) {
                 $token === self::TRANSLATABLE => $field['translatable'] = true,
-                str_starts_with($token, self::TRANSLATABLE.':') => $field['translatable'] = self::isTrue(substr($token, strlen(self::TRANSLATABLE) + 1)),
+                str_starts_with($token, self::TRANSLATABLE.':') => $field['translatable'] = $this->isTrue(substr($token, strlen(self::TRANSLATABLE) + 1)),
                 str_starts_with($token, self::LABEL_TOKEN) => $field['label'] = trim(substr($token, strlen(self::LABEL_TOKEN)), '"'),
                 default => $field['settings'] = [...$field['settings'], ...$this->token($name, $type, $token)],
             };
@@ -205,14 +205,14 @@ final readonly class DraftShorthand
         $value = trim($value, '"');
 
         return match ($kind) {
-            'boolean' => self::isTrue($value),
+            'boolean' => $this->isTrue($value),
             'integer' => (int) $value,
             'number' => is_numeric($value) ? $value + 0 : $value,
             default => $value,
         };
     }
 
-    private static function isTrue(string $value): bool
+    private function isTrue(string $value): bool
     {
         return ! in_array(strtolower(trim($value, '"')), ['false', '0', 'no'], true);
     }
