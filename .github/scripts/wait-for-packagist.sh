@@ -11,7 +11,7 @@ set -uo pipefail
 
 package="$1"
 tag="$2"
-attempts=90       # 30 minutes
+attempts=30       # 10 minutes: past that a mirror is behind, and the daily run catches up
 pause=20
 report_every=6    # every 2 minutes
 user_agent="lynxcms-starter-ci (+https://github.com/LynxCMS/lynxcms)"

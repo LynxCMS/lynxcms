@@ -2,7 +2,8 @@
 # in docs/snippets/training, with .github/scripts/build-starter.sh: a fresh Laravel app, Lynx from
 # Packagist, BlatUI, the guide's files, and the starter's own tests.
 # Pull requests that change the guide's code build and test it against the latest release. Tags
-# also push it, as one commit on main plus the tag, so the starter always matches a release.
+# also push it, as one commit on main plus the tag, so the starter always matches a release. A
+# daily run pushes the latest release when a tag run failed, as when a Packagist mirror lags.
 # Needs SPLIT_TOKEN with Contents read and write on LynxCMS/starter-training too.
 name: Starter
 
@@ -11,6 +12,9 @@ on:
     paths: ['docs/snippets/training/**', '.github/scripts/build-starter.sh', '.github/workflows/starter.yml']
   push:
     tags: ['v*']
+  # Daily, to catch up on a release whose tag run failed (see the needed step).
+  schedule:
+    - cron: '30 6 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -49,10 +53,28 @@ jobs:
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
+      # A daily run builds the latest release only when the starter doesn't have it yet, so a release
+      # whose tag run met a lagging Packagist mirror reaches the starter a day later at most.
+      - name: Check whether the starter needs the release
+        id: needed
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" != "schedule" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code --tags "https://github.com/LynxCMS/starter-training.git" "refs/tags/${TAG}" > /dev/null; then
+            echo "The starter has ${TAG} already."
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            # The guide's code as it was at the release.
+            git checkout --quiet "${TAG}"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+
       # Packagist can take a few minutes to list a tag the split workflow has just pushed, one
       # package at a time, so every package the starter needs is waited for.
       - name: Wait for the release on Packagist
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' && steps.needed.outputs.build == 'true'
         run: |
           for package in core admin menus media forms seo sitemap cache mcp; do
             .github/scripts/wait-for-packagist.sh "lynxcms/${package}" "${TAG}"
@@ -61,11 +83,12 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
 
       - name: Build and test the starter
+        if: steps.needed.outputs.build == 'true'
         run: .github/scripts/build-starter.sh "${{ steps.version.outputs.version }}" ../starter-training
 
       - name: Push to LynxCMS/starter-training
-        # A manual run pushes only with dry_run off, and only from a tag.
-        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false && github.ref_type == 'tag')
+        # A manual run pushes only with dry_run off, and only from a tag; a daily run when the starter needs it.
+        if: steps.needed.outputs.build == 'true' && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false && github.ref_type == 'tag'))
         working-directory: ../starter-training
         run: |
           git init --quiet --initial-branch=main
