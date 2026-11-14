@@ -5,7 +5,7 @@
 #
 # A field is "type[:argument]" followed by flags and key:value settings:
 #   textarea:html    decimal:2 min:0    choice:Small,Medium,"Extra large" multiple
-# Text, textarea and URL fields get a value per language; add "shared" for one value in every language.
+# Text, textarea and URL fields get a value per language; add translatable:false for one value in every language.
 # In a template, "name*" makes a field required there, and {name: type} defines it in place.
 # Pages are created unpublished, by URL path; required fields other than the title need a value.
 

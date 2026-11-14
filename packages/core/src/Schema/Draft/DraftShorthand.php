@@ -17,12 +17,13 @@ use LynxCms\Core\Support\Value;
 /**
  * Reads one field of a draft (ADR-0116). The short form is "type[:argument] token token": the
  * argument fills the type's main setting ("decimal:2" is two places), a bare token is
- * "shared", "translatable" or a true setting ("multiple"), label:"Text" is the label, and "key:value" sets a setting,
+ * "translatable" or a true setting ("multiple"), label:"Text" is the label, translatable:false keeps one value
+ * for every language, and "key:value" sets a setting,
  * with list settings split on commas. The long form is the field as an array: type, label, translatable,
  * and its settings beside them.
  *
  * A field is translatable when its type can be, as the admin makes it on a site with one language,
- * because that can't change later: "shared" opts out. A field the site has keeps its own choice
+ * because that can't change later: translatable:false opts out. A field the site has keeps its own choice
  * unless the draft states one. Repeater and matrix fields list their item fields, "name*" for a
  * required one.
  *
@@ -39,8 +40,6 @@ final readonly class DraftShorthand
     private const array COMMON_SETTINGS = ['fallback' => 'string', 'autoload' => 'boolean', 'description' => 'string', 'notes' => 'string'];
 
     private const string TRANSLATABLE = 'translatable';
-
-    private const string SHARED = 'shared';
 
     /** A label in the short form: label:"Button text". */
     public const string LABEL_TOKEN = 'label:';
@@ -130,7 +129,7 @@ final readonly class DraftShorthand
         foreach ($tokens as $token) {
             match (true) {
                 $token === self::TRANSLATABLE => $field['translatable'] = true,
-                $token === self::SHARED => $field['translatable'] = false,
+                str_starts_with($token, self::TRANSLATABLE.':') => $field['translatable'] = self::isTrue(substr($token, strlen(self::TRANSLATABLE) + 1)),
                 str_starts_with($token, self::LABEL_TOKEN) => $field['label'] = trim(substr($token, strlen(self::LABEL_TOKEN)), '"'),
                 default => $field['settings'] = [...$field['settings'], ...$this->token($name, $type, $token)],
             };
@@ -206,11 +205,16 @@ final readonly class DraftShorthand
         $value = trim($value, '"');
 
         return match ($kind) {
-            'boolean' => ! in_array(strtolower($value), ['false', '0', 'no'], true),
+            'boolean' => self::isTrue($value),
             'integer' => (int) $value,
             'number' => is_numeric($value) ? $value + 0 : $value,
             default => $value,
         };
+    }
+
+    private static function isTrue(string $value): bool
+    {
+        return ! in_array(strtolower(trim($value, '"')), ['false', '0', 'no'], true);
     }
 
     /**

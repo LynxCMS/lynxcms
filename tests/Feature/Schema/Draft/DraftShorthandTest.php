@@ -43,8 +43,9 @@ it('makes a field translatable when its type can be', function (): void {
         ->and(draftField('seats', 'integer')['translatable'])->toBeFalse();
 });
 
-it('keeps a field shared with the word shared', function (): void {
-    expect(draftField('code', 'text shared')['translatable'])->toBeFalse()
+it('keeps one value for every language with translatable:false', function (): void {
+    expect(draftField('code', 'text translatable:false')['translatable'])->toBeFalse()
+        ->and(draftField('code', 'text translatable:true')['translatable'])->toBeTrue()
         ->and(draftField('code', ['type' => 'text', 'translatable' => false])['translatable'])->toBeFalse();
 });
 

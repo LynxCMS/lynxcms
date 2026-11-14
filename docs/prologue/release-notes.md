@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- A draft makes text, textarea and URL fields translatable unless they are marked `shared`, as the admin does on a site with one language. Before, a field was shared unless marked `translatable`, so a draft built on a site with one language left fields that could never be translated once a language was added. Fields the site has keep their choice, so drafts you have built still build without changes. A new text field that must have one value in every language, such as a product code, now needs `shared` in the draft. `--from-site` writes `shared` where needed, and `translatable` no longer appears. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
+- A draft makes text, textarea and URL fields translatable unless they say `translatable:false`, as the admin does on a site with one language. Before, a field was shared unless marked `translatable`, so a draft built on a site with one language left fields that could never be translated once a language was added. Fields the site has keep their choice, so drafts you have built still build without changes. A new text field that must have one value in every language, such as a product code, now needs `translatable:false` in the draft. `--from-site` writes `translatable:false` where needed, and no longer writes `translatable`. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema) (ADR-0116).
 
 ## 0.1.44
 

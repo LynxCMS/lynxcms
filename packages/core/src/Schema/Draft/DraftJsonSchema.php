@@ -66,7 +66,7 @@ final readonly class DraftJsonSchema
         return [
             'type' => 'string',
             'pattern' => '^(?:'.implode('|', array_map(preg_quote(...), array_keys($this->types->all()))).')(?::\S+)?(?:\s.*)?$',
-            'description' => 'type[:argument] then flags (shared, translatable, true settings), label:"Text" and key:value settings. Text, textarea and URL fields are translatable unless marked shared. Arguments: '.$arguments.'.',
+            'description' => 'type[:argument] then flags (translatable, true settings), label:"Text" and key:value settings. Text, textarea and URL fields are translatable unless given translatable:false. Arguments: '.$arguments.'.',
         ];
     }
 

@@ -30,10 +30,10 @@ it('writes a field in the short form when it fits, translatable by default', fun
         ->toContain('body: \'textarea:html\'');
 });
 
-it('writes shared for a field that could be translatable but isn\'t', function (): void {
+it('writes translatable:false for a field that could be translatable but isn\'t', function (): void {
     lynx()->fields->add('code', 'text');
 
-    expect(app(DraftWriter::class)->write())->toContain('code: \'text shared\'');
+    expect(app(DraftWriter::class)->write())->toContain('code: \'text translatable:false\'');
 });
 
 it('builds back a site with a shared text field', function (): void {

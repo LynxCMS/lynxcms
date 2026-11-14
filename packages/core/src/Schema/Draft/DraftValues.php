@@ -56,7 +56,7 @@ final readonly class DraftValues
         $tokens = [$head];
 
         if ($item['translatable'] !== $this->shorthand->translatesByDefault($item['type'])) {
-            $tokens[] = $item['translatable'] ? 'translatable' : 'shared';
+            $tokens[] = $item['translatable'] ? 'translatable' : 'translatable:false';
         }
 
         if ($item['label'] !== DraftShorthand::label($item['name'])) {
