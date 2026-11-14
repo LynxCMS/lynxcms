@@ -25,11 +25,11 @@ Field names use lowercase letters, digits and underscores, and start with a lett
 
 Some names are taken, because pages or selectors already use them. Lynx refuses them with a message saying so, so you find out when you create the field, not when a selector misbehaves: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `has_draft`, `has_schedule`, `has_outdated`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.
 
-A field is created once and shared by every template that uses it. The `title` field that `lynx:install` creates is used by most templates, for example.
+A field is created once and used by every template that lists it. The `title` field that `lynx:install` creates is used by most templates, for example.
 
 ### Translatable fields
 
-A **translatable** field holds one value per language, such as a title or a body text. Any other field is **shared**: one value for every language, such as a price or a date. Only text, textarea and URL fields can be translatable. [Field Types](/basics/field-types#shared-and-translatable) explains the difference, and [Languages](/basics/languages) how values fall back between languages.
+A **translatable** field holds one value per language, such as a title or a body text. Any other field is **shared**: its one value is the same in every language, which share it, such as a price or a date. Only text, textarea and URL fields can be translatable. [Field Types](/basics/field-types#shared-and-translatable) explains the difference, and [Languages](/basics/languages) how values fall back between languages.
 
 Whether a field is translatable can't be changed after it is created, so choose with care. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so a language added later can be translated without changing any field.
 
@@ -232,7 +232,7 @@ templates:
 A field is its type, then what you want to change about it:
 
 - `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
-- Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language: that can't be changed later, so a language added later can be translated without changing any field. `translatable:false` keeps one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says `translatable` or `translatable:false`.
+- Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language: that can't be changed later, so a language added later can be translated without changing any field. `translatable:false` makes the field [shared](/basics/field-types#shared-and-translatable), with one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says `translatable` or `translatable:false`.
 - A word on its own, such as `multiple`, turns a setting on. `key:value` sets any other setting, and a list is written with commas: `templates:course,workshop`.
 - `label:"Ticket price (EUR)"` sets the label. Without one, `ticket_price` is labelled "Ticket price".
 - Anything the short form can't say, such as a repeater's fields or labels in several languages, goes in the long form: the field as a map of `type`, `label`, `translatable` (`false` for one value in every language) and its settings.
