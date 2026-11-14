@@ -71,6 +71,14 @@ it('reads a revision saved before as the default language\'s value', function ()
     expect(app(Revisions::class)->saveInput(translatableAlpha(), ['*' => ['venue' => 'Porto']])['venue'])->toBe(['default' => 'Porto', 'pt' => null]);
 });
 
+it('works beside a field named like the table it rebuilds from', function (): void {
+    lynx()->fields->add('venue_old', 'text');
+
+    lynx()->fields->makeTranslatable('venue');
+
+    expect((string) translatableAlpha()->venue)->toBe('Lisbon');
+});
+
 it('refuses a field that is translatable, or whose type can\'t be', function (string $field): void {
     lynx()->fields->makeTranslatable($field);
 })->with(['summary', 'price'])->throws(ValidationException::class);

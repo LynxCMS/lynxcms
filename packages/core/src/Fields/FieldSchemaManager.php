@@ -20,8 +20,8 @@ use LynxCms\Core\Models\Field;
  */
 final class FieldSchemaManager
 {
-    /** The suffix a table takes while it is rebuilt. */
-    private const string OLD = '_old';
+    /** The name a table takes while it is rebuilt: never a field's, whose tables all start lynx_f_. */
+    private const string REBUILDING = 'lynx_rebuild_';
 
     public function create(Field $field): void
     {
@@ -91,7 +91,7 @@ final class FieldSchemaManager
     public function makeTranslatable(Field $field, int $languageId): void
     {
         $table = $field->table();
-        $old = $table.self::OLD;
+        $old = self::REBUILDING.$field->id;
         $this->dropIndexes($field);
         Schema::rename($table, $old);
         $this->create($field);
