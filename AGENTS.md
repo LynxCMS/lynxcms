@@ -92,6 +92,14 @@ The docs aim to be as easy to follow as Laravel's. The reader is a PHP developer
 - **Guides** say what the reader is building first, then each chapter adds one part and ends with what the reader and the site's owner now have. Code in a guide is real: a tested snippet in `docs/snippets`, or a shortened excerpt of a starter app, saying so.
 - Reference pages (Configuration, Artisan, Field Types) may stay terse: readers arrive there knowing what they look for.
 
+## Checks while Lynx has few users
+
+Keep the loop short; CI is the safety net.
+
+- Before pushing code: Pint, PHPStan and the tests of what changed (`vendor/bin/pest tests/Feature/...`). The full suite and Rector run in CI. Docs, wording and CI changes need only Pint where PHP changed.
+- Pull requests run SQLite tests and the quality job; PostgreSQL and the table prefix run on `main` after the merge. Fix a failure there right away.
+- Releases come in batches, when something worth shipping has gathered, not after every pull request. A release is a commit on `main` that turns "Unreleased" into the version heading, then the tag; no pull request of its own.
+
 ## Commands
 
 ```bash

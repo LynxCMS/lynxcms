@@ -31,7 +31,9 @@ jobs:
             echo "code=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          code=$(echo "$changed" | grep -vE '^docs/(\.vitepress/|public/|package(-lock)?\.json$|wrangler[^/]*$)' | grep -vE '^docs/.+\.md$' || true)
+          # Docs and other workflows (starters, split, docs site) need no test run; this one does.
+          code=$(echo "$changed" | grep -vE '^docs/(\.vitepress/|public/|package(-lock)?\.json$|wrangler[^/]*$)' | grep -vE '^docs/.+\.md$' | grep -vE '^\.github/' || true)
+          code=$code$(echo "$changed" | grep -E '^\.github/workflows/tests\.yml$' || true)
           code=$code$(echo "$changed" | grep -E '^docs/snippets/' || true)
           echo "code=$([ -n "$code" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
@@ -65,14 +67,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The same suites as composer test:all: SQLite, PostgreSQL, and SQLite with a table prefix.
-        # PostgreSQL is the slowest, so it runs in three shards at the same time.
-        include:
-          - { suite: test, shard: '1/1' }
-          - { suite: 'test:prefix', shard: '1/1' }
-          - { suite: 'test:pgsql', shard: '1/3' }
-          - { suite: 'test:pgsql', shard: '2/3' }
-          - { suite: 'test:pgsql', shard: '3/3' }
+        # Pull requests run SQLite only. Pushes to main run the same suites as composer test:all:
+        # SQLite, PostgreSQL in three shards at the same time, and SQLite with a table prefix. Few
+        # sites use Lynx yet, so a driver problem found minutes after a merge is cheap to fix.
+        include: ${{ fromJSON(github.event_name == 'push' && '[{"suite":"test","shard":"1/1"},{"suite":"test:prefix","shard":"1/1"},{"suite":"test:pgsql","shard":"1/3"},{"suite":"test:pgsql","shard":"2/3"},{"suite":"test:pgsql","shard":"3/3"}]' || '[{"suite":"test","shard":"1/1"}]') }}
     name: Tests (${{ matrix.suite }} ${{ matrix.shard }})
 
     services:
