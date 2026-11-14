@@ -9,6 +9,7 @@ use LynxCms\Ai\LynxAi;
 use LynxCms\Cache\Pages\ClearOnChange;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Fields\FieldSchemaManager;
+use LynxCms\Core\Fields\Items\SubfieldLanguageRows;
 use LynxCms\Core\Indexes\TrigramIndexes;
 use LynxCms\Core\Query\ClauseComparison;
 use LynxCms\Core\Query\CountClause;
@@ -112,6 +113,8 @@ arch('only actions write page data')
         'LynxCms\Core\Pages',
         'LynxCms\Core\Query',
         FieldSchemaManager::class,
+        // Only for fields.make_translatable: moves a subfield's values into a language's item rows.
+        SubfieldLanguageRows::class,
         TemplateFieldsWriter::class,
         // Reads every template's field rows in one query, so no field is hydrated twice.
         TemplateRegistry::class,

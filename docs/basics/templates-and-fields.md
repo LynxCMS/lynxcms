@@ -31,7 +31,7 @@ A field is created once and used by every template that lists it. The `title` fi
 
 A **translatable** field holds one value per language, such as a title or a body text. Any other field is **shared**: its one value is the same in every language, which share it, such as a price or a date. Only text, textarea and URL fields can be translatable. [Field Types](/basics/field-types#shared-and-translatable) explains the difference, and [Languages](/basics/languages) how values fall back between languages.
 
-Whether a field is translatable can't be changed after it is created, so choose with care. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so a language added later can be translated without changing any field.
+A shared field can be made translatable later, as [Making a field translatable](#making-a-field-translatable) shows, but a translatable field can't be made shared again. On a site with one language the admin doesn't ask, and makes fields translatable whenever their type allows, so a language added later can be translated without changing any field.
 
 ### Labels, descriptions and notes
 
@@ -54,6 +54,20 @@ lynx()->fields->duplicate('starts_on', 'ends_on', label: 'Ends on');
 ```
 
 The new field gets the same type, labels (unless you give one), translation and settings. It is a field of its own: no template uses it until you add it, and no values are copied.
+
+### Making a field translatable
+
+A shared text, textarea or URL field can be made translatable, for example when a site gets its second language and a field made shared turns out to need translating. On the field's screen, **Make translatable** does it after asking. In code:
+
+```php
+lynx()->fields->makeTranslatable('venue');
+```
+
+Every value becomes the default language's value, on live pages, their drafts, and in the items of repeaters and matrices that show the field. Other languages start empty and [fall back](/basics/languages#fallback) to it until someone translates them, so visitors see no change. Revisions and content packages saved before read the old value as the default language's.
+
+It only goes one way: a translatable field can't be made shared again, because that would lose every translation. To get there, create a shared field, copy the values you want, and delete the old one.
+
+If the field is listed in `lynx.sort_keys`, run `php artisan lynx:sort-keys` afterwards so sorting by it uses sort keys again.
 
 ## Creating templates
 
@@ -232,7 +246,7 @@ templates:
 A field is its type, then what you want to change about it:
 
 - `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
-- Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language: that can't be changed later, so a language added later can be translated without changing any field. `translatable:false` makes the field [shared](/basics/field-types#shared-and-translatable), with one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says `translatable` or `translatable:false`.
+- Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language, so a language added later can be translated without changing any field. `translatable:false` makes the field [shared](/basics/field-types#shared-and-translatable), with one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says so: `translatable` makes a shared field translatable, keeping its values as the default language's.
 - A word on its own, such as `multiple`, turns a setting on. `key:value` sets any other setting, and a list is written with commas: `templates:course,workshop`.
 - `label:"Ticket price (EUR)"` sets the label. Without one, `ticket_price` is labelled "Ticket price".
 - Anything the short form can't say, such as a repeater's fields or labels in several languages, goes in the long form: the field as a map of `type`, `label`, `translatable` (`false` for one value in every language) and its settings.
@@ -255,7 +269,7 @@ php artisan lynx:draft --dry-run     # lists what would change, and changes noth
 php artisan lynx:draft               # builds it, after asking in a terminal
 ```
 
-A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or whether it is translatable, and it can't touch what Lynx or a module owns, such as menus.
+A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or make a translatable field shared, and it can't touch what Lynx or a module owns, such as menus.
 
 For a template the site already has, the draft's `fields` list becomes the template's list, in the draft's order. A draft that leaves out a field the template has is refused, and the error names the fields. List them to keep them, or build with `--prune-fields` to take them off the template; the plan then shows `remove field body from template course` for each. The fields and their values stay in the site.
 

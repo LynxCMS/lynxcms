@@ -19,6 +19,7 @@ use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
 use LynxCms\Admin\Livewire\Concerns\EditsFormatters;
 use LynxCms\Admin\Livewire\Concerns\EditsItemDisplay;
 use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
+use LynxCms\Admin\Livewire\Concerns\MakesFieldTranslatable;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\Change;
@@ -30,7 +31,7 @@ use LynxCms\Core\Support\Value;
  * Setup > Fields > New field and Edit field, in tabs: a repeater's or matrix's builder, Preview,
  * Field, and Limits and display. Kinds and settings are in words for people (FieldKinds,
  * SettingLabels); every write goes through fields.create or fields.update, whose errors show by
- * their inputs. Name, type and translatable are fixed once the field exists (schema-admin plan).
+ * their inputs. Name and type are fixed once the field exists (schema-admin plan); a shared field can be made translatable.
  *
  * @api
  */
@@ -40,6 +41,7 @@ final class FieldForm extends Component
     use EditsFormatters;
     use EditsItemDisplay;
     use EditsItemSettings;
+    use MakesFieldTranslatable;
     use Notifies;
 
     /** The field being edited; null on the New field screen. */
@@ -182,6 +184,7 @@ final class FieldForm extends Component
             'availableFormatters' => lynx()->formatters()->forType($this->type),
             // With one language the choice means nothing yet, and it can't be changed later.
             'canTranslate' => $this->isMultilingual() && $this->typeCanTranslate(),
+            'canMakeTranslatable' => $this->canMakeTranslatable(),
             'usedBy' => $this->field === null ? [] : (app(FieldUsage::class)->labels()[$this->field] ?? []),
             'canEdit' => $this->canEdit(),
             'owner' => $this->field === null ? null : app(SchemaOwners::class)->ownerOfField($this->field),

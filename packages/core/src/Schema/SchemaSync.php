@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Fields\DeleteField;
+use LynxCms\Core\Actions\Fields\MakeFieldTranslatable;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Languages\DeleteLanguage;
 use LynxCms\Core\Actions\Runner\ActionRunner;
@@ -172,10 +173,14 @@ final readonly class SchemaSync
                 continue;
             }
 
-            if ($existing->name !== $item['name'] || $existing->type !== $item['type'] || $existing->isTranslatable() !== $item['translatable']) {
-                $result->errors[] = "Field {$existing->name}: renaming, changing type or changing translatable is not supported by schema sync yet.";
+            if ($existing->name !== $item['name'] || $existing->type !== $item['type'] || ($existing->isTranslatable() && ! $item['translatable'])) {
+                $result->errors[] = "Field {$existing->name}: renaming, changing type or making a translatable field shared is not supported by schema sync.";
 
                 continue;
+            }
+
+            if (! $existing->isTranslatable() && $item['translatable']) {
+                $this->run($result, MakeFieldTranslatable::class, ['field' => $existing->name]);
             }
 
             if ($existing->labels()->toStorage() !== $item['label'] || $existing->config() != $item['settings']) {

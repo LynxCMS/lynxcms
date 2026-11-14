@@ -147,7 +147,7 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 Until a site has a second language, the admin leaves languages out: the field form doesn't ask whether a field is translatable, and screens don't mention translations, fallbacks or the default language.
 
-Fields whose type can be translated are still created translatable, because that can't be changed later. When the site gets its second language, every text is ready to translate without changing a field.
+Fields whose type can be translated are still created translatable, because a translatable field can't be made shared later while the reverse is easy ([Making a field translatable](/basics/templates-and-fields#making-a-field-translatable)). When the site gets its second language, every text is ready to translate without changing a field.
 
 `lynx()->languages->isMultilingual()` says whether the site has more than one language, for templates that want to do the same, such as hiding a language switcher.
 

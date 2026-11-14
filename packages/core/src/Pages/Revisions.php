@@ -113,7 +113,9 @@ final readonly class Revisions
             $byLanguage = [];
 
             foreach ($this->languages->all() as $language) {
-                $byLanguage[(string) $language->code] = $stored[(string) $language->code][$name] ?? null;
+                // A field made translatable since (ADR-0118) kept its value as shared: the default language's now.
+                $shared = $language->id === $this->languages->default()->id ? $stored['*'][$name] ?? null : null;
+                $byLanguage[(string) $language->code] = $stored[(string) $language->code][$name] ?? $shared;
             }
 
             $values[$name] = $byLanguage;

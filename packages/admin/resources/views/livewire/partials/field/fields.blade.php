@@ -27,7 +27,7 @@
         </div>
     </section>
 
-    @if ($canTranslate)
+    @if ($canTranslate || $canMakeTranslatable)
         <section class="{{ $section }}" aria-labelledby="field-languages-heading">
             <h2 id="field-languages-heading" class="text-base font-semibold">{{ __('lynx-admin::fields.languages.heading') }}</h2>
             @if ($field === null)
@@ -41,6 +41,12 @@
                 </div>
             @else
                 <p class="text-sm">{{ __($translatable ? 'lynx-admin::fields.languages.own_read' : 'lynx-admin::fields.languages.same_read') }}</p>
+            @endif
+            @if ($canMakeTranslatable)
+                <div class="flex flex-wrap items-center gap-3">
+                    <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="makeTranslatable" wire:confirm="{{ __('lynx-admin::fields.languages.confirm_make_translatable') }}">{{ __('lynx-admin::fields.languages.make_translatable') }}</x-lynx-admin::ui.button>
+                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.languages.make_translatable_hint') }}</p>
+                </div>
             @endif
             @if ($translatable)
                 <div class="flex flex-wrap items-center gap-3">

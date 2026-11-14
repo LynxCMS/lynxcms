@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Fields\DeleteField;
 use LynxCms\Core\Actions\Fields\DuplicateField;
+use LynxCms\Core\Actions\Fields\MakeFieldTranslatable;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
@@ -55,6 +56,12 @@ final readonly class FieldsApi
     public function duplicate(Field|string $field, string $name, string|array|null $label = null, bool $dryRun = false): Field|ActionResult
     {
         return $this->runner->run(DuplicateField::class, ['field' => $this->name($field), 'name' => $name] + ($label === null ? [] : ['label' => $label]), $dryRun)->valueOrDryRun(Field::class);
+    }
+
+    /** Makes a shared field translatable, its values becoming the default language's (ADR-0118). */
+    public function makeTranslatable(Field|string $field, bool $dryRun = false): Field|ActionResult
+    {
+        return $this->runner->run(MakeFieldTranslatable::class, ['field' => $this->name($field)], $dryRun)->valueOrDryRun(Field::class);
     }
 
     /**
