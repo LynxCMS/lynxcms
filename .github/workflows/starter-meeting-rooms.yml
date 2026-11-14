@@ -1,13 +1,17 @@
 # Keeps the meeting rooms starter (LynxCMS/starter-meeting-rooms), the code of the meeting rooms
 # guide, on the latest release. Unlike starter-training it is an app of its own, developed in its
 # repository: each tag requires the new Lynx version there, runs its PHPStan and tests, and pushes
-# the update as one commit on main plus the tag.
+# the update as one commit on main plus the tag. A daily run does the same for the latest release
+# when a tag run failed, as when a Packagist mirror lags.
 # Needs SPLIT_TOKEN with Contents read and write on LynxCMS/starter-meeting-rooms too.
 name: Starter (meeting rooms)
 
 on:
   push:
     tags: ['v*']
+  # Daily, to catch up on a release whose tag run failed (see the needed step).
+  schedule:
+    - cron: '30 6 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -52,9 +56,25 @@ jobs:
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
+      # A daily run builds the latest release only when the starter doesn't have it yet, so a release
+      # whose tag run met a lagging Packagist mirror reaches the starter a day later at most.
+      - name: Check whether the starter needs the release
+        id: needed
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" != "schedule" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code --tags "https://github.com/LynxCMS/starter-meeting-rooms.git" "refs/tags/${TAG}" > /dev/null; then
+            echo "The starter has ${TAG} already."
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+
       # Packagist lists a tag the split workflow has just pushed one package at a time.
       - name: Wait for the release on Packagist
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' && steps.needed.outputs.build == 'true'
         working-directory: starter
         run: |
           for package in $(jq -r '.require | keys[] | select(startswith("lynxcms/"))' composer.json); do
@@ -64,6 +84,7 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
 
       - name: Require the release
+        if: steps.needed.outputs.build == 'true'
         working-directory: starter
         run: |
           packages=$(jq -r --arg version "^${VERSION}" '.require | keys[] | select(startswith("lynxcms/")) | . + ":" + $version' composer.json)
@@ -79,6 +100,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
 
       - name: Check and test the starter
+        if: steps.needed.outputs.build == 'true'
         working-directory: starter
         run: |
           npm ci
@@ -89,8 +111,8 @@ jobs:
           php artisan test --parallel --compact
 
       - name: Push to LynxCMS/starter-meeting-rooms
-        # A manual run pushes only with dry_run off, and only from a tag.
-        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false && github.ref_type == 'tag')
+        # A manual run pushes only with dry_run off, and only from a tag; a daily run when the starter needs it.
+        if: steps.needed.outputs.build == 'true' && (github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false && github.ref_type == 'tag'))
         working-directory: starter
         run: |
           git add composer.json composer.lock
