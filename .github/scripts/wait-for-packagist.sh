@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Waits until Composer's metadata on repo.packagist.org lists a package's tag.
+# Waits until Composer's metadata on Packagist's main server lists a package's tag.
 #
 # Usage: wait-for-packagist.sh <vendor/package> <tag>
 #
 # Packagist lists a tag the split workflow has just pushed one package at a time, and its CDN
-# caches the metadata for up to 15 minutes. Every few attempts this prints the HTTP status and
+# caches the metadata for up to 15 minutes. The main server is read rather than repo.packagist.org,
+# whose mirrors served v0.1.44 for hours after v0.1.45 was out. Every few attempts this prints the HTTP status and
 # the newest version returned, so a timeout shows whether the tag was missing, the cache stale,
 # or the request refused. (packagist.org's own API is no help here: it is cached for 12 hours.)
 set -uo pipefail
@@ -23,11 +24,11 @@ newest() {
 }
 
 report() {
-  echo "${package}: attempt $1, repo.packagist.org answered $2, newest version $(newest)." >&2
+  echo "${package}: attempt $1, packagist.org answered $2, newest version $(newest)." >&2
 }
 
 for attempt in $(seq 1 "$attempts"); do
-  status="$(curl -s -A "$user_agent" -H 'Cache-Control: no-cache' -o "$body" -w '%{http_code}' "https://repo.packagist.org/p2/${package}.json")"
+  status="$(curl -s -A "$user_agent" -H 'Cache-Control: no-cache' -o "$body" -w '%{http_code}' "https://packagist.org/p2/${package}.json")"
 
   if [ "$status" = "200" ] && grep -q "\"${tag}\"" "$body"; then
     echo "${package} ${tag} is on Packagist."

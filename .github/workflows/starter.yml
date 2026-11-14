@@ -37,6 +37,11 @@ jobs:
           extensions: sqlite3, pdo_sqlite, intl, gd
           tools: composer:v2
 
+      # repo.packagist.org's mirrors can trail Packagist by hours: v0.1.44 and v0.1.45 each waited
+      # 30 minutes on metadata the main server had long had. The starter reads the main server.
+      - name: Read Packagist's main server
+        run: composer config --global repo.packagist composer https://packagist.org
+
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
