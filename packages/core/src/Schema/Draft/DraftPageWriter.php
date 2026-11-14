@@ -7,7 +7,6 @@ namespace LynxCms\Core\Schema\Draft;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Pages\SavePage;
-use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -28,7 +27,7 @@ final readonly class DraftPageWriter
     public function steps(array $pages): array
     {
         return array_map(fn (DraftPage $page): array => [
-            'action' => $this->exists($page) ? DraftPlan::KEEP : DraftPlan::CREATE,
+            'action' => $page->exists ? DraftPlan::KEEP : DraftPlan::CREATE,
             'kind' => 'page',
             'name' => "{$page->path} ({$page->template})",
         ], $pages);
@@ -43,7 +42,7 @@ final readonly class DraftPageWriter
     {
         DB::transaction(function () use ($pages): void {
             foreach ($pages as $page) {
-                if (! $this->exists($page)) {
+                if (! $page->exists) {
                     $this->save($page);
                 }
             }
@@ -66,10 +65,5 @@ final readonly class DraftPageWriter
         } catch (ValidationException $e) {
             throw new DraftError("Page [{$page->path}]: ".Value::string(collect($e->errors())->flatten()->first()).' The fields and templates are built; no page was created.', $e->getCode(), previous: $e);
         }
-    }
-
-    private function exists(DraftPage $page): bool
-    {
-        return lynx()->pages->get($page->path.'/') instanceof Page;
     }
 }

@@ -118,3 +118,12 @@ it('creates a page on a template without a title, and refuses a title for it', f
         ->expectsOutputToContain('Page [/footer]: template [site-settings] has no field [title].')
         ->assertFailed();
 });
+
+it('builds a page on a template without a URL again without changes', function (): void {
+    File::put($this->dir.'/draft.yaml', "fields:\n  contact_email: email\ntemplates:\n  site-settings:\n    url: false\n    singleton: true\n    fields: [contact_email]\npages:\n  /site-settings:\n");
+    $this->artisan('lynx:draft', ['path' => $this->dir.'/draft.yaml'])->assertSuccessful();
+
+    $this->artisan('lynx:draft', ['path' => $this->dir.'/draft.yaml'])
+        ->expectsOutputToContain('The site already matches the draft.')
+        ->assertSuccessful();
+});

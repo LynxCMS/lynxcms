@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Fixed: building a draft a second time failed when it creates a page whose template has no URL, such as a settings page, with "Template [site-settings] is a singleton and already has a page". Such a page has no path of its own, so the draft now finds it by its parent and name, and keeps it as it is.
+
 ## 0.1.46
 
 Released November 14, 2026. A shared field can be made translatable, and drafts can translate choice options and keep the translations made in the admin. Nothing to do after updating, and no database changes.

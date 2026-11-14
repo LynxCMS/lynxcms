@@ -78,7 +78,7 @@ final class DraftPages
         $parent = '/'.implode('/', array_slice($segments, 0, -1));
         $this->assertName($path, $name);
 
-        $existing = lynx()->pages->get($path.'/');
+        $existing = $this->sitePage($path);
         $entry = is_string($entry) ? ['title' => $entry] : Value::map($entry);
         $template = $existing instanceof Page ? (string) $existing->template()->name : $this->templateOf($path, $name, $entry);
         $values = array_diff_key($entry, ['template' => true]);
@@ -91,7 +91,7 @@ final class DraftPages
 
         $this->placed[$path] = $template;
 
-        return new DraftPage($path, $parent, $name, $template, $values);
+        return new DraftPage($path, $parent, $name, $template, $values, $existing instanceof Page);
     }
 
     private function assertName(string $path, string $name): void
@@ -136,13 +136,30 @@ final class DraftPages
     /** The template of a page the site has or the draft placed before. */
     private function placedTemplate(string $path): ?string
     {
-        if (isset($this->placed[$path])) {
-            return $this->placed[$path];
+        return $this->placed[$path] ?? $this->sitePage($path)?->template()->name;
+    }
+
+    /**
+     * The site's page at a path. A page whose template has no URL has no path of its own, so it is
+     * found by its parent and name instead, all the way up.
+     */
+    private function sitePage(string $path): ?Page
+    {
+        if ($path === self::HOME) {
+            return lynx()->pages->get(self::HOME);
         }
 
-        $page = lynx()->pages->get($path === self::HOME ? self::HOME : $path.'/');
+        $page = lynx()->pages->get($path.'/');
 
-        return $page instanceof Page ? (string) $page->template()->name : null;
+        if ($page instanceof Page) {
+            return $page;
+        }
+
+        $segments = explode('/', trim($path, '/'));
+        $name = array_pop($segments);
+        $parent = $this->sitePage('/'.implode('/', $segments));
+
+        return $parent instanceof Page ? lynx()->pages->findOne("parent={$parent->id}, name={$name}, include=all") : null;
     }
 
     /** @param  array<string, mixed>  $values */

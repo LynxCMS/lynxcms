@@ -6,7 +6,8 @@ namespace LynxCms\Core\Schema\Draft;
 
 /**
  * A page a draft creates (ADR-0116): where it goes, its template and the values the draft gives,
- * the title among them when the template has one; every other field stays empty.
+ * the title among them when the template has one; every other field stays empty. A page the site
+ * has already is kept as it is.
  *
  * @api
  */
@@ -21,5 +22,6 @@ final readonly class DraftPage
         public string $name,
         public string $template,
         public array $values = [],
+        public bool $exists = false,
     ) {}
 }
