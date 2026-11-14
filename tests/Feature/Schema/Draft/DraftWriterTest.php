@@ -36,6 +36,16 @@ it('writes translatable:false for a field that could be translatable but isn\'t'
     expect(app(DraftWriter::class)->write())->toContain('code: \'text translatable:false\'');
 });
 
+it('writes translated options as a map of labels to their translations, and builds them back', function (): void {
+    lynx()->fields->add('level', 'choice', settings: ['options' => [
+        ['value' => 'beginner', 'label' => ['default' => 'Beginner', 'pt' => 'Iniciante']],
+        ['value' => 'advanced', 'label' => 'Advanced'],
+    ]]);
+
+    expect(app(DraftWriter::class)->write())->toContain("    options:\n      Beginner: { pt: Iniciante }\n      Advanced: null\n")
+        ->and(roundTripPlan())->toBe([]);
+});
+
 it('builds back a site with a shared text field', function (): void {
     lynx()->fields->add('code', 'text', settings: ['description' => 'Internal code']);
     lynx()->fields->add('motto', 'textarea', translatable: true, settings: ['format' => 'html']);

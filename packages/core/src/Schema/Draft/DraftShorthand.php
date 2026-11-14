@@ -46,7 +46,7 @@ final readonly class DraftShorthand
 
     private const string REQUIRED_MARK = '*';
 
-    public function __construct(private FieldTypeRegistry $types) {}
+    public function __construct(private FieldTypeRegistry $types, private DraftChoiceOptions $choices) {}
 
     /**
      * @param  string|array<string, string>|null  $label  the label when the draft gives none: the site's, for a field it has
@@ -229,7 +229,7 @@ final readonly class DraftShorthand
             return $settings;
         }
 
-        $rows = array_map(fn (mixed $option): mixed => is_string($option) ? ['value' => Str::slug($option), 'label' => $option] : $option, $settings['options']);
+        $rows = $this->choices->rows($settings['options']);
 
         try {
             return ['options' => ChoiceOptions::normalize($rows)] + $settings;
