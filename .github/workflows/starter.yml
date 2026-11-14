@@ -55,12 +55,7 @@ jobs:
         if: github.ref_type == 'tag'
         run: |
           for package in core admin menus media forms seo sitemap cache mcp; do
-            for attempt in $(seq 1 90); do  # 30 minutes: Packagist can be slow
-              curl -sf "https://repo.packagist.org/p2/lynxcms/${package}.json" | grep -q "\"${TAG}\"" && continue 2
-              sleep 20
-            done
-            echo "lynxcms/${package} ${TAG} is not on Packagist yet." >&2
-            exit 1
+            .github/scripts/wait-for-packagist.sh "lynxcms/${package}" "${TAG}"
           done
         env:
           TAG: ${{ steps.version.outputs.tag }}
