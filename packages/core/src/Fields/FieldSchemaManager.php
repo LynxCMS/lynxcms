@@ -20,6 +20,9 @@ use LynxCms\Core\Models\Field;
  */
 final class FieldSchemaManager
 {
+    /** The suffix a table takes while it is rebuilt. */
+    private const string OLD = '_old';
+
     public function create(Field $field): void
     {
         $type = $field->fieldType();
@@ -78,6 +81,43 @@ final class FieldSchemaManager
             $translatable => ['_lang' => ['language_id']],
             default => [],
         };
+    }
+
+    /**
+     * Rebuilds a shared field's table as a translatable one, the field already marked translatable:
+     * each row becomes the given language's. The old table's indexes go first, since index names
+     * are global on PostgreSQL and SQLite, and the new table gets its own under the same names.
+     */
+    public function makeTranslatable(Field $field, int $languageId): void
+    {
+        $table = $field->table();
+        $old = $table.self::OLD;
+        $this->dropIndexes($field);
+        Schema::rename($table, $old);
+        $this->create($field);
+
+        $columns = array_values(array_diff(Schema::getColumnListing($old), ['language_id']));
+        DB::table($table)->insertUsing([...$columns, 'language_id'], DB::table($old)->select($columns)->selectRaw('? as language_id', [$languageId]));
+        Schema::drop($old);
+    }
+
+    /** The indexes of a shared field's table, its primary key on PostgreSQL included. */
+    private function dropIndexes(Field $field): void
+    {
+        $table = $field->table();
+        $index = DB::getTablePrefix().$table;
+        $suffixes = array_keys([...self::indexes(false, $field->fieldType()->indexable()), TrigramIndexes::SUFFIX => []]);
+        $names = array_filter(array_map(fn (string $suffix): string => $index.$suffix, $suffixes), fn (string $name): bool => Schema::hasIndex($table, $name));
+
+        Schema::table($table, function (Blueprint $blueprint) use ($names, $index): void {
+            foreach ($names as $name) {
+                $blueprint->dropIndex($name);
+            }
+
+            if (DB::getDriverName() === 'pgsql') {
+                $blueprint->dropPrimary("{$index}_pk");
+            }
+        });
     }
 
     public function drop(Field $field): void

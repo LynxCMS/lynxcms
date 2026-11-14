@@ -103,10 +103,14 @@ it('keeps a field the site has shared when the draft leaves it unsaid', function
     expect(compileDraft(['fields' => ['code' => 'text max_length:20']])->fields[0]['translatable'])->toBeFalse();
 });
 
-it('refuses to make a shared field of the site translatable', function (): void {
+it('lets a draft make a shared field of the site translatable', function (): void {
     lynx()->fields->add('code', 'text');
 
-    compileDraft(['fields' => ['code' => 'text translatable']]);
+    expect(compileDraft(['fields' => ['code' => 'text translatable']])->fields[0]['translatable'])->toBeTrue();
+});
+
+it('refuses to make a translatable field of the site shared', function (): void {
+    compileDraft(['fields' => ['summary' => 'textarea translatable:false']]);
 })->throws(DraftError::class, 'with translatable changed');
 
 it('refuses a template or field that a module owns', function (): void {

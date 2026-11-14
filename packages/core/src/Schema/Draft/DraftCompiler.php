@@ -135,8 +135,10 @@ final readonly class DraftCompiler
         $this->assertNotOwned('Field', $name, $this->owners->ownerOfField($name));
         $existing = $this->fields->find($name);
 
-        if ($existing instanceof Field && ($existing->type !== $field['type'] || $existing->isTranslatable() !== $field['translatable'])) {
-            throw new DraftError("Field [{$name}] is ".$this->article($existing->type)." {$existing->type} field in the site, and the draft makes it ".Value::string($field['type']).($existing->isTranslatable() !== $field['translatable'] ? ' with translatable changed' : '').". Schema sync can't change a field's type or whether it's translatable.");
+        $makesShared = $existing instanceof Field && $existing->isTranslatable() && ! $field['translatable'];
+
+        if ($existing instanceof Field && ($existing->type !== $field['type'] || $makesShared)) {
+            throw new DraftError("Field [{$name}] is ".$this->article($existing->type)." {$existing->type} field in the site, and the draft makes it ".Value::string($field['type']).($makesShared ? ' with translatable changed' : '').". Schema sync can't change a field's type or make a translatable field shared.");
         }
 
         $items = $this->itemFieldNames(Value::map($field['settings']));

@@ -9,6 +9,7 @@ use LynxCms\Core\Actions\Fields\CleanHtmlValues;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Fields\DeleteField;
 use LynxCms\Core\Actions\Fields\DuplicateField;
+use LynxCms\Core\Actions\Fields\MakeFieldTranslatable;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Languages\CreateLanguage;
@@ -136,6 +137,7 @@ final class CoreRegistrations
         CreateField::class,
         UpdateField::class,
         DuplicateField::class,
+        MakeFieldTranslatable::class,
         DeleteField::class,
         CreateTemplate::class,
         UpdateTemplate::class,

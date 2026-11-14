@@ -91,7 +91,7 @@ final readonly class DraftBuilder
 
         $current = $this->exporter->fieldData($existing);
 
-        return $current['label'] !== $item['label'] || $current['settings'] != $item['settings']
+        return $current['label'] !== $item['label'] || $current['settings'] != $item['settings'] || $current['translatable'] !== $item['translatable']
             ? ['action' => DraftPlan::UPDATE, 'kind' => 'field', 'name' => $item['name']]
             : null;
     }
