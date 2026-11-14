@@ -209,7 +209,7 @@ For a new site, or a batch of new templates, it is often quicker to write them d
 
 ```yaml
 fields:
-  intro: textarea translatable
+  intro: textarea
   starts_on: date
   ticket_price: decimal:2 min:0
   topics: choice:Design,Development,"Product management" multiple
@@ -232,10 +232,10 @@ templates:
 A field is its type, then what you want to change about it:
 
 - `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
-- `translatable` gives the field a value per language.
+- Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language: that can't be changed later, so a language added later can be translated without changing any field. `shared` keeps one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says `shared` or `translatable`.
 - A word on its own, such as `multiple`, turns a setting on. `key:value` sets any other setting, and a list is written with commas: `templates:course,workshop`.
 - `label:"Ticket price (EUR)"` sets the label. Without one, `ticket_price` is labelled "Ticket price".
-- Anything the short form can't say, such as a repeater's fields or labels in several languages, goes in the long form: the field as a map of `type`, `label`, `translatable` and its settings.
+- Anything the short form can't say, such as a repeater's fields or labels in several languages, goes in the long form: the field as a map of `type`, `label`, `translatable` (`false` for shared) and its settings.
 
 ```yaml
 fields:

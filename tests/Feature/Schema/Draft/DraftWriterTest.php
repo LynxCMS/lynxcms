@@ -25,9 +25,22 @@ function roundTripPlan(): array
     return app(DraftBuilder::class)->plan($draft, new DraftOptions(writeFiles: false))->lines();
 }
 
-it('writes a field in the short form when it fits', function (): void {
-    expect(app(DraftWriter::class)->write())->toContain('summary: \'textarea translatable\'')
-        ->toContain('body: \'textarea:html translatable\'');
+it('writes a field in the short form when it fits, translatable by default', function (): void {
+    expect(app(DraftWriter::class)->write())->toContain('summary: textarea')->not->toContain('translatable')
+        ->toContain('body: \'textarea:html\'');
+});
+
+it('writes shared for a field that could be translatable but isn\'t', function (): void {
+    lynx()->fields->add('code', 'text');
+
+    expect(app(DraftWriter::class)->write())->toContain('code: \'text shared\'');
+});
+
+it('builds back a site with a shared text field', function (): void {
+    lynx()->fields->add('code', 'text', settings: ['description' => 'Internal code']);
+    lynx()->fields->add('motto', 'textarea', translatable: true, settings: ['format' => 'html']);
+
+    expect(roundTripPlan())->toBe([]);
 });
 
 it('writes a template with its required fields starred', function (): void {

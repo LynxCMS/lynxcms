@@ -97,6 +97,18 @@ it('refuses to change the type of a field the site has', function (): void {
     compileDraft(['fields' => ['price' => 'decimal:2']]);
 })->throws(DraftError::class, 'Field [price] is an integer field in the site, and the draft makes it decimal.');
 
+it('keeps a field the site has shared when the draft leaves it unsaid', function (): void {
+    lynx()->fields->add('code', 'text');
+
+    expect(compileDraft(['fields' => ['code' => 'text max_length:20']])->fields[0]['translatable'])->toBeFalse();
+});
+
+it('refuses to make a shared field of the site translatable', function (): void {
+    lynx()->fields->add('code', 'text');
+
+    compileDraft(['fields' => ['code' => 'text translatable']]);
+})->throws(DraftError::class, 'with translatable changed');
+
 it('refuses a template or field that a module owns', function (): void {
     lynx()->menus()->create('top', 'Top');
 

@@ -102,7 +102,7 @@ final readonly class DraftWriter
 
         return ['type' => $item['type']]
             + ($item['label'] !== DraftShorthand::label($item['name']) ? ['label' => $item['label']] : [])
-            + ($item['translatable'] ? ['translatable' => true] : [])
+            + ($item['translatable'] !== $this->shorthand->translatesByDefault($item['type']) ? ['translatable' => $item['translatable']] : [])
             + $settings;
     }
 
