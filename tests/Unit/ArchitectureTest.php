@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\DB;
+use Livewire\LivewireManager;
 use LynxCms\Admin\Branding\SaveBranding;
+use LynxCms\Admin\Navigation;
 use LynxCms\Ai\AgentRun;
 use LynxCms\Ai\LynxAi;
 use LynxCms\Cache\Pages\ClearOnChange;
@@ -54,7 +56,7 @@ arch('menus work without Livewire or the admin, except their admin screens')
     ->expect(['LynxCms\Menus\Actions', 'LynxCms\Menus\Reading', 'LynxCms\Menus\Support', 'LynxCms\Menus\View', Menus::class, MenuSchema::class, MenusServiceProvider::class])
     ->not->toUse(['Livewire', 'LynxCms\Admin'])
     // The provider only asks the container whether the admin's navigation is bound.
-    ->ignoring('LynxCms\Admin\Navigation');
+    ->ignoring(Navigation::class);
 
 arch('media works without Livewire or the admin, except its admin input')
     ->expect(['LynxCms\Media\Actions', 'LynxCms\Media\Fields', 'LynxCms\Media\Values', 'LynxCms\Media\Images', 'LynxCms\Media\View'])
@@ -172,7 +174,7 @@ arch('the static export works without Livewire or the admin, except its screen')
     ->expect(['LynxCms\StaticSite\Actions', 'LynxCms\StaticSite\Console', 'LynxCms\StaticSite\Export'])
     ->not->toUse(['Livewire', 'LynxCms\Admin'])
     // Each visit resets Livewire's state, only when Livewire is installed.
-    ->ignoring('Livewire\LivewireManager');
+    ->ignoring(LivewireManager::class);
 
 arch('the core does not depend on the static export')
     ->expect('LynxCms\Core')
