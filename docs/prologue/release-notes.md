@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.47
+
+Released November 15, 2026. Two fixes: building a draft again with a settings page, and `lynx:schema:apply --force` on a fresh install. Nothing to do after updating, and no database changes.
 
 - Fixed: building a draft a second time failed when it creates a page whose template has no URL, such as a settings page, with "Template [site-settings] is a singleton and already has a page". Such a page has no path of its own, so the draft now finds it by its parent and name, and keeps it as it is.
 - Fixed: `lynx:schema:apply --force` on a freshly installed site deleted what the installer made, such as the `title` field and the `home` template, and then failed. Apply matches those by name when their uuids differ from the files', but the deletes only compared uuids. An item matched by name now counts as in the files.
