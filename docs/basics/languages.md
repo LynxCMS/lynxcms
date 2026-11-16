@@ -149,7 +149,7 @@ Search finds singular and plural forms in Portuguese (also Brazilian), English, 
 
 To add rules for a language, write a class that turns a plural into its singular:
 
-<<< @/snippets/advanced/DutchPlurals.php#reducer{php}
+<<< @/snippets/advanced/SwedishPlurals.php#reducer{php}
 
 and register it for the locale in a service provider. Registering a locale Lynx already has replaces its rules, and a full locale (`pt-BR`) wins over the bare language (`pt`):
 
