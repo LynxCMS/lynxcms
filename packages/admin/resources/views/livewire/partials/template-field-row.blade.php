@@ -72,6 +72,6 @@
             <livewire:lynx-admin.icon-picker wire:model="rows.{{ $field }}.icon" :disabled="! $canEdit" wire:key="override-icon-{{ $field }}" />
         </div>
         <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" id="override-{{ $field }}-required" type="checkbox" wire:model="rows.{{ $field }}.required"> {{ __(lynx()->languages->isMultilingual() ? 'lynx-admin::templates.row.required_default' : 'lynx-admin::templates.row.required_check') }}</label>
-        <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" id="override-{{ $field }}-searchable" type="checkbox" wire:model="rows.{{ $field }}.searchable"> {{ __('lynx-admin::templates.row.searchable_check') }}</label>
+        <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" id="override-{{ $field }}-searchable" type="checkbox" wire:model="rows.{{ $field }}.searchable"> {{ __($hasUrl ? 'lynx-admin::templates.row.searchable_check' : 'lynx-admin::templates.row.searchable_without_url') }}</label>
     </div>
 </li>

@@ -104,6 +104,7 @@ return [
         'required_check' => 'Required',
         'required_default' => 'Required (in the default language)',
         'searchable_check' => 'Searchable (admin and site search find pages by its text)',
+        'searchable_without_url' => 'Searchable (admin search finds pages by its text; this template has no URL, so site search leaves its pages out unless it names the template)',
     ],
     'layout' => [
         'in_section' => 'In section: :section',

@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- The "Searchable" checkbox on a template without a URL now says that site search leaves its pages out unless it names the template, and that the admin's search still finds them. Before, it said site search found them. See [Making fields searchable](/basics/templates-and-fields#making-fields-searchable).
+
 ## 0.1.47
 
 Released November 15, 2026. Two fixes: building a draft again with a settings page, and `lynx:schema:apply --force` on a fresh install. Nothing to do after updating, and no database changes.

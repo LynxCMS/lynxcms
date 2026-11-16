@@ -104,6 +104,7 @@ return [
         'required_check' => 'Obrigatório',
         'required_default' => 'Obrigatório (no idioma predefinido)',
         'searchable_check' => 'Pesquisável (a pesquisa da administração e do site encontra páginas pelo seu texto)',
+        'searchable_without_url' => 'Pesquisável (a pesquisa da administração encontra páginas pelo seu texto; este modelo não tem URL, por isso a pesquisa do site deixa as suas páginas de fora, a não ser que indique o modelo)',
     ],
     'layout' => [
         'in_section' => 'Na secção: :section',

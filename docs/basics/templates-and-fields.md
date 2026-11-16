@@ -198,6 +198,8 @@ lynx()->templates->update('project', ['add' => [['name' => 'blocks', 'searchable
 
 Text, textarea, email and URL fields add their words, without markup; choices add their labels in each language. A searchable repeater or matrix adds the text of its items that are switched on. Numbers, dates, toggles and page references add nothing.
 
+Pages of a template without a URL, such as promos or slides, are indexed too, and the admin's search box finds them. A site's search leaves them out like any selector does, unless it names their template or adds `include=no_url` (see [Pages without a URL](/basics/selectors#pages-without-a-url)). The template's screen says so next to the checkbox.
+
 Saving, restoring, moving to another template or deleting a page updates the index, and so does changing which fields a template marks. After changing a field's own settings, such as a choice label or a matrix type's fields, rebuild it:
 
 ```bash
