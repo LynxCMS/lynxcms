@@ -92,6 +92,7 @@ return [
         'required' => 'required',
         'locked' => 'Set by the site, not editable here.',
         'translatable' => 'translatable',
+        'searchable' => 'searchable',
         'filled' => 'Filled',
         'falls_back_to' => 'Falls back to :language',
         'empty' => 'Empty',

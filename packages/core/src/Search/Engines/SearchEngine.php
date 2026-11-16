@@ -6,6 +6,7 @@ namespace LynxCms\Core\Search\Engines;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder;
+use LynxCms\Core\Search\SearchWord;
 use LynxCms\Core\Support\Tables;
 
 /**
@@ -20,9 +21,10 @@ abstract class SearchEngine
 
     /**
      * Narrow $query to pages whose index row in the language holds every word, each as a word
-     * beginning. Words are folded (SearchText::words) and hold only letters and digits.
+     * beginning or as its reduced form exactly (ADR-0119). Words are folded (SearchText::query)
+     * and hold only letters and digits.
      *
-     * @param  non-empty-list<string>  $words
+     * @param  non-empty-list<SearchWord>  $words
      */
     abstract public function whereMatches(Builder $query, string $pageIdColumn, array $words, int $languageId): void;
 

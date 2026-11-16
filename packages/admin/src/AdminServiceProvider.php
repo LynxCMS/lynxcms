@@ -52,6 +52,7 @@ use LynxCms\Admin\Livewire\PageTableInput;
 use LynxCms\Admin\Livewire\PageTree;
 use LynxCms\Admin\Livewire\RoleForm;
 use LynxCms\Admin\Livewire\RoleList;
+use LynxCms\Admin\Livewire\SearchIndexScreen;
 use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Admin\Livewire\TemplateList;
 use LynxCms\Admin\Livewire\UserRoles;
@@ -131,6 +132,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->make(ActionRegistry::class)->register(CreateUser::class, SaveBranding::class, SaveAdminLocale::class);
         Livewire::component('lynx-admin.search', AdminSearch::class);
         Livewire::component('lynx-admin.language-list', LanguageList::class);
+        Livewire::component('lynx-admin.search-index', SearchIndexScreen::class);
         Livewire::component('lynx-admin.account-security', AccountSecurity::class);
         Livewire::component('lynx-admin.page-strings', PageStrings::class);
         Livewire::component('lynx-admin.language-form', LanguageForm::class);
@@ -191,6 +193,7 @@ final class AdminServiceProvider extends ServiceProvider
             ->add('lynx-admin::shell.nav.fields', 'lynx.admin.fields', order: 10, visible: $canManageSchema, icon: 'text-cursor-input', group: Navigation::SETTINGS, shortcut: 'f')
             ->add('lynx-admin::shell.nav.templates', 'lynx.admin.templates', order: 20, visible: $canManageSchema, icon: 'layout-template', group: Navigation::SETTINGS, shortcut: 't')
             ->add('lynx-admin::shell.nav.languages', 'lynx.admin.languages', order: 50, visible: $canManageSchema, icon: 'languages', group: Navigation::SETTINGS)
+            ->add('lynx-admin::shell.nav.search_index', 'lynx.admin.search-index', order: 55, visible: fn (): bool => $this->app->make(AdminAccess::class)->allows('search.manage'), icon: 'search', group: Navigation::SETTINGS)
             ->add('lynx-admin::shell.nav.general', 'lynx.admin.general', order: 60, visible: $superuser, icon: 'settings', group: Navigation::SETTINGS)
             ->add('lynx-admin::shell.nav.roles', 'lynx.admin.roles', order: 10, visible: $superuser, icon: 'shield-check', group: Navigation::ACCESS)
             ->add('lynx-admin::shell.nav.users', 'lynx.admin.users', order: 20, visible: $superuser, icon: 'users', group: Navigation::ACCESS);

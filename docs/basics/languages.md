@@ -143,6 +143,26 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 <<< @/snippets/advanced/language-mail.php#send{php}
 
+## Search in your languages
+
+Search finds singular and plural forms in Portuguese, English, French, Spanish, Italian, German and Dutch (see [Searching text](/basics/selectors#searching-text)). A language gets the rules of its locale (the default language uses `lynx.base_locale`). Lynx looks for rules registered for the full locale first, then for the language alone, so regional variants use their language's rules: `pt-BR` and `pt-PT` use the Portuguese ones, `en-US` and `en-GB` the English ones, `fr-CA` the French ones. Plurals are the same across those variants, and spelling differences such as `colour` and `color` need nothing, since each word is reduced on its own. Register rules for a full locale only when a variant needs something its language's rules don't do (an example follows). Italian and German plurals change the end of the word in ways no rule can undo, so there singular and plural are both reduced to the part they share, which also lets words that differ only in their last letters meet (`casa` and `caso`). In other languages, search matches the words as they are.
+
+To add rules for a language, write a class that turns a plural into its singular:
+
+<<< @/snippets/advanced/SwedishPlurals.php#reducer{php}
+
+and register it for the locale in a service provider. Registering a locale Lynx already has replaces its rules, and a full locale (`pt-BR`) wins over the bare language (`pt`):
+
+<<< @/snippets/advanced/plurals-register.php#register{php}
+
+Lynx's reducers can be extended too, for a regional locale that needs a few more exceptions. `endings()` and `exceptions()` return the rules; add yours to the parent's:
+
+<<< @/snippets/advanced/CanadianFrenchPlurals.php#reducer{php}
+
+<<< @/snippets/advanced/canadian-french-register.php#register{php}
+
+Run `php artisan lynx:search-index` afterwards, so pages already saved are indexed with the new rules. Short words (under four letters) are never changed. `LYNX_SEARCH_REDUCE_PLURALS=false` turns plurals off for every language.
+
 ## Sites with one language
 
 Until a site has a second language, the admin leaves languages out: the field form doesn't ask whether a field is translatable, and screens don't mention translations, fallbacks or the default language.

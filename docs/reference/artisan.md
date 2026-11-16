@@ -25,7 +25,7 @@ order: 2
 | `lynx:backup` | Writes a content backup, files included, and keeps the newest ones. Content only: back up the database as well. |
 | `lynx:schedule:run` | Applies due publishing schedules (the scheduler runs it every minute). |
 | `lynx:clean-html --field= --dry-run` | Cleans stored HTML the way a save would. |
-| `lynx:search-index --template=` | Rebuilds the search index, for every page or one template's pages. |
+| `lynx:search-index --template=` | Rebuilds the search index, for every page or one template's pages. Run it once after updating to 0.1.48, so pages already saved are found by their singular and plural forms. |
 | `lynx:sort-keys` | Rebuilds the stored sort values of the fields in `lynx.sort_keys`, after adding one or changing a field's fallback. See [Finding Pages](/basics/selectors#large-sites). |
 | `lynx:trigram` | Installs PostgreSQL's `pg_trgm` and adds trigram indexes that speed up text selectors. See [Finding Pages](/basics/selectors#large-sites). |
 | `lynx:draft path --dry-run --no-views --force-views --prune-fields --stub --from-site --json-schema` | Builds fields, templates and unpublished pages from a short YAML draft, with a starting view for each template with a URL it creates or changes that has none; `--from-site` writes the site's schema as a draft. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema). |

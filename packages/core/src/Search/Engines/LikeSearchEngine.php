@@ -8,8 +8,9 @@ use Illuminate\Database\Query\Builder;
 use LynxCms\Core\Support\Tables;
 
 /**
- * Databases without a full text engine Lynx knows: every word must begin a word of the row.
- * Rows are words joined by single spaces, so " word" marks a word beginning.
+ * Databases without a full text engine Lynx knows: every word must begin a word of the row, or
+ * its singular be a whole word of it (ADR-0119). Rows are words joined by single spaces, so
+ * " word" marks a word beginning and " word " a whole word.
  *
  * @internal
  */
@@ -21,7 +22,13 @@ final class LikeSearchEngine extends SearchEngine
             $rows->select('page_id')->from(Tables::SEARCH)->where('language_id', $languageId);
 
             foreach ($words as $word) {
-                $rows->whereRaw("(' ' || content) LIKE ?", ['% '.$word.'%']);
+                $rows->where(function (Builder $either) use ($word): void {
+                    $either->whereRaw("(' ' || content) LIKE ?", ['% '.$word->prefix.'%']);
+
+                    if ($word->reduced !== null) {
+                        $either->orWhereRaw("(' ' || content || ' ') LIKE ?", ['% '.$word->reduced.' %']);
+                    }
+                });
             }
         });
     }

@@ -9,7 +9,8 @@ use LynxCms\Core\Templates\FieldDisplay;
 
 /**
  * One template field in the editor: its definition and its value per language (shared fields
- * have a single entry under the default language code).
+ * have a single entry under the default language code). isSearchable: its text goes into the
+ * search index (ADR-0120).
  *
  * @api
  */
@@ -35,6 +36,7 @@ final readonly class FieldView
         public int $width = EditorSettings::FULL_WIDTH,
         public ?string $placeholder = null,
         public ?string $icon = null,
+        public bool $isSearchable = false,
     ) {}
 
     /** Whether the field starts closed in the editor (ADR-0063): by its mode and whether it has a value. */

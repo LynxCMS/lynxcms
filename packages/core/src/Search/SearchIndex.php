@@ -13,6 +13,7 @@ use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Query\Clause;
 use LynxCms\Core\Query\SelectorException;
 use LynxCms\Core\Search\Engines\SearchEngine;
+use LynxCms\Core\Search\Plurals\WordReducers;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 
@@ -31,6 +32,7 @@ final readonly class SearchIndex
         private SearchText $text,
         private PageLoader $loader,
         private LanguageRegistry $languages,
+        private WordReducers $reducers,
     ) {}
 
     /** Index a page again, or drop its rows when it is gone or a draft. */
@@ -88,11 +90,13 @@ final readonly class SearchIndex
     }
 
     /**
-     * Narrow a pages query to those whose text in the language holds every word of $search.
+     * Narrow a pages query to those whose text in the language holds every word of $search, each
+     * as a word beginning or, where the language reduces plurals, as its singular (ADR-0119).
      */
     public function whereMatches(Builder $query, string $pageIdColumn, string $search, int $languageId): void
     {
-        $words = SearchText::words($search);
+        $language = $this->languages->find($languageId);
+        $words = SearchText::query($search, $language === null ? null : $this->reducers->for($language));
 
         $words === [] ? $query->whereRaw('1 = 0') : $this->engine->whereMatches($query, $pageIdColumn, $words, $languageId);
     }

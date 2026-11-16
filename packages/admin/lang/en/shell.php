@@ -13,6 +13,7 @@ return [
         'fields' => 'Fields',
         'templates' => 'Templates',
         'languages' => 'Languages',
+        'search_index' => 'Search index',
         'general' => 'General',
         'roles' => 'Roles',
         'users' => 'Users',
