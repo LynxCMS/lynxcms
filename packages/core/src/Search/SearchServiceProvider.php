@@ -15,7 +15,6 @@ use LynxCms\Core\Search\Engines\LikeSearchEngine;
 use LynxCms\Core\Search\Engines\PostgresSearchEngine;
 use LynxCms\Core\Search\Engines\SearchEngine;
 use LynxCms\Core\Search\Engines\SqliteSearchEngine;
-use LynxCms\Core\Search\Plurals\BrazilianPortuguesePlurals;
 use LynxCms\Core\Search\Plurals\DutchPlurals;
 use LynxCms\Core\Search\Plurals\EnglishPlurals;
 use LynxCms\Core\Search\Plurals\FrenchPlurals;
@@ -38,7 +37,6 @@ final class SearchServiceProvider extends ServiceProvider
         $this->app->singleton(WordReducers::class, function (): WordReducers {
             $reducers = new WordReducers;
             $reducers->register('pt', new PortuguesePlurals);
-            $reducers->register('pt-BR', new BrazilianPortuguesePlurals);
             $reducers->register('en', new EnglishPlurals);
             $reducers->register('fr', new FrenchPlurals);
             $reducers->register('es', new SpanishPlurals);

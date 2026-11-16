@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace LynxCms\Core\Search\Plurals;
 
 /**
- * Portuguese plurals (ADR-0119), also typed without accents (estacoes, paes). -les and -ses only drop the s, since most such plurals come from
+ * Portuguese plurals (ADR-0119), also typed without accents (estacoes, paes). For pt-PT and pt-BR
+ * alike: plurals are the same, and the exceptions hold both spellings (ônibus and ónibus). -les and -ses only drop the s, since most such plurals come from
  * singulars in -le and -se (controles, frases); -eses gives -ês (meses, ingleses).
  *
  * Extend it to add or change rules for a regional locale (ADR-0119).

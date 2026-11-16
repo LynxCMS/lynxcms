@@ -8,7 +8,8 @@ use LynxCms\Core\Models\Language;
 
 /**
  * The plural reducers by locale (ADR-0119). A language finds its reducer by its locale
- * (Language::appLocale()), the full locale first (pt-BR), then the bare language (pt). Register a
+ * (Language::appLocale()), the full locale first (pt-BR), then the bare language (pt), so regional
+ * variants (pt-BR, en-US, en-GB) use their language's rules unless one is registered. Register a
  * reducer in a service provider to add a language or replace a built-in one:
  * app(WordReducers::class)->register('nl', new DutchPlurals).
  *
