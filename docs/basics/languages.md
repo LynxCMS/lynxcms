@@ -145,7 +145,7 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 ## Search in your languages
 
-Search finds singular and plural forms in Portuguese, English and French (see [Searching text](/basics/selectors#searching-text)). A language gets the rules of its locale: `pt-BR` and `pt-PT` both use the Portuguese ones, and the default language uses `lynx.base_locale`. In other languages, search matches the words as they are.
+Search finds singular and plural forms in Portuguese (also Brazilian), English, French, Spanish, Italian, German and Dutch (see [Searching text](/basics/selectors#searching-text)). A language gets the rules of its locale, the full locale first: `pt-BR` has rules of its own, `pt-PT` uses the Portuguese ones, and the default language uses `lynx.base_locale`. Italian and German plurals change the end of the word in ways no rule can undo, so there singular and plural are both reduced to the part they share, which also lets words that differ only in their last letters meet (`casa` and `caso`). In other languages, search matches the words as they are.
 
 To add rules for a language, write a class that turns a plural into its singular:
 

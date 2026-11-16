@@ -116,3 +116,18 @@ it('finds plurals with LIKE on databases without a known full text engine', func
         ->and(pluralSearch('anim'))->toBe(['alpha'])
         ->and(pluralSearch('livr mar'))->toBe([]);
 });
+
+it('finds singular and plural in the other built-in languages', function (string $locale, string $singular, string $plural): void {
+    lynx()->languages->add('xx', 'Test', locale: $locale, fallback: 'default');
+    saySummary($this->alpha->id, $singular, 'xx');
+    saySummary($this->beta->id, $plural, 'xx');
+
+    expect(pluralSearch($singular, 'xx'))->toBe(['alpha', 'beta'])
+        ->and(pluralSearch($plural, 'xx'))->toBe(['alpha', 'beta']);
+})->with([
+    'Brazilian Portuguese' => ['pt-BR', 'trem', 'trens'],
+    'Spanish' => ['es', 'canción', 'canciones'],
+    'Italian' => ['it', 'libro', 'libri'],
+    'German' => ['de', 'Haus', 'Häuser'],
+    'Dutch' => ['nl', 'kat', 'katten'],
+]);

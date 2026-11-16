@@ -7,10 +7,16 @@ return [
     'description' => 'As palavras pelas quais a pesquisa encontra páginas: o título e os campos que cada modelo marca como pesquisáveis.',
     'denied' => 'Não pode gerir o índice de pesquisa.',
     'rebuilt' => '{0} Não há páginas para indexar.|{1} 1 página indexada.|[2,*] :count páginas indexadas.',
+    'tabs' => [
+        'overview' => 'Visão geral',
+        'tools' => 'Ferramentas',
+    ],
     'rebuild' => [
         'title' => 'Reconstruir',
         'hint' => 'Guardar uma página mantém as suas palavras atualizadas. Reconstrua depois de mudar os campos pesquisáveis ou as definições de um campo, como o rótulo de uma opção. Em sites grandes, reconstrua um modelo de cada vez.',
-        'template' => 'Páginas',
+        'template' => 'Modelos',
+        'system_template' => 'Modelos do sistema',
+        'no_system_template' => 'Nenhum',
         'every_page' => 'Todas as páginas',
         'button' => 'Reconstruir o índice',
     ],
@@ -39,7 +45,8 @@ return [
         'no_url' => 'Sem URL',
     ],
     'lookup' => [
-        'title' => 'As palavras indexadas de uma página',
+        'title' => 'Testar Palavras Indexadas',
+        'hint' => 'Procure uma página para ver as palavras pelas quais a pesquisa a encontra, em cada idioma.',
         'page' => 'Caminho ou id da página',
         'placeholder' => 'Por exemplo /sobre ou 42',
         'missing' => 'Não há nenhuma página com esse caminho ou id.',

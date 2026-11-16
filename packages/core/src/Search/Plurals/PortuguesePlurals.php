@@ -10,7 +10,7 @@ namespace LynxCms\Core\Search\Plurals;
  *
  * @internal
  */
-final class PortuguesePlurals extends EndingRules
+class PortuguesePlurals extends EndingRules
 {
     private const array ENDINGS = [
         'ões' => 'ão', 'ães' => 'ão', 'ãos' => 'ão',

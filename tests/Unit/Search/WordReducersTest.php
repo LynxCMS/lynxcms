@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Search\Plurals\BrazilianPortuguesePlurals;
 use LynxCms\Core\Search\Plurals\EnglishPlurals;
 use LynxCms\Core\Search\Plurals\PortuguesePlurals;
 use LynxCms\Core\Search\Plurals\WordReducer;
@@ -28,8 +29,21 @@ it('finds a reducer by the full locale, then by the bare language', function ():
     $reducers = app(WordReducers::class);
 
     expect($reducers->for(languageWith('pt', 'pt-PT')))->toBeInstanceOf(PortuguesePlurals::class)
-        ->and($reducers->for(languageWith('br', 'pt_BR')))->toBeInstanceOf(PortuguesePlurals::class)
+        ->and($reducers->for(languageWith('br', 'pt_BR')))->toBeInstanceOf(BrazilianPortuguesePlurals::class)
         ->and($reducers->for(languageWith('en')))->toBeInstanceOf(EnglishPlurals::class);
+});
+
+it('has reducers for the main European languages and Brazilian Portuguese', function (string $locale): void {
+    expect(app(WordReducers::class)->for(languageWith('x', $locale)))->not->toBeNull();
+})->with(['pt-BR', 'pt-PT', 'en', 'fr', 'es', 'it', 'de', 'nl']);
+
+it('gives Brazilian Portuguese its own reducer', function (): void {
+    $reducer = app(WordReducers::class)->for(languageWith('br', 'pt-BR'));
+
+    expect($reducer)->toBeInstanceOf(BrazilianPortuguesePlurals::class)
+        ->and($reducer?->reduce('trens'))->toBe('trem')
+        ->and($reducer?->reduce('ônibus'))->toBe('ônibus')
+        ->and($reducer?->reduce('contatos'))->toBe('contato');
 });
 
 it('prefers a reducer registered for the full locale', function (): void {

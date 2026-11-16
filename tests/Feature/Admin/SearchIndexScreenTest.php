@@ -76,6 +76,29 @@ it('shows the words indexed for a page found by path or id', function (): void {
         ->assertSee(__('lynx-admin::search_index.lookup.missing'));
 });
 
+it('puts the overview and the tools on tabs of their own', function (): void {
+    lynx()->pages->trash(createCourses('gone')['gone']);
+    $this->actingAs(new GenericUser(['id' => 3]));
+
+    Livewire::test(SearchIndexScreen::class)
+        ->assertSeeHtmlInOrder(['data-tab="overview"', 'data-language="pt"', 'data-tab="tools"', 'id="search-template"', 'id="search-system-template"', __('lynx-admin::search_index.lookup.title')]);
+});
+
+it('offers the site\'s templates and the system templates in separate fields', function (): void {
+    lynx()->pages->trash(createCourses('gone')['gone']);
+    $this->actingAs(new GenericUser(['id' => 3]));
+
+    Livewire::test(SearchIndexScreen::class)
+        ->assertSee(__('lynx-admin::search_index.rebuild.template'))
+        ->assertSeeHtmlInOrder(['id="search-template"', 'value="course"', 'id="search-system-template"', 'value="'.Trash::TEMPLATE.'"'])
+        ->set('systemTemplate', Trash::TEMPLATE)
+        ->assertSet('template', '')
+        ->call('rebuild')
+        ->assertSee(trans_choice('lynx-admin::search_index.rebuilt', 1, ['count' => 1]))
+        ->set('template', 'course')
+        ->assertSet('systemTemplate', '');
+});
+
 it('rebuilds the whole index or one template\'s pages', function (): void {
     $this->actingAs(new GenericUser(['id' => 3]));
 
