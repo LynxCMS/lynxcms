@@ -9,9 +9,11 @@ namespace LynxCms\Core\Search\Plurals;
  * jóvenes, ciudades), -ces after a vowel gives -z (luces); other -es plurals come from singulars in
  * -e (noches, padres, dulces), so they drop the s. Accents that move are folded away later.
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class SpanishPlurals extends EndingRules
+class SpanishPlurals extends EndingRules
 {
     private const array VOWELS = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
 

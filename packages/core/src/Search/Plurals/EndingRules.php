@@ -6,9 +6,11 @@ namespace LynxCms\Core\Search\Plurals;
 
 /**
  * A plural reducer written as word endings (ADR-0119): the exceptions first, then the longest
- * ending that matches, and only that one. Words under MIN_LENGTH letters are never reduced.
+ * ending that matches, and only that one. Words under MIN_LENGTH letters are never reduced. Extend
+ * it for a new language, or extend a built-in reducer and add to parent::endings() or
+ * parent::exceptions() for a regional one.
  *
- * @internal
+ * @api
  */
 abstract class EndingRules implements WordReducer
 {

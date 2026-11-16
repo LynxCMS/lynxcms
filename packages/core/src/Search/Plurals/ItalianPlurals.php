@@ -12,9 +12,11 @@ namespace LynxCms\Core\Search\Plurals;
  * vowel do not change (città, film). The cost: words that differ only in the last vowel meet
  * (casa and caso).
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class ItalianPlurals extends EndingRules
+class ItalianPlurals extends EndingRules
 {
     private const array ENDINGS = [
         'chi' => 'c', 'ghi' => 'g', 'che' => 'c', 'ghe' => 'g',

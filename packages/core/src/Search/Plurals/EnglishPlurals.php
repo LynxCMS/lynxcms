@@ -8,9 +8,11 @@ namespace LynxCms\Core\Search\Plurals;
  * English plurals (ADR-0119). -es is dropped after ss, x, zz, ch and sh only; other -es plurals
  * come from singulars in -e (cases, sizes), so they drop the s.
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class EnglishPlurals extends EndingRules
+class EnglishPlurals extends EndingRules
 {
     private const array ENDINGS = [
         'ies' => 'y', 'sses' => 'ss', 'xes' => 'x', 'zzes' => 'z', 'ches' => 'ch', 'shes' => 'sh',

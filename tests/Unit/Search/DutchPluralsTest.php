@@ -22,3 +22,16 @@ it('turns a plural into its singular', function (string $plural, string $singula
 it('leaves singulars as they are', function (string $word): void {
     expect((new DutchPlurals)->reduce($word))->toBe($word);
 })->with(['boek', 'huis', 'bus', 'tafel']);
+
+it('lets a subclass add exceptions the spelling rules would otherwise change', function (): void {
+    $flemish = new class extends DutchPlurals
+    {
+        protected function exceptions(): array
+        {
+            return ['bomen' => 'bomen'] + parent::exceptions();
+        }
+    };
+
+    expect($flemish->reduce('bomen'))->toBe('bomen')
+        ->and($flemish->reduce('katten'))->toBe('kat');
+});

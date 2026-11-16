@@ -11,9 +11,11 @@ namespace LynxCms\Core\Search\Plurals;
  * the umlaut (haus, apfel). -s comes off loanwords in -os and -ys (Autos). Words that differ only in
  * these endings meet (Lehre and Lehrer).
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class GermanPlurals extends EndingRules
+class GermanPlurals extends EndingRules
 {
     private const array ENDINGS = [
         'innen' => 'in', 'ern' => '', 'eln' => 'el', 'en' => '', 'er' => '', 'e' => '',

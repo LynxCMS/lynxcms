@@ -9,9 +9,11 @@ namespace LynxCms\Core\Search\Plurals;
  * huis, brieven brief), -eren (kinderen), and -s after -el, -er, -em, -en and -je (tafels,
  * meisjes). Plurals whose vowel is short with a single consonant (dagen, wegen) are exceptions.
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class DutchPlurals extends EndingRules
+class DutchPlurals extends EndingRules
 {
     private const array ENDINGS = [
         'eren' => '', 'zen' => 's', 'ven' => 'f', 'en' => '',
@@ -27,7 +29,7 @@ final class DutchPlurals extends EndingRules
     {
         $reduced = parent::reduce($word);
 
-        if (isset(self::IRREGULAR[$word]) || ! str_ends_with($word, 'en') || $reduced !== substr($word, 0, -2)) {
+        if (isset($this->exceptions()[$word]) || ! str_ends_with($word, 'en') || $reduced !== substr($word, 0, -2)) {
             return $reduced;
         }
 

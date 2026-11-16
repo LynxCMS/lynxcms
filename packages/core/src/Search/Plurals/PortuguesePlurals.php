@@ -8,7 +8,9 @@ namespace LynxCms\Core\Search\Plurals;
  * Portuguese plurals (ADR-0119), also typed without accents (estacoes, paes). -les and -ses only drop the s, since most such plurals come from
  * singulars in -le and -se (controles, frases); -eses gives -ês (meses, ingleses).
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
 class PortuguesePlurals extends EndingRules
 {

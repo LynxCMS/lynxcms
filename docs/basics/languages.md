@@ -155,6 +155,12 @@ and register it for the locale in a service provider. Registering a locale Lynx 
 
 <<< @/snippets/advanced/plurals-register.php#register{php}
 
+Lynx's reducers can be extended too, for a regional locale that needs a few more exceptions. `endings()` and `exceptions()` return the rules; add yours to the parent's:
+
+<<< @/snippets/advanced/CanadianFrenchPlurals.php#reducer{php}
+
+<<< @/snippets/advanced/canadian-french-register.php#register{php}
+
 Run `php artisan lynx:search-index` afterwards, so pages already saved are indexed with the new rules. Short words (under four letters) are never changed. `LYNX_SEARCH_REDUCE_PLURALS=false` turns plurals off for every language.
 
 ## Sites with one language

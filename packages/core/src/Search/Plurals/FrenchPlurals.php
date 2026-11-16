@@ -7,9 +7,11 @@ namespace LynxCms\Core\Search\Plurals;
 /**
  * French plurals (ADR-0119): -eaux gives -eau, -aux gives -al, -x after u is dropped, and so is -s.
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class FrenchPlurals extends EndingRules
+class FrenchPlurals extends EndingRules
 {
     private const array ENDINGS = [
         'eaux' => 'eau', 'aux' => 'al', 'ux' => 'u',

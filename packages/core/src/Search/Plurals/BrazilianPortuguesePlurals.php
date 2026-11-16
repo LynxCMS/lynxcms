@@ -9,6 +9,8 @@ namespace LynxCms\Core\Search\Plurals;
  * hold both spellings (ônibus and ónibus, tênis and ténis). Registered for pt-BR on its own, so a
  * site can replace it without touching pt-PT.
  *
- * @internal
+ * Extend it to add or change rules for a regional locale (ADR-0119).
+ *
+ * @api
  */
-final class BrazilianPortuguesePlurals extends PortuguesePlurals {}
+class BrazilianPortuguesePlurals extends PortuguesePlurals {}
