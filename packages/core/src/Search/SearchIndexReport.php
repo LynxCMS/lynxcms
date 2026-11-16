@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Search;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Models\Template;
@@ -26,23 +28,28 @@ final readonly class SearchIndexReport
         private LanguageRegistry $languages,
         private TemplateRegistry $templates,
         private WordReducers $reducers,
+        private FieldRegistry $fields,
     ) {}
 
     /**
-     * Each language with how many pages have a row, out of the pages there are (drafts aside).
+     * Each language with how many pages have a row, out of the pages there are (drafts aside), and
+     * how many have their own title in it: the others are indexed with their fallback text, so
+     * visitors find them in that language too. own is null when titles are shared.
      *
-     * @return list<array{code: string, name: string, rows: int, pages: int, plurals: bool}>
+     * @return list<array{code: string, name: string, rows: int, pages: int, own: ?int, plurals: bool}>
      */
     public function languages(): array
     {
         $rows = DB::table(Tables::SEARCH)->selectRaw('language_id, count(*) as total')->groupBy('language_id')->pluck('total', 'language_id');
         $pages = DB::table(Tables::PAGES)->whereNull('draft_of')->count();
+        $own = $this->ownTitles();
 
         return array_values($this->languages->all()->map(fn (Language $language): array => [
             'code' => (string) $language->code,
             'name' => (string) $language->name,
             'rows' => Value::int($rows[$language->id] ?? 0),
             'pages' => $pages,
+            'own' => $own === null ? null : Value::int($own[$language->id] ?? 0),
             'plurals' => $this->reducers->for($language) !== null,
         ])->all());
     }
@@ -83,6 +90,28 @@ final readonly class SearchIndexReport
         }
 
         return $rows;
+    }
+
+    /**
+     * Pages with a title of their own, by language id, or null when the title is shared.
+     *
+     * @return Collection<int|string, mixed>|null
+     */
+    private function ownTitles(): ?Collection
+    {
+        $title = $this->fields->find('title');
+
+        if ($title === null || ! $title->isTranslatable()) {
+            return null;
+        }
+
+        return DB::table($title->table())
+            ->join(Tables::PAGES, Tables::PAGES.'.id', '=', $title->table().'.page_id')
+            ->whereNull(Tables::PAGES.'.draft_of')
+            ->where($title->table().'.data', '!=', '')
+            ->selectRaw('language_id, count(distinct page_id) as total')
+            ->groupBy('language_id')
+            ->pluck('total', 'language_id');
     }
 
     /** @return list<string> */

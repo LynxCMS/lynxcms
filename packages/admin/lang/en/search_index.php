@@ -17,8 +17,11 @@ return [
     'languages' => [
         'title' => 'Languages',
         'language' => 'Language',
-        'indexed' => 'Indexed',
+        'indexed' => 'In the index',
         'count' => ':rows of :pages pages',
+        'own' => 'Own text',
+        'own_shared' => 'Shared titles',
+        'fallback_hint' => 'Every page has a row in every language. Own text counts the pages with their own title in that language; the others are indexed with the text they fall back to, so visitors find them in that language too.',
         'incomplete' => 'Needs a rebuild',
         'plurals' => 'Singular and plural',
         'plurals_on' => 'Found from either',

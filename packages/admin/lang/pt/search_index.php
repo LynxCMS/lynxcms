@@ -17,8 +17,11 @@ return [
     'languages' => [
         'title' => 'Idiomas',
         'language' => 'Idioma',
-        'indexed' => 'Indexadas',
+        'indexed' => 'No índice',
         'count' => ':rows de :pages páginas',
+        'own' => 'Texto próprio',
+        'own_shared' => 'Títulos partilhados',
+        'fallback_hint' => 'Cada página tem uma linha em cada idioma. Texto próprio conta as páginas com título próprio nesse idioma; as outras são indexadas com o texto de recurso, para que os visitantes também as encontrem nesse idioma.',
         'incomplete' => 'Precisa de reconstrução',
         'plurals' => 'Singular e plural',
         'plurals_on' => 'Encontra ambos',

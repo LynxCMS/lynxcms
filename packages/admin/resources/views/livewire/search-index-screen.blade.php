@@ -27,6 +27,7 @@
                 <x-lynx-admin::ui.table-row class="hover:bg-transparent">
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.languages.language') }}</x-lynx-admin::ui.table-head>
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.languages.indexed') }}</x-lynx-admin::ui.table-head>
+                    <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.languages.own') }}</x-lynx-admin::ui.table-head>
                     <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.languages.plurals') }}</x-lynx-admin::ui.table-head>
                 </x-lynx-admin::ui.table-row>
             </x-lynx-admin::ui.table-header>
@@ -40,11 +41,13 @@
                                 <x-lynx-admin::ui.badge variant="outline" class="ms-1">{{ __('lynx-admin::search_index.languages.incomplete') }}</x-lynx-admin::ui.badge>
                             @endif
                         </x-lynx-admin::ui.table-cell>
+                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2" data-own="{{ $language['code'] }}">{{ $language['own'] ?? __('lynx-admin::search_index.languages.own_shared') }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">{{ __($language['plurals'] ? 'lynx-admin::search_index.languages.plurals_on' : 'lynx-admin::search_index.languages.plurals_off') }}</x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @endforeach
             </x-lynx-admin::ui.table-body>
         </x-lynx-admin::ui.table>
+        <p class="text-muted-foreground text-sm">{{ __('lynx-admin::search_index.languages.fallback_hint') }}</p>
     </section>
 
     <section aria-labelledby="search-templates" class="grid gap-3">

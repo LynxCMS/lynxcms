@@ -33,6 +33,7 @@ it('shows each language\'s rows and the fields each template indexes', function 
         ->assertSeeLivewire(SearchIndexScreen::class)
         ->assertSeeHtml('data-language="pt"')
         ->assertSeeHtml('data-template="course"')
+        ->assertSeeHtml('data-own="pt"')
         ->assertSee('summary');
 });
 
