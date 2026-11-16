@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use LynxCms\Core\Actions\Pages\SavePage;
+use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Search\SearchIndexReport;
 
 beforeEach(function (): void {
@@ -34,6 +35,15 @@ it('lists the fields each template indexes: the title and searchable fields that
     $course = collect(app(SearchIndexReport::class)->templates())->firstWhere('name', 'course');
 
     expect($course)->toMatchArray(['fields' => ['title', 'summary'], 'pages' => 1, 'has_url' => true]);
+});
+
+it('says which templates belong to Lynx or a module', function (): void {
+    lynx()->pages->trash(createCourses('gone')['gone']);
+    $templates = collect(app(SearchIndexReport::class)->templates())->keyBy('name');
+    $system = $templates->whereNotNull('owner');
+
+    expect($templates['course']['owner'])->toBeNull()
+        ->and($system->pluck('owner', 'name')->all())->toMatchArray([Trash::TEMPLATE => 'Lynx']);
 });
 
 it('shows what a page\'s rows hold in each language', function (): void {

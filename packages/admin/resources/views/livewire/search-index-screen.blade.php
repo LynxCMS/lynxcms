@@ -53,29 +53,17 @@
     <section aria-labelledby="search-templates" class="grid gap-3">
         <h2 id="search-templates" class="font-semibold">{{ __('lynx-admin::search_index.templates.title') }}</h2>
         <p class="text-muted-foreground text-sm">{{ __('lynx-admin::search_index.templates.hint') }}</p>
-        <x-lynx-admin::ui.table variant="card">
-            <x-lynx-admin::ui.table-header>
-                <x-lynx-admin::ui.table-row class="hover:bg-transparent">
-                    <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.templates.template') }}</x-lynx-admin::ui.table-head>
-                    <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.templates.pages') }}</x-lynx-admin::ui.table-head>
-                    <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-admin::search_index.templates.fields') }}</x-lynx-admin::ui.table-head>
-                </x-lynx-admin::ui.table-row>
-            </x-lynx-admin::ui.table-header>
-            <x-lynx-admin::ui.table-body>
-                @foreach ($templates as $template)
-                    <x-lynx-admin::ui.table-row wire:key="search-template-{{ $template['name'] }}" data-template="{{ $template['name'] }}">
-                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">
-                            {{ $template['label'] }} <span class="text-muted-foreground font-mono text-sm">{{ $template['name'] }}</span>
-                            @unless ($template['has_url'])
-                                <x-lynx-admin::ui.badge variant="outline" class="ms-1">{{ __('lynx-admin::search_index.templates.no_url') }}</x-lynx-admin::ui.badge>
-                            @endunless
-                        </x-lynx-admin::ui.table-cell>
-                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">{{ $template['pages'] }}</x-lynx-admin::ui.table-cell>
-                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 font-mono text-sm">{{ implode(', ', $template['fields']) }}</x-lynx-admin::ui.table-cell>
-                    </x-lynx-admin::ui.table-row>
-                @endforeach
-            </x-lynx-admin::ui.table-body>
-        </x-lynx-admin::ui.table>
+        @php($systemTemplates = array_values(array_filter($templates, fn (array $template): bool => $template['owner'] !== null)))
+        <div data-site-templates>
+            @include('lynx-admin::livewire.partials.search-index-templates', ['rows' => array_values(array_filter($templates, fn (array $template): bool => $template['owner'] === null)), 'withOwner' => false])
+        </div>
+        @if ($systemTemplates !== [])
+            <h3 class="mt-3 text-sm font-semibold">{{ __('lynx-admin::search_index.templates.system') }}</h3>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::search_index.templates.system_hint') }}</p>
+            <div data-system-templates>
+                @include('lynx-admin::livewire.partials.search-index-templates', ['rows' => $systemTemplates, 'withOwner' => true])
+            </div>
+        @endif
     </section>
 
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm grid gap-4 p-5" aria-labelledby="search-lookup">

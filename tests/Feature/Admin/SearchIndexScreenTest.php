@@ -8,6 +8,7 @@ use LynxCms\Admin\Livewire\SearchIndexScreen;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Pages\Trash;
 
 /*
  * Settings > Search index (ADR-0120): what the index holds, a page's indexed words, and rebuilding
@@ -35,6 +36,17 @@ it('shows each language\'s rows and the fields each template indexes', function 
         ->assertSeeHtml('data-template="course"')
         ->assertSeeHtml('data-own="pt"')
         ->assertSee('summary');
+});
+
+it('lists the site\'s templates apart from those of Lynx and its modules', function (): void {
+    lynx()->pages->trash(createCourses('gone')['gone']);
+    $this->actingAs(new GenericUser(['id' => 3]));
+    $system = ['name' => Trash::TEMPLATE, 'owner' => 'Lynx'];
+
+    Livewire::test(SearchIndexScreen::class)
+        ->assertSeeHtml('data-site-templates')
+        ->assertSeeHtml('data-system-templates')
+        ->assertSeeInOrder(['data-site-templates', 'data-template="course"', 'data-system-templates', 'data-template="'.$system['name'].'"', $system['owner']]);
 });
 
 it('lists the screen in Settings only for people with search.manage', function (): void {

@@ -33,6 +33,9 @@ return [
         'template' => 'Template',
         'pages' => 'Pages',
         'fields' => 'Indexed fields',
+        'system' => 'System templates',
+        'system_hint' => 'Templates that Lynx and its modules keep for themselves, such as the trash or settings pages.',
+        'owner' => 'Belongs to',
         'no_url' => 'No URL',
     ],
     'lookup' => [

@@ -10,6 +10,7 @@ use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Search\Plurals\WordReducers;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
@@ -29,6 +30,7 @@ final readonly class SearchIndexReport
         private TemplateRegistry $templates,
         private WordReducers $reducers,
         private FieldRegistry $fields,
+        private SchemaOwners $owners,
     ) {}
 
     /**
@@ -55,9 +57,10 @@ final readonly class SearchIndexReport
     }
 
     /**
-     * Each template with its pages and the fields it indexes.
+     * Each template with its pages, the fields it indexes, and its owner: the module or Lynx for
+     * system templates (ADR-0115), null for the site's own.
      *
-     * @return list<array{name: string, label: string, has_url: bool, pages: int, fields: list<string>}>
+     * @return list<array{name: string, label: string, has_url: bool, pages: int, fields: list<string>, owner: ?string}>
      */
     public function templates(): array
     {
@@ -69,6 +72,7 @@ final readonly class SearchIndexReport
             'has_url' => $template->hasUrl(),
             'pages' => Value::int($pages[$template->id] ?? 0),
             'fields' => $this->indexedFields($template),
+            'owner' => $this->owners->ownerOfTemplate((string) $template->name),
         ])->all());
     }
 

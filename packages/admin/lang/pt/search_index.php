@@ -33,6 +33,9 @@ return [
         'template' => 'Modelo',
         'pages' => 'Páginas',
         'fields' => 'Campos indexados',
+        'system' => 'Modelos do sistema',
+        'system_hint' => 'Modelos que o Lynx e os seus módulos guardam para si, como o lixo ou as páginas de definições.',
+        'owner' => 'Pertence a',
         'no_url' => 'Sem URL',
     ],
     'lookup' => [
