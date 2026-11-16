@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Search index',
+    'description' => 'The words search finds pages by: the title, and the fields each template marks searchable.',
+    'denied' => 'You may not manage the search index.',
+    'rebuilt' => '{0} No pages to index.|{1} Indexed 1 page.|[2,*] Indexed :count pages.',
+    'rebuild' => [
+        'title' => 'Rebuild',
+        'hint' => 'Saving a page keeps its words current. Rebuild after changing which fields are searchable or a field\'s settings, such as a choice label. Large sites can rebuild one template at a time.',
+        'template' => 'Pages',
+        'every_page' => 'Every page',
+        'button' => 'Rebuild the index',
+    ],
+    'languages' => [
+        'title' => 'Languages',
+        'language' => 'Language',
+        'indexed' => 'Indexed',
+        'count' => ':rows of :pages pages',
+        'incomplete' => 'Needs a rebuild',
+        'plurals' => 'Singular and plural',
+        'plurals_on' => 'Found from either',
+        'plurals_off' => 'Exact words only',
+    ],
+    'templates' => [
+        'title' => 'What each template indexes',
+        'hint' => 'Fields marked searchable whose type gives text, such as text, textarea and choices. Pages without a URL are indexed too; the site\'s search shows them only if it asks for them.',
+        'template' => 'Template',
+        'pages' => 'Pages',
+        'fields' => 'Indexed fields',
+        'no_url' => 'No URL',
+    ],
+    'lookup' => [
+        'title' => 'A page\'s indexed words',
+        'page' => 'Page path or id',
+        'placeholder' => 'For example /about or 42',
+        'missing' => 'There is no page at that path or id.',
+        'not_indexed' => 'This page has no words in the index yet. Rebuild the index.',
+    ],
+];

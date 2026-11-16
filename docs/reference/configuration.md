@@ -28,6 +28,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `backups.keep` | `14` | Backups kept. |
 | `backups.schedule` | `null` | `daily` or `hourly` to run backups from the scheduler. |
 | `revisions.keep` | `50` | Revisions kept per page. |
+| `search.reduce_plurals` | `true` (`LYNX_SEARCH_REDUCE_PLURALS`) | Search finds singular and plural forms in the languages Lynx has rules for (see [Search in your languages](/basics/languages#search-in-your-languages)). Run `lynx:search-index` after changing it. |
 | `edit_lock_seconds` | `120` | How long an editor's lock lasts without renewal. |
 | `permissions.open_until_roles` | `false` | Every signed in user may do everything until any user has a role (`LYNX_OPEN_UNTIL_ROLES`); local work only. |
 | `permissions.anonymous_role` | `null` | Role for MCP clients and agents acting for no user. |

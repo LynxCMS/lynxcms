@@ -158,6 +158,8 @@ lynx()->pages->find('search*="seasons", template=project');
 
 Every word must appear, as the beginning of a word: `estaç` finds "estações", but `ções` does not. Case and accents are ignored, so `estacoes` finds it too. `|` separates alternatives. Search uses full text indexes on SQLite (FTS5) and PostgreSQL.
 
+Singular and plural find each other in Portuguese, English and French: `livros` finds "livro", `animal` finds "animais", and `cities` finds "city". Only plurals are matched, not other forms of a word, so `organização` does not find "organizar". Each language uses the rules of its locale; [Languages](/basics/languages#search-in-your-languages) shows how to add rules for another one.
+
 ## Languages
 
 Selectors match the values visitors see in the current language, with fallback: a Portuguese visitor's `title%=risco` matches the Portuguese title, or the English one where there is no translation. Add `language=pt` to match another language than the request's:

@@ -6,11 +6,13 @@ namespace LynxCms\Core\Search\Engines;
 
 use Illuminate\Database\Query\Builder;
 use LynxCms\Core\Query\Sql;
+use LynxCms\Core\Search\SearchWord;
 use LynxCms\Core\Support\Tables;
 
 /**
  * SQLite: an external content FTS5 table over lynx_search, kept in step by hand (FTS5 needs the
- * old text to forget a row), matched with prefix terms, e.g. "quatro"* "estac"*.
+ * old text to forget a row), matched with prefix terms, or a word's singular exactly (ADR-0119), e.g. "quatro"* AND
+ * ("estacoes"* OR "estacao").
  *
  * @internal
  */
@@ -18,7 +20,7 @@ final class SqliteSearchEngine extends SearchEngine
 {
     public function whereMatches(Builder $query, string $pageIdColumn, array $words, int $languageId): void
     {
-        $match = implode(' ', array_map(fn (string $word): string => '"'.$word.'"*', $words));
+        $match = implode(' AND ', array_map(fn (SearchWord $word): string => $word->reduced === null ? '"'.$word->prefix.'"*' : '("'.$word->prefix.'"* OR "'.$word->reduced.'")', $words));
         $fts = $this->fts();
 
         $query->whereIn($pageIdColumn, fn (Builder $rows) => $rows->select('page_id')->from(Tables::SEARCH)

@@ -143,6 +143,20 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 <<< @/snippets/advanced/language-mail.php#send{php}
 
+## Search in your languages
+
+Search finds singular and plural forms in Portuguese, English and French (see [Searching text](/basics/selectors#searching-text)). A language gets the rules of its locale: `pt-BR` and `pt-PT` both use the Portuguese ones, and the default language uses `lynx.base_locale`. In other languages, search matches the words as they are.
+
+To add rules for a language, write a class that turns a plural into its singular:
+
+<<< @/snippets/advanced/DutchPlurals.php#reducer{php}
+
+and register it for the locale in a service provider. Registering a locale Lynx already has replaces its rules, and a full locale (`pt-BR`) wins over the bare language (`pt`):
+
+<<< @/snippets/advanced/plurals-register.php#register{php}
+
+Run `php artisan lynx:search-index` afterwards, so pages already saved are indexed with the new rules. Short words (under four letters) are never changed. `LYNX_SEARCH_REDUCE_PLURALS=false` turns plurals off for every language.
+
 ## Sites with one language
 
 Until a site has a second language, the admin leaves languages out: the field form doesn't ask whether a field is translatable, and screens don't mention translations, fallbacks or the default language.

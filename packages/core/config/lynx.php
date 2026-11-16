@@ -92,6 +92,12 @@ return [
         'registration_role' => env('LYNX_REGISTRATION_ROLE', 'guest'),
     ],
 
+    'search' => [
+        // Search finds singular and plural forms (ADR-0119) in the languages Lynx has a reducer
+        // for. Run lynx:search-index after changing it.
+        'reduce_plurals' => (bool) env('LYNX_SEARCH_REDUCE_PLURALS', true),
+    ],
+
     // Translatable fields sorted through stored sort keys (ADR-0061): sort=title reads an index
     // instead of sorting every page by its value with fallback. Run lynx:sort-keys after changing.
     'sort_keys' => ['title'],

@@ -22,6 +22,7 @@ A role is a set of **grants**. A grant is a permission, optionally limited to so
 | `pages.delete` | Delete pages. |
 | `pages.template` | Switch the template of pages. |
 | `schema.manage` | Manage fields, templates and languages. |
+| `search.manage` | Rebuild the search index and see what it holds, in the admin's Search index screen and with `search_inspect`. |
 | `agent.use` | Use the built-in agent and approve its plans. |
 | `system.manage` | Change system pages. |
 | `menus.manage` | Manage menus (with `lynxcms/menus`). |

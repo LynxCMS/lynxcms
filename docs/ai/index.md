@@ -21,7 +21,7 @@ Both run the same actions as the PHP API. Actions that should never be tools (su
 php artisan mcp:start lynx
 ```
 
-Point Claude Desktop, Claude Code or any MCP client at that command. The server starts with `describe_schema`, `find_pages`, `get_page` and `get_page_history`, plus one tool per action (`pages_save`, `pages_move`, `languages_create`…). Modules add read tools too, such as `list_submissions` and `get_submission` from the forms module. The built-in agent gets the same tools.
+Point Claude Desktop, Claude Code or any MCP client at that command. The server starts with `describe_schema`, `find_pages`, `get_page` and `get_page_history`, plus one tool per action (`pages_save`, `pages_move`, `languages_create`…). `search_inspect` says what the search index holds, for clients whose user has `search.manage`. Modules add read tools too, such as `list_submissions` and `get_submission` from the forms module. The built-in agent gets the same tools.
 
 ### Connecting a client
 

@@ -21,6 +21,11 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.47 to 0.1.48
+
+- Run `php artisan lynx:search-index` once, so pages already saved are found by their singular and plural forms (ADR-0119). Until then search finds everything it found before.
+- Rebuilding the search index (`search.rebuild`, also from an MCP client or the agent) now needs the new `search.manage` permission instead of `schema.manage` (ADR-0120). Superusers have it. Give it to the roles that rebuilt the index before.
+
 ## From 0.1.41 to 0.1.42
 
 - Run `php artisan lynx:migrate`: Page Finder keeps saved searches in a new table, and apps whose user model keeps users in a table not named `users` get the `lynx_language_id` column.

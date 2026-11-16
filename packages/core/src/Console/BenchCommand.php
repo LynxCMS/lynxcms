@@ -37,6 +37,8 @@ final class BenchCommand extends Command
             'translatable sort' => 'template=course, sort=title, limit=20',
             'translatable sort, deep page' => 'template=course, sort=-title, start=5000, limit=20',
             'count' => 'template=course, price>100',
+            'search' => 'template=course, search*="generated course 42", limit=20',
+            'search, plural' => 'template=course, search*="generated courses 42", limit=20',
         ];
 
         $rows = $context->with((string) $this->option('lang'), fn (): array => $this->eachStep(

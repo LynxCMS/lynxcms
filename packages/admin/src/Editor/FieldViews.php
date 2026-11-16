@@ -8,6 +8,7 @@ use BladeUI\Icons\Exceptions\SvgNotFound;
 use BladeUI\Icons\Factory as IconFactory;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Search\SearchText;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateField;
 
@@ -73,6 +74,7 @@ final class FieldViews
             width: $templateField->width(),
             placeholder: $templateField->placeholder() === '' ? null : $templateField->placeholder(),
             icon: $this->icon($templateField->icon()),
+            isSearchable: SearchText::indexes($templateField->name(), $templateField),
         );
     }
 

@@ -115,7 +115,7 @@ it('leaves actions that need schema.manage but change no schema alone', function
     schemaManager(7);
     config(['lynx.schema_editing' => false]);
 
-    lynx()->actingAs(Actor::user(7), fn (): mixed => lynx()->run(RebuildSearchIndex::class));
+    lynx()->actingAs(Actor::user(7), fn (): mixed => lynx()->run(CleanHtmlValues::class));
 })->throwsNoExceptions();
 
 it('marks the actions that change the schema, and only those', function (): void {

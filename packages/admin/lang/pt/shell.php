@@ -13,6 +13,7 @@ return [
         'fields' => 'Campos',
         'templates' => 'Modelos',
         'languages' => 'Idiomas',
+        'search_index' => 'Índice de pesquisa',
         'general' => 'Geral',
         'roles' => 'Funções',
         'users' => 'Utilizadores',

@@ -1,5 +1,5 @@
 @props(['field', 'languages', 'page' => null, 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false])
-{{-- showType: the field type under the label, for superusers only.
+{{-- showType: the field type under the label, for superusers only, and whether it is searchable (ADR-0120).
      cell: a cell of a page editor card, which wraps fields side by side by their width (ADR-0063).
      page: the page edited; under each language, views modules add to the editor.field slot (AdminSlots) get it. --}}
 @php
@@ -34,7 +34,7 @@
             <p class="text-muted-foreground text-xs">{{ __('lynx-admin::editor.field.locked') }}</p>
         @endif
         @if ($showType)
-            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', '.__('lynx-admin::editor.field.translatable') : '' }}</p>
+            <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', '.__('lynx-admin::editor.field.translatable') : '' }}@if ($field->isSearchable), <span data-searchable="{{ $field->field() }}">{{ __('lynx-admin::editor.field.searchable') }}</span>@endif</p>
         @endif
         @if ($field->description)
             <p class="text-muted-foreground text-sm mt-1">{{ $field->description }}</p>

@@ -206,6 +206,8 @@ Saving, restoring, moving to another template or deleting a page updates the ind
 php artisan lynx:search-index
 ```
 
+In the admin, **Settings › Search index** does the same for people with the `search.manage` permission: it rebuilds every page or one template's, shows how many pages each language has in the index, which fields each template indexes, and the words indexed for a page you look up. Superusers also see "searchable" under a field's label in the page editor when its text goes into the index.
+
 ## Changing the schema
 
 Lynx keeps content unless you delete it on purpose:
