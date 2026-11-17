@@ -12,7 +12,7 @@
             <div class="grid max-w-md gap-1.5" data-template-name>
                 <label for="name-{{ $defaultCode }}" class="sr-only">{{ __('lynx-admin::settings.name_in_templates') }}</label>
                 <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
-                <p class="text-muted-foreground text-sm">{{ __($isMultilingual ? 'lynx-admin::settings.name_help_languages' : 'lynx-admin::settings.name_help') }}</p>
+                <p class="lynx-field-help">{{ __($isMultilingual ? 'lynx-admin::settings.name_help_languages' : 'lynx-admin::settings.name_help') }}</p>
                 @error('names.'.$defaultCode) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 @if ($can['edit'])
                     <x-lynx-admin::ui.button type="button" class="mt-2 justify-self-start" wire:click="saveNames">{{ __('lynx-admin::settings.save_name') }}</x-lynx-admin::ui.button>
@@ -35,9 +35,9 @@
                                 @endif
                             </div>
                             @if (($active[$code] ?? true) && $urls[$code])
-                                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                <p class="lynx-field-help">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
                             @elseif (! ($active[$code] ?? true))
-                                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
+                                <p class="lynx-field-help">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
                             @endif
                             @error('names.'.$code) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                         </div>

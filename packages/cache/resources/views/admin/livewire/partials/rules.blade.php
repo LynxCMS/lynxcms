@@ -10,7 +10,7 @@
             <input id="cache-default-lifetime" type="number" min="0" class="blat-input w-28" wire:model="lifetime" placeholder="{{ $configLifetime }}" @error('lifetime') aria-invalid="true" @enderror>
             <span>{{ __('lynx-cache::admin.rules.seconds_end') }}</span>
         </p>
-        <p class="text-muted-foreground text-sm">{{ __('lynx-cache::admin.rules.default_help', ['seconds' => $configLifetime]) }}</p>
+        <p class="lynx-field-help">{{ __('lynx-cache::admin.rules.default_help', ['seconds' => $configLifetime]) }}</p>
         @error('lifetime') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     </section>
 

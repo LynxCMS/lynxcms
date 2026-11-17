@@ -8,14 +8,14 @@
         <div class="grid gap-1">
             <label for="branding-name" class="text-sm font-medium">{{ __('lynx-admin::general.branding.name') }}</label>
             <input id="branding-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.400ms="name" maxlength="60" placeholder="{{ $defaults->name }}" @error('name') aria-invalid="true" @enderror>
-            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::general.branding.name_help') }}</p>
+            <p class="lynx-field-help">{{ __('lynx-admin::general.branding.name_help') }}</p>
             @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid gap-2">
             <label for="branding-logo" class="text-sm font-medium">{{ __('lynx-admin::general.branding.logo') }}</label>
             <input id="branding-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="blat-input max-w-sm" wire:model="logo" @error('logo') aria-invalid="true" @enderror>
-            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::general.branding.logo_help') }}</p>
+            <p class="lynx-field-help">{{ __('lynx-admin::general.branding.logo_help') }}</p>
             @error('logo') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             @if ($hasUploadedLogo)
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="blat-checkbox" wire:model.live="removeLogo"> {{ __($defaults->logo ? 'lynx-admin::general.branding.remove_logo_configured' : 'lynx-admin::general.branding.remove_logo') }}</label>
@@ -34,7 +34,7 @@
                             <button type="button" class="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline" wire:click="$set('{{ $field }}', '')">{{ __('lynx-admin::general.branding.default') }}</button>
                         @endif
                     </div>
-                    <p class="text-muted-foreground text-sm">{{ $help }}</p>
+                    <p class="lynx-field-help">{{ $help }}</p>
                     @error($field) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </div>
             @endforeach

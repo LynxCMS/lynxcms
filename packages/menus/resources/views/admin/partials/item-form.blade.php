@@ -62,13 +62,13 @@
                     <div>
                         <label for="item-depth" class="blat-label mb-2">{{ __('lynx-menus::admin.item.levels') }}</label>
                         <input id="item-depth" type="number" min="1" max="{{ \LynxCms\Menus\MenuSchema::MAX_DEPTH }}" class="blat-input" wire:model="item.depth" placeholder="{{ \LynxCms\Menus\MenuSchema::DEFAULT_DEPTH }}" @error('depth') aria-invalid="true" @enderror>
-                        <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-menus::admin.item.levels_help', ['max' => \LynxCms\Menus\MenuSchema::MAX_DEPTH]) }}</p>
+                        <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.levels_help', ['max' => \LynxCms\Menus\MenuSchema::MAX_DEPTH]) }}</p>
                         @error('depth') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label for="item-limit" class="blat-label mb-2">{{ __('lynx-menus::admin.item.limit') }}</label>
                         <input id="item-limit" type="number" min="1" max="{{ \LynxCms\Menus\MenuSchema::MAX_LIMIT }}" class="blat-input" wire:model="item.limit" placeholder="{{ \LynxCms\Menus\MenuSchema::DEFAULT_LIMIT }}" @error('limit') aria-invalid="true" @enderror>
-                        <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-menus::admin.item.limit_help') }}</p>
+                        <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.limit_help') }}</p>
                         @error('limit') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -80,7 +80,7 @@
         <div>
             <span id="item-url-label" class="blat-label mb-2">{{ __('lynx-menus::admin.item.url') }}</span>
             @include('lynx-menus::admin.partials.translated-input', ['model' => 'item.url', 'id' => 'item-url', 'label' => __('lynx-menus::admin.item.url'), 'error' => 'url', 'placeholder' => __('lynx-menus::admin.item.url_placeholder')])
-            <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-menus::admin.item.url_help') }}</p>
+            <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.url_help') }}</p>
             @error('url') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
     @endif
@@ -131,7 +131,7 @@
                                 <input id="item-rel-{{ $value }}" type="checkbox" class="blat-checkbox" value="{{ $value }}" wire:model="item.rel"> {{ $text }}
                             </label>
                         @endforeach
-                        <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.item.noopener') }}</p>
+                        <p class="lynx-field-help">{{ __('lynx-menus::admin.item.noopener') }}</p>
                         @error('rel.*') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
                     </fieldset>
                 @endif

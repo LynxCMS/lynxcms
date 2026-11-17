@@ -286,6 +286,18 @@ app(AdminAssets::class)->stylesheet('reports', __DIR__.'/../dist/admin.css');
 
 Every admin page then links it after the admin's own stylesheet and before the site's (`lynx-admin.stylesheets`), with a version that changes with the file, so browsers never keep an old copy.
 
+### Help under a field
+
+Give the help text under a field the `lynx-field-help` class, so it has the same size and colour as the admin's own: a step smaller than the field's text, in the muted colour.
+
+```blade
+<label for="reports-title" class="text-sm font-medium">{{ __('reports::admin.title') }}</label>
+<input id="reports-title" type="text" class="blat-input" wire:model="title">
+<p class="lynx-field-help">{{ __('reports::admin.title_help') }}</p>
+```
+
+The class is in the admin's own stylesheet, so a module doesn't need it in its own. For help that only some people need, use a [hint](#hints) beside the label instead.
+
 ### Keeping the site's look
 
 Your classes read the same variables as the admin's, so a site's appearance settings and branding (accent color, base color, radius, fonts, spacing, dark mode) apply to your screens too. Three things keep it that way:
