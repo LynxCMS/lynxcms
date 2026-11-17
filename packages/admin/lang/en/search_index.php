@@ -45,7 +45,7 @@ return [
         'no_url' => 'No URL',
     ],
     'lookup' => [
-        'title' => 'Test Indexed Words',
+        'title' => 'Test indexed words',
         'hint' => 'Look up a page to see the words search finds it by, in each language.',
         'page' => 'Page path or id',
         'placeholder' => 'For example /about or 42',

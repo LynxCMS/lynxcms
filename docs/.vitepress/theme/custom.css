@@ -104,3 +104,21 @@
 .vp-doc img:not(a img) {
     cursor: zoom-in;
 }
+
+/* The home page's hero holds code (HomeCode.vue) where VitePress expects a square image: the text
+   stays left aligned at every width, the code takes the space beside it on wide screens and goes
+   under it on narrow ones. .VPHome outranks VitePress's scoped hero styles. */
+.VPHome .VPHero.has-image .container { text-align: left; }
+.VPHome .VPHero.has-image .name,
+.VPHome .VPHero.has-image .text,
+.VPHome .VPHero.has-image .tagline { margin: 0; }
+.VPHome .VPHero.has-image .actions { justify-content: flex-start; }
+.VPHome .VPHero.has-image .image { order: 2; margin: 40px 0 0; min-width: 0; }
+.VPHome .VPHero.has-image .image-container { width: auto; height: auto; transform: none; }
+.VPHome .VPHero.has-image .image-bg { display: none; }
+
+@media (min-width: 960px) {
+    .VPHome .VPHero.has-image .main { width: 48%; max-width: 520px; }
+    .VPHome .VPHero.has-image .image { display: flex; align-items: center; margin: 0 0 0 48px; }
+    .VPHome .VPHero.has-image .image-container { display: block; }
+}

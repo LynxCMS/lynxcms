@@ -65,7 +65,7 @@ Lynx serves every URL your routes leave free, but Laravel starts with a welcome 
 
 <<< @/snippets/training/routes/web.php{php}
 
-Sign in at `/lynx` and you see the page tree with the home page. Visit `/` and Lynx renders it with its default view, a list of its fields, until chapter 3 writes the real one.
+Sign in at `/lynx` and you see the admin's **Home** screen. **Pages** in its menu shows the page tree, with the home page in it. Visit `/` and Lynx renders it with its default view, a list of its fields, until chapter 3 writes the real one.
 
 ## What you get
 

@@ -10,7 +10,7 @@ Lynx is a content management system built on Laravel. It can run as a new Larave
 A little Laravel is enough to start. If you have written a route and a Blade view, you know most of what you need. Lynx adds a few ideas of its own, and the rest of this guide introduces them one at a time.
 
 > [!TIP]
-> The [live demo](https://demo-corporate.lynxcms.org/) shows a finished site. It is the website of an invented software company, in English and Portuguese. Its code is a starter you can install in about five minutes, admin included: [LynxCMS/lynx-corporate-starter](https://github.com/LynxCMS/lynx-corporate-starter).
+> The [live demo](https://demo-corporate.lynxcms.org/) shows a finished site. It is the website of an invented software company, in English and Portuguese. In its [demo admin](https://demo-corporate.lynxcms.org/lynx/), choose **Admin** or **Editor** on the sign-in page; no password is needed. Its code is a starter you can install in about five minutes, admin included: [LynxCMS/lynx-corporate-starter](https://github.com/LynxCMS/lynx-corporate-starter).
 
 > [!NOTE]
 > Lynx is in active development and has not reached 1.0. Its APIs may still change between releases. The [roadmap](/prologue/roadmap) lists what is planned.
@@ -103,6 +103,8 @@ Only `lynxcms/core` is required. Add the others when a site needs them. Each one
 | `lynxcms/mcp` | An MCP server that lets AI tools such as Claude work with the site. |
 | `lynxcms/ai` | A built-in AI agent and machine translation. |
 | `lynxcms/contracts` | Interfaces the packages share. It is installed with the other packages. |
+
+`lynxcms/translate`, machine translation for the Lynx CMS admin, is a paid module coming in a future release ([Roadmap](/prologue/roadmap#translate)).
 
 ## Next steps
 
