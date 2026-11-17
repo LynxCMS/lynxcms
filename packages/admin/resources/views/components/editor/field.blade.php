@@ -37,7 +37,7 @@
             <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', '.__('lynx-admin::editor.field.translatable') : '' }}@if ($field->isSearchable), <span data-searchable="{{ $field->field() }}">{{ __('lynx-admin::editor.field.searchable') }}</span>@endif</p>
         @endif
         @if ($field->description)
-            <p class="text-muted-foreground text-sm mt-1">{{ $field->description }}</p>
+            <p class="lynx-field-help mt-1">{{ $field->description }}</p>
         @endif
     </div>
 

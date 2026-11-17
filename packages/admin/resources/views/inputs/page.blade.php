@@ -24,7 +24,7 @@
         $wire = ($live ?? false) ? 'wire:model.live' : 'wire:model';
     @endphp
     @if ($options === [])
-        <p class="text-muted-foreground text-sm" id="input-{{ $field->name }}-{{ $code }}">{{ app(\LynxCms\Admin\Editor\PageChoices::class)->emptyNote($settings) }}</p>
+        <p class="lynx-field-help" id="input-{{ $field->name }}-{{ $code }}">{{ app(\LynxCms\Admin\Editor\PageChoices::class)->emptyNote($settings) }}</p>
     @elseif ($style === 'select')
         <select id="input-{{ $field->name }}-{{ $code }}" class="blat-select max-w-sm" {{ $wire }}="{{ $model }}" @if ($isMultiple) multiple @endif
                 aria-labelledby="field-{{ $field->name }}" @error('values.'.$field->name) aria-invalid="true" @enderror>

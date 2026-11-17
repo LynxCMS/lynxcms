@@ -44,7 +44,7 @@
             <div>
                 <input id="new-page-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="name" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 @if ($url)
-                    <p class="text-muted-foreground text-sm mt-1">{{ __('lynx-admin::pages.create.url') }} <span class="text-foreground">{{ $url }}</span></p>
+                    <p class="lynx-field-help mt-1">{{ __('lynx-admin::pages.create.url') }} <span class="text-foreground">{{ $url }}</span></p>
                 @endif
                 {{-- Core keys name errors by language code, e.g. names.en. --}}
                 @error('names.'.$defaultCode) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror

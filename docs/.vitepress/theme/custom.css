@@ -94,3 +94,13 @@
 .vp-doc .wide-table thead th:first-child {
     background-color: var(--vp-c-bg-soft);
 }
+
+/* Zoomed images (medium-zoom) sit above the top bar and sidebar. */
+.medium-zoom-overlay,
+.medium-zoom-image--opened {
+    z-index: 100;
+}
+
+.vp-doc img:not(a img) {
+    cursor: zoom-in;
+}

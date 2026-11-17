@@ -61,5 +61,5 @@
             </template>
         </ul>
     </template>
-    <p class="text-muted-foreground text-sm">{{ $hint }}</p>
+    <p class="lynx-field-help">{{ $hint }}</p>
 </fieldset>

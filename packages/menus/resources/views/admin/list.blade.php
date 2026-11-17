@@ -37,7 +37,7 @@
                 <div class="grid gap-2">
                     <label for="new-menu-name" class="blat-label">{{ __('lynx-menus::admin.name') }}</label>
                     <input id="new-menu-name" type="text" class="blat-input font-mono" wire:model="newMenu.name" placeholder="{{ __('lynx-menus::admin.name_placeholder') }}" autocomplete="off" spellcheck="false" @error('name') aria-invalid="true" @enderror>
-                    <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.name_help') }}</p>
+                    <p class="lynx-field-help">{{ __('lynx-menus::admin.name_help') }}</p>
                     @error('name') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
                 <x-lynx-admin::ui.dialog-footer>

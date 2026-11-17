@@ -34,10 +34,10 @@
                     @elseif ($setting['type'] === 'string')
                         <input id="setting-{{ $field->name }}-{{ $name }}" type="text" class="blat-input" wire:model="{{ $model }}.settings.{{ $name }}" @disabled($disabled)>
                     @else
-                        <p class="text-muted-foreground text-sm">{{ __('lynx-admin::inputs.setting_elsewhere', ['type' => $setting['type']]) }}</p>
+                        <p class="lynx-field-help">{{ __('lynx-admin::inputs.setting_elsewhere', ['type' => $setting['type']]) }}</p>
                     @endif
                     @if ($setting['description'] !== '')
-                        <p class="text-muted-foreground text-sm mt-1">{{ $setting['description'] }}</p>
+                        <p class="lynx-field-help mt-1">{{ $setting['description'] }}</p>
                     @endif
                 </div>
             @empty
