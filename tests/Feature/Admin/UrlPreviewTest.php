@@ -70,7 +70,7 @@ it('names the parent that lends its default name, beside that language\'s URL', 
     expect(new UrlPreviews(lynx()->pages->get($page->id))->borrowedFrom())->toBe(['pt' => (string) $courses->title]);
     Livewire::test(PageSettings::class, ['pageId' => $page->id])
         ->assertSeeHtml('data-url-parent-hint="pt"')
-        ->assertSee("{$courses->title} is not published in Português");
+        ->assertSee("{$courses->title} page is not published in Português");
 });
 
 it('keeps an unpublished parent\'s own name in the URL, with no hint', function (): void {

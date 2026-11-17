@@ -19,7 +19,7 @@ return [
     'published_in' => 'Published in :language',
     'url' => 'URL:',
     'parent_unpublished_label' => 'Why this URL',
-    'parent_unpublished' => ':parent is not published in :language, so its part of this URL uses its :default name. Publish :parent in :language to give it a name in :language.',
+    'parent_unpublished' => ':parent page is not published in :language, so its part of this URL uses its :default name. Publish :parent in :language to give it a name in :language.',
     'will_redirect' => '(the current URL will redirect)',
     'not_published_in' => 'Not published in :language: its URL returns 404.',
     'save_names' => 'Save names',
