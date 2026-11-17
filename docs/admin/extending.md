@@ -443,7 +443,7 @@ The hint opens on hover, on keyboard focus and on a tap, since touch screens hav
 | `label` | The button's name for screen readers. Required. |
 | `side` | Where the tooltip opens: `top`, `right`, `bottom` (the default) or `left`. |
 
-Other attributes go on the hint's wrapper, so `data-*` attributes and classes work as on any element. The icon takes the site's accent colour at 80%, lighter in dark mode, as the home screen's icons do. Its classes are in the admin's stylesheet already, so a module needs nothing in its own.
+Other attributes go on the hint's wrapper, so `data-*` attributes and classes work as on any element. The icon takes the site's accent color at 80%, lighter in dark mode, as the home screen's icons do. Its classes are in the admin's stylesheet already, so a module needs nothing in its own.
 
 ## Styles for your screens
 
@@ -476,7 +476,7 @@ Every admin page then links it after the admin's own stylesheet and before the s
 
 ### Help under a field
 
-Give the help text under a field the `lynx-field-help` class, so it has the same size and colour as the admin's own: a step smaller than the field's text, in the muted colour.
+Give the help text under a field the `lynx-field-help` class, so it has the same size and color as the admin's own: a step smaller than the field's text, in the muted color.
 
 ```blade
 <label for="reports-title" class="text-sm font-medium">{{ __('reports::admin.title') }}</label>

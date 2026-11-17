@@ -103,6 +103,10 @@
             }
         }
     },
+    "scripts-descriptions": {
+        "docs": "Serve the documentation locally with live reload (installs its npm packages when package-lock.json changes).",
+        "docs:build": "Build the documentation and check its links, as CI does."
+    },
     "scripts": {
         "post-autoload-dump": [
             "@prepare"
@@ -114,6 +118,16 @@
             "@php vendor/bin/testbench workbench:build --ansi"
         ],
         "assets": "npm --prefix packages/admin run build",
+        "docs": [
+            "Composer\\Config::disableProcessTimeout",
+            "[ docs/node_modules/.package-lock.json -nt docs/package-lock.json ] || npm --prefix docs ci --no-audit --no-fund",
+            "npm --prefix docs run dev"
+        ],
+        "docs:build": [
+            "Composer\\Config::disableProcessTimeout",
+            "[ docs/node_modules/.package-lock.json -nt docs/package-lock.json ] || npm --prefix docs ci --no-audit --no-fund",
+            "npm --prefix docs run build"
+        ],
         "serve": [
             "Composer\\Config::disableProcessTimeout",
             "@php vendor/bin/testbench serve --ansi"

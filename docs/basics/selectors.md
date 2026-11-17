@@ -160,7 +160,7 @@ lynx()->pages->find('search*="seasons", template=project');
 
 Every word must appear, as the beginning of a word: `estaç` finds "estações", but `ções` does not. Case and accents are ignored, so `estacoes` finds it too. `|` separates alternatives. Search uses full text indexes on SQLite (FTS5) and PostgreSQL.
 
-Singular and plural find each other in Portuguese, English, French, Spanish, Italian, German and Dutch: `livros` finds "livro", `animal` finds "animais", `cities` finds "city", `canciones` finds "canción", and `Häuser` finds "Haus". Only plurals are matched, not other forms of a word, so `organização` does not find "organizar". Regional variants such as `pt-BR`, `en-US` and `en-GB` use their language's rules; [Languages](/basics/languages#search-in-your-languages) shows how to add rules for another one.
+Singular and plural find each other in Portuguese, English, French, Spanish, Italian, German and Dutch: `livros` finds "livro", `animal` finds "animais", `cities` finds "city", `canciones` finds "canción", and `Häuser` finds "Haus". Other forms of a word are left as they are, so `organização` does not find "organizar". Regional variants such as `pt-BR`, `en-US` and `en-GB` use their language's rules; [Languages](/basics/languages#search-in-your-languages) shows how to add rules for another one.
 
 ## Languages
 

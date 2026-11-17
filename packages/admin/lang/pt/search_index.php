@@ -45,7 +45,7 @@ return [
         'no_url' => 'Sem URL',
     ],
     'lookup' => [
-        'title' => 'Testar Palavras Indexadas',
+        'title' => 'Testar palavras indexadas',
         'hint' => 'Procure uma página para ver as palavras pelas quais a pesquisa a encontra, em cada idioma.',
         'page' => 'Caminho ou id da página',
         'placeholder' => 'Por exemplo /sobre ou 42',

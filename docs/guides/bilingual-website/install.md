@@ -79,7 +79,7 @@ Laravel decides which code answers each address with **routes**, listed in `rout
 // routes/web.php: the site's pages are Lynx's, so there are no routes here yet.
 ```
 
-Start the app with `php artisan serve` and open `http://localhost:8000/lynx`. After signing in you see the page tree, with only the home page in it. Visit `http://localhost:8000/`: Lynx shows the home page with a plain built-in view until chapter 4 writes a real one.
+Start the app with `php artisan serve` and open `http://localhost:8000/lynx`. After signing in you see the admin's **Home** screen, and **Pages** in its menu shows the page tree with only the home page in it. Visit `http://localhost:8000/`: Lynx shows the home page with a plain built-in view until chapter 4 writes a real one.
 
 ## What you have now
 

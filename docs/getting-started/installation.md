@@ -12,7 +12,7 @@ This page installs Lynx and its admin, and creates the first account that can si
 Lynx is a set of Laravel packages, so it needs what Laravel 13 needs, plus:
 
 - PHP 8.5 or newer.
-- PostgreSQL (recommended) or SQLite. MySQL and MariaDB are not supported.
+- SQLite (for most sites) or PostgreSQL. MySQL and MariaDB are not supported. [Choosing a Database](/getting-started/database) helps you pick.
 - Laravel's scheduler, which needs one cron entry (cron is the server's timer for recurring commands), if editors schedule pages or you want automatic backups.
 
 Nothing else runs on the server: the admin's CSS and JavaScript come prebuilt, so production servers need no Node.js.
@@ -79,7 +79,17 @@ In a deploy script or CI, give everything as options: `php artisan lynx:superuse
 
 ## Signing in
 
-Start the app with `php artisan serve` (or your usual local server, such as Herd or Sail) and open `/lynx`. If your app does not set up [Laravel Fortify](https://laravel.com/docs/fortify) itself, Lynx shows its own sign-in screen at `/lynx/login`. After signing in you see the page tree, which holds only the home page for now.
+Start the app with `php artisan serve` (or your usual local server, such as Herd or Sail) and open `/lynx`. If your app does not set up [Laravel Fortify](https://laravel.com/docs/fortify) itself, Lynx shows its own sign-in screen at `/lynx/login`. After signing in you see the admin's **Home** screen: a welcome, buttons for common tasks and a few stats.
+
+### Checking the install
+
+Three things show that Lynx is installed and working:
+
+- `/lynx` opens the **Home** screen once you sign in.
+- **Pages** in the admin's menu shows the page tree, with one page in it: the home page.
+- `/` shows the home page with Lynx's plain built-in view, a list of its fields, until you write a view for it.
+
+If `/` still shows Laravel's welcome page, the welcome route is still in `routes/web.php` ([Installing Lynx](#installing-lynx)). If `/lynx` refuses your account, it has no role yet: run `php artisan lynx:superuser`.
 
 The admin also offers password resets, two-factor authentication and passkeys. Some of them need a few lines in your `User` model; see [Sign-in and Accounts](/admin/sign-in).
 

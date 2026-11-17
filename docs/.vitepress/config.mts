@@ -69,11 +69,13 @@ export default defineConfig({
     },
 
     themeConfig: {
+        // The faceted mark from lynxcms.org; dark mode uses the lighter teals the favicon uses there.
+        logo: { light: '/logo.svg', dark: '/logo-dark.svg', alt: '' },
         siteTitle: 'Lynx',
 
         nav: [
-            { text: 'Guide', link: '/getting-started/introduction', activeMatch: '^/(getting-started|basics|admin|modules|ai|deeper)/' },
-            { text: 'Guides', link: '/guides/training-site/', activeMatch: '^/guides/' },
+            { text: 'Docs', link: '/getting-started/introduction', activeMatch: '^/(getting-started|basics|admin|modules|ai|deeper)/' },
+            { text: 'Guides', link: '/guides/', activeMatch: '^/guides/' },
             { text: 'Reference', link: '/reference/configuration', activeMatch: '^/reference/' },
             { text: 'Roadmap', link: '/prologue/roadmap' },
         ],
@@ -94,6 +96,7 @@ export default defineConfig({
                     { text: 'Introduction', link: '/getting-started/introduction' },
                     { text: 'Lynx Compared', link: '/getting-started/compared' },
                     { text: 'Installation', link: '/getting-started/installation' },
+                    { text: 'Choosing a Database', link: '/getting-started/database' },
                     { text: 'Your First Site', link: '/getting-started/first-site' },
                     { text: 'Core Concepts', link: '/getting-started/concepts' },
                 ],
@@ -133,6 +136,10 @@ export default defineConfig({
                     { text: 'Page Finder', link: '/modules/finder' },
                     { text: 'Translate', link: '/modules/translate' },
                 ],
+            },
+            {
+                text: 'Guides and Starters',
+                link: '/guides/',
             },
             {
                 text: 'Guide: A Bilingual Website',
@@ -203,6 +210,7 @@ export default defineConfig({
                 items: [
                     { text: 'Artisan Commands', link: '/reference/artisan' },
                     { text: 'Configuration', link: '/reference/configuration' },
+                    { text: 'Selector Cheat Sheet', link: '/reference/selectors' },
                 ],
             },
         ]),

@@ -208,7 +208,7 @@ php artisan lynx:search-index
 
 ![The Search index screen's Overview tab: pages per language and the fields each template indexes](/img/admin/admin-search-index.png)
 
-In the admin, **Settings › Search index** does the same for people with the `search.manage` permission: its Tools tab rebuilds every page, a site template or a system template, and Test Indexed Words shows the words a page you look up is found by. Its Overview tab shows how many pages each language has in the index and how many have their own title in it (every page has a row in every language, indexed with its fallback text where it has no translation), which fields each template indexes (the site's templates first, then those of Lynx and its modules). Superusers also see "searchable" under a field's label in the page editor when its text goes into the index.
+In the admin, **Settings › Search index** does the same for people with the `search.manage` permission: its Tools tab rebuilds every page, a site template or a system template, and Test indexed words shows the words a page you look up is found by. Its Overview tab shows how many pages each language has in the index and how many have their own title in it (every page has a row in every language, indexed with its fallback text where it has no translation), which fields each template indexes (the site's templates first, then those of Lynx and its modules). Superusers also see "searchable" under a field's label in the page editor when its text goes into the index.
 
 ## Changing the schema
 

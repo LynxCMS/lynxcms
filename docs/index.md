@@ -1,43 +1,53 @@
 ---
 layout: home
-title: Lynx CMS
-titleTemplate: A multilingual CMS for Laravel
+title: Documentation
 
 hero:
   name: Lynx
   text: A multilingual CMS for Laravel
-  tagline: Add a page tree, runtime fields and a translated admin to the Laravel app you already know. People and AI agents edit through the same safe actions.
+  tagline: Lynx adds a page tree, fields without migrations and an admin with a tab per language to the Laravel app you already know. Editors, your code and AI agents change content through the same actions.
   actions:
     - theme: brand
-      text: Get started
+      text: Read the introduction
       link: /getting-started/introduction
     - theme: alt
-      text: See a live demo
+      text: Live demo
       link: https://demo-corporate.lynxcms.org/
     - theme: alt
-      text: Build your first site
-      link: /getting-started/first-site
-    - theme: alt
-      text: GitHub
-      link: https://github.com/LynxCMS/lynxcms
+      text: Demo admin
+      link: https://demo-corporate.lynxcms.org/lynx/
 
 features:
+  - title: Install Lynx
+    details: Requirements, the installer and the first account that signs in, on a new Laravel app or one you already have.
+    link: /getting-started/installation
+    linkText: Installation
+  - title: Build your first site
+    details: A small blog in two languages, from the first template to a translated page.
+    link: /getting-started/first-site
+    linkText: Your First Site
+  - title: Learn the ideas
+    details: Pages, templates and fields, languages, URLs and actions, the ideas the rest of the docs build on.
+    link: /getting-started/concepts
+    linkText: Core Concepts
   - title: It is still your Laravel app
-    details: Lynx is a set of Composer packages. Your routes, controllers, Blade views, queues and deployments keep working; Lynx serves the URLs your app leaves free.
-  - title: An admin for editors, if you want one
-    details: A page tree, an editor laid out per template with a tab per language, drafts, scheduling, history and a trash, in plain words. Or skip it and manage content from code.
-  - title: Livewire, in your pages and in the admin
-    details: Templates use any Livewire component, editors can place components on pages themselves, and the admin is built with Livewire 4.
-  - title: Fields without migrations
-    details: Define templates and fields in the admin, in PHP or in YAML files you commit. Lynx creates their tables at runtime.
-  - title: Languages are rows
-    details: Add a language to a running site in one step. Each field falls back to the next language when a translation is missing, and URLs are translated too.
-  - title: Find pages with one line
-    details: "Selectors such as template=post, sort=-published_on, limit=10 compile to plain SQL, with fallback, permissions and visibility rules applied."
-  - title: Every write is an action
-    details: The admin, Artisan, your code, the MCP server and the AI agent call the same validated actions, with permissions, hooks, dry runs and an activity log.
-  - title: Ready for AI agents
-    details: An MCP server and a built-in agent are generated from the actions. Agents plan their changes as a dry run, and apply only what you approve.
-  - title: Modules when you need them
-    details: Menus, forms, SEO, sitemaps, a page cache, page passwords, media and a static site export. Install only what the site uses.
+    details: Lynx is a set of Composer packages. Your routes, controllers, Blade views, queues and deployments keep working, and Lynx serves the URLs your app leaves free.
+    link: /getting-started/introduction#lynx-in-a-laravel-app
+    linkText: Lynx in a Laravel app
+  - title: Livewire in pages and in the admin
+    details: Templates use any Livewire component of your app, editors place components on pages, and the admin is built with Livewire 4, so you extend it the same way.
+    link: /basics/views#livewire-components
+    linkText: Livewire components
+  - title: Give editors an admin
+    details: The page tree, the page editor, drafts, history, roles and screens of your own.
+    link: /admin/
+    linkText: The Admin
+  - title: Connect AI agents
+    details: The MCP server and the built-in agent, which plan changes as a dry run and save nothing until someone approves.
+    link: /ai/
+    linkText: MCP Server and Agent
+  - title: Look something up
+    details: The configuration keys, the Artisan commands and a selector cheat sheet.
+    link: /reference/configuration
+    linkText: Reference
 ---

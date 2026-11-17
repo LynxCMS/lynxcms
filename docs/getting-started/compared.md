@@ -99,7 +99,7 @@ ProcessWire's multi-language support comes from core modules, and a blank transl
 
 ProcessWire runs on MySQL or MariaDB, with SQLite and PostgreSQL support experimental on its development branch. **Lynx** runs on PostgreSQL or SQLite, and does not support MySQL.
 
-- **For developers:** SQLite needs no database server, which suits small sites and local work; PostgreSQL brings full text search and trigram indexes that **Lynx** uses for large sites.
+- **For developers:** SQLite needs no database server, which suits small sites and local work; PostgreSQL brings trigram indexes that **Lynx** uses for large sites, and suits sites with many writes at once (see [Choosing a Database](/getting-started/database)).
 - **For clients and editors:** hosting that only offers MySQL can't run **Lynx** today. SQLite works on most low cost hosting (see [shared hosting](/getting-started/installation#shared-hosting)).
 
 ### Every change is an action

@@ -89,7 +89,7 @@ The command writes `LYNX_ADMIN_PREFIX` to `.env`, as `key:generate` writes `APP_
 
 The command refuses a path a page already uses, in any language, and names the page. Pages are served after every other route, so a page at the admin's path would be hidden from visitors. `lynx:doctor` warns about any page hidden that way, by the admin or by a route of your app (see [Checking a site](/reference/artisan#checking-a-site)).
 
-A random path keeps the admin out of reach of scripts that try common addresses, but it is not a password. Keep two-factor authentication on for editors. And when your app protects routes of its own with Laravel's `auth` middleware, guests who open them are sent to the admin's sign-in, which shows its address: send them to a sign-in of your own instead (see [Who signs users in](/admin/sign-in#who-signs-users-in)).
+A random path keeps the admin out of reach of scripts that try common addresses. Anyone who learns it still meets the sign-in, so keep two-factor authentication on for editors. And when your app protects routes of its own with Laravel's `auth` middleware, guests who open them are sent to the admin's sign-in, which shows its address: send them to a sign-in of your own instead (see [Who signs users in](/admin/sign-in#who-signs-users-in)).
 
 ## The admin's language
 

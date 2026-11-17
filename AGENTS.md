@@ -114,7 +114,8 @@ composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)
 composer check                         # Pint, Rector and PHPStan in check mode, as CI runs them
-npm --prefix docs run dev              # live preview of the documentation site (npm --prefix docs ci once); run build to check links, as CI does
+composer docs                          # live preview of the documentation site (installs its npm packages when package-lock.json changes)
+composer docs:build                    # build the documentation and check its links, as CI does
 composer assets                        # build the admin's CSS and JS into packages/admin/dist (after npm --prefix packages/admin ci once); built, never committed (ADR-0071)
 .github/scripts/build-starter.sh 0.1.8 ../atlas   # build and test the training starter app
 composer build && composer serve       # workbench demo site

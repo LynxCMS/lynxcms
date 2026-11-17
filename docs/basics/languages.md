@@ -145,7 +145,11 @@ To send a subscriber a new post in the language they read, build the mail inside
 
 ## Search in your languages
 
-Search finds singular and plural forms in Portuguese, English, French, Spanish, Italian, German and Dutch (see [Searching text](/basics/selectors#searching-text)). A language gets the rules of its locale (the default language uses `lynx.base_locale`). Lynx looks for rules registered for the full locale first, then for the language alone, so regional variants use their language's rules: `pt-BR` and `pt-PT` use the Portuguese ones, `en-US` and `en-GB` the English ones, `fr-CA` the French ones. Plurals are the same across those variants, and spelling differences such as `colour` and `color` need nothing, since each word is reduced on its own. Register rules for a full locale only when a variant needs something its language's rules don't do (an example follows). Italian and German plurals change the end of the word in ways no rule can undo, so there singular and plural are both reduced to the part they share, which also lets words that differ only in their last letters meet (`casa` and `caso`). In other languages, search matches the words as they are.
+Search finds singular and plural forms in Portuguese, English, French, Spanish, Italian, German and Dutch (see [Searching text](/basics/selectors#searching-text)). In other languages, search matches the words as they are.
+
+A language gets the rules of its locale, and the default language uses `lynx.base_locale`. Lynx looks for rules registered for the full locale first, then for the language alone. So `pt-BR` and `pt-PT` use the Portuguese rules, `en-US` and `en-GB` the English ones, and `fr-CA` the French ones. Those variants form their plurals the same way. Spelling differences need no rules of their own either: each word is reduced on its own, so `colours` finds "colour" and `colors` finds "color". Register rules for a full locale only when a variant needs something its language's rules don't do (an example follows).
+
+Italian and German plurals change the end of the word in ways no rule can undo. In those languages, singular and plural are both reduced to the part they share. Words that differ only in their last letters then meet too, so in Italian `casa` also finds "caso".
 
 To add rules for a language, write a class that turns a plural into its singular:
 
