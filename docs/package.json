@@ -8,6 +8,7 @@
         "deploy": "wrangler deploy"
     },
     "devDependencies": {
+        "medium-zoom": "1.1.2",
         "vitepress": "1.6.4",
         "wrangler": "4.156.0"
     },
