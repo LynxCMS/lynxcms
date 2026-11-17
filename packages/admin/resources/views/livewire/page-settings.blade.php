@@ -11,7 +11,7 @@
         @if (! $hasUrl && $page->parentId !== null)
             <div class="grid max-w-md gap-1.5" data-template-name>
                 <label for="name-{{ $defaultCode }}" class="sr-only">{{ __('lynx-admin::settings.name_in_templates') }}</label>
-                <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
+                <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" x-on:blur="$el.value.trim() === '' && $wire.suggestName(@js($defaultCode))" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 <p class="text-muted-foreground text-sm">{{ __($isMultilingual ? 'lynx-admin::settings.name_help_languages' : 'lynx-admin::settings.name_help') }}</p>
                 @error('names.'.$defaultCode) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 @if ($can['edit'])
@@ -28,7 +28,7 @@
                         <label for="name-{{ $code }}" class="pt-2 text-sm font-medium">{{ $isMultilingual ? $language->name : __('lynx-admin::settings.url_name') }}</label>
                         <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-3">
-                                <input id="name-{{ $code }}" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="names.{{ $code }}"
+                                <input id="name-{{ $code }}" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="names.{{ $code }}" x-on:blur="$el.value.trim() === '' && $wire.suggestName(@js($code))"
                                        placeholder="{{ $code === $defaultCode ? '' : __('lynx-admin::settings.same_as', ['name' => $names[$defaultCode]]) }}" @error('names.'.$code) aria-invalid="true" @enderror>
                                 @if ($code !== $defaultCode)
                                     <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model.live="active.{{ $code }}"> {{ __('lynx-admin::settings.published_in', ['language' => $language->name]) }}</label>

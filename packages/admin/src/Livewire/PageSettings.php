@@ -83,6 +83,14 @@ final class PageSettings extends Component
         $this->changed(__('lynx-admin::settings.names_saved'));
     }
 
+    /** Fill a name the editor cleared, when they leave its field; saved with the other names. */
+    public function suggestName(string $code): void
+    {
+        if (array_key_exists($code, $this->names) && trim($this->names[$code]) === '') {
+            $this->names[$code] = $this->suggestedName($code);
+        }
+    }
+
     public function toggleStatus(string $flag): void
     {
         if (! in_array($flag, SetPageStatus::EDITABLE, true)) {
@@ -201,6 +209,24 @@ final class PageSettings extends Component
         }
 
         return $input;
+    }
+
+    /**
+     * The name from the language's own title; another language without one copies the default
+     * name, so its URL stays the one it had through fallback.
+     */
+    private function suggestedName(string $code): string
+    {
+        $page = $this->page();
+        $defaultCode = Value::string(lynx()->languages->default()->code);
+        $defaultTitle = PageName::from(Value::string($page->getLanguageValue($defaultCode, 'title')));
+        $title = PageName::from(Value::string($page->getLanguageValue($code, 'title')));
+
+        if ($code === $defaultCode || $title !== '') {
+            return $title ?: $defaultTitle;
+        }
+
+        return PageName::from($this->names[$defaultCode] ?? '') ?: $defaultTitle;
     }
 
     /**
