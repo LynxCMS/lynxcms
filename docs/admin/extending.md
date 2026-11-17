@@ -194,7 +194,7 @@ The view gets `$page` and `$tab`. It renders again each time the editor does, so
 
 ## The home screen
 
-The admin opens on a home screen: a welcome with buttons for common tasks, a row of stats, then lists of drafts, scheduled changes and recent changes. Modules and your app add to each part through `HomeScreen`, and each entry shows only to the users its `visible` closure accepts:
+The admin opens on a home screen: a welcome with buttons for common tasks, a row of stats, then two columns of panels. The main column has the pages with a draft and the next scheduled changes, the side column the recent changes. Modules and your app add to each part through `HomeScreen`, and each entry shows only to the users its `visible` closure accepts:
 
 ```php
 use LynxCms\Admin\AdminAccess;
@@ -211,11 +211,13 @@ $home->stat('reports', 'Reports this week', fn (): int => Report::thisWeek()->co
 $home->action('new-report', 'New report', fn (): string => route('lynx.admin.reports.create'),
     icon: 'plus', visible: $canSee);
 
-// A panel below Lynx's own lists.
-$home->panel('reports::home-panel', $canSee, order: 30);
+// A panel in the main column, below Lynx's own lists.
+$home->panel('reports::home-panel', $canSee, order: 30, key: 'reports');
 ```
 
-A label can be a translation key. `order` places an entry among the others of its kind, lower first; entries with the same order keep the order they were added in. Lynx's own stats (pages, pages not published, languages) and actions (New page, Edit site texts) use 10 to 30, and the forms and menus modules add theirs at 30 and 40.
+A label can be a translation key. `order` places an entry among the others of its kind, lower first; entries with the same order keep the order they were added in. Lynx's own stats (pages, pages not published, languages) and actions (New page, Edit site texts) use 10 to 30, and the forms and menus modules add theirs at 30 and 40. Lynx's lists are panels with the orders 10 and 20.
+
+A panel goes in the main column unless you pass `column: HomeScreen::SIDE`. Its `key` is the view's name unless you give one.
 
 A stat is one number. A list, such as the most searched pages, is a panel. The panel's view gets no variables, so give it its data with a [view composer](https://laravel.com/docs/views#view-composers), a closure Laravel runs before it renders the view:
 
@@ -240,6 +242,170 @@ Build the panel from the home screen's own components, so it looks like Lynx's l
 ```
 
 `see-all-url` and `see-all-label` add a link to the full list, for when the panel shows only the first few.
+
+### Arranging the home screen
+
+Every entry has a key, so your app can take out or move what Lynx and the modules put on the home screen:
+
+```php
+$home = app(HomeScreen::class);
+
+$home->remove('site-texts');                              // the Edit site texts button
+$home->remove('recent');                                  // the recent changes
+$home->move('forms', order: 5);                           // the forms module's panel, above the drafts
+$home->move('upcoming', order: 5, column: HomeScreen::SIDE);
+```
+
+`remove()` and `move()` work on stats, actions and panels alike, whoever added them and in whichever order the service providers run: they apply when the screen is drawn. A key nothing has changes nothing, so removing what a module adds keeps working after the module is uninstalled. When the side column has nothing left, the main column takes the whole width.
+
+| Key | What it is |
+|---|---|
+| `pages`, `unpublished`, `languages` | Lynx's stats |
+| `new-page`, `site-texts` | Lynx's buttons |
+| `drafts`, `upcoming` | Lynx's lists in the main column (orders 10 and 20) |
+| `recent` | The recent changes, in the side column (order 10) |
+| `forms`, `form-submissions` | The forms module's panel (order 30) and stat |
+| `menus`, `finder` | The menus and finder modules' buttons |
+
+Who sees an entry is still up to its `visible` closure. To show a panel only to some roles, register it with a closure that asks `AdminAccess`, as above.
+
+### A panel with data from another service
+
+A panel is drawn with the home screen, so anything slow in it makes the whole screen slow, and an error in it can break the screen. When the data comes from another service, put it in a [Livewire](https://livewire.laravel.com/docs/lazy) component that loads after the page, cache what the service answers, and show a notice when it does not answer.
+
+Here is a panel with the weather for the next three days from [Open-Meteo](https://open-meteo.com/), which needs no key. The site's coordinates go in `config/services.php`:
+
+```php
+'open_meteo' => [
+    'latitude' => env('OPEN_METEO_LATITUDE', 38.72),
+    'longitude' => env('OPEN_METEO_LONGITUDE', -9.14),
+],
+```
+
+The component asks Open-Meteo at most every 30 minutes, waits 3 seconds at most, and reports a failure without caching it, so the next visit tries again:
+
+```php
+namespace App\Livewire;
+
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Livewire\Component;
+
+final class WeatherPanel extends Component
+{
+    public const string CACHE_KEY = 'home.weather';
+
+    private const string ENDPOINT = 'https://api.open-meteo.com/v1/forecast';
+
+    private const int CACHE_MINUTES = 30;
+
+    private const int TIMEOUT_SECONDS = 3;
+
+    private const int DAYS = 3;
+
+    public function placeholder(): View
+    {
+        return view('livewire.weather-panel-placeholder');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.weather-panel', ['days' => $this->forecast()]);
+    }
+
+    /** @return list<array{date: string, code: int, max: float, min: float}>|null null when Open-Meteo did not answer */
+    private function forecast(): ?array
+    {
+        $days = Cache::get(self::CACHE_KEY);
+
+        if (is_array($days)) {
+            return $days;
+        }
+
+        $days = $this->fetch();
+
+        if ($days !== null) {
+            Cache::put(self::CACHE_KEY, $days, now()->addMinutes(self::CACHE_MINUTES));
+        }
+
+        return $days;
+    }
+
+    /** @return list<array{date: string, code: int, max: float, min: float}>|null */
+    private function fetch(): ?array
+    {
+        try {
+            $daily = Http::timeout(self::TIMEOUT_SECONDS)->get(self::ENDPOINT, [
+                'latitude' => config('services.open_meteo.latitude'),
+                'longitude' => config('services.open_meteo.longitude'),
+                'daily' => 'weather_code,temperature_2m_max,temperature_2m_min',
+                'timezone' => 'auto',
+                'forecast_days' => self::DAYS,
+            ])->throw()->json('daily');
+        } catch (ConnectionException|RequestException $exception) {
+            report($exception);
+
+            return null;
+        }
+
+        return array_map(fn (int $day): array => [
+            'date' => $daily['time'][$day],
+            'code' => (int) $daily['weather_code'][$day],
+            'max' => (float) $daily['temperature_2m_max'][$day],
+            'min' => (float) $daily['temperature_2m_min'][$day],
+        ], array_keys($daily['time']));
+    }
+}
+```
+
+Its view, `resources/views/livewire/weather-panel.blade.php`, uses the home screen's section, so the panel has the same heading and empty state as Lynx's lists. Open-Meteo gives each day a [WMO weather code](https://open-meteo.com/en/docs#weather_variable_documentation), which the view turns into words and a [Lucide](https://lucide.dev/icons/) icon:
+
+```blade
+@php
+    $kinds = [95 => ['Thunderstorms', 'cloud-lightning'], 80 => ['Showers', 'cloud-rain'], 71 => ['Snow', 'cloud-snow'],
+        61 => ['Rain', 'cloud-rain'], 51 => ['Drizzle', 'cloud-drizzle'], 45 => ['Fog', 'cloud-fog'],
+        1 => ['Some clouds', 'cloud-sun'], 0 => ['Clear', 'sun']];
+    $kind = fn (int $code): array => collect($kinds)->first(fn (array $kind, int $from): bool => $code >= $from);
+@endphp
+<x-lynx-admin::home.section id="home-weather" data-home-panel="weather" icon="cloud-sun" title="Weather"
+    :is-empty="$days === null" empty-icon="cloud-off"
+    empty-title="The forecast is not available." empty-help="Open-Meteo did not answer. The panel tries again on the next visit.">
+    @foreach ($days ?? [] as $day)
+        <li class="flex items-center gap-3 border-b py-2.5 text-sm">
+            <x-lynx-admin::ui.icon :name="$kind($day['code'])[1]" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+            <span class="font-medium">{{ \Illuminate\Support\Carbon::parse($day['date'])->isoFormat('ddd D') }}</span>
+            <span class="text-muted-foreground">{{ $kind($day['code'])[0] }}</span>
+            <span class="ms-auto tabular-nums">{{ round($day['max']) }}° <span class="text-muted-foreground">{{ round($day['min']) }}°</span></span>
+        </li>
+    @endforeach
+</x-lynx-admin::home.section>
+```
+
+`resources/views/livewire/weather-panel-placeholder.blade.php` is what shows while the forecast loads:
+
+```blade
+<section class="grid gap-3" aria-busy="true">
+    <h2 class="text-base font-semibold">Weather</h2>
+    <div class="bg-muted h-24 animate-pulse rounded-md"></div>
+</section>
+```
+
+The panel itself is a view with only the component in it, `resources/views/admin/home-weather.blade.php`:
+
+```blade
+<livewire:weather-panel lazy />
+```
+
+Register it in a service provider's `boot()`, here in the side column below the recent changes:
+
+```php
+app(HomeScreen::class)->panel('admin.home-weather', key: 'weather', column: HomeScreen::SIDE, order: 20);
+```
+
+The home screen now shows at once with the placeholder, and the forecast fills in when Open-Meteo answers. While the cache holds it, the panel shows it without asking Open-Meteo again.
 
 ## Page tree filters
 

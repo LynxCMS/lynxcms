@@ -30,7 +30,7 @@ final class FormsHomePanel
     public static function register(Closure $canSee): void
     {
         $home = app(HomeScreen::class);
-        $home->panel(self::VIEW, $canSee, order: 20);
+        $home->panel(self::VIEW, $canSee, order: 30, key: 'forms');
         $home->stat('form-submissions', 'lynx-forms::admin.home.stat', fn (): int => Submission::query()->where('created_at', '>=', now()->subDays(self::STAT_DAYS))->count(),
             url: fn (): string => route('lynx.admin.forms'), icon: 'inbox', visible: $canSee, order: 40);
         View::composer(self::VIEW, fn ($view) => $view->with(self::data()));
