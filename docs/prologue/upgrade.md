@@ -26,6 +26,10 @@ To go back to the previous version on a live site, restore that database backup.
 - Run `php artisan lynx:search-index` once, so pages already saved are found by their singular and plural forms (ADR-0119). Until then search finds everything it found before.
 - `!=` on a translatable field now finds pages without a value too, as it always did on shared fields (ADR-0121). Where a selector relied on those pages being left out, add an empty clause: `summary!=Draft` becomes `summary!=, summary!=Draft`.
 - Rebuilding the search index (`search.rebuild`, also from an MCP client or the agent) now needs the new `search.manage` permission instead of `schema.manage` (ADR-0120). Superusers have it. Give it to the roles that rebuilt the index before.
+- `LYNX_ADMIN_PREFIX` is now checked when the app boots (ADR-0122). An empty value, or one that is not a URL path such as `back office`, stops the app with a message saying what to set. Before, an empty one put the admin over the site's URLs. Check `.env` on each server, or set the path with `php artisan lynx:admin-path`.
+- Lynx's own lists on the home screen are panels now, at orders 10 and 20 (ADR-0123). A module or app panel registered with an order of 20 or less now shows among them instead of below. Give it an order above 20 to keep it where it was. `HomeScreen::panels()` returns Lynx's lists too.
+- The admin's branding colours now come from a `<style>` element instead of a `style` attribute on `<html>`. The accent tokens are `!important`, so they still win over themes and site stylesheets. A site stylesheet that set `--primary` on `html` to beat the branding no longer does; use Settings › General or `lynx-admin.branding` instead.
+- Optional: give help text under the fields of your own admin screens the `lynx-field-help` class, to match Lynx's smaller help text.
 
 ## From 0.1.41 to 0.1.42
 
