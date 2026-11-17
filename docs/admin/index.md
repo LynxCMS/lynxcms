@@ -8,6 +8,8 @@ order: 6
 
 `lynxcms/admin` adds an admin at `/lynx` (or [another path](#the-admin-s-address)) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and [Laravel Fortify](https://laravel.com/docs/fortify) (Laravel's sign-in package), and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#running-without-the-admin)).
 
+<video src="/img/admin/admin-tour.mp4" controls muted playsinline preload="metadata" poster="/img/admin/admin-tour-poster.jpg" style="width: 100%; aspect-ratio: 16 / 10; border-radius: 8px;" aria-label="A short tour of the admin: the home screen, the page tree, and the page editor with its tabs and search"></video>
+
 | Screen | Does | Needs |
 | --- | --- | --- |
 | Home | A welcome with buttons for common tasks, stats, pages with a draft, the next scheduled changes, the pages changed last, and what modules add (new form submissions). | signed in |
@@ -21,9 +23,15 @@ order: 6
 | Roles, Users | Roles, their grants and who holds them; invitations. | superuser |
 | Account security | Password, two-factor authentication and passkeys. | signed in |
 
+![The admin's Home screen: a welcome, buttons for common tasks, and stats](/img/admin/admin-home.png)
+
 The admin opens on its **Home** screen. It welcomes the user with the date and buttons for common tasks (**New page** under the home page, **Edit site texts**, and **Edit menus** with the menus module), then shows stats: how many pages there are, how many are not published and, on a site with several languages, how many languages. Below them it lists the pages with a draft, the next scheduled changes (one line for the same change in several languages) and the pages changed last, each with its latest change and who made it. Every list holds only pages the user may view, outside the trash. Each list's heading opens the full list, and when a list has more than it shows, **See all** does too: the page tree's filter for them (`/lynx/pages?filter=drafts`, `filter=scheduled`). With the forms module, a panel lists the newest unread submissions, and a stat counts the last 30 days', for those who may see them.
 
+![The page tree, with the site's sections as folders and how many pages each holds](/img/admin/admin-page-tree.png)
+
 The page tree shows titles by default. Its **Details** view adds, beside each title, the page's state in every language (the same facets as the editor's language tabs: its own title, another language's title, or not published there), its status and its last change. Each user's choice lasts for the session. Above it, filters list the pages with **Draft changes**, the **Scheduled** ones, and those **Not in** each other language, each with its count and a hint on hover saying what it finds. A filter shows its pages in one list, most recently changed first, each saying which page it sits under. The filters are [selectors](/basics/selectors#status) (`has_draft=1`, `has_schedule=1`, `language!=pt`), so your code can ask the same questions.
+
+![The page editor on a product page: its fields, their languages, and the Save and Publish buttons](/img/admin/admin-page-editor.png)
 
 The page editor puts each field's label above its input, and beside the fields a panel shows whether the page is published or has a draft, how much of it each language has its own text for, and its latest activity (the Settings tab has all of it). Templates that lay out their own sidebar keep it instead of the panel.
 
@@ -122,7 +130,9 @@ Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_R
 
 ### The site's name, logo and colors
 
-Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in.
+Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in, in light and in dark mode.
+
+For editors who work in dark mode, the **Dark mode** part of the form takes a logo, a background and an accent of their own, such as a white version of a dark logo. Each is optional: dark mode shows the light one until it is set. Text on the background and on accent buttons is white or near black, whichever reads better on the color, in both modes.
 
 Until the site has a name or a logo of its own, the admin wears Lynx's: the Lynx mark beside the name, and the Lynx icon in browser tabs. Setting a name or a logo replaces both, so a client never sees Lynx's brand in their admin. Without a logo, the name's initial takes the mark's place, and tabs show the site's own `/favicon.ico`. An accent or a background alone keeps the Lynx mark.
 
@@ -134,6 +144,9 @@ The defaults come from `config/lynx-admin.php`, so a developer can ship them wit
     'logo' => '/images/logo.svg', // a URL or a path below public/
     'background' => '#f3eee4',
     'accent' => '#1f5a69',
+    'logo_dark' => '/images/logo-white.svg', // optional, for dark mode
+    'background_dark' => '#14232a',
+    'accent_dark' => '#7cc4d4',
 ],
 ```
 
@@ -142,7 +155,7 @@ What a superuser saves wins over the config; an empty field goes back to it. Upl
 ```php
 use LynxCms\Admin\Branding\SaveBranding;
 
-lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
+lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69', 'accent_dark' => '#7cc4d4']);
 ```
 
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.

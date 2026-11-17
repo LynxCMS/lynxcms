@@ -6,7 +6,7 @@
             <label for="role-name" class="text-sm font-medium">{{ __('lynx-admin::roles.form.name') }}</label>
             @if ($role === null)
                 <input id="role-name" type="text" class="blat-input max-w-sm" wire:model="name" autocomplete="off" @error('name') aria-invalid="true" @enderror>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::roles.form.name_help') }}</p>
+                <p class="lynx-field-help">{{ __('lynx-admin::roles.form.name_help') }}</p>
             @else
                 <p id="role-name" class="font-mono text-sm">{{ $name }}</p>
             @endif
@@ -23,7 +23,7 @@
         <section class="bg-card text-card-foreground rounded-xl border shadow-sm" aria-labelledby="role-permissions">
             <div class="border-b border-border p-5">
                 <h2 id="role-permissions" class="text-base font-semibold">{{ __('lynx-admin::roles.form.permissions') }}</h2>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::roles.form.permissions_help') }}</p>
+                <p class="lynx-field-help">{{ __('lynx-admin::roles.form.permissions_help') }}</p>
             </div>
             @error('grants') <p role="alert" class="text-destructive mt-1 text-sm px-5 pt-3">{{ $message }}</p> @enderror
             <ul class="divide-y divide-border">

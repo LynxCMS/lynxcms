@@ -1306,6 +1306,16 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Editors with `search.manage` can check and fix the index without a developer. A role that rebuilt the index through `schema.manage` needs `search.manage`; superusers have both. A rebuild from the admin runs in the request, so very large sites should keep using `lynx:search-index` or rebuild one template at a time.
 
+## ADR-0121: != on a translatable field is the exact opposite of =
+
+**Status:** Accepted (amends ADR-0005; issue #194)
+
+**Context:** On a shared field, `!=` finds every page `=` does not, pages without a value and pages whose template lacks the field included. On a translatable field, `!=` compared the effective value, the `COALESCE` along the language chain, so a page with no value in any language gave `NULL`, `NULL <> 'x'` was not true, and the page was left out. `summary!="Draft"` missed pages without a summary, and the same selector meant different things depending on whether a field was translatable. Comparing the `COALESCE` also kept the clause from using the field table's index.
+
+**Decision:** `!=` with non-empty values on a translatable field compiles as "not among the pages `=` finds": `TranslatableMatch` builds the same per-language lookup it uses for `=` (each served by the `(language_id, data, page_id)` index) and the page query takes `NOT IN` it. `a!=x|y` stays "neither x nor y". Empty values keep their meaning on both kinds of field: `summary!=` finds pages with a summary, and a mixed clause (`summary!=|Draft`) still compares the effective value, which already excludes empty pages because of the empty value.
+
+**Consequences:** `!=` means the same on shared and translatable fields, and is served by an index. Selectors that relied on `!=` leaving out pages without a value now find those pages too; adding `field!=` (has a value) restores the old result. The Page Finder could now offer "is not" on translatable text fields, which it held back because of this difference.
+
 ## ADR-0122: The admin's path is chosen per site, checked, and never hides pages silently
 
 **Status:** Accepted

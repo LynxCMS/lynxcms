@@ -9,7 +9,7 @@
         <div class="grid gap-1.5">
             <label for="field-label" class="text-sm font-medium">{{ __('lynx-admin::fields.name.label') }}</label>
             <x-lynx-admin::localized-input id="field-label" model="label" :placeholder="$field === null ? __('lynx-admin::fields.name.label_placeholder') : $field" />
-            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.name.label_help') }}</p>
+            <p class="lynx-field-help">{{ __('lynx-admin::fields.name.label_help') }}</p>
             @error('label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1.5">
@@ -19,7 +19,7 @@
                     <span class="text-muted-foreground grid place-items-center px-2.5">$page-&gt;</span>
                     <input id="field-name" type="text" data-slot="input-group-control" class="bg-background min-w-0 flex-1 border-s px-2.5 py-2 outline-none" wire:model="name" x-on:input="typed = true" autocomplete="off" spellcheck="false" @error('name') aria-invalid="true" @enderror>
                 </div>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.name.help') }}</p>
+                <p class="lynx-field-help">{{ __('lynx-admin::fields.name.help') }}</p>
             @else
                 <p id="field-name" class="flex items-center gap-1.5 font-mono text-sm"><x-lucide-lock class="text-muted-foreground size-3.5" aria-hidden="true" />$page-&gt;{{ $name }}</p>
             @endif
@@ -45,7 +45,7 @@
             @if ($canMakeTranslatable)
                 <div class="flex flex-wrap items-center gap-3">
                     <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="makeTranslatable" wire:confirm="{{ __('lynx-admin::fields.languages.confirm_make_translatable') }}">{{ __('lynx-admin::fields.languages.make_translatable') }}</x-lynx-admin::ui.button>
-                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.languages.make_translatable_hint') }}</p>
+                    <p class="lynx-field-help">{{ __('lynx-admin::fields.languages.make_translatable_hint') }}</p>
                 </div>
             @endif
             @if ($translatable)
