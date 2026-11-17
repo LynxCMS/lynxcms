@@ -18,6 +18,8 @@ return [
     'same_as' => 'igual a :name',
     'published_in' => 'Publicada em :language',
     'url' => 'URL:',
+    'parent_unpublished_label' => 'Porquê este URL',
+    'parent_unpublished' => ':parent não está publicada em :language, por isso esta página não tem URL próprio em :language: o seu URL é construído a partir do de :default. Publique :parent em :language para esta página ter o seu URL em :language.',
     'will_redirect' => '(o URL atual será redirecionado)',
     'not_published_in' => 'Não publicada em :language: o seu URL devolve 404.',
     'save_names' => 'Guardar nomes',

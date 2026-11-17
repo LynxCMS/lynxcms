@@ -40,7 +40,12 @@
                                 @endif
                             </div>
                             @if (($active[$code] ?? true) && $urls[$code])
-                                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                    @isset($unpublishedParents[$code])
+                                        <x-lynx-admin::hint side="right" :label="__('lynx-admin::settings.parent_unpublished_label')" data-url-parent-hint="{{ $code }}">{{ __('lynx-admin::settings.parent_unpublished', ['parent' => $unpublishedParents[$code], 'language' => $language->name, 'default' => lynx()->languages->default()->name]) }}</x-lynx-admin::hint>
+                                    @endisset
+                                </div>
                             @elseif (! ($active[$code] ?? true))
                                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
                             @endif

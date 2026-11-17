@@ -14,6 +14,7 @@ use LynxCms\Admin\Editor\NameSuggestions;
 use LynxCms\Admin\Editor\ParentTemplates;
 use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Admin\Editor\TemplateChoices;
+use LynxCms\Admin\Editor\UnpublishedAncestors;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Actions\Pages\SavePage;
@@ -166,6 +167,7 @@ final class PageSettings extends Component
             'languages' => lynx()->languages->all(),
             'defaultCode' => Value::string(lynx()->languages->default()->code),
             'urls' => $this->previewUrls($page),
+            'unpublishedParents' => UnpublishedAncestors::of($page),
             'templates' => $this->templateChoices($page, $choices),
             'parentTitle' => $page->parent() instanceof Page ? (new DefaultPresenter)->title($page->parent()) : null,
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
