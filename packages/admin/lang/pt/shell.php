@@ -26,7 +26,7 @@ return [
     'something_wrong' => 'Algo correu mal. Tente novamente.',
     'search' => [
         'label' => 'Pesquisar páginas',
-        'placeholder' => 'Pesquisar, ou template=course, sort=-modified',
+        'placeholder' => 'Pesquisar páginas…',
         'empty' => 'Nenhuma página encontrada.',
         'unpublished' => 'Não publicada',
         'count' => ':shown de :total página.|:shown de :total páginas.',
