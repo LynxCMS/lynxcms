@@ -5,8 +5,9 @@
     $settings = (array) config('lynx-admin.appearance', []);
     $appearance = \LynxCms\Admin\Appearance::html($settings);
     $fonts = ($settings['load_fonts'] ?? true) ? \LynxCms\Admin\Appearance::fontsUrl($settings) : null;
-    // The site's name and accent (Settings > General): inline on <html>, so they win in light and dark.
+    // The site's name, colours and logos (Settings > General), with their dark mode values.
     $branding = \LynxCms\Admin\Branding\Branding::current();
+    $brandingCss = $branding->themeCss();
 @endphp
 <!DOCTYPE html>
 <html
@@ -14,7 +15,6 @@
     data-lynx-theme="{{ $scheme }}"
     @if ($scheme === 'dark') class="dark" @endif
     {!! $appearance !!}
-    @if ($branding->accentStyle() !== '') style="{{ $branding->accentStyle() }}" @endif
 >
 <head>
     <meta charset="utf-8">
@@ -42,6 +42,9 @@
     @foreach ((array) config('lynx-admin.stylesheets', []) as $stylesheet)
         <link rel="stylesheet" href="{{ $stylesheet }}">
     @endforeach
+    @if ($brandingCss !== '')
+        <style data-lynx-branding>{!! $brandingCss !!}</style>
+    @endif
     @livewireStyles
 </head>
 {{ $slot }}

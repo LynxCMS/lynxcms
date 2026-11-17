@@ -2,7 +2,7 @@
 {{-- The sign-in screens: one centred card, no sidebar, on the site's backdrop with its logo. --}}
 @php($branding = \LynxCms\Admin\Branding\Branding::current())
 <x-lynx-admin::document :title="$title">
-<body class="bg-muted/40 flex min-h-screen items-center justify-center p-4 font-sans antialiased" @if ($branding->backgroundStyle() !== '') style="{{ $branding->backgroundStyle() }}" @endif>
+<body class="bg-muted/40 flex min-h-screen items-center justify-center p-4 font-sans antialiased" data-lynx-backdrop>
     <main class="w-full max-w-sm">
         <div class="mb-6 flex items-center justify-center gap-2">
             <x-lynx-admin::brand :branding="$branding" size="lg" />

@@ -113,7 +113,9 @@ Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_R
 
 ### The site's name, logo and colors
 
-Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in.
+Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in, in light and in dark mode.
+
+For editors who work in dark mode, the **Dark mode** part of the form takes a logo, a background and an accent of their own, such as a white version of a dark logo. Each is optional: dark mode shows the light one until it is set. Text on the background and on accent buttons is white or near black, whichever reads better on the color, in both modes.
 
 Until the site has a name or a logo of its own, the admin wears Lynx's: the Lynx mark beside the name, and the Lynx icon in browser tabs. Setting a name or a logo replaces both, so a client never sees Lynx's brand in their admin. Without a logo, the name's initial takes the mark's place, and tabs show the site's own `/favicon.ico`. An accent or a background alone keeps the Lynx mark.
 
@@ -125,6 +127,9 @@ The defaults come from `config/lynx-admin.php`, so a developer can ship them wit
     'logo' => '/images/logo.svg', // a URL or a path below public/
     'background' => '#f3eee4',
     'accent' => '#1f5a69',
+    'logo_dark' => '/images/logo-white.svg', // optional, for dark mode
+    'background_dark' => '#14232a',
+    'accent_dark' => '#7cc4d4',
 ],
 ```
 
@@ -133,7 +138,7 @@ What a superuser saves wins over the config; an empty field goes back to it. Upl
 ```php
 use LynxCms\Admin\Branding\SaveBranding;
 
-lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
+lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69', 'accent_dark' => '#7cc4d4']);
 ```
 
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.
