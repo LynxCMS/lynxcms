@@ -10,7 +10,8 @@ use LynxCms\Core\Pages\Page;
 /*
  * Clearing a URL name in the Settings tab and leaving the field fills it again: the default
  * language's from the page's title, another language's from its own title when the page has one,
- * else from the default name. Nothing is saved until the editor saves the names.
+ * else from the default name. A refilled default name also goes to every language without a title
+ * of its own. Nothing is saved until the editor saves the names.
  */
 
 beforeEach(function (): void {
@@ -43,6 +44,25 @@ it('fills a cleared default name from the title', function (): void {
         ->assertSet('names.default', 'delivery-guide');
 
     expect(lynx()->pages->get($page->id)?->name)->toBe('old-name');
+});
+
+it('gives the refilled default name to languages without a title of their own', function (): void {
+    $page = namedPage(null);
+
+    Livewire::test(PageSettings::class, ['pageId' => $page->id])
+        ->set('names.default', '')
+        ->call('suggestName', 'default')
+        ->assertSet('names.pt', 'delivery-guide');
+});
+
+it('keeps the name of a language with its own title when the default name is refilled', function (): void {
+    $page = namedPage('Guia de Entrega');
+
+    Livewire::test(PageSettings::class, ['pageId' => $page->id])
+        ->set('names.default', '')
+        ->call('suggestName', 'default')
+        ->assertSet('names.default', 'delivery-guide')
+        ->assertSet('names.pt', 'nome-antigo');
 });
 
 it('fills a cleared name from that language\'s own title', function (): void {

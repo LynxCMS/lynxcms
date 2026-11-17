@@ -10,6 +10,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
+use LynxCms\Admin\Editor\NameSuggestions;
 use LynxCms\Admin\Editor\ParentTemplates;
 use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Admin\Editor\TemplateChoices;
@@ -86,9 +87,7 @@ final class PageSettings extends Component
     /** Fill a name the editor cleared, when they leave its field; saved with the other names. */
     public function suggestName(string $code): void
     {
-        if (array_key_exists($code, $this->names) && trim($this->names[$code]) === '') {
-            $this->names[$code] = $this->suggestedName($code);
-        }
+        $this->names = new NameSuggestions($this->page())->fill($this->names, $code);
     }
 
     public function toggleStatus(string $flag): void
@@ -209,24 +208,6 @@ final class PageSettings extends Component
         }
 
         return $input;
-    }
-
-    /**
-     * The name from the language's own title; another language without one copies the default
-     * name, so its URL stays the one it had through fallback.
-     */
-    private function suggestedName(string $code): string
-    {
-        $page = $this->page();
-        $defaultCode = Value::string(lynx()->languages->default()->code);
-        $defaultTitle = PageName::from(Value::string($page->getLanguageValue($defaultCode, 'title')));
-        $title = PageName::from(Value::string($page->getLanguageValue($code, 'title')));
-
-        if ($code === $defaultCode || $title !== '') {
-            return $title ?: $defaultTitle;
-        }
-
-        return PageName::from($this->names[$defaultCode] ?? '') ?: $defaultTitle;
     }
 
     /**
