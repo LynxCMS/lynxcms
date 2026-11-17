@@ -73,6 +73,8 @@ The text operators (`%=`, `*=`, `~=`, `^=` and `$=`) ignore case. Put a value in
 
 `|` separates alternative values: `template=course|lesson` matches either. With `!=`, the page must differ from every value: `category!=news|events` finds pages in neither category.
 
+`!=` is the exact opposite of `=`, on every field: `summary!=Draft` finds every page whose summary is not "Draft", including pages without a summary and pages whose template has no summary field. Add `summary!=` to keep only pages that have one: `summary!=, summary!=Draft`.
+
 An empty value means empty or missing: `summary=` finds pages without a summary, and `price!=` finds pages with a price.
 
 ### Several fields at once

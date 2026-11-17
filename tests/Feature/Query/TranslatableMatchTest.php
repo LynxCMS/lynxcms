@@ -67,7 +67,27 @@ it('ignores rows without a value when falling back', function () use ($names): v
 it('keeps empty-value and contains clauses on the effective value', function () use ($names): void {
     expect($names('template=course, code='))->toBe([])
         ->and($names('template=course, code%=-2'))->toBe(['beta'])
-        ->and($names('template=course, code!=A-1'))->toBe(['beta']);
+        ->and($names('template=course, code!='))->toBe(['alpha', 'beta', 'gamma']);
+});
+
+it('makes != the exact opposite of =, pages without a value included (#194)', function () use ($names): void {
+    $page = lynx()->pages->new('course', '/courses/');
+    $page->name = 'delta';
+    $page->title = 'Delta';
+    $page->save();
+
+    expect($names('template=course, code!=A-1'))->toBe(['beta', 'delta'])
+        ->and($names('template=course, code!=A-1|B-2'))->toBe(['delta'])
+        ->and($names('template=course, code!=, code!=A-1'))->toBe(['beta'])
+        ->and($names('template=course, code!=|A-1'))->toBe(['beta'])
+        ->and($names('template=course, code!=B-1', 'default'))->toBe(['alpha', 'delta', 'gamma'])
+        ->and([...$names('template=course, code=A-1'), ...$names('template=course, code!=A-1')])->toEqualCanonicalizing(['alpha', 'beta', 'delta', 'gamma']);
+});
+
+it('matches != through the field table\'s index, not a COALESCE', function (): void {
+    $sql = lynx()->language('pt', fn (): string => app(PageFinder::class)->compile('template=course, code!=A-1')->toSql());
+
+    expect(strtolower($sql))->not->toContain('coalesce')->toContain('not in');
 });
 
 it('gives field tables covering indexes on their value', function (): void {

@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Changed: `!=` on a translatable field is now the exact opposite of `=`, as on shared fields. `summary!=Draft` also finds pages without a summary, which it used to leave out, and it now uses the field table's index. Add `summary!=` to keep only pages with a summary (#194, ADR-0121).
 - Help text under a field is a step smaller (13px) than the field's own text everywhere in the admin, so a field and its note read as two things. Modules give their own field help the `lynx-field-help` class to match. See [Help under a field](/admin/extending#help-under-a-field).
 - Fixed: the editor's Settings tab previewed the wrong URL for a language in which a parent page was never published, without the language's prefix, and said the current URL would redirect when it would not. The preview now follows the rule saving uses: the language's prefix, then each parent's name in that language or its default name. A hint beside that URL names the parent and says to publish it in that language.
 - **Hints:** `<x-lynx-admin::hint>` puts a help icon beside a heading or a label, with a short explanation that opens on hover, keyboard focus or a tap. The editor's Settings tab uses one to explain how cleared URL names fill again. Modules and apps can use it in their own screens. See [Hints](/admin/extending#hints).
