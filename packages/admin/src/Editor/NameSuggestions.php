@@ -10,8 +10,9 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Fills a URL name the editor cleared in the Settings tab. The default language's comes from the
- * page's title and also goes to every language without a title of its own, so those keep sharing
- * the default name. Another language's comes from its own title, else from the default name.
+ * page's title, and replaces the copies of the old default name in languages without a title of
+ * their own, so those keep sharing it; a name typed by hand, or an empty one that follows the
+ * default, stays. Another language's comes from its own title, else from the default name.
  *
  * @internal
  */
@@ -28,9 +29,10 @@ final readonly class NameSuggestions
      * The names with $code filled when it is empty; names that are not empty stay as typed.
      *
      * @param  array<string, string>  $names  per language code
+     * @param  string  $previousDefault  the default name before it was cleared: names equal to it are copies
      * @return array<string, string>
      */
-    public function fill(array $names, string $code): array
+    public function fill(array $names, string $code, string $previousDefault = ''): array
     {
         if (! array_key_exists($code, $names) || trim($names[$code]) !== '') {
             return $names;
@@ -44,17 +46,19 @@ final readonly class NameSuggestions
 
         $names[$code] = $this->title($code);
 
-        return $this->shareDefault($names);
+        return $this->shareDefault($names, trim($previousDefault));
     }
 
     /**
      * @param  array<string, string>  $names
      * @return array<string, string>
      */
-    private function shareDefault(array $names): array
+    private function shareDefault(array $names, string $previousDefault): array
     {
         foreach (array_keys($names) as $code) {
-            if ($code !== $this->defaultCode && $this->title($code) === '') {
+            $isCopy = $previousDefault !== '' && trim($names[$code]) === $previousDefault;
+
+            if ($code !== $this->defaultCode && $isCopy && $this->title($code) === '') {
                 $names[$code] = $names[$this->defaultCode];
             }
         }

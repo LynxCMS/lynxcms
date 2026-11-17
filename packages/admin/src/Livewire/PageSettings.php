@@ -45,6 +45,10 @@ final class PageSettings extends Component
     /** @var array<string, string> language code => URL name */
     public array $names = [];
 
+    /** The default name as saved or last refilled: other languages' names equal to it are copies. */
+    #[Locked]
+    public string $sharedName = '';
+
     /** @var array<string, bool> language code => published in that language */
     public array $active = [];
 
@@ -87,7 +91,11 @@ final class PageSettings extends Component
     /** Fill a name the editor cleared, when they leave its field; saved with the other names. */
     public function suggestName(string $code): void
     {
-        $this->names = new NameSuggestions($this->page())->fill($this->names, $code);
+        $this->names = new NameSuggestions($this->page())->fill($this->names, $code, $this->sharedName);
+
+        if ($code === Value::string(lynx()->languages->default()->code)) {
+            $this->sharedName = $this->names[$code];
+        }
     }
 
     public function toggleStatus(string $flag): void
@@ -183,6 +191,8 @@ final class PageSettings extends Component
             $this->names[$code] = Value::string($page->rawNames()[$language->id]['name'] ?? '');
             $this->active[$code] = $language->isDefault() || $page->isActiveIn($language);
         }
+
+        $this->sharedName = $this->names[Value::string(lynx()->languages->default()->code)] ?? '';
     }
 
     private function changed(string $message, bool $fieldsChanged = false): void

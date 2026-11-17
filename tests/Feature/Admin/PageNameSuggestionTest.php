@@ -10,8 +10,9 @@ use LynxCms\Core\Pages\Page;
 /*
  * Clearing a URL name in the Settings tab and leaving the field fills it again: the default
  * language's from the page's title, another language's from its own title when the page has one,
- * else from the default name. A refilled default name also goes to every language without a title
- * of its own. Nothing is saved until the editor saves the names.
+ * else from the default name. A refilled default name also replaces the copies of the old one in
+ * languages without a title of their own; names typed by hand stay. Nothing is saved until the
+ * editor saves the names.
  */
 
 beforeEach(function (): void {
@@ -19,12 +20,15 @@ beforeEach(function (): void {
     $this->actingAs(new GenericUser(['id' => 1]));
 });
 
-function namedPage(?string $portugueseTitle): Page
+function namedPage(?string $portugueseTitle, string $portugueseName = 'nome-antigo'): Page
 {
     $page = lynx()->pages->new('course', '/courses');
     $page->name = 'old-name';
     $page->title = 'Delivery Guide';
-    $page->setLanguageName('pt', 'nome-antigo');
+
+    if ($portugueseName !== '') {
+        $page->setLanguageName('pt', $portugueseName);
+    }
 
     if ($portugueseTitle !== null) {
         $page->setLanguageValue('pt', 'title', $portugueseTitle);
@@ -46,13 +50,32 @@ it('fills a cleared default name from the title', function (): void {
     expect(lynx()->pages->get($page->id)?->name)->toBe('old-name');
 });
 
-it('gives the refilled default name to languages without a title of their own', function (): void {
-    $page = namedPage(null);
+it('gives the refilled default name to a language that copied the old one and has no title', function (): void {
+    $page = namedPage(null, 'old-name');
 
     Livewire::test(PageSettings::class, ['pageId' => $page->id])
         ->set('names.default', '')
         ->call('suggestName', 'default')
         ->assertSet('names.pt', 'delivery-guide');
+});
+
+it('keeps a name typed by hand in a language without a title when the default name is refilled', function (): void {
+    $page = namedPage(null, 'nome-proprio');
+
+    Livewire::test(PageSettings::class, ['pageId' => $page->id])
+        ->set('names.default', '')
+        ->call('suggestName', 'default')
+        ->assertSet('names.default', 'delivery-guide')
+        ->assertSet('names.pt', 'nome-proprio');
+});
+
+it('leaves an empty name to follow the default when the default name is refilled', function (): void {
+    $page = namedPage(null, '');
+
+    Livewire::test(PageSettings::class, ['pageId' => $page->id])
+        ->set('names.default', '')
+        ->call('suggestName', 'default')
+        ->assertSet('names.pt', '');
 });
 
 it('keeps the name of a language with its own title when the default name is refilled', function (): void {
