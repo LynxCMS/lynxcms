@@ -123,3 +123,12 @@ it('ignores a language the site does not have', function (): void {
         ->assertSet('names.default', 'old-name')
         ->assertNotSet('names.xx', 'old-name');
 });
+
+it('explains how cleared names fill again, above the names', function (): void {
+    $page = namedPage(null);
+
+    Livewire::test(PageSettings::class, ['pageId' => $page->id])
+        ->assertSeeHtml('data-names-help')
+        ->assertSee('Clear a name and leave the field to make it again from the title in that language.')
+        ->assertSee('Names you type yourself stay.');
+});

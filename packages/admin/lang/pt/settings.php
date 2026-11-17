@@ -11,6 +11,8 @@ return [
     'save_name' => 'Guardar nome',
     'home_no_name' => 'A página inicial não tem nome de URL: o seu URL é /.',
     'home_no_name_languages' => 'A página inicial não tem nome de URL: o seu URL é o prefixo do idioma.',
+    'names_help' => 'Apague o nome e saia do campo para o criar de novo a partir do título da página.',
+    'names_help_languages' => 'Apague um nome e saia do campo para o criar de novo a partir do título nesse idioma. Os idiomas sem título próprio partilham o nome predefinido: um nome vazio segue-o e uma cópia muda com ele. Os nomes que escrever mantêm-se.',
     'url_name' => 'Nome do URL',
     'same_as' => 'igual a :name',
     'published_in' => 'Publicada em :language',

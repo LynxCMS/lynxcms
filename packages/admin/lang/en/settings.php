@@ -11,6 +11,8 @@ return [
     'save_name' => 'Save name',
     'home_no_name' => 'The home page has no URL name: its URL is /.',
     'home_no_name_languages' => 'The home page has no URL name: its URL is the language prefix.',
+    'names_help' => 'Clear the name and leave the field to make it again from the page\'s title.',
+    'names_help_languages' => 'Clear a name and leave the field to make it again from the title in that language. Languages without a title of their own share the default name: an empty name follows it, and a copy changes with it. Names you type yourself stay.',
     'url_name' => 'URL name',
     'same_as' => 'same as :name',
     'published_in' => 'Published in :language',

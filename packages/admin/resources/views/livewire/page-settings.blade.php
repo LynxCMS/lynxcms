@@ -21,6 +21,7 @@
         @elseif ($page->parentId === null)
             <p class="text-muted-foreground text-sm">{{ __($isMultilingual ? 'lynx-admin::settings.home_no_name_languages' : 'lynx-admin::settings.home_no_name') }}</p>
         @else
+            <p class="text-muted-foreground -mt-2 mb-4 max-w-prose text-sm" data-names-help>{{ __($isMultilingual ? 'lynx-admin::settings.names_help_languages' : 'lynx-admin::settings.names_help') }}</p>
             <div class="space-y-4">
                 @foreach ($languages as $language)
                     @php($code = (string) $language->code)
