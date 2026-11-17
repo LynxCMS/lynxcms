@@ -9,8 +9,9 @@ use LynxCms\Admin\Tree\TreeFilters;
 use LynxCms\Core\Pages\Page;
 
 /**
- * Lynx's own stats and actions on the home screen (HomeScreen): how many pages there are and how
- * many are not published, the languages, and buttons for a new page and the site texts.
+ * Lynx's own entries on the home screen (HomeScreen): how many pages there are and how many are
+ * not published, the languages, buttons for a new page and the site texts, and the lists of pages
+ * with a draft and the next scheduled changes (main column) and the pages changed last (side).
  *
  * @internal
  */
@@ -30,6 +31,10 @@ final class HomeDefaults
             icon: 'plus', visible: fn (): bool => self::mayAddUnderHome(), order: 10);
         $home->action('site-texts', 'lynx-admin::home.actions.site_texts', fn (): string => route('lynx.admin.site-texts'),
             icon: 'type', visible: fn (): bool => app(AdminAccess::class)->allows('pages.edit'), order: 20);
+
+        $home->panel('lynx-admin::home.drafts', order: 10, key: 'drafts');
+        $home->panel('lynx-admin::home.upcoming', order: 20, key: 'upcoming');
+        $home->panel('lynx-admin::home.recent', order: 10, key: 'recent', column: HomeScreen::SIDE);
     }
 
     /** New pages start under the home page; a site whose home page takes no children starts them from the tree. */
