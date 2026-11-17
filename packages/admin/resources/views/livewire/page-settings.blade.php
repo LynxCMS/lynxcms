@@ -7,7 +7,20 @@
     {{-- Names and languages; a page without a URL has one name, which templates find it by --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-names">
         @php($isMultilingual = lynx()->languages->isMultilingual())
-        <h2 id="settings-names" class="mb-4 text-base font-semibold">{{ __(! $hasUrl ? 'lynx-admin::settings.name_in_templates' : ($isMultilingual ? 'lynx-admin::settings.names_languages' : 'lynx-admin::settings.name')) }}</h2>
+        <div class="mb-4 flex items-center gap-1.5">
+            <h2 id="settings-names" class="text-base font-semibold">{{ __(! $hasUrl ? 'lynx-admin::settings.name_in_templates' : ($isMultilingual ? 'lynx-admin::settings.names_languages' : 'lynx-admin::settings.name')) }}</h2>
+            @if ($hasUrl && $page->parentId !== null)
+                {{-- How cleared names fill again: on hover or keyboard focus, and on a tap for touch screens. --}}
+                <x-lynx-admin::ui.tooltip data-names-help>
+                    <x-lynx-admin::ui.tooltip-trigger>
+                        <button type="button" class="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex rounded-full outline-none focus-visible:ring-[3px]" x-on:click="open = ! open" aria-label="{{ __('lynx-admin::settings.names_help_label') }}">
+                            <x-lynx-admin::ui.icon name="circle-help" class="size-4" aria-hidden="true" />
+                        </button>
+                    </x-lynx-admin::ui.tooltip-trigger>
+                    <x-lynx-admin::ui.tooltip-content side="bottom">{{ __($isMultilingual ? 'lynx-admin::settings.names_help_languages' : 'lynx-admin::settings.names_help') }}</x-lynx-admin::ui.tooltip-content>
+                </x-lynx-admin::ui.tooltip>
+            @endif
+        </div>
         @if (! $hasUrl && $page->parentId !== null)
             <div class="grid max-w-md gap-1.5" data-template-name>
                 <label for="name-{{ $defaultCode }}" class="sr-only">{{ __('lynx-admin::settings.name_in_templates') }}</label>
@@ -21,7 +34,6 @@
         @elseif ($page->parentId === null)
             <p class="text-muted-foreground text-sm">{{ __($isMultilingual ? 'lynx-admin::settings.home_no_name_languages' : 'lynx-admin::settings.home_no_name') }}</p>
         @else
-            <p class="text-muted-foreground -mt-2 mb-4 max-w-prose text-sm" data-names-help>{{ __($isMultilingual ? 'lynx-admin::settings.names_help_languages' : 'lynx-admin::settings.names_help') }}</p>
             <div class="space-y-4">
                 @foreach ($languages as $language)
                     @php($code = (string) $language->code)
