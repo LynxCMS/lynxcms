@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Admin\AdminPath;
 use LynxCms\Admin\Users\CreateUser;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
@@ -70,7 +71,7 @@ final class SuperuserCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->info("{$name} <{$email}> is a superuser. Sign in at ".url(Value::string(config('lynx-admin.prefix', 'lynx'))).'.');
+        $this->components->info("{$name} <{$email}> is a superuser. Sign in at ".url(AdminPath::current()).'.');
 
         return self::SUCCESS;
     }

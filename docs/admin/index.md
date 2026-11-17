@@ -6,7 +6,7 @@ order: 6
 
 # The admin
 
-`lynxcms/admin` adds an admin at `/lynx` (`LYNX_ADMIN_PREFIX`) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and [Laravel Fortify](https://laravel.com/docs/fortify) (Laravel's sign-in package), and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#running-without-the-admin)).
+`lynxcms/admin` adds an admin at `/lynx` (or [another path](#the-admin-s-address)) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and [Laravel Fortify](https://laravel.com/docs/fortify) (Laravel's sign-in package), and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#running-without-the-admin)).
 
 <video src="/img/admin/admin-tour.mp4" controls muted playsinline preload="metadata" poster="/img/admin/admin-tour-poster.jpg" style="width: 100%; aspect-ratio: 16 / 10; border-radius: 8px;" aria-label="A short tour of the admin: the home screen, the page tree, and the page editor with its tabs and search"></video>
 
@@ -73,6 +73,23 @@ The list names only the screens the user may open.
 - [Sign-in and accounts](/admin/sign-in)
 - [Roles and permissions](/admin/permissions)
 - [Extending the admin](/admin/extending)
+
+## The admin's address
+
+The admin lives at `/lynx` until you choose another path. A site about lynxes needs `/lynx` for a page of its own, and some teams prefer an address that nobody finds by trying `/admin` or `/lynx`. `lynx:admin-path` shows the address and moves the admin:
+
+```bash
+php artisan lynx:admin-path            # where the admin is now
+php artisan lynx:admin-path admin      # move it to /admin
+php artisan lynx:admin-path team/cms   # paths can have several segments
+php artisan lynx:admin-path --random   # a path of 20 random letters and digits
+```
+
+The command writes `LYNX_ADMIN_PREFIX` to `.env`, as `key:generate` writes `APP_KEY`, so you can also set it by hand on a server. A path holds lowercase letters, digits, `-` and `_`, with `/` between segments. It can't be empty, since the admin's screens would then take over the site's own URLs. Every admin screen, the sign-in, the links in invitation emails and the redirects after signing in and out move with it. Bookmarks to the old address stop working. When the configuration is cached, run `php artisan config:cache` again for the new path to take effect.
+
+The command refuses a path a page already uses, in any language, and names the page. Pages are served after every other route, so a page at the admin's path would be hidden from visitors. `lynx:doctor` warns about any page hidden that way, by the admin or by a route of your app (see [Checking a site](/reference/artisan#checking-a-site)).
+
+A random path keeps the admin out of reach of scripts that try common addresses, but it is not a password. Keep two-factor authentication on for editors. And when your app protects routes of its own with Laravel's `auth` middleware, guests who open them are sent to the admin's sign-in, which shows its address: send them to a sign-in of your own instead (see [Who signs users in](/admin/sign-in#who-signs-users-in)).
 
 ## The admin's language
 
