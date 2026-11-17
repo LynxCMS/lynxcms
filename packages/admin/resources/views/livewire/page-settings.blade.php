@@ -7,13 +7,13 @@
     {{-- Names and languages; a page without a URL has one name, which templates find it by --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-names">
         @php($isMultilingual = lynx()->languages->isMultilingual())
-        <div class="mb-4 flex items-center gap-1.5">
+        <div class="mb-4 flex items-center gap-2">
             <h2 id="settings-names" class="text-base font-semibold">{{ __(! $hasUrl ? 'lynx-admin::settings.name_in_templates' : ($isMultilingual ? 'lynx-admin::settings.names_languages' : 'lynx-admin::settings.name')) }}</h2>
             @if ($hasUrl && $page->parentId !== null)
                 {{-- How cleared names fill again: on hover or keyboard focus, and on a tap for touch screens. --}}
-                <x-lynx-admin::ui.tooltip data-names-help>
-                    <x-lynx-admin::ui.tooltip-trigger>
-                        <button type="button" class="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex rounded-full outline-none focus-visible:ring-[3px]" x-on:click="open = ! open" aria-label="{{ __('lynx-admin::settings.names_help_label') }}">
+                <x-lynx-admin::ui.tooltip class="flex" data-names-help>
+                    <x-lynx-admin::ui.tooltip-trigger class="flex">
+                        <button type="button" class="text-primary dark:text-[color-mix(in_oklab,var(--primary),var(--foreground)_30%)] focus-visible:ring-ring/50 flex rounded-full opacity-80 outline-none hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-[3px]" x-on:click="open = ! open" aria-label="{{ __('lynx-admin::settings.names_help_label') }}">
                             <x-lynx-admin::ui.icon name="circle-help" class="size-4" aria-hidden="true" />
                         </button>
                     </x-lynx-admin::ui.tooltip-trigger>
