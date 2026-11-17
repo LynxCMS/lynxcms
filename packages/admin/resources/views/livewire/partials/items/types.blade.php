@@ -49,7 +49,7 @@
                             <label for="type-{{ $blockType['key'] }}-slug" class="mt-2 text-sm font-medium">{{ __('lynx-admin::fields.types.in_code') }}</label>
                             <input id="type-{{ $blockType['key'] }}-slug" type="text" class="blat-input max-w-md font-mono" wire:model="itemTypes.{{ $index }}.slug" placeholder="{{ __('lynx-admin::fields.types.in_code_placeholder') }}" autocomplete="off"
                                    @error("settings.types.{$index}.slug") aria-invalid="true" @enderror>
-                            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.types.in_code_help') }}</p>
+                            <p class="lynx-field-help">{{ __('lynx-admin::fields.types.in_code_help') }}</p>
                             @error("settings.types.{$index}.slug") <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                         @endif
                     </div>
@@ -58,7 +58,7 @@
                         <label for="type-{{ $blockType['key'] }}-item-label" class="text-sm font-medium">{{ __('lynx-admin::fields.types.closed') }}</label>
                         <input id="type-{{ $blockType['key'] }}-item-label" type="text" class="blat-input max-w-md font-mono" wire:model="itemTypes.{{ $index }}.item_label"
                                placeholder="{{ isset($blockType['fields'][0]) ? '{'.$blockType['fields'][0]['name'].'}' : '{field}' }}" autocomplete="off">
-                        <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.types.closed_help') }}</p>
+                        <p class="lynx-field-help">{{ __('lynx-admin::fields.types.closed_help') }}</p>
                     </div>
                 </div>
             </li>

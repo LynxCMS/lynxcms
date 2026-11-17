@@ -15,7 +15,7 @@
                 @if ($type === 'choice' && $setting === 'options')
                     <span class="text-sm font-medium">{{ __('lynx-admin::fields.settings.options') }}</span>
                     <x-lynx-admin::choices-editor model="settings.options" :disabled="! $canEdit" defaultable multiple-model="settings.multiple" />
-                    <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.options_help') }}</p>
+                    <p class="lynx-field-help">{{ __('lynx-admin::fields.settings.options_help') }}</p>
                 @elseif ($definition['type'] === 'array' && $definition['format'] === \LynxCms\Core\Fields\SettingFormats::TEMPLATE)
                     <x-lynx-admin::template-chooser :model="'settings.'.$setting" :options="$templateOptions" :legend="$words['label']" :hint="$words['hint']" />
                 @elseif ($definition['type'] === 'array' && $words['options'] !== [])
@@ -30,7 +30,7 @@
                                 </label>
                             @endforeach
                         </div>
-                        @if ($words['hint'] !== '')<p class="text-muted-foreground text-sm">{{ $words['hint'] }}</p>@endif
+                        @if ($words['hint'] !== '')<p class="lynx-field-help">{{ $words['hint'] }}</p>@endif
                     </fieldset>
                 @elseif ($definition['type'] === 'boolean')
                     <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
@@ -52,7 +52,7 @@
                         @endif
                         @if ($words['unit'] !== '')<span class="text-muted-foreground text-sm">{{ $words['unit'] }}</span>@endif
                     </div>
-                    @if ($words['hint'] !== '')<p class="text-muted-foreground text-sm">{{ $words['hint'] }}</p>@endif
+                    @if ($words['hint'] !== '')<p class="lynx-field-help">{{ $words['hint'] }}</p>@endif
                 @endif
                 @error('settings.'.$setting) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
@@ -75,7 +75,7 @@
                         </li>
                     @endforeach
                 </ul>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.settings.formatters_help') }}</p>
+                <p class="lynx-field-help">{{ __('lynx-admin::fields.settings.formatters_help') }}</p>
                 @error('settings.formatters') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         @endif

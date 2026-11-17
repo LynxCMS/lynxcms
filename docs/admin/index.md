@@ -6,7 +6,7 @@ order: 6
 
 # The admin
 
-`lynxcms/admin` adds an admin at `/lynx` (`LYNX_ADMIN_PREFIX`) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and [Laravel Fortify](https://laravel.com/docs/fortify) (Laravel's sign-in package), and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#running-without-the-admin)).
+`lynxcms/admin` adds an admin at `/lynx` (or [another path](#the-admin-s-address)) where editors work without technical knowledge: a page tree they drag to reorder, a page editor laid out per template with a tab per language, drafts, scheduling, history and a trash. It is built with Livewire 4 and [Laravel Fortify](https://laravel.com/docs/fortify) (Laravel's sign-in package), and it is optional: a site can run on `lynxcms/core` alone and manage content from code, files or AI tools (see the [introduction](/getting-started/introduction#running-without-the-admin)).
 
 <video src="/img/admin/admin-tour.mp4" controls muted playsinline preload="metadata" poster="/img/admin/admin-tour-poster.jpg" style="width: 100%; aspect-ratio: 16 / 10; border-radius: 8px;" aria-label="A short tour of the admin: the home screen, the page tree, and the page editor with its tabs and search"></video>
 
@@ -74,6 +74,23 @@ The list names only the screens the user may open.
 - [Roles and permissions](/admin/permissions)
 - [Extending the admin](/admin/extending)
 
+## The admin's address
+
+The admin lives at `/lynx` until you choose another path. A site about lynxes needs `/lynx` for a page of its own, and some teams prefer an address that nobody finds by trying `/admin` or `/lynx`. `lynx:admin-path` shows the address and moves the admin:
+
+```bash
+php artisan lynx:admin-path            # where the admin is now
+php artisan lynx:admin-path admin      # move it to /admin
+php artisan lynx:admin-path team/cms   # paths can have several segments
+php artisan lynx:admin-path --random   # a path of 20 random letters and digits
+```
+
+The command writes `LYNX_ADMIN_PREFIX` to `.env`, as `key:generate` writes `APP_KEY`, so you can also set it by hand on a server. A path holds lowercase letters, digits, `-` and `_`, with `/` between segments. It can't be empty, since the admin's screens would then take over the site's own URLs. Every admin screen, the sign-in, the links in invitation emails and the redirects after signing in and out move with it. Bookmarks to the old address stop working. When the configuration is cached, run `php artisan config:cache` again for the new path to take effect.
+
+The command refuses a path a page already uses, in any language, and names the page. Pages are served after every other route, so a page at the admin's path would be hidden from visitors. `lynx:doctor` warns about any page hidden that way, by the admin or by a route of your app (see [Checking a site](/reference/artisan#checking-a-site)).
+
+A random path keeps the admin out of reach of scripts that try common addresses, but it is not a password. Keep two-factor authentication on for editors. And when your app protects routes of its own with Laravel's `auth` middleware, guests who open them are sent to the admin's sign-in, which shows its address: send them to a sign-in of your own instead (see [Who signs users in](/admin/sign-in#who-signs-users-in)).
+
 ## The admin's language
 
 Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording only, so a Portuguese editor can work on an English site. Lynx ships English and Portuguese.
@@ -113,7 +130,9 @@ Each option also has an environment variable (`LYNX_ADMIN_ACCENT`, `LYNX_ADMIN_R
 
 ### The site's name, logo and colors
 
-Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in.
+Superusers give the admin the site's own look under **Settings > General**: a name, a logo (PNG, JPEG, WebP or SVG, up to 1 MB) and two colors, the sign-in screens' background and an accent for buttons, links and focus rings. The sign-in, password reset, two-factor and invitation screens show them, and so does the top of the sidebar, where a collapsed sidebar shows the name's initial instead of a wide logo. The name also ends every browser tab's title. A preview shows the sign-in card as the fields are filled in, in light and in dark mode.
+
+For editors who work in dark mode, the **Dark mode** part of the form takes a logo, a background and an accent of their own, such as a white version of a dark logo. Each is optional: dark mode shows the light one until it is set. Text on the background and on accent buttons is white or near black, whichever reads better on the color, in both modes.
 
 Until the site has a name or a logo of its own, the admin wears Lynx's: the Lynx mark beside the name, and the Lynx icon in browser tabs. Setting a name or a logo replaces both, so a client never sees Lynx's brand in their admin. Without a logo, the name's initial takes the mark's place, and tabs show the site's own `/favicon.ico`. An accent or a background alone keeps the Lynx mark.
 
@@ -125,6 +144,9 @@ The defaults come from `config/lynx-admin.php`, so a developer can ship them wit
     'logo' => '/images/logo.svg', // a URL or a path below public/
     'background' => '#f3eee4',
     'accent' => '#1f5a69',
+    'logo_dark' => '/images/logo-white.svg', // optional, for dark mode
+    'background_dark' => '#14232a',
+    'accent_dark' => '#7cc4d4',
 ],
 ```
 
@@ -133,7 +155,7 @@ What a superuser saves wins over the config; an empty field goes back to it. Upl
 ```php
 use LynxCms\Admin\Branding\SaveBranding;
 
-lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69']);
+lynx()->run(SaveBranding::class, ['name' => 'Castor & Otters', 'accent' => '#1f5a69', 'accent_dark' => '#7cc4d4']);
 ```
 
 `theme` is the default. Each user can pick light, dark or system in the user menu at the bottom of the sidebar, which is remembered in that browser. The same menu links to the account's security settings.

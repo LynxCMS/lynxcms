@@ -26,7 +26,7 @@ return [
     'something_wrong' => 'Something went wrong. Try again.',
     'search' => [
         'label' => 'Search pages',
-        'placeholder' => 'Search, or template=course, sort=-modified',
+        'placeholder' => 'Search pages…',
         'empty' => 'No pages found.',
         'unpublished' => 'Unpublished',
         'count' => ':shown of :total page.|:shown of :total pages.',

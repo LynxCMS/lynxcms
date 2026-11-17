@@ -17,6 +17,9 @@
         <testsuite name="ProviderOrder">
             <directory>tests/ProviderOrder</directory>
         </testsuite>
+        <testsuite name="AdminPath">
+            <directory>tests/AdminPath</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

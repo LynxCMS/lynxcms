@@ -8,13 +8,13 @@
         <div class="grid gap-2">
             <span id="settings-title-input-label" class="blat-label">{{ __('lynx-menus::admin.title_label') }}</span>
             @include('lynx-menus::admin.partials.translated-input', ['model' => 'settings.title', 'id' => 'settings-title-input', 'label' => __('lynx-menus::admin.title_label'), 'error' => 'values.title'])
-            <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.settings.title_help') }}</p>
+            <p class="lynx-field-help">{{ __('lynx-menus::admin.settings.title_help') }}</p>
         </div>
 
         <div class="grid gap-2">
             <label for="settings-class" class="blat-label">{{ __('lynx-menus::admin.settings.classes') }}</label>
             <input id="settings-class" type="text" class="blat-input font-mono" wire:model="settings.class" placeholder="{{ __('lynx-menus::admin.settings.optional') }}" spellcheck="false">
-            <p class="text-muted-foreground text-sm">{{ __('lynx-menus::admin.settings.classes_help') }}</p>
+            <p class="lynx-field-help">{{ __('lynx-menus::admin.settings.classes_help') }}</p>
         </div>
 
         <div>

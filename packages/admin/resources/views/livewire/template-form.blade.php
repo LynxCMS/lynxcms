@@ -10,7 +10,7 @@
             <div class="grid gap-1">
                 <label for="template-name" class="text-sm font-medium">{{ __('lynx-admin::templates.form.name') }}</label>
                 <input id="template-name" type="text" class="blat-input max-w-sm" wire:model="name" autocomplete="off" @error('name') aria-invalid="true" @enderror>
-                <p class="text-muted-foreground text-sm">{!! __('lynx-admin::templates.form.name_help', ['path' => '<code>templates/'.e($name !== '' ? $name : 'name').'.blade.php</code>']) !!}</p>
+                <p class="lynx-field-help">{!! __('lynx-admin::templates.form.name_help', ['path' => '<code>templates/'.e($name !== '' ? $name : 'name').'.blade.php</code>']) !!}</p>
                 @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1">

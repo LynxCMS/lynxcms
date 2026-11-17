@@ -8,6 +8,7 @@ use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Menus\Reading\MenuItem;
+use LynxCms\Tests\AdminPathTestCase;
 use LynxCms\Tests\AppFortifyTestCase;
 use LynxCms\Tests\ProviderOrderTestCase;
 use LynxCms\Tests\TestCase;
@@ -16,6 +17,7 @@ use Workbench\App\Models\User;
 pest()->extend(TestCase::class)->in('Feature', 'Unit');
 pest()->extend(AppFortifyTestCase::class)->in('AppAuth');
 pest()->extend(ProviderOrderTestCase::class)->in('ProviderOrder');
+pest()->extend(AdminPathTestCase::class)->in('AdminPath');
 
 /**
  * A folder under storage/framework/testing for this test process only, so parallel runs do not
