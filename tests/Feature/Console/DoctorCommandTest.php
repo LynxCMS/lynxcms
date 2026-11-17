@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use LynxCms\Core\Doctor\Check;
 use LynxCms\Core\Doctor\DoctorChecks;
@@ -56,7 +57,7 @@ it('finds nothing wrong on a healthy site', function (): void {
     $report = doctorReport();
 
     expect(array_merge(...array_column($report, 'findings')))->toBe([])
-        ->and(array_keys($report))->toContain('template-views', 'unused-fields', 'orphaned-values', 'scheduler');
+        ->and(array_keys($report))->toContain('template-views', 'unused-fields', 'orphaned-values', 'scheduler', 'page-routes');
 });
 
 it('warns about a template whose pages have no view', function (): void {
@@ -105,6 +106,37 @@ it('fails when schedules are overdue, as when the scheduler does not run', funct
     DB::table(Tables::SCHEDULES)->insert(['page_id' => $alpha->id, 'language_id' => lynx()->languages->default()->id, 'action' => 'publish', 'at' => now()->subHour()]);
 
     expect(severities(doctorReport(exit: 1), 'scheduler'))->toBe(['error']);
+});
+
+it('warns about a page the admin hides, as on a site about lynxes', function (): void {
+    $page = lynx()->pages->new('courses', '/');
+    $page->name = 'lynx';
+    $page->title = 'Lynxes';
+    $page->setLanguageName('pt', 'lince');
+    $page->save();
+
+    $findings = doctorReport()['page-routes']['findings'];
+
+    expect($findings)->toHaveCount(1)
+        ->and($findings[0]['severity'])->toBe('warning')
+        ->and($findings[0]['message'])->toContain('/lynx', 'Lynxes')
+        ->and($findings[0]['fix'])->toContain('lynx:admin-path');
+});
+
+it('warns about a page an app route hides', function (): void {
+    Route::get('/courses', fn (): string => 'Our own list');
+
+    expect(doctorReport()['page-routes']['findings'][0]['message'])->toContain('/courses');
+});
+
+it('leaves out trashed pages', function (): void {
+    $page = lynx()->pages->new('courses', '/');
+    $page->name = 'lynx';
+    $page->title = 'Lynxes';
+    $page->save();
+    lynx()->pages->trash($page);
+
+    expect(doctorReport()['page-routes']['findings'])->toBe([]);
 });
 
 it('runs the checks modules add', function (): void {

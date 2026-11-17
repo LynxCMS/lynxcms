@@ -44,7 +44,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `prefix` | `lynx` | URL prefix of the admin. |
+| `prefix` | `lynx` (`LYNX_ADMIN_PREFIX`) | The admin's path. Lowercase letters, digits, `-` and `_`, with `/` between segments; never empty. Set it with `lynx:admin-path`. See [The admin's address](/admin/#the-admin-s-address). |
 | `middleware` | `['web', 'auth']` | Middleware of every admin route. |
 | `locale` | none (`LYNX_ADMIN_LOCALE`) | The admin's default language. Empty: the app's locale. See [The admin's language](/admin/#the-admin-s-language). |
 | `locales` | `en`, `pt` | The languages editors can choose in their menu, as code and name. |

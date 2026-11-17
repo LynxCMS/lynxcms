@@ -28,7 +28,7 @@ final class Admin
     {
         // Editors see every page: visibility rules are for visitors (ADR-0062).
         Route::middleware([...Value::strings(config('lynx-admin.middleware')), 'can:'.AdminServiceProvider::GATE, WithoutPageVisibility::class, UseAdminLocale::class])
-            ->prefix(Value::string(config('lynx-admin.prefix')))
+            ->prefix(AdminPath::current())
             ->name('lynx.admin.')
             ->group($routes);
     }
