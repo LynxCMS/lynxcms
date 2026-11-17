@@ -37,6 +37,16 @@
 @import "./identity.css";
 
 /*
+ * Help text under a field: a step smaller than the field's own text (14px), so the two read as
+ * label and note, the same on every screen. Modules use the class too (docs/admin/extending.md).
+ */
+@layer components {
+    .lynx-field-help {
+        @apply text-muted-foreground text-[0.8125rem] leading-snug;
+    }
+}
+
+/*
  * Lynx tokens: the parts BlatUI has no token for (the page tree). Each defaults to a BlatUI token,
  * so a BlatUI preset restyles them too; a host stylesheet can still set them (theme.stub.css).
  */

@@ -35,7 +35,7 @@
             <div class="grid gap-1.5">
                 <label for="setting-limit-header" class="text-sm font-medium">{{ __('lynx-admin::fields.limits.closed_block_default') }}</label>
                 <input id="setting-limit-header" type="text" class="blat-input max-w-md font-mono" wire:model="settings.item_label" autocomplete="off">
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.limits.braces') }}</p>
+                <p class="lynx-field-help">{{ __('lynx-admin::fields.limits.braces') }}</p>
             </div>
         @endif
         <div class="grid gap-1.5" role="radiogroup" aria-labelledby="limits-start">
