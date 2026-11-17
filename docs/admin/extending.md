@@ -257,6 +257,28 @@ The `hint` is optional: it shows when someone hovers over the filter or focuses 
 
 The closure runs when the tree shows its filters, so it can read the site's languages or settings. Lynx's own filters keep their keys, so a module filter with the same key is left out.
 
+## Hints
+
+A hint is a small help icon beside a heading or a label. It explains the thing in a tooltip, so the screen keeps only what people need every time. The editor's Settings tab uses one beside **Names and languages** to say how a cleared URL name fills again.
+
+```blade
+<div class="flex items-center gap-2">
+    <h2 id="reports-schedule" class="text-base font-semibold">{{ __('reports::admin.schedule') }}</h2>
+    <x-lynx-admin::hint :label="__('reports::admin.schedule_hint_label')">
+        {{ __('reports::admin.schedule_hint') }}
+    </x-lynx-admin::hint>
+</div>
+```
+
+The hint opens on hover, on keyboard focus and on a tap, since touch screens have no hover, and Escape closes it. Its icon is a button named by `label`, and the text describes it, so screen readers read both. Write the label as the question the hint answers ("How names fill again"), and keep the text to a few sentences: the tooltip is narrow, and anything longer belongs on the screen or in the docs.
+
+| Attribute | What it does |
+|---|---|
+| `label` | The button's name for screen readers. Required. |
+| `side` | Where the tooltip opens: `top`, `right`, `bottom` (the default) or `left`. |
+
+Other attributes go on the hint's wrapper, so `data-*` attributes and classes work as on any element. The icon takes the site's accent colour at 80%, lighter in dark mode, as the home screen's icons do. Its classes are in the admin's stylesheet already, so a module needs nothing in its own.
+
 ## Styles for your screens
 
 The admin's stylesheet is built from Lynx's own views, so a class only your module uses doesn't exist in it. A module in its own repository builds a small stylesheet of its own, with the admin's classes and tokens, and registers it.

@@ -77,13 +77,16 @@ return [
     | Superusers change them under Settings in the admin; these are the defaults until they do.
     | logo: a URL or a path below public/ (an SVG is fine here). background: the sign-in screens'
     | backdrop. accent: buttons, links and focus rings. Colours are hex, e.g. #b4602c; empty keeps
-    | the admin's own.
+    | the admin's own. The *_dark keys are what dark mode shows instead; empty uses the light one.
     */
     'branding' => [
         'name' => env('LYNX_ADMIN_NAME', 'Lynx'),
         'logo' => env('LYNX_ADMIN_LOGO'),
         'background' => env('LYNX_ADMIN_BACKGROUND'),
         'accent' => env('LYNX_ADMIN_BRAND_ACCENT'),
+        'logo_dark' => env('LYNX_ADMIN_LOGO_DARK'),
+        'background_dark' => env('LYNX_ADMIN_BACKGROUND_DARK'),
+        'accent_dark' => env('LYNX_ADMIN_BRAND_ACCENT_DARK'),
     ],
 
     /*

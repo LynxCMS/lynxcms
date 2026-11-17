@@ -10,18 +10,18 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
+use LynxCms\Admin\Editor\NameSuggestions;
 use LynxCms\Admin\Editor\ParentTemplates;
 use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Admin\Editor\TemplateChoices;
+use LynxCms\Admin\Editor\UrlPreviews;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Pages\SetPageStatus;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Pages\PageName;
 use LynxCms\Core\Pages\PageStatus;
-use LynxCms\Core\Pages\PageUrl;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -43,6 +43,10 @@ final class PageSettings extends Component
 
     /** @var array<string, string> language code => URL name */
     public array $names = [];
+
+    /** The default name as saved or last refilled: other languages' names equal to it are copies. */
+    #[Locked]
+    public string $sharedName = '';
 
     /** @var array<string, bool> language code => published in that language */
     public array $active = [];
@@ -81,6 +85,16 @@ final class PageSettings extends Component
     {
         lynx()->run(SavePage::class, ['id' => $this->pageId, 'names' => $this->namesInput(), 'expected_revision' => $this->revision]);
         $this->changed(__('lynx-admin::settings.names_saved'));
+    }
+
+    /** Fill a name the editor cleared, when they leave its field; saved with the other names. */
+    public function suggestName(string $code): void
+    {
+        $this->names = new NameSuggestions($this->page())->fill($this->names, $code, $this->sharedName);
+
+        if ($code === Value::string(lynx()->languages->default()->code)) {
+            $this->sharedName = $this->names[$code];
+        }
     }
 
     public function toggleStatus(string $flag): void
@@ -145,12 +159,14 @@ final class PageSettings extends Component
     public function render(TemplateChoices $choices): View
     {
         $page = $this->page();
+        $previews = new UrlPreviews($page);
 
         return view('lynx-admin::livewire.page-settings', [
             'page' => $page,
             'languages' => lynx()->languages->all(),
             'defaultCode' => Value::string(lynx()->languages->default()->code),
-            'urls' => $this->previewUrls($page),
+            'urls' => $previews->urls($this->names),
+            'unpublishedParents' => $previews->borrowedFrom(),
             'templates' => $this->templateChoices($page, $choices),
             'parentTitle' => $page->parent() instanceof Page ? (new DefaultPresenter)->title($page->parent()) : null,
             // Without a URL a page shows wherever a template puts it, in every language: one name, no languages to publish in.
@@ -176,6 +192,8 @@ final class PageSettings extends Component
             $this->names[$code] = Value::string($page->rawNames()[$language->id]['name'] ?? '');
             $this->active[$code] = $language->isDefault() || $page->isActiveIn($language);
         }
+
+        $this->sharedName = $this->names[Value::string(lynx()->languages->default()->code)] ?? '';
     }
 
     private function changed(string $message, bool $fieldsChanged = false): void
@@ -201,27 +219,6 @@ final class PageSettings extends Component
         }
 
         return $input;
-    }
-
-    /**
-     * The URL each language will have, using the rule pages.save applies to names.
-     *
-     * @return array<string, string|null>
-     */
-    private function previewUrls(Page $page): array
-    {
-        $parent = $page->parent();
-        $urls = [];
-
-        foreach (lynx()->languages->all() as $language) {
-            $code = Value::string($language->code);
-            $name = PageName::from($this->names[$code] ?? '') ?: PageName::from($this->names[lynx()->languages->default()->code] ?? '');
-            $urls[$code] = $parent instanceof Page && $page->template()->hasUrl() && $name !== ''
-                ? PageUrl::child($parent->localUrl($language), $name)
-                : null;
-        }
-
-        return $urls;
     }
 
     /**

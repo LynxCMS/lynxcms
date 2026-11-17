@@ -16,7 +16,7 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class Branding
 {
-    /** The setting saved under Settings in the admin, JSON: name, logo, background, accent. */
+    /** The setting saved under Settings in the admin, JSON: name, logo, background, accent, and their *_dark. */
     public const string SETTING = 'admin.branding';
 
     /** Where uploaded logos are kept: private storage, served by the admin's asset route. */
@@ -41,6 +41,10 @@ final readonly class Branding
         public ?string $background,
         public ?string $accent,
         public ?string $uploadedLogo = null,
+        public ?string $darkBackground = null,
+        public ?string $darkAccent = null,
+        public ?string $darkLogo = null,
+        public ?string $uploadedDarkLogo = null,
     ) {}
 
     /** The branding in effect. */
@@ -69,6 +73,7 @@ final readonly class Branding
     {
         $pick = fn (string $key): ?string => self::filled($saved[$key] ?? null) ?? self::filled($defaults[$key] ?? null);
         $uploaded = self::filled($saved['logo'] ?? null);
+        $uploadedDark = self::filled($saved['logo_dark'] ?? null);
 
         return new self(
             name: $pick('name') ?? self::DEFAULT_NAME,
@@ -76,21 +81,33 @@ final readonly class Branding
             background: self::hex($pick('background')),
             accent: self::hex($pick('accent')),
             uploadedLogo: $uploaded,
+            darkBackground: self::hex($pick('background_dark')),
+            darkAccent: self::hex($pick('accent_dark')),
+            darkLogo: $uploadedDark === null ? self::filled($defaults['logo_dark'] ?? null) : null,
+            uploadedDarkLogo: $uploadedDark,
         );
     }
 
     /** The logo's address: the uploaded one, else the configured URL or public path. */
     public function logoUrl(): ?string
     {
-        if ($this->uploadedLogo !== null) {
-            return route('lynx.admin.assets.logo', ['file' => $this->uploadedLogo], false);
-        }
+        return $this->urlOf($this->uploadedLogo, $this->logo);
+    }
 
-        if ($this->logo === null) {
-            return null;
-        }
+    /** The logo shown in dark mode, when the site has one of its own for it. */
+    public function darkLogoUrl(): ?string
+    {
+        return $this->urlOf($this->uploadedDarkLogo, $this->darkLogo);
+    }
 
-        return preg_match('#^(https?:)?//#', $this->logo) === 1 ? $this->logo : asset($this->logo);
+    /**
+     * The colours as a stylesheet for the document's <head>, empty when there are none: the
+     * accent over BlatUI's tokens, the sign-in backdrop, and in dark mode their dark values and
+     * the dark logo instead of the light one.
+     */
+    public function themeCss(): string
+    {
+        return BrandingCss::of($this);
     }
 
     /**
@@ -99,7 +116,7 @@ final readonly class Branding
      */
     public function usesLynxMark(): bool
     {
-        return $this->name === self::DEFAULT_NAME && $this->logo === null && $this->uploadedLogo === null;
+        return $this->name === self::DEFAULT_NAME && $this->logoUrl() === null && $this->darkLogoUrl() === null;
     }
 
     /** The mark shown without a logo, once the site has its own name: the name's first letter. */
@@ -112,22 +129,40 @@ final readonly class Branding
      * BlatUI's primary tokens in the accent, for the <html> element's style attribute, which wins
      * over the theme's own values in light and dark. Empty without an accent.
      */
-    public function accentStyle(): string
+    public function accentStyle(bool $dark = false): string
     {
-        if ($this->accent === null) {
+        $accent = $dark ? ($this->darkAccent ?? $this->accent) : $this->accent;
+
+        if ($accent === null) {
             return '';
         }
 
-        $text = self::readableOn($this->accent);
+        $text = self::readableOn($accent);
 
-        return "--primary: {$this->accent}; --primary-foreground: {$text}; --ring: {$this->accent}; "
-            ."--sidebar-primary: {$this->accent}; --sidebar-primary-foreground: {$text}; --sidebar-ring: {$this->accent};";
+        return "--primary: {$accent}; --primary-foreground: {$text}; --ring: {$accent}; "
+            ."--sidebar-primary: {$accent}; --sidebar-primary-foreground: {$text}; --sidebar-ring: {$accent};";
     }
 
-    /** The sign-in screens' backdrop and the text on it. Empty without a background. */
-    public function backgroundStyle(): string
+    /** The sign-in screens' backdrop and the text on it, in light or dark mode. Empty without one. */
+    public function backgroundStyle(bool $dark = false): string
     {
-        return $this->background === null ? '' : "background-color: {$this->background}; color: ".self::readableOn($this->background).';';
+        $background = $dark ? ($this->darkBackground ?? $this->background) : $this->background;
+
+        return $background === null ? '' : "background-color: {$background}; color: ".self::readableOn($background).';';
+    }
+
+    /** An uploaded logo's route, else the configured URL or public path. */
+    private function urlOf(?string $uploaded, ?string $configured): ?string
+    {
+        if ($uploaded !== null) {
+            return route('lynx.admin.assets.logo', ['file' => $uploaded], false);
+        }
+
+        if ($configured === null) {
+            return null;
+        }
+
+        return preg_match('#^(https?:)?//#', $configured) === 1 ? $configured : asset($configured);
     }
 
     /** White or near-black, whichever reads better on the colour. */
