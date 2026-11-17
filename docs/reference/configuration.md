@@ -56,6 +56,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `branding.logo` | none (`LYNX_ADMIN_LOGO`) | A logo URL or a path below `public/`. |
 | `branding.background` | none (`LYNX_ADMIN_BACKGROUND`) | The sign-in screens' backdrop, as `#rrggbb`. |
 | `branding.accent` | none (`LYNX_ADMIN_BRAND_ACCENT`) | Buttons, links and focus rings, as `#rrggbb`. |
+| `branding.logo_dark`, `branding.background_dark`, `branding.accent_dark` | none (`LYNX_ADMIN_LOGO_DARK`, `LYNX_ADMIN_BACKGROUND_DARK`, `LYNX_ADMIN_BRAND_ACCENT_DARK`) | What dark mode shows instead of the logo, the sign-in backdrop and the accent. Empty: the light one. |
 | `stylesheets` | `[]` | Extra stylesheets loaded after the admin CSS. |
 | `schema_editing` | `true` | Whether the schema screens can change the schema. |
 | `tree.per_page` | `20` | Pages per page in the tree. |

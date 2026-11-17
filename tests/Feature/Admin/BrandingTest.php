@@ -97,7 +97,7 @@ it('shows the logo on the sign-in screen and in the sidebar, with the colours', 
     $this->get(route('login'))->assertOk()
         ->assertSee('src="'.$logo.'"', false)
         ->assertSee('background-color: #f3eee4; color: #111111;', false)
-        ->assertSee('--primary: #1f5a69; --primary-foreground: #ffffff;', false);
+        ->assertSee('--primary: #1f5a69 !important; --primary-foreground: #ffffff !important;', false);
 
     $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk()->assertSee('src="'.$logo.'"', false);
 });

@@ -18,6 +18,12 @@ it('shows the search box in the top bar', function (): void {
     $this->get('/lynx/pages')->assertSeeLivewire(AdminSearch::class);
 });
 
+it('invites a plain search, leaving selectors to its hint', function (): void {
+    Livewire::test(AdminSearch::class)
+        ->assertSeeHtml('placeholder="Search pages…"')
+        ->assertDontSeeHtml('sort=-modified"');
+});
+
 it('finds pages by any searchable text, not only the title', function (): void {
     lynx()->templates->update('course', ['add' => [['name' => 'summary', 'searchable' => true]]]);
     $beta = lynx()->pages->get('/courses/beta/');

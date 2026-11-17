@@ -7,11 +7,16 @@
     {{-- Names and languages; a page without a URL has one name, which templates find it by --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-names">
         @php($isMultilingual = lynx()->languages->isMultilingual())
-        <h2 id="settings-names" class="mb-4 text-base font-semibold">{{ __(! $hasUrl ? 'lynx-admin::settings.name_in_templates' : ($isMultilingual ? 'lynx-admin::settings.names_languages' : 'lynx-admin::settings.name')) }}</h2>
+        <div class="mb-4 flex items-center gap-2">
+            <h2 id="settings-names" class="text-base font-semibold">{{ __(! $hasUrl ? 'lynx-admin::settings.name_in_templates' : ($isMultilingual ? 'lynx-admin::settings.names_languages' : 'lynx-admin::settings.name')) }}</h2>
+            @if ($hasUrl && $page->parentId !== null)
+                <x-lynx-admin::hint :label="__('lynx-admin::settings.names_help_label')" data-names-help>{{ __($isMultilingual ? 'lynx-admin::settings.names_help_languages' : 'lynx-admin::settings.names_help') }}</x-lynx-admin::hint>
+            @endif
+        </div>
         @if (! $hasUrl && $page->parentId !== null)
             <div class="grid max-w-md gap-1.5" data-template-name>
                 <label for="name-{{ $defaultCode }}" class="sr-only">{{ __('lynx-admin::settings.name_in_templates') }}</label>
-                <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
+                <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" x-on:blur="$el.value.trim() === '' && $wire.suggestName(@js($defaultCode))" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 <p class="lynx-field-help">{{ __($isMultilingual ? 'lynx-admin::settings.name_help_languages' : 'lynx-admin::settings.name_help') }}</p>
                 @error('names.'.$defaultCode) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 @if ($can['edit'])
@@ -28,14 +33,19 @@
                         <label for="name-{{ $code }}" class="pt-2 text-sm font-medium">{{ $isMultilingual ? $language->name : __('lynx-admin::settings.url_name') }}</label>
                         <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-3">
-                                <input id="name-{{ $code }}" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="names.{{ $code }}"
+                                <input id="name-{{ $code }}" type="text" class="blat-input max-w-sm" wire:model.live.debounce.300ms="names.{{ $code }}" x-on:blur="$el.value.trim() === '' && $wire.suggestName(@js($code))"
                                        placeholder="{{ $code === $defaultCode ? '' : __('lynx-admin::settings.same_as', ['name' => $names[$defaultCode]]) }}" @error('names.'.$code) aria-invalid="true" @enderror>
                                 @if ($code !== $defaultCode)
                                     <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model.live="active.{{ $code }}"> {{ __('lynx-admin::settings.published_in', ['language' => $language->name]) }}</label>
                                 @endif
                             </div>
                             @if (($active[$code] ?? true) && $urls[$code])
-                                <p class="lynx-field-help">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                <div class="flex items-center gap-1.5">
+                                    <p class="lynx-field-help">{{ __('lynx-admin::settings.url') }} <span class="text-foreground">{{ $urls[$code] }}</span>@if ($page->path($code) !== null && $page->localUrl($code) !== $urls[$code]) <span data-url-will-redirect>{{ __('lynx-admin::settings.will_redirect') }}</span>@endif</p>
+                                    @isset($unpublishedParents[$code])
+                                        <x-lynx-admin::hint side="right" :label="__('lynx-admin::settings.parent_unpublished_label')" data-url-parent-hint="{{ $code }}">{{ __('lynx-admin::settings.parent_unpublished', ['parent' => $unpublishedParents[$code], 'language' => $language->name, 'default' => lynx()->languages->default()->name]) }}</x-lynx-admin::hint>
+                                    @endisset
+                                </div>
                             @elseif (! ($active[$code] ?? true))
                                 <p class="lynx-field-help">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
                             @endif
