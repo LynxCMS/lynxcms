@@ -12,7 +12,7 @@ use LynxCms\Core\Support\Value;
 
 /**
  * A field as used inside an item field: the field itself, plus what the item field's settings say
- * about it here (label, description, notes, required, width).
+ * about it here (label, description, notes, required, width, and the group it starts).
  *
  * @api
  */
@@ -78,6 +78,20 @@ final readonly class Subfield
         $own = LocalizedText::from($this->entry['notes'] ?? null);
 
         return $own->isEmpty() ? $this->field->notes() : $own->in();
+    }
+
+    /** The group this subfield starts, if any: the fields from here to the next group share a box. */
+    public function group(): ?SubfieldGroup
+    {
+        $group = $this->entry['group'] ?? null;
+
+        if (! is_array($group)) {
+            return null;
+        }
+
+        $text = fn (string $key): string => LocalizedText::from($group[$key] ?? null)->in();
+
+        return new SubfieldGroup($text('label'), $text('description'), $text('notes'), [$this]);
     }
 
     /** Share of the row, in percent (100 = full width). */

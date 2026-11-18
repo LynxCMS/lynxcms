@@ -96,8 +96,8 @@ final class FormSchema
             self::MAX_KB => ['integer', false, 'Largest file (KB)', []],
             self::MAX_FILES => ['integer', false, 'Most files', []],
             self::MAX_ROWS => ['integer', false, 'Most rows', []],
-            self::SHOW_IF => ['text', false, 'Show only when field', []],
-            self::SHOW_IF_VALUES => ['text', false, 'is one of (comma separated), compares as >= 18, or yes / no', []],
+            self::SHOW_IF => ['text', false, 'Show only when the field', ['description' => 'The other field\'s name for developers, as its settings show it.']],
+            self::SHOW_IF_VALUES => ['text', false, 'has the answer', ['description' => 'One answer, or several separated by commas; a comparison such as >= 18 for a number; or yes or no for a tick box.']],
             self::FIELDS => ['matrix', false, 'Fields', ['types' => self::blockTypes(), 'max_depth' => 1]],
             self::RECIPIENTS => ['text', false, 'Send submissions to (emails, comma separated)', []],
             self::ONCE_PER_USER => ['toggle', false, 'Signed-in visitors only, one answer each', ['description' => 'For surveys of people who have an account on this site, such as a course\'s participants: each account answers once, and visitors who aren\'t signed in see a sign-in link instead of the form. The site needs its own sign-in for visitors; without one, only people who sign in to the admin could answer.']],
@@ -121,6 +121,17 @@ final class FormSchema
         ];
     }
 
+    /** The box around a field's condition in the builder, with examples of what it takes. */
+    private const array CONDITION_GROUP = [
+        'label' => 'Condition',
+        'description' => 'Show this field only for some answers to another field. Leave both empty to always show it.',
+        'notes' => "Examples:\n"
+            ."job_title has the answer other: shown when a visitor chooses Other.\n"
+            ."country has the answer pt, es: shown for either answer.\n"
+            ."age has the answer >= 18: shown for 18 or more. Also >, <, <= and != (not this answer).\n"
+            .'newsletter has the answer yes: shown when the tick box is ticked.',
+    ];
+
     /**
      * The form_fields matrix's block types: each shows the settings that apply to it.
      *
@@ -129,7 +140,7 @@ final class FormSchema
     public static function blockTypes(): array
     {
         $common = [['name' => self::LABEL, 'required' => true], ['name' => self::NAME, 'width' => 50], ['name' => self::WIDTH, 'width' => 50], ['name' => self::HELP], ['name' => self::REQUIRED]];
-        $condition = [['name' => self::SHOW_IF, 'width' => 50], ['name' => self::SHOW_IF_VALUES, 'width' => 50]];
+        $condition = [['name' => self::SHOW_IF, 'width' => 50, 'group' => self::CONDITION_GROUP], ['name' => self::SHOW_IF_VALUES, 'width' => 50]];
         $type = fn (string $slug, string $label, array $extra = []): array => ['slug' => $slug, 'label' => $label, 'fields' => [...$common, ...$extra, ...$condition], 'item_label' => '{'.self::LABEL.'}'];
 
         return [

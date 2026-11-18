@@ -54,16 +54,24 @@
                     </div>
                     @error('values.'.$field->name.'.'.$index.'.type') <p role="alert" class="text-destructive px-3 pb-2 text-sm">{{ $message }}</p> @enderror
                     <div x-show="open" @unless ($open) x-cloak @endunless class="grid grid-cols-12 items-start gap-4 border-t p-3">
-                        @foreach ($subfields as $subfield)
-                            <x-lynx-admin::editor.subfield
-                                :field="$field->name"
-                                :index="$index"
-                                :subfield="$subfield"
-                                :model="$model.'.'.$index.'.values.'.$subfield->name()"
-                                :values="(array) ($item['values'][$subfield->name()] ?? [])"
-                                :disabled="$disabled"
-                                :page-id="$field->pageId"
-                            />
+                        @foreach (\LynxCms\Core\Fields\Items\SubfieldGroups::of($subfields) as $group)
+                            @if ($group->hasHeading())
+                                @php($groupId = 'group-'.$field->name.'-'.$index.'-'.$loop->index)
+                                <div role="group" aria-labelledby="{{ $groupId }}" class="col-span-12 grid grid-cols-12 items-start gap-4 rounded-md border p-3" data-item-group>
+                                    <div class="col-span-12 grid gap-1">
+                                        <p id="{{ $groupId }}" class="text-sm font-semibold">{{ $group->label }}</p>
+                                        @if ($group->description !== '')
+                                            <p class="lynx-field-help">{{ $group->description }}</p>
+                                        @endif
+                                    </div>
+                                    @include('lynx-admin::inputs.partials.item-subfields', ['subfields' => $group->subfields])
+                                    @if ($group->notes !== '')
+                                        <p class="lynx-field-help col-span-12 whitespace-pre-line">{{ $group->notes }}</p>
+                                    @endif
+                                </div>
+                            @else
+                                @include('lynx-admin::inputs.partials.item-subfields', ['subfields' => $group->subfields])
+                            @endif
                         @endforeach
                     </div>
                 </li>

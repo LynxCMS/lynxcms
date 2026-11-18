@@ -36,6 +36,10 @@ final class ItemSettingsRules
             "{$prefix}.*.label" => ['sometimes', 'nullable', ...LocalizedText::rules()],
             "{$prefix}.*.description" => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
             "{$prefix}.*.notes" => ['sometimes', 'nullable', ...LocalizedText::rules(500)],
+            "{$prefix}.*.group" => ['sometimes', 'nullable', 'array', 'required_array_keys:label'],
+            "{$prefix}.*.group.label" => ['sometimes', ...LocalizedText::rules()],
+            "{$prefix}.*.group.description" => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
+            "{$prefix}.*.group.notes" => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
         ];
     }
 

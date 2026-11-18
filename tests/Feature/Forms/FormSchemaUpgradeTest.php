@@ -24,3 +24,26 @@ it('brings the label and help of its own fields up to date', function (): void {
         ->and($settings['description'] ?? null)->not->toBeNull()
         ->and($field->config()['description'] ?? null)->toBe($settings['description']);
 });
+
+it('brings its block types up to date, so a field\'s condition shows as a group', function (): void {
+    courseSite();
+    lynx()->run(InstallForms::class);
+    $types = FormSchema::blockTypes();
+    $types[0]['fields'] = array_map(fn (array $field): array => array_diff_key($field, ['group' => true]), $types[0]['fields']);
+    lynx()->fields->update(FormSchema::FIELDS, ['settings' => ['types' => $types]]);
+
+    lynx()->run(InstallForms::class);
+
+    expect(lynx()->fields->get(FormSchema::FIELDS)->config()['types'])->toBe(FormSchema::blockTypes());
+});
+
+it('explains a field\'s condition, with examples', function (): void {
+    $condition = array_first(array_filter(FormSchema::blockTypes()[0]['fields'], fn (array $field): bool => isset($field['group'])));
+
+    expect($condition['name'])->toBe(FormSchema::SHOW_IF)
+        ->and($condition['group']['label'])->toBe('Condition')
+        ->and($condition['group']['notes'])->toContain('>= 18')
+        ->and(FormSchema::fields()[FormSchema::SHOW_IF][2])->toBe('Show only when the field')
+        ->and(FormSchema::fields()[FormSchema::SHOW_IF_VALUES][2])->toBe('has the answer')
+        ->and(FormSchema::fields()[FormSchema::SHOW_IF_VALUES][3]['description'])->toContain('comma');
+});
