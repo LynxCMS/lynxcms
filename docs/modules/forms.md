@@ -116,6 +116,38 @@ final class QuoteRequest extends FormComponent
 }
 ```
 
+Two more methods are there for subclasses to override:
+
+- `fieldOptions(FormField $field)` gives a choice's options on this component. Return fewer than the form has to offer only some of them on this page, such as the languages a document exists in. The component shows and checks the options it gives, so an answer outside them is refused before anything is stored.
+- `afterSent(Submission $submission)` runs once the submission is stored, in the same request, so the component can answer the visitor with something made for them, such as a [temporary link](/basics/images-and-files#temporary-links). It doesn't run for spam, which is never stored.
+
+```php
+use LynxCms\Forms\Definition\FormField;
+use LynxCms\Forms\Livewire\FormComponent;
+use LynxCms\Forms\Models\Submission;
+
+final class ReportRequest extends FormComponent
+{
+    public ?string $downloadUrl = null;
+
+    protected function fieldOptions(FormField $field): array
+    {
+        if ($field->name !== 'language') {
+            return $field->options;
+        }
+
+        return array_intersect_key($field->options, array_flip($this->report()->languages()));
+    }
+
+    protected function afterSent(Submission $submission): void
+    {
+        $this->downloadUrl = $this->report()->file($this->data['language'])->temporaryUrl(now()->addDay());
+    }
+}
+```
+
+Use `afterSent()` for what the visitor waits for. Mail and other work that can wait belong in a listener for `FormSubmitted`, which runs on the queue.
+
 ### Texts
 
 Labels, help, options, step titles and the success and error messages come from the form, in each language. The component's own words (Next, Send, "Too many attempts…"), and the success and error messages of a form that doesn't define its own, are translations in `lynx-forms::forms`, shipped in English, French and Portuguese; publish them with `--tag=lynx-forms-lang` to change them. Validation messages come from the app's `lang/{locale}/validation.php`, such as laravel-lang's, with field labels as attribute names.

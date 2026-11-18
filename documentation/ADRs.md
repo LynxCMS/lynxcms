@@ -1344,3 +1344,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** The docs recommend SQLite for most sites and PostgreSQL for sites with many writes at the same moment, several web servers, trigram indexes (ADR-0061), or PostgreSQL extensions the app uses for its own features (PostGIS, pgvector). `getting-started/database.md` explains the choice. Both databases stay fully supported: every feature works on both and CI runs the suite on both. MySQL and MariaDB stay unsupported for the reason ADR-0013 gives, non-transactional DDL.
 
 **Consequences:** New sites start with no database server. Sites that outgrow SQLite move to PostgreSQL through a content package. Features that need PostgreSQL stay opt in, as trigram indexes are.
+
+## ADR-0125: Temporary links to files, and form components that answer with them
+
+**Status:** Accepted
+
+**Context:** A site wanted gated downloads: a visitor fills a form and gets a private report in the language they choose. Private files (ADR-0077) follow their page's rules, so a visitor who may open the page gets every file, and one who may not gets none; nothing handed one file to one visitor. The form component sent its submission and dropped it, so a subclass could not answer with something made from it, and a choice always offered every option of the form, so a report in English only still offered three languages.
+
+**Decision:** `Pagefile::temporaryUrl($expires)` gives a link signed with Laravel's `temporarySignedRoute` to `/lynx-media/signed/{page}/{file}`, which serves the file as a download without asking the page's rules: the signature is the grant. It works for public and private files. The form component gets two protected hooks: `fieldOptions(FormField)` narrows a choice's options, and the narrowed fields are the ones shown and validated before sending, since the action validates against the form's full definition; `afterSent(Submission)` runs once a submission is stored, not for spam. `FormValidator::makeFor()` validates a list of fields, for components that changed them.
+
+**Consequences:** Whoever holds a link can pass it on until it expires, so sites keep the time short. A narrowed choice is enforced by the component only; agents and other callers of `forms.submit` see the full options, as the form defines them. Mail and other slow work stay in `FormSubmitted` listeners, on the queue.
+

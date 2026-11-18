@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Temporary links to files.** `$file->temporaryUrl(now()->addDay())` gives a signed link that downloads a page's file until it expires, without asking the page's rules: for a gated download, say. It works for private and public files. See [Temporary links](/basics/images-and-files#temporary-links) (ADR-0125).
+- **Form components can narrow a choice and act on their submission.** A subclass of `FormComponent` overrides `fieldOptions()` to offer fewer options on a page (they are shown and checked), and `afterSent()` to answer with something made from the stored submission, such as a temporary link. See [Adding behavior](/modules/forms#adding-behavior) (ADR-0125).
 - The Search index screen's "Test Indexed Words" title is now "Test indexed words", in sentence case like the rest of the admin.
 - New docs pages: [Choosing a Database](/getting-started/database) and a [Selector Cheat Sheet](/reference/selectors). The docs recommend SQLite for most sites (ADR-0124).
 

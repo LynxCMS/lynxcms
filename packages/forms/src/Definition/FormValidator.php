@@ -28,11 +28,23 @@ final class FormValidator
      */
     public function make(Form $form, array $data, ?array $only = null): Validator
     {
+        return $this->makeFor($form->fields(), $data, $only);
+    }
+
+    /**
+     * As make(), for fields a form component changed, such as a choice with fewer options.
+     *
+     * @param  list<FormField>  $fields
+     * @param  array<string, mixed>  $data
+     * @param  list<string>|null  $only  field names, e.g. one step's
+     */
+    public function makeFor(array $fields, array $data, ?array $only = null): Validator
+    {
         $rules = [];
         $messages = [];
         $attributes = [];
 
-        foreach ($this->shownFields($form, $data, $only) as $field) {
+        foreach ($this->shown($fields, $data, $only) as $field) {
             $this->describe($field, 'data.'.$field->name, $rules, $messages, $attributes);
         }
 
@@ -88,8 +100,19 @@ final class FormValidator
      */
     private function shownFields(Form $form, array $data, ?array $only = null): array
     {
+        return $this->shown($form->fields(), $data, $only);
+    }
+
+    /**
+     * @param  list<FormField>  $fields
+     * @param  array<string, mixed>  $data
+     * @param  list<string>|null  $only
+     * @return list<FormField>
+     */
+    private function shown(array $fields, array $data, ?array $only = null): array
+    {
         return array_values(array_filter(
-            $form->fields(),
+            $fields,
             fn (FormField $field): bool => $field->isShown($data) && ($only === null || in_array($field->name, $only, true)),
         ));
     }

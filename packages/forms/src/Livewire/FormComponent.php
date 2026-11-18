@@ -18,6 +18,8 @@ use LynxCms\Forms\Definition\FormField;
 use LynxCms\Forms\Definition\FormValidator;
 use LynxCms\Forms\Livewire\Concerns\EditsRows;
 use LynxCms\Forms\Livewire\Concerns\GuardsSubmissions;
+use LynxCms\Forms\Livewire\Concerns\NarrowsChoices;
+use LynxCms\Forms\Models\Submission;
 use LynxCms\Forms\OncePerUser;
 use LynxCms\Forms\SubmissionPresenter;
 use Throwable;
@@ -34,6 +36,7 @@ class FormComponent extends Component
 {
     use EditsRows;
     use GuardsSubmissions;
+    use NarrowsChoices;
     use UsesLynxPage;
     use WithFileUploads;
 
@@ -69,7 +72,7 @@ class FormComponent extends Component
         $this->listUpload($property);
         $key = 'data.'.substr($property, strpos($property, '.') + 1);
         $name = explode('.', $key)[1] ?? '';
-        $errors = app(FormValidator::class)->make($this->definition(), $this->answers(), [$name])->errors();
+        $errors = app(FormValidator::class)->makeFor($this->fields(), $this->answers(), [$name])->errors();
         $this->resetErrorBag($key);
 
         if ($errors->has($key)) {
@@ -79,7 +82,7 @@ class FormComponent extends Component
 
     public function next(): void
     {
-        app(FormValidator::class)->make($this->definition(), $this->answers(), $this->stepFields($this->step))->validate();
+        app(FormValidator::class)->makeFor($this->fields(), $this->answers(), $this->stepFields($this->step))->validate();
         $this->step = min($this->step + 1, max(0, count($this->definition()->steps()) - 1));
     }
 
@@ -101,12 +104,15 @@ class FormComponent extends Component
 
         $this->countAttempt();
 
-        if (! $this->looksLikeSpam()) {
-            $this->send();
-        }
+        $submission = $this->looksLikeSpam() ? null : $this->send();
 
         if ($this->problem === null) {
             $this->isSent = true;
+
+            if ($submission instanceof Submission) {
+                $this->afterSent($submission);
+            }
+
             $this->dispatch('lynx-form-sent', form: $this->form);
         }
     }
@@ -175,10 +181,13 @@ class FormComponent extends Component
         $answers = $this->answers();
 
         return array_values(array_filter(
-            $this->definition()->fields(),
+            $this->fields(),
             fn (FormField $field): bool => ($names === null || in_array($field->name, $names, true)) && $field->isShown($answers),
         ));
     }
+
+    /** Runs once a submission is stored (not for spam): a subclass can answer with a link, say. */
+    protected function afterSent(Submission $submission): void {}
 
     /**
      * Answers and uploads together, as forms.submit takes them.
@@ -208,16 +217,19 @@ class FormComponent extends Component
         return ($this->definition()->steps()[$step] ?? null)?->fields;
     }
 
-    private function send(): void
+    private function send(): ?Submission
     {
         try {
-            lynx()->run(SubmitForm::class, [
+            app(FormValidator::class)->makeFor($this->fields(), $this->answers())->validate();
+            $result = lynx()->run(SubmitForm::class, [
                 'form' => $this->form,
                 'data' => $this->answers(),
                 'page' => $this->pageId,
                 'language' => $this->lang,
                 'meta' => array_filter(['user_agent' => mb_substr((string) request()->userAgent(), 0, 255)]),
             ]);
+
+            return $result->value instanceof Submission ? $result->value : null;
         } catch (ValidationException $e) {
             $this->step = $this->stepOf((string) array_key_first($e->errors()));
 
@@ -225,6 +237,8 @@ class FormComponent extends Component
         } catch (Throwable $e) {
             report($e);
             $this->problem = $this->definition()->text('error')->in();
+
+            return null;
         }
     }
 
