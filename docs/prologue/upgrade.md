@@ -21,6 +21,12 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.49 to 0.1.50
+
+No database changes and nothing to change in your code.
+
+- If your site has published `config/lynx-admin.php`, add `'es' => 'Español'` to its `locales` so editors can pick Spanish. Sites without a published config get Spanish on their own.
+
 ## From 0.1.48 to 0.1.49
 
 No database changes and nothing to change in your code.

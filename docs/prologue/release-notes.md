@@ -10,8 +10,15 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- The forms inbox has a View button on each row, next to the status, that opens the submission.
+## 0.1.50
+
+Released November 18, 2026. The admin in Spanish, and a View button in the forms inbox. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-49-to-0-1-50).
+
+### Admin
+
 - **The admin in Spanish.** Every package ships Spanish (Spain) wording, and editors can pick Español under Language in their menu. Sites that list their own `lynx-admin.locales` in a published config add `'es' => 'Español'` there. See [the admin's language](/admin/#the-admin-s-language).
+- The forms inbox has a View button on each row, next to the status, that opens the submission.
+
 ## 0.1.49
 
 Released November 18, 2026. Building blocks for gated downloads: temporary links to files, and form components that narrow a choice and answer with their submission. Groups for an item's fields, and a clearer condition in the form builder. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-48-to-0-1-49).
