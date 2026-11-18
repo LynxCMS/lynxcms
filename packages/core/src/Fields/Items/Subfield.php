@@ -91,7 +91,9 @@ final readonly class Subfield
 
         $text = fn (string $key): string => LocalizedText::from($group[$key] ?? null)->in();
 
-        return new SubfieldGroup($text('label'), $text('description'), $text('notes'), [$this]);
+        $link = is_array($group['link'] ?? null) ? $group['link'] : [];
+
+        return new SubfieldGroup($text('label'), $text('description'), $text('notes'), [$this], LocalizedText::from($link['label'] ?? null)->in(), Value::string($link['url'] ?? ''));
     }
 
     /** Share of the row, in percent (100 = full width). */

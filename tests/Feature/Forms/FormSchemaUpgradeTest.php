@@ -43,7 +43,9 @@ it('explains a field\'s condition, with examples', function (): void {
     expect($condition['name'])->toBe(FormSchema::SHOW_IF)
         ->and($condition['group']['label'])->toBe('Condition')
         ->and($condition['group']['notes'])->toContain('>= 18')
+        ->and($condition['group']['link']['url'])->toBe('https://lynxcms.org/cms/docs/modules/forms#building-forms-in-the-admin')
         ->and(FormSchema::fields()[FormSchema::SHOW_IF][2])->toBe('Show only when the field')
+        ->and(FormSchema::fields()[FormSchema::SHOW_IF][3])->toBe([])
         ->and(FormSchema::fields()[FormSchema::SHOW_IF_VALUES][2])->toBe('has the answer')
-        ->and(FormSchema::fields()[FormSchema::SHOW_IF_VALUES][3]['description'])->toContain('comma');
+        ->and(FormSchema::fields()[FormSchema::SHOW_IF_VALUES][3])->toBe([]);
 });

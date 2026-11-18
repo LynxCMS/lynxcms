@@ -40,6 +40,9 @@ final class ItemSettingsRules
             "{$prefix}.*.group.label" => ['sometimes', ...LocalizedText::rules()],
             "{$prefix}.*.group.description" => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
             "{$prefix}.*.group.notes" => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
+            "{$prefix}.*.group.link" => ['sometimes', 'nullable', 'array', 'required_array_keys:label,url'],
+            "{$prefix}.*.group.link.label" => ['sometimes', ...LocalizedText::rules()],
+            "{$prefix}.*.group.link.url" => ['sometimes', 'url:https,http', 'max:2048'],
         ];
     }
 

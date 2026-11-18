@@ -240,13 +240,14 @@ Each item lists fields of the site, so create them first:
 
 In the admin, the repeater's field screen opens on its fields, in order, each with **Required** and a width (Half, Third, Full…). Search for an existing field to add it, or create a new one on the spot. The **Preview** tab shows an item as editors see it, and **Limits and display** sets how many items, the add button's text in every language and whether items start open.
 
-A field's `group` starts a box in the admin around it and the fields after it, up to the next group: a heading (`label`, required), help above the fields (`description`) and notes below them (`notes`), each text or one per language. Use it to set apart fields that belong together, such as a condition's two fields. Fields before the first group show as usual.
+A field's `group` starts a box in the admin around it and the fields after it, up to the next group: a heading (`label`, required), help above the fields (`description`) and notes below them (`notes`), each text or one per language, and a `link` after the notes (`label` and an http or https `url`), which opens in a new tab. Use it to set apart fields that belong together, such as a condition's two fields. Fields before the first group show as usual.
 
 ```php
 ['name' => 'show_if', 'width' => 50, 'group' => [
     'label' => 'Condition',
     'description' => 'Leave both empty to always show this field.',
     'notes' => 'Example: country has the answer pt, es.',
+    'link' => ['label' => 'More in the docs', 'url' => 'https://example.com/docs/forms'],
 ]],
 ['name' => 'show_if_values', 'width' => 50],
 ```

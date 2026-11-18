@@ -65,8 +65,15 @@
                                         @endif
                                     </div>
                                     @include('lynx-admin::inputs.partials.item-subfields', ['subfields' => $group->subfields])
-                                    @if ($group->notes !== '')
-                                        <p class="lynx-field-help col-span-12 whitespace-pre-line">{{ $group->notes }}</p>
+                                    @if ($group->notes !== '' || $group->hasLink())
+                                        <div class="lynx-field-help col-span-12 grid gap-1">
+                                            @if ($group->notes !== '')
+                                                <p class="whitespace-pre-line">{{ $group->notes }}</p>
+                                            @endif
+                                            @if ($group->hasLink())
+                                                <p><a href="{{ $group->linkUrl }}" target="_blank" rel="noopener" class="text-primary underline-offset-4 hover:underline">{{ $group->linkLabel }}</a></p>
+                                            @endif
+                                        </div>
                                     @endif
                                 </div>
                             @else

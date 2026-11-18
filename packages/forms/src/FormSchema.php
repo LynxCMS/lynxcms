@@ -96,8 +96,8 @@ final class FormSchema
             self::MAX_KB => ['integer', false, 'Largest file (KB)', []],
             self::MAX_FILES => ['integer', false, 'Most files', []],
             self::MAX_ROWS => ['integer', false, 'Most rows', []],
-            self::SHOW_IF => ['text', false, 'Show only when the field', ['description' => 'The other field\'s name for developers, as its settings show it.']],
-            self::SHOW_IF_VALUES => ['text', false, 'has the answer', ['description' => 'One answer, or several separated by commas; a comparison such as >= 18 for a number; or yes or no for a tick box.']],
+            self::SHOW_IF => ['text', false, 'Show only when the field', []],
+            self::SHOW_IF_VALUES => ['text', false, 'has the answer', []],
             self::FIELDS => ['matrix', false, 'Fields', ['types' => self::blockTypes(), 'max_depth' => 1]],
             self::RECIPIENTS => ['text', false, 'Send submissions to (emails, comma separated)', []],
             self::ONCE_PER_USER => ['toggle', false, 'Signed-in visitors only, one answer each', ['description' => 'For surveys of people who have an account on this site, such as a course\'s participants: each account answers once, and visitors who aren\'t signed in see a sign-in link instead of the form. The site needs its own sign-in for visitors; without one, only people who sign in to the admin could answer.']],
@@ -130,6 +130,7 @@ final class FormSchema
             ."country has the answer pt, es: shown for either answer.\n"
             ."age has the answer >= 18: shown for 18 or more. Also >, <, <= and != (not this answer).\n"
             .'newsletter has the answer yes: shown when the tick box is ticked.',
+        'link' => ['label' => 'Conditions in the forms docs', 'url' => 'https://lynxcms.org/cms/docs/modules/forms#building-forms-in-the-admin'],
     ];
 
     /**

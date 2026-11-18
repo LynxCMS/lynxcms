@@ -26,6 +26,7 @@ beforeEach(function (): void {
                 'label' => ['default' => 'Condition', 'pt' => 'Condição'],
                 'description' => 'Leave both empty to always show it.',
                 'notes' => 'Example: job_title and other.',
+                'link' => ['label' => 'More in the docs', 'url' => 'https://example.com/docs/forms'],
             ]],
             ['name' => 'when_value', 'width' => 50],
         ]],
@@ -48,16 +49,25 @@ it('splits subfields into groups, each running to the next', function (): void {
         ->and($groups[1]->label)->toBe('Condition')
         ->and($groups[1]->description)->toBe('Leave both empty to always show it.')
         ->and($groups[1]->notes)->toBe('Example: job_title and other.')
+        ->and($groups[1]->linkLabel)->toBe('More in the docs')
+        ->and($groups[1]->linkUrl)->toBe('https://example.com/docs/forms')
         ->and(array_map(fn (Subfield $s): string => $s->name(), $groups[1]->subfields))->toBe(['when_field', 'when_value']);
 });
 
 it('shows a group as a box with its heading, help and notes', function (): void {
     Livewire::test(PageEditor::class, ['pageId' => $this->alphaId])
-        ->assertSeeHtml('data-item-group')->assertSeeInOrder(['Role', 'Condition', 'Leave both empty to always show it.', 'When field', 'When value', 'Example: job_title and other.']);
+        ->assertSeeHtml('data-item-group')->assertSeeInOrder(['Role', 'Condition', 'Leave both empty to always show it.', 'When field', 'When value', 'Example: job_title and other.', 'More in the docs'])
+        ->assertSeeHtml('href="https://example.com/docs/forms" target="_blank" rel="noopener"');
 });
 
 it('refuses a group without a heading', function (): void {
     lynx()->fields->update('blocks', ['settings' => ['types' => [
         ['slug' => 'person', 'label' => 'Person', 'fields' => [['name' => 'role', 'group' => ['description' => 'No heading']]]],
+    ]]]);
+})->throws(ValidationException::class);
+
+it('refuses a group link that is not a web address', function (): void {
+    lynx()->fields->update('blocks', ['settings' => ['types' => [
+        ['slug' => 'person', 'label' => 'Person', 'fields' => [['name' => 'role', 'group' => ['label' => 'Who', 'link' => ['label' => 'Docs', 'url' => 'javascript:alert(1)']]]]],
     ]]]);
 })->throws(ValidationException::class);
