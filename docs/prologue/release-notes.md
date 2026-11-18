@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Groups of an item's fields.** A repeater's or block type's field may start a `group`: a box in the admin with a heading, help above, and notes and a link below, around it and the fields after it up to the next group. See [repeater](/basics/field-types#repeater).
+- **The form builder's condition is clearer.** Its two fields sit in a Condition box with help, examples and a link to the forms docs, labelled "Show only when the field" and "has the answer". Existing sites get the new wording the next time `forms.install` runs (see the [upgrade guide](/prologue/upgrade)).
 - **Temporary links to files.** `$file->temporaryUrl(now()->addDay())` gives a signed link that downloads a page's file until it expires, without asking the page's rules: for a gated download, say. It works for private and public files. See [Temporary links](/basics/images-and-files#temporary-links) (ADR-0125).
 - **Form components can narrow a choice and act on their submission.** A subclass of `FormComponent` overrides `fieldOptions()` to offer fewer options on a page (they are shown and checked), and `afterSent()` to answer with something made from the stored submission, such as a temporary link. See [Adding behavior](/modules/forms#adding-behavior) (ADR-0125).
 - The Search index screen's "Test Indexed Words" title is now "Test indexed words", in sentence case like the rest of the admin.

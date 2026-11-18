@@ -21,6 +21,10 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## Upcoming release
+
+- With `lynxcms/forms` installed, the form builder's condition gets its new box, labels and help the next time `forms.install` runs, for example when someone creates a form in the admin. To update it now: `php artisan tinker --execute="lynx()->run(LynxCms\\Forms\\Actions\\InstallForms::class)"`.
+
 ## From 0.1.47 to 0.1.48
 
 - Run `php artisan lynx:search-index` once, so pages already saved are found by their singular and plural forms (ADR-0119). Until then search finds everything it found before.

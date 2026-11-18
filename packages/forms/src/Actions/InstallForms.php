@@ -99,13 +99,29 @@ final class InstallForms extends Action
             if ($existing === null) {
                 $context->run(CreateField::class, ['name' => $name, 'type' => $type, 'translatable' => $translatable, 'label' => $label, 'settings' => $settings]);
                 $installed = true;
-            } elseif ($existing->label !== $label || ($existing->config()['description'] ?? null) !== ($settings['description'] ?? null)) {
-                // The builder's own fields are read only in the admin: newer wording (label, help) comes from here.
-                $context->run(UpdateField::class, ['field' => $name, 'label' => $label, 'settings' => ['description' => $settings['description'] ?? null]]);
+            } elseif ($existing->label !== $label || $this->outdated($existing->config(), $settings) !== []) {
+                // The builder's own fields are read only in the admin: newer wording (label, help)
+                // and block types (a condition's group) come from here.
+                $context->run(UpdateField::class, ['field' => $name, 'label' => $label, 'settings' => $this->outdated($existing->config(), $settings) + ['description' => $settings['description'] ?? null]]);
                 $installed = true;
             }
         }
 
         return $installed;
+    }
+
+    /**
+     * The settings Lynx keeps up to date that differ from the installed field's: its help, and the
+     * builder's block types.
+     *
+     * @param  array<string, mixed>  $installed
+     * @param  array<string, mixed>  $wanted
+     * @return array<string, mixed>
+     */
+    private function outdated(array $installed, array $wanted): array
+    {
+        $kept = ['description' => $wanted['description'] ?? null] + array_intersect_key($wanted, ['types' => true]);
+
+        return array_filter($kept, fn (mixed $value, string $key): bool => ($installed[$key] ?? null) !== $value, ARRAY_FILTER_USE_BOTH);
     }
 }
