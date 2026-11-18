@@ -10,12 +10,24 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- **Groups of an item's fields.** A repeater's or block type's field may start a `group`: a box in the admin with a heading, help above, and notes and a link below, around it and the fields after it up to the next group. See [repeater](/basics/field-types#repeater).
-- **The form builder's condition is clearer.** Its two fields sit in a Condition box with help, examples and a link to the forms docs, labelled "Show only when the field" and "has the answer". Existing sites get the new wording the next time `forms.install` runs (see the [upgrade guide](/prologue/upgrade)).
+## 0.1.49
+
+Released November 18, 2026. Building blocks for gated downloads: temporary links to files, and form components that narrow a choice and answer with their submission. Groups for an item's fields, and a clearer condition in the form builder. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-48-to-0-1-49).
+
+### Files and forms
+
 - **Temporary links to files.** `$file->temporaryUrl(now()->addDay())` gives a signed link that downloads a page's file until it expires, without asking the page's rules: for a gated download, say. It works for private and public files. See [Temporary links](/basics/images-and-files#temporary-links) (ADR-0125).
 - **Form components can narrow a choice and act on their submission.** A subclass of `FormComponent` overrides `fieldOptions()` to offer fewer options on a page (they are shown and checked), and `afterSent()` to answer with something made from the stored submission, such as a temporary link. See [Adding behavior](/modules/forms#adding-behavior) (ADR-0125).
+- **The form builder's condition is clearer.** Its two fields sit in a Condition box with help, examples and a link to the forms docs, labelled "Show only when the field" and "has the answer". Existing sites get the new wording the next time `forms.install` runs (see the [upgrade guide](/prologue/upgrade#from-0-1-48-to-0-1-49)).
+
+### Admin
+
+- **Groups of an item's fields.** A repeater's or block type's field may start a `group`: a box in the admin with a heading, help above, and notes and a link below, around it and the fields after it up to the next group. See [repeater](/basics/field-types#repeater).
 - The Search index screen's "Test Indexed Words" title is now "Test indexed words", in sentence case like the rest of the admin.
-- New docs pages: [Choosing a Database](/getting-started/database) and a [Selector Cheat Sheet](/reference/selectors). The docs recommend SQLite for most sites (ADR-0124).
+
+### Docs
+
+- New pages: [Choosing a Database](/getting-started/database) and a [Selector Cheat Sheet](/reference/selectors). The docs recommend SQLite for most sites (ADR-0124).
 
 ## 0.1.48
 
