@@ -93,7 +93,7 @@ A random path keeps the admin out of reach of scripts that try common addresses.
 
 ## The admin's language
 
-Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording only, so a Portuguese editor can work on an English site. Lynx ships English and Portuguese.
+Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording only, so a Portuguese editor can work on an English site. Lynx ships English, Portuguese and Spanish (Spain).
 
 Editors who haven't chosen see the default. Set it with an environment variable, or leave it empty to use the app's locale:
 

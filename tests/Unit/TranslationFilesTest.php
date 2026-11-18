@@ -6,10 +6,13 @@ use Illuminate\Support\Arr;
 use Symfony\Component\Finder\Finder;
 
 /*
- * Every package ships English and Portuguese wording (ADR-0097). A key added to English and
- * forgotten elsewhere would show English on a Portuguese screen, with nothing to say so. Other
- * languages are held to the same standard for the files they have.
+ * Every package ships English, Portuguese and Spanish wording (ADR-0097). A key added to English
+ * and forgotten elsewhere would show English on a Portuguese or Spanish screen, with nothing to
+ * say so. Other languages are held to the same standard for the files they have.
  */
+
+/** The languages every package ships besides English. */
+const SHIPPED = ['pt', 'es'];
 
 /** @return array<string, array{string, string, string}> [package, language, file] for every translation of an English file */
 function translatedFiles(): array
@@ -19,8 +22,8 @@ function translatedFiles(): array
     foreach (Finder::create()->files()->name('*.php')->in(dirname(__DIR__, 2).'/packages/*/lang/en') as $file) {
         $root = dirname($file->getPath());
 
-        foreach (array_unique(['pt', ...array_map(basename(...), glob("{$root}/*", GLOB_ONLYDIR) ?: [])]) as $language) {
-            if ($language === 'pt' || ($language !== 'en' && file_exists("{$root}/{$language}/{$file->getFilename()}"))) {
+        foreach (array_unique([...SHIPPED, ...array_map(basename(...), glob("{$root}/*", GLOB_ONLYDIR) ?: [])]) as $language) {
+            if (in_array($language, SHIPPED, true) || ($language !== 'en' && file_exists("{$root}/{$language}/{$file->getFilename()}"))) {
                 $cases[basename(dirname($root))."/{$language}/{$file->getFilename()}"] = [$root, $language, $file->getFilename()];
             }
         }
