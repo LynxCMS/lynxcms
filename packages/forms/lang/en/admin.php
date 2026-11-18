@@ -69,6 +69,9 @@ return [
         'empty_help' => "Answers sent through the site's forms show here until someone reads them.",
     ],
     'inbox' => [
+        'actions' => 'Actions',
+        'view' => 'View',
+        'view_named' => 'View submission :id',
         'search' => 'Search',
         'search_placeholder' => 'Name, email, any answer',
         'show' => 'Show',

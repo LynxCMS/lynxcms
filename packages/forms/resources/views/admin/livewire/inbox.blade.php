@@ -50,6 +50,7 @@
                 <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-forms::admin.inbox.from') }}</x-lynx-admin::ui.table-head>
                 <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-forms::admin.inbox.form') }}</x-lynx-admin::ui.table-head>
                 <x-lynx-admin::ui.table-head class="px-4 text-muted-foreground">{{ __('lynx-forms::admin.inbox.status') }}</x-lynx-admin::ui.table-head>
+                <x-lynx-admin::ui.table-head class="px-4"><span class="sr-only">{{ __('lynx-forms::admin.inbox.actions') }}</span></x-lynx-admin::ui.table-head>
             </x-lynx-admin::ui.table-row>
         </x-lynx-admin::ui.table-header>
         <x-lynx-admin::ui.table-body>
@@ -67,9 +68,12 @@
                     <x-lynx-admin::ui.table-cell class="px-4 py-2 font-normal">
                         <x-lynx-admin::ui.badge :variant="$submission->status === 'new' ? 'default' : 'secondary'">{{ __('lynx-forms::admin.status.'.$submission->status) }}</x-lynx-admin::ui.badge>
                     </x-lynx-admin::ui.table-cell>
+                    <x-lynx-admin::ui.table-cell class="px-4 py-2 text-end font-normal">
+                        <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.show', $submission->uuid)" :aria-label="__('lynx-forms::admin.inbox.view_named', ['id' => $submission->id])">{{ __('lynx-forms::admin.inbox.view') }}</x-lynx-admin::ui.button>
+                    </x-lynx-admin::ui.table-cell>
                 </x-lynx-admin::ui.table-row>
             @empty
-                <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="5" class="whitespace-normal p-4">
+                <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="6" class="whitespace-normal p-4">
                     @if ($hasAny)
                         <x-lynx-admin::empty-state icon="search-x" :title="__('lynx-forms::admin.inbox.empty')" :help="__('lynx-forms::admin.inbox.empty_help')" class="border-0">
                             <x-lynx-admin::ui.button variant="outline" type="button" wire:click="clearFilters">{{ __('lynx-forms::admin.inbox.clear') }}</x-lynx-admin::ui.button>

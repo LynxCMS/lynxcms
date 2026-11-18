@@ -58,6 +58,12 @@ it('lists submissions by form and status, and finds them by text', function (): 
         ->set('search', '')->set('show', 'archived')->assertDontSee('Ana Lima');
 });
 
+it('opens each submission from a View button in its row', function (): void {
+    Livewire::test(Inbox::class)
+        ->assertSeeHtml('href="'.route('lynx.admin.forms.show', $this->ana->uuid).'"')
+        ->assertSeeInOrder(['Ana Lima', 'View']);
+});
+
 it('marks the selected submissions in one go', function (): void {
     Livewire::test(Inbox::class)->set('selected', [$this->ana->uuid])->call('markSelected', 'archived')
         ->assertDispatched('lynx-notify');

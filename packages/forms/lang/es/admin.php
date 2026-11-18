@@ -69,6 +69,9 @@ return [
         'empty_help' => 'Las respuestas enviadas a través de los formularios del sitio aparecen aquí hasta que alguien las lee.',
     ],
     'inbox' => [
+        'actions' => 'Acciones',
+        'view' => 'Ver',
+        'view_named' => 'Ver el envío :id',
         'search' => 'Buscar',
         'search_placeholder' => 'Nombre, correo, cualquier respuesta',
         'show' => 'Mostrar',

@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- The forms inbox has a View button on each row, next to the status, that opens the submission.
 - **The admin in Spanish.** Every package ships Spanish (Spain) wording, and editors can pick Español under Language in their menu. Sites that list their own `lynx-admin.locales` in a published config add `'es' => 'Español'` there. See [the admin's language](/admin/#the-admin-s-language).
 ## 0.1.49
 
