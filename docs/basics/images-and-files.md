@@ -139,6 +139,18 @@ Turning the setting on or off moves the field's existing files to the other disk
 
 Private files cost a PHP request each, so keep public images (logos, photos on public pages) in public fields. They also don't work in a [static site export](/modules/static-site), whose pages have no Lynx to ask.
 
+### Temporary links
+
+A temporary link hands one file to whoever holds it, until it runs out, without asking the page's rules. Use it for a gated download: a visitor fills a form, and gets a link to a private report they could not open otherwise.
+
+```php
+$file = $page->report->inLanguage('pt')->first();
+
+$url = $file->temporaryUrl(now()->addDay());
+```
+
+The link is signed: changing any part of it, or using it after it expires, gets a 403 answer. The file always downloads, with `Cache-Control: private, no-store` and `noindex`, so no cache or search engine keeps it. Links work for public files too. Anyone you give a link to can pass it on until it expires, so keep the time short and send a new link instead of a long one.
+
 ## Cleaning up
 
 Files that no page, draft or revision uses, on the public and the private disk, are deleted by `php artisan lynx:media:prune`, which the scheduler runs daily, once they are a day old. [Content packages](/deeper/schema-and-content) carry the files of the pages they hold.
