@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'nav' => [
+        'label' => 'Panel',
+        'home' => 'Inicio',
+        'pages' => 'Páginas',
+        'site_texts' => 'Textos del sitio',
+        'settings' => 'Ajustes',
+        'access' => 'Acceso',
+        'fields' => 'Campos',
+        'templates' => 'Plantillas',
+        'languages' => 'Idiomas',
+        'search_index' => 'Índice de búsqueda',
+        'general' => 'General',
+        'roles' => 'Roles',
+        'users' => 'Usuarios',
+    ],
+    'sign_out' => 'Cerrar sesión',
+    'view_site' => 'Ver el sitio',
+    'view_page' => 'Ver la página',
+    'not_saved' => 'No se ha guardado: :problem',
+    'not_saved_many' => 'No se ha guardado: :problem (:count problemas en total)',
+    'something_wrong' => 'Algo ha fallado. Vuelve a intentarlo.',
+    'search' => [
+        'label' => 'Buscar páginas',
+        'placeholder' => 'Buscar páginas…',
+        'empty' => 'No se han encontrado páginas.',
+        'unpublished' => 'Sin publicar',
+        'count' => ':shown de :total página.|:shown de :total páginas.',
+        'hint' => 'Busca en los títulos y en los campos buscables; un selector como :example busca cualquier cosa.',
+    ],
+    'ui' => [
+        'breadcrumb' => 'Ruta de navegación',
+        'close' => 'Cerrar',
+        'hide_password' => 'Ocultar la contraseña',
+        'more' => 'Más',
+        'notifications' => 'Notificaciones',
+        'popover' => 'Ventana emergente',
+        'remove_label' => 'Quitar :label',
+        'select_option' => 'Seleccionar una opción',
+        'show_password' => 'Mostrar la contraseña',
+        'sidebar' => 'Barra lateral',
+        'toggle_sidebar' => 'Mostrar u ocultar la barra lateral',
+    ],
+    'status' => [
+        'verification_link_sent' => 'Te hemos enviado por correo un nuevo enlace de verificación.',
+        'profile_updated' => 'Perfil actualizado.',
+        'password_updated' => 'Contraseña actualizada.',
+        'two_factor_enabled' => 'Verificación en dos pasos activada.',
+        'two_factor_confirmed' => 'Verificación en dos pasos confirmada.',
+        'two_factor_disabled' => 'Verificación en dos pasos desactivada.',
+        'recovery_codes_generated' => 'Códigos de recuperación generados.',
+        'password_confirmed' => 'Contraseña confirmada.',
+    ],
+];

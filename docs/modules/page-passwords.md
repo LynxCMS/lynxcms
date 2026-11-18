@@ -49,7 +49,7 @@ The field reads as a `StoredPassword`:
 
 ## The form
 
-The form is a small page of its own, in the visitor's language (English, French and Portuguese ship with the module). To match your site, publish the view and edit it:
+The form is a small page of its own, in the visitor's language (English, French, Portuguese and Spanish ship with the module). To match your site, publish the view and edit it:
 
 ```bash
 php artisan vendor:publish --tag=lynx-page-password-views

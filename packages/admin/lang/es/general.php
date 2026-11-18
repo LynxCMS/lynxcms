@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'General',
+    'description' => 'Cómo se presenta el panel a todas las personas que inician sesión.',
+    'not_found' => [
+        'heading' => 'Página no encontrada',
+        'help' => 'La página que se muestra, con el estado 404, cuando una dirección no coincide con ninguna página. Se escribe como cualquier otra página. Si no hay ninguna, el sitio muestra su 404 básico.',
+        'search' => 'Buscar una página',
+        'not_shown' => 'Esa página está despublicada o en la papelera, así que se muestra el 404 básico.',
+        'save' => 'Guardar',
+        'edit' => 'Editar la página',
+        'denied' => 'Solo los superusuarios eligen la página no encontrada.',
+        'saved' => 'Guardado.',
+        'saved_plain' => 'Guardado. Las páginas que faltan muestran el 404 básico.',
+    ],
+    'branding' => [
+        'heading' => 'Imagen de marca',
+        'intro' => 'El nombre, el logotipo y los colores del sitio en las pantallas de inicio de sesión y en la parte superior de la barra lateral. Deja un campo vacío para usar el valor predeterminado.',
+        'name' => 'Nombre',
+        'name_help' => 'Se muestra junto a la inicial cuando no hay logotipo, en las pestañas del navegador, y se lee en lugar del logotipo.',
+        'logo' => 'Logotipo',
+        'logo_help' => 'PNG, JPEG, WebP o SVG, hasta 1 MB. Funciona mejor un logotipo ancho que incluya el nombre; sustituye al nombre.',
+        'remove_logo' => 'Quitar el logotipo subido',
+        'remove_logo_configured' => 'Quitar el logotipo subido (vuelve al configurado)',
+        'background' => 'Fondo del inicio de sesión',
+        'background_help' => 'Detrás de la tarjeta de inicio de sesión. Como #rrggbb.',
+        'accent' => 'Color de acento',
+        'accent_help' => 'Botones, enlaces y anillos de foco. Como #rrggbb.',
+        'pick' => ':color: elegir',
+        'default_placeholder' => 'predeterminado',
+        'default' => 'Predeterminado',
+        'save' => 'Guardar',
+        'preview_label' => 'Vista previa de la pantalla de inicio de sesión',
+        'preview' => 'Vista previa',
+        'svg_note' => 'El nuevo logotipo SVG se muestra una vez guardado.',
+        'light' => 'Modo claro',
+        'dark' => 'Modo oscuro',
+        'dark_help' => 'Para quienes usan el panel en modo oscuro. Deja un campo vacío para usar el del modo claro.',
+        'logo_dark_help' => 'Se muestra en modo oscuro en lugar del logotipo de arriba, por ejemplo una versión clara. PNG, JPEG, WebP o SVG, hasta 1 MB.',
+        'remove_logo_dark' => 'Quitar el logotipo del modo oscuro (vuelve al del modo claro)',
+        'same_as_light' => 'Igual que en modo claro',
+        'denied' => 'Solo los superusuarios cambian la imagen de marca.',
+        'saved' => 'Guardado. Las pantallas de inicio de sesión y la barra lateral lo muestran a partir de la próxima página.',
+    ],
+];

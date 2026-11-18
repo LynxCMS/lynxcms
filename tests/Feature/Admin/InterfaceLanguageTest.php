@@ -182,3 +182,13 @@ it('shows the menu editor\'s link relations as words, whichever screen reads the
     expect(ItemForm::relChoices())->not->toBeEmpty()
         ->and(implode(' ', ItemForm::relChoices()))->not->toContain('lynx-admin::');
 });
+
+it('offers Spanish and speaks it to an editor who picks it', function (): void {
+    $shipped = (require dirname(__DIR__, 3).'/packages/admin/config/lynx-admin.php')['locales'];
+    config(['lynx-admin.locales' => $shipped]);
+    saveAdminLocale('es');
+
+    expect($shipped)->toHaveKey('es', 'Español');
+    $this->actingAs(new GenericUser(['id' => 1]))->get('/lynx/pages')->assertOk()
+        ->assertSee('lang="es"', false)->assertSee('Buscar páginas…')->assertSee('Cerrar sesión');
+});

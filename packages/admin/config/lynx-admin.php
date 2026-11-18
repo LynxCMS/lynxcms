@@ -23,6 +23,7 @@ return [
     'locales' => [
         'en' => 'English',
         'pt' => 'Português',
+        'es' => 'Español',
     ],
 
     /*
