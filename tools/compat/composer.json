@@ -1,0 +1,13 @@
+{
+    "name": "lynxcms/compat-tools",
+    "description": "Backward compatibility check of Lynx's @api classes, installed apart from Lynx's own dependencies.",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "roave/backward-compatibility-check": "^8.27"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

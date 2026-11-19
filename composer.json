@@ -20,6 +20,7 @@
         "laravel/passkeys": "^0.2.0",
         "laravel/prompts": "^0.3.23",
         "league/commonmark": "^2.8",
+        "livewire/livewire": "^4.4.8",
         "mallardduck/blade-lucide-icons": "^2.0",
         "spatie/laravel-honeypot": "^4.7",
         "symfony/html-sanitizer": "^8.1",
@@ -28,7 +29,6 @@
     "require-dev": {
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
-        "livewire/livewire": "^4.4.8",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^4.1|^5.0",
         "pestphp/pest-plugin-laravel": "^4.0|^5.0",
@@ -102,6 +102,7 @@
     },
     "scripts-descriptions": {
         "docs": "Serve the documentation locally with live reload (installs its npm packages when package-lock.json changes).",
+        "compat": "List what changed in @api code since the latest release: classes, methods and signatures that would break apps (ADR-0132).",
         "docs:build": "Build the documentation and check its links, as CI does."
     },
     "scripts": {
@@ -115,6 +116,11 @@
             "@php vendor/bin/testbench workbench:build --ansi"
         ],
         "assets": "npm --prefix packages/admin run build",
+        "compat": [
+            "Composer\\Config::disableProcessTimeout",
+            "[ -d tools/compat/vendor ] || composer install --working-dir=tools/compat --no-interaction --quiet",
+            "tools/compat/vendor/bin/roave-backward-compatibility-check --from=\"$(git describe --tags --abbrev=0)\" --format=markdown"
+        ],
         "docs": [
             "Composer\\Config::disableProcessTimeout",
             "[ docs/node_modules/.package-lock.json -nt docs/package-lock.json ] || npm --prefix docs ci --no-audit --no-fund",

@@ -99,7 +99,7 @@ Keep the loop short; CI is the safety net.
 - Before pushing code: Pint, PHPStan and the tests of what changed (`vendor/bin/pest tests/Feature/...`). The full suite and Rector run in CI. Docs, wording and CI changes need only Pint where PHP changed.
 - Small, low risk changes go straight to `main` once the local checks pass, without a pull request. The split workflow publishes them to `dev-main` within minutes, and CI runs after the push without blocking anything. Never add `[skip ci]`: it skips the split too, so `dev-main` would not update.
 - Changes to storage, migrations, security or the public API get a pull request, for review rather than for CI. Merge once reviewed, without waiting for checks unless the change is risky.
-- Pull requests run SQLite tests and the quality job; PostgreSQL and the table prefix run on `main` after every push or merge. Fix a failure there right away.
+- Pull requests run SQLite tests, the quality job and the backward compatibility check of `@api` code, which only reports until 1.0 (ADR-0132): read its summary, and list every break it finds in the release notes; PostgreSQL and the table prefix run on `main` after every push or merge. Fix a failure there right away.
 - Releases come in batches, when something worth shipping has gathered, not after every change. Before tagging, check that every test run on `main` for the commit passed, on all drivers (`gh run list --commit <sha>`). A release is a commit on `main` that turns "Unreleased" into the version heading, then the tag; no pull request of its own.
 
 ## Commands
@@ -114,6 +114,7 @@ composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)
 composer check                         # Pint, Rector and PHPStan in check mode, as CI runs them
+composer compat                        # what changed in @api code since the latest release that would break apps (ADR-0132)
 composer docs                          # live preview of the documentation site (installs its npm packages when package-lock.json changes)
 composer docs:build                    # build the documentation and check its links, as CI does
 composer assets                        # build the admin's CSS and JS into packages/admin/dist (after npm --prefix packages/admin ci once); built, never committed (ADR-0071)

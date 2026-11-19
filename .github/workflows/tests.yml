@@ -60,6 +60,45 @@ jobs:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
       - run: vendor/bin/pest tests/Feature/Docs/DocsIntegrityTest.php
 
+  # What a pull request changes in @api code that would break apps: removed or changed classes,
+  # methods and signatures (ADR-0132). Classes and methods marked @internal are not checked. Until
+  # 1.0 it only reports, in the run's summary; set COMPAT_BLOCKING to true at 1.0 so a break fails.
+  compat:
+    needs: changes
+    if: github.event_name == 'pull_request' && needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    env:
+      COMPAT_BLOCKING: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, mbstring, zip
+          coverage: none
+      - run: composer install --working-dir=tools/compat --prefer-dist --no-interaction --no-progress
+      - name: Compare with the pull request's base
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+        run: |
+          status=0
+          tools/compat/vendor/bin/roave-backward-compatibility-check --from="$BASE" --format=markdown > compat.md || status=$?
+          {
+            echo "## Backward compatibility of @api code"
+            if [ "$status" = 0 ]; then echo "No change breaks apps."; else cat compat.md; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          # Exit code 3 means breaks were found; anything else is the check itself failing.
+          if [ "$status" = 0 ]; then exit 0; fi
+          if [ "$COMPAT_BLOCKING" = true ]; then exit "$status"; fi
+          if [ "$status" = 3 ]; then
+            echo "::warning title=Backward compatibility::This pull request changes @api code in a way that breaks apps. See the run's summary."
+          else
+            echo "::warning title=Backward compatibility::The check could not run (exit code $status)."
+          fi
+
   tests:
     needs: changes
     if: needs.changes.outputs.code == 'true'

@@ -1415,3 +1415,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** 127 classes became `@internal`, 81 unmarked classes (the actions, `lynx()->ai()` and its run) became `@api`, 97 unmarked classes became `@internal`, and `IntegerConverter`, which the custom field type guide uses, became `@api`, leaving 255 `@api` classes. Apps that used a demoted class keep working until 1.0 but lose the promise; the starters still use three classes that were `@internal` before the audit (`Branding`, `Trash`, `Unlocks`), to be replaced or made public before 1.0. The backward compatibility check in CI comes next, on this list.
 
+## ADR-0132: A backward compatibility check of the public API
+
+**Status:** Accepted
+
+**Context:** ADR-0131 made the public API explicit: 255 classes marked `@api`. A promise is only as good as its enforcement: without a check, a refactor can remove or change a public method without anyone noticing until an app breaks.
+
+**Decision:** CI runs Roave's backward-compatibility-check on every pull request, comparing the pull request with its base. It checks every class and method not marked `@internal`, so the markers decide what it guards, and it reports removed classes and methods, changed signatures and classes that became `@internal`. The tool lives in `tools/compat` with its own Composer lock, apart from Lynx's dependencies. `composer compat` runs it locally against the latest release, for writing release notes. Until 1.0 the check only reports, in the run's summary and as a warning: 0.x releases may break on purpose, and each break goes in the release notes. At 1.0, `COMPAT_BLOCKING` in the workflow becomes true and a break fails the pull request. Livewire moved from the root `require-dev` to `require`: the tool installs only `require` dependencies, and the admin's Livewire components could not be compared without it.
+
+**Consequences:** Every pull request shows what it breaks in `@api` code. After 1.0 a break needs a new major version, or a deprecation first. The check costs about a minute per pull request. It does not see behaviour changes behind an unchanged signature; tests and release notes cover those.
+
