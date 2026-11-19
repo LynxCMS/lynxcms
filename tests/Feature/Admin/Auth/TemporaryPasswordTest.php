@@ -113,7 +113,7 @@ it('gives an existing user a new temporary password, replacing theirs', function
 });
 
 it('ends a pending invitation when it gives a temporary password', function (): void {
-    lynx()->run(InviteUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com']);
+    lynx()->run(InviteUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']]);
     $bruno = User::query()->where('email', 'bruno@example.com')->firstOrFail();
 
     lynx()->run(SetTemporaryPassword::class, ['user' => (string) $bruno->id]);
@@ -136,7 +136,7 @@ it('lets only superusers create users or give temporary passwords', function (st
 
     lynx()->run($action, $input === [] ? ['user' => (string) $this->admin->id] : $input);
 })->with([
-    'create' => [CreateUserWithTemporaryPassword::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com']],
+    'create' => [CreateUserWithTemporaryPassword::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']]],
     'temporary password' => [SetTemporaryPassword::class, []],
 ])->throws(AuthorizationException::class);
 
@@ -145,3 +145,10 @@ it('is not an agent tool', function (): void {
         ->and(app(ActionRegistry::class)->find('users.create_with_temporary_password'))->toBe(CreateUserWithTemporaryPassword::class)
         ->and(app(ActionRegistry::class)->find('users.temporary_password'))->toBe(SetTemporaryPassword::class);
 });
+
+it('refuses to add a user without a role', function (string $action): void {
+    lynx()->run($action, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => []]);
+})->with([
+    'temporary password' => [CreateUserWithTemporaryPassword::class],
+    'invitation' => [InviteUser::class],
+])->throws(ValidationException::class, 'roles');

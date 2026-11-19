@@ -16,7 +16,7 @@ use LynxCms\Core\Support\Value;
 
 /**
  * What users.invite and users.create_with_temporary_password share: the input, a new user with an unusable password,
- * and their roles.
+ * and their roles. A user needs at least one role: without one, they could not open the admin.
  *
  * @internal
  */
@@ -27,7 +27,7 @@ trait CreatesAdminUsers
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'roles' => ['sometimes', 'array'],
+            'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string'],
         ];
     }
@@ -46,10 +46,7 @@ trait CreatesAdminUsers
         $user = $user instanceof Authenticatable ? $user : throw new LogicException('New users must be able to sign in.');
         $id = Value::string($user->getAuthIdentifier());
         $roles = Value::strings($input->array('roles'));
-
-        if ($roles !== []) {
-            $context->run(AssignRoles::class, ['user' => $id, 'roles' => $roles]);
-        }
+        $context->run(AssignRoles::class, ['user' => $id, 'roles' => $roles]);
 
         return ['user' => $user, 'id' => $id, 'name' => $name, 'email' => $email, 'roles' => $roles];
     }
