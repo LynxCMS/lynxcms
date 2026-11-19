@@ -10,17 +10,33 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- **A password change signs out every other session.** A reset, a temporary password, a new password after a temporary one, or a change on **Account security** now ends the user's other sessions and "Remember me" cookies, through Laravel's `auth.session` on every admin route. Admin components also run the two-factor and temporary password checks on every update, as screens do. See [Sessions and sign-in attempts](/admin/sign-in#sessions-and-sign-in-attempts) (ADR-0129).
-- **Sign-in is limited per account too:** 30 attempts an hour for one email from any address, beside 5 a minute from one address.
-- An expired temporary password signs the user out on their next admin request, also when the app's own sign-in let them in.
-- Files sent with forms download with `X-Content-Type-Options: nosniff`.
-- **Two-factor authentication is required for the admin.** Everyone who opens the admin sets it up on **Account security** before any other screen; members who never open the admin are not asked. Superusers reset it for a user who lost their phone with **Reset two-factor** on the Users screen, or `php artisan lynx:two-factor:reset` on the server. Set `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` to turn it off, for example locally. See [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication) (ADR-0128).
-- Two actions can no longer share a name: the action registry refuses the second one.
-- **Temporary passwords.** A superuser can add a user with a temporary password instead of an invitation, or give one to someone who forgot theirs. It is shown once, expires after 1 day, and the user is required to change it on first sign-in. `LYNX_ADMIN_AUTH_MAIL=false` turns off invitations and reset links for sites that send no email. Adding a user, by invitation or temporary password, now needs at least one role. Run `php artisan lynx:migrate` for its table. See [Temporary passwords](/admin/sign-in#temporary-passwords) (ADR-0126).
-- **Password rules on every password form.** The reset, invitation, new password and **Account security** forms list the app's `Password::defaults()` and tick each rule as the user types. See [Password rules](/admin/sign-in#password-rules).
-- The Users screen's **Invite user** form is now **Add user**.
+## 0.1.51
+
+Released November 19, 2026. Sign-in security: two-factor authentication required for the admin, temporary passwords for sites that send no email, every other session signed out when a password changes, and no more open mode. One new table: run `lynx:migrate`. See the [upgrade guide](/prologue/upgrade#from-0-1-50-to-0-1-51).
+
+### Breaking changes
+
 - **No more open mode.** `LYNX_OPEN_UNTIL_ROLES` is gone: a user without a role never has any right, whatever the configuration. A new site gets its first superuser from `lynx:install` or `lynx:superuser` (ADR-0127).
 - **People who sign up get no role.** Install no longer creates the `guest` role, and `LYNX_REGISTRATION_ROLE` is gone: Lynx gives sign-ups no role. Without a role, a sign-up sees the website and never the admin, as a guest did. Sites that already have the role keep it and its assignments. An app that set `LYNX_REGISTRATION_ROLE` assigns the role in its own registration code instead; see [People who sign up](/admin/permissions#people-who-sign-up).
+- **Two-factor authentication is required for the admin.** Everyone who opens the admin sets it up on **Account security** before any other screen; members who never open the admin are not asked. Superusers reset it for a user who lost their phone with **Reset two-factor** on the Users screen, or `php artisan lynx:two-factor:reset` on the server. Set `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` to turn it off, for example locally. See [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication) (ADR-0128).
+- **Adding a user needs at least one role,** by invitation or temporary password.
+
+### Security
+
+- **A password change signs out every other session.** A reset, a temporary password, a new password after a temporary one, or a change on **Account security** ends the user's other sessions and "Remember me" cookies, through Laravel's `auth.session` on every admin route. Admin components also run the two-factor and temporary password checks on every update, as screens do. See [Sessions and sign-in attempts](/admin/sign-in#sessions-and-sign-in-attempts) (ADR-0129).
+- **Sign-in is limited per account too:** 30 attempts an hour for one email from any address, beside 5 a minute from one address.
+- Files sent with forms download with `X-Content-Type-Options: nosniff`.
+- The findings and fixes of this release's security review are in `documentation/reports/security-review-2026-11.md`.
+
+### Admin
+
+- **Temporary passwords.** A superuser can add a user with a temporary password instead of an invitation, or give one to someone who forgot theirs. It is shown once, expires after 1 day, and the user is required to change it on first sign-in. An expired one signs the user out on their next admin request. `LYNX_ADMIN_AUTH_MAIL=false` turns off invitations and reset links for sites that send no email. See [Temporary passwords](/admin/sign-in#temporary-passwords) (ADR-0126).
+- **Password rules on every password form.** The reset, invitation, new password and **Account security** forms list the app's `Password::defaults()` and tick each rule as the user types. See [Password rules](/admin/sign-in#password-rules).
+- The Users screen's **Invite user** form is now **Add user**.
+
+### Core
+
+- Two actions can no longer share a name: the action registry refuses the second one.
 
 ## 0.1.50
 

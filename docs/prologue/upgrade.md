@@ -21,6 +21,17 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.50 to 0.1.51
+
+One new table, for temporary passwords. Sign-in changes on every site, so read this before you update a live one.
+
+- Run `php artisan lynx:migrate`.
+- **Two-factor authentication is now required for the admin.** On their next visit, everyone who opens the admin is sent to **Account security** to set it up. It needs Fortify's `TwoFactorAuthenticatable` trait on your user model (see [Your user model](/admin/sign-in#your-user-model)); without it nobody is asked and `lynx:doctor` warns. Add `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` to your local `.env` to work without it.
+- Remove `LYNX_OPEN_UNTIL_ROLES` from your `.env` files: it no longer does anything. A site where nobody holds a role needs a superuser first: `php artisan lynx:superuser`.
+- If you set `LYNX_REGISTRATION_ROLE`, remove it and give that role in your own registration code, such as Fortify's `CreateNewUser`, as [People who sign up](/admin/permissions#people-who-sign-up) shows. Existing `guest` roles and their assignments stay and grant nothing.
+- Code that runs `users.invite` must now pass at least one role.
+- After a password change, users signed in on other devices sign in again. Nothing to configure.
+
 ## From 0.1.49 to 0.1.50
 
 No database changes and nothing to change in your code.
