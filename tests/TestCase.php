@@ -97,6 +97,10 @@ abstract class TestCase extends Orchestra
         // old open mode; tests of the closed default turn it off (ADR-0078).
         $app['config']->set('lynx.permissions.open_until_roles', true);
 
+        // Most admin tests act as users without two-factor authentication; tests of the
+        // requirement turn it on (ADR-0128).
+        $app['config']->set('lynx-admin.auth.require_two_factor', false);
+
         // DB_PREFIX simulates a host app that uses Laravel's table prefix setting.
         $app['config']->set("database.connections.{$connection}.prefix", env('DB_PREFIX', ''));
     }

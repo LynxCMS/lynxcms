@@ -54,6 +54,12 @@ return [
         'not_for_you' => 'No puedes crear una contraseña temporal para ti. Cambia tu contraseña en Seguridad de la cuenta.',
         'unsupported' => 'Lynx no puede establecer contraseñas para los usuarios de esta aplicación.',
     ],
+    'two_factor' => [
+        'reset' => 'Restablecer dos pasos',
+        'confirm_reset' => '¿Restablecer la verificación en dos pasos de :name? Tendrá que configurarla de nuevo.',
+        'reset_done' => 'Verificación en dos pasos restablecida para :name.',
+        'unsupported' => 'Lynx no puede gestionar la verificación en dos pasos de los usuarios de esta aplicación.',
+    ],
     'mail' => [
         'subject' => 'Te han invitado a :site',
         'greeting' => 'Hola, :name:',

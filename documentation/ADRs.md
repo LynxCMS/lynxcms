@@ -1365,3 +1365,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** The superuser sees the password and passes it on, so it is only as private as that channel; the short life and the forced change limit the damage. The password is never in the activity log, which records only that a user was created or given one. It needs the user model to be Eloquent, as invitations do. A user who never signs in keeps an expired temporary password that signs in no one until a superuser gives a new one.
 
+## ADR-0128: Two-factor authentication required for the admin
+
+**Status:** Accepted
+
+**Context:** The admin offers two-factor authentication (ADR-0041) but leaves it to each user. A stolen password then opens the admin. Sites with a members area share one users table and one sign-in between staff and members, and requiring it of members would cost sign-ups and support for no gain to the admin.
+
+**Decision:** `lynx-admin.auth.require_two_factor` (`LYNX_ADMIN_REQUIRE_TWO_FACTOR`, default true) makes every admin route send a signed in user without confirmed two-factor authentication to Account security, which shows why and hides **Turn off**. It runs after the temporary password check (ADR-0126), and only on admin routes, so members who never open the admin are not asked. It applies only when it can be met: Lynx manages accounts, Fortify's feature is on, and the user model uses `TwoFactorAuthenticatable`; otherwise `lynx:doctor` warns. A passkey does not meet it, since the password still signs in alone. `users.reset_two_factor` (superusers, not an agent tool) and `lynx:two-factor:reset {email}` turn it off for a user who lost their phone and recovery codes.
+
+**Consequences:** Existing admin users set it up on their next visit, with no grace period. Local work sets the variable to false. A superuser who loses both phone and codes needs the server. Lynx's own tests turn the requirement off except where they test it.
+

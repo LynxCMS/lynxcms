@@ -14,6 +14,7 @@ order: 2
 | `lynx:languages` | Lists the languages. |
 | `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view, the site's first and those Lynx and its modules own (menus, trash, settings) in a second table with their owner; with a template, its fields in order with their type, section and tab. Tables wrap to fit the terminal. |
 | `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices, with module fields in a table of their own; `--unused` keeps those nothing uses. With `--json`, each template or field has an `owner`, `null` for the site's. |
+| `lynx:two-factor:reset {email}` | Turns off a user's two-factor authentication, for someone who lost their phone and their recovery codes. They set it up again when they next open the admin. Comes with `lynxcms/admin`. See [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication). |
 | `lynx:admin-path {path} --random` | Shows the admin's address, or moves the admin to another path, or to a random one, by writing `LYNX_ADMIN_PREFIX` to `.env`. Refuses a path a page uses. Comes with `lynxcms/admin`. See [The admin's address](/admin/#the-admin-s-address). |
 | `lynx:doctor --json` | Looks for problems in the site's setup and structure, each with a fix. See [Checking a site](#checking-a-site). |
 | `lynx:find "selector" --lang= --sql` | Runs a selector; `--sql` shows the query. |
@@ -60,6 +61,7 @@ It runs a list of checks and prints OK for each that passes, or what it found an
 - **Scheduler:** scheduled publishing more than ten minutes late, which means Laravel's scheduler (the cron entry) is not running.
 - **Global middleware:** middleware Lynx runs on every request that could not be added, because the app's HTTP kernel is not Laravel's own. The fix names the line to add in `bootstrap/app.php`.
 - **Pages behind routes:** a page whose URL a route of the app or a module answers first, so visitors never see it, such as a page at `/lynx` behind the admin. Rename the page, or move the route; `lynx:admin-path` moves the admin.
+- **Two-factor** (with `lynxcms/admin`): the admin requires two-factor authentication, but it can't be set up, because the user model lacks Fortify's `TwoFactorAuthenticatable` or the app's Fortify has the feature off. Nobody is asked for it then.
 - **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
 
 Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.

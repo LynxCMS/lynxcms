@@ -54,6 +54,12 @@ return [
         'not_for_you' => 'You can\'t create a temporary password for yourself. Change your password in Account security.',
         'unsupported' => 'Lynx can\'t set passwords for this app\'s users.',
     ],
+    'two_factor' => [
+        'reset' => 'Reset two-factor',
+        'confirm_reset' => 'Reset two-factor authentication for :name? They will have to set it up again.',
+        'reset_done' => 'Two-factor authentication reset for :name.',
+        'unsupported' => 'Lynx can\'t manage two-factor authentication for this app\'s users.',
+    ],
     'mail' => [
         'subject' => 'You are invited to :site',
         'greeting' => 'Hello :name,',

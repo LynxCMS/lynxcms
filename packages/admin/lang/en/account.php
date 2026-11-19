@@ -26,6 +26,8 @@ return [
         'changed' => 'Password changed.',
     ],
     'two_factor' => [
+        'required' => 'Two-factor authentication is required for the admin.',
+        'required_help' => 'Turn it on below to continue. You will need an authenticator app on your phone.',
         'heading' => 'Two-factor authentication',
         'description' => 'After your password, signing in asks for a code from an authenticator app on your phone.',
         'scan' => 'Scan the QR code with your authenticator app, or enter the setup key. Then type the code it shows.',

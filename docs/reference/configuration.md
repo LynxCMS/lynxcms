@@ -52,6 +52,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `auth.invitation_days` | `7` | How long an invitation link works. |
 | `auth.temporary_password_days` | `3` | How long a [temporary password](/admin/sign-in#temporary-passwords) signs in. |
 | `auth.mail` | `true` (`LYNX_ADMIN_AUTH_MAIL`) | `false`: the admin sends no email, so no invitations or reset links. See [A site that sends no email](/admin/sign-in#a-site-that-sends-no-email). |
+| `auth.require_two_factor` | `true` (`LYNX_ADMIN_REQUIRE_TWO_FACTOR`) | Everyone who opens the admin sets up two-factor authentication first. See [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication). |
 | `theme` | `system` | `light`, `dark` or `system`. |
 | `appearance.*` | | BlatUI options: base, theme, radius, font, heading font, shadow, spacing, tracking, input style, font loading. |
 | `branding.name` | `Lynx` (`LYNX_ADMIN_NAME`) | The site's name on the sign-in screens, the sidebar and browser tabs. With `Lynx` and no logo, the admin shows the Lynx mark and favicon. |

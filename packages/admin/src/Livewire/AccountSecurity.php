@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
+use LynxCms\Admin\Auth\TwoFactorRequirement;
 use LynxCms\Admin\Auth\TwoFactorState;
 use LynxCms\Admin\Livewire\Concerns\ChangesPassword;
 use LynxCms\Admin\Livewire\Concerns\ManagesPasskeys;
@@ -45,6 +46,8 @@ final class AccountSecurity extends Component
 
         return view('lynx-admin::livewire.account-security', [
             'canUseTwoFactor' => $twoFactorUser !== null,
+            'isTwoFactorRequired' => TwoFactorRequirement::applies(),
+            'mustSetUpTwoFactor' => TwoFactorRequirement::isMissing(),
             'twoFactorEnabled' => $twoFactorUser !== null && TwoFactorState::isEnabled($twoFactorUser),
             'qrCodeSvg' => $isPending ? TwoFactorState::qrCodeSvg($twoFactorUser) : null,
             'setupKey' => $isPending ? TwoFactorState::setupKey($twoFactorUser) : null,

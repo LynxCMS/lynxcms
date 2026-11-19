@@ -11,6 +11,7 @@ use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
 use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 use Laravel\Fortify\Actions\GenerateNewRecoveryCodes;
 use Livewire\Attributes\Locked;
+use LynxCms\Admin\Auth\TwoFactorRequirement;
 use LynxCms\Admin\Auth\TwoFactorState;
 
 /**
@@ -74,9 +75,18 @@ trait ManagesTwoFactor
         $this->recoveryCodes = TwoFactorState::recoveryCodes($user->refresh());
     }
 
+    /** Cancels a setup, or turns it off; never turns it off while the admin requires it (ADR-0128). */
     public function disableTwoFactor(DisableTwoFactorAuthentication $disable): void
     {
-        $disable($this->twoFactorUser());
+        $user = $this->twoFactorUser();
+
+        if (TwoFactorState::isEnabled($user) && TwoFactorRequirement::applies()) {
+            $this->addError('two_factor', __('lynx-admin::account.two_factor.required'));
+
+            return;
+        }
+
+        $disable($user);
         $this->reset('isSettingUpTwoFactor', 'code', 'recoveryCodes');
     }
 

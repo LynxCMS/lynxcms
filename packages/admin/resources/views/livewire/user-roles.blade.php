@@ -63,6 +63,9 @@
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-end">
                             <div class="flex flex-wrap justify-end gap-2">
                                 <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="saveRoles({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.save') }}</x-lynx-admin::ui.button>
+                                @if (in_array($user['id'], $twoFactor, true))
+                                    <x-lynx-admin::ui.button variant="ghost" size="sm" wire:click="resetTwoFactor({{ Js::from($user['id']) }})" wire:confirm="{{ __('lynx-admin::users.two_factor.confirm_reset', ['name' => $user['label']]) }}">{{ __('lynx-admin::users.two_factor.reset') }}</x-lynx-admin::ui.button>
+                                @endif
                                 @if ($canInvite && $user['id'] !== $me)
                                     <x-lynx-admin::ui.button variant="ghost" size="sm" wire:click="giveTemporaryPassword({{ Js::from($user['id']) }})" wire:confirm="{{ __('lynx-admin::users.list.confirm_new_password', ['name' => $user['label']]) }}">{{ __('lynx-admin::users.list.new_password') }}</x-lynx-admin::ui.button>
                                 @endif

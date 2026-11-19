@@ -41,6 +41,9 @@ return [
         // false: the admin sends no email. No invitations or reset links; superusers give
         // temporary passwords instead
         'mail' => env('LYNX_ADMIN_AUTH_MAIL', true),
+        // Everyone who opens the admin sets up two-factor authentication first (ADR-0128). Turn it
+        // off for local work. Members of a site, who never open the admin, are not asked
+        'require_two_factor' => env('LYNX_ADMIN_REQUIRE_TWO_FACTOR', true),
     ],
 
     /*
