@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- The admin's `SchemaOwners::register()` is gone, after being deprecated since ADR-0115. Modules register their templates and fields on `LynxCms\Core\Schema\SchemaOwners` from their service provider.
 - `lynx()->pages->inTrash($page)` tells whether a page is in the trash, directly or below a trashed page. Apps used Lynx's internal `Trash` class for this.
 - **A smaller public API before 1.0.** 127 classes go from `@api` to `@internal`: service providers, the admin's Livewire screens, Blade component classes, table and schema helpers, and the inner parts of Page Finder, schema drafts and search. Every action is now `@api`, and every class carries one of the two markers, which a test checks. See `documentation/reports/api-audit-2026-11.md` (ADR-0131).
 - `lynx()->pages->find()` and `childCounts()` no longer take a `$scope` argument. It served the admin's own lists, which now use Lynx's internal page finder.

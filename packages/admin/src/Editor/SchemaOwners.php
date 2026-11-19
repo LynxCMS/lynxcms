@@ -18,18 +18,6 @@ final readonly class SchemaOwners
 {
     public function __construct(private CoreSchemaOwners $owners, private SchemaEditing $editing) {}
 
-    /**
-     * @deprecated Register on LynxCms\Core\Schema\SchemaOwners from the module's service provider,
-     *             so the schema is known without the admin too (ADR-0115).
-     *
-     * @param  list<string>  $templates
-     * @param  list<string>  $fields
-     */
-    public function register(string $module, array $templates = [], array $fields = []): void
-    {
-        $this->owners->register($module, $templates, $fields);
-    }
-
     public function ownerOfTemplate(string $template): ?string
     {
         return $this->owners->ownerOfTemplate($template);

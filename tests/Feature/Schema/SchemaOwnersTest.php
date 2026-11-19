@@ -35,11 +35,10 @@ it('keeps the first owner of a name', function (): void {
     expect(app(SchemaOwners::class)->ownerOfTemplate('menu-item'))->toBe('Menus');
 });
 
-it('shares the registry with the admin', function (): void {
+it('shares the registry with the admin, which only reads it', function (): void {
     app(SchemaOwners::class)->register('Demo', ['course'], ['price']);
-    app(AdminSchemaOwners::class)->register('Legacy', ['courses']);
 
     expect(app(AdminSchemaOwners::class)->ownerOfTemplate('course'))->toBe('Demo')
         ->and(app(AdminSchemaOwners::class)->isSystemField('price'))->toBeTrue()
-        ->and(app(SchemaOwners::class)->ownerOfTemplate('courses'))->toBe('Legacy');
+        ->and(method_exists(AdminSchemaOwners::class, 'register'))->toBeFalse();
 });
