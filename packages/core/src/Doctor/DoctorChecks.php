@@ -9,7 +9,6 @@ use InvalidArgumentException;
 use LynxCms\Core\Doctor\Checks\GlobalMiddlewareRegistered;
 use LynxCms\Core\Doctor\Checks\OrphanedValues;
 use LynxCms\Core\Doctor\Checks\PagesBehindRoutes;
-use LynxCms\Core\Doctor\Checks\RegistrationRoleCheck;
 use LynxCms\Core\Doctor\Checks\Scheduler;
 use LynxCms\Core\Doctor\Checks\TemplateViews;
 use LynxCms\Core\Doctor\Checks\UnusedFields;
@@ -22,7 +21,7 @@ use LynxCms\Core\Doctor\Checks\UnusedFields;
 final class DoctorChecks
 {
     /** @var list<class-string<Check>> */
-    private const array CORE = [TemplateViews::class, UnusedFields::class, OrphanedValues::class, Scheduler::class, GlobalMiddlewareRegistered::class, PagesBehindRoutes::class, RegistrationRoleCheck::class];
+    private const array CORE = [TemplateViews::class, UnusedFields::class, OrphanedValues::class, Scheduler::class, GlobalMiddlewareRegistered::class, PagesBehindRoutes::class];
 
     /** @var list<class-string<Check>|Check> */
     private array $added = [];

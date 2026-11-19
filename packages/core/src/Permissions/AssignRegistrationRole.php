@@ -13,8 +13,7 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Gives people who sign up on the site the role in lynx.permissions.registration_role, when the
- * app sets one (ADR-0073, ADR-0127). Without it they get no role, and so no rights. A role that
- * opens the admin is never given this way.
+ * app sets one (ADR-0073, ADR-0127). Without it they get no role, and so no rights.
  *
  * @internal
  */
@@ -24,36 +23,19 @@ final readonly class AssignRegistrationRole
 
     public function handle(Registered $event): void
     {
-        $name = RegistrationRole::name();
+        $role = Value::string(config('lynx.permissions.registration_role'));
         $user = Value::string($event->user->getAuthIdentifier());
 
-        if ($name === '' || $user === '' || RoleAssignment::query()->where('user_id', $user)->exists()) {
+        if ($role === '' || $user === '' || RoleAssignment::query()->where('user_id', $user)->exists()) {
             return;
         }
 
-        $role = $this->usableRole($name, $user);
+        if (! Role::query()->where('name', $role)->exists()) {
+            Log::warning("Lynx gave user {$user} no role on sign-up: there is no role [{$role}]. Create the role, or set lynx.permissions.registration_role to a role that exists.");
 
-        if ($role instanceof Role) {
-            $this->runner->actingAs(Actor::system(), fn (): mixed => $this->runner->run(AssignRoles::class, ['user' => $user, 'roles' => [$name]]));
-        }
-    }
-
-    private function usableRole(string $name, string $user): ?Role
-    {
-        $role = RegistrationRole::find();
-
-        if (! $role instanceof Role) {
-            Log::warning("Lynx gave user {$user} no role on sign-up: there is no role [{$name}]. Create the role, or set lynx.permissions.registration_role to a role that exists.");
-
-            return null;
+            return;
         }
 
-        if (RegistrationRole::opensAdmin($role)) {
-            Log::error("Lynx gave user {$user} no role on sign-up: the role [{$name}] opens the admin, and anyone can sign up. Remove admin.access and superuser from it, or name another role in lynx.permissions.registration_role.");
-
-            return null;
-        }
-
-        return $role;
+        $this->runner->actingAs(Actor::system(), fn (): mixed => $this->runner->run(AssignRoles::class, ['user' => $user, 'roles' => [$role]]));
     }
 }

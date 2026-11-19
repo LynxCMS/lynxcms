@@ -12,7 +12,6 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - **No more open mode.** `LYNX_OPEN_UNTIL_ROLES` is gone: a user without a role never has any right, whatever the configuration. A new site gets its first superuser from `lynx:install` or `lynx:superuser` (ADR-0127).
 - **People who sign up get no role.** Install no longer creates the `guest` role, and `LYNX_REGISTRATION_ROLE` is empty by default. Without a role, a sign-up sees the website and never the admin, as a guest did. Sites that already have the role keep it and its assignments; set `LYNX_REGISTRATION_ROLE=guest` to keep giving it to sign-ups.
-- **A sign-up never gets the admin.** Lynx refuses to give sign-ups a role that is a superuser or grants `admin.access`, and logs why. `lynx:doctor` has a new check for the sign-up role.
 ## 0.1.50
 
 Released November 18, 2026. The admin in Spanish, and a View button in the forms inbox. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-49-to-0-1-50).
