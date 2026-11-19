@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
 
 /**
  * The Users screen's Add user form (ADR-0041, ADR-0126): an invitation by email through
- * users.invite, or a temporary password through users.create, which is the only way when the
+ * users.invite, or a temporary password through users.create_with_temporary_password, which is the only way when the
  * admin sends no email. Its errors show by the form's inputs.
  *
  * @internal

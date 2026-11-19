@@ -15,7 +15,7 @@ use LynxCms\Core\Actions\Runner\Input;
  * password comes back once, for the superuser to pass on; the activity log never holds it.
  * Superusers only; never an agent tool.
  */
-final class CreateUser extends Action
+final class CreateUserWithTemporaryPassword extends Action
 {
     use CreatesAdminUsers;
 
@@ -23,7 +23,7 @@ final class CreateUser extends Action
 
     public static function name(): string
     {
-        return 'users.create';
+        return 'users.create_with_temporary_password';
     }
 
     public static function description(): string

@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Override;
 
 /**
- * A user whose password a superuser set (ADR-0126). Written by users.create and
+ * A user whose password a superuser set (ADR-0126). Written by users.create_with_temporary_password and
  * users.temporary_password, removed when the user chooses their own password.
  *
  * @property int $id

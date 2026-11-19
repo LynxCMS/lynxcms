@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\TestResponse;
 use Illuminate\Validation\ValidationException;
-use LynxCms\Admin\Auth\CreateUser;
+use LynxCms\Admin\Auth\CreateUserWithTemporaryPassword;
 use LynxCms\Admin\Auth\Invitation;
 use LynxCms\Admin\Auth\InviteUser;
 use LynxCms\Admin\Auth\SetTemporaryPassword;
@@ -39,7 +39,7 @@ beforeEach(function (): void {
 /** @return array{user: string, password: string, expires_at: string} */
 function createWithPassword(array $input = []): array
 {
-    return lynx()->run(CreateUser::class, $input + ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']])->value;
+    return lynx()->run(CreateUserWithTemporaryPassword::class, $input + ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']])->value;
 }
 
 function signIn(string $email, string $password): TestResponse
@@ -61,7 +61,7 @@ it('creates the user with their roles and a strong password, and sends no email'
 it('keeps the password out of the activity log', function (): void {
     $created = createWithPassword();
 
-    expect(ActivityEvent::query()->where('action', 'users.create')->exists())->toBeTrue()
+    expect(ActivityEvent::query()->where('action', 'users.create_with_temporary_password')->exists())->toBeTrue()
         ->and(ActivityEvent::query()->get()->toJson())->not->toContain($created['password']);
 });
 
@@ -136,12 +136,12 @@ it('lets only superusers create users or give temporary passwords', function (st
 
     lynx()->run($action, $input === [] ? ['user' => (string) $this->admin->id] : $input);
 })->with([
-    'create' => [CreateUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com']],
+    'create' => [CreateUserWithTemporaryPassword::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com']],
     'temporary password' => [SetTemporaryPassword::class, []],
 ])->throws(AuthorizationException::class);
 
 it('is not an agent tool', function (): void {
-    expect(CreateUser::exposedAsTool())->toBeFalse()->and(SetTemporaryPassword::exposedAsTool())->toBeFalse()
-        ->and(app(ActionRegistry::class)->find('users.create'))->toBe(CreateUser::class)
+    expect(CreateUserWithTemporaryPassword::exposedAsTool())->toBeFalse()->and(SetTemporaryPassword::exposedAsTool())->toBeFalse()
+        ->and(app(ActionRegistry::class)->find('users.create_with_temporary_password'))->toBe(CreateUserWithTemporaryPassword::class)
         ->and(app(ActionRegistry::class)->find('users.temporary_password'))->toBe(SetTemporaryPassword::class);
 });

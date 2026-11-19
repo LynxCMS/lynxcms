@@ -15,7 +15,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Support\Value;
 
 /**
- * What users.invite and users.create share: the input, a new user with an unusable password,
+ * What users.invite and users.create_with_temporary_password share: the input, a new user with an unusable password,
  * and their roles.
  *
  * @internal

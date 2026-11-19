@@ -130,7 +130,7 @@ final class AdminAuth
         Event::listen(UserInvited::class, SendInvitation::class);
         Event::listen(PasswordReset::class, ClearInvitation::class);
         Event::listen(Validated::class, RefuseExpiredTemporaryPassword::class);
-        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class, CreateUser::class, SetTemporaryPassword::class);
+        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class, CreateUserWithTemporaryPassword::class, SetTemporaryPassword::class);
         self::routes();
 
         if (self::isEnabled()) {

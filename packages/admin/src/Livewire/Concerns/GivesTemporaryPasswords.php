@@ -7,7 +7,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Locked;
 use LynxCms\Admin\Auth\AdminAuth;
-use LynxCms\Admin\Auth\CreateUser;
+use LynxCms\Admin\Auth\CreateUserWithTemporaryPassword;
 use LynxCms\Admin\Auth\SetTemporaryPassword;
 use LynxCms\Admin\Auth\TemporaryPassword;
 use LynxCms\Core\Support\Value;
@@ -40,7 +40,7 @@ trait GivesTemporaryPasswords
 
     private function createWithTemporaryPassword(): void
     {
-        $created = Value::array($this->inInviteForm(fn (): mixed => lynx()->run(CreateUser::class, $this->inviteInput())->value));
+        $created = Value::array($this->inInviteForm(fn (): mixed => lynx()->run(CreateUserWithTemporaryPassword::class, $this->inviteInput())->value));
         $this->issue(Value::string($this->invite['name']), $created, isNew: true);
     }
 

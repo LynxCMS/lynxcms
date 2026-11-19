@@ -70,10 +70,10 @@ The user is required to set a new password on first sign-in, before any other ad
 In code, both are actions, for superusers only and never offered to agents. The password is in the result, and the activity log never holds it:
 
 ```php
-use LynxCms\Admin\Auth\CreateUser;
+use LynxCms\Admin\Auth\CreateUserWithTemporaryPassword;
 use LynxCms\Admin\Auth\SetTemporaryPassword;
 
-$created = lynx()->run(CreateUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']])->value;
+$created = lynx()->run(CreateUserWithTemporaryPassword::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']])->value;
 // ['user' => '12', 'password' => '...', 'expires_at' => '2026-11-22T10:00:00+00:00']
 
 $given = lynx()->run(SetTemporaryPassword::class, ['user' => '12'])->value;
