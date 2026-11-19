@@ -1445,3 +1445,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** One maintainer backports security fixes to two majors at most. Breaking the admin's look or wording needs no major release, so its screens can keep improving. Squashing migrations later stays possible at a major release.
 
+## ADR-0135: Notices when two-factor authentication changes
+
+**Status:** Accepted (follows the security review, finding L1)
+
+**Context:** Requiring two-factor authentication on first use means whoever signs in first with the password sets it up (security review, L1), and a superuser's reset or `lynx:two-factor:reset` removes it without the user knowing. Superusers also had no way to see who had not set it up.
+
+**Decision:** Lynx listens to Fortify's `TwoFactorAuthenticationConfirmed` and `TwoFactorAuthenticationDisabled` events, which every way of turning it on or off fires, and emails the user a queued notice saying what changed, when, and to tell the site's manager if they did not make the change. It emails only users who can open the admin (an app's members hear from the app) and only when the admin sends email. While two-factor authentication is required and can be set up, the Users screen marks admin users without it.
+
+**Consequences:** A user learns within minutes when someone else set up or removed their second factor. Sites with a queue need a worker for the email; without one Laravel sends it at once. The notice can't say who made the change, as Fortify's events don't carry it.
+

@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Two-factor authentication notices.** Lynx emails a user when two-factor authentication is turned on or off for their account, by them, a superuser's reset or `lynx:two-factor:reset`. While it is required, **Access > Users** marks admin users who haven't set it up yet. See [Who has it, and emails when it changes](/admin/sign-in#who-has-it-and-emails-when-it-changes) (ADR-0135).
 - A new page, [Versioning and Support](/prologue/versioning), says what each version number promises from 1.0 on, how deprecations work and how long each version gets fixes.
 - The admin's `SchemaOwners::register()` is gone, after being deprecated since ADR-0115. Modules register their templates and fields on `LynxCms\Core\Schema\SchemaOwners` from their service provider.
 - `lynx()->pages->inTrash($page)` tells whether a page is in the trash, directly or below a trashed page. Apps used Lynx's internal `Trash` class for this.

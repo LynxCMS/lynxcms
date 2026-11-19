@@ -26,6 +26,13 @@ return [
         'changed' => 'Contraseña cambiada.',
     ],
     'two_factor' => [
+        'mail' => [
+            'subject_on' => 'Se activó la verificación en dos pasos en tu cuenta de :site',
+            'subject_off' => 'Se desactivó la verificación en dos pasos en tu cuenta de :site',
+            'on' => 'Se activó la verificación en dos pasos en tu cuenta de :site el :when. Al iniciar sesión, ahora también se te pide un código de tu aplicación de autenticación.',
+            'off' => 'Se desactivó la verificación en dos pasos en tu cuenta de :site el :when. Al iniciar sesión, ahora solo se te pide la contraseña. Cuando el admin exige la verificación en dos pasos, tendrás que configurarla de nuevo en tu próxima visita.',
+            'not_you' => 'Si no hiciste este cambio, avisa a quien gestiona :site.',
+        ],
         'required' => 'La verificación en dos pasos es obligatoria para el admin.',
         'required_help' => 'Actívala abajo para continuar. Necesitarás una aplicación de autenticación en el móvil.',
         'heading' => 'Verificación en dos pasos',

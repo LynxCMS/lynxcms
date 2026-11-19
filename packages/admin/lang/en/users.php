@@ -19,6 +19,8 @@ return [
         'empty_help' => 'Try a shorter search, or part of a name or email address.',
         'temporary' => 'Temporary password',
         'temporary_until' => 'Expires :when',
+        'no_two_factor' => 'Two-factor not set up',
+        'no_two_factor_help' => 'Asked to set it up on the next visit to the admin',
         'new_password' => 'New temporary password',
         'confirm_new_password' => 'Create a temporary password for :name? Their current password will stop working.',
     ],

@@ -19,6 +19,8 @@ return [
         'empty_help' => 'Prueba con una búsqueda más corta, o con parte de un nombre o de una dirección de correo.',
         'temporary' => 'Contraseña temporal',
         'temporary_until' => 'Caduca :when',
+        'no_two_factor' => 'Sin verificación en dos pasos',
+        'no_two_factor_help' => 'Tendrá que configurarla en su próxima visita al admin',
         'new_password' => 'Nueva contraseña temporal',
         'confirm_new_password' => '¿Crear una contraseña temporal para :name? Su contraseña actual dejará de funcionar.',
     ],

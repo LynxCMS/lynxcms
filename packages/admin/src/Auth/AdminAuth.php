@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Events\TwoFactorAuthenticationConfirmed;
+use Laravel\Fortify\Events\TwoFactorAuthenticationDisabled;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use LynxCms\Admin\Admin;
@@ -133,6 +135,7 @@ final class AdminAuth
         Event::listen(UserInvited::class, SendInvitation::class);
         Event::listen(PasswordReset::class, ClearInvitation::class);
         Event::listen(Validated::class, RefuseExpiredTemporaryPassword::class);
+        Event::listen([TwoFactorAuthenticationConfirmed::class, TwoFactorAuthenticationDisabled::class], SendTwoFactorNotice::class);
         app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class, CreateUserWithTemporaryPassword::class, SetTemporaryPassword::class, ResetTwoFactor::class);
         self::routes();
 
