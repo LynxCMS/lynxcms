@@ -17,6 +17,8 @@ use LynxCms\Core\Support\Value;
  * Replaces a user's password with a temporary one (ADR-0126), for someone who forgot theirs on a
  * site that sends no email. Their old password stops working at once. Not for the superuser
  * running it, who changes their own on the account screen. Superusers only; never an agent tool.
+ *
+ * @api
  */
 final class SetTemporaryPassword extends Action
 {

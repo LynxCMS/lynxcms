@@ -9,7 +9,11 @@ use LynxCms\Contracts\Fields\Comparison;
 use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Models\Field;
 
-/** On/off switch. Shared across languages. */
+/**
+ * On/off switch. Shared across languages.
+ *
+ * @internal
+ */
 final class ToggleType extends BaseFieldType implements DescribesPhpType
 {
     public static function name(): string

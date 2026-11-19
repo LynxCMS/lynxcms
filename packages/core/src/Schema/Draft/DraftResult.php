@@ -10,7 +10,7 @@ use LynxCms\Core\Schema\SchemaSyncResult;
  * A built draft (ADR-0116): the plan it followed, what schema sync reported, and notes for the
  * developer, such as starting a schema folder.
  *
- * @api
+ * @internal
  */
 final readonly class DraftResult
 {

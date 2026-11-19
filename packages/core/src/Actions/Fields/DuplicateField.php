@@ -18,6 +18,8 @@ use Override;
  * A new field like another: its type, labels, translation and settings under a new name, made with
  * fields.create (which checks the name). It is a field of its own: no template uses it yet, and
  * values are never copied.
+ *
+ * @api
  */
 final class DuplicateField extends Action
 {

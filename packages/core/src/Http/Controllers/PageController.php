@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
  * answers with a 301 to the page's current URL in the same language (ADR-0011). A one-segment URL
  * that matches nothing redirects to the unique page with that name, like ProcessWire (ADR-0029).
  * The page not found answers its own URL with status 404 too (ADR-0085).
+ *
+ * @internal
  */
 final readonly class PageController
 {

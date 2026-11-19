@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
  * how it compares (an operator key) and the value, or the pages chosen for a page reference.
  * "to" is the second value of "between".
  *
- * @api
+ * @internal
  */
 final readonly class Condition
 {

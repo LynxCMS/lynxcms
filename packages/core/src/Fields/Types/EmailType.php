@@ -11,7 +11,11 @@ use LynxCms\Core\Fields\Types\Concerns\ProvidesPlainSearchText;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Value;
 
-/** An email address, trimmed with its domain in lower case. Shared across languages. */
+/**
+ * An email address, trimmed with its domain in lower case. Shared across languages.
+ *
+ * @internal
+ */
 final class EmailType extends BaseFieldType implements DescribesPhpType, ProvidesSearchText
 {
     use ProvidesPlainSearchText;

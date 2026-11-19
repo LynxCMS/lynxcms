@@ -16,6 +16,8 @@ use LynxCms\Core\Permissions\Authorizer;
 /**
  * Releases the edit lock on a page (ADR-0037): the holder's own, or anyone's for a superuser
  * (someone left a page open and went home).
+ *
+ * @api
  */
 final class UnlockEdit extends Action
 {

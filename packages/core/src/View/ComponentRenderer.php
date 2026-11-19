@@ -16,7 +16,7 @@ use LynxCms\Core\Support\Value;
  * Renders the app component chosen in a "component" field (ADR-0021): @lynxComponent($page, 'form').
  * Livewire components receive pageId, lang and settings.
  *
- * @api
+ * @internal
  */
 final readonly class ComponentRenderer
 {

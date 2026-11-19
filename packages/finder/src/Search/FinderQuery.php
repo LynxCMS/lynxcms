@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
  * of the results and the fields shown as columns. It travels as an array: in the screen's URL and
  * in saved searches.
  *
- * @api
+ * @internal
  */
 final readonly class FinderQuery
 {

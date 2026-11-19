@@ -13,6 +13,8 @@ use UnexpectedValueException;
 /**
  * Machine translation through the Laravel AI SDK, used by pages.translate (ADR-0016, ADR-0020).
  * DeepL can replace it later behind the same interface.
+ *
+ * @internal
  */
 final class LaravelAiTranslationProvider implements TranslationProvider
 {

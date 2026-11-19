@@ -11,6 +11,8 @@ use LynxCms\Forms\Definition\FormField;
 /**
  * Lets a form component offer fewer options in a choice than the form has, for the page it is on
  * (the languages a document exists in, say). The fields it gives are the ones shown and checked.
+ *
+ * @internal
  */
 trait NarrowsChoices
 {

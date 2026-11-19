@@ -19,6 +19,8 @@ use UnexpectedValueException;
  * Saves field values and the page's own template strings (ADR-0048) to the page's draft
  * (ADR-0039), creating it from the live page the first time. The live page does not change until
  * pages.publish_draft. Values are validated like a save.
+ *
+ * @api
  */
 final class SaveDraft extends Action
 {

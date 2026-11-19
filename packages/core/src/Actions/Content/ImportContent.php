@@ -34,6 +34,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * the pages their grants are limited to exist; a schema error stops the import. With
  * "prune", pages not in the package go to the trash. A page that cannot be written (a locked one,
  * another template) is skipped with the reason, and the rest still imports.
+ *
+ * @api
  */
 final class ImportContent extends Action
 {

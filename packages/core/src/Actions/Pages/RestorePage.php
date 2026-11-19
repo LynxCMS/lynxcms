@@ -22,6 +22,8 @@ use LynxCms\Core\Templates\FamilyRules;
 /**
  * Takes a branch out of the trash (ADR-0035): back where it was, with its names and URLs, or
  * under a parent given when that place is gone or in the trash itself. Locks never block it.
+ *
+ * @api
  */
 final class RestorePage extends Action
 {

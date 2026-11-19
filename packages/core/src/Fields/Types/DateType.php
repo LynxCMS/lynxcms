@@ -17,6 +17,8 @@ use Throwable;
  * A date, or a date and time with the "time" setting. Shared across languages. Stored as a
  * datetime (midnight for dates), so switching "time" on later needs no change to the table.
  * Templates get a CarbonImmutable: $page->starts_on->isoFormat('D MMMM YYYY').
+ *
+ * @internal
  */
 final class DateType extends BaseFieldType implements DescribesPhpType
 {

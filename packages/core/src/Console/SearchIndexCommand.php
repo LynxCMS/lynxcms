@@ -11,7 +11,11 @@ use LynxCms\Core\Console\Concerns\TerminalFeedback;
 use LynxCms\Core\Support\Value;
 use Override;
 
-/** Runs search.rebuild, e.g. after changing a field's settings. */
+/**
+ * Runs search.rebuild, e.g. after changing a field's settings.
+ *
+ * @internal
+ */
 final class SearchIndexCommand extends Command
 {
     use TerminalFeedback;

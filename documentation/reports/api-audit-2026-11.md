@@ -1,6 +1,6 @@
 # Public API audit, November 2026
 
-Done on 2026-11-19, on `main` after 0.1.52, as item 1 of the road to 1.0 (`documentation/Implementation plan.md`). Every class marked `@api` becomes a promise at 1.0, so each one should be needed by apps or modules. Nothing is changed yet: this report is the list to approve.
+Done on 2026-11-19, on `main` after 0.1.52, as item 1 of the road to 1.0 (`documentation/Implementation plan.md`). Every class marked `@api` becomes a promise at 1.0, so each one should be needed by apps or modules. Approved and applied on 2026-11-19 (ADR-0131), with the recommendations below for the "decide" group.
 
 ## How it was done
 

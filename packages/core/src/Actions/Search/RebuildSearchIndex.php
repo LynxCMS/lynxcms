@@ -15,6 +15,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * Indexes pages for search again (ADR-0054): after upgrading, or after a field's settings change
  * what its values say (a choice label, a matrix type's fields). Saves keep the index current
  * otherwise. Needs search.manage (ADR-0120).
+ *
+ * @api
  */
 final class RebuildSearchIndex extends Action
 {

@@ -15,6 +15,8 @@ use Override;
  * Writes a starting view for a template, or with --all for every template whose pages have none,
  * into the app's first view path under lynx.views_path. An existing view is kept unless --force.
  * Fields on tabs other than Content are named in a comment, unless --all-tabs.
+ *
+ * @internal
  */
 final class MakeViewCommand extends Command
 {

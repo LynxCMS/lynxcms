@@ -18,7 +18,7 @@ use LynxCms\Core\Support\Value;
  * Chooses pages for a page reference field: the chosen pages with Remove buttons and a title
  * search to add more. Bound to its parent with wire:model, e.g. in the page editor.
  *
- * @api
+ * @internal
  */
 final class PagePicker extends Component
 {

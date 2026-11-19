@@ -22,6 +22,8 @@ use LynxCms\Finder\Admin\FinderScreen;
  * The finder module: the admin's Find pages screen, where editors search every page with
  * conditions grouped by all and any, see the selector the search makes, save searches (ADR-0111),
  * change the pages found together and export them.
+ *
+ * @internal
  */
 final class FinderServiceProvider extends ServiceProvider
 {

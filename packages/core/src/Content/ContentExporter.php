@@ -27,7 +27,7 @@ use RuntimeException;
  * written as keys, so the package moves between sites. Files the values name go into files/
  * (ADR-0050). Drafts and the trash are left out.
  *
- * @api
+ * @internal
  */
 final readonly class ContentExporter
 {

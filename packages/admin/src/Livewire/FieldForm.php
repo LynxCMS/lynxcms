@@ -33,7 +33,7 @@ use LynxCms\Core\Support\Value;
  * SettingLabels); every write goes through fields.create or fields.update, whose errors show by
  * their inputs. Name and type are fixed once the field exists (schema-admin plan); a shared field can be made translatable.
  *
- * @api
+ * @internal
  */
 final class FieldForm extends Component
 {

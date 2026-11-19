@@ -10,7 +10,7 @@ use RuntimeException;
  * A draft that can't be built (ADR-0116): a type, setting or field that doesn't exist, or a change
  * schema sync can't make. The message names where in the draft, and suggests the closest name.
  *
- * @api
+ * @internal
  */
 final class DraftError extends RuntimeException
 {

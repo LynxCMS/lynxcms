@@ -15,7 +15,7 @@ use LynxCms\Core\Support\Value;
  * unpublished page counts as none, and Laravel's own 404 answers instead. The id is read once per
  * request and again after every action, so the tree can ask for each row.
  *
- * @api
+ * @internal
  */
 final class NotFoundPage implements Flushable
 {

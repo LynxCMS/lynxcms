@@ -25,6 +25,8 @@ use function Laravel\Prompts\suggest;
 /**
  * Imports a content package (ADR-0040): pages matched by key, created or updated. With --prune in a
  * terminal, a dry run shows first how many pages would go to the trash and asks before importing.
+ *
+ * @internal
  */
 final class ImportCommand extends Command implements PromptsForMissingInput
 {

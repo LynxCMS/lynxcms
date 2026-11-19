@@ -8,7 +8,7 @@ namespace LynxCms\Core\Http;
  * Request attributes the front-end route sets, for middleware that runs around it, such as a
  * page cache (ADR-0064).
  *
- * @api
+ * @internal
  */
 final class PageAttributes
 {

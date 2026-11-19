@@ -27,6 +27,8 @@ use function Laravel\Prompts\confirm;
  * Builds a draft of templates and fields (ADR-0116): lynx/draft.yaml in a short syntax becomes the
  * site's schema, a starting view for each new template with a URL, and the schema files and types
  * the site keeps. In a terminal it shows what changes and asks first.
+ *
+ * @internal
  */
 final class DraftCommand extends Command
 {

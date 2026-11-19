@@ -14,6 +14,8 @@ use Spatie\Honeypot\SpamProtection;
 /**
  * Spam protection for public forms (ADR-0052): Spatie's honeypot and timing check, and Laravel's
  * rate limiter per form and visitor (a hash of the IP, never stored).
+ *
+ * @internal
  */
 trait GuardsSubmissions
 {

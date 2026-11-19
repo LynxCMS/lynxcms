@@ -10,6 +10,7 @@ use Laravel\Mcp\Server\Prompt;
 use LynxCms\Core\Agents\AgentToolkit;
 use Override;
 
+/** @internal */
 final class ContentAssistantPrompt extends Prompt
 {
     #[Override]

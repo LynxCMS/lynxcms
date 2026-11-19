@@ -17,6 +17,8 @@ use LynxCms\Core\Pages\SiblingOrder;
 
 /**
  * Changes a page's position among its siblings. Use pages.move to change the parent.
+ *
+ * @api
  */
 final class SortPage extends Action
 {

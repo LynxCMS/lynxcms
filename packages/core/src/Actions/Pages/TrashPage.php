@@ -24,6 +24,8 @@ use LynxCms\Core\Support\Value;
  * Moves a page and everything under it to the trash (ADR-0035). The branch keeps its pages and
  * values; its top page is renamed "{id}-{name}" so trashed names never clash, and visitors get a
  * 404 at its URLs, old ones included, until pages.restore puts it back.
+ *
+ * @api
  */
 final class TrashPage extends Action
 {

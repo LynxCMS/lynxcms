@@ -17,6 +17,8 @@ use LynxCms\Core\Support\Value;
  * A web address: http or https only, so a link never runs script (javascript:) when a template
  * prints it in an href. With "relative", a path on the site ("/contact/") is accepted too.
  * Can be translatable, for addresses that differ per language.
+ *
+ * @internal
  */
 final class UrlType extends BaseFieldType implements DescribesPhpType, ProvidesSearchText
 {

@@ -15,6 +15,8 @@ use LynxCms\Core\Agents\AgentToolkit;
 /**
  * One MCP tool per registered Lynx action, generated from the action registry (ADR-0015).
  * Every call goes through the ActionRunner: validation, hooks, dry runs and the activity log.
+ *
+ * @internal
  */
 final class ActionTool extends Tool
 {

@@ -27,6 +27,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * no prefix, ADR-0006), the root page, a plain template for a site's first pages, and a hidden
  * "Page not found" page shown for URLs that match nothing (ADR-0085), unless someone already
  * chose one or none. Safe to run twice.
+ *
+ * @api
  */
 final class InstallLynx extends Action
 {

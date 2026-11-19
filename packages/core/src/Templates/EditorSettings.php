@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
  * The page editor settings of a template's fields (ADR-0063): the widths a field may take, and
  * the checks on editor, width and icon.
  *
- * @api
+ * @internal
  */
 final class EditorSettings
 {

@@ -10,6 +10,7 @@ use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Support\Value;
 use LynxCms\Mcp\Http\RequireTokenAbility;
 
+/** @internal */
 final class McpServiceProvider extends ServiceProvider
 {
     public function boot(): void

@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
  * The rule for URL names: lowercase ASCII letters, digits, "-" and "_". pages.save applies it to
  * names and to titles it derives names from; editors use it to preview the URL a page will get.
  *
- * @api
+ * @internal
  */
 final class PageName
 {

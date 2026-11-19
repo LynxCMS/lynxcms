@@ -10,7 +10,7 @@ namespace LynxCms\Finder\Catalog;
  * field of items (images, files, repeaters, matrices), found by how many it holds; Choice is a
  * choice field, compared with one of its options.
  *
- * @api
+ * @internal
  */
 enum Kind: string
 {

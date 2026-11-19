@@ -22,6 +22,8 @@ use Override;
  * agent runs it with dry_run first and shows the plan. A draft that leaves fields out of a
  * template the site has is refused unless prune_fields is given. Where schema editing is off,
  * the runner refuses it as it does every schema action (ADR-0117).
+ *
+ * @api
  */
 final class BuildDraft extends Action
 {

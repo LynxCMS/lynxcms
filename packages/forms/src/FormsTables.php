@@ -7,7 +7,7 @@ namespace LynxCms\Forms;
 /**
  * The forms module's tables.
  *
- * @api
+ * @internal
  */
 final class FormsTables
 {

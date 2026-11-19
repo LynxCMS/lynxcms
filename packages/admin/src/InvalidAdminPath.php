@@ -9,6 +9,6 @@ use InvalidArgumentException;
 /**
  * LYNX_ADMIN_PREFIX (or a path given to lynx:admin-path) is empty or not a URL path.
  *
- * @api
+ * @internal
  */
 final class InvalidAdminPath extends InvalidArgumentException {}

@@ -9,7 +9,7 @@ namespace LynxCms\Core\Schema\Draft;
  * the title among them when the template has one; every other field stays empty. A page the site
  * has already is kept as it is.
  *
- * @api
+ * @internal
  */
 final readonly class DraftPage
 {

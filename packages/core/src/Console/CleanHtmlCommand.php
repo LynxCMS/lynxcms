@@ -12,7 +12,11 @@ use LynxCms\Core\Console\Concerns\TerminalFeedback;
 use LynxCms\Core\Support\Value;
 use Override;
 
-/** Runs fields.clean_html, e.g. once after upgrading from a version without the HTML sanitizer. */
+/**
+ * Runs fields.clean_html, e.g. once after upgrading from a version without the HTML sanitizer.
+ *
+ * @internal
+ */
 final class CleanHtmlCommand extends Command
 {
     use TerminalFeedback;

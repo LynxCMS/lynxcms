@@ -7,7 +7,7 @@ namespace LynxCms\Finder;
 /**
  * The finder module's tables.
  *
- * @api
+ * @internal
  */
 final class FinderTables
 {

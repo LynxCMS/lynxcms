@@ -24,6 +24,8 @@ use LynxCms\Core\Support\Value;
  * page below it. The copy goes under the same parent (or another), named as the original or, when
  * a sibling has that name, "name-copy"; it starts unpublished. Every page is created with
  * pages.save, which checks the user's permissions and the template rules for each one.
+ *
+ * @api
  */
 final class DuplicatePage extends Action
 {

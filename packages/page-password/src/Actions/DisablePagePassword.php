@@ -15,6 +15,8 @@ use LynxCms\PagePassword\PagePasswordSchema;
 /**
  * Takes the password field off a template. Passwords stay stored, but no longer protect pages,
  * until the field comes back.
+ *
+ * @api
  */
 final class DisablePagePassword extends Action
 {

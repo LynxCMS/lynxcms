@@ -29,6 +29,8 @@ use LynxCms\Core\Support\Value;
  * pages.save, or to its draft with pages.save_draft, so revisions and drafts cover them (ADR-0048).
  * Site strings are stored on the home page whichever page they are edited from, and are never
  * drafted: every page shares them.
+ *
+ * @api
  */
 final class SaveStrings extends Action
 {

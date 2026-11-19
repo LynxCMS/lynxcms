@@ -15,6 +15,8 @@ use LynxCms\Seo\SeoSchema;
 /**
  * Removes a template's structured data mapping: its pages keep the site, page and breadcrumb nodes
  * every page has.
+ *
+ * @api
  */
 final class UnmapTemplate extends Action
 {

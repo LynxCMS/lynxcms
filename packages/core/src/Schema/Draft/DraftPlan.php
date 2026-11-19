@@ -9,7 +9,7 @@ namespace LynxCms\Core\Schema\Draft;
  * update, remove, write, keep, refresh), what it acts on and its name. Unchanged fields and templates
  * have no step.
  *
- * @api
+ * @internal
  */
 final readonly class DraftPlan
 {

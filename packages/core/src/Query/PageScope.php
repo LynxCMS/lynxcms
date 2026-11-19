@@ -15,7 +15,7 @@ use LynxCms\Core\Support\Value;
  * null means no limit on that side. A page passes when any rule covers it. No rules: no page.
  * withAncestors() also lets through every page above a covered one, as the way to it in a tree.
  *
- * @api
+ * @internal
  */
 final readonly class PageScope
 {

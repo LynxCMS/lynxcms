@@ -10,7 +10,7 @@ use LynxCms\Core\Support\Value;
  * The users who hold a permission anywhere: through a role granting it, or a superuser role. For
  * modules that tell people about work waiting for them, such as new form submissions.
  *
- * @api
+ * @internal
  */
 final readonly class PermissionHolders
 {

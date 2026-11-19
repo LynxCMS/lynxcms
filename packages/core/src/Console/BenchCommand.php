@@ -13,6 +13,8 @@ use Override;
 
 /**
  * Times typical selectors for the performance spike (phase 9).
+ *
+ * @internal
  */
 final class BenchCommand extends Command
 {

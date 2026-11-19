@@ -18,6 +18,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * The only action that deletes field values left behind by template changes (ADR-0012).
+ *
+ * @api
  */
 final class PurgeOrphanedValues extends Action
 {

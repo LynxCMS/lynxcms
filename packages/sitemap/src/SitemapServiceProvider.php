@@ -25,7 +25,7 @@ use LynxCms\Sitemap\Integrations\SeoIntegration;
  * Registers the sitemap (ADR-0057): /sitemap.xml and its parts, lynx()->sitemap(), the actions
  * (and so their MCP and AI tools), lynx:sitemap and the sitemap.manage permission.
  *
- * @api
+ * @internal
  */
 final class SitemapServiceProvider extends ServiceProvider
 {

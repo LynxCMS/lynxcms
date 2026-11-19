@@ -23,7 +23,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * @phpstan-import-type FieldItem from SchemaSync
  * @phpstan-import-type TemplateItem from SchemaSync
  *
- * @api
+ * @internal
  */
 final readonly class DraftBuilder
 {

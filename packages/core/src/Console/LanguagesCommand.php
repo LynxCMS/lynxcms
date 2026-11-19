@@ -9,6 +9,7 @@ use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use Override;
 
+/** @internal */
 final class LanguagesCommand extends Command
 {
     #[Override]

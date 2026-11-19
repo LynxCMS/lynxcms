@@ -14,6 +14,8 @@ use LynxCms\Core\Actions\Runner\Input;
  * Invites someone to the admin (ADR-0041): creates the host app user with an unusable password,
  * gives them roles and emails a link to choose a password. Superusers only; never an agent tool,
  * since it sends email to any address.
+ *
+ * @api
  */
 final class InviteUser extends Action
 {

@@ -29,7 +29,7 @@ use LynxCms\Core\Support\Value;
  *
  * @phpstan-import-type FieldItem from SchemaSync
  *
- * @api
+ * @internal
  */
 final readonly class DraftShorthand
 {

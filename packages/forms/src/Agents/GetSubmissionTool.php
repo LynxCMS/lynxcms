@@ -13,6 +13,8 @@ use LynxCms\Forms\SubmissionPresenter;
 /**
  * One form submission for agents: every answer as the form asked it, file names, notes, the
  * page and language it came from.
+ *
+ * @internal
  */
 final class GetSubmissionTool extends AgentReadTool
 {

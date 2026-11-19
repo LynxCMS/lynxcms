@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Editor;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -73,7 +74,7 @@ final readonly class PageChoices
         $selector = 'include=all, sort=title, limit='.self::LIMIT
             .($templates === [] ? '' : ', template='.implode('|', $templates))
             .implode('', array_map(fn (int $id): string => ', id!='.$id, $exclude));
-        $options = lynx()->pages->find($selector, scope: $this->access->viewScope())->map($this->option(...));
+        $options = app(PageFinder::class)->find($selector, scope: $this->access->viewScope())->map($this->option(...));
         $missing = array_values(array_diff($chosen, array_column($options, 'id')));
 
         if ($missing !== []) {

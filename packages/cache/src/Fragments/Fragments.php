@@ -19,7 +19,7 @@ use LynxCms\Core\Support\Value;
  * and @lynxCache ... @endLynxCache. Guests share copies per language; signed in users always get
  * a fresh render.
  *
- * @api
+ * @internal
  */
 final class Fragments
 {

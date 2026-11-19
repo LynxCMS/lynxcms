@@ -18,7 +18,7 @@ use LynxCms\Finder\Search\FinderQuery;
  * are incomplete, or name something the catalog lacks, are left out, so editors' words never
  * reach the selector unchecked.
  *
- * @api
+ * @internal
  */
 final readonly class SelectorWriter
 {

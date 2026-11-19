@@ -28,7 +28,7 @@ The design and the decisions behind it live in the plan document and its ADRs. D
 7. **Paths are never deleted on rename or move.** The previous row becomes inactive and redirects.
 8. **Eloquent only for system tables** (`Language`, `Field`, `Template`, `ActivityEvent`, `Setting`, `Role`, `RoleGrant`, `RoleAssignment`). Pages are domain objects hydrated by `PageLoader`.
 9. **The core must not depend on** `laravel/mcp`, `laravel/ai`, Livewire (except the optional `Livewire\UsesLynxPage` trait) or the admin. Architecture tests enforce this.
-10. **Public API is explicit.** Mark classes `@api` or `@internal`. Paid modules may only use `@api` code, and they live in their own private repositories, never in this monorepo.
+10. **Public API is explicit.** Mark every class `@api` or `@internal`; `tests/Unit/PublicApiTest.php` fails on a class with neither. `@api` is a promise to apps and modules from 1.0 on, so mark a class `@api` only when apps or third-party modules need it (ADR-0131): actions, what `lynx()` returns, events, extension points, and what the docs teach. Lynx's own packages may use each other's `@internal` code, as they are released together. Paid modules and the guides' code may only use `@api` code, and paid modules live in their own private repositories, never in this monorepo.
 
 ## Conventions
 

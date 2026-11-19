@@ -13,6 +13,7 @@ use LynxCms\Admin\Livewire\Concerns\ChangesChildren;
 use LynxCms\Admin\Livewire\Concerns\MovesChildren;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Pages\PageArray;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\PageScope;
 
 /**
@@ -119,7 +120,7 @@ final class PageChildren extends Component
             'total' => $total,
             'lastPage' => max(1, (int) ceil($total / self::PER_PAGE)),
             'canReorder' => $this->canReorder(),
-            'childCounts' => lynx()->pages->childCounts($children->ids(), $this->list()->everyChild(), $this->scope()),
+            'childCounts' => app(PageFinder::class)->countByParent($children->ids(), $this->list()->everyChild(), $this->scope()),
             'drafts' => array_flip(lynx()->pages->withDrafts($children->ids())),
             'filters' => array_keys(self::FILTERS),
             'sorts' => array_keys(self::SORTS),
@@ -133,7 +134,7 @@ final class PageChildren extends Component
     {
         $start = ($this->page - 1) * self::PER_PAGE;
 
-        return lynx()->pages->find($this->selector().", start={$start}, limit=".self::PER_PAGE, scope: $this->scope());
+        return app(PageFinder::class)->find($this->selector().", start={$start}, limit=".self::PER_PAGE, scope: $this->scope());
     }
 
     /** The page's children as the tree lists them, narrowed by the search and the status filter. */

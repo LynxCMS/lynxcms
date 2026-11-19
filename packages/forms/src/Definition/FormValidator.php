@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
  * show, each group row on its own, labels as attribute names and messages in the current
  * language. Also splits valid answers into stored values and uploaded files.
  *
- * @api
+ * @internal
  */
 final class FormValidator
 {

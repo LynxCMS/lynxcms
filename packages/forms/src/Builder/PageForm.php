@@ -12,7 +12,7 @@ use LynxCms\Forms\Definition\FormStep;
  * A form made in the builder (ADR-0053): the definition PageFormCompiler reads from a form page,
  * used by everything code forms use (the component, submit, inbox, mail).
  *
- * @api
+ * @internal
  */
 final class PageForm extends Form
 {

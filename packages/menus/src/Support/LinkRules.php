@@ -9,7 +9,7 @@ use LynxCms\Core\Fields\LinkRel;
 /**
  * Safety rules for custom links, applied when saving and again when rendering.
  *
- * @api
+ * @internal
  */
 final class LinkRules
 {

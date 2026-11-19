@@ -12,6 +12,8 @@ use Stringable;
 
 /**
  * Translates a batch of field values with structured output: one property per field.
+ *
+ * @internal
  */
 class TranslatorAgent implements Agent, HasStructuredOutput
 {

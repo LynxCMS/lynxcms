@@ -12,7 +12,7 @@ use LynxCms\Core\Support\Value;
  * with an input for each language. Used for a choice field's options, where rows can also be
  * marked as the default, and a form's options.
  *
- * @api
+ * @internal
  */
 final class ChoicesForm
 {

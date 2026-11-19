@@ -13,6 +13,8 @@ use LynxCms\Forms\SubmissionPresenter;
 /**
  * Form submissions for agents, newest first, each with its first answers: "summarise this
  * week's quote requests".
+ *
+ * @internal
  */
 final class ListSubmissionsTool extends AgentReadTool
 {

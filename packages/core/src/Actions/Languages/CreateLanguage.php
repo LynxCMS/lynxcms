@@ -23,6 +23,8 @@ use Override;
 /**
  * Adds a language at runtime. One INSERT, no schema change (ADR-0003).
  * The first language created becomes the default.
+ *
+ * @api
  */
 final class CreateLanguage extends Action
 {

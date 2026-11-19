@@ -16,6 +16,8 @@ use LynxCms\Core\Support\Value;
 /**
  * An app component (usually Livewire) chosen by editors, with its settings (ADR-0021).
  * Stores {"component": alias, "settings": {...}}. Shared across languages.
+ *
+ * @internal
  */
 final class ComponentType extends BaseFieldType implements DescribesPhpType
 {

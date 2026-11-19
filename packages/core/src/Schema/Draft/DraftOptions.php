@@ -10,7 +10,7 @@ namespace LynxCms\Core\Schema\Draft;
  * A draft that leaves fields out of a template the site has is refused, unless pruning is asked:
  * the template's field list is replaced, so those fields would leave it.
  *
- * @api
+ * @internal
  */
 final readonly class DraftOptions
 {

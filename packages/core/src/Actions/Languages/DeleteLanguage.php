@@ -21,6 +21,8 @@ use Override;
 /**
  * Removes a language and every value, name and path stored in it. The default language
  * can never be deleted. Languages that fell back to it fall back to the default instead.
+ *
+ * @api
  */
 final class DeleteLanguage extends Action
 {

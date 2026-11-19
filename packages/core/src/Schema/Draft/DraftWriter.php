@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @phpstan-import-type FieldItem from SchemaSync
  *
- * @api
+ * @internal
  */
 final readonly class DraftWriter
 {

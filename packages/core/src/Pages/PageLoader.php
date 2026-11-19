@@ -19,7 +19,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * fields set to load with the page and fields asked for ($join) load up front; the others load on
  * first read, still once for the whole batch (ADR-0067). Keeps an identity map for the request.
  *
- * @api
+ * @internal
  */
 final class PageLoader implements Flushable
 {

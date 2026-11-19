@@ -21,6 +21,8 @@ use function Laravel\Prompts\textarea;
 
 /**
  * php artisan lynx:ask "Create a new course from this content and translate it to PT" --file=course.md
+ *
+ * @internal
  */
 final class AskCommand extends Command implements PromptsForMissingInput
 {

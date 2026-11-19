@@ -15,6 +15,8 @@ use LynxCms\Forms\Models\Submission;
 /**
  * Deletes spam and archived submissions older than some days (lynx-forms.purge_after_days), with
  * their files. New and read submissions are never purged.
+ *
+ * @api
  */
 final class PurgeSubmissions extends Action
 {

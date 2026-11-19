@@ -22,6 +22,8 @@ use UnexpectedValueException;
 /**
  * Creates or updates a menu item: a section label, a page (optionally with its child pages)
  * or a custom link. Sorting, moving and deleting items use pages.sort, pages.move and pages.delete.
+ *
+ * @api
  */
 final class SaveMenuItem extends Action
 {

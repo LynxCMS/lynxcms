@@ -17,6 +17,8 @@ use LynxCms\Seo\SeoSchema;
 /**
  * Turns SEO off for a template. Its pages keep their SEO values as orphans (rule 6), so turning
  * it back on brings them back.
+ *
+ * @api
  */
 final class DisableSeo extends Action
 {

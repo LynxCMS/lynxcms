@@ -20,6 +20,8 @@ use stdClass;
  * Runs the stored values of html fields through their field type again, so HTML saved before the
  * sanitizer (or before a stricter one) is cleaned the way a save cleans it today. Only values that
  * change are written.
+ *
+ * @api
  */
 final class CleanHtmlValues extends Action
 {

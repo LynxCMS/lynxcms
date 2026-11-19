@@ -10,7 +10,7 @@ use RuntimeException;
  * An agent run passed lynx.ai.plan_seconds: it holds a database transaction (other writers wait
  * on SQLite), so it stops at its next tool call and everything it did rolls back.
  *
- * @api
+ * @internal
  */
 final class PlanTookTooLong extends RuntimeException
 {

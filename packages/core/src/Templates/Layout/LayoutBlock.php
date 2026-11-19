@@ -7,7 +7,7 @@ namespace LynxCms\Core\Templates\Layout;
 /**
  * One entry of a column: a field on its own, or a section with its fields.
  *
- * @api
+ * @internal
  */
 final class LayoutBlock
 {

@@ -14,7 +14,7 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
  * The short form is checked by its type name only; the long form is checked setting by setting,
  * from each type's settingsSchema().
  *
- * @api
+ * @internal
  */
 final readonly class DraftJsonSchema
 {

@@ -53,7 +53,7 @@ use LynxCms\Core\Support\Value;
  * Registers the page cache (ADR-0064): the middleware, clearing on content changes, the
  * page_cache.* actions (and so their MCP and AI tools), lynx:page-cache and pruning.
  *
- * @api
+ * @internal
  */
 final class CacheServiceProvider extends ServiceProvider
 {

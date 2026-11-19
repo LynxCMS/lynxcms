@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
  * The pages that use a template, which keep it from being deleted: every page, published or not,
  * in the trash too. Drafts don't count; they belong to their page.
  *
- * @api
+ * @internal
  */
 final readonly class TemplateUsage
 {

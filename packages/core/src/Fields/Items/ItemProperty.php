@@ -11,7 +11,7 @@ use LynxCms\Contracts\Fields\Comparison;
  * (HasItemProperties). Lists match with = and != only; translatable properties match the text
  * visitors see, with fallback.
  *
- * @api
+ * @internal
  */
 final readonly class ItemProperty
 {

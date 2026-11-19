@@ -17,6 +17,8 @@ use LynxCms\Forms\SubmissionPresenter;
 /**
  * Mail to the people who handle a form: its answers and a link to the submission in the admin.
  * Files stay on the private disk; the mail only names them. Answers are plain text, never Markdown.
+ *
+ * @internal
  */
 final class SubmissionReceived extends Notification implements ShouldQueue
 {

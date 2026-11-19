@@ -16,6 +16,8 @@ use Stringable;
 /**
  * The built-in Lynx agent (ADR-0020). Its tools are the read tools plus one tool per registered
  * action, exactly like the MCP server.
+ *
+ * @internal
  */
 class CmsAgent implements Agent, HasTools
 {

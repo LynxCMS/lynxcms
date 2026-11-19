@@ -17,7 +17,7 @@ use Override;
  * @property string $email
  * @property Carbon $sent_at
  *
- * @api
+ * @internal
  */
 final class Invitation extends Model
 {

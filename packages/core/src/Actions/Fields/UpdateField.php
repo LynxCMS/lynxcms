@@ -18,6 +18,8 @@ use Override;
 
 /**
  * Changes a field's label or settings. Renaming and changing scope come later (they move data).
+ *
+ * @api
  */
 final class UpdateField extends Action
 {

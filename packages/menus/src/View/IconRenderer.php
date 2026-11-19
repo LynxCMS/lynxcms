@@ -13,7 +13,7 @@ use Illuminate\Support\HtmlString;
  * icon font: <span class="lynx-menu-icon fa fa-home" aria-hidden="true"></span>. Apps that use
  * SVG icons register their own renderer, e.g. lynx()->menus()->renderIconsUsing(fn ($icon) => svg($icon)).
  *
- * @api
+ * @internal
  */
 final class IconRenderer
 {

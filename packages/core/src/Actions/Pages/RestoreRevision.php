@@ -19,6 +19,8 @@ use LynxCms\Core\Strings\PageStringEdits;
  * current values become a revision too. Fields the template no longer has are skipped; values
  * the revision did not have are cleared. The page's own template strings come back too (ADR-0048),
  * unless the revision predates them.
+ *
+ * @api
  */
 final class RestoreRevision extends Action
 {

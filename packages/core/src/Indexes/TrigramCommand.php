@@ -7,7 +7,11 @@ namespace LynxCms\Core\Indexes;
 use Illuminate\Console\Command;
 use Override;
 
-/** Installs pg_trgm and gives every text field a trigram index (PostgreSQL only). */
+/**
+ * Installs pg_trgm and gives every text field a trigram index (PostgreSQL only).
+ *
+ * @internal
+ */
 final class TrigramCommand extends Command
 {
     #[Override]

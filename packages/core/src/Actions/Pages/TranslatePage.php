@@ -35,6 +35,8 @@ use LynxCms\Core\Translation\TranslationProviders;
  * own source text, and names nothing (ADR-0100). A dry run counts the texts and calls no provider.
  * Texts inside items, options and the page's own template texts are translated where missing
  * (ADR-0105).
+ *
+ * @api
  */
 final class TranslatePage extends Action
 {

@@ -24,6 +24,8 @@ use LynxCms\Core\Templates\FamilyRules;
 /**
  * Moves a page (and its subtree) under another parent. Old paths stay and redirect.
  * Reordering among the current siblings is pages.sort.
+ *
+ * @api
  */
 final class MovePage extends Action
 {

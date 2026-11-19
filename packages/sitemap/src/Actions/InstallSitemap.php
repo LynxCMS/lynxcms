@@ -17,6 +17,8 @@ use LynxCms\Sitemap\SitemapSchema;
 /**
  * Creates the sitemap settings fields, template and hidden system page. Safe to run again. The
  * sitemap itself works without it, from the config alone.
+ *
+ * @api
  */
 final class InstallSitemap extends Action
 {

@@ -18,6 +18,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Creates or updates a role and replaces its grants (ADR-0033). Superusers only.
+ *
+ * @api
  */
 final class SaveRole extends Action
 {

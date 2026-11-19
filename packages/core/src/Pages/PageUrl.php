@@ -9,7 +9,7 @@ namespace LynxCms\Core\Pages;
  * as Laravel writes them, unless "lynx.trailing_slash" is true, as ProcessWire writes them
  * (ADR-0065). The home page is always "/". Both forms resolve to the page either way.
  *
- * @api
+ * @internal
  */
 final class PageUrl
 {

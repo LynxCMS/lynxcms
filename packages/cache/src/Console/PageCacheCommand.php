@@ -21,6 +21,8 @@ use function Laravel\Prompts\multiselect;
 
 /**
  * lynx:page-cache: clear, prune, warm or count stored pages, and compile the settings serve.php reads.
+ *
+ * @internal
  */
 final class PageCacheCommand extends Command
 {

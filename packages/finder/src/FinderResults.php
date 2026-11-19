@@ -8,6 +8,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Tree\TreeFilters;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Finder\Search\FinderQuery;
 
 /**
@@ -46,6 +47,6 @@ final readonly class FinderResults
     {
         $scope = $this->access->viewScope();
 
-        return lynx()->pages->find(new TreeFilters($scope)->within($terms), scope: $scope);
+        return app(PageFinder::class)->find(new TreeFilters($scope)->within($terms), scope: $scope);
     }
 }

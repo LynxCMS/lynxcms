@@ -15,6 +15,8 @@ use LynxCms\Seo\SeoData;
 /**
  * A page's SEO as search engines and social networks get it: title, description, canonical URL,
  * robots rule, share image and language links, in one language.
+ *
+ * @internal
  */
 final class InspectSeoTool extends AgentReadTool
 {

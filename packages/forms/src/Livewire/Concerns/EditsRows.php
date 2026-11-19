@@ -11,6 +11,8 @@ use LynxCms\Forms\Definition\FormField;
 /**
  * Rows of group fields (deliverables, people…): added, removed and sorted by the visitor. Each
  * row keeps a "_key" for wire:key; it is not a field, so it is never stored.
+ *
+ * @internal
  */
 trait EditsRows
 {

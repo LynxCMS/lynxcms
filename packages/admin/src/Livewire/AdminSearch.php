@@ -10,6 +10,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\SelectorException;
 
 /**
@@ -75,7 +76,7 @@ final class AdminSearch extends Component
         }
 
         try {
-            $pages = lynx()->pages->find(self::selector($this->query), maxLimit: self::MAX_LIMIT, defaultLimit: self::LIMIT, scope: $this->access->viewScope());
+            $pages = app(PageFinder::class)->find(self::selector($this->query), maxLimit: self::MAX_LIMIT, defaultLimit: self::LIMIT, scope: $this->access->viewScope());
         } catch (SelectorException $exception) {
             return [[], 0, $exception->getMessage()];
         }

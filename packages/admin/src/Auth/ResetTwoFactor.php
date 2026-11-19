@@ -19,6 +19,8 @@ use LynxCms\Core\Support\Value;
  * Turns off a user's two-factor authentication (ADR-0128), for someone who lost their phone and
  * their recovery codes. When the admin requires it, they set it up again on their next visit.
  * Superusers only (the console is one, for a superuser locked out); never an agent tool.
+ *
+ * @api
  */
 final class ResetTwoFactor extends Action
 {

@@ -13,6 +13,7 @@ use Override;
 
 use function Laravel\Prompts\confirm;
 
+/** @internal */
 final class SchemaApplyCommand extends Command
 {
     use AsksInTerminal;

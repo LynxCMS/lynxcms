@@ -19,7 +19,7 @@ use LynxCms\Seo\Support\SiteSettings;
  * Works out a page's SEO in the current language: its own SEO fields first, then its content,
  * then the site-wide settings (ADR-0055).
  *
- * @api
+ * @internal
  */
 final readonly class SeoResolver
 {

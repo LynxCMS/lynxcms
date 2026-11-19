@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Required. Resolves the request language (ADR-0007): URL prefix first; without a prefix the
  * session, then the logged-in user's language, then the default. Sets LanguageContext and
  * Laravel's locale, and stores the path without prefix in the "lynx.path" request attribute.
+ *
+ * @internal
  */
 final readonly class DetectLocale
 {

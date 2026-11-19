@@ -7,7 +7,7 @@ namespace LynxCms\Finder\Catalog;
 /**
  * How a finder condition compares. The values are the keys searches store, so they never change.
  *
- * @api
+ * @internal
  */
 enum Operator: string
 {

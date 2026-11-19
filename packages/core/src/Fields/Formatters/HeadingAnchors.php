@@ -11,6 +11,8 @@ use LynxCms\Contracts\Fields\FormatContext;
  * Gives each h2, h3 and h4 an id made from its text ("Opening hours" gets id="opening-hours"), so
  * links can point at a section: /about/#opening-hours. Ids are unique within the text. The admin's
  * link dialog lists the same ids with anchors().
+ *
+ * @internal
  */
 final class HeadingAnchors extends TextFormatter
 {

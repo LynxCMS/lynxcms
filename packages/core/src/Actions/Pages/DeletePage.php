@@ -20,6 +20,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Permanently deletes a page and everything under it (trash comes later).
+ *
+ * @api
  */
 final class DeletePage extends Action
 {

@@ -20,6 +20,8 @@ use LynxCms\Forms\FormSchema;
 /**
  * Installs the form builder (ADR-0053): its fields, templates and the hidden page that holds the
  * forms. Runs the first time a form is created; safe to run again.
+ *
+ * @api
  */
 final class InstallForms extends Action
 {

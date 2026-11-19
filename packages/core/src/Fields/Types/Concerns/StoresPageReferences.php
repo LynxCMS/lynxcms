@@ -21,6 +21,8 @@ use stdClass;
 /**
  * Ordered page ids, one row each, shared across languages: how page references and page tables
  * store, compare and present their pages (ADR-0042).
+ *
+ * @internal
  */
 trait StoresPageReferences
 {

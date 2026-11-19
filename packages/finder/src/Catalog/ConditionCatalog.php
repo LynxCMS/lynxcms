@@ -21,7 +21,7 @@ use LynxCms\Core\Support\Value;
  * out; fields of items, such as images and repeaters, are compared by how many items they hold;
  * choice fields offer their options). Each comes with the operators its kind offers.
  *
- * @api
+ * @internal
  */
 final class ConditionCatalog
 {

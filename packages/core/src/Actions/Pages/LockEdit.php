@@ -15,6 +15,8 @@ use LynxCms\Core\Pages\EditLocks;
 /**
  * Takes or renews the edit lock on a page (ADR-0037), so nobody else saves it while it is open
  * in an editor. Refused while someone else holds a lock that has not expired.
+ *
+ * @api
  */
 final class LockEdit extends Action
 {

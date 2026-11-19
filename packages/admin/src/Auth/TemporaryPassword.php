@@ -16,7 +16,7 @@ use Override;
  * @property string $user_id
  * @property Carbon $expires_at
  *
- * @api
+ * @internal
  */
 final class TemporaryPassword extends Model
 {

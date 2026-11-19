@@ -9,7 +9,7 @@ namespace LynxCms\Seo\JsonLd;
  * kind of value each takes. Dotted properties build nested nodes (address.streetAddress makes a
  * PostalAddress); a list property takes a repeater or matrix, one node per enabled item.
  *
- * @api
+ * @internal
  */
 final class SchemaTypes
 {

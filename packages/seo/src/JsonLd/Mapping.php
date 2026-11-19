@@ -9,7 +9,7 @@ namespace LynxCms\Seo\JsonLd;
  * from. Sources are a field name, a subfield of a list property's repeater, a built-in such as
  * "@title", or a constant written "=EUR".
  *
- * @api
+ * @internal
  */
 final readonly class Mapping
 {

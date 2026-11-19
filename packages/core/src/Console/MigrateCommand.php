@@ -15,6 +15,8 @@ use function Laravel\Prompts\confirm;
 /**
  * Runs the pending migrations of Lynx packages, after the user confirms the database is backed
  * up. The app's own migrations are left to php artisan migrate.
+ *
+ * @internal
  */
 final class MigrateCommand extends Command
 {

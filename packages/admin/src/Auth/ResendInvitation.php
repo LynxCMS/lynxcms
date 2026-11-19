@@ -16,6 +16,8 @@ use LynxCms\Core\Support\Value;
 /**
  * Emails a pending invitation again with a new link (ADR-0041); the old link stops working.
  * Superusers only; never an agent tool.
+ *
+ * @api
  */
 final class ResendInvitation extends Action
 {

@@ -25,7 +25,7 @@ use LynxCms\Core\Support\Value;
  * (ADR-0033), invite new ones (ADR-0041) or add them with temporary passwords (ADR-0126).
  * Superusers only.
  *
- * @api
+ * @internal
  */
 final class UserRoles extends Component
 {

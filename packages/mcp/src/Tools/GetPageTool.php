@@ -12,6 +12,7 @@ use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Support\Value;
 use Override;
 
+/** @internal */
 final class GetPageTool extends Tool
 {
     use ActsForUser;

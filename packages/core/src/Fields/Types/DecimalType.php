@@ -15,6 +15,8 @@ use LynxCms\Core\Support\Value;
  * A number with decimals, such as a price or a rating. Shared across languages. Stored in a
  * fixed decimal column and rounded to the field's "places" on save, so changing "places" later
  * needs no table change. Templates read a float.
+ *
+ * @internal
  */
 final class DecimalType extends BaseFieldType implements DescribesPhpType
 {

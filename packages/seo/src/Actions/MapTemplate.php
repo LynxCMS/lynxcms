@@ -21,6 +21,8 @@ use LynxCms\Seo\SeoSchema;
  *
  * @organization, or =a fixed value). Replaces the template's mapping; others stay. The settings
  * page's validation refuses a mapping that would make broken structured data.
+ *
+ * @api
  */
 final class MapTemplate extends Action
 {

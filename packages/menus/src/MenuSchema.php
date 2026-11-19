@@ -8,7 +8,7 @@ namespace LynxCms\Menus;
  * Names of the templates and fields the menu module installs. Menus are pages (ADR-0008):
  * a hidden system page holds one "menu" page per menu, whose descendants are "menu-item" pages.
  *
- * @api
+ * @internal
  */
 final class MenuSchema
 {

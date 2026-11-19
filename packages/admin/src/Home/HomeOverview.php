@@ -14,6 +14,7 @@ use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\ScheduleReader;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\PageScope;
 use LynxCms\Core\Support\Value;
 
@@ -49,7 +50,7 @@ final readonly class HomeOverview
      */
     public function drafts(): array
     {
-        $found = lynx()->pages->find($this->filters->selector(TreeFilters::DRAFTS).', sort=-modified, limit='.self::LIMIT, scope: $this->scope);
+        $found = app(PageFinder::class)->find($this->filters->selector(TreeFilters::DRAFTS).', sort=-modified, limit='.self::LIMIT, scope: $this->scope);
         $pages = [];
 
         foreach ($found as $page) {
@@ -68,7 +69,7 @@ final readonly class HomeOverview
      */
     public function upcoming(): array
     {
-        $ids = lynx()->pages->find($this->filters->selector(TreeFilters::SCHEDULED).', limit='.self::SCHEDULED_PAGES, scope: $this->scope)->ids();
+        $ids = app(PageFinder::class)->find($this->filters->selector(TreeFilters::SCHEDULED).', limit='.self::SCHEDULED_PAGES, scope: $this->scope)->ids();
         $labels = $this->languageLabels();
         $entries = $this->schedules->upcoming($ids, self::LIMIT * max(1, count($labels)));
         $pages = $this->pages(array_column($entries, 'page'));
@@ -121,7 +122,7 @@ final readonly class HomeOverview
     {
         $pages = [];
 
-        foreach (lynx()->pages->find($this->filters->among($ids).', limit='.max(1, count($ids)), scope: $this->scope) as $page) {
+        foreach (app(PageFinder::class)->find($this->filters->among($ids).', limit='.max(1, count($ids)), scope: $this->scope) as $page) {
             $pages[(int) $page->id] = $page;
         }
 

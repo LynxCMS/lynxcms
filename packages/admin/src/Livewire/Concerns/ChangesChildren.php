@@ -12,6 +12,8 @@ use LynxCms\Core\Pages\PageStatus;
 /**
  * Status changes and trash for the Children tab: one child at a time from its row, or the selected
  * ones at once (ChangesPages). Ids come from the browser, so each must be a child of the page.
+ *
+ * @internal
  */
 trait ChangesChildren
 {

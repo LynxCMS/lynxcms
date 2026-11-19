@@ -20,7 +20,7 @@ use Stringable;
  * tags, cut to MAX_LENGTH characters. Fields the page's template lacks, and values with no short
  * form (images, repeaters), are empty.
  *
- * @api
+ * @internal
  */
 final class ShortValue
 {

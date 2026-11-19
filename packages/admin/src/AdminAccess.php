@@ -34,6 +34,8 @@ final readonly class AdminAccess
     /**
      * The pages the page tree shows: those the user may view or act on (any page action) and the
      * pages above them, as the way there; null shows every page.
+     *
+     * @internal
      */
     public function treeScope(): ?PageScope
     {
@@ -52,7 +54,11 @@ final readonly class AdminAccess
         return PageScope::union(...$scopes)->withAncestors();
     }
 
-    /** The pages the user may view, for search results such as page pickers; null for all. */
+    /**
+     * The pages the user may view, for search results such as page pickers; null for all.
+     *
+     * @internal
+     */
     public function viewScope(): ?PageScope
     {
         return $this->authorizer->scopeOf($this->actor(), 'pages.view');

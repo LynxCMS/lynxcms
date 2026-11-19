@@ -13,6 +13,8 @@ use Override;
 
 /**
  * lynx:sitemap: the sitemap's parts and their URLs; --clear drops the cache, --warm builds every file.
+ *
+ * @internal
  */
 final class SitemapCommand extends Command
 {

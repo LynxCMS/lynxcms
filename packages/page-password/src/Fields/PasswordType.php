@@ -19,7 +19,7 @@ use LynxCms\PagePassword\StoredPassword;
  * written to the search index. Read tools, history and content packages see only the
  * encrypted value.
  *
- * @api
+ * @internal
  */
 final class PasswordType extends BaseFieldType implements DescribesPhpType, PresentsValue
 {

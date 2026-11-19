@@ -18,6 +18,8 @@ use LynxCms\Core\Support\Value;
 /**
  * Saves the page cache's template rules and default lifetime on its settings page. Rules saved
  * here win over lynx-cache.pages.templates for the same template; "*" is every other template.
+ *
+ * @api
  */
 final class SavePageCacheRules extends Action
 {

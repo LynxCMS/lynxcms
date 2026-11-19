@@ -28,7 +28,7 @@ use LynxCms\Core\Templates\TemplateField;
  * list with per template overrides (label, description, required, searchable, show_if, required_if) and saves it
  * in one templates.update, whose errors show above the list. Family and delete: ManagesTemplateFamily.
  *
- * @api
+ * @internal
  */
 final class TemplateForm extends Component
 {

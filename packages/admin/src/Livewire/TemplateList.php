@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
 /**
  * Setup > Templates: every template with its number of fields and pages and its flags.
  *
- * @api
+ * @internal
  */
 final class TemplateList extends Component
 {

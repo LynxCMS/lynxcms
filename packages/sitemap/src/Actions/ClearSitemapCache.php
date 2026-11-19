@@ -13,6 +13,8 @@ use LynxCms\Sitemap\SitemapCache;
 /**
  * Drops the built sitemap, so the next request builds it again. Content changes do this on their
  * own; this is for changes Lynx cannot see, such as a new config value.
+ *
+ * @api
  */
 final class ClearSitemapCache extends Action
 {

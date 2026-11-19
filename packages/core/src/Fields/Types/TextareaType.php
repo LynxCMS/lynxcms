@@ -18,7 +18,11 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Pages\SharedValue;
 use LynxCms\Core\Support\Value;
 
-/** Multi-line text: plain, HTML (rich text) or Markdown. Translatable. */
+/**
+ * Multi-line text: plain, HTML (rich text) or Markdown. Translatable.
+ *
+ * @internal
+ */
 final class TextareaType extends BaseFieldType implements DescribesPhpType, PresentsValue, ProvidesSearchText
 {
     use PresentsSharedText;

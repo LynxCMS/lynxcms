@@ -37,6 +37,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The pagePassword module (documentation/plans/page-passwords.md): the password field type, the
  * actions that add it to templates, and the visibility rule that hides locked pages.
+ *
+ * @internal
  */
 final class PagePasswordServiceProvider extends ServiceProvider
 {

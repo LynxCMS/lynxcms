@@ -16,7 +16,7 @@ use LynxCms\Core\Models\Setting;
  * Saves the language a signed-in editor reads the admin in (ADR-0097). Empty goes back to the
  * admin's default. Personal, so it is not an agent tool and stays out of the activity log.
  *
- * @api
+ * @internal
  */
 final class SaveAdminLocale extends Action
 {

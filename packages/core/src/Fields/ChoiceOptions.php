@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
  * their settings and form fields in their values. Rows without a label are dropped; an empty value
  * is made from the default language's label.
  *
- * @api
+ * @internal
  */
 final class ChoiceOptions
 {

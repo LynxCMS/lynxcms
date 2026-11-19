@@ -20,6 +20,8 @@ use LynxCms\Core\Support\Value;
  * Deletes trashed branches for good (ADR-0035): all of them, or one. A branch holding a locked
  * page stays, and the result names its locked pages so they can be unlocked; a branch the user
  * may not delete stays too. Everything else is deleted, never a general failure.
+ *
+ * @api
  */
 final class EmptyTrash extends Action
 {

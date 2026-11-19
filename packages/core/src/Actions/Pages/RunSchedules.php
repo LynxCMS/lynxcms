@@ -22,6 +22,8 @@ use stdClass;
  * oldest first. An entry that cannot
  * run, such as one for a locked page, is marked failed with the reason and not tried again; the
  * others still run. lynx:schedule:run calls it every minute.
+ *
+ * @api
  */
 final class RunSchedules extends Action
 {

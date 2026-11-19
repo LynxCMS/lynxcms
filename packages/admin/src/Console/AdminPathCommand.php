@@ -17,6 +17,8 @@ use Override;
  * Shows the admin's address, or moves the admin (ADR-0122): to a chosen path such as "admin",
  * on a site that needs /lynx for a page, or to a random one that is hard to guess. It writes
  * LYNX_ADMIN_PREFIX to .env, as key:generate writes APP_KEY, and refuses a path a page uses.
+ *
+ * @internal
  */
 final class AdminPathCommand extends Command
 {

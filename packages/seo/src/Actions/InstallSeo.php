@@ -18,6 +18,8 @@ use LynxCms\Seo\SeoSchema;
 /**
  * Creates the SEO fields, the settings template and its hidden system page (ADR-0055).
  * Safe to run again: anything that exists is left alone, and fields added since are added.
+ *
+ * @api
  */
 final class InstallSeo extends Action
 {

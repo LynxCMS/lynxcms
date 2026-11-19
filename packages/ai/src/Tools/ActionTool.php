@@ -15,6 +15,8 @@ use LynxCms\Core\Support\Value;
 /**
  * A Lynx action as a laravel/ai tool, generated from the same registry as the MCP tools.
  * Every successful call is recorded in the session so the plan can be shown and replayed.
+ *
+ * @internal
  */
 final readonly class ActionTool implements Tool
 {

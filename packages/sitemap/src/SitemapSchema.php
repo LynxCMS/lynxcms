@@ -8,7 +8,7 @@ namespace LynxCms\Sitemap;
  * Names of the fields and the template the sitemap module installs (ADR-0057). Its settings live
  * on a hidden system page (ADR-0008).
  *
- * @api
+ * @internal
  */
 final class SitemapSchema
 {

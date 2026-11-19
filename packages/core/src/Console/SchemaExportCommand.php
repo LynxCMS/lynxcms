@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use LynxCms\Core\Schema\SchemaSync;
 use Override;
 
+/** @internal */
 final class SchemaExportCommand extends Command
 {
     #[Override]

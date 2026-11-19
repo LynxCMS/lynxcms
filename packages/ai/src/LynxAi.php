@@ -25,6 +25,8 @@ use Throwable;
  *
  * By default the agent works in plan mode: its actions run inside a transaction that is rolled
  * back, and apply() replays them once approved (ADR-0020).
+ *
+ * @api
  */
 final readonly class LynxAi
 {

@@ -17,6 +17,8 @@ use LynxCms\Core\Support\Value;
  * the field's "types", and shows that type's fields. Types are stable slugs, so reordering or
  * importing them never changes what an item is. An item changing type keeps the other type's
  * values, hidden (rule 6).
+ *
+ * @internal
  */
 final class MatrixType extends ItemFieldType
 {

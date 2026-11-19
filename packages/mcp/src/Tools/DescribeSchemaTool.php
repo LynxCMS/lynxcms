@@ -10,6 +10,7 @@ use Laravel\Mcp\Server\Tool;
 use LynxCms\Core\Agents\AgentToolkit;
 use Override;
 
+/** @internal */
 final class DescribeSchemaTool extends Tool
 {
     use ActsForUser;

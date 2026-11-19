@@ -33,7 +33,7 @@ use Throwable;
  * @phpstan-type TemplateItem array{uuid: string, name: string, label: string|array<string, string>, settings: array<string, mixed>, fields: list<mixed>}
  * @phpstan-type SchemaFiles array{languages: list<LanguageItem>, fields: list<FieldItem>, templates: list<TemplateItem>}
  *
- * @api
+ * @internal
  */
 final readonly class SchemaSync
 {

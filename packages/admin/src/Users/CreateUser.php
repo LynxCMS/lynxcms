@@ -19,6 +19,8 @@ use LynxCms\Core\Support\Value;
  * Creates an account in the host app's users with a password and roles, as lynx:superuser does for
  * a site's first superuser (ADR-0079). Superusers only (the console is one), and never an agent
  * tool: passwords don't go through agents. The password is never recorded.
+ *
+ * @api
  */
 final class CreateUser extends Action
 {

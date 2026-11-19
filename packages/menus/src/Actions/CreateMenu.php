@@ -18,6 +18,8 @@ use UnexpectedValueException;
 
 /**
  * Creates a menu, installing the menu builder first when needed.
+ *
+ * @api
  */
 final class CreateMenu extends Action
 {

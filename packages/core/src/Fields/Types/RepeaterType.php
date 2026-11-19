@@ -13,6 +13,8 @@ use LynxCms\Core\Support\Value;
 /**
  * A list of items with the same fields, ProcessWire style: ordered, each switchable on and off
  * (ADR-0044). Items reuse existing fields, so their types, settings and translations apply.
+ *
+ * @internal
  */
 final class RepeaterType extends ItemFieldType
 {

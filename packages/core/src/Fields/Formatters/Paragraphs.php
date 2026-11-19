@@ -8,6 +8,8 @@ use LynxCms\Contracts\Fields\FormatContext;
 
 /**
  * Plain text to paragraphs: a blank line starts a paragraph, a single line break becomes <br>.
+ *
+ * @internal
  */
 final class Paragraphs extends TextFormatter
 {

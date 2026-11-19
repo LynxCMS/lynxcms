@@ -19,7 +19,7 @@ use LynxCms\Core\Pages\Page;
  * The Revisions section of the editor's Settings tab (ADR-0038): the page's saved versions,
  * each comparable with the page in the review table and restorable as a new save.
  *
- * @api
+ * @internal
  */
 final class PageRevisions extends Component
 {

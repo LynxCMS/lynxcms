@@ -20,6 +20,8 @@ use LynxCms\Core\Support\Value;
  * Drops stored pages so the next visits render them again: every page, some pages, or the pages
  * of one template; or stored fragments, all or by name. Content changes clear on their own; this is for changes Lynx cannot see, such
  * as a deploy that changed Blade files.
+ *
+ * @api
  */
 final class ClearPageCache extends Action
 {

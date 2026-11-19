@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Editor;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
+use LynxCms\Core\Query\PageFinder;
 
 /**
  * Finds pages for the admin's pickers (page reference fields, the link dialog, the menu editor):
@@ -54,6 +55,6 @@ final readonly class PageSearch
 
     private function select(string $selector): PageArray
     {
-        return lynx()->pages->find($selector, scope: $this->access->viewScope());
+        return app(PageFinder::class)->find($selector, scope: $this->access->viewScope());
     }
 }

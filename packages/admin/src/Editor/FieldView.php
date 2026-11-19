@@ -12,7 +12,7 @@ use LynxCms\Core\Templates\FieldDisplay;
  * have a single entry under the default language code). isSearchable: its text goes into the
  * search index (ADR-0120).
  *
- * @api
+ * @internal
  */
 final readonly class FieldView
 {

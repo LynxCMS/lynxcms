@@ -34,7 +34,6 @@ use LynxCms\Core\Pages\TranslationStates;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Query\Backlinks;
 use LynxCms\Core\Query\PageFinder;
-use LynxCms\Core\Query\PageScope;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
 use UnexpectedValueException;
@@ -100,11 +99,10 @@ final readonly class PagesApi
      * an API, an agent) so it cannot ask for every page at once.
      *
      * @param  list<string>  $with  page-reference fields to eager load
-     * @param  PageScope|null  $scope  only pages these grants cover (Authorizer::scopeOf())
      */
-    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null, ?PageScope $scope = null): PageArray
+    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null): PageArray
     {
-        return $this->finder->find($selector, $with, $maxLimit, $defaultLimit, $scope);
+        return $this->finder->find($selector, $with, $maxLimit, $defaultLimit);
     }
 
     public function findOne(string $selector): ?Page
@@ -158,12 +156,11 @@ final readonly class PagesApi
      * e.g. "include=all".
      *
      * @param  list<int>  $parentIds
-     * @param  PageScope|null  $scope  count only the pages these grants cover (Authorizer::scopeOf())
      * @return array<int, int>
      */
-    public function childCounts(array $parentIds, string $selector = '', ?PageScope $scope = null): array
+    public function childCounts(array $parentIds, string $selector = ''): array
     {
-        return $this->finder->countByParent($parentIds, $selector, $scope);
+        return $this->finder->countByParent($parentIds, $selector);
     }
 
     /**

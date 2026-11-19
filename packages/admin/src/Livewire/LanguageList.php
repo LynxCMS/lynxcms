@@ -13,7 +13,7 @@ use LynxCms\Core\Support\Value;
 /**
  * Setup > Languages: every language with its URL prefix, fallback and tab label (ADR-0003).
  *
- * @api
+ * @internal
  */
 final class LanguageList extends Component
 {

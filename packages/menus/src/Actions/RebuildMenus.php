@@ -19,6 +19,8 @@ use LynxCms\Menus\Reading\MenuBuilds;
  * Drops stored menus (ADR-0068) so the next visit builds them again from their items and the pages
  * they link. Changes made through Lynx already do this; it is for changes Lynx cannot see, such as
  * pages edited with SQL or an imported database.
+ *
+ * @api
  */
 final class RebuildMenus extends Action
 {

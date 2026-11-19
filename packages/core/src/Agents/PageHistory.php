@@ -18,7 +18,7 @@ use LynxCms\Core\Support\Value;
  * agent knows before renaming or deleting), its latest activity and revisions, and whether it has
  * a draft. What the admin's Settings tab shows, as data.
  *
- * @api
+ * @internal
  */
 final readonly class PageHistory
 {
