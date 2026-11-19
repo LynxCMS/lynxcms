@@ -50,13 +50,11 @@ use LynxCms\Contracts\Actions\Actor;
 lynx()->actingAs(Actor::system(), fn () => $session->save());
 ```
 
-On your own machine, `LYNX_OPEN_UNTIL_ROLES=true` brings back the open mode of older releases: until any user has a role, every signed in user may do everything. Never set it on a server others can reach.
-
 ## People who sign up
 
-Install also creates a `guest` role with no grants. If your app lets visitors sign up (Fortify, Breeze or your own registration), Lynx gives each new user the `guest` role when Laravel's `Registered` event fires. They see the website like any visitor, and the admin answers 403. Users who already hold a role keep their roles.
+If your app lets visitors sign up (Fortify, Breeze or your own registration), the new users get no role. A user without a role has no rights, so they see the website like any visitor, and the admin answers 403.
 
-Set `LYNX_REGISTRATION_ROLE` to give sign-ups another role, such as one with grants of your own, or to `null` to give them none.
+To give sign-ups a role, such as one with grants of your own, set `LYNX_REGISTRATION_ROLE` to its name. Lynx assigns it when Laravel's `Registered` event fires. Users who already hold a role keep their roles.
 
 ## Checking permissions
 

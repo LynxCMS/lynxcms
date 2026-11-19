@@ -22,7 +22,7 @@ use LynxCms\Core\Permissions\RoleAssignment;
  */
 
 beforeEach(function (): void {
-    config(['lynx.permissions.open_until_roles' => false]);
+    app(Authorizer::class)->openForTests(false);
     courseSite();
     createCourses('alpha');
 });
@@ -110,8 +110,8 @@ it('lets code run as the system for a visitor when it asks to', function (): voi
     expect((string) lynx()->pages->get('/courses/alpha/')?->title)->toBe('Booked');
 });
 
-it('keeps the old open mode for signed in users, never for visitors, when asked', function (): void {
-    config(['lynx.permissions.open_until_roles' => true]);
+it('lets Lynx\'s own tests open the checks for signed in users, never for visitors', function (): void {
+    app(Authorizer::class)->openForTests();
     $authorizer = app(Authorizer::class);
     $authorizer->flush();
 
@@ -127,3 +127,9 @@ it('warns on install when no one is a superuser, and not once someone is', funct
     $this->artisan('lynx:install', ['--no-interaction' => true])->expectsOutputToContain('No one is a superuser yet')->assertSuccessful();
     $this->artisan('lynx:install', ['--user' => userAccount()])->doesntExpectOutputToContain('No one is a superuser yet')->assertSuccessful();
 });
+
+it('never opens the checks outside unit tests', function (): void {
+    app()['env'] = 'production';
+
+    app(Authorizer::class)->openForTests();
+})->throws(LogicException::class);

@@ -80,16 +80,13 @@ return [
     'edit_lock_seconds' => (int) env('LYNX_EDIT_LOCK_SECONDS', 120),
 
     'permissions' => [
-        // A user without a role has no rights (ADR-0078). True brings back the old open mode, where
-        // every signed in user may do everything until any user has a role: local work only.
-        'open_until_roles' => (bool) env('LYNX_OPEN_UNTIL_ROLES', false),
-
         // Role given to MCP clients and agents that act for no user. Null refuses them.
         'anonymous_role' => env('LYNX_ANONYMOUS_ROLE'),
 
-        // Role given to people who sign up on the site (Laravel's Registered event). "guest"
-        // grants nothing: the website, never the admin. Null gives none (ADR-0073).
-        'registration_role' => env('LYNX_REGISTRATION_ROLE', 'guest'),
+        // Role given to people who sign up on the site (Laravel's Registered event), such as one
+        // with grants of your own. Null gives none: a user without a role has no rights, so they
+        // see the website and never the admin (ADR-0127).
+        'registration_role' => env('LYNX_REGISTRATION_ROLE'),
     ],
 
     'search' => [

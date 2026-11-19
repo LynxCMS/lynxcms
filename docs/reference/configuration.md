@@ -30,9 +30,8 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `revisions.keep` | `50` | Revisions kept per page. |
 | `search.reduce_plurals` | `true` (`LYNX_SEARCH_REDUCE_PLURALS`) | Search finds singular and plural forms in the languages Lynx has rules for (see [Search in your languages](/basics/languages#search-in-your-languages)). Run `lynx:search-index` after changing it. |
 | `edit_lock_seconds` | `120` | How long an editor's lock lasts without renewal. |
-| `permissions.open_until_roles` | `false` | Every signed in user may do everything until any user has a role (`LYNX_OPEN_UNTIL_ROLES`); local work only. |
 | `permissions.anonymous_role` | `null` | Role for MCP clients and agents acting for no user. |
-| `permissions.registration_role` | `guest` | Role for people who sign up (`LYNX_REGISTRATION_ROLE`); `null` gives none. |
+| `permissions.registration_role` | none | Role for people who sign up (`LYNX_REGISTRATION_ROLE`). Without it they get no role, and so no rights. |
 | `agents.allowed_languages` | `[]` | Languages agents may write; empty means all. |
 | `agents.default_limit`, `agents.max_limit` | `25`, `100` | Page limits for agent searches. |
 | `mcp.web.enabled` | `false` | Serve the MCP server over HTTP at `mcp.web.path`. |
