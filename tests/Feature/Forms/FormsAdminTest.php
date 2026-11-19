@@ -100,7 +100,7 @@ it('serves files only to users who may see submissions', function (): void {
     $file = $this->ana->files->first();
     $url = route('lynx.admin.forms.file', [$this->ana->uuid, $file->id]);
 
-    $this->get($url)->assertOk()->assertDownload('brief.pdf');
+    $this->get($url)->assertOk()->assertDownload('brief.pdf')->assertHeader('X-Content-Type-Options', 'nosniff');
 
     formRoles();
     $this->actingAs(new GenericUser(['id' => 3]));

@@ -24,7 +24,7 @@ final class TemporaryPasswords
     /** Letters in both cases, digits and symbols. */
     public const int LENGTH = 20;
 
-    private const int DEFAULT_DAYS = 3;
+    private const int DEFAULT_DAYS = 1;
 
     /** @return array{password: string, expires_at: string} */
     public function give(Authenticatable $user): array

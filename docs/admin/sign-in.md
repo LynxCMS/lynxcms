@@ -63,7 +63,7 @@ Password::defaults(fn () => app()->isProduction()
 
 A superuser can create a user with a temporary password instead of sending an invitation (ADR-0126). Under **Add user**, choose **Create a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Lynx stores only its hash and can't show it again. The **Copy** button needs HTTPS, as browsers allow copying only on secure pages. Without it, the button is disabled and the password can be selected and copied by hand.
 
-The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 3 days (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
+The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 1 day (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
 
 **New temporary password**, on each user's row, replaces the password of a user who forgot theirs. Their current password stops working, and a pending invitation is cancelled. It isn't offered on your own row: change your own on the **Account security** screen, in your menu.
 
@@ -132,6 +132,16 @@ Recovery codes sign in once each. Without them, a superuser uses **Reset two-fac
 ```bash
 php artisan lynx:two-factor:reset ana@example.com
 ```
+
+Resetting two-factor authentication leaves the user's sessions signed in. When the phone may be in someone else's hands, also give the user a [temporary password](#temporary-passwords): that signs out every session of theirs.
+
+## Sessions and sign-in attempts
+
+When a user's password changes, every other session of theirs ends, on any device, and so do "Remember me" cookies. This holds for each way a password changes: a reset by email, a temporary password a superuser gives, choosing a new one after a temporary password, and **Account security**. The session where the user changed their own password stays signed in. Lynx uses Laravel's `AuthenticateSession` middleware (`auth.session`) on every admin route and admin component for this, so apps need no setting.
+
+A temporary password past its days signs the user out on their next admin request, also on sites whose own sign-in signed them in.
+
+Lynx's sign-in screen allows 5 attempts a minute for one email from one address, and 30 an hour for one email from every address together. Past either limit, sign-in answers 429 Too Many Requests until the time is up. The hourly limit also slows down someone who guesses one account's password from many addresses; that same person can use it to keep the account's owner waiting for up to an hour.
 
 ## Passkeys
 

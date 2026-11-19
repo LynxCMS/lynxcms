@@ -22,7 +22,7 @@ use Workbench\App\Models\User;
 
 /*
  * Temporary passwords (ADR-0126): a superuser creates a user, or helps one who forgot their
- * password, without sending email. The password is shown once, works for a few days, and the
+ * password, without sending email. The password is shown once, works for a day, and the
  * user must choose their own before anything else in the admin.
  */
 
@@ -93,10 +93,13 @@ it('refuses the temporary password as the new one', function (): void {
         ->assertSessionHasErrors('password');
 });
 
-it('stops working after a few days', function (): void {
+it('stops working after a day', function (): void {
     $created = createWithPassword();
-    $this->travel(4)->days();
 
+    $this->travel(23)->hours();
+    signIn('bruno@example.com', $created['password'])->assertRedirect('/lynx/pages');
+
+    $this->travel(2)->hours();
     signIn('bruno@example.com', $created['password'])->assertSessionHasErrors('email');
     $this->assertGuest();
 });
