@@ -276,3 +276,5 @@ Planned for the version after 1.0, moved out of phase 12 on 2026-10-08:
 * **Headless REST API:** read and write pages over HTTP for decoupled front ends, with token authentication. Writes go through the actions, like MCP.
 * **Webhooks:** signed HTTP calls to other systems when pages are saved, published, moved, trashed or deleted, queued with retries.
 
+Both are planned in detail, with an Astro front end as the target, in `documentation/plans/headless.md`.
+
