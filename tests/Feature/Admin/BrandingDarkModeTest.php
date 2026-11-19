@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use LynxCms\Admin\Branding\AccentContrast;
 use LynxCms\Admin\Branding\Branding;
 use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Admin\Livewire\BrandingForm;
@@ -39,12 +40,13 @@ it('saves a dark logo, background and accent', function (): void {
     $this->get((string) $branding->darkLogoUrl())->assertOk();
 });
 
-it('uses the light branding in dark mode until dark values are set', function (): void {
+it('uses the light branding in dark mode until dark values are set, with the accent made readable there', function (): void {
     lynx()->run(SaveBranding::class, ['accent' => '#b4602c', 'background' => '#f3eee4']);
     $css = Branding::current()->themeCss();
 
     expect($css)->toContain('html:root{--primary: #b4602c !important;', 'body[data-lynx-backdrop]{background-color: #f3eee4;')
-        ->not->toContain('html.dark');
+        ->toContain('html.dark:root{--primary: '.AccentContrast::onDark('#b4602c').' !important;')
+        ->not->toContain('html.dark body');
 });
 
 it('gives dark mode its own accent and background, with readable text', function (): void {

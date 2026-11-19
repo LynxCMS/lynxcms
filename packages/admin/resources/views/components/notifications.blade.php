@@ -30,6 +30,8 @@
     @endif
     role="region"
     aria-label="{{ __('lynx-admin::shell.ui.notifications') }}"
+    {{-- In the page from the start, so screen readers announce the notices added to it. --}}
+    aria-live="polite"
     class="lynx-notices"
 >
     <template x-for="notice in notices" :key="notice.id">

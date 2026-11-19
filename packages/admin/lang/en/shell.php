@@ -33,6 +33,7 @@ return [
         'hint' => 'Searching titles and searchable fields; a selector such as :example searches anything.',
     ],
     'ui' => [
+        'skip_to_content' => 'Skip to content',
         'breadcrumb' => 'Breadcrumb',
         'close' => 'Close',
         'hide_password' => 'Hide password',

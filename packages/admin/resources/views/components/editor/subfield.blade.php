@@ -25,7 +25,7 @@
                 @endforeach
             </x-lynx-admin::ui.tabs-list>
             @foreach ($codes as $code)
-                <div x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
+                <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
                     @include($input, ['field' => $view, 'code' => $code, 'model' => $model.'.'.$code, 'placeholder' => '', 'disabled' => $disabled, 'live' => false, 'value' => $values[$code] ?? null, 'readOnly' => $readOnly($values[$code] ?? null)])
                 </div>
             @endforeach

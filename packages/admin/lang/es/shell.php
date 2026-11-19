@@ -33,6 +33,7 @@ return [
         'hint' => 'Busca en los títulos y en los campos buscables; un selector como :example busca cualquier cosa.',
     ],
     'ui' => [
+        'skip_to_content' => 'Saltar al contenido',
         'breadcrumb' => 'Ruta de navegación',
         'close' => 'Cerrar',
         'hide_password' => 'Ocultar la contraseña',

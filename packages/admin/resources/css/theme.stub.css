@@ -21,7 +21,8 @@
     --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
     --lynx-highlight: var(--accent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
-    --lynx-hidden-opacity: 0.55;
+    --lynx-primary-text: var(--primary); /* links and text-primary; under .dark, mixed with white to read on the dark background */
+    --lynx-hidden-opacity: 1; /* below 1, hidden page titles fall under 4.5:1 contrast */
     --lynx-sidebar-active-mix: 16%; /* the current link's accent tint; 32% under .dark */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);

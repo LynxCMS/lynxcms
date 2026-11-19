@@ -1445,3 +1445,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** One maintainer backports security fixes to two majors at most. Breaking the admin's look or wording needs no major release, so its screens can keep improving. Squashing migrations later stays possible at a major release.
 
+## ADR-0136: The admin meets WCAG 2.1 AA, checked with axe
+
+**Status:** Accepted (amends ADR-0084 for the dark accent)
+
+**Context:** The first accessibility review of the admin (`documentation/reports/accessibility-review-2026-11.md`) found six failing rules on every screen with axe-core, among them a search field with an attribute it may not have, a sidebar list broken by its `<nav>`, tabs without panels, and text too pale in dark mode. BlatUI's dark primaries are fills for buttons, and read at 2.4:1 as text; ADR-0084 also reused a site's light accent unchanged in dark mode.
+
+**Decision:** The admin targets WCAG 2.1 level AA. Primary-coloured text uses `--lynx-primary-text`, which under `.dark` mixes the primary with white, for every BlatUI theme; buttons keep `--primary`. A site's accent without a dark one is lightened for dark mode until it reaches 4.5:1 on the dark background (`AccentContrast`); light mode keeps the site's colour, and a dark accent the site sets wins. Language tabs use real tab panels; tabs whose content the server renders elsewhere omit `aria-controls`. The layout has a skip link, the notice area is a live region from the start, and `<html>` has an opaque background so checkers measure what people see. `tools/a11y` repeats the axe scan in light and dark mode.
+
+**Consequences:** No axe failures on the 31 screens reviewed, in either mode. Branded sites look slightly lighter in dark mode when their accent is dark. Two findings stay open: error messages tied to their fields, and notices that pause on hover or focus. A screen reader pass by a regular user is still to do.
+

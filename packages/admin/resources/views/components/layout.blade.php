@@ -3,6 +3,8 @@
      viewUrl: the front-end page this screen edits; the top bar's view link opens it instead of the site. --}}
 <x-lynx-admin::document :title="$title">
 <body class="min-h-screen font-sans antialiased">
+    {{-- The first stop for keyboard users: past the sidebar and header to the screen itself. --}}
+    <a href="#lynx-main" class="bg-background text-foreground sr-only z-50 rounded-md border px-3 py-2 text-sm font-medium shadow-sm focus:not-sr-only focus:fixed focus:start-4 focus:top-4">{{ __('lynx-admin::shell.ui.skip_to_content') }}</a>
     {{-- Open or collapsed as the person left it, from the first paint: no flash between pages. --}}
     <x-lynx-admin::ui.sidebar-provider :default-open="request()->cookie(\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE) !== 'collapsed'" :cookie="\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE">
         <x-lynx-admin::ui.sidebar collapsible="icon">
@@ -13,9 +15,11 @@
             </x-lynx-admin::ui.sidebar-header>
             <x-lynx-admin::ui.sidebar-content>
                 <x-lynx-admin::ui.sidebar-group>
-                    <x-lynx-admin::ui.sidebar-menu>
-                        <x-lynx-admin::navigation />
-                    </x-lynx-admin::ui.sidebar-menu>
+                    <nav aria-label="{{ __('lynx-admin::shell.nav.label') }}">
+                        <x-lynx-admin::ui.sidebar-menu>
+                            <x-lynx-admin::navigation />
+                        </x-lynx-admin::ui.sidebar-menu>
+                    </nav>
                 </x-lynx-admin::ui.sidebar-group>
             </x-lynx-admin::ui.sidebar-content>
             @auth
@@ -67,7 +71,7 @@
                     </x-lynx-admin::ui.button>
                 @endauth
             </header>
-            <main class="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
+            <main id="lynx-main" tabindex="-1" class="mx-auto w-full max-w-7xl px-4 py-6 outline-none md:px-8 md:py-8">
                 {{ $slot }}
             </main>
         </x-lynx-admin::ui.sidebar-inset>
