@@ -11,3 +11,6 @@ composer.lock
 
 # The documentation site moved to LynxCMS/docs-site; an old local copy may still be here.
 /docs-site/
+/tools/compat/vendor
+# The check's own lock keeps CI and local runs on the same version.
+!/tools/compat/composer.lock

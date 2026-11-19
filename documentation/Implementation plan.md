@@ -36,7 +36,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 **Blockers**
 
 1. **A smaller public API.** Done on 2026-11-19 (ADR-0131): 255 classes are `@api`, every class carries a marker, and a test checks it. Left: the starters' three uses of `@internal` classes.
-2. **A backward compatibility check in CI** that fails the build when an `@api` class or method changes in a way that breaks apps.
+2. **A backward compatibility check in CI.** Done on 2026-11-19 (ADR-0132): every pull request reports what it breaks in `@api` code; it becomes blocking at 1.0.
 3. **A versioning and support policy:** semantic versioning of `@api` only, how long a deprecation lasts, and which versions get security fixes. `SECURITY.md` supports the latest 0.x release only today.
 4. **The upgrade path from 0.1.x:** whether migrations are squashed into a 1.0 baseline, and how a 0.1.x site reaches 1.0.
 5. **The one `@deprecated` method removed:** `LynxCms\Admin\Editor\SchemaOwners` registration (ADR-0115).
