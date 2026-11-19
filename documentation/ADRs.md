@@ -1435,3 +1435,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** One fewer source of truth to keep in step with the others, and no rule needed for when a class and a YAML file disagree. Developers who prefer classes write a seeder or an install action with PHP calls. If Lynx 1 users ask for classes, they can come after 1.0 as a module on the same actions, without breaking anything.
 
+## ADR-0134: Versioning, deprecations and support from 1.0
+
+**Status:** Accepted
+
+**Context:** 1.0 is a promise to apps and modules. ADR-0131 and ADR-0132 define the public API and check it in CI; what each version number means, how long a version is supported and how a `0.x` site reaches 1.0 were not written down. `SECURITY.md` supported only the latest `0.x` release.
+
+**Decision:** From 1.0, Lynx follows semantic versioning for its public API: `@api` classes, and also action names and input, events, Artisan commands, configuration keys and environment variables, Blade components and directives, field type and formatter names and settings, the selector syntax, and the URLs Lynx serves. The admin's screens are not public API. Minor and patch releases may add migrations, run with `lynx:migrate`, never needing code changes. Deprecations are announced in a minor release and removed in the next major. The latest minor release of the current major gets bug and security fixes; the previous major gets security fixes for 12 months after the next major. Dropping a PHP or Laravel version happens only in a major release. Sites reach 1.0 from the latest `0.x` release; the `0.x` migrations are kept, not squashed, so every site upgrades the same way. `docs/prologue/versioning.md` is the public statement of this policy.
+
+**Consequences:** One maintainer backports security fixes to two majors at most. Breaking the admin's look or wording needs no major release, so its screens can keep improving. Squashing migrations later stays possible at a major release.
+

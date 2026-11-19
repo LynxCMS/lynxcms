@@ -37,8 +37,8 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 
 1. **A smaller public API.** Done on 2026-11-19 (ADR-0131): 255 classes are `@api`, every class carries a marker, and a test checks it. Left: the starters' three uses of `@internal` classes.
 2. **A backward compatibility check in CI.** Done on 2026-11-19 (ADR-0132): every pull request reports what it breaks in `@api` code; it becomes blocking at 1.0.
-3. **A versioning and support policy:** semantic versioning of `@api` only, how long a deprecation lasts, and which versions get security fixes. `SECURITY.md` supports the latest 0.x release only today.
-4. **The upgrade path from 0.1.x:** whether migrations are squashed into a 1.0 baseline, and how a 0.1.x site reaches 1.0.
+3. **A versioning and support policy.** Done on 2026-11-19 (ADR-0134, `docs/prologue/versioning.md`): semantic versioning of the public API, deprecations removed only in a major release, security fixes for the current major and the previous one for 12 months.
+4. **The upgrade path from 0.1.x.** Done on 2026-11-19 (ADR-0134): sites update to the latest 0.x release, then to 1.0; every migration is kept, none squashed.
 5. **The one `@deprecated` method removed.** Done on 2026-11-19: the admin's `SchemaOwners::register()` (ADR-0115).
 
 **Before the release**

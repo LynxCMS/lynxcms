@@ -87,6 +87,7 @@ export default defineConfig({
                 items: [
                     { text: 'Release Notes', link: '/prologue/release-notes' },
                     { text: 'Upgrade Guide', link: '/prologue/upgrade' },
+                    { text: 'Versioning and Support', link: '/prologue/versioning' },
                     { text: 'Roadmap', link: '/prologue/roadmap' },
                 ],
             },
