@@ -57,7 +57,7 @@ php artisan migrate
 php artisan lynx:install
 ```
 
-`lynx:install` creates the default language, the home page and three roles: `superuser`, `editor` and `guest`, then asks for the owner's name, email and password and creates their account as superuser. In chapter 8 customers sign up too, and each new account gets the `guest` role, which sees the website and never the admin. See [People who sign up](/admin/permissions#people-who-sign-up).
+`lynx:install` creates the default language, the home page and two roles, `superuser` and `editor`, then asks for the owner's name, email and password and creates their account as superuser. In chapter 8 customers sign up too. Their accounts get no role, so they see the website and never the admin. See [People who sign up](/admin/permissions#people-who-sign-up).
 
 ## Hand the home page to Lynx
 

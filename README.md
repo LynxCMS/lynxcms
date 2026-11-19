@@ -3,7 +3,7 @@
 **A multilingual CMS for Laravel that people and AI agents can build and run safely.**
 
 > [!WARNING]
-> **Lynx is not ready for production.** It is under active development and has not had a release yet. APIs, database tables, configuration and package names will change, sometimes without a migration path, and the structure of this repository may change too (packages may move into their own repositories). Try it, read it and open issues, but do not build a site you depend on with it yet.
+> **Lynx is not 1.0 yet.** Releases are tagged `0.1.x` on Packagist, and any of them may change APIs, database tables or configuration. Each release lists what changed in the [release notes](docs/prologue/release-notes.md) and what to do in the [upgrade guide](docs/prologue/upgrade.md). Try it, build with it and open issues, but pin an exact version and read both before you update a site you depend on.
 
 Lynx brings [ProcessWire](https://processwire.com)'s page tree, runtime fields and selector API to Laravel 13, as a standalone site in a new app or added to one you already have, with languages as a core concept and every change going through validated actions that people, Artisan, MCP clients and AI agents share.
 
@@ -16,6 +16,8 @@ Lynx brings [ProcessWire](https://processwire.com)'s page tree, runtime fields a
 - **Selectors.** `template=course, price<300, title%=Delivery, sort=-title, limit=10` finds pages by the values visitors see, in the current language.
 - **Every write is an action.** The PHP API, Artisan, the admin, the MCP server and the built in agent call the same actions, with validation, hooks, permissions, dry runs and an activity log.
 - **AI native.** An MCP server and a `laravel/ai` agent are generated from the action registry. The agent plans first and applies only what you approve.
+- **Closed by default.** A user without a role can do nothing. Roles grant permissions per template and per branch, and the admin signs people in with two-factor authentication and passkeys.
+- **An admin in three languages.** English, Portuguese and Spanish, chosen by each editor, apart from the languages of the site.
 - **Fast by default.** Stored menus, fields loaded on first read, a page cache that lets nginx or Apache send pages without PHP, and a static site export.
 
 ## A quick look
@@ -77,12 +79,13 @@ This repository is a monorepo: every package lives in `packages/`, and changes a
 
 | Package | What it adds |
 | --- | --- |
-| `lynxcms/core` | Languages, fields, templates, pages, selectors, actions, routing and Blade helpers. |
+| `lynxcms/core` | Languages, fields, templates, pages, selectors, site search, actions, routing and Blade helpers. |
 | `lynxcms/contracts` | Interfaces and data objects that modules depend on. |
-| `lynxcms/admin` | The Livewire admin: page tree, editor, drafts and revisions, schema screens, languages, roles, users and sign in. |
+| `lynxcms/admin` | The Livewire admin: page tree, editor, drafts and revisions, trash, schema screens, languages, roles, users, activity, and sign in with two-factor authentication and passkeys. |
 | `lynxcms/menus` | Multilingual menus stored as pages, the menu editor and `<x-lynx-menu>`. |
-| `lynxcms/media` | Images and files on pages, with sizes made on demand. |
-| `lynxcms/forms` | Forms defined in code, rendered with Livewire, with submissions in the admin. |
+| `lynxcms/media` | Images and files on pages, with sizes made on demand, private files and expiring links. |
+| `lynxcms/forms` | Forms defined in code or built in the admin, rendered with Livewire, with submissions, results and exports in the admin. |
+| `lynxcms/finder` | Find pages in the admin by their fields, template, status and dates, save searches, change the pages found together and export them. |
 | `lynxcms/seo` | Meta and social tags, canonical links, JSON-LD and `robots.txt`. |
 | `lynxcms/sitemap` | XML sitemaps for every language. |
 | `lynxcms/page-password` | Password protected pages and branches. |
@@ -91,9 +94,11 @@ This repository is a monorepo: every package lives in `packages/`, and changes a
 | `lynxcms/mcp` | An MCP server generated from the actions. |
 | `lynxcms/ai` | The built in agent and the translation provider, on the Laravel AI SDK. |
 
+Machine translation in the admin (`lynxcms/translate`) is a paid module on the [roadmap](docs/prologue/roadmap.md).
+
 ## Trying it
 
-Requirements: PHP 8.5, Laravel 13, and PostgreSQL (recommended) or SQLite.
+Requirements: PHP 8.5, Laravel 13, and SQLite or PostgreSQL. MySQL is not supported; [Choosing a database](docs/getting-started/database.md) says which to use and why.
 
 ### The demo in this repository
 
@@ -108,6 +113,16 @@ composer serve      # the site, and the admin at /lynx/pages
 ```
 
 Opening the admin signs you in as the demo superuser. `/demo/sign-in/editor` and `/demo/sign-in/courses` show what other roles see, and every demo password is `password`.
+
+### A starter site
+
+Each starter is a finished Laravel app built with Lynx, ready to clone and change. [Guides and Starters](docs/guides/index.md) shows how to install each one.
+
+| Starter | What it is |
+| --- | --- |
+| [lynx-corporate-starter](https://github.com/LynxCMS/lynx-corporate-starter) | A software company's website in English and Portuguese ([live demo](https://demo-corporate.lynxcms.org/)). |
+| [starter-training](https://github.com/LynxCMS/starter-training) | A bilingual training company: leads, paid bookings, members and surveys ([guide](docs/guides/training-site/index.md)). |
+| [starter-meeting-rooms](https://github.com/LynxCMS/starter-meeting-rooms) | A law firm's website and meeting rooms on door screens ([guide](docs/guides/meeting-rooms/index.md), [live demo](https://meeting-rooms.lynxcms.org/)). |
 
 ### In your own Laravel app
 
@@ -125,9 +140,11 @@ The documentation is at **[lynxcms.org/cms/docs](https://lynxcms.org/cms/docs/)*
 
 - [Getting started](docs/getting-started/introduction.md): introduction, installation, [your first site](docs/getting-started/first-site.md) and the core concepts.
 - [The basics](docs/basics/): templates and fields, views, selectors, languages, images and files, publishing.
-- [The admin](docs/admin/index.md), [modules](docs/modules/) (menus, forms, SEO, sitemap, page cache, page passwords, static export) and [AI](docs/ai/index.md).
+- [Guides](docs/guides/index.md): a bilingual website, a training company site and a meeting rooms app, built step by step.
+- [The admin](docs/admin/index.md), [modules](docs/modules/) (menus, forms, Page Finder, SEO, sitemap, page cache, page passwords, static export) and [AI](docs/ai/index.md).
 - [Digging deeper](docs/deeper/): actions and hooks, visibility rules, schema and content packages, custom field types, server capacity.
 - [Reference](docs/reference/): Artisan commands and configuration.
+- [Release notes](docs/prologue/release-notes.md), the [upgrade guide](docs/prologue/upgrade.md) and the [roadmap](docs/prologue/roadmap.md).
 
 To work on the documentation, run `npm --prefix docs ci` once, then `npm --prefix docs run dev` for a live preview. `npm --prefix docs run build` checks every link, as CI does.
 
@@ -147,7 +164,7 @@ Every change comes with tests, and every action is tested for its happy path, a 
 
 ## Status
 
-Lynx is in active development. Feedback and issues are welcome. Expect breaking changes until 1.0, and expect larger pull requests to need a discussion first while the design settles.
+Lynx is in active development, released as `0.1.x`. Expect breaking changes until 1.0; each one is in the release notes with its upgrade steps. Only the latest release gets security fixes, and [SECURITY.md](SECURITY.md) says how to report a vulnerability privately. Feedback and issues are welcome, and larger pull requests need a discussion first while the design settles.
 
 ## License
 

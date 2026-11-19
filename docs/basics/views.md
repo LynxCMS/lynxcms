@@ -306,7 +306,7 @@ The answer follows the user's roles:
 - **Pass the page.** A grant can be limited to some templates or to a branch of the page tree, and Lynx checks those limits against the page you pass. Without a page, `@can('lynx.pages.edit')` is true for anyone who may edit some page, so an editor of the courses section would see the link on every page.
 - **Superusers** always see the link.
 - **Visitors** who are not signed in never see it.
-- **A site with no roles yet** shows it to every signed in user when `LYNX_OPEN_UNTIL_ROLES=true`. That setting is for local work only.
+- **Users without a role** never see it.
 
 Hiding the link does not protect the page. The editor checks permissions again: users who may only view the page see it read only, users who may not view it get a 403 page, and saving is refused without `pages.edit` for that page.
 

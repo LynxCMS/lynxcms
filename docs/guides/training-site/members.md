@@ -27,7 +27,7 @@ The screens are Blade views in the Bloom style, around one card. The sign-in scr
 
 ## Who gets what
 
-When someone signs up, Fortify dispatches Laravel's `Registered` event, and Lynx gives the new account the **guest** role. A guest has no grants: they see the website and their members area, and the admin answers 403. You did nothing for this beyond running `lynx:install` in chapter 1, which made the owner a superuser. See [People who sign up](/admin/permissions#people-who-sign-up).
+A new account gets no role. A user without a role has no rights in Lynx: they see the website and their members area, and the admin answers 403. You did nothing for this beyond running `lynx:install` in chapter 1, which made the owner a superuser. See [People who sign up](/admin/permissions#people-who-sign-up).
 
 ## The members area
 

@@ -10,6 +10,7 @@ use LynxCms\Admin\Users\CreateUser;
 use LynxCms\Contracts\Actions\ActionHalted;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionResult;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Permissions\RoleAssignment;
@@ -20,7 +21,7 @@ use Workbench\App\Models\User;
  * lynx:superuser creates one (or promotes an existing account), and lynx:install offers it.
  */
 
-beforeEach(fn () => config(['lynx.permissions.open_until_roles' => false]));
+beforeEach(fn () => app(Authorizer::class)->openForTests(false));
 
 afterEach(fn (): bool => putenv('SHELL_INTERACTIVE'));
 

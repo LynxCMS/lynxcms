@@ -14,6 +14,7 @@ use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Ai\AiServiceProvider;
 use LynxCms\Cache\CacheServiceProvider;
 use LynxCms\Core\LynxServiceProvider;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Finder\FinderServiceProvider;
 use LynxCms\Forms\FormsServiceProvider;
 use LynxCms\Mcp\McpServiceProvider;
@@ -45,6 +46,9 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
         $this->app?->make(LivewireManager::class)->flushState();
+        // Most tests act as the site's owner without giving them a role: until any user holds
+        // one, the suite lets signed in users pass. Tests of the closed default turn it off.
+        $this->app?->make(Authorizer::class)->openForTests();
     }
 
     protected function getPackageProviders($app): array
@@ -92,10 +96,6 @@ abstract class TestCase extends Orchestra
                 'password' => env('DB_PASSWORD', 'postgres'),
             ]));
         }
-
-        // Most tests act as the site's owner without giving them a role, so the suite keeps the
-        // old open mode; tests of the closed default turn it off (ADR-0078).
-        $app['config']->set('lynx.permissions.open_until_roles', true);
 
         // Most admin tests act as users without two-factor authentication; tests of the
         // requirement turn it on (ADR-0128).

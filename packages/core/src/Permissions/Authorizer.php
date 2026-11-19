@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Permissions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use LogicException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
@@ -17,8 +18,7 @@ use LynxCms\Core\Support\Value;
 /**
  * Whether an actor holds a permission, optionally for a page or a template (ADR-0033, ADR-0078).
  *
- * A user without a role has no rights; lynx.permissions.open_until_roles brings back the old
- * "everyone may do everything until any user has a role", for local work only. Visitors who are
+ * A user without a role has no rights, and no setting changes that (ADR-0127). Visitors who are
  * not signed in hold only what is open to everyone. The console and the system actor always have
  * every right. Users, and MCP clients and agents acting for a user, have the union of that user's
  * roles; a superuser role passes every check. MCP clients and agents without a user get the role
@@ -30,6 +30,9 @@ use LynxCms\Core\Support\Value;
 final class Authorizer implements Flushable
 {
     private ?bool $isEnforced = null;
+
+    /** Lynx's own test suite only, for every instance in the process: see openForTests(). */
+    private static bool $isOpenForTests = false;
 
     /** @var array<string, array{superuser: bool, grants: list<RoleGrant>}|null> */
     private array $rights = [];
@@ -163,20 +166,34 @@ final class Authorizer implements Flushable
         return $this->rightsOf($actor)['superuser'] ?? false;
     }
 
-    /** The console and the system always; anyone but a visitor in open mode before any role. */
+    /** The console and the system always; in Lynx's own tests, anyone but a visitor before any role. */
     private function hasEveryRight(Actor $actor): bool
     {
         return in_array($actor->kind, [Actor::CLI, Actor::SYSTEM], true)
             || ($actor->kind !== Actor::GUEST && ! $this->isEnforced());
     }
 
-    /**
-     * True unless lynx.permissions.open_until_roles is on and no user holds a role yet: then
-     * every actor passes, as before ADR-0078.
-     */
+    /** True unless Lynx's own tests opened the checks and no user holds a role yet. */
     public function isEnforced(): bool
     {
-        return $this->isEnforced ??= ! Value::bool(config('lynx.permissions.open_until_roles')) || RoleAssignment::query()->exists();
+        return $this->isEnforced ??= ! self::$isOpenForTests || RoleAssignment::query()->exists();
+    }
+
+    /**
+     * Lynx's own test suite acts as users without roles: until any user holds one, every signed
+     * in user passes. It refuses to run outside unit tests, so no configuration can open a live
+     * site (ADR-0127).
+     *
+     * @internal
+     */
+    public function openForTests(bool $isOpen = true): void
+    {
+        if (! app()->runningUnitTests()) {
+            throw new LogicException('Authorizer::openForTests() works only in unit tests.');
+        }
+
+        self::$isOpenForTests = $isOpen;
+        $this->isEnforced = null;
     }
 
     public function flush(): void
