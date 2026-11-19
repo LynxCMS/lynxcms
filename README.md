@@ -140,7 +140,7 @@ The documentation is at **[lynxcms.org/cms/docs](https://lynxcms.org/cms/docs/)*
 
 - [Getting started](docs/getting-started/introduction.md): introduction, installation, [your first site](docs/getting-started/first-site.md) and the core concepts.
 - [The basics](docs/basics/): templates and fields, views, selectors, languages, images and files, publishing.
-- [Guides](docs/guides/index.md): a bilingual website, a training company site and a meeting rooms app, built step by step.
+- [Guides](docs/guides/index.md): a training company site and a meeting rooms app, built step by step.
 - [The admin](docs/admin/index.md), [modules](docs/modules/) (menus, forms, Page Finder, SEO, sitemap, page cache, page passwords, static export) and [AI](docs/ai/index.md).
 - [Digging deeper](docs/deeper/): actions and hooks, visibility rules, schema and content packages, custom field types, server capacity.
 - [Reference](docs/reference/): Artisan commands and configuration.

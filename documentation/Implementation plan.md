@@ -15,17 +15,48 @@ The build runs in 16 phases: 10 for the MVP, 4 to reach a public release, and th
 | 6 Front end | Done | Three locale middlewares, catch-all route, 301 for old paths, `@hreflang`, `@field`, `@lynxComponent`, `UsesLynxPage` |
 | 7 MCP server | Done | Generated tools, read tools, prompt, resource, allowlist |
 | 8 AI agent | Done | `CmsAgent` on laravel/ai, plan-then-apply with replay, `lynx:ask`, `pages.translate` with an LLM provider |
-| 9 Spike | Measured | See ADR-0023: 50,000 pages × 3 languages, translatable filters and sorts 70–160 ms; no search index yet |
-| 10 Schema sync | Done | lynx:schema:export and lynx:schema:apply (uuid-keyed YAML, idempotent, --dry-run, --force). PHP template classes compiled by lynx:sync are still to do. |
+| 9 Spike | Measured | See ADR-0023: 50,000 pages × 3 languages, translatable filters and sorts 70–160 ms. A search index followed later (ADR-0054, ADR-0119, ADR-0120) |
+| 10 Schema sync | Done | lynx:schema:export and lynx:schema:apply (uuid-keyed YAML, idempotent, --dry-run, --force). PHP template classes compiled by lynx:sync were not built; decide before 1.0 whether they are still wanted. |
 | 11 Livewire admin | Done | Page tree, menu builder, page editor (steps 1 to 8: inputs, rich text, page and component fields, Settings tab, unique status, review changes). Conditional fields (ADR-0030), templates and fields screens, template family rules (ADR-0032), text formatters (ADR-0031), roles and permissions (ADR-0033). Phase 11 is complete |
 | 12 Lynx 1 modules | Done | Trash (ADR-0035), admin on BlatUI (ADR-0034), scheduled publishing per language (ADR-0036), edit locks (ADR-0037), revisions (ADR-0038), drafts with preview (ADR-0039), export, import and backups (ADR-0040), Laravel Boost guideline and skills. REST API and webhooks moved to v2 |
-| 13–15 | Not started |  |
+| 13 Translation | Built, not released | In the private paid module `lynxcms/translate`: DeepL, local models (OpenAI-compatible) and cloud models through `lynxcms/ai`, a glossary per language pair, a monthly budget in characters, whole pages and branches in the background, translations into drafts, badges for machine-written and outdated text (`source_hash` in core). No tag yet |
+| 14 Public release | In progress | Released as 0.1.x on Packagist since 2026-10-22 (0.1.52 on 2026-11-19), with release notes and an upgrade guide for each. English documentation at lynxcms.org, three starters with guides, the first security review (`documentation/reports/security-review-2026-11.md`). Still to do: the 1.0 promise (see below), the private Composer repository and the first paid module's release, the license review, Portuguese documentation |
+| 15 Agent chat panel | Not started | Planned after 1.0 |
 
-87 tests pass on both PostgreSQL and SQLite, and PHPStan at level max reports no errors, with no baseline. The code lives in the lynx-evolved folder. In code the API root is `lynx()` (facade `Lynx`) rather than `cms()`, commands are `lynx:*` rather than `cms:*`, and every table is prefixed `lynx_`.
+About 3,900 tests pass on PostgreSQL and SQLite (and with a table prefix) in CI, and PHPStan at level max reports no errors, with no baseline. The code lives in the LynxCMS/lynxcms monorepo, split into read-only package repositories on every push. In code the API root is `lynx()` (facade `Lynx`) rather than `cms()`, commands are `lynx:*` rather than `cms:*`, and every table is prefixed `lynx_`.
 
 &#91;embedded content: roadmap · 16 phases, MVP gate after phase 9\]
 
 Phases run in order, left to right and top to bottom; each one only uses what the earlier ones built.
+
+## The road to 1.0
+
+Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; what is missing is the promise itself and the release around it.
+
+**Blockers**
+
+1. **A smaller public API.** 300 classes are marked `@api` and 404 `@internal`. Every `@api` class is a promise from 1.0 on, so each is kept only when apps or modules need it, with the rest moved to `@internal`.
+2. **A backward compatibility check in CI** that fails the build when an `@api` class or method changes in a way that breaks apps.
+3. **A versioning and support policy:** semantic versioning of `@api` only, how long a deprecation lasts, and which versions get security fixes. `SECURITY.md` supports the latest 0.x release only today.
+4. **The upgrade path from 0.1.x:** whether migrations are squashed into a 1.0 baseline, and how a 0.1.x site reaches 1.0.
+5. **The one `@deprecated` method removed:** `LynxCms\Admin\Editor\SchemaOwners` registration (ADR-0115).
+
+**Before the release**
+
+6. The page cache check on Laravel Cloud the roadmap asks for: two replicas, Octane, `edge_ttl`.
+7. Browser tests of the sign-in flows (password, two-factor setup and challenge, temporary password, invitation), which only Livewire and HTTP tests cover today.
+8. An accessibility review of the admin.
+9. The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
+10. A decision on `lynx:sync` (phase 10): build it or drop it from the plan.
+11. The draft documentation: publish or drop the bilingual website guide and the comparison page.
+
+**Decisions for phase 14**
+
+12. Portuguese documentation: before 1.0, or after.
+13. The private Composer repository and the release of `lynxcms/translate`: with 1.0, or after.
+14. The license review the open-core model needs (ADR-0018).
+
+Not needed for 1.0: the headless API and webhooks (v2, `documentation/plans/headless.md`) and the agent chat panel (phase 15).
 
 ## Phase 0: Repository and quality setup
 
