@@ -60,6 +60,7 @@ It runs a list of checks and prints OK for each that passes, or what it found an
 - **Scheduler:** scheduled publishing more than ten minutes late, which means Laravel's scheduler (the cron entry) is not running.
 - **Global middleware:** middleware Lynx runs on every request that could not be added, because the app's HTTP kernel is not Laravel's own. The fix names the line to add in `bootstrap/app.php`.
 - **Pages behind routes:** a page whose URL a route of the app or a module answers first, so visitors never see it, such as a page at `/lynx` behind the admin. Rename the page, or move the route; `lynx:admin-path` moves the admin.
+- **Sign-up role:** the role in `LYNX_REGISTRATION_ROLE` does not exist (a warning), or opens the admin as a superuser or with `admin.access` (an error). Lynx gives sign-ups no role in both cases.
 - **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
 
 Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.

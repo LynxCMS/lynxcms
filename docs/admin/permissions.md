@@ -56,6 +56,8 @@ If your app lets visitors sign up (Fortify, Breeze or your own registration), th
 
 To give sign-ups a role, such as one with grants of your own, set `LYNX_REGISTRATION_ROLE` to its name. Lynx assigns it when Laravel's `Registered` event fires. Users who already hold a role keep their roles.
 
+Anyone can sign up, so the role may not open the admin. Lynx never gives a role that is a superuser or grants `admin.access` this way: the new user gets no role, and the log says why. `lynx:doctor` reports such a role as an error, and a sign-up role that does not exist as a warning. Give admin rights from Setup › Users instead.
+
 ## Checking permissions
 
 ```php

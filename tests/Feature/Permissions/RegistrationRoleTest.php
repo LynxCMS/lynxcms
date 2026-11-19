@@ -76,3 +76,18 @@ it('assigns nothing and logs why when the role does not exist', function (): voi
     expect(RoleAssignment::query()->count())->toBe(0);
     Log::shouldHaveReceived('warning')->withArgs(fn (string $message): bool => str_contains($message, '[reviewer]'))->once();
 });
+
+it('gives no role that opens the admin, and logs why', function (array $role): void {
+    installLynx();
+    lynx()->run(SaveRole::class, ['name' => 'reviewer'] + $role);
+    config(['lynx.permissions.registration_role' => 'reviewer']);
+    Log::spy();
+
+    registerVisitor(50);
+
+    expect(RoleAssignment::query()->count())->toBe(0);
+    Log::shouldHaveReceived('error')->withArgs(fn (string $message): bool => str_contains($message, '[reviewer]') && str_contains($message, 'admin'))->once();
+})->with([
+    'admin.access' => [['grants' => [['permission' => 'admin.access'], ['permission' => 'pages.view']]]],
+    'superuser' => [['superuser' => true]],
+]);
