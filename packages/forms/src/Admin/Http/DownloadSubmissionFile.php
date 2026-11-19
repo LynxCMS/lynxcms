@@ -25,6 +25,6 @@ final readonly class DownloadSubmissionFile
 
         abort_unless($this->files->disk()->exists($stored->path), 404);
 
-        return $this->files->disk()->download($stored->path, $stored->name);
+        return $this->files->disk()->download($stored->path, $stored->name, ['X-Content-Type-Options' => 'nosniff']);
     }
 }

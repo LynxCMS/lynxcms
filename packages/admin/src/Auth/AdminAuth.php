@@ -42,6 +42,9 @@ final class AdminAuth
 
     private const int PASSKEY_ATTEMPTS_PER_MINUTE = 10;
 
+    /** Attempts on one account from every address together, within an hour. */
+    private const int LOGIN_ATTEMPTS_PER_ACCOUNT_PER_HOUR = 30;
+
     public const string LYNX = 'lynx';
 
     public const string APP = 'app';
@@ -148,12 +151,27 @@ final class AdminAuth
         Fortify::twoFactorChallengeView(fn (): mixed => view('lynx-admin::auth.two-factor-challenge'));
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        RateLimiter::for('lynx-login', fn (Request $request): Limit => Limit::perMinute(self::LOGIN_ATTEMPTS_PER_MINUTE)
-            ->by(Str::transliterate(Str::lower(Value::string($request->input(Fortify::username())))).'|'.$request->ip()));
+        RateLimiter::for('lynx-login', fn (Request $request): array => self::loginLimits($request));
         RateLimiter::for('lynx-two-factor', fn (Request $request): Limit => Limit::perMinute(self::LOGIN_ATTEMPTS_PER_MINUTE)
             ->by(Value::string($request->session()->get('login.id'))));
         RateLimiter::for('lynx-passkeys', fn (Request $request): Limit => Limit::perMinute(self::PASSKEY_ATTEMPTS_PER_MINUTE)
             ->by(Value::string($request->input('credential.id'), $request->session()->getId()).'|'.$request->ip()));
+    }
+
+    /**
+     * Sign-in attempts per account and address, and per account from any address, so guessing one
+     * account's password from many addresses is slowed down too (ADR-0129).
+     *
+     * @return list<Limit>
+     */
+    private static function loginLimits(Request $request): array
+    {
+        $account = Str::transliterate(Str::lower(Value::string($request->input(Fortify::username()))));
+
+        return [
+            Limit::perMinute(self::LOGIN_ATTEMPTS_PER_MINUTE)->by($account.'|'.$request->ip()),
+            Limit::perHour(self::LOGIN_ATTEMPTS_PER_ACCOUNT_PER_HOUR)->by('account|'.$account),
+        ];
     }
 
     /** The account screens, and accepting an invitation: guests only, throttled like the sign-in form. */

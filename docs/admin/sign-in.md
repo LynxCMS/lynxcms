@@ -133,6 +133,16 @@ Recovery codes sign in once each. Without them, a superuser uses **Reset two-fac
 php artisan lynx:two-factor:reset ana@example.com
 ```
 
+Resetting two-factor authentication leaves the user's sessions signed in. When the phone may be in someone else's hands, also give the user a [temporary password](#temporary-passwords): that signs out every session of theirs.
+
+## Sessions and sign-in attempts
+
+When a user's password changes, every other session of theirs ends, on any device, and so do "Remember me" cookies. This holds for each way a password changes: a reset by email, a temporary password a superuser gives, choosing a new one after a temporary password, and **Account security**. The session where the user changed their own password stays signed in. Lynx uses Laravel's `AuthenticateSession` middleware (`auth.session`) on every admin route and admin component for this, so apps need no setting.
+
+A temporary password past its days signs the user out on their next admin request, also on sites whose own sign-in signed them in.
+
+Lynx's sign-in screen allows 5 attempts a minute for one email from one address, and 30 an hour for one email from every address together. Past either limit, sign-in answers 429 Too Many Requests until the time is up. The hourly limit also slows down someone who guesses one account's password from many addresses; that same person can use it to keep the account's owner waiting for up to an hour.
+
 ## Passkeys
 
 **Add passkey** registers the device's passkey (fingerprint, face or PIN). The sign-in screen then offers **Sign in with a passkey**. Passkeys need HTTPS (or `localhost`) and `APP_URL` set to the site's address.

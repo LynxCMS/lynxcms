@@ -6,6 +6,7 @@ namespace LynxCms\Admin;
 
 use Closure;
 use Illuminate\Routing\Route as RoutingRoute;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Support\Facades\Route;
 use LynxCms\Admin\Http\ModuleScreenController;
 use LynxCms\Admin\Http\RequireOwnPassword;
@@ -29,7 +30,7 @@ final class Admin
     public static function routes(Closure|string $routes): void
     {
         // Editors see every page: visibility rules are for visitors (ADR-0062).
-        Route::middleware([...Value::strings(config('lynx-admin.middleware')), 'can:'.AdminServiceProvider::GATE, WithoutPageVisibility::class, UseAdminLocale::class, RequireOwnPassword::class, RequireTwoFactor::class])
+        Route::middleware([...Value::strings(config('lynx-admin.middleware')), AuthenticateSession::class, 'can:'.AdminServiceProvider::GATE, WithoutPageVisibility::class, UseAdminLocale::class, RequireOwnPassword::class, RequireTwoFactor::class])
             ->prefix(AdminPath::current())
             ->name('lynx.admin.')
             ->group($routes);

@@ -7,6 +7,7 @@ namespace LynxCms\Admin;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,8 @@ use LynxCms\Admin\Fields\IconType;
 use LynxCms\Admin\Home\HomeDefaults;
 use LynxCms\Admin\Home\HomeScreen;
 use LynxCms\Admin\Http\AssetController;
+use LynxCms\Admin\Http\RequireOwnPassword;
+use LynxCms\Admin\Http\RequireTwoFactor;
 use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Admin\Icons\IconSet;
 use LynxCms\Admin\Livewire\AccountSecurity;
@@ -128,8 +131,9 @@ final class AdminServiceProvider extends ServiceProvider
         EncryptCookies::except(self::SIDEBAR_COOKIE);
         Blade::anonymousComponentPath(self::ROOT.'/resources/views/components', 'lynx-admin');
         $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-admin');
-        // Admin components' updates keep the admin routes' WithoutPageVisibility (ADR-0062) and language (ADR-0097).
-        Livewire::addPersistentMiddleware([WithoutPageVisibility::class, UseAdminLocale::class]);
+        // Admin components' updates keep the admin routes' WithoutPageVisibility (ADR-0062), language (ADR-0097),
+        // and sign-in checks: a changed password, a temporary password and two-factor authentication (ADR-0129).
+        Livewire::addPersistentMiddleware([WithoutPageVisibility::class, UseAdminLocale::class, AuthenticateSession::class, RequireOwnPassword::class, RequireTwoFactor::class]);
         Livewire::component('lynx-admin.page-tree', PageTree::class);
         Livewire::component('lynx-admin.icon-picker', IconPicker::class);
         // The icon field type: an icon name from the admin's set (docs/deeper/custom-field-types.md).

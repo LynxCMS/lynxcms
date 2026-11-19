@@ -1385,3 +1385,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Existing admin users set it up on their next visit, with no grace period. Local work sets the variable to false. A superuser who loses both phone and codes needs the server. Lynx's own tests turn the requirement off except where they test it.
 
+## ADR-0129: A password change ends the user's other sessions
+
+**Status:** Accepted (amends ADR-0126 and ADR-0128)
+
+**Context:** A security review found that changing a password kept the user's other sessions and "Remember me" cookies signed in. A superuser gives a temporary password when someone forgot theirs or may have been broken into, so the second case was not covered. It also found that Livewire runs only a fixed list of middleware on component updates, which left out Lynx's `RequireOwnPassword` and `RequireTwoFactor`: the search and link dialog on Account security worked for a user without two-factor authentication. And sign-in attempts were limited per email and address only.
+
+**Decision:** Use what Laravel has instead of code of our own. Every admin route carries Laravel's `AuthenticateSession`, after the app's middleware and not in `lynx-admin.middleware`, so a published config cannot drop it. It compares the password hash stored in the session and in the remember cookie with the user's current one on each request, so any password change, wherever it happens, ends every other session, and the request that changed it keeps its own. Lynx does not change remember tokens or call `logoutOtherDevices()` itself. `AuthenticateSession`, `RequireOwnPassword` and `RequireTwoFactor` join Livewire's persistent middleware. `RequireOwnPassword` signs out a user whose temporary password expired, for apps whose sign-in does not fire `Validated`. The `lynx-login` limiter adds 30 attempts an hour per email from any address.
+
+**Consequences:** Users signed in on several devices sign in again after a password change, which is the point. Resetting two-factor authentication changes no password, so it ends no session; the docs say to give a temporary password as well when a phone may be stolen. The hourly limit lets someone who knows an email keep its owner out for up to an hour; the review judged that better than unlimited guessing from many addresses. A user without a password hash is skipped by `AuthenticateSession`; Lynx always sets one, an unusable one for invited users.
+
