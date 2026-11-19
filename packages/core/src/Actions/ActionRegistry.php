@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Actions;
 
 use InvalidArgumentException;
+use LogicException;
 use LynxCms\Contracts\Actions\Action as ActionContract;
 
 /**
@@ -28,7 +29,14 @@ final class ActionRegistry
                 throw new InvalidArgumentException("[{$action}] is not a Lynx action.");
             }
 
-            $this->actions[$action::name()] = $action;
+            $name = $action::name();
+            $taken = $this->actions[$name] ?? $action;
+
+            if ($taken !== $action) {
+                throw new LogicException("Two actions are named [{$name}]: {$taken} and {$action}. Give one another name.");
+            }
+
+            $this->actions[$name] = $action;
         }
     }
 

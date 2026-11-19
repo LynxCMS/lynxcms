@@ -10,6 +10,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Auth\AdminAuth;
+use LynxCms\Admin\Livewire\Concerns\GivesTemporaryPasswords;
 use LynxCms\Admin\Livewire\Concerns\InvitesUsers;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Admin\Users\LynxUsers;
@@ -20,12 +21,14 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Setup > Users: find the host app's users (LynxUsers), set their roles through roles.assign
- * (ADR-0033) and invite new ones (ADR-0041). Superusers only.
+ * (ADR-0033), invite new ones (ADR-0041) or add them with temporary passwords (ADR-0126).
+ * Superusers only.
  *
  * @api
  */
 final class UserRoles extends Component
 {
+    use GivesTemporaryPasswords;
     use InvitesUsers;
     use Notifies;
 
@@ -62,7 +65,10 @@ final class UserRoles extends Component
             'users' => $found,
             'roleNames' => Role::query()->orderBy('name')->pluck('label', 'name')->all(),
             'canInvite' => AdminAuth::managesAccounts(),
+            'sendsMail' => AdminAuth::sendsMail(),
+            'me' => Value::string(auth()->id()),
             'pending' => AdminAuth::managesAccounts() ? $this->pendingInvitations(array_column($found, 'id')) : [],
+            'temporary' => AdminAuth::managesAccounts() ? $this->temporaryPasswords(array_column($found, 'id')) : [],
         ]);
     }
 

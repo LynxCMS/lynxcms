@@ -107,7 +107,7 @@ it('refuses an invalid email', function (): void {
 })->throws(ValidationException::class);
 
 it('creates nothing and sends nothing on a dry run', function (): void {
-    lynx()->run(InviteUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com'], dryRun: true);
+    lynx()->run(InviteUser::class, ['name' => 'Bruno Costa', 'email' => 'bruno@example.com', 'roles' => ['editor']], dryRun: true);
 
     expect(User::query()->where('email', 'bruno@example.com')->exists())->toBeFalse();
     Notification::assertNothingSent();
@@ -128,7 +128,7 @@ it('is not an agent tool', function (): void {
 
 it('invites from the Users screen', function (): void {
     Livewire::test(UserRoles::class)
-        ->assertSee('Invite user')
+        ->assertSee('Add user')
         ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')->set('invite.roles', ['editor'])
         ->call('sendInvitation')
         ->assertHasNoErrors()
@@ -140,7 +140,7 @@ it('invites from the Users screen', function (): void {
 
 it('shows invitation errors by their inputs', function (): void {
     Livewire::test(UserRoles::class)->set('invite.email', 'not an email')->call('sendInvitation')->assertHasErrors(['invite.name', 'invite.email']);
-    Livewire::test(UserRoles::class)->set('invite.name', 'Ada')->set('invite.email', 'ada@example.com')->call('sendInvitation')->assertHasErrors(['invite.email']);
+    Livewire::test(UserRoles::class)->set('invite.name', 'Ada')->set('invite.email', 'ada@example.com')->set('invite.roles', ['editor'])->call('sendInvitation')->assertHasErrors(['invite.email']);
 });
 
 it('marks invited users as pending until they choose a password', function (): void {
