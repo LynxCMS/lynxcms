@@ -82,11 +82,6 @@ return [
     'permissions' => [
         // Role given to MCP clients and agents that act for no user. Null refuses them.
         'anonymous_role' => env('LYNX_ANONYMOUS_ROLE'),
-
-        // Role given to people who sign up on the site (Laravel's Registered event), such as one
-        // with grants of your own. Null gives none: a user without a role has no rights, so they
-        // see the website and never the admin (ADR-0127).
-        'registration_role' => env('LYNX_REGISTRATION_ROLE'),
     ],
 
     'search' => [

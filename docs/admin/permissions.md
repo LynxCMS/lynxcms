@@ -54,7 +54,19 @@ lynx()->actingAs(Actor::system(), fn () => $session->save());
 
 If your app lets visitors sign up (Fortify, Breeze or your own registration), the new users get no role. A user without a role has no rights, so they see the website like any visitor, and the admin answers 403.
 
-To give sign-ups a role, such as one with grants of your own, set `LYNX_REGISTRATION_ROLE` to its name. Lynx assigns it when Laravel's `Registered` event fires. Users who already hold a role keep their roles.
+Lynx never gives a role on sign-up. To give members a role of your own, assign it in your registration code, such as Fortify's `CreateNewUser`, after the user is created:
+
+```php
+use LynxCms\Contracts\Actions\Actor;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+
+lynx()->actingAs(Actor::system(), fn () => lynx()->run(AssignRoles::class, [
+    'user' => (string) $user->id,
+    'roles' => ['member'],
+]));
+```
+
+Running it as the system records the assignment in the activity log. Anyone can sign up, so give this role no `admin.access` and never make it a superuser. Staff get their roles from Setup › Users, by invitation or with a temporary password.
 
 ## Checking permissions
 

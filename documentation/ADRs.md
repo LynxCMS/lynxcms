@@ -800,7 +800,7 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 ## ADR-0073: People who sign up get a guest role, so a sign-up never has full rights
 
-**Status:** Accepted (amends ADR-0033; its warning applies only in open mode since ADR-0078)
+**Status:** Superseded by ADR-0127 (amended ADR-0033)
 
 **Context:** ADR-0033 keeps full rights for every signed in user until any user holds a role, so an install or upgrade never locks anyone out. Sites that let visitors sign up (a members area, bookings, surveys) break that promise's premise: on a site where the owner never ran `lynx:install --user`, the first person to sign up would open the admin with every right.
 
@@ -1357,11 +1357,11 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 ## ADR-0127: No open mode, and no role for people who sign up
 
-**Status:** Accepted (supersedes the open mode of ADR-0033 and ADR-0078; amends ADR-0073)
+**Status:** Accepted (supersedes the open mode of ADR-0033 and ADR-0078, and ADR-0073)
 
 **Context:** ADR-0078 closed Lynx by default but kept `LYNX_OPEN_UNTIL_ROLES`, which gives every signed in user every right until any user holds a role, for local work. One environment variable set on a server, or copied from a local `.env`, would hand the admin to the first person who signs in or signs up. ADR-0073 created the `guest` role mostly to close that hole on sites with registration. A user without a role already has no rights, so the role adds nothing else by default.
 
-**Decision:** The setting is removed. A user without a role has no rights, and no configuration changes that. Lynx's own test suite, whose tests act as users without roles, opens the checks with `Authorizer::openForTests()`, which throws unless the app runs unit tests. Install no longer creates `guest`, and `lynx.permissions.registration_role` defaults to none; a site sets it to give sign-ups a role of its own. Existing `guest` roles and assignments stay: they grant nothing.
+**Decision:** The setting is removed. A user without a role has no rights, and no configuration changes that. Lynx's own test suite, whose tests act as users without roles, opens the checks with `Authorizer::openForTests()`, which throws unless the app runs unit tests. Install no longer creates `guest`, and `lynx.permissions.registration_role` and its `Registered` listener are removed. Sign-up exists only in an app's own registration code (Lynx's admin has none: staff come by invitation or temporary password), so that code assigns a role when it wants one. A role in reviewed code is safer than one in an environment variable, which could hand anyone who signs up a role that opens the admin. Existing `guest` roles and assignments stay: they grant nothing.
 
-**Consequences:** A new site is unusable until a superuser exists, which `lynx:install` and `lynx:superuser` provide. Sites that relied on the guest role for their own checks set `LYNX_REGISTRATION_ROLE=guest`. The Users screen shows sign-ups without a role.
+**Consequences:** A new site is unusable until a superuser exists, which `lynx:install` and `lynx:superuser` provide. Apps that set `LYNX_REGISTRATION_ROLE` assign that role in their registration code. The Users screen shows sign-ups without a role.
 
