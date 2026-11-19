@@ -12,7 +12,7 @@ use LynxCms\Admin\Auth\AdminAuth;
 use LynxCms\Admin\Auth\InvitationNotification;
 use LynxCms\Admin\Livewire\UserRoles;
 use LynxCms\Core\Actions\Roles\AssignRoles;
-use LynxCms\Core\Permissions\Role;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\RoleAssignment;
 use LynxCms\Tests\Fixtures\AppAuth\CreateNewUser;
 use Workbench\App\Models\User;
@@ -24,6 +24,7 @@ use Workbench\App\Models\User;
  */
 
 beforeEach(function (): void {
+    app(Authorizer::class)->openForTests(false);
     installLynx();
     Fortify::createUsersUsing(CreateNewUser::class);
     Fortify::loginView(fn (): string => 'App sign-in');
@@ -46,12 +47,12 @@ it('lets staff sign in at the app\'s /login and open the admin', function (): vo
     $this->get('/lynx/pages')->assertOk();
 });
 
-it('gives people who sign up the guest role, and keeps them out of the admin', function (): void {
+it('gives people who sign up no role, and keeps them out of the admin', function (): void {
     $this->post('/register', ['name' => 'Mia Member', 'email' => 'mia@example.com', 'password' => 'long enough', 'password_confirmation' => 'long enough'])
         ->assertRedirect('/account');
 
     $member = User::query()->where('email', 'mia@example.com')->sole();
-    expect(RoleAssignment::query()->where('user_id', (string) $member->id)->value('role_id'))->toBe(Role::query()->where('name', 'guest')->value('id'));
+    expect(RoleAssignment::query()->where('user_id', (string) $member->id)->exists())->toBeFalse();
 
     $this->get('/lynx/pages')->assertForbidden();
     $this->get('/')->assertOk();

@@ -8,7 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use LynxCms\Core\Permissions\Role;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\RoleAssignment;
 use Workbench\App\Models\User;
 
@@ -24,6 +24,7 @@ require_once TRAINING.'/app/Actions/Fortify/ResetUserPassword.php';
 require_once TRAINING.'/app/Providers/FortifyServiceProvider.php';
 
 beforeEach(function (): void {
+    app(Authorizer::class)->openForTests(false);
     trainingSite();
     new FortifyServiceProvider(app())->boot();
     $this->withoutVite();
@@ -31,7 +32,7 @@ beforeEach(function (): void {
     $this->materials = '/courses/yoga-teacher-training/materials';
 });
 
-/** A member as sign-up makes one: with the guest role, so roles are in use as on a live site. */
+/** A member as sign-up makes one: without a role, so with no rights, as on a live site. */
 function trainingMember(string $email = 'mia@example.com'): User
 {
     $user = User::query()->forceCreate(['name' => 'Mia Member', 'email' => $email, 'password' => Hash::make('long enough pass')]);
@@ -50,14 +51,14 @@ function trainingPaidBooking(User $user, int $courseId): Booking
     ]);
 }
 
-it('signs a visitor up as a guest, into the members area and never the admin', function (): void {
+it('signs a visitor up into the members area and never the admin', function (): void {
     $this->get('/register')->assertOk()->assertSee('Create an account');
 
     $this->post('/register', ['name' => 'Mia Member', 'email' => 'mia@example.com', 'password' => 'long enough pass', 'password_confirmation' => 'long enough pass'])
         ->assertRedirect('/account');
 
     $mia = User::query()->where('email', 'mia@example.com')->sole();
-    expect(RoleAssignment::query()->where('user_id', (string) $mia->id)->value('role_id'))->toBe(Role::query()->where('name', 'guest')->value('id'));
+    expect(RoleAssignment::query()->where('user_id', (string) $mia->id)->exists())->toBeFalse();
 
     $this->get('/account')->assertOk()->assertSee('No bookings yet');
     $this->get('/lynx/pages')->assertForbidden();

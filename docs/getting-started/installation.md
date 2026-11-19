@@ -64,7 +64,7 @@ Route::get('/', function () {
 php artisan lynx:install
 ```
 
-`lynx:install` creates the default language, the home page, a `simple-page` template with a title for your first pages, and three roles, the sets of permissions people get: `superuser` (allowed everything), `editor` (works on pages) and `guest` (allowed nothing). When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
+`lynx:install` creates the default language, the home page, a `simple-page` template with a title for your first pages, and two roles, the sets of permissions people get: `superuser` (allowed everything) and `editor` (works on pages). When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
 
 If your app already has accounts, make one of them the superuser instead:
 
@@ -73,7 +73,7 @@ php artisan lynx:install --user=ada@example.com     # an email, or a user id
 ```
 
 > [!IMPORTANT]
-> A user without a role can do nothing in Lynx, so until someone is a superuser, nobody can open the admin. `php artisan lynx:superuser` creates a superuser, or makes an existing account one, at any time, also on a site that lost its last superuser. People who sign up on the site get the `guest` role, which grants nothing (see [People who sign up](/admin/permissions#people-who-sign-up)).
+> A user without a role can do nothing in Lynx, so until someone is a superuser, nobody can open the admin. `php artisan lynx:superuser` creates a superuser, or makes an existing account one, at any time, also on a site that lost its last superuser. People who sign up on the site get no role, so no rights (see [People who sign up](/admin/permissions#people-who-sign-up)).
 
 In a deploy script or CI, give everything as options: `php artisan lynx:superuser --email=ada@example.com --name=Ada --password=... --no-interaction`. A password on the command line stays in the shell's history, so prefer the question where you can.
 

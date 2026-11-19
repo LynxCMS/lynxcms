@@ -800,7 +800,7 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 ## ADR-0073: People who sign up get a guest role, so a sign-up never has full rights
 
-**Status:** Accepted (amends ADR-0033; its warning applies only in open mode since ADR-0078)
+**Status:** Superseded by ADR-0127 (amended ADR-0033)
 
 **Context:** ADR-0033 keeps full rights for every signed in user until any user holds a role, so an install or upgrade never locks anyone out. Sites that let visitors sign up (a members area, bookings, surveys) break that promise's premise: on a site where the owner never ran `lynx:install --user`, the first person to sign up would open the admin with every right.
 
@@ -1364,4 +1364,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** Two superuser actions, never agent tools: `users.create_with_temporary_password` creates a user with roles, and `users.temporary_password` replaces a user's password (not the caller's own). Both set a random 20 character password with both cases, digits and symbols, store only its hash, and return it once. A row in `lynx_temporary_passwords` marks the user until they choose their own: admin routes send them to `account/new-password` first, where the temporary password can't be kept, and after `lynx-admin.auth.temporary_password_days` (3) a listener on Laravel's `Validated` event refuses it at sign-in, with Lynx's screens or the app's. A password reset or an accepted invitation removes the row, and a temporary password ends a pending invitation. `lynx-admin.auth.mail` (`LYNX_ADMIN_AUTH_MAIL`) set to false hides invitations and leaves Fortify's reset feature out of Lynx's sign-in. Invitations and `users.create_with_temporary_password` share their input and the creation of the user.
 
 **Consequences:** Adding a user, by invitation or temporary password, needs at least one role: a user without one could not open the admin, and since ADR-0127 nothing gives them one later by itself. The superuser sees the password and passes it on, so it is only as private as that channel; the short life and the forced change limit the damage. The password is never in the activity log, which records only that a user was created or given one. It needs the user model to be Eloquent, as invitations do. A user who never signs in keeps an expired temporary password that signs in no one until a superuser gives a new one.
+
+## ADR-0127: No open mode, and no role for people who sign up
+
+**Status:** Accepted (supersedes the open mode of ADR-0033 and ADR-0078, and ADR-0073)
+
+**Context:** ADR-0078 closed Lynx by default but kept `LYNX_OPEN_UNTIL_ROLES`, which gives every signed in user every right until any user holds a role, for local work. One environment variable set on a server, or copied from a local `.env`, would hand the admin to the first person who signs in or signs up. ADR-0073 created the `guest` role mostly to close that hole on sites with registration. A user without a role already has no rights, so the role adds nothing else by default.
+
+**Decision:** The setting is removed. A user without a role has no rights, and no configuration changes that. Lynx's own test suite, whose tests act as users without roles, opens the checks with `Authorizer::openForTests()`, which throws unless the app runs unit tests. Install no longer creates `guest`, and `lynx.permissions.registration_role` and its `Registered` listener are removed. Sign-up exists only in an app's own registration code (Lynx's admin has none: staff come by invitation or temporary password), so that code assigns a role when it wants one. A role in reviewed code is safer than one in an environment variable, which could hand anyone who signs up a role that opens the admin. Existing `guest` roles and assignments stay: they grant nothing.
+
+**Consequences:** A new site is unusable until a superuser exists, which `lynx:install` and `lynx:superuser` provide. Apps that set `LYNX_REGISTRATION_ROLE` assign that role in their registration code. The Users screen shows sign-ups without a role.
 

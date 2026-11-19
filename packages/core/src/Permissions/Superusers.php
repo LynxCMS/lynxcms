@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
  * Who holds a superuser role (ADR-0033, ADR-0114). Lynx keeps user ids without a foreign key, so
  * a deleted account's assignments stay behind: only accounts the app's user provider still finds
  * count as superusers. The last one is never removed, and neither is the last superuser
- * assignment, which would turn open mode (lynx.permissions.open_until_roles) back on.
+ * assignment, which would leave no one able to give roles from the admin.
  *
  * @internal
  */
