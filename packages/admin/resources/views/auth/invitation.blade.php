@@ -17,6 +17,7 @@
             <x-lynx-admin::ui.label for="password_confirmation">{{ __('lynx-admin::auth.repeat_password') }}</x-lynx-admin::ui.label>
             <x-lynx-admin::ui.input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" />
         </div>
+        <x-lynx-admin::password-rules for="password" confirm="password_confirmation" />
         <x-lynx-admin::ui.button type="submit" class="w-full">{{ __('lynx-admin::auth.invitation.submit') }}</x-lynx-admin::ui.button>
     </form>
 </x-lynx-admin::auth-layout>

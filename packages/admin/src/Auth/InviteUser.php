@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Auth;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Validation\ValidationException;
 use LynxCms\Admin\Users\LynxUsers;
 use LynxCms\Core\Actions\Action;
-use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
-use LynxCms\Core\Support\Value;
 
 /**
  * Invites someone to the admin (ADR-0041): creates the host app user with an unusable password,
@@ -21,6 +17,8 @@ use LynxCms\Core\Support\Value;
  */
 final class InviteUser extends Action
 {
+    use CreatesAdminUsers;
+
     public function __construct(private readonly LynxUsers $users) {}
 
     public static function name(): string
@@ -38,16 +36,6 @@ final class InviteUser extends Action
         return false;
     }
 
-    public static function rules(): array
-    {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'roles' => ['sometimes', 'array'],
-            'roles.*' => ['string'],
-        ];
-    }
-
     public static function schema(JsonSchema $schema): array
     {
         return [
@@ -60,20 +48,7 @@ final class InviteUser extends Action
     /** @return string the new user's id */
     public function handle(Input $input, ActionContext $context): string
     {
-        $name = trim((string) $input->string('name'));
-        $email = mb_strtolower(trim((string) $input->string('email')));
-
-        if ($this->users->emailExists($email)) {
-            throw ValidationException::withMessages(['email' => __('lynx-admin::users.invite.email_taken')]);
-        }
-
-        $user = $this->users->create($name, $email);
-        $id = Value::string($user instanceof Authenticatable ? $user->getAuthIdentifier() : null);
-        $roles = Value::strings($input->array('roles'));
-
-        if ($roles !== []) {
-            $context->run(AssignRoles::class, ['user' => $id, 'roles' => $roles]);
-        }
+        ['user' => $user, 'id' => $id, 'name' => $name, 'email' => $email, 'roles' => $roles] = $this->createUser($this->users, $input, $context);
 
         Invitation::query()->create(['user_id' => $id, 'email' => $email, 'sent_at' => now()]);
         $context->changes->created('user', $id, "Invite {$name} <{$email}>", ['email' => $email, 'roles' => $roles]);
