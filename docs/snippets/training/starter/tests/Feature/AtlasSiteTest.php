@@ -44,9 +44,9 @@ final class AtlasSiteTest extends TestCase
         $this->get('/login')->assertOk()->assertSee('Forgot your password?');
     }
 
-    public function test_the_owner_opens_the_admin(): void
+    public function test_the_owner_sets_up_two_factor_authentication_before_the_admin(): void
     {
         $this->post('/login', ['email' => 'owner@atlas-training.example', 'password' => 'change-me-now'])->assertRedirect('/account');
-        $this->get('/lynx/pages')->assertOk();
+        $this->get('/lynx/pages')->assertRedirect('/lynx/account/security');
     }
 }

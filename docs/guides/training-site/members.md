@@ -15,7 +15,7 @@ The site signs everyone in with Laravel Fortify, at the site's root: `/login`, `
 
 <<< @/snippets/training/config/fortify.php{php}
 
-Because `config/fortify.php` exists, Lynx's admin stops showing its own sign-in screens and uses these (`LYNX_ADMIN_AUTH=auto`). Staff sign in at `/login` too, and a staff member who opens `/lynx` while signed out comes back to the admin after signing in. Lynx keeps inviting staff from **Access › Users**, and keeps the admin's **Account security** screen. See [Who signs users in](/admin/sign-in#who-signs-users-in).
+Because `config/fortify.php` exists, Lynx's admin stops showing its own sign-in screens and uses these (`LYNX_ADMIN_AUTH=auto`). Staff sign in at `/login` too, and a staff member who opens `/lynx` while signed out comes back to the admin after signing in. Lynx keeps inviting staff from **Access › Users**, and keeps the admin's **Account security** screen. See [Who signs users in](/admin/sign-in#who-signs-users-in). Staff set up two-factor authentication there before any other admin screen, because the user model has Fortify's `TwoFactorAuthenticatable` trait and `config/fortify.php` turns the feature on (see [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication)); members never open the admin, so they are not asked.
 
 A provider gives Fortify the site's screens and its sign-up action:
 
