@@ -23,6 +23,15 @@ trait TrashesPages
         return $this->trash->rootId();
     }
 
+    /**
+     * Whether the page is in the trash, directly or below a trashed page. Trashed pages have no
+     * path, so they are named by the Page or its id; an unknown id is not in the trash.
+     */
+    public function inTrash(Page|int $page): bool
+    {
+        return $this->trash->holds($page instanceof Page ? (int) $page->id : $page);
+    }
+
     /** Move a page and everything under it to the trash (ADR-0035). */
     public function trash(Page|int|string $page, bool $dryRun = false): Page|ActionResult
     {

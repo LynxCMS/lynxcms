@@ -52,6 +52,21 @@ it('moves a branch to the trash, where visitors cannot reach it', function (): v
     $this->get('/_trash/')->assertNotFound();
 });
 
+it('tells whether a page is in the trash, the pages under it included', function (): void {
+    $alpha = at('/courses/alpha/');
+    $lesson = at('/courses/alpha/lesson/');
+    $beta = at('/courses/beta/');
+
+    expect(lynx()->pages->inTrash($alpha))->toBeFalse();
+
+    lynx()->pages->trash($alpha);
+
+    expect(lynx()->pages->inTrash($alpha))->toBeTrue()
+        ->and(lynx()->pages->inTrash((int) $lesson->id))->toBeTrue()
+        ->and(lynx()->pages->inTrash((int) $beta->id))->toBeFalse()
+        ->and(lynx()->pages->inTrash(9999))->toBeFalse();
+});
+
 it('restores a branch where it was, with its name and URLs', function (): void {
     $alpha = at('/courses/alpha/');
     lynx()->pages->trash($alpha);
