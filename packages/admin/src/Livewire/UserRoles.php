@@ -13,6 +13,7 @@ use LynxCms\Admin\Auth\AdminAuth;
 use LynxCms\Admin\Livewire\Concerns\GivesTemporaryPasswords;
 use LynxCms\Admin\Livewire\Concerns\InvitesUsers;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Admin\Livewire\Concerns\ResetsTwoFactor;
 use LynxCms\Admin\Users\LynxUsers;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Permissions\Role;
@@ -31,6 +32,7 @@ final class UserRoles extends Component
     use GivesTemporaryPasswords;
     use InvitesUsers;
     use Notifies;
+    use ResetsTwoFactor;
 
     private const int PER_PAGE = 50;
 
@@ -69,6 +71,7 @@ final class UserRoles extends Component
             'me' => Value::string(auth()->id()),
             'pending' => AdminAuth::managesAccounts() ? $this->pendingInvitations(array_column($found, 'id')) : [],
             'temporary' => AdminAuth::managesAccounts() ? $this->temporaryPasswords(array_column($found, 'id')) : [],
+            'twoFactor' => $this->twoFactorUsers(array_column($found, 'id')),
         ]);
     }
 

@@ -15,7 +15,9 @@ use Livewire\Livewire;
 use LynxCms\Admin\Auth\AdminAuth;
 use LynxCms\Admin\Branding\SaveBranding;
 use LynxCms\Admin\Console\AdminPathCommand;
+use LynxCms\Admin\Console\ResetTwoFactorCommand;
 use LynxCms\Admin\Console\SuperuserCommand;
+use LynxCms\Admin\Doctor\TwoFactorAvailable;
 use LynxCms\Admin\Editor\BacklinkFilter;
 use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\FieldInputs;
@@ -65,6 +67,7 @@ use LynxCms\Admin\Users\EloquentUsers;
 use LynxCms\Admin\Users\LynxUsers;
 use LynxCms\Admin\View\TailwindMergeMacros;
 use LynxCms\Core\Actions\ActionRegistry;
+use LynxCms\Core\Doctor\DoctorChecks;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Http\Middleware\WithoutPageVisibility;
 use LynxCms\Core\Pages\NotFoundPage;
@@ -119,6 +122,7 @@ final class AdminServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->app->make(DoctorChecks::class)->add(TwoFactorAvailable::class);
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-admin');
         // Written by the sidebar's script, so it is plain text, not one Laravel encrypted.
         EncryptCookies::except(self::SIDEBAR_COOKIE);
@@ -173,7 +177,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->assetRoutes();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([SuperuserCommand::class, AdminPathCommand::class]);
+            $this->commands([SuperuserCommand::class, AdminPathCommand::class, ResetTwoFactorCommand::class]);
             $this->publishes([self::ROOT.'/config/lynx-admin.php' => config_path('lynx-admin.php')], 'lynx-admin-config');
             $this->publishes([self::ROOT.'/resources/css/theme.stub.css' => public_path('vendor/lynx-admin/theme.css')], 'lynx-admin-theme');
         }

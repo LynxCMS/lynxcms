@@ -1,4 +1,10 @@
 <div class="grid max-w-2xl gap-6">
+    @if ($mustSetUpTwoFactor)
+        <x-lynx-admin::ui.alert tone="warning" role="status" data-two-factor-required>
+            <x-lynx-admin::ui.alert-title>{{ __('lynx-admin::account.two_factor.required') }}</x-lynx-admin::ui.alert-title>
+            <x-lynx-admin::ui.alert-description>{{ __('lynx-admin::account.two_factor.required_help') }}</x-lynx-admin::ui.alert-description>
+        </x-lynx-admin::ui.alert>
+    @endif
 
     <form wire:submit="updatePassword" class="bg-card text-card-foreground grid gap-4 rounded-xl border p-5 shadow-sm" aria-labelledby="account-password">
         <h2 id="account-password" class="text-base font-semibold">{{ __('lynx-admin::account.password.heading') }}</h2>
@@ -24,6 +30,7 @@
         <section class="bg-card text-card-foreground grid gap-4 rounded-xl border p-5 shadow-sm" aria-labelledby="account-two-factor">
             <div>
                 <h2 id="account-two-factor" class="text-base font-semibold">{{ __('lynx-admin::account.two_factor.heading') }}</h2>
+                @error('two_factor') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::account.two_factor.description') }}</p>
             </div>
 
@@ -57,7 +64,9 @@
                 @endif
                 <div class="flex flex-wrap gap-3">
                     <x-lynx-admin::ui.button type="button" variant="outline" wire:click="regenerateRecoveryCodes">{{ __('lynx-admin::account.two_factor.new_recovery_codes') }}</x-lynx-admin::ui.button>
-                    <x-lynx-admin::ui.button type="button" variant="outline" class="text-destructive hover:text-destructive" wire:click="disableTwoFactor">{{ __('lynx-admin::account.two_factor.turn_off') }}</x-lynx-admin::ui.button>
+                    @unless ($isTwoFactorRequired)
+                        <x-lynx-admin::ui.button type="button" variant="outline" class="text-destructive hover:text-destructive" wire:click="disableTwoFactor">{{ __('lynx-admin::account.two_factor.turn_off') }}</x-lynx-admin::ui.button>
+                    @endunless
                 </div>
             @else
                 <div><x-lynx-admin::ui.button type="button" wire:click="enableTwoFactor">{{ __('lynx-admin::account.two_factor.turn_on') }}</x-lynx-admin::ui.button></div>

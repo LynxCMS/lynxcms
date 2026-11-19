@@ -26,6 +26,8 @@ return [
         'changed' => 'Palavra-passe alterada.',
     ],
     'two_factor' => [
+        'required' => 'A autenticação de dois fatores é obrigatória para o admin.',
+        'required_help' => 'Ative-a abaixo para continuar. Precisa de uma aplicação de autenticação no telemóvel.',
         'heading' => 'Autenticação de dois fatores',
         'description' => 'Depois da palavra-passe, o início de sessão pede um código de uma aplicação de autenticação no seu telemóvel.',
         'scan' => 'Leia o código QR com a sua aplicação de autenticação ou introduza a chave de configuração. Depois, escreva o código que ela mostrar.',

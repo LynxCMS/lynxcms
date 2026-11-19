@@ -54,6 +54,12 @@ return [
         'not_for_you' => 'Não pode criar uma palavra-passe temporária para si. Altere a sua palavra-passe em Segurança da conta.',
         'unsupported' => 'O Lynx não pode definir palavras-passe para os utilizadores desta aplicação.',
     ],
+    'two_factor' => [
+        'reset' => 'Repor dois fatores',
+        'confirm_reset' => 'Repor a autenticação de dois fatores de :name? Terá de a configurar de novo.',
+        'reset_done' => 'Autenticação de dois fatores reposta para :name.',
+        'unsupported' => 'O Lynx não pode gerir a autenticação de dois fatores dos utilizadores desta aplicação.',
+    ],
     'mail' => [
         'subject' => 'Foi convidado para :site',
         'greeting' => 'Olá, :name,',

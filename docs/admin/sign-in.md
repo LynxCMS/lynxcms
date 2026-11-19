@@ -113,6 +113,26 @@ Lynx's migration adds the two-factor columns to `users` and creates the `passkey
 
 On **Account security**, **Turn on** shows a QR code and a setup key. Two-factor authentication counts only once a code from the app confirms it. The recovery codes are shown then; each signs you in once if you lose your phone.
 
+### Requiring two-factor authentication
+
+The admin requires two-factor authentication by default (`LYNX_ADMIN_REQUIRE_TWO_FACTOR`, ADR-0128). A user who opens the admin without it is sent to **Account security** and can't open any other admin screen until it is on. A user with a temporary password sets their own password first. While it is required, **Turn off** is not offered.
+
+It applies to everyone who can open the admin. Members of a site who never open the admin are not asked; the app can still offer it to them.
+
+It needs Fortify's `TwoFactorAuthenticatable` trait on the user model, and, when the app's Fortify signs users in, `Features::twoFactorAuthentication()` in `config/fortify.php`. Without them nobody could set it up, so nobody is asked, and `lynx:doctor` warns. When your own sign-in signs users in (`LYNX_ADMIN_AUTH=false`), it doesn't apply: your sign-in handles it.
+
+A passkey doesn't count: the account can still sign in with its password alone.
+
+Set `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` in your local `.env` to work without it.
+
+### A lost phone
+
+Recovery codes sign in once each. Without them, a superuser uses **Reset two-factor** on the user's row under **Access > Users**: the user sets it up again on their next visit. A superuser locked out themselves runs this on the server:
+
+```bash
+php artisan lynx:two-factor:reset ana@example.com
+```
+
 ## Passkeys
 
 **Add passkey** registers the device's passkey (fingerprint, face or PIN). The sign-in screen then offers **Sign in with a passkey**. Passkeys need HTTPS (or `localhost`) and `APP_URL` set to the site's address.

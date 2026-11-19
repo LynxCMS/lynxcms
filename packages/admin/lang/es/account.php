@@ -26,6 +26,8 @@ return [
         'changed' => 'Contraseña cambiada.',
     ],
     'two_factor' => [
+        'required' => 'La verificación en dos pasos es obligatoria para el admin.',
+        'required_help' => 'Actívala abajo para continuar. Necesitarás una aplicación de autenticación en el móvil.',
         'heading' => 'Verificación en dos pasos',
         'description' => 'Después de la contraseña, al iniciar sesión se te pide un código de una aplicación de autenticación en tu móvil.',
         'scan' => 'Escanea el código QR con tu aplicación de autenticación o escribe la clave de configuración. Después escribe el código que muestra.',
