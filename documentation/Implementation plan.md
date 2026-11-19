@@ -54,7 +54,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 
 12. Portuguese documentation: before 1.0, or after.
 13. The private Composer repository and the release of `lynxcms/translate`: with 1.0, or after.
-14. The license review the open-core model needs (ADR-0018).
+14. The legal review of the paid modules' terms (ADR-0018). The core stays MIT (ADR-0130); register the name "Lynx CMS" and publish a trademark policy.
 
 Not needed for 1.0: the headless API and webhooks (v2, `documentation/plans/headless.md`) and the agent chat panel (phase 15).
 

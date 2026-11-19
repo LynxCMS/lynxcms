@@ -1395,3 +1395,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Users signed in on several devices sign in again after a password change, which is the point. Resetting two-factor authentication changes no password, so it ends no session; the docs say to give a temporary password as well when a phone may be stolen. The hourly limit lets someone who knows an email keep its owner out for up to an hour; the review judged that better than unlimited guessing from many addresses. A user without a password hash is skipped by `AuthenticateSession`; Lynx always sets one, an unusable one for invited users.
 
+## ADR-0130: The core stays under the MIT license
+
+**Status:** Accepted (confirms ADR-0018)
+
+**Context:** Before 1.0, Apache 2.0 was weighed against MIT for the core packages. Apache 2.0 adds an explicit patent grant with patent retaliation, terms for contributions, a clause saying the name is not licensed, and a NOTICE file; it also asks anyone who redistributes changed files to mark them. Every commit so far has one human author, so either change would be free today.
+
+**Decision:** Keep MIT for every `lynxcms/*` package and for the starters. Of Apache 2.0's additions, only the patent grant is not already covered: GitHub's terms put contributions under the repository's license, MIT grants no rights to the name either, and MIT already requires keeping the copyright notice. MIT is the Laravel ecosystem's norm and asks less of people who change or pass on Lynx. It is also the reversible choice: MIT code, contributors' code included, can move to Apache 2.0 later, while Apache 2.0 code cannot be relabelled MIT without its contributors' consent.
+
+**Consequences:** No relicensing work before 1.0. If an enterprise customer's legal review asks for a patent grant, moving to Apache 2.0 stays open, for releases from then on. The name "Lynx CMS" is protected by registering it and publishing a trademark policy, which no software license does. Paid modules keep their own commercial terms (ADR-0018), and those still need the legal review before launch.
+
