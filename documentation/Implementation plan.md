@@ -48,7 +48,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 8. An accessibility review of the admin.
 9. The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
 10. ~~A decision on `lynx:sync`.~~ Decided on 2026-11-19: dropped (ADR-0133).
-11. The draft documentation: publish or drop the bilingual website guide and the comparison page.
+11. ~~The draft documentation.~~ Moved after 1.0 on 2026-11-19: drafts are hidden from the docs site, so they block nothing.
 
 **Decisions for phase 14**
 
@@ -57,6 +57,11 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 14. The legal review of the paid modules' terms (ADR-0018). The core stays MIT (ADR-0130); register the name "Lynx CMS" and publish a trademark policy.
 
 Not needed for 1.0: the headless API and webhooks (v2, `documentation/plans/headless.md`) and the agent chat panel (phase 15).
+
+**After 1.0**
+
+* **The bilingual website guide** (`docs/guides/bilingual-website/`, a draft): finish it as the website half of the meeting rooms starter, with its code moved into `docs/snippets` so the suite tests it, as the training site guide's is.
+* **The comparison page** (`docs/getting-started/compared.md`) stays a draft. Publishing it means checking every claim about the other products again and dating it, then checking it again at each minor release.
 
 ## Phase 0: Repository and quality setup
 
