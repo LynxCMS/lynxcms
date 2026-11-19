@@ -32,7 +32,7 @@ it('adds a user with a temporary password and shows it once', function (): void 
         ->set('invite.method', 'password')
         ->call('addUser')
         ->assertHasNoErrors()
-        ->assertSee('Bruno Costa can now sign in with this password.')
+        ->assertSee('User Bruno Costa created. Temporary password:')
         ->assertSet('invite.email', '');
 
     $password = $screen->get('issued')['password'];
@@ -55,7 +55,7 @@ it('gives a listed user a new temporary password, and marks them', function (): 
     $screen = Livewire::test(UserRoles::class)
         ->assertSee('New temporary password')
         ->call('giveTemporaryPassword', (string) $bruno->id)
-        ->assertSee('Bruno Costa can now sign in with this new password.')
+        ->assertSee('New temporary password for Bruno Costa:')
         ->assertSee('Temporary password');
 
     expect(TemporaryPassword::query()->where('user_id', (string) $bruno->id)->exists())->toBeTrue()
@@ -75,11 +75,11 @@ it('offers only temporary passwords on a site that sends no email', function ():
     Livewire::test(UserRoles::class)
         ->assertSet('invite.method', 'password')
         ->assertSee('Create user')
-        ->assertDontSee('Email them an invitation')
+        ->assertDontSee('Send an invitation by email')
         ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')
         ->set('invite.method', 'email')
         ->call('addUser')
-        ->assertSee('Bruno Costa can now sign in with this password.');
+        ->assertSee('User Bruno Costa created. Temporary password:');
 
     Notification::assertNothingSent();
 });

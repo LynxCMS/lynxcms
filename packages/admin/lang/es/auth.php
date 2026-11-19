@@ -27,14 +27,14 @@ return [
         'back' => 'Volver al inicio de sesión',
     ],
     'temporary' => [
-        'expired' => 'Esta contraseña temporal ha caducado. Pide una nueva a quien te la dio.',
+        'expired' => 'Esta contraseña temporal ha caducado. Pide una nueva a un administrador.',
     ],
     'new_password' => [
-        'title' => 'Elige tu contraseña',
-        'description' => 'Has iniciado sesión con una contraseña temporal. Elige la tuya para continuar.',
+        'title' => 'Establece una nueva contraseña',
+        'description' => 'Has iniciado sesión con una contraseña temporal. Establece una nueva contraseña para continuar.',
         'password' => 'Nueva contraseña',
         'submit' => 'Guardar contraseña',
-        'same' => 'Elige una contraseña distinta de la temporal.',
+        'same' => 'La nueva contraseña debe ser distinta de la temporal.',
     ],
     'invitation' => [
         'welcome' => 'Te damos la bienvenida',

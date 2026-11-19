@@ -27,14 +27,14 @@ return [
         'back' => 'Voltar ao início de sessão',
     ],
     'temporary' => [
-        'expired' => 'Esta palavra-passe temporária expirou. Peça uma nova a quem lha deu.',
+        'expired' => 'Esta palavra-passe temporária expirou. Peça uma nova a um administrador.',
     ],
     'new_password' => [
-        'title' => 'Escolha a sua palavra-passe',
-        'description' => 'Iniciou sessão com uma palavra-passe temporária. Escolha a sua para continuar.',
+        'title' => 'Defina uma nova palavra-passe',
+        'description' => 'Iniciou sessão com uma palavra-passe temporária. Defina uma nova palavra-passe para continuar.',
         'password' => 'Nova palavra-passe',
         'submit' => 'Guardar palavra-passe',
-        'same' => 'Escolha uma palavra-passe diferente da temporária.',
+        'same' => 'A nova palavra-passe tem de ser diferente da temporária.',
     ],
     'invitation' => [
         'welcome' => 'Bem-vindo',

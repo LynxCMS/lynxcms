@@ -39,7 +39,7 @@ A site with a members area, bookings or surveys lets visitors create accounts. U
 
 ## Invitations
 
-Under **Access > Users**, a superuser fills in a name, an email and roles under **Add user**, chooses **Email them an invitation**, then **Send invitation**. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
+Under **Access > Users**, a superuser fills in a name, an email and roles under **Add user**, chooses **Send an invitation by email**, then **Send invitation**. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
 
 Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working.
 
@@ -47,11 +47,11 @@ The email needs a working mail setup in your app. Without one, use temporary pas
 
 ## Temporary passwords
 
-A superuser can give someone a password instead of an email (ADR-0126). Under **Add user**, choose **Give them a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Pass it on privately: Lynx keeps only its hash and can't show it again.
+A superuser can create a user with a temporary password instead of sending an invitation (ADR-0126). Under **Add user**, choose **Create a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Lynx stores only its hash and can't show it again.
 
-The person signs in with it and chooses their own password before anything else in the admin. The temporary one can't be kept, and it stops signing in after 3 days (`lynx-admin.auth.temporary_password_days`). Until they choose, the Users screen marks them **Temporary password**.
+The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 3 days (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
 
-**New temporary password**, on each user's row, does the same for someone who forgot theirs. Their old password stops working at once, and a pending invitation ends. It isn't offered on your own row: change your own on the **Account security** screen, in your menu.
+**New temporary password**, on each user's row, replaces the password of a user who forgot theirs. Their current password stops working, and a pending invitation is cancelled. It isn't offered on your own row: change your own on the **Account security** screen, in your menu.
 
 In code, both are actions, for superusers only and never offered to agents. The password is in the result, and the activity log never holds it:
 
@@ -67,7 +67,7 @@ $given = lynx()->run(SetTemporaryPassword::class, ['user' => '12'])->value;
 
 ### A site that sends no email
 
-Set `LYNX_ADMIN_AUTH_MAIL=false`. The Users screen then adds people with temporary passwords only and offers no invitations, and Lynx's sign-in screens have no **Forgot password** link: a superuser gives a new temporary password instead. When the app's own Fortify signs people in, its password reset is the app's to turn off.
+Set `LYNX_ADMIN_AUTH_MAIL=false`. The Users screen then creates users with temporary passwords only and offers no invitations, and Lynx's sign-in screens have no **Forgot password** link. A superuser creates a new temporary password instead. When the app's own Fortify signs people in, its password reset is the app's to turn off.
 
 ## Your user model
 

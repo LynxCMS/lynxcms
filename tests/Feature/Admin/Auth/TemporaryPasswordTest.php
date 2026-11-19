@@ -70,7 +70,7 @@ it('signs the user in with it and asks for their own password first', function (
 
     signIn('bruno@example.com', $created['password'])->assertRedirect('/lynx/pages');
     $this->get('/lynx/pages')->assertRedirect('/lynx/account/new-password');
-    $this->get('/lynx/account/new-password')->assertOk()->assertSee('Choose your password');
+    $this->get('/lynx/account/new-password')->assertOk()->assertSee('Set a new password');
 });
 
 it('lets the user choose their own password, and then opens the admin', function (): void {

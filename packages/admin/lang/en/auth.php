@@ -27,14 +27,14 @@ return [
         'back' => 'Back to sign in',
     ],
     'temporary' => [
-        'expired' => 'This temporary password has expired. Ask whoever gave it to you for a new one.',
+        'expired' => 'This temporary password has expired. Ask an administrator for a new one.',
     ],
     'new_password' => [
-        'title' => 'Choose your password',
-        'description' => 'You signed in with a temporary password. Choose your own to continue.',
+        'title' => 'Set a new password',
+        'description' => 'You signed in with a temporary password. Set a new password to continue.',
         'password' => 'New password',
         'submit' => 'Save password',
-        'same' => 'Choose a password different from the temporary one.',
+        'same' => 'The new password must be different from the temporary password.',
     ],
     'invitation' => [
         'welcome' => 'Welcome',
