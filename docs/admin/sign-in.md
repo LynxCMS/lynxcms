@@ -63,7 +63,7 @@ Password::defaults(fn () => app()->isProduction()
 
 A superuser can create a user with a temporary password instead of sending an invitation (ADR-0126). Under **Add user**, choose **Create a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Lynx stores only its hash and can't show it again. The **Copy** button needs HTTPS, as browsers allow copying only on secure pages. Without it, the button is disabled and the password can be selected and copied by hand.
 
-The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 3 days (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
+The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 1 day (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
 
 **New temporary password**, on each user's row, replaces the password of a user who forgot theirs. Their current password stops working, and a pending invitation is cancelled. It isn't offered on your own row: change your own on the **Account security** screen, in your menu.
 

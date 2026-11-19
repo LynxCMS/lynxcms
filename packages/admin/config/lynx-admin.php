@@ -37,7 +37,7 @@ return [
         // How long an invitation link works
         'invitation_days' => 7,
         // How long a temporary password signs in, until its user chooses their own (ADR-0126)
-        'temporary_password_days' => 3,
+        'temporary_password_days' => 1,
         // false: the admin sends no email. No invitations or reset links; superusers give
         // temporary passwords instead
         'mail' => env('LYNX_ADMIN_AUTH_MAIL', true),

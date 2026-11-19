@@ -48,7 +48,7 @@ php artisan vendor:publish --tag=lynx-admin-config
 | `locales` | `en`, `pt`, `es` | The languages editors can choose in their menu, as code and name. |
 | `auth.enabled` | `auto` | Who signs users in: `auto`, `app` or `false`; see [Sign-in](/admin/sign-in#who-signs-users-in). |
 | `auth.invitation_days` | `7` | How long an invitation link works. |
-| `auth.temporary_password_days` | `3` | How long a [temporary password](/admin/sign-in#temporary-passwords) signs in. |
+| `auth.temporary_password_days` | `1` | How long a [temporary password](/admin/sign-in#temporary-passwords) signs in. |
 | `auth.mail` | `true` (`LYNX_ADMIN_AUTH_MAIL`) | `false`: the admin sends no email, so no invitations or reset links. See [A site that sends no email](/admin/sign-in#a-site-that-sends-no-email). |
 | `auth.require_two_factor` | `true` (`LYNX_ADMIN_REQUIRE_TWO_FACTOR`) | Everyone who opens the admin sets up two-factor authentication first. See [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication). |
 | `theme` | `system` | `light`, `dark` or `system`. |
