@@ -49,6 +49,7 @@ return [
         'label' => 'Temporary password',
         'copy' => 'Copy',
         'copied' => 'Copied',
+        'copy_needs_https' => 'Copy is not available without HTTPS. Select the password to copy it.',
         'done' => 'Done',
         'not_for_you' => 'You can\'t create a temporary password for yourself. Change your password in Account security.',
         'unsupported' => 'Lynx can\'t set passwords for this app\'s users.',

@@ -8,11 +8,13 @@
             <div class="flex flex-wrap items-center gap-2">
                 <span class="sr-only">{{ __('lynx-admin::users.temporary.label') }}</span>
                 <code x-ref="password" class="bg-muted rounded px-3 py-2 font-mono text-base select-all break-all">{{ $issued['password'] }}</code>
-                <x-lynx-admin::ui.button type="button" variant="outline" size="sm" x-on:click="navigator.clipboard.writeText($refs.password.textContent).then(() => copied = true).catch(() => window.getSelection().selectAllChildren($refs.password))">
+                <x-lynx-admin::ui.button type="button" variant="outline" size="sm" x-bind:disabled="! window.isSecureContext" x-on:click="navigator.clipboard.writeText($refs.password.textContent).then(() => copied = true).catch(() => window.getSelection().selectAllChildren($refs.password))">
                     <span x-show="! copied">{{ __('lynx-admin::users.temporary.copy') }}</span>
                     <span x-show="copied" x-cloak>{{ __('lynx-admin::users.temporary.copied') }}</span>
                 </x-lynx-admin::ui.button>
             </div>
+            {{-- The clipboard API exists only on HTTPS pages (and localhost). --}}
+            <p class="text-muted-foreground text-sm" x-show="! window.isSecureContext" x-cloak>{{ __('lynx-admin::users.temporary.copy_needs_https') }}</p>
             <p class="text-muted-foreground text-sm">{{ __('lynx-admin::users.temporary.shown_once', ['when' => $issued['until']]) }}</p>
             <div><x-lynx-admin::ui.button type="button" size="sm" wire:click="dismissIssued">{{ __('lynx-admin::users.temporary.done') }}</x-lynx-admin::ui.button></div>
         </div>

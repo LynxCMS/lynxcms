@@ -45,9 +45,23 @@ Until they choose a password, the Users screen marks them **Invitation pending**
 
 The email needs a working mail setup in your app. Without one, use temporary passwords.
 
+## Password rules
+
+Every form that sets a password (reset, invitation, new password, **Account security**) follows your app's `Password::defaults()` and lists its rules under the inputs. Each rule is ticked as the user types, and a last line says whether both passwords match. The server checks the rules again when the form is sent; "not found in known data breaches" is checked only then.
+
+Without `Password::defaults()`, Laravel asks for 8 characters. Set your own in a service provider:
+
+```php
+use Illuminate\Validation\Rules\Password;
+
+Password::defaults(fn () => app()->isProduction()
+    ? Password::min(12)->uncompromised()
+    : Password::min(12));
+```
+
 ## Temporary passwords
 
-A superuser can create a user with a temporary password instead of sending an invitation (ADR-0126). Under **Add user**, choose **Create a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Lynx stores only its hash and can't show it again.
+A superuser can create a user with a temporary password instead of sending an invitation (ADR-0126). Under **Add user**, choose **Create a temporary password**, then **Create user**. Lynx creates the user with their roles and shows a random password of 20 letters, digits and symbols, once, with a button to copy it. Lynx stores only its hash and can't show it again. The **Copy** button needs HTTPS, as browsers allow copying only on secure pages. Without it, the button is disabled and the password can be selected and copied by hand.
 
 The user is required to set a new password on first sign-in, before any other admin screen opens. The new password must differ from the temporary one. The temporary password expires after 3 days (`lynx-admin.auth.temporary_password_days`). Until the user sets a new password, the Users screen marks them **Temporary password**.
 

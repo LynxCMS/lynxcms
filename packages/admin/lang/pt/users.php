@@ -49,6 +49,7 @@ return [
         'label' => 'Palavra-passe temporária',
         'copy' => 'Copiar',
         'copied' => 'Copiada',
+        'copy_needs_https' => 'Copiar não está disponível sem HTTPS. Selecione a palavra-passe para a copiar.',
         'done' => 'Concluído',
         'not_for_you' => 'Não pode criar uma palavra-passe temporária para si. Altere a sua palavra-passe em Segurança da conta.',
         'unsupported' => 'O Lynx não pode definir palavras-passe para os utilizadores desta aplicação.',

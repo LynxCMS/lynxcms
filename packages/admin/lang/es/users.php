@@ -49,6 +49,7 @@ return [
         'label' => 'Contraseña temporal',
         'copy' => 'Copiar',
         'copied' => 'Copiada',
+        'copy_needs_https' => 'Copiar no está disponible sin HTTPS. Selecciona la contraseña para copiarla.',
         'done' => 'Hecho',
         'not_for_you' => 'No puedes crear una contraseña temporal para ti. Cambia tu contraseña en Seguridad de la cuenta.',
         'unsupported' => 'Lynx no puede establecer contraseñas para los usuarios de esta aplicación.',

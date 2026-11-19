@@ -37,6 +37,7 @@ it('adds a user with a temporary password and shows it once', function (): void 
 
     $password = $screen->get('issued')['password'];
     expect($password)->toHaveLength(20);
+    $screen->assertSee('Copy is not available without HTTPS. Select the password to copy it.');
     $screen->assertSee($password)->call('dismissIssued')->assertSet('issued', null)->assertDontSee($password);
     Notification::assertNothingSent();
 });

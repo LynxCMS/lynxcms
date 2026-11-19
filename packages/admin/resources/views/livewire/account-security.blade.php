@@ -16,6 +16,7 @@
             <label for="new-password-confirmation" class="text-sm font-medium">{{ __('lynx-admin::account.password.repeat') }}</label>
             <input id="new-password-confirmation" type="password" class="blat-input max-w-sm" wire:model="password_confirmation" autocomplete="new-password">
         </div>
+        <x-lynx-admin::password-rules for="new-password" confirm="new-password-confirmation" />
         <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::account.password.submit') }}</x-lynx-admin::ui.button></div>
     </form>
 
