@@ -158,7 +158,7 @@ Added later: ADR-0022, start fresh as lynxcms/\* (Accepted); ADR-0023, keep read
 
 ## ADR-0014: Schema sync through YAML export and apply, keyed by uuid
 
-**Status:** Accepted
+**Status:** Accepted (PHP template classes dropped by ADR-0133)
 
 **Context:** Languages, fields and templates live in the database and can change in production through the admin or AI agents. Developers need those changes locally, and auto-increment ids differ between machines. Craft solves this with project config; Lynx 1 defines templates as PHP classes synced with `lynx:sync`.
 
@@ -1424,4 +1424,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** CI runs Roave's backward-compatibility-check on every pull request, comparing the pull request with its base. It checks every class and method not marked `@internal`, so the markers decide what it guards, and it reports removed classes and methods, changed signatures and classes that became `@internal`. The tool lives in `tools/compat` with its own Composer lock, apart from Lynx's dependencies. `composer compat` runs it locally against the latest release, for writing release notes. Until 1.0 the check only reports, in the run's summary and as a warning: 0.x releases may break on purpose, and each break goes in the release notes. At 1.0, `COMPAT_BLOCKING` in the workflow becomes true and a break fails the pull request. Livewire moved from the root `require-dev` to `require`: the tool installs only `require` dependencies, and the admin's Livewire components could not be compared without it.
 
 **Consequences:** Every pull request shows what it breaks in `@api` code. After 1.0 a break needs a new major version, or a deprecation first. The check costs about a minute per pull request. It does not see behaviour changes behind an unchanged signature; tests and release notes cover those.
+
+## ADR-0133: No PHP template classes (`lynx:sync`)
+
+**Status:** Accepted (amends ADR-0014)
+
+**Context:** ADR-0014 kept Lynx 1's PHP template classes as an option: one class per template, compiled by `lynx:sync` into the same actions as everything else. They were never built. Meanwhile the schema can be defined in the admin, in YAML files (`lynx:schema:export` and `lynx:schema:apply`), with PHP calls (`lynx()->fields->add()`, `lynx()->templates->add()`) and with schema drafts (`lynx:draft`), and PHPStan already knows each template's fields through the `FieldProperties` extension.
+
+**Decision:** Drop PHP template classes and `lynx:sync` from the plan. Lynx 1.0 ships without them.
+
+**Consequences:** One fewer source of truth to keep in step with the others, and no rule needed for when a class and a YAML file disagree. Developers who prefer classes write a seeder or an install action with PHP calls. If Lynx 1 users ask for classes, they can come after 1.0 as a module on the same actions, without breaking anything.
 
