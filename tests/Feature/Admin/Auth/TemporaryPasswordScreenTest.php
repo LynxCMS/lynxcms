@@ -44,7 +44,7 @@ it('adds a user with a temporary password and shows it once', function (): void 
 
 it('still sends an invitation when that is the choice', function (): void {
     Livewire::test(UserRoles::class)
-        ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')
+        ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')->set('invite.roles', ['editor'])
         ->call('addUser')
         ->assertSet('status', 'Invitation sent to bruno@example.com.')
         ->assertSet('issued', null);
@@ -77,7 +77,7 @@ it('offers only temporary passwords on a site that sends no email', function ():
         ->assertSet('invite.method', 'password')
         ->assertSee('Create user')
         ->assertDontSee('Send an invitation by email')
-        ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')
+        ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')->set('invite.roles', ['editor'])
         ->set('invite.method', 'email')
         ->call('addUser')
         ->assertSee('User Bruno Costa created. Temporary password:');
@@ -91,3 +91,13 @@ it('never shows the password on a user\'s row or in a later render', function ()
 
     Livewire::test(UserRoles::class)->assertSee('Temporary password')->assertDontSee($given['password']);
 });
+
+it('shows the error by the roles when none is chosen', function (string $method): void {
+    Livewire::test(UserRoles::class)
+        ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')->set('invite.method', $method)
+        ->call('addUser')
+        ->assertHasErrors('invite.roles')
+        ->assertSet('issued', null);
+
+    expect(User::query()->where('email', 'bruno@example.com')->exists())->toBeFalse();
+})->with(['email', 'password']);

@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- **Temporary passwords.** A superuser can add a user with a temporary password instead of an invitation, or give one to someone who forgot theirs. It is shown once, expires after 3 days, and the user is required to change it on first sign-in. `LYNX_ADMIN_AUTH_MAIL=false` turns off invitations and reset links for sites that send no email. Run `php artisan lynx:migrate` for its table. See [Temporary passwords](/admin/sign-in#temporary-passwords) (ADR-0126).
+- **Temporary passwords.** A superuser can add a user with a temporary password instead of an invitation, or give one to someone who forgot theirs. It is shown once, expires after 3 days, and the user is required to change it on first sign-in. `LYNX_ADMIN_AUTH_MAIL=false` turns off invitations and reset links for sites that send no email. Adding a user, by invitation or temporary password, now needs at least one role. Run `php artisan lynx:migrate` for its table. See [Temporary passwords](/admin/sign-in#temporary-passwords) (ADR-0126).
 - **Password rules on every password form.** The reset, invitation, new password and **Account security** forms list the app's `Password::defaults()` and tick each rule as the user types. See [Password rules](/admin/sign-in#password-rules).
 - The Users screen's **Invite user** form is now **Add user**.
 

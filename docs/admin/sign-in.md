@@ -39,7 +39,7 @@ A site with a members area, bookings or surveys lets visitors create accounts. U
 
 ## Invitations
 
-Under **Access > Users**, a superuser fills in a name, an email and roles under **Add user**, chooses **Send an invitation by email**, then **Send invitation**. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
+Under **Access > Users**, a superuser fills in a name, an email and at least one role under **Add user**, chooses **Send an invitation by email**, then **Send invitation**. A user without a role could not open the admin, so Lynx refuses to add one. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
 
 Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working.
 
