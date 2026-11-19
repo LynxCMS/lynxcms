@@ -10,6 +10,14 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+## 0.1.52
+
+Released November 19, 2026. No changes to the packages: the training site starter now expects its owner to set up two-factor authentication before the admin opens, so it can follow 0.1.51. Nothing to do when upgrading.
+
+### Guides
+
+- [Members Area](/guides/training-site/members) says that staff set up two-factor authentication on **Account security** before any other admin screen, and members are not asked.
+
 ## 0.1.51
 
 Released November 19, 2026. Sign-in security: two-factor authentication required for the admin, temporary passwords for sites that send no email, every other session signed out when a password changes, and no more open mode. One new table: run `lynx:migrate`. See the [upgrade guide](/prologue/upgrade#from-0-1-50-to-0-1-51).
