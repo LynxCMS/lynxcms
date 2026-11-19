@@ -17,6 +17,8 @@ Lynx has not reached 1.0. Security fixes go into the latest release only, so sta
 | Latest `0.x` release | Yes |
 | Older releases | No |
 
+From 1.0 on, the latest minor release of the current major version gets security fixes, and so does the previous major version for 12 months after the next one is released. [Versioning and Support](https://lynxcms.org/cms/docs/prologue/versioning) has the details.
+
 Each release lists its security fixes in the [release notes](https://lynxcms.org/cms/docs/prologue/release-notes).
 
 ## What counts
