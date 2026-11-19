@@ -12,6 +12,8 @@ use Throwable;
  * Notices in the admin's notification bar (components/notifications): notify() shows a message,
  * green, yellow or red, and keeps it in $status for screen readers and tests. A save refused by
  * validation gets a red notice; the errors stay next to their inputs.
+ *
+ * @internal
  */
 trait Notifies
 {

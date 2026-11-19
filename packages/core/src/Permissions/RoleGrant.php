@@ -18,7 +18,7 @@ use Override;
  * @property list<string>|null $templates
  * @property list<int>|null $branches
  *
- * @api
+ * @internal
  */
 final class RoleGrant extends Model
 {

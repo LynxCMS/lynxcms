@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
 /**
  * The invitation email: a link to choose a password, valid for some days.
  *
- * @api
+ * @internal
  */
 final class InvitationNotification extends Notification
 {

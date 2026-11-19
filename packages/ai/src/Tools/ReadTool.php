@@ -20,6 +20,8 @@ use LynxCms\Core\Support\Value;
 /**
  * The read tools shared with the MCP server: describe_schema, describe_field_types, find_pages, get_page,
  * get_page_history, and those modules register (ReadToolRegistry).
+ *
+ * @internal
  */
 final readonly class ReadTool implements Tool
 {

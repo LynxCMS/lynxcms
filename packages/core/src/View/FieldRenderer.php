@@ -13,7 +13,7 @@ use Stringable;
  * Renders a field value for HTML. When a translatable value comes from a fallback language it is
  * wrapped with a lang attribute, so screen readers and search engines read it correctly.
  *
- * @api
+ * @internal
  */
 final readonly class FieldRenderer
 {

@@ -13,6 +13,8 @@ use LynxCms\Forms\Models\Submission;
 
 /**
  * Sets a submission's status (new, read, archived, spam) and the editors' notes on it.
+ *
+ * @api
  */
 final class UpdateSubmission extends Action
 {

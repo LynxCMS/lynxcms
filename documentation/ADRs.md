@@ -1405,3 +1405,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** No relicensing work before 1.0. If an enterprise customer's legal review asks for a patent grant, moving to Apache 2.0 stays open, for releases from then on. The name "Lynx CMS" is protected by registering it and publishing a trademark policy, which no software license does. Paid modules keep their own commercial terms (ADR-0018), and those still need the legal review before launch.
 
+## ADR-0131: The public API before 1.0
+
+**Status:** Accepted (refines ADR-0018's `@api` rule)
+
+**Context:** Every class marked `@api` becomes a promise at 1.0. An audit (`documentation/reports/api-audit-2026-11.md`) found 300 `@api` classes, many used by no app, module or guide, and 178 classes with no marker at all.
+
+**Decision:** A class is `@api` when apps or third-party modules need it: actions (their class and input are how apps write), what `lynx()` and its module APIs return, events, exceptions the API throws, interfaces and abstract classes meant for extension, admin hooks for modules, and every class the docs or the guides' code use. Everything else is `@internal`: service providers, Livewire screens, Blade component classes (the tag is the API), Artisan commands (the command is the API), agent and MCP tools, field type and formatter classes (their names are the API), and the inner parts of features. Lynx's own packages may use each other's `@internal` classes, because they are released together under one version. A public method that only Lynx's packages need is marked `@internal` on the method; parameters that exposed internal classes are removed, as `$scope` was from `PagesApi::find()` and `childCounts()`. `tests/Unit/PublicApiTest.php` fails on a class without a marker and on the guides' code using an `@internal` class.
+
+**Consequences:** 127 classes became `@internal`, 81 unmarked classes (the actions, `lynx()->ai()` and its run) became `@api`, 97 unmarked classes became `@internal`, and `IntegerConverter`, which the custom field type guide uses, became `@api`, leaving 255 `@api` classes. Apps that used a demoted class keep working until 1.0 but lose the promise; the starters still use three classes that were `@internal` before the audit (`Branding`, `Trash`, `Unlocks`), to be replaced or made public before 1.0. The backward compatibility check in CI comes next, on this list.
+

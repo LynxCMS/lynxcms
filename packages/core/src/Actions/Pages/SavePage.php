@@ -45,6 +45,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * split between Pages\Saving\PageInput, NameWriter, ValueWriter and PageRowWriter.
  *
  * Input is either a Page object (from the PHP API) or plain arrays (from MCP and the AI agent).
+ *
+ * @api
  */
 final class SavePage extends Action
 {

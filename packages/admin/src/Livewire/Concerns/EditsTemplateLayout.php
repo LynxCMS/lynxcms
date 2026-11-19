@@ -19,6 +19,8 @@ use LynxCms\Core\Templates\Layout\TemplateLayout;
  * with the field list in one templates.update (TemplateForm::saveFields).
  *
  * Items are "field:{name}" or "section:{key}"; lists are "tab:{tab}:{column}" or "section:{key}".
+ *
+ * @internal
  */
 trait EditsTemplateLayout
 {

@@ -15,6 +15,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Deletes a role, its grants and who held it (ADR-0033). Superusers only.
+ *
+ * @api
  */
 final class DeleteRole extends Action
 {

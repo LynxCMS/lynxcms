@@ -25,6 +25,8 @@ use LynxCms\Core\Support\Value;
  * Adds or removes status flags without saving field values, so a page with an incomplete
  * required field can still be hidden, published or locked (the page tree's quick actions).
  * A flag listed in both add and remove ends up removed.
+ *
+ * @api
  */
 final class SetPageStatus extends Action
 {

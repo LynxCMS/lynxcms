@@ -23,6 +23,8 @@ use Override;
  * Makes a shared field translatable (ADR-0118): each value, on pages, their drafts and the items
  * of repeaters and matrices that show the field, becomes the default language's, which other
  * languages fall back to. Nothing is lost, so there is no action for the other way.
+ *
+ * @api
  */
 final class MakeFieldTranslatable extends Action
 {

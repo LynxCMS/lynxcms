@@ -15,6 +15,8 @@ use LynxCms\Finder\Search\FinderQuery;
 /**
  * Saves a finder search under a name, or changes a saved one (ADR-0111). A new search belongs to
  * whoever saves it; sharing it with everyone who may use the finder needs finder.share.
+ *
+ * @api
  */
 final class SaveSearch extends Action
 {

@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Tree;
 
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\PageScope;
 use LynxCms\Core\Support\Value;
 
@@ -99,12 +100,12 @@ final readonly class TreeFilters
     /** How many of the pages the filters cover match a selector term, such as "status=unpublished"; all of them for "". */
     public function total(string $term = ''): int
     {
-        return lynx()->pages->find($this->base.($term === '' ? '' : ", {$term}").', limit=1', scope: $this->scope)->total();
+        return app(PageFinder::class)->find($this->base.($term === '' ? '' : ", {$term}").', limit=1', scope: $this->scope)->total();
     }
 
     private function count(string $key): int
     {
-        return lynx()->pages->find($this->selector($key).', limit=1', scope: $this->scope)->total();
+        return app(PageFinder::class)->find($this->selector($key).', limit=1', scope: $this->scope)->total();
     }
 
     private function missing(string $code): ?string

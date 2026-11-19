@@ -19,6 +19,8 @@ use function Laravel\Prompts\text;
 
 /**
  * Prints the pages matching a selector and the SQL it compiles to.
+ *
+ * @internal
  */
 final class FindCommand extends Command implements PromptsForMissingInput
 {

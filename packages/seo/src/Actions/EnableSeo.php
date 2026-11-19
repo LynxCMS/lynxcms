@@ -19,6 +19,8 @@ use LynxCms\Seo\SeoSchema;
 /**
  * Turns SEO on for a template: its pages get their own title, description, share image, noindex
  * and canonical fields. Installs the module first.
+ *
+ * @api
  */
 final class EnableSeo extends Action
 {

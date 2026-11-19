@@ -17,6 +17,8 @@ use Override;
  * A content backup (ADR-0040): the schema and every page as a .zip in lynx.backups.path, keeping
  * the newest lynx.backups.keep. Restore with lynx:import <zip> --with-schema --prune. It does not
  * replace a database backup: activity, revisions, users and app tables are not in it.
+ *
+ * @internal
  */
 final class BackupCommand extends Command
 {

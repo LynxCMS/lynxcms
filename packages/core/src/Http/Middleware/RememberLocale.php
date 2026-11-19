@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Optional. Stores the language of every page view (GET only) in the session, so later requests
  * without a prefix (the admin, form posts, Livewire updates) stay in that language.
+ *
+ * @internal
  */
 final readonly class RememberLocale
 {

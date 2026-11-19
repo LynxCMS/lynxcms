@@ -9,7 +9,7 @@ use LynxCms\Core\Support\LocalizedText;
 /**
  * A titled group of fields in the page editor. Its fields share its tab and column.
  *
- * @api
+ * @internal
  */
 final readonly class LayoutSection
 {

@@ -21,7 +21,7 @@ use LynxCms\Core\Support\Value;
  * differ. An empty field clears the entry. Entries that could not run show why. While the page
  * has a draft, a last field sets when the draft goes live (ADR-0092).
  *
- * @api
+ * @internal
  */
 final class PageSchedule extends Component
 {

@@ -14,7 +14,7 @@ use LynxCms\Core\Templates\TemplateField;
  * Review changes, and later the agent's plans. Fields the template does not have are left out;
  * pages.save itself reports them.
  *
- * @api
+ * @internal
  */
 final readonly class ChangeReview
 {

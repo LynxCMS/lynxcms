@@ -19,6 +19,8 @@ use LynxCms\Menus\MenuSchema;
 /**
  * Creates the menu fields, templates and the hidden system page that holds every menu.
  * Safe to run again: anything that exists is left alone.
+ *
+ * @api
  */
 final class InstallMenus extends Action
 {

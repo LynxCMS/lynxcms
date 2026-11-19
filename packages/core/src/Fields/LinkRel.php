@@ -10,7 +10,7 @@ namespace LynxCms\Core\Fields;
  * through window.opener. noreferrer is a choice, not a default, so sites linked to still see
  * where their visitors came from.
  *
- * @api
+ * @internal
  */
 final class LinkRel
 {

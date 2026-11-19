@@ -13,6 +13,8 @@ use LynxCms\Core\Support\Value;
  * In plan mode those actions run inside a transaction that is rolled back; the recorded steps
  * are then replayed exactly when the user approves (ADR-0020). A run has lynx.ai.plan_seconds to
  * finish, since its transaction holds other writers back.
+ *
+ * @internal
  */
 final class AgentSession
 {

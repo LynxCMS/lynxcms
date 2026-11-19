@@ -8,7 +8,7 @@ namespace LynxCms\Core\Fields\Items;
  * An item's subfields in the groups their entries start ("group" on a subfield entry). Each group
  * runs to the next one; the fields before the first group form one without a heading.
  *
- * @api
+ * @internal
  */
 final class SubfieldGroups
 {

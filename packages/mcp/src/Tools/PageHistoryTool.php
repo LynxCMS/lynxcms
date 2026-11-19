@@ -12,6 +12,7 @@ use LynxCms\Core\Agents\PageHistory;
 use LynxCms\Core\Support\Value;
 use Override;
 
+/** @internal */
 final class PageHistoryTool extends Tool
 {
     use ActsForUser;

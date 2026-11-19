@@ -30,6 +30,8 @@ use LynxCms\Forms\OncePerUser;
  * Receives a form's answers (ADR-0052): validates them in the visitor's language, stores the
  * submission with a snapshot of the form and its files on the private forms disk, and announces
  * it after commit, which mails the people who handle it. For visitors, so not an agent tool.
+ *
+ * @api
  */
 final class SubmitForm extends Action
 {

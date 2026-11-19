@@ -21,7 +21,7 @@ use Override;
  * @property array<string, mixed>|null $meta
  * @property Carbon $created_at
  *
- * @api
+ * @internal
  */
 final class ActivityEvent extends Model
 {

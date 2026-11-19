@@ -8,7 +8,7 @@ namespace LynxCms\Core\Schema\Draft;
  * The files a draft build keeps up to date (ADR-0116), each only when the site has it: the schema
  * folder, the types Lynx's PHPStan extension reads, and the IDE helper.
  *
- * @api
+ * @internal
  */
 final readonly class DraftPaths
 {

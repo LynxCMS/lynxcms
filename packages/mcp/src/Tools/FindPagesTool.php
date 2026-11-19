@@ -13,6 +13,7 @@ use LynxCms\Core\Query\SelectorException;
 use LynxCms\Core\Support\Value;
 use Override;
 
+/** @internal */
 final class FindPagesTool extends Tool
 {
     use ActsForUser;

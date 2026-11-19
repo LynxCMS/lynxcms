@@ -140,8 +140,10 @@ final class Authorizer implements Flushable
 
     /**
      * The pages a permission reaches, for filtering lists: null when nothing limits it (the
-     * console, superusers, open mode before any role, or one grant without templates and branches).
-     * For page permissions, the branches of modules whose permission the user holds count too.
+     * console, superusers, or one grant without templates and branches). For page permissions,
+     * the branches of modules whose permission the user holds count too.
+     *
+     * @internal
      */
     public function scopeOf(Actor $actor, string $permission): ?PageScope
     {

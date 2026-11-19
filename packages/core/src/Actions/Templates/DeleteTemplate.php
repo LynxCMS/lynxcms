@@ -16,6 +16,8 @@ use Override;
 
 /**
  * Deletes a template that no page uses.
+ *
+ * @api
  */
 final class DeleteTemplate extends Action
 {

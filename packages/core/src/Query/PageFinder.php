@@ -18,7 +18,7 @@ use LynxCms\Core\Support\Value;
  * Filtering and sorting on translatable fields use the value visitors see in the current
  * language (or "language=pt" in the selector).
  *
- * @api
+ * @internal
  */
 final readonly class PageFinder
 {

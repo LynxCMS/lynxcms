@@ -13,7 +13,7 @@ use LynxCms\Core\Support\Value;
  * Which templates may sit under which (ADR-0032), like ProcessWire's family settings: a parent
  * template may refuse children or limit their templates, and a template may limit its parents'.
  *
- * @api
+ * @internal
  */
 final readonly class FamilyRules
 {

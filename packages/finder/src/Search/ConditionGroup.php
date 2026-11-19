@@ -9,7 +9,7 @@ use LynxCms\Core\Support\Value;
 /**
  * A card of conditions in the finder: a page matches it when it matches all of them, or any.
  *
- * @api
+ * @internal
  */
 final readonly class ConditionGroup
 {

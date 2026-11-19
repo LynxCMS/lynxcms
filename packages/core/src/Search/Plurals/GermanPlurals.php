@@ -13,7 +13,7 @@ namespace LynxCms\Core\Search\Plurals;
  *
  * Extend it to add or change rules for a regional locale (ADR-0119).
  *
- * @api
+ * @internal
  */
 class GermanPlurals extends EndingRules
 {

@@ -9,7 +9,7 @@ use LynxCms\Core\Support\LocalizedText;
 /**
  * A tab of the page editor that holds fields: "content", or one a template adds.
  *
- * @api
+ * @internal
  */
 final readonly class LayoutTab
 {

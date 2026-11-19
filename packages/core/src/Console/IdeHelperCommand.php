@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\File;
 use LynxCms\Core\Fields\SchemaTypes;
 use Override;
 
-/** Writes the fields as @property lines of Page and Item, for editors' autocomplete (ADR-0083). */
+/**
+ * Writes the fields as @property lines of Page and Item, for editors' autocomplete (ADR-0083).
+ *
+ * @internal
+ */
 final class IdeHelperCommand extends Command
 {
     #[Override]

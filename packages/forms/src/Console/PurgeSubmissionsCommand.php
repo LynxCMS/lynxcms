@@ -10,6 +10,8 @@ use Override;
 
 /**
  * Deletes old spam and archived submissions with their files (forms.purge); scheduled daily.
+ *
+ * @internal
  */
 final class PurgeSubmissionsCommand extends Command
 {

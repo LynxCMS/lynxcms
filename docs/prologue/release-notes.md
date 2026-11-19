@@ -10,6 +10,10 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **A smaller public API before 1.0.** 127 classes go from `@api` to `@internal`: service providers, the admin's Livewire screens, Blade component classes, table and schema helpers, and the inner parts of Page Finder, schema drafts and search. Every action is now `@api`, and every class carries one of the two markers, which a test checks. See `documentation/reports/api-audit-2026-11.md` (ADR-0131).
+- `lynx()->pages->find()` and `childCounts()` no longer take a `$scope` argument. It served the admin's own lists, which now use Lynx's internal page finder.
+- [Extending the admin](/admin/extending) documents four hooks for modules: `TemplateChoices`, `BacklinkFilter`, `TreeMarkers` and `LinkFiles`.
+
 ## 0.1.52
 
 Released November 19, 2026. No changes to the packages: the training site starter now expects its owner to set up two-factor authentication before the admin opens, so it can follow 0.1.51. Nothing to do when upgrading.

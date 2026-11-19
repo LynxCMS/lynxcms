@@ -7,7 +7,11 @@ namespace LynxCms\Core\Indexes;
 use Illuminate\Console\Command;
 use Override;
 
-/** Writes every sort key again, after changing lynx.sort_keys or a field's fallback setting. */
+/**
+ * Writes every sort key again, after changing lynx.sort_keys or a field's fallback setting.
+ *
+ * @internal
+ */
 final class SortKeysCommand extends Command
 {
     #[Override]

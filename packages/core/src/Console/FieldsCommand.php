@@ -15,6 +15,8 @@ use Override;
 /**
  * Lists every field with its type and where it is used: templates, and repeater or matrix items.
  * The site's fields come apart from those Lynx and its modules own (ADR-0115).
+ *
+ * @internal
  */
 final class FieldsCommand extends Command
 {

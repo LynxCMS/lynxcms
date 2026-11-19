@@ -32,7 +32,7 @@ use LynxCms\Menus\View\MenuComponent;
  * Registers the menu actions (and so their MCP and AI tools), lynx()->menus(), the
  * <x-lynx-menu> component and its views.
  *
- * @api
+ * @internal
  */
 final class MenusServiceProvider extends ServiceProvider
 {

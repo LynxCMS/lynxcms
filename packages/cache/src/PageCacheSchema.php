@@ -9,7 +9,7 @@ namespace LynxCms\Cache;
  * a hidden system page (ADR-0008); what only the server can decide (on or off, driver, hosts)
  * stays in config.
  *
- * @api
+ * @internal
  */
 final class PageCacheSchema
 {

@@ -12,6 +12,8 @@ use LynxCms\Forms\Results\FormResults;
 
 /**
  * A form's answers summed up per question, for "how did the course survey go?".
+ *
+ * @internal
  */
 final class SummarizeFormTool extends AgentReadTool
 {

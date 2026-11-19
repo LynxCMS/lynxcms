@@ -11,6 +11,8 @@ use Override;
 
 /**
  * lynx:page-cache:server: prints the rules that let a web server send stored pages itself.
+ *
+ * @internal
  */
 final class ServerRulesCommand extends Command
 {

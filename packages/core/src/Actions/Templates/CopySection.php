@@ -24,6 +24,8 @@ use Override;
  * The copies are not linked: each template owns its section afterwards. A template that already
  * has one of the fields is refused, or, with rename_conflicts, gets a new field cloned from it.
  * Returns the names of the templates the section was copied to.
+ *
+ * @api
  */
 final class CopySection extends Action
 {

@@ -21,6 +21,8 @@ use Override;
 /**
  * Deletes a field, removes it from every template and drops its table with all values. Refuses
  * while a repeater or matrix shows it in its items, so no item field points at a missing field.
+ *
+ * @api
  */
 final class DeleteField extends Action
 {

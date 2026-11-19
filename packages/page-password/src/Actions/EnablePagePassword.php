@@ -15,6 +15,8 @@ use LynxCms\PagePassword\PagePasswordSchema;
 /**
  * Lets a template's pages have a password: adds the page_password field to the Content tab's
  * sidebar, installing first. Pages below a protected page share its password.
+ *
+ * @api
  */
 final class EnablePagePassword extends Action
 {

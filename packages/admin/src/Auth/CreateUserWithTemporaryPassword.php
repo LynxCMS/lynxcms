@@ -14,6 +14,8 @@ use LynxCms\Core\Actions\Runner\Input;
  * Creates a user with roles and a temporary password, without sending email (ADR-0126). The
  * password comes back once, for the superuser to pass on; the activity log never holds it.
  * Superusers only; never an agent tool.
+ *
+ * @api
  */
 final class CreateUserWithTemporaryPassword extends Action
 {

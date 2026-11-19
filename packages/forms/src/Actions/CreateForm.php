@@ -19,6 +19,8 @@ use LynxCms\Forms\FormSchema;
  * Creates a form in the builder (ADR-0053): an unpublished page under the hidden forms page,
  * named by the form's key. Its fields are blocks of form_fields, saved with pages.save; publish
  * it once it has fields.
+ *
+ * @api
  */
 final class CreateForm extends Action
 {

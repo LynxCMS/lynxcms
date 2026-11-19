@@ -15,7 +15,11 @@ use LynxCms\Core\Models\Field;
 use LynxCms\Core\Pages\SharedValue;
 use LynxCms\Core\Support\Value;
 
-/** Single-line text, up to 255 characters. Translatable. */
+/**
+ * Single-line text, up to 255 characters. Translatable.
+ *
+ * @internal
+ */
 final class TextType extends BaseFieldType implements DescribesPhpType, PresentsValue, ProvidesSearchText
 {
     use PresentsSharedText;

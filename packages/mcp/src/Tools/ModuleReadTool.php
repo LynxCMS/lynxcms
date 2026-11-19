@@ -13,6 +13,8 @@ use LynxCms\Core\Agents\ReadToolRegistry;
 
 /**
  * A module's read tool (AgentReadTool) as an MCP tool, run as the client's user.
+ *
+ * @internal
  */
 final class ModuleReadTool extends Tool
 {

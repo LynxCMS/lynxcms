@@ -35,7 +35,7 @@ use UnexpectedValueException;
  * status and delete actions (PageQuickActions) and the root scope of every write (ScopedToRoot)
  * live in traits. Every write goes through the pages API. The menu builder reuses it with another root.
  *
- * @api
+ * @internal
  */
 final class PageTree extends Component
 {

@@ -20,6 +20,8 @@ use function Laravel\Prompts\confirm;
 /**
  * Installs Lynx, then makes sure someone can open the admin: --user promotes an account (by id or
  * email), and without one, when no one is a superuser, it offers lynx:superuser (ADR-0079).
+ *
+ * @internal
  */
 final class InstallCommand extends Command
 {

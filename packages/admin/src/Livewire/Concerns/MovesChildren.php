@@ -15,6 +15,8 @@ use LynxCms\Core\Support\Value;
  * Each page moves with pages.move, which checks the user's permissions, the parent's template
  * rules and the names already under it; a page it refuses stays (ChangesChildren::each). The page
  * search offers only pages whose templates take every page being moved (ParentTemplates).
+ *
+ * @internal
  */
 trait MovesChildren
 {

@@ -11,6 +11,7 @@ use LynxCms\Contracts\Translation\TranslationProvider;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Translation\TranslationProviders;
 
+/** @internal */
 final class AiServiceProvider extends ServiceProvider
 {
     public function register(): void

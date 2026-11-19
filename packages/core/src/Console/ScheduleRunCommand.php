@@ -9,7 +9,11 @@ use LynxCms\Core\Actions\Pages\RunSchedules;
 use LynxCms\Core\Support\Value;
 use Override;
 
-/** Applies due scheduled publishing (ADR-0036). Laravel's scheduler runs it every minute. */
+/**
+ * Applies due scheduled publishing (ADR-0036). Laravel's scheduler runs it every minute.
+ *
+ * @internal
+ */
 final class ScheduleRunCommand extends Command
 {
     #[Override]

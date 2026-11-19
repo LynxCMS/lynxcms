@@ -18,6 +18,8 @@ use Override;
 /**
  * Lists the templates with their pages, fields and views, the site's apart from those Lynx and its
  * modules own (ADR-0115); or one template's fields in order.
+ *
+ * @internal
  */
 final class TemplatesCommand extends Command
 {

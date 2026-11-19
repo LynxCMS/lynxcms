@@ -16,6 +16,8 @@ use LynxCms\Core\Templates\TemplateField;
  * with the ticked templates. Each template shows why the section cannot go there, from a dry run,
  * and which of its fields would be renamed. The copy takes the section as last saved. The dry runs
  * run when the dialog opens and when the renaming changes, not on every render of the board.
+ *
+ * @internal
  */
 trait CopiesSections
 {

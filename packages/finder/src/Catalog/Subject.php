@@ -9,7 +9,7 @@ namespace LynxCms\Finder\Catalog;
  * selector calls it; $options are the values a choice offers (template, status and choice fields), by value;
  * $templates are the searched templates that have a field, when some lack it (empty otherwise).
  *
- * @api
+ * @internal
  */
 final readonly class Subject
 {

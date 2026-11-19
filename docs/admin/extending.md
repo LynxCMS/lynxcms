@@ -135,6 +135,43 @@ app(\LynxCms\Admin\AdminBranches::class)->register('reports-root',
 
 Give the root page the `system` status so it stays after the other pages.
 
+Such a module usually also keeps its templates out of the admin's general screens. Register these in the module's service provider:
+
+```php
+use LynxCms\Admin\Editor\BacklinkFilter;
+use LynxCms\Admin\Editor\TemplateChoices;
+
+// The New page screen doesn't offer these templates: the module's screen creates their pages.
+app(TemplateChoices::class)->exclude('report', 'report-section');
+
+// The Settings tab's "Linked from" list leaves out pages of these templates.
+app(BacklinkFilter::class)->exclude('report-section');
+```
+
+## A marker in the page tree
+
+A module shows a small icon beside the pages it changes, as page passwords show a key. The label is shown on hover and read by screen readers; return null for pages without the marker.
+
+```php
+use LynxCms\Admin\Tree\TreeMarkers;
+
+app(TreeMarkers::class)->add('reviewed', fn ($page): ?array => $page->get('reviewed') === true
+    ? ['icon' => 'badge-check', 'label' => 'Reviewed']
+    : null);
+```
+
+## Files in the link dialog
+
+The link dialog of rich text fields offers the files of the page being edited under **Select file**. A module that keeps files of its own adds them:
+
+```php
+use LynxCms\Admin\Editor\LinkFiles;
+
+app(LinkFiles::class)->add(fn ($page): array => [
+    ['name' => 'Annual report.pdf', 'url' => "/reports/{$page->id}/annual-report.pdf"],
+]);
+```
+
 ## Page tree rows
 
 Implement `LynxCms\Admin\Tree\TreePresenter` (`title()`, `detail()`) and pass it to `<livewire:lynx-admin.page-tree :presenter="MyPresenter::class" />`.

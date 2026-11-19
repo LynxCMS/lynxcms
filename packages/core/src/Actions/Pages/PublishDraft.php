@@ -23,6 +23,8 @@ use LynxCms\Core\Support\Tables;
  * Makes a page's draft live (ADR-0039): its values and its own template strings (ADR-0048) are
  * saved onto the page through pages.save, so validation, hooks, activity and a revision apply,
  * and the draft is deleted. The values keep the origins the draft recorded (ADR-0016, ADR-0099).
+ *
+ * @api
  */
 final class PublishDraft extends Action
 {

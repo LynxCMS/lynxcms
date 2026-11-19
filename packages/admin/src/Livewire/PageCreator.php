@@ -28,7 +28,7 @@ use LynxCms\Core\Support\Value;
  * unpublished unless "publish now" is ticked, and opens in the editor. Required files cannot be
  * uploaded before the page exists, so a template with any always creates it unpublished.
  *
- * @api
+ * @internal
  */
 final class PageCreator extends Component
 {

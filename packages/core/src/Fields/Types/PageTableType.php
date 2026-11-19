@@ -18,6 +18,8 @@ use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
  * created under the page itself (or the "parent" path) and hidden from navigation. The field holds
  * them in order; templates read a PageArray. Removing an item from the list keeps its page unless
  * "remove" is "trash".
+ *
+ * @internal
  */
 final class PageTableType extends BaseFieldType implements DescribesPhpType, NeedsSavedPage, PresentsValue, ReferencesPages
 {

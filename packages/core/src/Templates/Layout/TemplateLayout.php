@@ -14,7 +14,7 @@ use LynxCms\Core\Templates\TemplateField;
  * each a list of fields and sections. The field order stays one flat list (values, selectors and
  * templates->fields() never see the layout); a section sits where its first field is.
  *
- * @api
+ * @internal
  */
 final readonly class TemplateLayout
 {

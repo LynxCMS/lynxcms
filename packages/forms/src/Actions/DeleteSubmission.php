@@ -13,6 +13,8 @@ use LynxCms\Forms\Models\Submission;
 
 /**
  * Deletes a submission and, once that commits, its files.
+ *
+ * @api
  */
 final class DeleteSubmission extends Action
 {

@@ -9,6 +9,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 use Override;
 
+/** @internal */
 final class DescribeFieldTypesTool extends Tool
 {
     #[Override]

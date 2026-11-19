@@ -73,6 +73,7 @@ use LynxCms\Core\Translation\TranslationProviders;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/** @internal */
 final class LynxServiceProvider extends ServiceProvider
 {
     private function registerRouting(): void

@@ -12,7 +12,7 @@ use LynxCms\Core\Support\Value;
  * lynx-admin.locale, then the app's locale. Choices live in Lynx's settings, not on the users
  * table, because apps may keep their users elsewhere (ADR-0033).
  *
- * @api
+ * @internal
  */
 final class AdminLocale
 {

@@ -14,6 +14,8 @@ use Override;
 /**
  * Runs every doctor check (ADR-0109) and reports what each found, with how to fix it. Fails when
  * a check finds an error, so CI and deploy scripts can stop on one; warnings only inform.
+ *
+ * @internal
  */
 final class DoctorCommand extends Command
 {

@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\File;
 use LynxCms\Core\Fields\SchemaTypes;
 use Override;
 
-/** Writes the field types Lynx's PHPStan extension reads (ADR-0083). */
+/**
+ * Writes the field types Lynx's PHPStan extension reads (ADR-0083).
+ *
+ * @internal
+ */
 final class PhpStanCommand extends Command
 {
     #[Override]

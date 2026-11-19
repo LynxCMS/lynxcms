@@ -8,6 +8,8 @@ use LynxCms\Contracts\Fields\FormatContext;
 
 /**
  * Typographic quotes, dashes and ellipses in text, never inside tags, attributes, code or pre.
+ *
+ * @internal
  */
 final class SmartyPants extends TextFormatter
 {

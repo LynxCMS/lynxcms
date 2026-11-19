@@ -13,7 +13,7 @@ use LynxCms\Core\Support\Value;
 /**
  * Setup > Roles: every role with its grants and users (ADR-0033). Superusers only.
  *
- * @api
+ * @internal
  */
 final class RoleList extends Component
 {

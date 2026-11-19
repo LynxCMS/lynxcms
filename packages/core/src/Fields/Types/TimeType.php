@@ -15,6 +15,8 @@ use LynxCms\Core\Models\Field;
  * A time of day without a date, such as an opening hour. Shared across languages. Stored as
  * "HH:MM" (or "HH:MM:SS" with the "seconds" setting), zero padded so text comparison orders it:
  * opens<12:00. Templates get the same string.
+ *
+ * @internal
  */
 final class TimeType extends BaseFieldType implements DescribesPhpType
 {

@@ -15,6 +15,8 @@ use Override;
  * literals, keys declared twice with different texts, and texts for language codes the site lacks
  * (ADR-0047). Templates without a view (settings pages, menus, pages without a URL) declare none,
  * so they are counted, not listed.
+ *
+ * @internal
  */
 final class ScanStringsCommand extends Command
 {

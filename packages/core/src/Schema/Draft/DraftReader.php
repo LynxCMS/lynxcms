@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
  * Reads a draft file (ADR-0116), refusing one that is missing or isn't YAML with a message that
  * says what to do.
  *
- * @api
+ * @internal
  */
 final readonly class DraftReader
 {

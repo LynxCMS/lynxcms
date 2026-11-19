@@ -8,7 +8,7 @@ namespace LynxCms\Core\Query;
  * One set of OR groups in a selector (ADR-0110): a page matches the set when it matches every clause
  * of at least one alternative. "(a=1), (b=2)" is one unnamed set; "x=(a=1), x=(b=2)" a set named x.
  *
- * @api
+ * @internal
  */
 final readonly class OrGroupSet
 {

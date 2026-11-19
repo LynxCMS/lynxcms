@@ -8,6 +8,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Query\PageScope;
 
 /**
@@ -44,7 +45,7 @@ final class TreeLoader
     public function branch(Page $root): TreeBranch
     {
         $id = (int) $root->id;
-        $count = lynx()->pages->childCounts([$id], $this->selector, $this->scope)[$id] ?? 0;
+        $count = app(PageFinder::class)->countByParent([$id], $this->selector, $this->scope)[$id] ?? 0;
 
         return $this->toBranch($this->node($root, 0, $count, isTreeRoot: true));
     }
@@ -60,8 +61,8 @@ final class TreeLoader
         $lastPage = max(1, (int) ceil($parent->childCount / $this->perPage));
         $page = min(max(1, $this->pages[$parentId] ?? 1), $lastPage);
         $start = ($page - 1) * $this->perPage;
-        $children = lynx()->pages->find('parent='.$parentId.', '.$this->selector.", start={$start}, limit={$this->perPage}", scope: $this->scope);
-        $counts = lynx()->pages->childCounts($children->ids(), $this->selector, $this->scope);
+        $children = app(PageFinder::class)->find('parent='.$parentId.', '.$this->selector.", start={$start}, limit={$this->perPage}", scope: $this->scope);
+        $counts = app(PageFinder::class)->countByParent($children->ids(), $this->selector, $this->scope);
         $drafts = array_flip(lynx()->pages->withDrafts($children->ids()));
         $branches = [];
 
@@ -103,7 +104,7 @@ final class TreeLoader
         $page = max(1, $page);
         $start = ($page - 1) * $this->perPage;
 
-        return ['pages' => lynx()->pages->find("{$selector}, sort=-modified, start={$start}, limit={$this->perPage}", scope: $this->scope), 'page' => $page, 'start' => $start];
+        return ['pages' => app(PageFinder::class)->find("{$selector}, sort=-modified, start={$start}, limit={$this->perPage}", scope: $this->scope), 'page' => $page, 'start' => $start];
     }
 
     private function location(Page $page): ?string
@@ -120,7 +121,7 @@ final class TreeLoader
             return true;
         }
 
-        $visibleCount ??= lynx()->pages->childCounts([$parentId], $this->selector, $this->scope)[$parentId] ?? 0;
+        $visibleCount ??= app(PageFinder::class)->countByParent([$parentId], $this->selector, $this->scope)[$parentId] ?? 0;
 
         return $visibleCount === (lynx()->pages->childCounts([$parentId], $this->selector)[$parentId] ?? 0);
     }

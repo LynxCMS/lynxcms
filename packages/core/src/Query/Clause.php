@@ -7,7 +7,7 @@ namespace LynxCms\Core\Query;
 /**
  * One "field operator value(s)" part of a selector. Several values mean OR.
  *
- * @api
+ * @internal
  */
 final readonly class Clause
 {

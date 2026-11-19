@@ -10,6 +10,8 @@ use LynxCms\Contracts\Fields\FormatContext;
 /**
  * Markdown to HTML at output, for fields whose format is plain text (gradual adoption; fields
  * with format "markdown" are already converted).
+ *
+ * @internal
  */
 final class Markdown extends TextFormatter
 {

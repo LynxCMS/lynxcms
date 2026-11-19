@@ -17,6 +17,8 @@ use LynxCms\Core\Support\Value;
 /**
  * Sets the language for the rest of the request and Laravel's locale. With remember: true the
  * choice is stored in the session and on the logged-in user (ADR-0007).
+ *
+ * @api
  */
 final class SetCurrentLanguage extends Action
 {

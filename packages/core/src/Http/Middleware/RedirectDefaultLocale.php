@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Optional. When the default language has no URL prefix, /{default-code}/about answers with a
  * 301 to /about. GET requests only.
+ *
+ * @internal
  */
 final readonly class RedirectDefaultLocale
 {

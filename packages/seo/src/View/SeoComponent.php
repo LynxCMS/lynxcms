@@ -13,7 +13,7 @@ use LynxCms\Core\Pages\Page;
  * <title> and @hreflang in a layout's <head>. A list filtered by query string can override the robots
  * rule and canonical link: <x-lynx-seo :page="$page" robots="noindex, follow" canonical="/courses/" />.
  *
- * @api
+ * @internal
  */
 final class SeoComponent extends Component
 {

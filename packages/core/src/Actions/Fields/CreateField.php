@@ -26,6 +26,8 @@ use Override;
 
 /**
  * Creates a field and its table at runtime (ADR-0004). No migration.
+ *
+ * @api
  */
 final class CreateField extends Action
 {

@@ -21,6 +21,8 @@ use Override;
 /**
  * The Lynx MCP server. Read tools (Lynx's own and those modules register) plus one write tool per
  * registered action, so tools added by modules appear here automatically.
+ *
+ * @internal
  */
 class LynxServer extends Server
 {

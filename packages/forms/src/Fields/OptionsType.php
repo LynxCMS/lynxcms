@@ -19,7 +19,7 @@ use LynxCms\Core\Support\Value;
  * label can be reworded or translated without changing what submissions store. A value left
  * empty is made from the default-language label. Shared across languages; the labels hold them.
  *
- * @api
+ * @internal
  */
 final class OptionsType extends BaseFieldType implements DescribesPhpType, HasTranslatableTexts
 {

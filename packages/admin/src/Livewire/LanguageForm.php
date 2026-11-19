@@ -21,7 +21,7 @@ use LynxCms\Core\Support\Value;
  * languages.update and languages.delete, whose errors show by their inputs. The default language
  * cannot be deleted and has no fallback.
  *
- * @api
+ * @internal
  */
 final class LanguageForm extends Component
 {

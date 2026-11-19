@@ -10,6 +10,7 @@ use LynxCms\Core\Console\Concerns\TerminalFeedback;
 use LynxCms\Core\Demo\DemoSite;
 use Override;
 
+/** @internal */
 final class DemoCommand extends Command
 {
     use TerminalFeedback;

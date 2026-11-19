@@ -13,7 +13,7 @@ namespace LynxCms\Core\Query;
  * with " or ' to include commas or pipes. Parenthesised groups are OR alternatives (ADR-0110):
  * "(price<20), (price>70)" matches either, and "cost=(…), cost=(…)" names a set of them.
  *
- * @api
+ * @internal
  */
 final class SelectorParser
 {

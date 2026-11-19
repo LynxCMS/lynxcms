@@ -12,6 +12,8 @@ use LynxCms\Finder\Models\SavedSearch;
 
 /**
  * Deletes a saved finder search, for its owner or a superuser (ADR-0111). Pages are untouched.
+ *
+ * @api
  */
 final class DeleteSearch extends Action
 {

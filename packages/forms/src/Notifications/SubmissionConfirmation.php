@@ -13,6 +13,8 @@ use LynxCms\Forms\Models\Submission;
 
 /**
  * The confirmation mailed to the visitor who sent a form, in their language (Form::autoReply()).
+ *
+ * @internal
  */
 final class SubmissionConfirmation extends Notification implements ShouldQueue
 {

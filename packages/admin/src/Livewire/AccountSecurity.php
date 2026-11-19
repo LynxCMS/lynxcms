@@ -20,7 +20,7 @@ use LynxCms\Admin\Livewire\Concerns\Notifies;
  * passkeys. The route asks for the password first. Two-factor authentication and passkeys show
  * when the app's user model uses Fortify's traits.
  *
- * @api
+ * @internal
  */
 final class AccountSecurity extends Component
 {

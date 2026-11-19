@@ -13,7 +13,7 @@ use LynxCms\Core\Schema\SchemaSync;
  * @phpstan-import-type FieldItem from SchemaSync
  * @phpstan-import-type TemplateItem from SchemaSync
  *
- * @api
+ * @internal
  */
 final readonly class CompiledDraft
 {

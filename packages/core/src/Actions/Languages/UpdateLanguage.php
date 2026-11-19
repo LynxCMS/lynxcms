@@ -20,6 +20,8 @@ use Override;
 /**
  * Renames a language or changes its code, locale, fallback, prefix or active state.
  * Rejects fallback cycles.
+ *
+ * @api
  */
 final class UpdateLanguage extends Action
 {

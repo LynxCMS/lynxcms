@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Editor;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Fields\Formatters\HeadingAnchors;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -49,7 +50,7 @@ final readonly class LinkPages
         }
 
         $parent = $page->parent();
-        $children = lynx()->pages->find('parent='.$page->id.', include=all, limit='.self::BROWSE_LIMIT, scope: $this->access->viewScope());
+        $children = app(PageFinder::class)->find('parent='.$page->id.', include=all, limit='.self::BROWSE_LIMIT, scope: $this->access->viewScope());
 
         return [
             'page' => $this->row($page, $language) ?? ['id' => (int) $page->id, 'title' => Value::string($page->title), 'url' => '', 'canHaveChildren' => true],

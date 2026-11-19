@@ -8,6 +8,8 @@ use LynxCms\Core\Models\Language;
 
 /**
  * Text values are their own search text (ADR-0054).
+ *
+ * @internal
  */
 trait ProvidesPlainSearchText
 {

@@ -17,7 +17,7 @@ use LynxCms\Menus\Menus;
  * Bundled views: lynx-menus::menus.list (plain nested list), .dropdown (opens on hover and focus)
  * and .accordion (opens on click, no JavaScript).
  *
- * @api
+ * @internal
  */
 final class MenuComponent extends Component
 {

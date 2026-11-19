@@ -12,6 +12,8 @@ use LynxCms\Core\Pages\Page;
  * The result of $lynx->ai()->ask(): the agent's answer and the plan of recorded actions.
  * If the run was not applied, apply() replays the exact recorded actions, without asking the
  * model again, so what the user approved is what runs.
+ *
+ * @api
  */
 final class AgentRun
 {

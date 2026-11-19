@@ -37,7 +37,7 @@ use LynxCms\Seo\View\SeoHead;
  * Registers SEO (ADR-0055): the actions (and so their MCP and AI tools), lynx()->seo($page),
  * <x-lynx-seo> and @seo with JSON-LD, /robots.txt, the seo_inspect read tool and the seo.manage permission.
  *
- * @api
+ * @internal
  */
 final class SeoServiceProvider extends ServiceProvider
 {

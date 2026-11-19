@@ -14,7 +14,11 @@ use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Support\Tables;
 
-/** Deletes a page's draft (ADR-0039); the live page stays as it is. */
+/**
+ * Deletes a page's draft (ADR-0039); the live page stays as it is.
+ *
+ * @api
+ */
 final class DiscardDraft extends Action
 {
     use ResolvesPages;

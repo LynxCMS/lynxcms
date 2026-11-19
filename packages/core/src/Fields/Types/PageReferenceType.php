@@ -14,7 +14,11 @@ use LynxCms\Core\Fields\SettingsPerUse;
 use LynxCms\Core\Fields\Types\Concerns\StoresPageReferences;
 use LynxCms\Core\Support\Value;
 
-/** References to other pages, ordered. Shared across languages. */
+/**
+ * References to other pages, ordered. Shared across languages.
+ *
+ * @internal
+ */
 final class PageReferenceType extends BaseFieldType implements DescribesPhpType, PresentsValue, ReferencesPages, SettingsPerUse
 {
     use StoresPageReferences;

@@ -21,6 +21,8 @@ use LynxCms\Core\Support\Tables;
 /**
  * Forgets an old path of a page, so it stops redirecting (and becomes free for other pages without
  * a lookup tie). Only old paths: the page's current path changes by renaming or moving it.
+ *
+ * @api
  */
 final class DeleteRedirect extends Action
 {

@@ -12,7 +12,7 @@ use LynxCms\Core\Support\Value;
  * Finds published pages whose SEO needs work, in the current language: no description, a title
  * another page also uses, or a title search engines cut short.
  *
- * @api
+ * @internal
  */
 final readonly class SeoAuditor
 {

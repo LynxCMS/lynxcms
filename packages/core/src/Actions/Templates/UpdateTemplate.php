@@ -21,6 +21,8 @@ use Override;
 /**
  * Changes a template's label, flags or fields. Removing a field keeps its values as orphaned
  * rows (ADR-0012); only PurgeOrphanedValues deletes them.
+ *
+ * @api
  */
 final class UpdateTemplate extends Action
 {

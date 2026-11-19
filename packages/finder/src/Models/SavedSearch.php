@@ -24,7 +24,7 @@ use Override;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @api
+ * @internal
  */
 final class SavedSearch extends Model
 {

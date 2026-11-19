@@ -24,7 +24,7 @@ use LynxCms\Core\Support\Value;
  *
  * Permission names hold dots, which Livewire reads as nesting, so the grid keys them with "__".
  *
- * @api
+ * @internal
  */
 final class RoleForm extends Component
 {

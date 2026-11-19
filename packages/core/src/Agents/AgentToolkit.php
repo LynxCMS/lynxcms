@@ -23,6 +23,7 @@ use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Permissions\Authorizer;
+use LynxCms\Core\Query\PageFinder;
 use LynxCms\Core\Strings\PageStrings;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateField;
@@ -33,7 +34,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  * (ADR-0015, ADR-0020): read tools, and every registered action as a write tool with dry runs,
  * the language allowlist and the activity log.
  *
- * @api
+ * @internal
  */
 final readonly class AgentToolkit
 {
@@ -178,7 +179,7 @@ final readonly class AgentToolkit
         $default = $limit === null ? Value::int(config('lynx.agents.default_limit', 25), 25) : $cap;
 
         $run = function () use ($selector, $cap, $default, $scope): array {
-            $pages = $this->lynx->pages->find($selector, maxLimit: $cap, defaultLimit: $default, scope: $scope);
+            $pages = app(PageFinder::class)->find($selector, maxLimit: $cap, defaultLimit: $default, scope: $scope);
 
             return [
                 'total' => $pages->total(),

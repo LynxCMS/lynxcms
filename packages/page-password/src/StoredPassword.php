@@ -12,7 +12,7 @@ use LynxCms\Core\Support\Value;
  * A page's password as templates and the module read it: encrypted with Laravel's Crypt (the
  * app key), so editors can read it again to send it to guests, and compared in constant time.
  *
- * @api
+ * @internal
  */
 final readonly class StoredPassword
 {

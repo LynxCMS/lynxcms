@@ -21,7 +21,7 @@ use LynxCms\Core\Pages\PageStatus;
  * The read only part of the Settings tab: the page's old URLs and whether they still redirect,
  * the pages that link to it, and its activity. Reloads whenever the settings change the page.
  *
- * @api
+ * @internal
  */
 final class PageHistory extends Component
 {

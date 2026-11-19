@@ -14,6 +14,8 @@ use LynxCms\PagePassword\PagePasswordSchema;
 
 /**
  * Creates the page_password field. Safe to run again; page_password.enable_template runs it.
+ *
+ * @api
  */
 final class InstallPagePassword extends Action
 {

@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
  * e.g. "admin" on a site that needs /lynx for a page, or a random path that is hard to guess.
  * Every admin route, the sign-in and Fortify's redirects are built from it.
  *
- * @api
+ * @internal
  */
 final class AdminPath
 {

@@ -29,6 +29,8 @@ use stdClass;
  * page's language. One row per chosen value, so "multiple" can be switched later. Templates get a
  * Choice (or null), or a ChoiceList with "multiple"; selectors compare values: color=red|blue.
  * A "default" is stored on new pages and items (ADR-0088).
+ *
+ * @internal
  */
 final class ChoiceType extends BaseFieldType implements ChecksSettings, DescribesPhpType, HasDefaultValue, NormalizesSettings, PresentsValue, ProvidesSearchText
 {

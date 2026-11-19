@@ -10,7 +10,7 @@ use LynxCms\Core\Models\Field;
 /**
  * Integers: input that is not a number stays a string, so pages.save reports it.
  *
- * @internal
+ * @api
  */
 final class IntegerConverter implements FormConverter
 {

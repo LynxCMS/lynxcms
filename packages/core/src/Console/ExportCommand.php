@@ -20,6 +20,8 @@ use function Laravel\Prompts\text;
  * Exports the schema and every page as a content package (ADR-0040), as a directory or a .zip.
  * Media files stay out unless --with-files asks for them: copying a large site's media can take
  * long and weigh gigabytes, and machines can download them from production instead (ADR-0082).
+ *
+ * @internal
  */
 final class ExportCommand extends Command implements PromptsForMissingInput
 {

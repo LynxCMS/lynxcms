@@ -29,7 +29,7 @@ use LynxCms\Core\Support\Value;
  * status flags, template, and parent. Every change goes through the page actions, then tells the
  * editor ("lynx-page-changed") so its content form stays in step with the page's revision.
  *
- * @api
+ * @internal
  */
 final class PageSettings extends Component
 {

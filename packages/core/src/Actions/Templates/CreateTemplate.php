@@ -22,6 +22,8 @@ use Override;
 
 /**
  * Creates a template, optionally copying another template's fields and settings ("from").
+ *
+ * @api
  */
 final class CreateTemplate extends Action
 {

@@ -18,7 +18,7 @@ use Override;
  * @property string $label
  * @property bool $is_superuser
  *
- * @api
+ * @internal
  */
 final class Role extends Model
 {

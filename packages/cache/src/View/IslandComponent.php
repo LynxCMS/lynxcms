@@ -23,7 +23,7 @@ use LynxCms\Core\Support\Value;
  * may be stored it prints a placeholder, filled after load by the refresh script; anywhere else
  * it renders in place.
  *
- * @api
+ * @internal
  */
 final class IslandComponent extends Component
 {

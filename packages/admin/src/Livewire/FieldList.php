@@ -19,7 +19,7 @@ use LynxCms\Core\Support\Value;
  * Setup > Fields: every field with its type and the templates that use it, filtered by type,
  * template and text. Filters stay in the URL.
  *
- * @api
+ * @internal
  */
 final class FieldList extends Component
 {

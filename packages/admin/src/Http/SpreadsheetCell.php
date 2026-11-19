@@ -9,7 +9,7 @@ namespace LynxCms\Admin\Http;
  * (=, +, -, @, a tab or a carriage return) gets a leading quote, so opening the export never runs
  * it (OWASP's advice for CSV injection). Plain numbers stay numbers.
  *
- * @api
+ * @internal
  */
 final class SpreadsheetCell
 {

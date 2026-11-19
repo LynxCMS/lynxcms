@@ -11,7 +11,7 @@ use LynxCms\Core\Support\Value;
  * <html> (['base' => 'zinc'] gives data-base="zinc") and the web fonts the chosen fonts use.
  * Every option of BlatUI's customizer is here; values BlatUI does not know are left out.
  *
- * @api
+ * @internal
  */
 final class Appearance
 {

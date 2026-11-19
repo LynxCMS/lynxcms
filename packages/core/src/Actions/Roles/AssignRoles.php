@@ -16,6 +16,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Sets the roles of a host app user, replacing the ones they had (ADR-0033). Superusers only.
+ *
+ * @api
  */
 final class AssignRoles extends Action
 {

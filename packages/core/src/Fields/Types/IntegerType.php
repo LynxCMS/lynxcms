@@ -11,7 +11,11 @@ use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Value;
 
-/** Whole number. Shared across languages. */
+/**
+ * Whole number. Shared across languages.
+ *
+ * @internal
+ */
 final class IntegerType extends BaseFieldType implements DescribesPhpType
 {
     public static function name(): string

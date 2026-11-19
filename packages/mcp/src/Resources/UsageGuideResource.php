@@ -10,6 +10,7 @@ use Laravel\Mcp\Server\Resource;
 use LynxCms\Core\Agents\AgentToolkit;
 use Override;
 
+/** @internal */
 final class UsageGuideResource extends Resource
 {
     #[Override]

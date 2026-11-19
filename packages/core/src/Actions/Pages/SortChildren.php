@@ -20,6 +20,8 @@ use LynxCms\Core\Query\PageFinder;
  * Puts every child of a page in one order at once: by title, or by when they were created, last
  * changed or published, each either way. Every status is sorted; system pages stay last, the trash
  * at the end, as pages.sort keeps them. Each child must be one the user may move.
+ *
+ * @api
  */
 final class SortChildren extends Action
 {

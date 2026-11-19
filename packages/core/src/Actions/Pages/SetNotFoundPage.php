@@ -20,6 +20,8 @@ use LynxCms\Core\Support\Value;
 /**
  * Picks the page shown, with status 404, for URLs that match nothing (ADR-0085), or none, for
  * Laravel's own 404. Superusers only: it changes what every missing URL answers.
+ *
+ * @api
  */
 final class SetNotFoundPage extends Action
 {

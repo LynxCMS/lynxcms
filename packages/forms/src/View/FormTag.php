@@ -18,7 +18,7 @@ use LynxCms\Forms\FormSchema;
  * is not published. $livewire names a component extending FormComponent, for live extras.
  * With lazy, a placeholder renders instead and the form loads once it scrolls into view.
  *
- * @api
+ * @internal
  */
 final class FormTag extends Component
 {

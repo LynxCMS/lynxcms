@@ -12,7 +12,7 @@ use LynxCms\Core\Pages\Page;
  * Alternate-language links for a page: one per active language the page is published in, plus
  * x-default. Used by @hreflang and by any template engine plugin.
  *
- * @api
+ * @internal
  */
 final readonly class HreflangBuilder
 {

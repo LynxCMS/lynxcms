@@ -12,7 +12,7 @@ use LynxCms\Forms\Models\Submission;
  * A submission's answers as label and text, from the fields stored with it, so the mail, the
  * admin and exports read the same and survive later changes to the form.
  *
- * @api
+ * @internal
  */
 final class SubmissionPresenter
 {

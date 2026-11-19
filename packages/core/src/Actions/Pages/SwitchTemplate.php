@@ -25,6 +25,8 @@ use LynxCms\Core\Templates\TemplateRegistry;
 /**
  * Switches a page to another template. Values of fields the new template lacks are kept as
  * orphans (ADR-0012): switching back restores them.
+ *
+ * @api
  */
 final class SwitchTemplate extends Action
 {

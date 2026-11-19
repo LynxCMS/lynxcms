@@ -17,6 +17,8 @@ use LynxCms\Core\Actions\Templates\CreateTemplate;
 /**
  * Creates the page cache settings fields, template and hidden system page. Safe to run again.
  * The page cache works without it, from the config alone.
+ *
+ * @api
  */
 final class InstallPageCache extends Action
 {

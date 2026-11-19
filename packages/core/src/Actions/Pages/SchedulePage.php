@@ -23,6 +23,8 @@ use LynxCms\Core\Support\Tables;
  * language "*" (ADR-0036). In the default language that is the page's unpublished status; in
  * others, whether the language is active. It also sets when the page's draft goes live, for the
  * whole page whatever the language (ADR-0092). lynx:schedule:run applies due entries every minute.
+ *
+ * @api
  */
 final class SchedulePage extends Action
 {

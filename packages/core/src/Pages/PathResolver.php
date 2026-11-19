@@ -14,7 +14,7 @@ use LynxCms\Core\Support\Value;
  * Read side of page paths (ADR-0011): the active path of a page per language, and which page a
  * path belongs to. Old paths stay as inactive rows and resolve to a redirect.
  *
- * @api
+ * @internal
  */
 final class PathResolver implements Flushable
 {

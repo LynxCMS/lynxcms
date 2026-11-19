@@ -11,7 +11,7 @@ use LynxCms\Core\Languages\LanguageRegistry;
  * live in and has a path in, each once. For modules that visit or export every page, such as the
  * page cache warmer and the static site export.
  *
- * @api
+ * @internal
  */
 final readonly class PageUrls
 {

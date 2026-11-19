@@ -59,7 +59,7 @@ final readonly class ChildList
             return null;
         }
 
-        return lynx()->pages->find('id='.implode('|', $after).', '.$this->everyChild().', limit=1', scope: $this->scope())->first()?->id;
+        return app(PageFinder::class)->find('id='.implode('|', $after).', '.$this->everyChild().', limit=1', scope: $this->scope())->first()?->id;
     }
 
     public function hasChildren(Page $page): bool
@@ -80,7 +80,7 @@ final readonly class ChildList
 
     private function count(int $parentId, ?PageScope $scope): int
     {
-        return lynx()->pages->childCounts([$parentId], $this->everyChild(), $scope)[$parentId] ?? 0;
+        return app(PageFinder::class)->countByParent([$parentId], $this->everyChild(), $scope)[$parentId] ?? 0;
     }
 
     /**

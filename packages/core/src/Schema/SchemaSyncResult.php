@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Core\Schema;
 
 /**
- * @api
+ * @internal
  */
 final class SchemaSyncResult
 {

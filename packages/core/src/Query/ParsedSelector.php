@@ -8,7 +8,7 @@ namespace LynxCms\Core\Query;
  * A parsed selector: its clauses, every one of which must match, and its sets of OR groups, every
  * one of which must match through at least one of its alternatives (ADR-0110).
  *
- * @api
+ * @internal
  */
 final readonly class ParsedSelector
 {

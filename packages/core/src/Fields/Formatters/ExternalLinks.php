@@ -11,6 +11,8 @@ use LynxCms\Core\Support\Value;
 /**
  * Links to other sites open in a new tab, with noopener added to their rel. Links that already
  * set a target are left alone.
+ *
+ * @internal
  */
 final class ExternalLinks extends TextFormatter
 {

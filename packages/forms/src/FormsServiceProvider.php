@@ -41,7 +41,7 @@ use LynxCms\Forms\View\FormTag;
  * tools), the forms.view and forms.manage permissions, the mail to the people who handle
  * submissions, and the daily purge of old spam.
  *
- * @api
+ * @internal
  */
 final class FormsServiceProvider extends ServiceProvider
 {
