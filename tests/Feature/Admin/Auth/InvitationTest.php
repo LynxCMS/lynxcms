@@ -128,7 +128,7 @@ it('is not an agent tool', function (): void {
 
 it('invites from the Users screen', function (): void {
     Livewire::test(UserRoles::class)
-        ->assertSee('Invite user')
+        ->assertSee('Add user')
         ->set('invite.name', 'Bruno Costa')->set('invite.email', 'bruno@example.com')->set('invite.roles', ['editor'])
         ->call('sendInvitation')
         ->assertHasNoErrors()

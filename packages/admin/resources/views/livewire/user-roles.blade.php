@@ -1,5 +1,22 @@
 <div class="space-y-4">
     @error('roles') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+    @error('user') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+
+    @if ($issued)
+        <div role="status" class="bg-card text-card-foreground grid max-w-2xl gap-3 rounded-xl border p-5 shadow-sm" data-temporary-password x-data="{ copied: false }">
+            <p class="font-medium">{{ __($issued['isNew'] ? 'lynx-admin::users.temporary.created' : 'lynx-admin::users.temporary.given', ['name' => $issued['name']]) }}</p>
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="sr-only">{{ __('lynx-admin::users.temporary.label') }}</span>
+                <code x-ref="password" class="bg-muted rounded px-3 py-2 font-mono text-base select-all break-all">{{ $issued['password'] }}</code>
+                <x-lynx-admin::ui.button type="button" variant="outline" size="sm" x-on:click="navigator.clipboard.writeText($refs.password.textContent).then(() => copied = true).catch(() => window.getSelection().selectAllChildren($refs.password))">
+                    <span x-show="! copied">{{ __('lynx-admin::users.temporary.copy') }}</span>
+                    <span x-show="copied" x-cloak>{{ __('lynx-admin::users.temporary.copied') }}</span>
+                </x-lynx-admin::ui.button>
+            </div>
+            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::users.temporary.shown_once', ['when' => $issued['until']]) }}</p>
+            <div><x-lynx-admin::ui.button type="button" size="sm" wire:click="dismissIssued">{{ __('lynx-admin::users.temporary.done') }}</x-lynx-admin::ui.button></div>
+        </div>
+    @endif
 
     <label class="grid max-w-sm gap-1 text-sm">
         <span class="text-muted-foreground">{{ __('lynx-admin::users.list.search') }}</span>
@@ -23,7 +40,14 @@
                             @isset($pending[$user['id']])
                                 <span class="mt-1 flex flex-wrap items-center gap-2">
                                     <x-lynx-admin::ui.badge variant="outline" title="{{ __('lynx-admin::users.list.sent', ['when' => $pending[$user['id']]]) }}">{{ __('lynx-admin::users.list.pending') }}</x-lynx-admin::ui.badge>
-                                    <button type="button" class="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline" wire:click="resendInvitation({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.resend') }}</button>
+                                    @if ($sendsMail)
+                                        <button type="button" class="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline" wire:click="resendInvitation({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.resend') }}</button>
+                                    @endif
+                                </span>
+                            @endisset
+                            @isset($temporary[$user['id']])
+                                <span class="mt-1 flex flex-wrap items-center gap-2">
+                                    <x-lynx-admin::ui.badge variant="outline" title="{{ __('lynx-admin::users.list.temporary_until', ['when' => $temporary[$user['id']]]) }}">{{ __('lynx-admin::users.list.temporary') }}</x-lynx-admin::ui.badge>
                                 </span>
                             @endisset
                         </x-lynx-admin::ui.table-cell>
@@ -34,7 +58,14 @@
                                 @endforeach
                             </div>
                         </x-lynx-admin::ui.table-cell>
-                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-end"><x-lynx-admin::ui.button variant="outline" size="sm" wire:click="saveRoles({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.save') }}</x-lynx-admin::ui.button></x-lynx-admin::ui.table-cell>
+                        <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-end">
+                            <div class="flex flex-wrap justify-end gap-2">
+                                <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="saveRoles({{ Js::from($user['id']) }})">{{ __('lynx-admin::users.list.save') }}</x-lynx-admin::ui.button>
+                                @if ($canInvite && $user['id'] !== $me)
+                                    <x-lynx-admin::ui.button variant="ghost" size="sm" wire:click="giveTemporaryPassword({{ Js::from($user['id']) }})" wire:confirm="{{ __('lynx-admin::users.list.confirm_new_password', ['name' => $user['label']]) }}">{{ __('lynx-admin::users.list.new_password') }}</x-lynx-admin::ui.button>
+                                @endif
+                            </div>
+                        </x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty
                     <x-lynx-admin::ui.table-row class="hover:bg-transparent"><x-lynx-admin::ui.table-cell colspan="3" class="whitespace-normal p-4">
@@ -45,10 +76,10 @@
         </x-lynx-admin::ui.table>
 
     @if ($canInvite)
-        <form wire:submit="sendInvitation" class="bg-card text-card-foreground grid max-w-2xl gap-4 rounded-xl border p-5 shadow-sm" aria-labelledby="invite-user">
+        <form wire:submit="addUser" class="bg-card text-card-foreground grid max-w-2xl gap-4 rounded-xl border p-5 shadow-sm" aria-labelledby="invite-user">
             <div>
-                <h2 id="invite-user" class="text-base font-semibold">{{ __('lynx-admin::users.invite.heading') }}</h2>
-                <p class="text-muted-foreground text-sm">{{ __('lynx-admin::users.invite.help') }}</p>
+                <h2 id="invite-user" class="text-base font-semibold">{{ __('lynx-admin::users.invite.heading_add') }}</h2>
+                <p class="text-muted-foreground text-sm">{{ __($sendsMail ? 'lynx-admin::users.invite.help' : 'lynx-admin::users.invite.help_no_mail') }}</p>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="grid gap-1">
@@ -73,7 +104,18 @@
                     @error('invite.roles') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </fieldset>
             @endif
-            <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::users.invite.send') }}</x-lynx-admin::ui.button></div>
+            @if ($sendsMail)
+                <fieldset class="grid gap-2">
+                    <legend class="mb-1 text-sm font-medium">{{ __('lynx-admin::users.invite.method') }}</legend>
+                    @foreach (['email' => 'by_email', 'password' => 'by_password'] as $method => $key)
+                        <label class="flex items-start gap-2 text-sm">
+                            <input class="blat-radio mt-0.5" id="invite-method-{{ $method }}" type="radio" name="invite-method" value="{{ $method }}" wire:model.live="invite.method">
+                            <span><span class="font-medium">{{ __('lynx-admin::users.invite.'.$key) }}</span> <span class="text-muted-foreground block">{{ __('lynx-admin::users.invite.'.$key.'_help') }}</span></span>
+                        </label>
+                    @endforeach
+                </fieldset>
+            @endif
+            <div><x-lynx-admin::ui.button type="submit">{{ __($sendsMail && $invite['method'] === 'email' ? 'lynx-admin::users.invite.send' : 'lynx-admin::users.invite.create') }}</x-lynx-admin::ui.button></div>
         </form>
     @endif
 </div>

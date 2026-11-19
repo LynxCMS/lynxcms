@@ -26,6 +26,16 @@ return [
         'submit' => 'Enviar ligação por email',
         'back' => 'Voltar ao início de sessão',
     ],
+    'temporary' => [
+        'expired' => 'Esta palavra-passe temporária expirou. Peça uma nova a quem lha deu.',
+    ],
+    'new_password' => [
+        'title' => 'Escolha a sua palavra-passe',
+        'description' => 'Iniciou sessão com uma palavra-passe temporária. Escolha a sua para continuar.',
+        'password' => 'Nova palavra-passe',
+        'submit' => 'Guardar palavra-passe',
+        'same' => 'Escolha uma palavra-passe diferente da temporária.',
+    ],
     'invitation' => [
         'welcome' => 'Bem-vindo',
         'welcome_name' => 'Bem-vindo, :name',

@@ -26,6 +26,16 @@ return [
         'submit' => 'Email a reset link',
         'back' => 'Back to sign in',
     ],
+    'temporary' => [
+        'expired' => 'This temporary password has expired. Ask whoever gave it to you for a new one.',
+    ],
+    'new_password' => [
+        'title' => 'Choose your password',
+        'description' => 'You signed in with a temporary password. Choose your own to continue.',
+        'password' => 'New password',
+        'submit' => 'Save password',
+        'same' => 'Choose a password different from the temporary one.',
+    ],
     'invitation' => [
         'welcome' => 'Welcome',
         'welcome_name' => 'Welcome, :name',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Auth;
 
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -16,6 +17,7 @@ use Laravel\Fortify\Fortify;
 use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminPath;
 use LynxCms\Admin\Http\InvitationController;
+use LynxCms\Admin\Http\NewPasswordController;
 use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Support\Value;
@@ -71,6 +73,12 @@ final class AdminAuth
         return self::mode() !== self::OFF;
     }
 
+    /** Whether the admin may email people: invitations and password reset links (ADR-0126). */
+    public static function sendsMail(): bool
+    {
+        return Value::bool(config('lynx-admin.auth.mail', true));
+    }
+
     /** On register: Fortify reads this config when it registers its routes. */
     public static function configure(): void
     {
@@ -98,11 +106,12 @@ final class AdminAuth
             'fortify.limiters.two-factor' => 'lynx-two-factor',
             'fortify.limiters.passkeys' => 'lynx-passkeys',
             'fortify.redirects.logout' => "/{$prefix}/login",
-            'fortify.features' => [
-                Features::resetPasswords(),
+            // Without email (lynx-admin.auth.mail), no reset links: superusers give temporary passwords.
+            'fortify.features' => array_values(array_filter([
+                self::sendsMail() ? Features::resetPasswords() : null,
                 Features::twoFactorAuthentication(['confirm' => true, 'confirmPassword' => true]),
                 Features::passkeys(['confirmPassword' => true]),
-            ],
+            ])),
             // Fortify copies this from fortify.home while it registers, usually before the admin
             // does (ADR-0112, tests/ProviderOrder). Fortify registers the passkey routes itself,
             // limited by fortify.limiters.passkeys above, so passkeys.throttle is never read.
@@ -120,7 +129,8 @@ final class AdminAuth
 
         Event::listen(UserInvited::class, SendInvitation::class);
         Event::listen(PasswordReset::class, ClearInvitation::class);
-        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class);
+        Event::listen(Validated::class, RefuseExpiredTemporaryPassword::class);
+        app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class, CreateUser::class, SetTemporaryPassword::class);
         self::routes();
 
         if (self::isEnabled()) {
@@ -146,11 +156,13 @@ final class AdminAuth
             ->by(Value::string($request->input('credential.id'), $request->session()->getId()).'|'.$request->ip()));
     }
 
-    /** Accepting an invitation: guests only, throttled like the sign-in form. */
+    /** The account screens, and accepting an invitation: guests only, throttled like the sign-in form. */
     private static function routes(): void
     {
         Admin::routes(function (): void {
             Route::view('account/security', 'lynx-admin::account.security')->middleware('password.confirm')->name('account');
+            Route::get('account/new-password', [NewPasswordController::class, 'show'])->name('account.new-password');
+            Route::post('account/new-password', [NewPasswordController::class, 'store'])->name('account.new-password.save');
         });
         Route::middleware(['web', 'guest', UseAdminLocale::class])->prefix(AdminPath::current())->name('lynx.admin.')->group(function (): void {
             Route::get('invitation/{token}', [InvitationController::class, 'show'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation');

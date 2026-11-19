@@ -10,6 +10,9 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Temporary passwords.** A superuser can add a user with a temporary password instead of an invitation, or give one to someone who forgot theirs. It is shown once, works for 3 days, and its user chooses their own before anything else in the admin. `LYNX_ADMIN_AUTH_MAIL=false` turns off invitations and reset links for sites that send no email. Run `php artisan lynx:migrate` for its table. See [Temporary passwords](/admin/sign-in#temporary-passwords) (ADR-0126).
+- The Users screen's **Invite user** form is now **Add user**.
+
 ## 0.1.50
 
 Released November 18, 2026. The admin in Spanish, and a View button in the forms inbox. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-49-to-0-1-50).

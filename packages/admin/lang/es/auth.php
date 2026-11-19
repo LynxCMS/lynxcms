@@ -26,6 +26,16 @@ return [
         'submit' => 'Enviar un enlace para restablecerla',
         'back' => 'Volver al inicio de sesión',
     ],
+    'temporary' => [
+        'expired' => 'Esta contraseña temporal ha caducado. Pide una nueva a quien te la dio.',
+    ],
+    'new_password' => [
+        'title' => 'Elige tu contraseña',
+        'description' => 'Has iniciado sesión con una contraseña temporal. Elige la tuya para continuar.',
+        'password' => 'Nueva contraseña',
+        'submit' => 'Guardar contraseña',
+        'same' => 'Elige una contraseña distinta de la temporal.',
+    ],
     'invitation' => [
         'welcome' => 'Te damos la bienvenida',
         'welcome_name' => 'Te damos la bienvenida, :name',
