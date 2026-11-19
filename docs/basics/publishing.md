@@ -100,6 +100,8 @@ lynx()->pages->restore('/news/old');
 lynx()->pages->emptyTrash();
 ```
 
+Trashed pages have no URL, so code that reacts to a page by its id, such as a listener on `PageSaved`, asks whether the page is in the trash with `lynx()->pages->inTrash($page)`, which takes the page or its id and counts pages below a trashed page too.
+
 `lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash, which editors can undo.
 
 ## Old URLs
