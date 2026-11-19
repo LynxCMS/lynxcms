@@ -158,7 +158,7 @@ Added later: ADR-0022, start fresh as lynxcms/\* (Accepted); ADR-0023, keep read
 
 ## ADR-0014: Schema sync through YAML export and apply, keyed by uuid
 
-**Status:** Accepted
+**Status:** Accepted (PHP template classes dropped by ADR-0133)
 
 **Context:** Languages, fields and templates live in the database and can change in production through the admin or AI agents. Developers need those changes locally, and auto-increment ids differ between machines. Craft solves this with project config; Lynx 1 defines templates as PHP classes synced with `lynx:sync`.
 
@@ -1414,4 +1414,14 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 **Decision:** A class is `@api` when apps or third-party modules need it: actions (their class and input are how apps write), what `lynx()` and its module APIs return, events, exceptions the API throws, interfaces and abstract classes meant for extension, admin hooks for modules, and every class the docs or the guides' code use. Everything else is `@internal`: service providers, Livewire screens, Blade component classes (the tag is the API), Artisan commands (the command is the API), agent and MCP tools, field type and formatter classes (their names are the API), and the inner parts of features. Lynx's own packages may use each other's `@internal` classes, because they are released together under one version. A public method that only Lynx's packages need is marked `@internal` on the method; parameters that exposed internal classes are removed, as `$scope` was from `PagesApi::find()` and `childCounts()`. `tests/Unit/PublicApiTest.php` fails on a class without a marker and on the guides' code using an `@internal` class.
 
 **Consequences:** 127 classes became `@internal`, 81 unmarked classes (the actions, `lynx()->ai()` and its run) became `@api`, 97 unmarked classes became `@internal`, and `IntegerConverter`, which the custom field type guide uses, became `@api`, leaving 255 `@api` classes. Apps that used a demoted class keep working until 1.0 but lose the promise; the starters still use three classes that were `@internal` before the audit (`Branding`, `Trash`, `Unlocks`), to be replaced or made public before 1.0. The backward compatibility check in CI comes next, on this list.
+
+## ADR-0133: No PHP template classes (`lynx:sync`)
+
+**Status:** Accepted (amends ADR-0014)
+
+**Context:** ADR-0014 kept Lynx 1's PHP template classes as an option: one class per template, compiled by `lynx:sync` into the same actions as everything else. They were never built. Meanwhile the schema can be defined in the admin, in YAML files (`lynx:schema:export` and `lynx:schema:apply`), with PHP calls (`lynx()->fields->add()`, `lynx()->templates->add()`) and with schema drafts (`lynx:draft`), and PHPStan already knows each template's fields through the `FieldProperties` extension.
+
+**Decision:** Drop PHP template classes and `lynx:sync` from the plan. Lynx 1.0 ships without them.
+
+**Consequences:** One fewer source of truth to keep in step with the others, and no rule needed for when a class and a YAML file disagree. Developers who prefer classes write a seeder or an install action with PHP calls. If Lynx 1 users ask for classes, they can come after 1.0 as a module on the same actions, without breaking anything.
 

@@ -16,7 +16,7 @@ The build runs in 16 phases: 10 for the MVP, 4 to reach a public release, and th
 | 7 MCP server | Done | Generated tools, read tools, prompt, resource, allowlist |
 | 8 AI agent | Done | `CmsAgent` on laravel/ai, plan-then-apply with replay, `lynx:ask`, `pages.translate` with an LLM provider |
 | 9 Spike | Measured | See ADR-0023: 50,000 pages × 3 languages, translatable filters and sorts 70–160 ms. A search index followed later (ADR-0054, ADR-0119, ADR-0120) |
-| 10 Schema sync | Done | lynx:schema:export and lynx:schema:apply (uuid-keyed YAML, idempotent, --dry-run, --force). PHP template classes compiled by lynx:sync were not built; decide before 1.0 whether they are still wanted. |
+| 10 Schema sync | Done | lynx:schema:export and lynx:schema:apply (uuid-keyed YAML, idempotent, --dry-run, --force). PHP template classes compiled by lynx:sync were dropped (ADR-0133): the schema is defined in the admin, YAML files or PHP calls. |
 | 11 Livewire admin | Done | Page tree, menu builder, page editor (steps 1 to 8: inputs, rich text, page and component fields, Settings tab, unique status, review changes). Conditional fields (ADR-0030), templates and fields screens, template family rules (ADR-0032), text formatters (ADR-0031), roles and permissions (ADR-0033). Phase 11 is complete |
 | 12 Lynx 1 modules | Done | Trash (ADR-0035), admin on BlatUI (ADR-0034), scheduled publishing per language (ADR-0036), edit locks (ADR-0037), revisions (ADR-0038), drafts with preview (ADR-0039), export, import and backups (ADR-0040), Laravel Boost guideline and skills. REST API and webhooks moved to v2 |
 | 13 Translation | Built, not released | In the private paid module `lynxcms/translate`: DeepL, local models (OpenAI-compatible) and cloud models through `lynxcms/ai`, a glossary per language pair, a monthly budget in characters, whole pages and branches in the background, translations into drafts, badges for machine-written and outdated text (`source_hash` in core). No tag yet |
@@ -47,7 +47,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 7. Browser tests of the sign-in flows (password, two-factor setup and challenge, temporary password, invitation), which only Livewire and HTTP tests cover today.
 8. An accessibility review of the admin.
 9. The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
-10. A decision on `lynx:sync` (phase 10): build it or drop it from the plan.
+10. ~~A decision on `lynx:sync`.~~ Decided on 2026-11-19: dropped (ADR-0133).
 11. The draft documentation: publish or drop the bilingual website guide and the comparison page.
 
 **Decisions for phase 14**
@@ -254,7 +254,7 @@ Not needed for 1.0: the headless API and webhooks (v2, `documentation/plans/head
 
 ## Phase 10: Schema sync
 
-**Build:** `cms:schema:export` and `cms:schema:apply` (YAML keyed by uuid, `--force` for destructive changes, conflict detection), PHP template classes compiled by `cms:sync`, and the option to lock schema editing in production.
+**Build:** `cms:schema:export` and `cms:schema:apply` (YAML keyed by uuid, `--force` for destructive changes, conflict detection) and the option to lock schema editing in production. PHP template classes compiled by `cms:sync` were planned here and dropped (ADR-0133).
 
 **After this phase:** schema changes made in production, by an editor or an AI agent, reach a developer's machine through git, and the other way round on deploy.
 
