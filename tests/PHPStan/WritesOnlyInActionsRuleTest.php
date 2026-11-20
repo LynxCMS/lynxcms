@@ -6,6 +6,7 @@ namespace LynxCms\Tests\PHPStan;
 
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
+use WritesFixture\ListedWriter;
 
 /**
  * Without Larastan, which boots a Laravel app and leaves its handlers behind: Laravel's own types
@@ -28,6 +29,6 @@ final class WritesOnlyInActionsRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new WritesOnlyInActionsRule(['WritesFixture\ListedWriter']);
+        return new WritesOnlyInActionsRule([ListedWriter::class]);
     }
 }

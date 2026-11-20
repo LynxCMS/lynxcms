@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Laravel\Fortify\Contracts\ResetsUserPasswords;
+use Laravel\Fortify\Contracts\UpdatesUserPasswords;
+use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 use LynxCms\Core\Actions\Action;
 use PhpParser\Node;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
@@ -28,7 +33,7 @@ use PHPStan\Type\Type;
  * users are written the Fortify way), and outside the classes listed in phpstan.neon.dist
  * (lynxWriters), each with its reason. The DB facade has the same rule in ArchitectureTest.
  *
- * @implements Rule<Node\Expr\CallLike>
+ * @implements Rule<CallLike>
  */
 final readonly class WritesOnlyInActionsRule implements Rule
 {
@@ -42,10 +47,10 @@ final readonly class WritesOnlyInActionsRule implements Rule
     ];
 
     private const array FORTIFY_WRITERS = [
-        'Laravel\Fortify\Contracts\CreatesNewUsers',
-        'Laravel\Fortify\Contracts\ResetsUserPasswords',
-        'Laravel\Fortify\Contracts\UpdatesUserPasswords',
-        'Laravel\Fortify\Contracts\UpdatesUserProfileInformation',
+        CreatesNewUsers::class,
+        ResetsUserPasswords::class,
+        UpdatesUserPasswords::class,
+        UpdatesUserProfileInformation::class,
     ];
 
     private const array WRITABLE = [Model::class, EloquentBuilder::class, QueryBuilder::class, Relation::class];
@@ -55,7 +60,7 @@ final readonly class WritesOnlyInActionsRule implements Rule
 
     public function getNodeType(): string
     {
-        return Node\Expr\CallLike::class;
+        return CallLike::class;
     }
 
     /** @return list<IdentifierRuleError> */
@@ -77,7 +82,7 @@ final readonly class WritesOnlyInActionsRule implements Rule
     /** The write method called, or null for any other call. */
     private function writeMethod(Node $node): ?string
     {
-        if (! ($node instanceof MethodCall || $node instanceof StaticCall) || ! $node->name instanceof Identifier) {
+        if (! $node instanceof MethodCall && ! $node instanceof StaticCall || ! $node->name instanceof Identifier) {
             return null;
         }
 
@@ -98,7 +103,7 @@ final readonly class WritesOnlyInActionsRule implements Rule
 
     private function isA(Type $type, string $class): bool
     {
-        return (new ObjectType($class))->isSuperTypeOf($type)->yes();
+        return new ObjectType($class)->isSuperTypeOf($type)->yes();
     }
 
     /** Whether the class the call is in may write: an action, a Fortify writer, or a listed class. */
