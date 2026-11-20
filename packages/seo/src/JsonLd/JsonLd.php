@@ -71,6 +71,12 @@ final class JsonLd
         return in_array($this->mappings->for($page->template()->name)?->type, SchemaTypes::ARTICLES, true);
     }
 
+    /** The og:type for the page: "article" or "book" for templates mapped to those types, else "website". */
+    public function openGraphType(Page $page): string
+    {
+        return SchemaTypes::OPEN_GRAPH_TYPES[$this->mappings->for($page->template()->name)->type ?? ''] ?? 'website';
+    }
+
     /** The @id of the site's organization or person, when the settings name one. */
     public static function organizationId(): string
     {

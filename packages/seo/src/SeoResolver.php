@@ -57,7 +57,7 @@ final readonly class SeoResolver
             localeAlternates: $this->otherLocales($alternates, $locale),
             alternates: $alternates,
             twitter: $this->twitter(),
-            type: $this->jsonLd->isArticle($page) ? 'article' : 'website',
+            type: $this->jsonLd->openGraphType($page),
         );
 
         return $seo->withJsonLd($this->jsonLd->build($page, $seo));

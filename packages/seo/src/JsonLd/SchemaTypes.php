@@ -55,6 +55,7 @@ final class SchemaTypes
         'eventStatus' => ['scheduled' => 'EventScheduled', 'cancelled' => 'EventCancelled', 'canceled' => 'EventCancelled', 'postponed' => 'EventPostponed', 'rescheduled' => 'EventRescheduled', 'online' => 'EventMovedOnline'],
         'eventAttendanceMode' => ['offline' => 'OfflineEventAttendanceMode', 'online' => 'OnlineEventAttendanceMode', 'mixed' => 'MixedEventAttendanceMode'],
         'offers.availability' => ['in_stock' => 'InStock', 'out_of_stock' => 'OutOfStock', 'preorder' => 'PreOrder', 'sold_out' => 'SoldOut', 'limited' => 'LimitedAvailability'],
+        'bookFormat' => ['hardcover' => 'Hardcover', 'paperback' => 'Paperback', 'ebook' => 'EBook', 'audiobook' => 'AudiobookFormat', 'graphic_novel' => 'GraphicNovel'],
     ];
 
     /** Field types each kind of property can read. */
@@ -72,6 +73,9 @@ final class SchemaTypes
 
     /** Pages of these types are articles to social networks (og:type). */
     public const array ARTICLES = ['Article', 'BlogPosting', 'NewsArticle'];
+
+    /** The og:type social networks know for a schema type; any other page is a website. */
+    public const array OPEN_GRAPH_TYPES = ['Article' => 'article', 'BlogPosting' => 'article', 'NewsArticle' => 'article', 'Book' => 'book'];
 
     /** Branches of the site's organization (parentOrganization). */
     public const array LOCAL_BUSINESSES = ['LocalBusiness', 'Store', 'Restaurant', 'ProfessionalService', 'LodgingBusiness'];
@@ -125,6 +129,7 @@ final class SchemaTypes
         return [
             ...array_fill_keys([...self::ARTICLES, 'CreativeWork'], $creative),
             'Event' => [...self::THING, 'startDate' => self::DATE, 'endDate' => self::DATE, 'eventStatus' => self::ENUM, 'eventAttendanceMode' => self::ENUM, 'location' => self::PAGE, 'location.name' => self::TEXT, ...self::prefixed('location.address', self::ADDRESS), 'organizer' => self::PAGE, 'organizer.name' => self::TEXT, 'organizer.url' => self::URL, 'performer.name' => self::TEXT, ...self::prefixed('offers', self::OFFER)],
+            'Book' => [...$creative, 'isbn' => self::TEXT, 'numberOfPages' => self::NUMBER, 'bookFormat' => self::ENUM, 'inLanguage' => self::TEXT, ...self::prefixed('offers', self::OFFER)],
             'Product' => [...self::THING, 'sku' => self::TEXT, 'brand.name' => self::TEXT, ...self::prefixed('offers', self::OFFER)],
             'Course' => [...self::THING, 'provider' => self::PAGE, 'provider.name' => self::TEXT, 'provider.url' => self::URL, ...self::prefixed('offers', self::OFFER)],
             'Place' => $place,

@@ -97,7 +97,7 @@ On **SEO**, then **Structured data**, map a template to a schema.org type and sa
 | A fixed value | `offers.priceCurrency: =EUR` | The text after `=`. |
 | The site's owner | `author: @organization` | The organization or person from the settings, linked by `@id`. Fits `author` and `publisher` on articles, `provider` on courses, `organizer` on events and `worksFor` on people. |
 
-The types are Article, BlogPosting, NewsArticle, CreativeWork, Event, Product, Course, Place, LocalBusiness, Store, Restaurant, ProfessionalService, LodgingBusiness, Person and FAQPage. Values are converted for each property: dates to ISO 8601, images and links to full URLs, numbers to numbers, text without tags.
+The types are Article, BlogPosting, NewsArticle, CreativeWork, Book, Event, Product, Course, Place, LocalBusiness, Store, Restaurant, ProfessionalService, LodgingBusiness, Person and FAQPage. Values are converted for each property: dates to ISO 8601, images and links to full URLs, numbers to numbers, text without tags.
 
 Dotted properties build nested nodes, so `address.streetAddress: street` gives a `PostalAddress` and `geo.latitude: lat` gives `GeoCoordinates`.
 
@@ -111,9 +111,11 @@ openingHoursSpecification.dayOfWeek: day
 openingHoursSpecification.opens: opens
 ```
 
+A `Book` takes a creative work's properties plus `isbn`, `numberOfPages`, `bookFormat`, `inLanguage` and `offers`, so a book not out yet can say `offers.availability: =preorder`. Pages mapped to `Book` are books to social networks (`og:type` `book`), as articles are articles.
+
 The same works for questions and answers on a `FAQPage` (`mainEntity: faq`, `mainEntity.name: question`, `mainEntity.acceptedAnswer.text: answer`).
 
-States such as `eventStatus` and `offers.availability` take a choice's value (`cancelled`, `in_stock`) or the schema.org name (`EventCancelled`). Shops and other local businesses point to the site's organization as `parentOrganization`, so branches share one brand.
+States such as `eventStatus`, `offers.availability` and a book's `bookFormat` take a choice's value (`cancelled`, `in_stock`, `paperback`, `ebook`) or the schema.org name (`EventCancelled`). Shops and other local businesses point to the site's organization as `parentOrganization`, so branches share one brand.
 
 A mapping that would make broken structured data is refused when saved, with the reason: an unknown property, a field the template lacks, or a field of the wrong kind, such as text for an image.
 
