@@ -18,7 +18,7 @@
     --lynx-title-color: var(--foreground);
     --lynx-title-size: 0.9375rem;
     --lynx-title-weight: 500;
-    --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
+    --lynx-row-hover: color-mix(in oklab, var(--primary) 6%, transparent); /* 14% under .dark */
     --lynx-highlight: var(--accent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
     --lynx-primary-text: var(--primary); /* links and text-primary; under .dark, mixed with white to read on the dark background */

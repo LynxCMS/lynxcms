@@ -20,7 +20,7 @@ Before: 6 WCAG rules failing, on every screen. After: none, in light and dark mo
 | The sidebar's `<nav>` sat inside the menu's `<ul>`, so its items were not a list | 1.3.1 | Every screen | Fixed |
 | Language tabs pointed to panels that had no role or id | 4.1.2 | Fields, templates, page editor, menus, media, site texts | Fixed |
 | The template layout's tab list held remove and add buttons, which a tab list may not | 4.1.2 | Templates | Fixed: a group of pressed buttons |
-| Hidden pages in the tree were dimmed to 2.9:1 | 1.4.3 | Pages | Fixed: the muted colour alone, 4.8:1 |
+| Hidden pages in the tree were dimmed to 2.9:1 | 1.4.3, 1.4.1 | Pages | Fixed: a muted colour at 4.8:1, and an eye icon named "Hidden" so colour is not the only sign |
 | Primary-coloured text (links, "Add tab", "New field") read at 2.4:1 in dark mode | 1.4.3 | Dark mode | Fixed |
 | A site's light accent was reused unchanged in dark mode | 1.4.3, 1.4.11 | Branded sites | Fixed: lightened to 4.5:1 |
 | No skip link past the sidebar and header | 2.4.1 | Every screen | Fixed |

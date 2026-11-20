@@ -56,6 +56,10 @@
             @click="selected = selected === {{ $id }} ? null : {{ $id }}"
             @if ($node->hasChildren()) wire:click="toggle({{ $id }})" @endif
         >{{ $node->title }}</button>
+        @if ($node->isHidden())
+            {{-- An icon with words besides the muted title: colour alone is not enough (WCAG 1.4.1). --}}
+            <span role="img" aria-label="{{ __('lynx-admin::pages.status.hidden') }}" title="{{ __('lynx-admin::pages.status.hidden') }}" class="inline-flex" data-tree-hidden>{{ \LynxCms\Admin\Tree\TreeUi::icon('eye-off', 'size-3.5 shrink-0 text-muted-foreground') }}</span>
+        @endif
         @if ($node->isLocked())
             <x-lynx-admin::tree.lock />
         @endif

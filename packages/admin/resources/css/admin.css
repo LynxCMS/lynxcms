@@ -57,12 +57,13 @@
     --lynx-title-color: var(--foreground);
     --lynx-title-size: 0.9375rem;
     --lynx-title-weight: 500;
-    --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
+    /* Rows take a tint of the accent on hover, as the sidebar's current link does. */
+    --lynx-row-hover: color-mix(in oklab, var(--primary) 6%, transparent);
     --lynx-highlight: var(--accent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
     /* Primary-coloured text (links, text-primary): the primary itself on light backgrounds. */
     --lynx-primary-text: var(--primary);
-    --lynx-hidden-opacity: 1; /* 1 keeps hidden pages readable (WCAG 1.4.3); their muted colour marks them */
+    --lynx-hidden-opacity: 1; /* 1 keeps hidden pages readable (WCAG 1.4.3); a muted colour and an icon mark them */
     /* How much accent tints the current screen's link in the sidebar; dark sidebars need more. */
     --lynx-sidebar-active-mix: 16%;
     /* Notification bar: green, yellow and red. */
@@ -84,6 +85,7 @@
     color-scheme: dark;
     --lynx-mark-eye: #56bad5;
     --lynx-sidebar-active-mix: 32%;
+    --lynx-row-hover: color-mix(in oklab, var(--primary) 14%, transparent);
 }
 
 @import "./lynx-theme.css";
@@ -114,6 +116,7 @@
     }
 
     .lynx-tree-hidden {
+        color: var(--muted-foreground);
         opacity: var(--lynx-hidden-opacity);
     }
 
