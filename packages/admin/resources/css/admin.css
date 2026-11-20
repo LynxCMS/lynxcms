@@ -59,7 +59,8 @@
     --lynx-title-weight: 500;
     /* Rows take a tint of the accent on hover, as the sidebar's current link does. */
     --lynx-row-hover: color-mix(in oklab, var(--primary) 6%, transparent);
-    --lynx-highlight: var(--accent);
+    /* The selected title and the row being moved: a stronger accent tint than hover. */
+    --lynx-highlight: color-mix(in oklab, var(--primary) 14%, transparent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
     /* Primary-coloured text (links, text-primary): the primary itself on light backgrounds. */
     --lynx-primary-text: var(--primary);
@@ -86,6 +87,7 @@
     --lynx-mark-eye: #56bad5;
     --lynx-sidebar-active-mix: 32%;
     --lynx-row-hover: color-mix(in oklab, var(--primary) 14%, transparent);
+    --lynx-highlight: color-mix(in oklab, var(--primary) 26%, transparent);
 }
 
 @import "./lynx-theme.css";
