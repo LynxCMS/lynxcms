@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Livewire;
+use LynxCms\Admin\Auth\Invitations;
 use LynxCms\Admin\Auth\PasswordRules;
 use LynxCms\Admin\Livewire\AccountSecurity;
 use LynxCms\Core\Actions\Roles\AssignRoles;
@@ -44,7 +45,12 @@ it('shows the rules on the reset, invitation and new password screens', function
         ->assertSee('Not found in known data breaches');
 })->with([
     'reset' => '/lynx/reset-password/a-token?email=ana%40example.com',
-    'invitation' => '/lynx/invitation/a-token?email=ana%40example.com',
+    // The invitation screen asks for a password only for a valid invitation.
+    'invitation' => function (): string {
+        $ana = User::query()->forceCreate(['name' => 'Ana Lima', 'email' => 'ana@example.com', 'password' => Hash::make('correct horse')]);
+
+        return '/lynx/invitation/'.Invitations::broker()->createToken($ana).'?email=ana%40example.com';
+    },
 ]);
 
 it('shows the rules where a signed-in user changes their password', function (): void {

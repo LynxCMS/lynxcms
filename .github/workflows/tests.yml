@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      signin: ${{ steps.filter.outputs.signin }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,8 +30,13 @@ jobs:
         run: |
           if ! changed=$(git diff --name-only "$BASE" "$GITHUB_SHA" 2>/dev/null) || [ -z "$changed" ]; then
             echo "code=true" >> "$GITHUB_OUTPUT"
+            echo "signin=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          # The sign-in flows' code, screens, wording and dependencies, and the browser tests
+          # themselves: only these run the browser job (ADR-0137).
+          signin=$(echo "$changed" | grep -E '^packages/admin/src/(Auth/|Livewire/AccountSecurity\.php|Http/(InvitationController|NewPasswordController|RequireOwnPassword|RequireTwoFactor)\.php)|^packages/admin/resources/views/(auth/|account/|livewire/account-security\.blade\.php|components/(auth-layout|password-rules)\.blade\.php)|^packages/admin/resources/js/(admin|blatui-core|passkeys)\.js|^packages/admin/lang/[a-z]+/(auth|account)\.php|^(packages/admin/)?composer\.json$|^package(-lock)?\.json$|^phpunit\.xml\.dist$|^tests/Browser/|^\.github/workflows/tests\.yml$' || true)
+          echo "signin=$([ -n "$signin" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           # Docs and other workflows (starters, split, docs site) need no test run; this one does.
           code=$(echo "$changed" | grep -vE '^docs/(\.vitepress/|public/|package(-lock)?\.json$|wrangler[^/]*$)' | grep -vE '^docs/.+\.md$' | grep -vE '^\.github/' || true)
           code=$code$(echo "$changed" | grep -E '^\.github/workflows/tests\.yml$' || true)
@@ -156,6 +162,45 @@ jobs:
           DB_DATABASE: lynx_test
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
+
+  # The sign-in flows in a real browser (tests/Browser): Pest's browser plugin drives Chromium
+  # through Playwright. Its own job, so the main suite needs no browser, and only when the
+  # sign-in flows change (the changes job's signin output).
+  browser:
+    needs: changes
+    if: needs.changes.outputs.signin == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_sqlite, intl, mbstring, zip
+          coverage: none
+      - uses: actions/cache@v6
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: vendor-${{ runner.os }}-
+      - run: composer update --prefer-dist --no-interaction --no-progress
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/admin/package-lock.json
+      - run: npm ci && npm run build
+        working-directory: packages/admin
+      - run: npm ci && npx playwright install --with-deps chromium
+      - run: composer test:browser -- --ci
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-screenshots
+          path: tests/Browser/Screenshots
 
   quality:
     needs: changes

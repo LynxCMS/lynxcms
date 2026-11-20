@@ -26,6 +26,16 @@ it('signs in with email and password', function (): void {
     $this->assertAuthenticatedAs($this->user);
 });
 
+it('counts the password typed to sign in as just confirmed, so account security does not ask for it again', function (): void {
+    $this->post('/lynx/login', ['email' => 'ana@example.com', 'password' => 'correct horse']);
+
+    $this->get('/lynx/account/security')->assertOk();
+});
+
+it('still asks for the password on account security after a sign-in without one', function (): void {
+    $this->actingAs($this->user)->get('/lynx/account/security')->assertRedirect('/lynx/user/confirm-password');
+});
+
 it('refuses a wrong password', function (): void {
     $this->from('/lynx/login')->post('/lynx/login', ['email' => 'ana@example.com', 'password' => 'wrong'])
         ->assertRedirect('/lynx/login')->assertSessionHasErrors('email');

@@ -41,7 +41,7 @@ A site with a members area, bookings or surveys lets visitors create accounts. U
 
 Under **Access > Users**, a superuser fills in a name, an email and at least one role under **Add user**, chooses **Send an invitation by email**, then **Send invitation**. A user without a role could not open the admin, so Lynx refuses to add one. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
 
-Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working.
+Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working. A link that no longer works (used, replaced or past its days) says so as soon as it opens, and to ask for a new one. It shows the same message for an address that has no invitation, so the screen tells no one who has an account.
 
 The email needs a working mail setup in your app. Without one, use temporary passwords.
 
@@ -111,7 +111,7 @@ Lynx's migration adds the two-factor columns to `users` and creates the `passkey
 
 ## Two-factor authentication
 
-On **Account security**, **Turn on** shows a QR code and a setup key. Two-factor authentication counts only once a code from the app confirms it. The recovery codes are shown then; each signs you in once if you lose your phone.
+**Account security** asks for your password again unless you typed it to sign in, or confirmed it, within Laravel's `auth.password_timeout` (three hours by default). Signing in with "Keep me signed in" or a passkey confirms nothing, so it asks then. On **Account security**, **Turn on** shows a QR code and a setup key. Two-factor authentication counts only once a code from the app confirms it. The recovery codes are shown then; each signs you in once if you lose your phone.
 
 ### Requiring two-factor authentication
 

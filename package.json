@@ -1,0 +1,7 @@
+{
+    "private": true,
+    "description": "Playwright for Pest's browser tests (tests/Browser). The admin's assets have their own package.json in packages/admin.",
+    "devDependencies": {
+        "playwright": "^1.65.1"
+    }
+}
