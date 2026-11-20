@@ -45,7 +45,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 
 6. ~~The page cache check on Laravel Cloud.~~ Moved after 1.0 on 2026-11-20: most Lynx sites run on SQLite, on one server, so replicas are rare.
 7. Browser tests of the sign-in flows (password, two-factor setup and challenge, temporary password, invitation). Done on 2026-11-20 (ADR-0137): `composer test:browser`, a job of its own in CI.
-8. An accessibility review of the admin. Done on 2026-11-19 (ADR-0136, `documentation/reports/accessibility-review-2026-11.md`); the open findings fixed on 2026-11-20 (ADR-0138); left: a screen reader pass by a person who uses one daily.
+8. An accessibility review of the admin. Done on 2026-11-19 (ADR-0136, `documentation/reports/accessibility-review-2026-11.md`); the open findings fixed on 2026-11-20 (ADR-0138). A screen reader pass by a person moved to v2 on 2026-11-20.
 9. Done on 2026-11-19 (ADR-0135). The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
 10. ~~A decision on `lynx:sync`.~~ Decided on 2026-11-19: dropped (ADR-0133).
 11. ~~The draft documentation.~~ Moved after 1.0 on 2026-11-19: drafts are hidden from the docs site, so they block nothing.
@@ -314,4 +314,8 @@ Planned for the version after 1.0, moved out of phase 12 on 2026-10-08:
 * **Webhooks:** signed HTTP calls to other systems when pages are saved, published, moved, trashed or deleted, queued with retries.
 
 Both are planned in detail, with an Astro front end as the target, in `documentation/plans/headless.md`.
+
+Moved here on 2026-11-20 from the road to 1.0:
+
+* **A screen reader pass by a person.** Someone who uses VoiceOver or NVDA daily goes through signing in, the page tree (with move mode), the page editor with its language tabs and errors, and a form in the Forms module. The admin's accessibility so far is checked with axe and browser tests, not by listening (`documentation/reports/accessibility-review-2026-11.md`).
 

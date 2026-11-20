@@ -36,7 +36,7 @@ One reported failure was not real: the brand name on the sign-in screens in dark
 
 ## Open
 
-* **A screen reader pass by a person.** Every finding above was fixed by reading the markup and checking it with axe and browser tests, not by listening. Someone who uses VoiceOver or NVDA daily should go through signing in, the page tree (including move mode), the page editor with its language tabs and errors, and a form in the Forms module.
+* **A screen reader pass by a person** (moved to v2 on 2026-11-20). Every finding above was fixed by reading the markup and checking it with axe and browser tests, not by listening. Someone who uses VoiceOver or NVDA daily should go through signing in, the page tree (including move mode), the page editor with its language tabs and errors, and a form in the Forms module.
 
 ## Follow-up, 2026-11-20
 
@@ -52,4 +52,4 @@ The open findings were fixed: errors tied to their fields (ADR-0138), notices th
 
 ## Not covered
 
-Screen readers themselves (VoiceOver, NVDA), zoom to 400% and reflow on narrow screens, the rich text editor's toolbar, the forms results screen, and modules' screens beyond those listed. A screen reader pass by a person who uses one daily is the next step before 1.0.
+Screen readers themselves (VoiceOver, NVDA), zoom to 400% and reflow on narrow screens, the rich text editor's toolbar, the forms results screen, and modules' screens beyond those listed. A screen reader pass by a person who uses one daily is planned for v2 (`documentation/Implementation plan.md`).
