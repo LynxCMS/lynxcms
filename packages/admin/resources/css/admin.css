@@ -105,6 +105,16 @@
         background: var(--lynx-row-hover);
     }
 
+    /* The row's buttons (BlatUI's hover:bg-accent) take the selected title's accent tint.
+       In dark mode they show half of it (dark:hover:bg-accent/50), so the tint doubles there. */
+    .lynx-tree-row {
+        --accent: var(--lynx-highlight);
+    }
+
+    .dark .lynx-tree-row {
+        --accent: color-mix(in oklab, var(--primary) 52%, transparent);
+    }
+
     .lynx-tree-row-moving,
     .lynx-tree-row-moving:hover {
         background: var(--lynx-highlight);
