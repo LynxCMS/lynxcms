@@ -1,11 +1,14 @@
-{{-- The item form in the panel beside the tree; options most items never need fold under More options. --}}
+{{--
+    The item form in the panel below the tree, brought into view when it opens (smoothly, unless the
+    editor asks for less motion); options most items never need fold under More options.
+--}}
 @php
     $advancedKeys = ['target', 'rel.*', 'icon_before', 'icon_after', 'class'];
     $isAdvancedOpen = $item->targetChoice !== '' || $item->rel !== [] || $item->iconBefore !== '' || $item->iconAfter !== '' || $item->class !== ''
         || collect($advancedKeys)->contains(fn (string $key): bool => $errors->has($key));
 @endphp
 <form wire:submit="saveItem" class="bg-card text-card-foreground grid gap-5 rounded-xl border p-5" aria-labelledby="item-form-title" wire:key="item-form-{{ $item->id ?? 'new-'.$item->parent }}" data-item-form
-    x-init="if (window.matchMedia('(max-width: 1023px)').matches) $el.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+    x-init="$el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' })">
     <div class="flex items-center justify-between gap-4">
         <h2 id="item-form-title" class="text-base font-semibold">{{ __($item->id ? 'lynx-menus::admin.item.edit' : 'lynx-menus::admin.item.new') }}</h2>
         <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="cancelItem" aria-label="{{ __('lynx-menus::admin.item.close') }}"><x-lucide-x aria-hidden="true" /></x-lynx-admin::ui.button>

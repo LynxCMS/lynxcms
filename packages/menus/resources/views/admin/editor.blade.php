@@ -1,6 +1,6 @@
 {{--
     One menu (MenuEditor): its title and name with Add item, then two tabs. Items shows the tree
-    with the item form in a panel beside it (below it on small screens); Settings holds the title,
+    with the item form below it, at a width that fits its choices; Settings holds the title,
     classes, how a template shows the menu, its stored copies and deletion.
 --}}
 <div class="grid gap-6">
@@ -24,7 +24,7 @@
         </x-lynx-admin::ui.tabs>
 
         @if ($tab === 'items')
-            <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]" data-menu-items>
+            <div class="grid gap-6" data-menu-items>
                 <livewire:lynx-admin.page-tree
                     :root="(string) $menuId"
                     events="menu-item"
@@ -32,7 +32,7 @@
                     :key="'menu-tree-'.$menuId"
                 />
 
-                <aside class="lg:sticky lg:top-20" aria-label="{{ __('lynx-menus::admin.item.panel') }}" data-menu-panel>
+                <aside class="w-full max-w-2xl" aria-label="{{ __('lynx-menus::admin.item.panel') }}" data-menu-panel>
                     @if ($isEditingItem)
                         @include('lynx-menus::admin.partials.item-form', ['languages' => $this->languages])
                     @else

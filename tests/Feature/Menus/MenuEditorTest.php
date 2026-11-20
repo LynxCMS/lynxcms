@@ -65,11 +65,12 @@ it('answers 404 for a page that is not a menu', function (): void {
     $this->get(route('lynx.admin.menus.edit', lynx()->pages->get('/courses/alpha')?->id))->assertNotFound();
 });
 
-it('shows the item panel beside the tree, and the settings on their own tab', function (): void {
+it('shows the item panel below the tree, and the settings on their own tab', function (): void {
     lynx()->menus()->create('top', 'Top');
 
     Livewire::test(MenuEditor::class, ['menuId' => topMenuId()])
         ->assertSeeHtml('data-menu-panel')
+        ->assertDontSeeHtml('lg:grid-cols-')
         ->assertDontSeeHtml('data-item-form')
         ->assertDontSeeHtml('data-menu-settings')
         ->set('tab', 'settings')
