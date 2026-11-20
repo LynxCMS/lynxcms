@@ -135,6 +135,7 @@ final class AdminAuth
         Event::listen(UserInvited::class, SendInvitation::class);
         Event::listen(PasswordReset::class, ClearInvitation::class);
         Event::listen(Validated::class, RefuseExpiredTemporaryPassword::class);
+        Event::listen(Validated::class, ConfirmPasswordOnSignIn::class);
         Event::listen([TwoFactorAuthenticationConfirmed::class, TwoFactorAuthenticationDisabled::class], SendTwoFactorNotice::class);
         app(ActionRegistry::class)->register(InviteUser::class, ResendInvitation::class, CreateUserWithTemporaryPassword::class, SetTemporaryPassword::class, ResetTwoFactor::class);
         self::routes();

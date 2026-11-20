@@ -31,6 +31,7 @@
         "laravel/pint": "^1.0",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^4.1|^5.0",
+        "pestphp/pest-plugin-browser": "^5.2",
         "pestphp/pest-plugin-laravel": "^4.0|^5.0",
         "rector/rector": "^2.8.4"
     },
@@ -139,6 +140,10 @@
             "Composer\\Config::disableProcessTimeout",
             "@putenv LARAVEL_PARALLEL_TESTING=1",
             "@php vendor/bin/pest --parallel"
+        ],
+        "test:browser": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php vendor/bin/pest --testsuite=Browser"
         ],
         "test:pgsql": [
             "Composer\\Config::disableProcessTimeout",

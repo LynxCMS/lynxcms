@@ -3,7 +3,8 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache"
+         defaultTestSuite="Unit,Feature,AppAuth,ProviderOrder,AdminPath">
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
@@ -19,6 +20,10 @@
         </testsuite>
         <testsuite name="AdminPath">
             <directory>tests/AdminPath</directory>
+        </testsuite>
+        <!-- Real browser tests (Pest browser plugin and Playwright), run on their own: pest with testsuite Browser. -->
+        <testsuite name="Browser">
+            <directory>tests/Browser</directory>
         </testsuite>
     </testsuites>
     <source>

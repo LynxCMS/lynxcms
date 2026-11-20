@@ -18,6 +18,9 @@ pest()->extend(TestCase::class)->in('Feature', 'Unit');
 pest()->extend(AppFortifyTestCase::class)->in('AppAuth');
 pest()->extend(ProviderOrderTestCase::class)->in('ProviderOrder');
 pest()->extend(AdminPathTestCase::class)->in('AdminPath');
+pest()->extend(TestCase::class)->in('Browser');
+
+require_once __DIR__.'/Browser/BrowserHelpers.php';
 
 /**
  * A folder under storage/framework/testing for this test process only, so parallel runs do not

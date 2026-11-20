@@ -157,6 +157,44 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
 
+  # The sign-in flows in a real browser (tests/Browser): Pest's browser plugin drives Chromium
+  # through Playwright. Its own job, so the main suite needs no browser.
+  browser:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_sqlite, intl, mbstring, zip
+          coverage: none
+      - uses: actions/cache@v6
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ hashFiles('composer.json', 'packages/*/composer.json') }}
+          restore-keys: vendor-${{ runner.os }}-
+      - run: composer update --prefer-dist --no-interaction --no-progress
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/admin/package-lock.json
+      - run: npm ci && npm run build
+        working-directory: packages/admin
+      - run: npm ci && npx playwright install --with-deps chromium
+      - run: composer test:browser -- --ci
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-screenshots
+          path: tests/Browser/Screenshots
+
   quality:
     needs: changes
     if: needs.changes.outputs.code == 'true'

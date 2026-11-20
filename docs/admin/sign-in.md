@@ -111,7 +111,7 @@ Lynx's migration adds the two-factor columns to `users` and creates the `passkey
 
 ## Two-factor authentication
 
-On **Account security**, **Turn on** shows a QR code and a setup key. Two-factor authentication counts only once a code from the app confirms it. The recovery codes are shown then; each signs you in once if you lose your phone.
+**Account security** asks for your password again unless you typed it to sign in, or confirmed it, within Laravel's `auth.password_timeout` (three hours by default). Signing in with "Keep me signed in" or a passkey confirms nothing, so it asks then. On **Account security**, **Turn on** shows a QR code and a setup key. Two-factor authentication counts only once a code from the app confirms it. The recovery codes are shown then; each signs you in once if you lose your phone.
 
 ### Requiring two-factor authentication
 

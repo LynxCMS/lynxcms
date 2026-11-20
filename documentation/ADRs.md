@@ -1465,3 +1465,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** No axe failures on the 31 screens reviewed, in either mode. Branded sites look slightly lighter in dark mode when their accent is dark. Two findings stay open: error messages tied to their fields, and notices that pause on hover or focus. A screen reader pass by a regular user is still to do.
 
+## ADR-0137: Browser tests of the sign-in flows
+
+**Status:** Accepted
+
+**Context:** Signing in to the admin crosses Lynx's screens, Fortify, Livewire and Alpine: the password, two-factor setup and challenge, temporary passwords and invitations. Livewire and HTTP tests checked each step alone, never the screens a person goes through. The first run in a browser found a step no HTTP test had put together: with two-factor authentication required, a first sign-in asked for the password twice in a row, once to sign in and once more for **Account security** (`password.confirm`).
+
+**Decision:** The sign-in flows have browser tests in `tests/Browser`, with Pest's browser plugin, which drives Chromium through Playwright against the testbench app in the same process. They are a test suite of their own, outside the default run, so `composer test` needs no browser; `composer test:browser` runs them, and CI runs them in a job of their own and keeps the screenshots of failures. Tests act as a person does: by field names, button text and what the screen says. The password typed to sign in counts as just confirmed (`ConfirmPasswordOnSignIn`, on Laravel's `Validated` event), so password-confirmed screens open within `auth.password_timeout`; a remember cookie or a passkey confirms nothing.
+
+**Consequences:** About 15 seconds more in CI, in parallel with the other jobs, and Playwright as a development dependency in a root `package.json`. Browser tests cover flows, not rules: the rules stay in the HTTP tests, which are faster and say more when they fail. More flows (the page editor, the page tree's move mode) can join the suite when they need a browser to be trusted.
+

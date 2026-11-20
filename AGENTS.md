@@ -110,6 +110,7 @@ composer test:pgsql                    # PostgreSQL in parallel: lynx_test_test_
 composer test:prefix                   # SQLite with DB_PREFIX=app_
 composer test:all                      # the three above, as CI runs them
 composer test:serial                   # one process, for debugging order-dependent tests
+composer test:browser                  # the sign-in flows in Chromium (tests/Browser); once: npm ci && npx playwright install chromium
 composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)

@@ -14,3 +14,7 @@ composer.lock
 /tools/compat/vendor
 # The check's own lock keeps CI and local runs on the same version.
 !/tools/compat/composer.lock
+
+# Browser tests: screenshots and traces of failures
+/tests/Browser/Screenshots
+/tests/Browser/Traces
