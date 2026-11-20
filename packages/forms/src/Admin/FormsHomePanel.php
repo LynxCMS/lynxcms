@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Admin;
 
 use Closure;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\Facades\View;
 use LynxCms\Admin\Home\HomeScreen;
 use LynxCms\Forms\Definition\Form;
@@ -33,7 +34,7 @@ final class FormsHomePanel
         $home->panel(self::VIEW, $canSee, order: 30, key: 'forms');
         $home->stat('form-submissions', 'lynx-forms::admin.home.stat', fn (): int => Submission::query()->where('created_at', '>=', now()->subDays(self::STAT_DAYS))->count(),
             url: fn (): string => route('lynx.admin.forms'), icon: 'inbox', visible: $canSee, order: 40);
-        View::composer(self::VIEW, fn ($view) => $view->with(self::data()));
+        View::composer(self::VIEW, fn (ViewContract $view) => $view->with(self::data()));
     }
 
     /**

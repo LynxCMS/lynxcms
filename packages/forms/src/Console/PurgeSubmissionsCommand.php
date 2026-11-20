@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Console;
 
 use Illuminate\Console\Command;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\PurgeSubmissions;
 use Override;
 
@@ -24,7 +25,7 @@ final class PurgeSubmissionsCommand extends Command
     public function handle(): int
     {
         $days = $this->option('days');
-        $count = lynx()->run(PurgeSubmissions::class, is_numeric($days) ? ['older_than_days' => (int) $days] : [])->value;
+        $count = Value::int(lynx()->run(PurgeSubmissions::class, is_numeric($days) ? ['older_than_days' => (int) $days] : [])->value);
         $this->components->info("Deleted {$count} submissions.");
 
         return self::SUCCESS;

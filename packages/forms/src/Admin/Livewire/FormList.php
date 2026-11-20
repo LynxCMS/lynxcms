@@ -44,7 +44,7 @@ final class FormList extends Component
     public function render(): View
     {
         $counts = Submission::query()->selectRaw('form, status, count(*) as total')->groupBy('form', 'status')->get();
-        $countOf = fn (string $key, ?string $status = null): int => (int) $counts->where('form', $key)->when($status !== null, fn ($rows) => $rows->where('status', $status))->sum('total');
+        $countOf = fn (string $key, ?string $status = null): int => Value::int($counts->where('form', $key)->when($status !== null, fn ($rows) => $rows->where('status', $status))->sum('total'));
 
         return view('lynx-forms::admin.livewire.form-list', [
             'rows' => [...$this->builderRows(), ...$this->codeRows()],

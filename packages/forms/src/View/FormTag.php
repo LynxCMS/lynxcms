@@ -33,7 +33,7 @@ final class FormTag extends Component
         $form = $form instanceof PageArray ? $form->first() : $form;
         $key = $form instanceof Page ? FormSchema::key($form) : $form;
         $this->key = $key !== null && $key !== '' && app(FormRegistry::class)->get($key) !== null ? $key : null;
-        $this->pageId = $page?->id ?? $this->currentPageId();
+        $this->pageId = $page->id ?? $this->currentPageId();
         // A lazy form mounts in a later request, without the page's language prefix.
         $this->lang = app(LanguageContext::class)->current()->code;
     }
