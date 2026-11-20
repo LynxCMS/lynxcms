@@ -1,4 +1,5 @@
-@props(['value' => null, 'disabled' => false])
+{{-- panel: false when the server renders the tab's content elsewhere, so there is no panel to point to. --}}
+@props(['value' => null, 'disabled' => false, 'panel' => true])
 
 @php
     // Shared, variant-agnostic base.
@@ -22,7 +23,7 @@
     role="tab"
     data-slot="tabs-trigger"
     :id="$id('blat-tab', @js($value))"
-    :aria-controls="$id('blat-tabpanel', @js($value))"
+    @if ($panel) :aria-controls="$id('blat-tabpanel', @js($value))" @endif
     :aria-selected="tab === @js($value)"
     :tabindex="tab === @js($value) ? 0 : -1"
     :data-state="tab === @js($value) ? 'active' : 'inactive'"

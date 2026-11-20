@@ -18,8 +18,8 @@
 
         <x-lynx-admin::ui.tabs :value="$tab" wire:key="menu-tabs-{{ $tab }}">
             <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-menus::admin.sections') }}" data-shortcut-tabs>
-                <x-lynx-admin::ui.tabs-trigger value="items" wire:click="$set('tab', 'items')">{{ __('lynx-menus::admin.tab_items') }}</x-lynx-admin::ui.tabs-trigger>
-                <x-lynx-admin::ui.tabs-trigger value="settings" wire:click="$set('tab', 'settings')">{{ __('lynx-menus::admin.tab_settings') }}</x-lynx-admin::ui.tabs-trigger>
+                <x-lynx-admin::ui.tabs-trigger value="items" :panel="false" wire:click="$set('tab', 'items')">{{ __('lynx-menus::admin.tab_items') }}</x-lynx-admin::ui.tabs-trigger>
+                <x-lynx-admin::ui.tabs-trigger value="settings" :panel="false" wire:click="$set('tab', 'settings')">{{ __('lynx-menus::admin.tab_settings') }}</x-lynx-admin::ui.tabs-trigger>
             </x-lynx-admin::ui.tabs-list>
         </x-lynx-admin::ui.tabs>
 

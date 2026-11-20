@@ -57,7 +57,7 @@
         @endif
 
         @foreach ($field->values as $code => $state)
-            <div x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
+            <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
                 @if ($input)
                     {{-- The fallback value shows as the placeholder while this language is empty, else the template's placeholder. --}}
                     @include($input, [

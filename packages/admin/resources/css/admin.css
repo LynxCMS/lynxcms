@@ -57,12 +57,17 @@
     --lynx-title-color: var(--foreground);
     --lynx-title-size: 0.9375rem;
     --lynx-title-weight: 500;
-    --lynx-row-hover: color-mix(in oklab, var(--muted) 60%, transparent);
-    --lynx-highlight: var(--accent);
+    /* Rows take a tint of the accent on hover, as the sidebar's current link does. */
+    --lynx-row-hover: color-mix(in oklab, var(--primary) 6%, transparent);
+    /* The selected title and the row being moved: a stronger accent tint than hover. */
+    --lynx-highlight: color-mix(in oklab, var(--primary) 14%, transparent);
     --lynx-dropzone: color-mix(in oklab, var(--primary) 10%, transparent);
-    --lynx-hidden-opacity: 0.55;
+    /* Primary-coloured text (links, text-primary): the primary itself on light backgrounds. */
+    --lynx-primary-text: var(--primary);
+    --lynx-hidden-opacity: 1; /* 1 keeps hidden pages readable (WCAG 1.4.3); a muted colour and an icon mark them */
     /* How much accent tints the current screen's link in the sidebar; dark sidebars need more. */
     --lynx-sidebar-active-mix: 16%;
+    --lynx-sidebar-hover-mix: 8%;
     /* Notification bar: green, yellow and red. */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);
@@ -82,6 +87,9 @@
     color-scheme: dark;
     --lynx-mark-eye: #56bad5;
     --lynx-sidebar-active-mix: 32%;
+    --lynx-sidebar-hover-mix: 16%;
+    --lynx-row-hover: color-mix(in oklab, var(--primary) 14%, transparent);
+    --lynx-highlight: color-mix(in oklab, var(--primary) 26%, transparent);
 }
 
 @import "./lynx-theme.css";
@@ -99,6 +107,16 @@
         background: var(--lynx-row-hover);
     }
 
+    /* The row's buttons (BlatUI's hover:bg-accent) take the selected title's accent tint.
+       In dark mode they show half of it (dark:hover:bg-accent/50), so the tint doubles there. */
+    .lynx-tree-row {
+        --accent: var(--lynx-highlight);
+    }
+
+    .dark .lynx-tree-row {
+        --accent: color-mix(in oklab, var(--primary) 52%, transparent);
+    }
+
     .lynx-tree-row-moving,
     .lynx-tree-row-moving:hover {
         background: var(--lynx-highlight);
@@ -112,6 +130,7 @@
     }
 
     .lynx-tree-hidden {
+        color: var(--muted-foreground);
         opacity: var(--lynx-hidden-opacity);
     }
 
@@ -280,7 +299,7 @@
     .lynx-richtext-content ul { padding-inline-start: 1.25rem; list-style: disc; }
     .lynx-richtext-content ol { padding-inline-start: 1.25rem; list-style: decimal; }
     .lynx-richtext-content blockquote { padding-inline-start: 0.75rem; color: var(--muted-foreground); border-inline-start: 3px solid var(--border); }
-    .lynx-richtext-content a { color: var(--primary); text-decoration: underline; }
+    .lynx-richtext-content a { color: var(--lynx-primary-text); text-decoration: underline; }
     .lynx-richtext-content code { padding: 0 0.25rem; font-size: 0.9em; background: var(--muted); border-radius: 0.25rem; }
     .lynx-richtext-content pre { padding: 0.75rem; overflow-x: auto; background: var(--muted); border-radius: var(--radius-md); }
     .lynx-richtext-content pre code { padding: 0; background: none; }
@@ -298,5 +317,26 @@
 
     .lynx-code {
         @apply bg-muted overflow-x-auto rounded-md p-3 font-mono text-xs;
+    }
+}
+
+/*
+ * Dark mode: BlatUI's dark primaries are button fills, too dark to read as text on the dark
+ * background (2.4:1 for cyan). Primary-coloured text mixes in white to reach 4.5:1 (WCAG 1.4.3)
+ * with every theme a site can pick; buttons keep --primary.
+ */
+.dark {
+    --lynx-primary-text: color-mix(in oklab, var(--primary) 55%, white);
+}
+
+/* An opaque page background under the translucent ones (the sign-in backdrop), so contrast
+   checkers measure what people see instead of assuming white. */
+html {
+    background-color: var(--background);
+}
+
+@layer utilities {
+    .dark .text-primary {
+        color: var(--lynx-primary-text);
     }
 }

@@ -8,15 +8,16 @@
         </x-lynx-admin::ui.tabs-list>
     @endif
     @foreach ($languages as $index => $language)
+        <div role="tabpanel" :id="$id('blat-tabpanel', @js($language['code']))" :aria-labelledby="$id('blat-tab', @js($language['code']))" x-show="tab === '{{ $language['code'] }}'" @if ($index !== 0) x-cloak @endif>
         <input
             type="text"
             id="{{ $id }}-{{ $language['code'] }}"
             class="blat-input"
             wire:model="{{ $model }}.{{ $language['code'] }}"
-            x-show="tab === '{{ $language['code'] }}'"
             placeholder="{{ $index === 0 ? ($placeholder ?? '') : __('lynx-menus::admin.falls_back', ['language' => $languages[0]['name']]) }}"
             @if ($index === 0) aria-labelledby="{{ $id }}-label" @else aria-label="{{ $label }} ({{ $language['name'] }})" @endif
             @error($error) aria-invalid="true" @enderror
         >
+        </div>
     @endforeach
 </x-lynx-admin::ui.tabs>

@@ -31,7 +31,7 @@
 
     {{-- Chevron as in BlatUI's server tree table; it turns when the branch is open (admin.css). --}}
     @if ($node->hasChildren())
-        <button type="button" tabindex="-1" wire:click="toggle({{ $id }})" class="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="{{ __('lynx-admin::pages.tree.toggle_children', ['page' => $node->title]) }}">
+        <button type="button" tabindex="-1" wire:click="toggle({{ $id }})" class="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground dark:hover:bg-accent/50" aria-label="{{ __('lynx-admin::pages.tree.toggle_children', ['page' => $node->title]) }}">
             {{ \LynxCms\Admin\Tree\TreeUi::icon('chevron-right', 'lynx-tree-chevron size-4 transition-transform duration-150 rtl:-scale-x-100') }}
         </button>
     @else
@@ -56,6 +56,10 @@
             @click="selected = selected === {{ $id }} ? null : {{ $id }}"
             @if ($node->hasChildren()) wire:click="toggle({{ $id }})" @endif
         >{{ $node->title }}</button>
+        @if ($node->isHidden())
+            {{-- An icon with words besides the muted title: colour alone is not enough (WCAG 1.4.1). --}}
+            <span role="img" aria-label="{{ __('lynx-admin::pages.status.hidden') }}" title="{{ __('lynx-admin::pages.status.hidden') }}" class="inline-flex" data-tree-hidden>{{ \LynxCms\Admin\Tree\TreeUi::icon('eye-off', 'size-3.5 shrink-0 text-muted-foreground') }}</span>
+        @endif
         @if ($node->isLocked())
             <x-lynx-admin::tree.lock />
         @endif
