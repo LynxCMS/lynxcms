@@ -19,7 +19,47 @@ SQLite keeps the whole database in one file next to your app. PHP reads that fil
 - **Development matches production.** Your machine, the tests and the live site use the same database, and a new developer needs no database setup.
 - **A backup is one file.** SQLite's `.backup` command copies it safely while the site runs.
 
-SQLite lets one write happen at a time. The others wait their turn, usually for a few milliseconds. Keep sessions in files so that page views don't write ([Creating a Laravel app](/getting-started/installation#creating-a-laravel-app)), and turn on write ahead logging when the database sits on a local disk ([Shared hosting](/getting-started/installation#shared-hosting)). A site with a few editors never reaches the limit.
+SQLite lets one write happen at a time. The others wait their turn, usually for a few milliseconds. Keep sessions in files so that page views don't write ([Creating a Laravel app](/getting-started/installation#creating-a-laravel-app)), and turn on write ahead logging when the database sits on a local disk ([Write ahead logging](#write-ahead-logging)). A site with a few editors never reaches the limit.
+
+### Write ahead logging
+
+By default SQLite writes a change straight into the database file and keeps a copy of the old pages in a journal, so it can undo the change if something fails. While a write is saved, nobody can read. In write ahead logging (WAL) mode, SQLite does the opposite: it appends changes to a separate `-wal` file and copies them into the database later, in a step called a checkpoint. Readers keep reading the database while the write happens.
+
+Turn it on in the `sqlite` connection of `config/database.php`:
+
+```php
+'sqlite' => [
+    // ...
+    'journal_mode' => 'wal',
+    'busy_timeout' => 5000,
+    'synchronous' => 'normal',
+],
+```
+
+`busy_timeout` makes a write wait up to 5 seconds for its turn instead of failing with "database is locked". The mode is stored in the database file, so it stays on once set.
+
+It helps when:
+
+- **Editors save while visitors read.** A save no longer pauses page views, and page views no longer delay a save. This matters most when the page cache is off or many pages expire at once.
+- **Background work writes.** Queue jobs, scheduled imports, form submissions and search indexing write while the site serves pages.
+- **Writes come often.** Each save is faster, because SQLite appends to one file instead of writing to two. With `synchronous` set to `normal`, it also syncs to disk less often, and a power cut can lose only the last few saves, never corrupt the file.
+
+Pros:
+
+- Readers and the writer don't block each other.
+- Faster writes, with fewer disk syncs.
+- Fewer "database is locked" errors under load.
+
+Cons:
+
+- **Still one writer at a time.** WAL lets reads run during a write. It does not let two writes run together. Many writes at the same moment still call for PostgreSQL.
+- **Local disks only.** WAL shares memory between processes through a `-shm` file, which doesn't work on network storage such as NFS, SMB or some shared hosting setups. There, leave the defaults, or the file can be corrupted.
+- **Two more files.** `database.sqlite-wal` and `database.sqlite-shm` sit next to the database. The web server user needs write access to the folder, not only to the file, even to read.
+- **Copying the file is no longer a backup.** Recent changes may still be in the `-wal` file. Back up with SQLite's `.backup` command or `VACUUM INTO`, never with `cp` alone, and don't copy or replace the database file during a deploy while the site runs.
+- **The `-wal` file can grow.** A checkpoint can't finish while a long read is still running, so on a busy site with long reads the file grows until there is a quiet moment. SQLite resets it on its own; most sites never notice.
+- **Slightly slower reads in rare cases.** Each read also checks the `-wal` file. With a small file the difference can't be measured.
+
+For a site on one server with a local disk, the benefits outweigh the costs. On network storage, or when the database file is copied around by deploy or backup scripts that you can't change, keep the default journal.
 
 ## PostgreSQL
 
