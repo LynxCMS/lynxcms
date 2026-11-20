@@ -21,6 +21,17 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.52 to 0.1.53
+
+No database changes.
+
+- Code that passes a `$scope` to `lynx()->pages->find()` or `childCounts()`: drop the argument.
+- Modules that call `SchemaOwners::register()`: register templates and fields on `LynxCms\Core\Schema\SchemaRegistry` instead.
+- Code that uses a class now marked `@internal` keeps working, without a promise that it will. The release notes list what to use instead; for the trash, `lynx()->pages->inTrash($page)` replaces the internal `Trash` class.
+- If your app configures Fortify itself, **Account security** now changes the password through your `UpdatesUserPasswords`, and replacing a temporary password fires Laravel's `PasswordReset` event, so your listeners for it run too.
+- If you published the Forms module's views (`lynx-forms-views`), publish them again, or add the `aria-describedby` links to their fields from the package's `fields/` views.
+- Admin modules: give error messages `data-error-for` with the error's key and `role="alert"` (see [Extending the admin](/admin/extending#error-messages)).
+
 ## From 0.1.51 to 0.1.52
 
 No database changes and nothing to change in your code.

@@ -8,7 +8,17 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.53
+
+Released November 20, 2026. Accessibility of the admin (errors tied to their fields, notices that wait, landmarks, contrast in dark mode), emails when two-factor authentication changes, browser tests of the sign-in flows, a smaller public API before 1.0, and a PHPStan rule that keeps database writes in actions. No database changes.
+
+### Breaking changes
+
+- The admin's `SchemaOwners::register()` is gone, after being deprecated since ADR-0115. Modules register their templates and fields on `LynxCms\Core\Schema\SchemaOwners` from their service provider.
+- **A smaller public API before 1.0.** 127 classes go from `@api` to `@internal`: service providers, the admin's Livewire screens, Blade component classes, table and schema helpers, and the inner parts of Page Finder, schema drafts and search. Every action is now `@api`, and every class carries one of the two markers, which a test checks. See `documentation/reports/api-audit-2026-11.md` (ADR-0131).
+- `lynx()->pages->find()` and `childCounts()` no longer take a `$scope` argument. It served the admin's own lists, which now use Lynx's internal page finder.
+
+### Changes
 
 - **Two-factor authentication notices.** Lynx emails a user when two-factor authentication is turned on or off for their account, by them, a superuser's reset or `lynx:two-factor:reset`. While it is required, **Access > Users** marks admin users who haven't set it up yet. See [Who has it, and emails when it changes](/admin/sign-in#who-has-it-and-emails-when-it-changes) (ADR-0135).
 - **No second password prompt after signing in.** The password typed to sign in counts as confirmed, so **Account security**, where two-factor authentication is set up, opens without asking for it again. Before, a first sign-in with two-factor authentication required asked for the password twice in a row. Browser tests of the sign-in flows found it (ADR-0137).
@@ -17,11 +27,9 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 - **Error messages tied to their fields.** In the admin and in the Forms module's public forms, a field with an error points to the message (`aria-describedby`), so a screen reader on the field reads why it is invalid. Admin modules give their messages `data-error-for` (ADR-0138). Notices wait while the pointer or the focus is on them, the whole sidebar is one navigation landmark, and the page editor's second breadcrumb is named "Parent pages".
 - **Accessibility fixes in the admin,** from a review against WCAG 2.1 AA (`documentation/reports/accessibility-review-2026-11.md`): a skip link to the screen's content, the sidebar's links as a proper list, language tabs tied to their panels, hidden pages in the tree readable and marked with an icon, the tree's row hover, buttons and selected title, and the sidebar's hover, tinted with the accent, readable links in dark mode, and notices and search results announced to screen readers. A site that sets an accent for light mode only gets it lightened in dark mode until it reads on the dark background (ADR-0136).
 - A new page, [Versioning and Support](/prologue/versioning), says what each version number promises from 1.0 on, how deprecations work and how long each version gets fixes.
-- The admin's `SchemaOwners::register()` is gone, after being deprecated since ADR-0115. Modules register their templates and fields on `LynxCms\Core\Schema\SchemaOwners` from their service provider.
 - `lynx()->pages->inTrash($page)` tells whether a page is in the trash, directly or below a trashed page. Apps used Lynx's internal `Trash` class for this.
-- **A smaller public API before 1.0.** 127 classes go from `@api` to `@internal`: service providers, the admin's Livewire screens, Blade component classes, table and schema helpers, and the inner parts of Page Finder, schema drafts and search. Every action is now `@api`, and every class carries one of the two markers, which a test checks. See `documentation/reports/api-audit-2026-11.md` (ADR-0131).
-- `lynx()->pages->find()` and `childCounts()` no longer take a `$scope` argument. It served the admin's own lists, which now use Lynx's internal page finder.
 - [Extending the admin](/admin/extending) documents four hooks for modules: `TemplateChoices`, `BacklinkFilter`, `TreeMarkers` and `LinkFiles`.
+- **Lynx's own code:** a PHPStan rule now fails the build on a database write outside an action (ADR-0139), and the Forms module is analysed by PHPStan too.
 
 ## 0.1.52
 
