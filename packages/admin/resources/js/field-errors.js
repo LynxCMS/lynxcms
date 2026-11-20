@@ -9,12 +9,13 @@
  * controls under it. The message gets an id, the field aria-describedby and aria-invalid.
  *
  * These attributes exist only in the browser, and a Livewire morph sets attributes back to the
- * server's HTML, so the wiring is derived again whenever the page changes, as BlatUI's
- * keepWired does. Each pass writes only what differs, so its own writes end the loop.
+ * server's HTML. Errors only appear with a page load or a server response, so the wiring is
+ * derived on load, after each Livewire morph and after wire:navigate, and at no other time: no
+ * work while someone types, and no reacting to other scripts' writes (a page-wide observer
+ * could trade writes with BlatUI's own, one per frame, forever).
  */
 
 const CONTROLS = 'input:not([type="hidden"]), select, textarea, [contenteditable="true"]'
-const WIRED = ['aria-describedby', 'aria-invalid', 'id']
 
 /** The key a control is bound to: its wire:model (any modifiers), else its name. */
 function boundKey(control) {
@@ -61,25 +62,22 @@ export function linkFieldErrors(root = document) {
     })
 }
 
-/** Links the messages now and again after each change, at most once a frame. */
+/** Links the messages on load, and again after Livewire updates or changes the page. */
 export function keepFieldErrorsLinked() {
     let queued = false
-    const run = () => {
-        queued = false
-        linkFieldErrors()
-    }
     const queue = () => {
-        if (!queued) {
-            queued = true
-            requestAnimationFrame(run)
-        }
+        if (queued) return
+        queued = true
+        // Once per frame, after every component a response morphed.
+        requestAnimationFrame(() => {
+            queued = false
+            linkFieldErrors()
+        })
     }
 
-    const start = () => {
-        linkFieldErrors()
-        new MutationObserver(queue).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: WIRED })
-    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => linkFieldErrors())
+    else linkFieldErrors()
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start)
-    else start()
+    document.addEventListener('livewire:init', () => window.Livewire.hook('morphed', queue))
+    document.addEventListener('livewire:navigated', queue)
 }
