@@ -13,17 +13,17 @@
     }
 
     /*
-     * A language tab's state, drawn as the mark's facet: filled when the language has its own
+     * A language tab's state, drawn as a small circle: filled when the language has its own
      * value, a light fill when it shows another language's (fallback), an outline when empty.
      */
     .lynx-tab-state {
         display: inline-block;
         width: 0.4375rem;
-        height: 0.5625rem;
+        height: 0.4375rem;
         margin-inline-start: 0.3125rem;
-        vertical-align: -0.0625rem;
+        vertical-align: 0.0625rem;
         border: 1.5px solid var(--muted-foreground);
-        transform: skewX(-18deg);
+        border-radius: 9999px;
     }
 
     .lynx-tab-state.is-filled {
