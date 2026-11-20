@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
+use Laravel\Fortify\Contracts\UpdatesUserPasswords;
 use Laravel\Passkeys\Passkey;
 use Livewire\Livewire;
 use LynxCms\Admin\Auth\TwoFactorState;
@@ -40,14 +42,51 @@ it('links the account screen from the sidebar', function (): void {
 
 it('changes the password after checking the current one', function (): void {
     Livewire::test(AccountSecurity::class)
-        ->set('currentPassword', 'wrong')->set('password', 'a long new password')->set('password_confirmation', 'a long new password')
-        ->call('updatePassword')->assertHasErrors('currentPassword');
+        ->set('current_password', 'wrong')->set('password', 'a long new password')->set('password_confirmation', 'a long new password')
+        ->call('updatePassword')->assertHasErrors('current_password');
 
     Livewire::test(AccountSecurity::class)
-        ->set('currentPassword', 'correct horse')->set('password', 'a long new password')->set('password_confirmation', 'a long new password')
+        ->set('current_password', 'correct horse')->set('password', 'a long new password')->set('password_confirmation', 'a long new password')
         ->call('updatePassword')->assertHasNoErrors()->assertSet('status', 'Password changed.');
 
     expect(Hash::check('a long new password', (string) $this->user->fresh()?->password))->toBeTrue();
+});
+
+it('changes the password through the app\'s own UpdatesUserPasswords when the app has one', function (): void {
+    $calls = [];
+    app()->instance(UpdatesUserPasswords::class, new class($calls) implements UpdatesUserPasswords
+    {
+        /** @param  list<array<string, mixed>>  $calls */
+        public function __construct(private array &$calls) {}
+
+        /** @param  array<string, mixed>  $input */
+        public function update(mixed $user, array $input): void
+        {
+            $this->calls[] = $input;
+        }
+    });
+
+    Livewire::test(AccountSecurity::class)
+        ->set('current_password', 'correct horse')->set('password', 'Another-Password-1')->set('password_confirmation', 'Another-Password-1')
+        ->call('updatePassword')->assertHasNoErrors()->assertSet('status', 'Password changed.');
+
+    expect($calls)->toBe([['current_password' => 'correct horse', 'password' => 'Another-Password-1', 'password_confirmation' => 'Another-Password-1']])
+        ->and(Hash::check('correct horse', (string) $this->user->fresh()?->password))->toBeTrue();
+});
+
+it('shows the errors the app\'s UpdatesUserPasswords raises on the form\'s fields', function (): void {
+    app()->instance(UpdatesUserPasswords::class, new class implements UpdatesUserPasswords
+    {
+        /** @param  array<string, mixed>  $input */
+        public function update(mixed $user, array $input): void
+        {
+            Validator::make($input, ['password' => ['min:40']])->validateWithBag('updatePassword');
+        }
+    });
+
+    Livewire::test(AccountSecurity::class)
+        ->set('current_password', 'correct horse')->set('password', 'short-but-fine')->set('password_confirmation', 'short-but-fine')
+        ->call('updatePassword')->assertHasErrors('password')->assertSet('current_password', '');
 });
 
 it('enables two-factor authentication once a code confirms it', function (): void {

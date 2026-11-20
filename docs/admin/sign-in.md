@@ -35,7 +35,7 @@ A site with a members area, bookings or surveys lets visitors create accounts. U
 - Everyone signs in at your app's `/login`, staff included. A staff member who opens `/lynx` while signed out goes to `/login` and comes back to the admin afterwards.
 - People who sign up get no role, so they see the site and never the admin (see [People who sign up](/admin/permissions#people-who-sign-up)).
 - Superusers still invite staff from **Access > Users**. The invitation link opens Lynx's screen to choose a password, which then signs them in.
-- **Account security** stays in the admin's user menu. It offers two-factor authentication only when your Fortify config turns `Features::twoFactorAuthentication()` on, since your sign-in is what asks for the code. Passkeys follow `Features::passkeys()` the same way.
+- **Account security** stays in the admin's user menu. It offers two-factor authentication only when your Fortify config turns `Features::twoFactorAuthentication()` on, since your sign-in is what asks for the code. Passkeys follow `Features::passkeys()` the same way. Changing the password there runs your app's `UpdatesUserPasswords` (the `App\Actions\Fortify\UpdateUserPassword` Fortify installs), so its rules apply in the admin too.
 
 ## Invitations
 
