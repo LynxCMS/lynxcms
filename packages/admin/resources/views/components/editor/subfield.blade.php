@@ -18,10 +18,19 @@
     @if (! $input)
         <x-lynx-admin::editor.value :type="$subfield->field->type" :value="$readOnly(reset($values))" />
     @elseif (count($codes) > 1)
-        <x-lynx-admin::ui.tabs :value="$codes[0]" class="gap-1">
+        {{-- The same tabs as the editor's fields (editor/field): each language's state, and a double click switches every field. --}}
+        @php($states = \LynxCms\Admin\Editor\SubfieldLanguages::states((string) $subfield->field->type, $values))
+        <x-lynx-admin::ui.tabs :value="$codes[0]" class="gap-1"
+            x-on:lynx-editor-language.window="if ({{ Js::from($codes) }}.includes($event.detail)) tab = $event.detail">
             <x-lynx-admin::ui.tabs-list variant="compact" aria-label="{{ __('lynx-admin::editor.field.languages') }}">
                 @foreach (\LynxCms\Admin\Editor\LocalizedForm::languages() as $language)
-                    <x-lynx-admin::ui.tabs-trigger :value="$language['code']">{{ $language['label'] }}</x-lynx-admin::ui.tabs-trigger>
+                    @php($state = $states[$language['code']] ?? new \LynxCms\Admin\Editor\LanguageValue(null, false))
+                    <x-lynx-admin::ui.tabs-trigger :value="$language['code']"
+                            x-on:dblclick="$dispatch('lynx-editor-language', '{{ $language['code'] }}')"
+                            :title="$state->isOwn ? __('lynx-admin::editor.field.filled') : ($state->fallsBackTo ? __('lynx-admin::editor.field.falls_back_to', ['language' => $state->fallsBackTo]) : __('lynx-admin::editor.field.empty'))">
+                        {{ $language['label'] }}
+                        <span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $state->isOwn, 'is-fallback' => $state->fallsBackTo !== null])></span>
+                    </x-lynx-admin::ui.tabs-trigger>
                 @endforeach
             </x-lynx-admin::ui.tabs-list>
             @foreach ($codes as $code)

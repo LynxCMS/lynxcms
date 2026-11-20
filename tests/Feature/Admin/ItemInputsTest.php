@@ -117,3 +117,15 @@ it('shows page references in items as titles while another user edits the page',
 
     itemEditor()->assertSet('editedBy', fn (?string $holder): bool => $holder !== null)->assertSee('Beta');
 });
+
+it('marks each language of a subfield as the editor\'s fields do: filled, falling back, or empty', function (): void {
+    $html = itemEditor()->html();
+    preg_match('/id="field-credits-0-role".*?(?=data-field="blocks"|$)/s', $html, $subfield);
+
+    expect($subfield[0] ?? '')
+        ->toContain('title="Filled"')
+        ->toContain('title="Falls back to '.lynx()->languages->default()->name.'"')
+        ->toContain('lynx-tab-state is-filled')
+        ->toContain('lynx-tab-state is-fallback')
+        ->toContain("\$dispatch('lynx-editor-language', 'pt')");
+});
