@@ -22,8 +22,6 @@ parameters:
     treatPhpDocTypesAsCertain: false
     universalObjectCratesClasses:
         - LynxCms\Core\Pages\Page
-    ignoreErrors:
-        - identifier: trait.unused
 
     # Classes and namespaces (ending in \) that may write to the database outside an action, each
     # with its reason (tests/PHPStan/WritesOnlyInActionsRule.php, AGENTS.md rule 1).
