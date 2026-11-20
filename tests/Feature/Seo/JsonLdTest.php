@@ -126,6 +126,21 @@ it('refuses the organization where a property takes no page', function (): void 
     mapSchemas(['course' => ['Article', 'headline: @organization']]);
 })->throws(ValidationException::class, '[@organization] only fits');
 
+it('describes a book, with its format, and as a book to social networks', function (): void {
+    mapSchemas(['course' => ['Book', "name: @title\nauthor.name: =Ana Lima\nisbn: =978-65-00-00000-0\nnumberOfPages: =240\nbookFormat: =paperback\ninLanguage: =pt-BR\noffers.availability: =preorder\noffers.priceCurrency: =BRL"]]);
+
+    expect(nodeOf(graphOf($this->alpha), 'Book'))->toMatchArray([
+        'name' => 'Alpha',
+        'author' => ['@type' => 'Person', 'name' => 'Ana Lima'],
+        'isbn' => '978-65-00-00000-0',
+        'numberOfPages' => 240,
+        'bookFormat' => 'https://schema.org/Paperback',
+        'inLanguage' => 'pt-BR',
+        'offers' => ['@type' => 'Offer', 'availability' => 'https://schema.org/PreOrder', 'priceCurrency' => 'BRL'],
+    ])
+        ->and(lynx()->seo(lynx()->pages->get($this->alpha->id))->type)->toBe('book');
+});
+
 it('embeds the mapped page an event takes place in, and converts dates, numbers and states', function (): void {
     eventSite();
     mapSchemas([

@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- **Books in structured data.** The SEO module maps templates to schema.org's `Book`, with `isbn`, `numberOfPages`, `bookFormat` (`paperback`, `hardcover`, `ebook`, `audiobook`), `inLanguage` and `offers`, and tells social networks the page is a book (`og:type` `book`). `JsonLd::openGraphType()` gives a page's `og:type`.
+
 ## 0.1.53
 
 Released November 20, 2026. Accessibility of the admin (errors tied to their fields, notices that wait, landmarks, contrast in dark mode), emails when two-factor authentication changes, browser tests of the sign-in flows, a smaller public API before 1.0, and a PHPStan rule that keeps database writes in actions. No database changes.
