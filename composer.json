@@ -77,7 +77,10 @@
             "LynxCms\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
-        }
+        },
+        "classmap": [
+            "tests/PHPStan/data"
+        ]
     },
     "extra": {
         "laravel": {

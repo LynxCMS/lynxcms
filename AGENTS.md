@@ -19,7 +19,7 @@ The design and the decisions behind it live in the plan document and its ADRs. D
 
 ## Core rules
 
-1. **Every write is an action.** Actions live in `packages/core/src/Actions/*`, extend `LynxCms\Core\Actions\Action`, are `final`, and have one `handle(Input $input, ActionContext $context)` method plus static `name()`, `description()`, `rules()`, `schema()`. Register new actions in `LynxServiceProvider` (or a module's provider) through `ActionRegistry`; MCP and AI tools appear automatically.
+1. **Every write is an action.** Actions live in `packages/core/src/Actions/*`, extend `LynxCms\Core\Actions\Action`, are `final`, and have one `handle(Input $input, ActionContext $context)` method plus static `name()`, `description()`, `rules()`, `schema()`. Register new actions in `LynxServiceProvider` (or a module's provider) through `ActionRegistry`; MCP and AI tools appear automatically. PHPStan enforces it (`tests/PHPStan/WritesOnlyInActionsRule.php`, ADR-0139): an Eloquent or query builder write outside an action, a class implementing Fortify's write contracts, or a class listed under `lynxWriters` in `phpstan.neon.dist` fails the build; a new entry in that list needs its reason.
 2. **Run actions through `ActionRunner`**, never by calling `handle()` directly. Inside an action, call other actions with `$context->run()`.
 3. **Record changes** with `$context->changes->created/updated/deleted/schema(...)`. They are the dry-run output, the activity log and the AI plan. Mark data removal as destructive.
 4. **Languages are rows.** Never add per-language columns. Translatable field tables are keyed by `(page_id, language_id)`.

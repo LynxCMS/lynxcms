@@ -1485,3 +1485,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** One attribute per message, which modules use the same way (documented under Extending the admin). The links exist only once the script runs; the admin needs JavaScript anyway. Browser tests check them, after a Livewire update too. A message whose key matches no control (a whole list's error) stays unlinked, announced by its alert when it appears.
 
+## ADR-0139: PHPStan keeps database writes in actions
+
+**Status:** Accepted
+
+**Context:** Every write is an action (AGENTS.md rule 1): actions check permissions and record activity, and MCP and AI tools come from them. A write anywhere else skips the permission check and the activity log. `ArchitectureTest` kept the `DB` facade to an allowed list of classes, but Pest's architecture tests see which classes a class uses, not which methods it calls, so Eloquent writes (`$model->save()`, `Model::create()`, `->delete()`) were not checked at all. Telling `$model->delete()` from `lynx()->pages->delete($id)`, which runs an action, needs types.
+
+**Decision:** A PHPStan rule (`tests/PHPStan/WritesOnlyInActionsRule.php`, identifier `lynx.writeOutsideAction`) reports write methods called on an Eloquent model, an Eloquent or query builder, or a relation, unless the call is in an action, in a class implementing one of Fortify's write contracts (the app's users are written the Fortify way, and the app may replace those classes), or in a class or namespace listed under `lynxWriters` in `phpstan.neon.dist`, each with its reason: the storage the actions call, the activity log, data built from content (caches, menu builds) and the user records the user actions write. It is an allowed list, not a list of forbidden places (controllers, Livewire, MCP tools): a helper class called from a controller would get past a forbidden list, and so would any new kind of class.
+
+**Consequences:** The first run found two writes outside actions, both on sign-in screens: Account security saved the password itself (now Fortify's `UpdatesUserPasswords`), and the new password screen deleted the temporary password itself (now Laravel's `PasswordReset` event, as invitations do). The rule checks where a write is made, not who called it: a listed class called from a controller is not caught, so the list stays short and each entry says who calls it. Code PHPStan does not analyse is not checked; `packages/forms/src` is not in its paths yet.
+

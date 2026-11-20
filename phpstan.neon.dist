@@ -23,3 +23,42 @@ parameters:
         - LynxCms\Core\Pages\Page
     ignoreErrors:
         - identifier: trait.unused
+
+    # Classes and namespaces (ending in \) that may write to the database outside an action, each
+    # with its reason (tests/PHPStan/WritesOnlyInActionsRule.php, AGENTS.md rule 1).
+    lynxWriters:
+        # Storage the actions call: pages and their values, sort keys, the search index, site
+        # texts, schema text, field columns and template fields (as the DB rule in ArchitectureTest).
+        - LynxCms\Core\Pages\
+        - LynxCms\Core\Indexes\
+        - LynxCms\Core\Search\
+        - LynxCms\Core\Strings\
+        - LynxCms\Core\Schema\
+        - LynxCms\Core\Fields\FieldSchemaManager
+        - LynxCms\Core\Fields\Items\SubfieldLanguageRows
+        - LynxCms\Core\Templates\TemplateFieldsWriter
+        # Role assignments and settings, which the role and settings actions write through.
+        - LynxCms\Core\Permissions\Role
+        - LynxCms\Core\Models\Setting
+        # The activity log itself, which every action writes to.
+        - LynxCms\Core\Activity\ActivityRecorder
+        # Data built from content, never content: the page cache, fragments and menu builds.
+        - LynxCms\Cache\Pages\
+        - LynxCms\Cache\Fragments\
+        - LynxCms\Menus\Reading\MenuBuilds
+        # The app's users and their sign-in records (invitations, temporary passwords), written
+        # by the user actions and by Fortify's PasswordReset event.
+        - LynxCms\Admin\Users\EloquentUsers
+        - LynxCms\Admin\Auth\TemporaryPasswords
+        - LynxCms\Admin\Auth\ClearInvitation
+
+parametersSchema:
+    lynxWriters: listOf(string())
+
+services:
+    -
+        class: LynxCms\Tests\PHPStan\WritesOnlyInActionsRule
+        arguments:
+            allowed: %lynxWriters%
+        tags:
+            - phpstan.rules.rule

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Http;
 
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -46,7 +47,9 @@ final class NewPasswordController
             'password' => $request->string('password')->toString(),
             'password_confirmation' => $request->string('password_confirmation')->toString(),
         ]);
-        $temporary->delete();
+        // As after a reset or an invitation: ClearInvitation ends the temporary password, and the
+        // app's own listeners hear that the password changed.
+        event(new PasswordReset($user));
         $request->session()->regenerate();
 
         return redirect()->route('lynx.admin.pages');
