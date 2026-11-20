@@ -154,6 +154,7 @@ final class AdminAuth
         Fortify::confirmPasswordView(fn (): mixed => view('lynx-admin::auth.confirm-password'));
         Fortify::twoFactorChallengeView(fn (): mixed => view('lynx-admin::auth.two-factor-challenge'));
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
 
         RateLimiter::for('lynx-login', fn (Request $request): array => self::loginLimits($request));
         RateLimiter::for('lynx-two-factor', fn (Request $request): Limit => Limit::perMinute(self::LOGIN_ATTEMPTS_PER_MINUTE)

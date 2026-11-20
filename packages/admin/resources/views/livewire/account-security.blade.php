@@ -10,8 +10,8 @@
         <h2 id="account-password" class="text-base font-semibold">{{ __('lynx-admin::account.password.heading') }}</h2>
         <div class="grid gap-1">
             <label for="current-password" class="text-sm font-medium">{{ __('lynx-admin::account.password.current') }}</label>
-            <input id="current-password" type="password" class="blat-input max-w-sm" wire:model="currentPassword" autocomplete="current-password" @error('currentPassword') aria-invalid="true" @enderror>
-            @error('currentPassword') <p data-error-for="currentPassword" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            <input id="current-password" type="password" class="blat-input max-w-sm" wire:model="current_password" autocomplete="current-password" @error('current_password') aria-invalid="true" @enderror>
+            @error('current_password') <p data-error-for="current_password" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1">
             <label for="new-password" class="text-sm font-medium">{{ __('lynx-admin::account.password.new') }}</label>
