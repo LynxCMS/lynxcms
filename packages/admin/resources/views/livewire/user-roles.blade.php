@@ -47,6 +47,11 @@
                                     @endif
                                 </span>
                             @endisset
+                            @if (in_array($user['id'], $withoutTwoFactor, true))
+                                <span class="mt-1 flex flex-wrap items-center gap-2">
+                                    <x-lynx-admin::ui.badge variant="outline" data-no-two-factor="{{ $user['id'] }}" title="{{ __('lynx-admin::users.list.no_two_factor_help') }}">{{ __('lynx-admin::users.list.no_two_factor') }}</x-lynx-admin::ui.badge>
+                                </span>
+                            @endif
                             @isset($temporary[$user['id']])
                                 <span class="mt-1 flex flex-wrap items-center gap-2">
                                     <x-lynx-admin::ui.badge variant="outline" title="{{ __('lynx-admin::users.list.temporary_until', ['when' => $temporary[$user['id']]]) }}">{{ __('lynx-admin::users.list.temporary') }}</x-lynx-admin::ui.badge>

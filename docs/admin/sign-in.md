@@ -125,6 +125,12 @@ A passkey doesn't count: the account can still sign in with its password alone.
 
 Set `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` in your local `.env` to work without it.
 
+### Who has it, and emails when it changes
+
+While two-factor authentication is required, **Access > Users** marks each admin user who hasn't set it up yet with **Two-factor not set up**. They are asked to on their next visit.
+
+When two-factor authentication is turned on or off for an account, Lynx emails its user, so someone who didn't make the change hears about it. This covers turning it on or off on **Account security**, **Reset two-factor** and `lynx:two-factor:reset`. The email goes only to users who can open the admin, and only when the admin sends email (`LYNX_ADMIN_AUTH_MAIL`). It is queued, so a queue worker sends it; without one, Laravel sends it at once.
+
 ### A lost phone
 
 Recovery codes sign in once each. Without them, a superuser uses **Reset two-factor** on the user's row under **Access > Users**: the user sets it up again on their next visit. A superuser locked out themselves runs this on the server:

@@ -26,6 +26,13 @@ return [
         'changed' => 'Palavra-passe alterada.',
     ],
     'two_factor' => [
+        'mail' => [
+            'subject_on' => 'A autenticação de dois fatores foi ativada na sua conta de :site',
+            'subject_off' => 'A autenticação de dois fatores foi desativada na sua conta de :site',
+            'on' => 'A autenticação de dois fatores foi ativada na sua conta de :site em :when. Ao iniciar sessão, passa a ser pedido também um código da sua aplicação de autenticação.',
+            'off' => 'A autenticação de dois fatores foi desativada na sua conta de :site em :when. Ao iniciar sessão, passa a ser pedida apenas a palavra-passe. Quando o admin exige a autenticação de dois fatores, terá de a configurar de novo na próxima visita.',
+            'not_you' => 'Se não fez esta alteração, avise quem gere :site.',
+        ],
         'required' => 'A autenticação de dois fatores é obrigatória para o admin.',
         'required_help' => 'Ative-a abaixo para continuar. Precisa de uma aplicação de autenticação no telemóvel.',
         'heading' => 'Autenticação de dois fatores',

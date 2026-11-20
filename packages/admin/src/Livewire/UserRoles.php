@@ -71,7 +71,8 @@ final class UserRoles extends Component
             'me' => Value::string(auth()->id()),
             'pending' => AdminAuth::managesAccounts() ? $this->pendingInvitations(array_column($found, 'id')) : [],
             'temporary' => AdminAuth::managesAccounts() ? $this->temporaryPasswords(array_column($found, 'id')) : [],
-            'twoFactor' => $this->twoFactorUsers(array_column($found, 'id')),
+            'twoFactor' => $twoFactor = $this->twoFactorUsers(array_column($found, 'id')),
+            'withoutTwoFactor' => $this->usersWithoutTwoFactor(array_column($found, 'id'), $twoFactor),
         ]);
     }
 

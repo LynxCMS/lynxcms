@@ -14,7 +14,7 @@ Not covered: every action's `permission()` one by one (how they are enforced was
 |---|---|---|---|
 | M1 | Medium | A password change kept the user's other sessions and "Remember me" cookies signed in | Fixed |
 | M2 | Medium | Admin components skipped the two-factor and temporary password checks on updates | Fixed |
-| L1 | Low | Two-factor setup is open to whoever signs in first | Accepted, documented |
+| L1 | Low | Two-factor setup is open to whoever signs in first | Accepted; notices added (ADR-0135) |
 | L2 | Low | Sign-in attempts were limited per email and address only | Fixed |
 | L3 | Low | An expired temporary password still signed in through an app's own sign-in | Fixed |
 | L4 | Low | Files sent with forms downloaded without `nosniff` | Fixed |

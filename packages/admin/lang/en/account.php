@@ -26,6 +26,13 @@ return [
         'changed' => 'Password changed.',
     ],
     'two_factor' => [
+        'mail' => [
+            'subject_on' => 'Two-factor authentication was turned on for your :site account',
+            'subject_off' => 'Two-factor authentication was turned off for your :site account',
+            'on' => 'Two-factor authentication was turned on for your account on :site on :when. Signing in now also asks for a code from your authentication app.',
+            'off' => 'Two-factor authentication was turned off for your account on :site on :when. Signing in now asks only for your password. When the admin requires two-factor authentication, you will set it up again on your next visit.',
+            'not_you' => 'If you did not make this change, tell the person who manages :site.',
+        ],
         'required' => 'Two-factor authentication is required for the admin.',
         'required_help' => 'Turn it on below to continue. You will need an authenticator app on your phone.',
         'heading' => 'Two-factor authentication',

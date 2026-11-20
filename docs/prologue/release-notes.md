@@ -10,6 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- **Two-factor authentication notices.** Lynx emails a user when two-factor authentication is turned on or off for their account, by them, a superuser's reset or `lynx:two-factor:reset`. While it is required, **Access > Users** marks admin users who haven't set it up yet. See [Who has it, and emails when it changes](/admin/sign-in#who-has-it-and-emails-when-it-changes) (ADR-0135).
 - **Accessibility fixes in the admin,** from a review against WCAG 2.1 AA (`documentation/reports/accessibility-review-2026-11.md`): a skip link to the screen's content, the sidebar's links as a proper list, language tabs tied to their panels, hidden pages in the tree readable and marked with an icon, the tree's row hover, buttons and selected title, and the sidebar's hover, tinted with the accent, readable links in dark mode, and notices and search results announced to screen readers. A site that sets an accent for light mode only gets it lightened in dark mode until it reads on the dark background (ADR-0136).
 - A new page, [Versioning and Support](/prologue/versioning), says what each version number promises from 1.0 on, how deprecations work and how long each version gets fixes.
 - The admin's `SchemaOwners::register()` is gone, after being deprecated since ADR-0115. Modules register their templates and fields on `LynxCms\Core\Schema\SchemaOwners` from their service provider.

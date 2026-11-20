@@ -46,7 +46,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 6. The page cache check on Laravel Cloud the roadmap asks for: two replicas, Octane, `edge_ttl`.
 7. Browser tests of the sign-in flows (password, two-factor setup and challenge, temporary password, invitation), which only Livewire and HTTP tests cover today.
 8. An accessibility review of the admin. Done on 2026-11-19 (ADR-0136, `documentation/reports/accessibility-review-2026-11.md`); left: errors tied to their fields, pausing notices, a screen reader pass.
-9. The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
+9. Done on 2026-11-19 (ADR-0135). The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
 10. ~~A decision on `lynx:sync`.~~ Decided on 2026-11-19: dropped (ADR-0133).
 11. ~~The draft documentation.~~ Moved after 1.0 on 2026-11-19: drafts are hidden from the docs site, so they block nothing.
 

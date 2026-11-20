@@ -19,6 +19,8 @@ return [
         'empty_help' => 'Experimente uma pesquisa mais curta, ou parte de um nome ou endereço de email.',
         'temporary' => 'Palavra-passe temporária',
         'temporary_until' => 'Expira :when',
+        'no_two_factor' => 'Sem dois fatores',
+        'no_two_factor_help' => 'Terá de configurar a autenticação de dois fatores na próxima visita ao admin',
         'new_password' => 'Nova palavra-passe temporária',
         'confirm_new_password' => 'Criar uma palavra-passe temporária para :name? A palavra-passe atual deixará de funcionar.',
     ],
