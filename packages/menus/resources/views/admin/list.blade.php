@@ -32,13 +32,13 @@
                 <div class="grid gap-2">
                     <span id="new-menu-title-input-label" class="blat-label">{{ __('lynx-menus::admin.title_label') }}</span>
                     @include('lynx-menus::admin.partials.translated-input', ['model' => 'newMenu.title', 'id' => 'new-menu-title-input', 'label' => __('lynx-menus::admin.title_label'), 'error' => 'title', 'placeholder' => __('lynx-menus::admin.title_placeholder')])
-                    @error('title') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('title') <p data-error-for="title" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid gap-2">
                     <label for="new-menu-name" class="blat-label">{{ __('lynx-menus::admin.name') }}</label>
                     <input id="new-menu-name" type="text" class="blat-input font-mono" wire:model="newMenu.name" placeholder="{{ __('lynx-menus::admin.name_placeholder') }}" autocomplete="off" spellcheck="false" @error('name') aria-invalid="true" @enderror>
                     <p class="lynx-field-help">{{ __('lynx-menus::admin.name_help') }}</p>
-                    @error('name') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('name') <p data-error-for="name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
                 <x-lynx-admin::ui.dialog-footer>
                     <x-lynx-admin::ui.button variant="outline" type="button" x-on:click="$dispatch('close-dialog-lynx-new-menu')">{{ __('lynx-menus::admin.settings.cancel') }}</x-lynx-admin::ui.button>

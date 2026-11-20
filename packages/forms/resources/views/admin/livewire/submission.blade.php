@@ -1,5 +1,5 @@
 <div class="space-y-6">
-    <x-lynx-admin::ui.breadcrumb>
+    <x-lynx-admin::ui.breadcrumb :aria-label="__('lynx-forms::admin.title')">
         <x-lynx-admin::ui.breadcrumb-list>
             <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.forms')">{{ __('lynx-forms::admin.title') }}</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
         </x-lynx-admin::ui.breadcrumb-list>

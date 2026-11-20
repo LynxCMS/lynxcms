@@ -35,6 +35,7 @@ return [
     'ui' => [
         'skip_to_content' => 'Skip to content',
         'breadcrumb' => 'Breadcrumb',
+        'parent_pages' => 'Parent pages',
         'close' => 'Close',
         'hide_password' => 'Hide password',
         'more' => 'More',

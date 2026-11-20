@@ -57,5 +57,5 @@
     @if ($groups !== [] && $canEdit)
         <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::pages.strings.save') }}</x-lynx-admin::ui.button></div>
     @endif
-    @error('values') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error('values') <p data-error-for="values" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 </form>

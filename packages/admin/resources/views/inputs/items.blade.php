@@ -52,7 +52,7 @@
                             </span>
                         @endunless
                     </div>
-                    @error('values.'.$field->name.'.'.$index.'.type') <p role="alert" class="text-destructive px-3 pb-2 text-sm">{{ $message }}</p> @enderror
+                    @error('values.'.$field->name.'.'.$index.'.type') <p data-error-for="{{ 'values.'.$field->name.'.'.$index.'.type' }}" role="alert" class="text-destructive px-3 pb-2 text-sm">{{ $message }}</p> @enderror
                     <div x-show="open" @unless ($open) x-cloak @endunless class="grid grid-cols-12 items-start gap-4 border-t p-3">
                         @foreach (\LynxCms\Core\Fields\Items\SubfieldGroups::of($subfields) as $group)
                             @if ($group->hasHeading())

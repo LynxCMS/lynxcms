@@ -16,7 +16,7 @@
             <label for="branding-name" class="text-sm font-medium">{{ __('lynx-admin::general.branding.name') }}</label>
             <input id="branding-name" type="text" class="blat-input max-w-sm" wire:model.live.debounce.400ms="name" maxlength="60" placeholder="{{ $defaults->name }}" @error('name') aria-invalid="true" @enderror>
             <p class="lynx-field-help">{{ __('lynx-admin::general.branding.name_help') }}</p>
-            @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('name') <p data-error-for="name" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         @foreach ($modes as $mode => $fields)
@@ -30,7 +30,7 @@
                     <label for="branding-{{ $fields['logo'] }}" class="text-sm font-medium">{{ __('lynx-admin::general.branding.logo') }}</label>
                     <input id="branding-{{ $fields['logo'] }}" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="blat-input max-w-sm" wire:model="{{ $fields['logo'] }}" @error($fields['logo']) aria-invalid="true" @enderror>
                     <p class="lynx-field-help">{{ __($mode === 'dark' ? 'lynx-admin::general.branding.logo_dark_help' : 'lynx-admin::general.branding.logo_help') }}</p>
-                    @error($fields['logo']) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                    @error($fields['logo']) <p data-error-for="{{ $fields['logo'] }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                     @if ($fields['hasUploaded'])
                         <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="blat-checkbox" wire:model.live="{{ $fields['remove'] }}"> {{ __($mode === 'dark' ? 'lynx-admin::general.branding.remove_logo_dark' : ($defaults->logo ? 'lynx-admin::general.branding.remove_logo_configured' : 'lynx-admin::general.branding.remove_logo')) }}</label>
                     @endif
@@ -54,7 +54,7 @@
                                 @endif
                             </div>
                             <p class="lynx-field-help">{{ __('lynx-admin::general.branding.'.$colour.'_help') }}</p>
-                            @error($field) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                            @error($field) <p data-error-for="{{ $field }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                         </div>
                     @endforeach
                 </div>

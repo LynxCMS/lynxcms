@@ -5,7 +5,7 @@
         <label class="grid gap-1 text-sm">
             <span class="text-muted-foreground">{{ $actionLabel }}</span>
             <input type="datetime-local" class="blat-input" wire:model="{{ $model }}.{{ $action }}" @disabled(! $canPublish) @error("{$model}.{$action}") aria-invalid="true" @enderror>
-            @error("{$model}.{$action}") <span role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
+            @error("{$model}.{$action}") <span data-error-for="{{ "{$model}.{$action}" }}" role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </label>
     @endforeach
 </div>

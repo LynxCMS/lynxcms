@@ -4,7 +4,7 @@
         <div class="grid gap-2">
             <x-lynx-admin::ui.label for="password">{{ __('lynx-admin::auth.new_password.password') }}</x-lynx-admin::ui.label>
             <x-lynx-admin::ui.input id="password" name="password" type="password" required autofocus autocomplete="new-password" :aria-invalid="$errors->has('password') ? 'true' : null" />
-            @error('password') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('password') <p data-error-for="password" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-2">
             <x-lynx-admin::ui.label for="password_confirmation">{{ __('lynx-admin::auth.repeat_password') }}</x-lynx-admin::ui.label>

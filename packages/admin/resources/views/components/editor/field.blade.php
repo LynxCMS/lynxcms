@@ -100,7 +100,7 @@
             <p class="text-muted-foreground text-xs mt-1">{{ $field->notes }}</p>
         @endif
 
-        @error('values.'.$field->name) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error('values.'.$field->name) <p data-error-for="{{ 'values.'.$field->name }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     </div>
 </x-lynx-admin::ui.tabs>
 </div>

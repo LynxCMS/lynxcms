@@ -23,7 +23,7 @@
     @endforeach
 
     @foreach (['has_url', 'singleton', 'allow_children', 'child_templates', 'parent_templates', 'allowed_templates'] as $key)
-        @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
     @if ($canEdit) <div><x-lynx-admin::ui.button variant="outline" type="button" wire:click="saveFamily">{{ __('lynx-admin::templates.family.save') }}</x-lynx-admin::ui.button></div> @endif
 </section>
@@ -50,7 +50,7 @@
         @endif
     @endif
 
-    @error('template') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+    @error('template') <p data-error-for="template" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
 
     @if ($pageCount > 0)
         {{-- templates.delete refuses while any page uses the template, trashed ones included. --}}

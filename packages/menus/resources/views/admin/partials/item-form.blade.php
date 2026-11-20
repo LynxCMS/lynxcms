@@ -13,7 +13,7 @@
 
     {{-- Errors about the item as a whole, e.g. a locked item; page choice errors show by the page field. --}}
     @foreach (['item', ...($item->kind === 'page' ? [] : ['page'])] as $key)
-        @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
 
     <fieldset>
@@ -24,7 +24,7 @@
                 <label class="has-checked:bg-background has-checked:text-foreground has-checked:shadow-sm has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] inline-flex h-full cursor-pointer items-center justify-center rounded-md px-2 text-sm font-medium whitespace-nowrap"><input type="radio" class="sr-only" wire:model.live="item.kind" value="{{ $value }}"> {{ $text }}</label>
             @endforeach
         </div>
-        @error('kind') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error('kind') <p data-error-for="kind" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     </fieldset>
 
     <div>
@@ -33,7 +33,7 @@
         @if ($item->kind === 'page')
             <p class="text-muted-foreground text-sm mt-1">{{ __(count($languages) > 1 ? 'lynx-menus::admin.item.use_title_languages' : 'lynx-menus::admin.item.use_title') }}</p>
         @endif
-        @error('label') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error('label') <p data-error-for="label" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     </div>
 
     @if ($item->kind === 'page')
@@ -55,7 +55,7 @@
                     @endforeach
                 </ul>
             @endif
-            @error('page') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('page') <p data-error-for="page" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model.live="item.children"> {{ __('lynx-menus::admin.item.children') }}</label>
             @if ($item->children)
                 <div class="grid grid-cols-2 gap-4">
@@ -63,13 +63,13 @@
                         <label for="item-depth" class="blat-label mb-2">{{ __('lynx-menus::admin.item.levels') }}</label>
                         <input id="item-depth" type="number" min="1" max="{{ \LynxCms\Menus\MenuSchema::MAX_DEPTH }}" class="blat-input" wire:model="item.depth" placeholder="{{ \LynxCms\Menus\MenuSchema::DEFAULT_DEPTH }}" @error('depth') aria-invalid="true" @enderror>
                         <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.levels_help', ['max' => \LynxCms\Menus\MenuSchema::MAX_DEPTH]) }}</p>
-                        @error('depth') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                        @error('depth') <p data-error-for="depth" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label for="item-limit" class="blat-label mb-2">{{ __('lynx-menus::admin.item.limit') }}</label>
                         <input id="item-limit" type="number" min="1" max="{{ \LynxCms\Menus\MenuSchema::MAX_LIMIT }}" class="blat-input" wire:model="item.limit" placeholder="{{ \LynxCms\Menus\MenuSchema::DEFAULT_LIMIT }}" @error('limit') aria-invalid="true" @enderror>
                         <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.limit_help') }}</p>
-                        @error('limit') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                        @error('limit') <p data-error-for="limit" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                     </div>
                 </div>
             @endif
@@ -81,7 +81,7 @@
             <span id="item-url-label" class="blat-label mb-2">{{ __('lynx-menus::admin.item.url') }}</span>
             @include('lynx-menus::admin.partials.translated-input', ['model' => 'item.url', 'id' => 'item-url', 'label' => __('lynx-menus::admin.item.url'), 'error' => 'url', 'placeholder' => __('lynx-menus::admin.item.url_placeholder')])
             <p class="lynx-field-help mt-1">{{ __('lynx-menus::admin.item.url_help') }}</p>
-            @error('url') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('url') <p data-error-for="url" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
     @endif
 
@@ -93,7 +93,7 @@
                     <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model="item.languages" value="{{ $language['code'] }}"> {{ $language['name'] }}</label>
                 @endforeach
             </div>
-            @error('languages') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('languages') <p data-error-for="languages" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </fieldset>
     @endif
 
@@ -121,7 +121,7 @@
                         </div>
                     @endif
                 </div>
-                @error('target') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('target') <p data-error-for="target" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
 
                 @if (\LynxCms\Menus\Admin\Forms\ItemForm::relChoices() !== [])
                     <fieldset class="grid gap-1.5">
@@ -132,7 +132,7 @@
                             </label>
                         @endforeach
                         <p class="lynx-field-help">{{ __('lynx-menus::admin.item.noopener') }}</p>
-                        @error('rel.*') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
+                        @error('rel.*') <p data-error-for="rel.*" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                     </fieldset>
                 @endif
             @endif
@@ -141,17 +141,17 @@
                 <div>
                     <label for="item-icon-before" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_before') }}</label>
                     <input id="item-icon-before" type="text" class="blat-input" wire:model="item.iconBefore" placeholder="{{ __('lynx-menus::admin.item.icon_before_placeholder') }}" @error('icon_before') aria-invalid="true" @enderror>
-                    @error('icon_before') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                    @error('icon_before') <p data-error-for="icon_before" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="item-icon-after" class="blat-label mb-2">{{ __('lynx-menus::admin.item.icon_after') }}</label>
                     <input id="item-icon-after" type="text" class="blat-input" wire:model="item.iconAfter" placeholder="{{ __('lynx-menus::admin.item.icon_after_placeholder') }}" @error('icon_after') aria-invalid="true" @enderror>
-                    @error('icon_after') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                    @error('icon_after') <p data-error-for="icon_after" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </div>
                 <div class="col-span-2">
                     <label for="item-class" class="blat-label mb-2">{{ __('lynx-menus::admin.item.classes') }}</label>
                     <input id="item-class" type="text" class="blat-input" wire:model="item.class" placeholder="{{ __('lynx-menus::admin.item.optional') }}" @error('class') aria-invalid="true" @enderror>
-                    @error('class') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                    @error('class') <p data-error-for="class" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </div>
             </div>
 

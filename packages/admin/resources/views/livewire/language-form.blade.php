@@ -12,34 +12,34 @@
             <label for="language-code" class="text-sm font-medium">{{ __('lynx-admin::languages.form.code') }}</label>
             <input id="language-code" type="text" class="blat-input max-w-xs font-mono" wire:model="code" autocomplete="off" @error('code') aria-invalid="true" @enderror>
             <p class="lynx-field-help">{!! __('lynx-admin::languages.form.code_help', ['short' => '<code>pt</code>', 'long' => '<code>pt-br</code>']) !!}</p>
-            @error('code') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('code') <p data-error-for="code" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid gap-1">
             <label for="language-name" class="text-sm font-medium">{{ __('lynx-admin::languages.form.name') }}</label>
             <input id="language-name" type="text" class="blat-input max-w-sm" wire:model="name" placeholder="Português" @error('name') aria-invalid="true" @enderror>
-            @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('name') <p data-error-for="name" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid gap-1">
             <label for="language-label" class="text-sm font-medium">{{ __('lynx-admin::languages.form.tab_label') }}</label>
             <input id="language-label" type="text" class="blat-input max-w-xs" wire:model="label" maxlength="32" placeholder="{{ $name !== '' ? $name : __('lynx-admin::languages.form.from_name') }}">
             <p class="lynx-field-help">{{ __('lynx-admin::languages.form.tab_help') }}</p>
-            @error('label') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('label') <p data-error-for="label" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid gap-1">
             <label for="language-locale" class="text-sm font-medium">{{ __('lynx-admin::languages.form.locale') }}</label>
             <input id="language-locale" type="text" class="blat-input max-w-xs font-mono" wire:model="locale" placeholder="{{ $code !== '' ? $code : 'pt-PT' }}">
             <p class="lynx-field-help">{!! __('lynx-admin::languages.form.locale_help', ['attribute' => '<code>lang</code>']) !!}</p>
-            @error('locale') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('locale') <p data-error-for="locale" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="grid gap-1">
             <label for="language-prefix" class="text-sm font-medium">{{ __('lynx-admin::languages.form.prefix') }}</label>
             <input id="language-prefix" type="text" class="blat-input max-w-xs font-mono" wire:model="prefix" placeholder="{{ $language === null ? ($code !== '' ? $code : 'pt') : '' }}">
             <p class="lynx-field-help">{{ __($language === null ? 'lynx-admin::languages.form.prefix_new' : 'lynx-admin::languages.form.prefix_help') }}</p>
-            @error('prefix') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('prefix') <p data-error-for="prefix" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
 
         @unless ($isDefault)
@@ -52,7 +52,7 @@
                     @endforeach
                 </select>
                 <p class="lynx-field-help">{{ __('lynx-admin::languages.form.fallback_help') }}</p>
-                @error('fallback') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('fallback') <p data-error-for="fallback" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
         @endunless
 

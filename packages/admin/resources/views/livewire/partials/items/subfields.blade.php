@@ -58,12 +58,12 @@
                             <x-lynx-admin::ui.button variant="outline" size="sm" type="button" class="text-destructive hover:text-destructive justify-self-start" wire:click="removeSubfield({{ Js::from($list) }}, {{ Js::from($row['name']) }})">{{ __('lynx-admin::fields.subfields.remove', ['field' => $shownAs]) }}</x-lynx-admin::ui.button>
                         @endif
                     </div>
-                    @error("{$errorPrefix}.{$position}.name") <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                    @error("{$errorPrefix}.{$position}.name") <p data-error-for="{{ "{$errorPrefix}.{$position}.name" }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                 </li>
             @endforeach
         </ol>
     @endif
-    @error($errorPrefix) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error($errorPrefix) <p data-error-for="{{ $errorPrefix }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 
     @if ($canEdit)
         <div class="flex flex-wrap items-center gap-2">

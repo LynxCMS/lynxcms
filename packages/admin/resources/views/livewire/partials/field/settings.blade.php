@@ -54,7 +54,7 @@
                     </div>
                     @if ($words['hint'] !== '')<p class="lynx-field-help">{{ $words['hint'] }}</p>@endif
                 @endif
-                @error('settings.'.$setting) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('settings.'.$setting) <p data-error-for="{{ 'settings.'.$setting }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         @endforeach
 
@@ -76,7 +76,7 @@
                     @endforeach
                 </ul>
                 <p class="lynx-field-help">{{ __('lynx-admin::fields.settings.formatters_help') }}</p>
-                @error('settings.formatters') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('settings.formatters') <p data-error-for="settings.formatters" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         @endif
     </section>

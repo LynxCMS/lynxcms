@@ -1,5 +1,5 @@
 <form wire:submit="create" class="space-y-6" aria-labelledby="new-page-title">
-    <x-lynx-admin::ui.breadcrumb>
+    <x-lynx-admin::ui.breadcrumb :aria-label="__('lynx-admin::shell.ui.parent_pages')">
         <x-lynx-admin::ui.breadcrumb-list>
             <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.pages')">{{ __('lynx-admin::pages.title') }}</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
             <x-lynx-admin::ui.breadcrumb-separator />
@@ -10,7 +10,7 @@
     <h1 id="new-page-title" class="text-2xl font-semibold tracking-tight">{{ __('lynx-admin::pages.create.heading', ['page' => $parentTitle]) }}</h1>
 
     @foreach (['template', 'parent', 'page'] as $key)
-        @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
 
     @if ($choices === [])
@@ -47,7 +47,7 @@
                     <p class="lynx-field-help mt-1">{{ __('lynx-admin::pages.create.url') }} <span class="text-foreground">{{ $url }}</span></p>
                 @endif
                 {{-- Core keys name errors by language code, e.g. names.en. --}}
-                @error('names.'.$defaultCode) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('names.'.$defaultCode) <p data-error-for="{{ 'names.'.$defaultCode }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
         </div>
     </section>

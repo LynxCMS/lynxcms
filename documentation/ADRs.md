@@ -1475,3 +1475,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** Most changes skip the browser job; one that touches sign-in adds a job running beside the others, so it does not lengthen the run. A new Fortify or Laravel release comes in without any file changing (no `composer.lock` is committed), so it does not run the job: run `composer test:browser` before a release that updates them. Playwright is a development dependency in a root `package.json`. Browser tests cover flows, not rules: the rules stay in the HTTP tests, which are faster and say more when they fail. More flows (the page editor, the page tree's move mode) can join the suite when they need a browser to be trusted.
 
+## ADR-0138: Error messages tied to their fields in the browser
+
+**Status:** Accepted (follows ADR-0136)
+
+**Context:** The accessibility review found about 130 error messages in the admin shown next to their fields but not tied to them: a screen reader on the field said "invalid" without the reason. Only about 50 of the fields even marked themselves invalid. Adding an id to each message and `aria-describedby` to each field by hand touches every form, and a field and its message are often in different partials, with keys made at runtime (`values.title`, `settings.types.3.label`).
+
+**Decision:** Each admin error message carries `data-error-for`, the error's key, and `role="alert"`. A script in the admin (`js/field-errors.js`) ties each message to the controls bound to that key in the same Livewire component or form (by `wire:model`, or by `name`), giving the message an id and the controls `aria-describedby` and `aria-invalid`. A key for a whole field ties the message to each of its inputs. Livewire's morph sets attributes back to the server's HTML, so the script derives the wiring again on every change, as BlatUI's `keepWired` does. The public form fields of the Forms module, which run without the admin's script, point to their message in the HTML.
+
+**Consequences:** One attribute per message, which modules use the same way (documented under Extending the admin). The links exist only once the script runs; the admin needs JavaScript anyway. Browser tests check them, after a Livewire update too. A message whose key matches no control (a whole list's error) stays unlinked, announced by its alert when it appears.
+

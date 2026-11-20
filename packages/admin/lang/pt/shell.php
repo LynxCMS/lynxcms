@@ -35,6 +35,7 @@ return [
     'ui' => [
         'skip_to_content' => 'Saltar para o conteúdo',
         'breadcrumb' => 'Trilho de navegação',
+        'parent_pages' => 'Páginas-mãe',
         'close' => 'Fechar',
         'hide_password' => 'Ocultar palavra-passe',
         'more' => 'Mais',

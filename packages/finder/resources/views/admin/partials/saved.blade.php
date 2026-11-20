@@ -40,7 +40,7 @@
                 <div class="grid gap-2">
                     <label for="finder-save-name" class="blat-label">{{ __('lynx-finder::admin.saved.name') }}</label>
                     <input id="finder-save-name" type="text" class="blat-input" wire:model="saveName" placeholder="{{ __('lynx-finder::admin.saved.name_placeholder') }}" maxlength="100" @error('name') aria-invalid="true" @enderror>
-                    @error('name') <p class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('name') <p data-error-for="name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
                 @if ($canShare)
                     <label class="flex items-center gap-2 text-sm">

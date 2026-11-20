@@ -34,7 +34,7 @@
             </span>
         @endif
     </div>
-    @error('layout') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error('layout') <p data-error-for="layout" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 
     @foreach ($tabLabels as $tabKey => $tabLabel)
         <div x-show="tab === @js($tabKey)" @if ($tabKey !== 'content') x-cloak @endif class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]" role="group" aria-label="{{ $tabLabel }}">

@@ -10,7 +10,7 @@
             <label for="field-label" class="text-sm font-medium">{{ __('lynx-admin::fields.name.label') }}</label>
             <x-lynx-admin::localized-input id="field-label" model="label" :placeholder="$field === null ? __('lynx-admin::fields.name.label_placeholder') : $field" />
             <p class="lynx-field-help">{{ __('lynx-admin::fields.name.label_help') }}</p>
-            @error('label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('label') <p data-error-for="label" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1.5">
             <label for="field-name" class="text-sm font-medium">{{ __('lynx-admin::fields.name.in_templates') }}</label>
@@ -23,7 +23,7 @@
             @else
                 <p id="field-name" class="flex items-center gap-1.5 font-mono text-sm"><x-lucide-lock class="text-muted-foreground size-3.5" aria-hidden="true" />$page-&gt;{{ $name }}</p>
             @endif
-            @error('name') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('name') <p data-error-for="name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
     </section>
 
@@ -57,7 +57,7 @@
                     </select>
                 </div>
             @endif
-            @error('translatable') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('translatable') <p data-error-for="translatable" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </section>
     @endif
 
@@ -67,12 +67,12 @@
             <div class="grid content-start gap-1.5">
                 <label for="field-description" class="text-sm font-medium">{{ __('lynx-admin::fields.help.above') }}</label>
                 <x-lynx-admin::localized-input id="field-description" model="description" multiline :placeholder="__('lynx-admin::fields.help.optional')" />
-                @error('settings.description') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('settings.description') <p data-error-for="settings.description" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid content-start gap-1.5">
                 <label for="field-notes" class="text-sm font-medium">{{ __('lynx-admin::fields.help.below') }}</label>
                 <x-lynx-admin::localized-input id="field-notes" model="notes" multiline :placeholder="__('lynx-admin::fields.help.optional')" />
-                @error('settings.notes') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('settings.notes') <p data-error-for="settings.notes" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         </div>
     </section>
@@ -89,7 +89,7 @@
                 <span class="grid gap-0.5"><span class="font-medium">{{ __('lynx-admin::fields.advanced.autoload') }}</span><span class="text-muted-foreground">{{ __('lynx-admin::fields.advanced.autoload_hint') }}</span></span>
             </label>
         @endif
-        @error('settings.autoload') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('settings.autoload') <p data-error-for="settings.autoload" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     </details>
 
     @include('lynx-admin::livewire.partials.field.danger')

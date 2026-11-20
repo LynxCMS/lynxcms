@@ -11,12 +11,12 @@
         <div class="grid gap-1">
             <label for="current-password" class="text-sm font-medium">{{ __('lynx-admin::account.password.current') }}</label>
             <input id="current-password" type="password" class="blat-input max-w-sm" wire:model="currentPassword" autocomplete="current-password" @error('currentPassword') aria-invalid="true" @enderror>
-            @error('currentPassword') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('currentPassword') <p data-error-for="currentPassword" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1">
             <label for="new-password" class="text-sm font-medium">{{ __('lynx-admin::account.password.new') }}</label>
             <input id="new-password" type="password" class="blat-input max-w-sm" wire:model="password" autocomplete="new-password" @error('password') aria-invalid="true" @enderror>
-            @error('password') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('password') <p data-error-for="password" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1">
             <label for="new-password-confirmation" class="text-sm font-medium">{{ __('lynx-admin::account.password.repeat') }}</label>
@@ -30,7 +30,7 @@
         <section class="bg-card text-card-foreground grid gap-4 rounded-xl border p-5 shadow-sm" aria-labelledby="account-two-factor">
             <div>
                 <h2 id="account-two-factor" class="text-base font-semibold">{{ __('lynx-admin::account.two_factor.heading') }}</h2>
-                @error('two_factor') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('two_factor') <p data-error-for="two_factor" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 <p class="text-muted-foreground text-sm">{{ __('lynx-admin::account.two_factor.description') }}</p>
             </div>
 
@@ -43,7 +43,7 @@
                         <div class="grid gap-1">
                             <label for="two-factor-code" class="sr-only">{{ __('lynx-admin::account.two_factor.code') }}</label>
                             <input id="two-factor-code" type="text" inputmode="numeric" autocomplete="one-time-code" class="blat-input w-36 font-mono" wire:model="code" placeholder="123456" @error('code') aria-invalid="true" @enderror>
-                            @error('code') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                            @error('code') <p data-error-for="code" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                         </div>
                         <x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::account.two_factor.confirm') }}</x-lynx-admin::ui.button>
                         <x-lynx-admin::ui.button type="button" variant="outline" wire:click="disableTwoFactor">{{ __('lynx-admin::account.two_factor.cancel') }}</x-lynx-admin::ui.button>

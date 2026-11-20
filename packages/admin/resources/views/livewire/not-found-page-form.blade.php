@@ -6,7 +6,7 @@
 
     <div class="grid max-w-md gap-2">
         <livewire:lynx-admin.page-picker wire:model="page" :value="$page" :multiple="false" :placeholder="__('lynx-admin::general.not_found.search')" key="not-found-picker" />
-        @error('page') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('page') <p data-error-for="page" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         @unless ($isShown)
             <p class="text-sm text-[var(--lynx-notice-warning-foreground)]">{{ __('lynx-admin::general.not_found.not_shown') }}</p>
         @endunless

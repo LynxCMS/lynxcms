@@ -11,12 +11,12 @@
             <span>{{ __('lynx-cache::admin.rules.seconds_end') }}</span>
         </p>
         <p class="lynx-field-help">{{ __('lynx-cache::admin.rules.default_help', ['seconds' => $configLifetime]) }}</p>
-        @error('lifetime') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('lifetime') <p data-error-for="lifetime" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     </section>
 
     <section class="grid gap-3 border-t pt-6" aria-labelledby="cache-templates">
         <h2 id="cache-templates" class="text-base font-semibold">{{ __('lynx-cache::admin.rules.templates') }}</h2>
-        @error('templates') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('templates') <p data-error-for="templates" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         <ol class="grid gap-2">
             @foreach ($templates as $name => $label)
                 @php($hasErrors = collect($errors->keys())->contains(fn ($key) => str_starts_with($key, "templates.{$name}.")))
@@ -39,13 +39,13 @@
                                 <label for="rule-{{ $name }}-lifetime" class="font-medium">{{ __('lynx-cache::admin.rules.keep') }}</label>
                                 <div class="flex items-center gap-2"><input id="rule-{{ $name }}-lifetime" type="number" min="0" class="blat-input w-28" wire:model="rules.{{ $name }}.lifetime" placeholder="{{ __('lynx-cache::admin.rules.default') }}"><span class="text-muted-foreground">{{ __('lynx-cache::admin.rules.seconds') }}</span></div>
                                 <p class="text-muted-foreground">{{ __('lynx-cache::admin.rules.empty_default') }}</p>
-                                @error('templates.'.$name.'.lifetime') <p role="alert" class="text-destructive">{{ $message }}</p> @enderror
+                                @error('templates.'.$name.'.lifetime') <p data-error-for="{{ 'templates.'.$name.'.lifetime' }}" role="alert" class="text-destructive">{{ $message }}</p> @enderror
                             </div>
                             <div class="grid content-start gap-1.5">
                                 <label for="rule-{{ $name }}-parameters" class="font-medium">{{ __('lynx-cache::admin.rules.parameters') }}</label>
                                 <input id="rule-{{ $name }}-parameters" type="text" class="blat-input" wire:model="rules.{{ $name }}.parameters" placeholder="page, sort">
                                 <p class="text-muted-foreground">{{ __('lynx-cache::admin.rules.parameters_help') }}</p>
-                                @error('templates.'.$name.'.parameters.*') <p role="alert" class="text-destructive">{{ $message }}</p> @enderror
+                                @error('templates.'.$name.'.parameters.*') <p data-error-for="{{ 'templates.'.$name.'.parameters.*' }}" role="alert" class="text-destructive">{{ $message }}</p> @enderror
                             </div>
                         </div>
                         <fieldset class="grid gap-2">

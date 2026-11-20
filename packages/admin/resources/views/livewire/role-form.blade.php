@@ -10,7 +10,7 @@
             @else
                 <p id="role-name" class="font-mono text-sm">{{ $name }}</p>
             @endif
-            @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('name') <p data-error-for="name" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-1">
             <label for="role-label" class="text-sm font-medium">{{ __('lynx-admin::roles.form.label') }}</label>
@@ -25,7 +25,7 @@
                 <h2 id="role-permissions" class="text-base font-semibold">{{ __('lynx-admin::roles.form.permissions') }}</h2>
                 <p class="lynx-field-help">{{ __('lynx-admin::roles.form.permissions_help') }}</p>
             </div>
-            @error('grants') <p role="alert" class="text-destructive mt-1 text-sm px-5 pt-3">{{ $message }}</p> @enderror
+            @error('grants') <p data-error-for="grants" role="alert" class="text-destructive mt-1 text-sm px-5 pt-3">{{ $message }}</p> @enderror
             <ul class="divide-y divide-border">
                 @foreach ($permissions as $key => $permission)
                     <li wire:key="grant-{{ $key }}" class="grid gap-3 px-5 py-3">
@@ -71,7 +71,7 @@
     @if ($isConfirmingDelete)
         <section role="alert" class="bg-card text-card-foreground rounded-xl border shadow-sm grid gap-3 p-5">
             <p class="text-sm">{{ trans_choice('lynx-admin::roles.form.confirm', $deleteUsers, ['name' => $role]) }}</p>
-            @error('role') <p class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('role') <p data-error-for="role" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             <div class="flex flex-wrap gap-3">
                 <x-lynx-admin::ui.button variant="destructive" type="button" wire:click="delete">{{ __('lynx-admin::roles.form.delete_named', ['name' => $role]) }}</x-lynx-admin::ui.button>
                 <x-lynx-admin::ui.button variant="outline" type="button" wire:click="cancelDelete">{{ __('lynx-admin::roles.form.cancel') }}</x-lynx-admin::ui.button>

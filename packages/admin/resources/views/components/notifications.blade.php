@@ -1,27 +1,15 @@
 {{--
     The admin's notification bar: full width, floating at the bottom of the viewport. Green for
-    success, yellow for warnings, red for errors; click one to close it before it times out.
+    success, yellow for warnings, red for errors; click one to close it before it times out. They
+    wait while the pointer or the focus is on the bar (js/notices.js).
     Livewire components send them with notify() (Livewire\Concerns\Notifies, event "lynx-notify");
     BlatUI's window.toast() events show here too. A notice flashed to the session before a redirect
     (session key "lynx-notify", as the publish button's menu does) shows on the next screen.
 --}}
 @php($flashed = session('lynx-notify'))
 <div
-    x-data="{
-        notices: [],
-        durations: { success: 4000, warning: 6000, error: 9000 },
-        add(message, type) {
-            if (! message) return;
-            type = this.durations[type] ? type : 'success';
-            const id = Date.now() + Math.random();
-            this.notices.push({ id, message, type });
-            setTimeout(() => this.remove(id), this.durations[type]);
-        },
-        fromToast(t) {
-            this.add(t.description || t.title || '', t.type === 'error' ? 'error' : (t.type === 'warning' ? 'warning' : 'success'));
-        },
-        remove(id) { this.notices = this.notices.filter(n => n.id !== id); },
-    }"
+    x-data="lynxNotices"
+    @mouseenter="hold()" @mouseleave="release()" @focusin="hold()" @focusout="$nextTick(() => release())"
     @lynx-notify.window="add($event.detail.message, $event.detail.type)"
     @toast.window="fromToast($event.detail)"
     @if (is_array($flashed) && is_string($flashed['message'] ?? null))

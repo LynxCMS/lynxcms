@@ -523,6 +523,16 @@ Give the help text under a field the `lynx-field-help` class, so it has the same
 
 The class is in the admin's own stylesheet, so a module doesn't need it in its own. For help that only some people need, use a [hint](#hints) beside the label instead.
 
+### Error messages
+
+Give an error message `data-error-for` with the error's key, and `role="alert"` so it is read out when it appears:
+
+```blade
+@error('title') <p data-error-for="title" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+```
+
+The admin ties the message to the field bound to that key in the same component (its `wire:model`, or its `name` in a plain form): the field gets `aria-describedby` pointing to the message and `aria-invalid`, so a screen reader on the field reads why it is invalid. A key for a whole field (`values.title`) ties the message to each of its inputs (`values.title.en`, `values.title.pt`). It happens in the browser and again after each Livewire update, so the view needs nothing else.
+
 ### Keeping the site's look
 
 Your classes read the same variables as the admin's, so a site's appearance settings and branding (accent color, base color, radius, fonts, spacing, dark mode) apply to your screens too. Three things keep it that way:

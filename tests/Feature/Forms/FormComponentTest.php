@@ -186,6 +186,12 @@ it('names a refused file by its label, not its form key', function (): void {
 
     expect($errors)->not->toBeEmpty()
         ->and($errors->implode(' '))->not->toContain('data.brief');
+
+    // The file input points to its hint and to the message, wherever the error is kept.
+    $html = $component->html();
+    preg_match('/<p class="lynx-form-error" id="(f-data-brief-(?:files-)?error)"/', $html, $message);
+    expect($message)->not->toBeEmpty()
+        ->and($html)->toMatch('/<input id="f-data-brief"[^>]*aria-describedby="f-data-brief-hint [^"]*'.($message[1] ?? 'none').'"/');
 });
 
 it('names a refused choice in a list by its label', function (): void {
@@ -211,4 +217,15 @@ it('names a refused choice in a list by its label', function (): void {
 
     expect($errors->isNotEmpty())->toBeTrue()
         ->and(collect($errors->all())->implode(' '))->not->toContain('data.extras');
+});
+
+it('ties an error to its field, so screen readers read the reason with the field', function (): void {
+    $html = quoteComponent()->call('next')->html();
+
+    expect($html)->toMatch('/<select id="f-data-type"[^>]*aria-describedby="f-data-type-error"[^>]*aria-invalid="true"/')
+        ->toContain('<p class="lynx-form-error" id="f-data-type-error" role="alert">');
+});
+
+it('points a field without an error only to its help', function (): void {
+    expect(quoteComponent()->html())->not->toContain('-error"');
 });

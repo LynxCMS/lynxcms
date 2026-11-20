@@ -26,7 +26,7 @@
                             <p id="link-href-help" class="text-muted-foreground text-sm">{{ __('lynx-admin::link.to_help') }}</p>
                             <input id="link-href" type="text" class="blat-input" wire:model.live.debounce.300ms="href" autocomplete="off"
                                    aria-describedby="link-href-help" @error('href') aria-invalid="true" @enderror>
-                            @error('href') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                            @error('href') <p data-error-for="href" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                             @if ($matches !== [])
                                 <ul class="bg-card rounded-lg border divide-y divide-border overflow-hidden" aria-label="{{ __('lynx-admin::link.matching_pages') }}">
                                     @foreach ($matches as $page)
@@ -104,7 +104,7 @@
                                             <option value="{{ $value }}">{{ $label }}</option>
                                         @endforeach
                                     </select>
-                                    @error('target') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                                    @error('target') <p data-error-for="target" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                                 </div>
                             @endif
                             @if ($rels !== [])
@@ -115,7 +115,7 @@
                                             <input type="checkbox" class="blat-checkbox" value="{{ $value }}" wire:model="rel"> {{ $label }}
                                         </label>
                                     @endforeach
-                                    @error('rel.*') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                                    @error('rel.*') <p data-error-for="rel.*" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                                 </fieldset>
                             @endif
                         </div>
