@@ -24,6 +24,7 @@
     --lynx-primary-text: var(--primary); /* links and text-primary; under .dark, mixed with white to read on the dark background */
     --lynx-hidden-opacity: 1; /* below 1, hidden page titles fall under 4.5:1 contrast */
     --lynx-sidebar-active-mix: 16%; /* the current link's accent tint; 32% under .dark */
+    --lynx-sidebar-hover-mix: 8%; /* a hovered link's accent tint; 16% under .dark */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);
     --lynx-notice-warning: oklch(0.87 0.16 92);

@@ -15,6 +15,8 @@
     --color-highlight: var(--lynx-highlight);
     /* The current screen's link in the sidebar: a tint of the accent, stronger than the hover grey. */
     --color-sidebar-active: color-mix(in oklab, var(--primary) var(--lynx-sidebar-active-mix), var(--sidebar));
+    /* Hovering a sidebar link: a lighter tint of the same accent (BlatUI's hover:bg-sidebar-accent). */
+    --color-sidebar-accent: color-mix(in oklab, var(--primary) var(--lynx-sidebar-hover-mix), var(--sidebar));
     --color-transparent: transparent;
     --color-current: currentColor;
 }

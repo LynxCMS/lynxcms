@@ -67,6 +67,7 @@
     --lynx-hidden-opacity: 1; /* 1 keeps hidden pages readable (WCAG 1.4.3); a muted colour and an icon mark them */
     /* How much accent tints the current screen's link in the sidebar; dark sidebars need more. */
     --lynx-sidebar-active-mix: 16%;
+    --lynx-sidebar-hover-mix: 8%;
     /* Notification bar: green, yellow and red. */
     --lynx-notice-success: var(--success);
     --lynx-notice-success-foreground: var(--success-foreground);
@@ -86,6 +87,7 @@
     color-scheme: dark;
     --lynx-mark-eye: #56bad5;
     --lynx-sidebar-active-mix: 32%;
+    --lynx-sidebar-hover-mix: 16%;
     --lynx-row-hover: color-mix(in oklab, var(--primary) 14%, transparent);
     --lynx-highlight: color-mix(in oklab, var(--primary) 26%, transparent);
 }
