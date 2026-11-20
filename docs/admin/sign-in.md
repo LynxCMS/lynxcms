@@ -41,7 +41,7 @@ A site with a members area, bookings or surveys lets visitors create accounts. U
 
 Under **Access > Users**, a superuser fills in a name, an email and at least one role under **Add user**, chooses **Send an invitation by email**, then **Send invitation**. A user without a role could not open the admin, so Lynx refuses to add one. Lynx creates the user with an unusable password, gives them the roles and emails a link to choose a password. The link works for 7 days (`lynx-admin.auth.invitation_days`). Once they choose a password, they are signed in.
 
-Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working.
+Until they choose a password, the Users screen marks them **Invitation pending**. **Resend invitation** emails a new link, and the old one stops working. A link that no longer works (used, replaced or past its days) says so as soon as it opens, and to ask for a new one. It shows the same message for an address that has no invitation, so the screen tells no one who has an account.
 
 The email needs a working mail setup in your app. Without one, use temporary passwords.
 

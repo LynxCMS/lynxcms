@@ -40,7 +40,7 @@ it('chooses a password from the invitation link and opens the admin', function (
         ->assertNoJavaScriptErrors();
 });
 
-it('refuses the same link a second time, without naming anyone', function (): void {
+it('says a used link no longer works as soon as it opens, without naming anyone', function (): void {
     $path = $this->link;
 
     visit($path)
@@ -49,12 +49,11 @@ it('refuses the same link a second time, without naming anyone', function (): vo
         ->click('button[type=submit]')
         ->press('Sign out')
         ->navigate($path)
-        ->assertDontSee('Bruno Costa')
-        ->fill('password', NEW_INVITED_PASSWORD)
-        ->fill('password_confirmation', NEW_INVITED_PASSWORD)
-        ->click('button[type=submit]')
         ->assertSee('This invitation has expired or was already used.')
-        ->assertDontSee('Sign out');
+        ->assertDontSee('Bruno Costa')
+        ->assertMissing('#password')
+        ->click('Back to sign in')
+        ->assertPathIs('/lynx/login');
 });
 
 const NEW_INVITED_PASSWORD = 'Invited-Password-2026';

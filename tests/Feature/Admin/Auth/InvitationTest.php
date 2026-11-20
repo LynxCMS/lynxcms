@@ -69,12 +69,28 @@ it('lets the invited user choose a password and signs them in', function (): voi
     expect(Auth::user()?->getAuthIdentifier())->toBe(User::query()->where('email', 'bruno@example.com')->value('id'));
 });
 
-it('names no one for an invitation link without a valid token', function (): void {
+it('says at once that a link without a valid token no longer works, and names no one', function (): void {
     invite();
     Auth::logout();
 
-    $this->get('/lynx/invitation/made-up-token?email=ada%40example.com')->assertOk()->assertDontSee('Ada Admin');
-    $this->get('/lynx/invitation/made-up-token?email=bruno%40example.com')->assertOk()->assertDontSee('Bruno Costa');
+    foreach (['ada%40example.com' => 'Ada Admin', 'bruno%40example.com' => 'Bruno Costa', 'nobody%40example.com' => 'Nobody'] as $email => $name) {
+        $this->get('/lynx/invitation/made-up-token?email='.$email)->assertOk()
+            ->assertSee('This invitation has expired or was already used. Ask for a new one.')
+            ->assertSee('Back to sign in')
+            ->assertDontSee($name)
+            ->assertDontSee('name="password"', false);
+    }
+});
+
+it('shows the password form for a valid invitation', function (): void {
+    invite();
+    $link = invitationLink('bruno@example.com');
+    Auth::logout();
+
+    $this->get(str($link)->after(config('app.url'))->toString())->assertOk()
+        ->assertSee('Welcome, Bruno Costa')
+        ->assertSee('name="password"', false)
+        ->assertDontSee('This invitation has expired');
 });
 
 it('keeps the link valid for days, not the hour of a password reset', function (): void {

@@ -25,7 +25,11 @@ use LynxCms\Core\Support\Value;
  */
 final class InvitationController
 {
-    /** The greeting names the user only for a valid invitation, so the page tells no one who has an account. */
+    /**
+     * A valid invitation greets the user by name and asks for a password. Any other link says at
+     * once that it no longer works: the same message for an unknown address, a used or an expired
+     * token, so the page tells no one who has an account.
+     */
     public function show(Request $request, string $token): View
     {
         $email = $request->string('email')->toString();
@@ -35,6 +39,7 @@ final class InvitationController
         return view('lynx-admin::auth.invitation', [
             'token' => $token,
             'email' => $email,
+            'isInvited' => $isInvited,
             'name' => $isInvited ? Value::nullableString(data_get($user, 'name')) : null,
         ]);
     }
