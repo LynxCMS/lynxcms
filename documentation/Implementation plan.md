@@ -43,7 +43,7 @@ Reviewed on 2026-11-19, after 0.1.52. Every phase before the release is built; w
 
 **Before the release**
 
-6. The page cache check on Laravel Cloud the roadmap asks for: two replicas, Octane, `edge_ttl`.
+6. ~~The page cache check on Laravel Cloud.~~ Moved after 1.0 on 2026-11-20: most Lynx sites run on SQLite, on one server, so replicas are rare.
 7. Browser tests of the sign-in flows (password, two-factor setup and challenge, temporary password, invitation), which only Livewire and HTTP tests cover today.
 8. An accessibility review of the admin. Done on 2026-11-19 (ADR-0136, `documentation/reports/accessibility-review-2026-11.md`); left: errors tied to their fields, pausing notices, a screen reader pass.
 9. Done on 2026-11-19 (ADR-0135). The follow-up of the security review: email users when two-factor authentication is turned on or reset, and show superusers who has not set it up.
@@ -61,6 +61,7 @@ Not needed for 1.0: the headless API and webhooks (v2, `documentation/plans/head
 **After 1.0**
 
 * **The bilingual website guide** (`docs/guides/bilingual-website/`, a draft): finish it as the website half of the meeting rooms starter, with its code moved into `docs/snippets` so the suite tests it, as the training site guide's is.
+* **The page cache check on Laravel Cloud** the roadmap asks for: two replicas, Octane, `edge_ttl`. It matters for sites on a shared database (MySQL or Postgres) behind several servers.
 * **The comparison page** (`docs/getting-started/compared.md`) stays a draft. Publishing it means checking every claim about the other products again and dating it, then checking it again at each minor release.
 
 ## Phase 0: Repository and quality setup
