@@ -10,9 +10,11 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.54
 
-Released November 20, 2026. Books in the SEO module's structured data. No database changes.
+Released November 20, 2026. Books in the SEO module's structured data, the menu editor's item form below the tree, and a guide to SQLite's write ahead logging. No database changes.
 
 - **Books in structured data.** The SEO module maps templates to schema.org's `Book`, with `isbn`, `numberOfPages`, `bookFormat` (`paperback`, `hardcover`, `ebook`, `audiobook`), `inLanguage` and `offers`, and tells social networks the page is a book (`og:type` `book`). `JsonLd::openGraphType()` gives a page's `og:type`.
+- **The menu editor's item form below the tree.** Beside the tree, the panel was too narrow for the form's three kinds of item (section label, page, custom link), which overflowed it. The form now opens below the tree, up to 42rem wide, and scrolls into view when it opens.
+- **SQLite's write ahead logging, documented.** [Database](/getting-started/database#write-ahead-logging) explains what WAL mode changes, how to turn it on in `config/database.php` (`journal_mode`, `busy_timeout`, `synchronous`), when it helps, and what it costs: local disks only, two more files, and backups with `.backup` or `VACUUM INTO` rather than copying the file.
 
 ## 0.1.53
 
