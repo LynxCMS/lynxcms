@@ -131,7 +131,8 @@ final readonly class Branding
      */
     public function accentStyle(bool $dark = false): string
     {
-        $accent = $dark ? ($this->darkAccent ?? $this->accent) : $this->accent;
+        // Without a dark accent of its own, dark mode gets the light one made readable there.
+        $accent = $dark ? ($this->darkAccent ?? ($this->accent === null ? null : AccentContrast::onDark($this->accent))) : $this->accent;
 
         if ($accent === null) {
             return '';
@@ -168,15 +169,7 @@ final readonly class Branding
     /** White or near-black, whichever reads better on the colour. */
     public static function readableOn(string $hex): string
     {
-        $channels = array_map(function (string $pair): float {
-            $value = hexdec($pair) / 255;
-
-            return $value <= 0.03928 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
-        }, str_split(substr($hex, 1), 2));
-
-        $luminance = 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
-
-        return $luminance > self::LIGHT_LUMINANCE ? '#111111' : '#ffffff';
+        return AccentContrast::luminance($hex) > self::LIGHT_LUMINANCE ? '#111111' : '#ffffff';
     }
 
     private static function filled(mixed $value): ?string

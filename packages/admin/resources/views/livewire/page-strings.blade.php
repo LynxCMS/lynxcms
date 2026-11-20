@@ -31,7 +31,7 @@
                         @endif
                         @foreach ($languages as $language)
                             @php($code = $language['code'])
-                            <div x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif class="grid gap-1">
+                            <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif class="grid gap-1">
                                 @php($placeholder = $definition->defaultIn($code))
                                 @if (mb_strlen($placeholder) > 80 || $definition->format === 'markdown')
                                     <textarea rows="3" class="blat-textarea" wire:model="values.{{ $position }}.{{ $code }}" placeholder="{{ $placeholder }}" @disabled(! $canEdit) aria-label="{{ $definition->title() }} ({{ $language['label'] }})"></textarea>

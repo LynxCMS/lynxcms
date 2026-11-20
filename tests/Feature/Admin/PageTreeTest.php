@@ -174,6 +174,15 @@ it('toggles status flags', function (): void {
     expect(lynx()->pages->get($pages['alpha']->id)->hasStatus(PageStatus::HIDDEN))->toBeFalse();
 });
 
+it('marks hidden pages with an icon and words, not by colour alone', function (): void {
+    $pages = createCourses('alpha', 'beta');
+    $pages['alpha']->setStatus(PageStatus::HIDDEN)->save();
+
+    Livewire::test(PageTree::class)->call('toggle', pageId('/courses/'))
+        ->assertSeeHtml('aria-label="Hidden"')
+        ->assertSeeInOrder(['Alpha', 'data-tree-hidden', 'Beta']);
+});
+
 it('asks for confirmation with the number of pages before moving them to the trash', function (): void {
     $pages = createCourses('alpha', 'beta');
     lynx()->pages->move($pages['beta'], $pages['alpha']);

@@ -15,7 +15,7 @@
             @endforeach
         </x-lynx-admin::ui.tabs-list>
         @foreach ($languages as $language)
-            <div x-show="tab === '{{ $language['code'] }}'" @if (! $loop->first) x-cloak @endif>
+            <div role="tabpanel" :id="$id('blat-tabpanel', @js($language['code']))" :aria-labelledby="$id('blat-tab', @js($language['code']))" x-show="tab === '{{ $language['code'] }}'" @if (! $loop->first) x-cloak @endif>
                 @if ($multiline)
                     <textarea id="{{ $loop->first ? $id : $id.'-'.$language['code'] }}" rows="{{ $rows }}" class="blat-textarea" wire:model="{{ $model }}.{{ $language['code'] }}" placeholder="{{ $placeholder }}" aria-label="{{ $language['label'] }}"></textarea>
                 @else

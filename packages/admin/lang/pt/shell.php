@@ -33,6 +33,7 @@ return [
         'hint' => 'A pesquisa abrange títulos e campos pesquisáveis; um seletor como :example pesquisa em tudo.',
     ],
     'ui' => [
+        'skip_to_content' => 'Saltar para o conteúdo',
         'breadcrumb' => 'Trilho de navegação',
         'close' => 'Fechar',
         'hide_password' => 'Ocultar palavra-passe',

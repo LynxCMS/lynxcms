@@ -13,9 +13,11 @@
            @focus="open = true" @input="open = true"
            @keydown.enter.prevent="$refs.results?.querySelector('a')?.click()"
            @keydown.down.prevent="$refs.results?.querySelector('a')?.focus()"
-           aria-controls="lynx-admin-search-results" :aria-expanded="open">
+           @if (trim($query) !== '') aria-controls="lynx-admin-search-results" @endif>
     <x-lynx-admin::ui.kbd class="pointer-events-none absolute end-2 top-1/2 hidden -translate-y-1/2 sm:inline-flex" x-text="/Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘K' : 'Ctrl K'">⌘K</x-lynx-admin::ui.kbd>
 
+    {{-- Results appear below the field; this line tells screen readers how many there are. --}}
+    <p class="sr-only" role="status">@if (trim($query) !== '' && $error === null){{ $results === [] ? __('lynx-admin::shell.search.empty') : trans_choice('lynx-admin::shell.search.count', $total, ['shown' => count($results), 'total' => $total]) }}@endif</p>
     @if (trim($query) !== '')
         <div id="lynx-admin-search-results" x-ref="results" x-show="open" x-cloak
              class="bg-popover text-popover-foreground absolute end-0 top-full z-50 mt-1 grid w-[min(32rem,90vw)] gap-1 rounded-md border p-1 shadow-md">

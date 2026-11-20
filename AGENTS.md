@@ -114,6 +114,7 @@ composer analyse                       # PHPStan
 composer format                        # Pint
 composer refactor                      # Rector (then composer format)
 composer check                         # Pint, Rector and PHPStan in check mode, as CI runs them
+tools/a11y/scan.sh build/a11y http://127.0.0.1:8765 lynx lynx/pages   # axe on admin screens (agent-browser; see the accessibility report)
 composer compat                        # what changed in @api code since the latest release that would break apps (ADR-0132)
 composer docs                          # live preview of the documentation site (installs its npm packages when package-lock.json changes)
 composer docs:build                    # build the documentation and check its links, as CI does

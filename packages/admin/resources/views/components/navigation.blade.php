@@ -1,9 +1,8 @@
-{{-- The sidebar's links (LynxCms\Admin\Navigation): items, then groups that stay closed until
+{{-- The sidebar's links (LynxCms\Admin\Navigation), as list items of the layout's menu, inside its <nav>: items, then groups that stay closed until
      opened, unless the current screen is in them. Each browser remembers the groups it opened.
      Opening a group on the collapsed icon rail opens the sidebar first. --}}
 @php($isCurrent = fn (array $item): bool => request()->routeIs($item['route'], $item['route'].'.*'))
 @php($exists = fn (array $item): bool => Route::has($item['route']))
-<nav aria-label="{{ __('lynx-admin::shell.nav.label') }}" class="contents">
     @foreach (app(\LynxCms\Admin\Navigation::class)->menu() as $entry)
         @if (isset($entry['items']))
             @php($items = array_values(array_filter($entry['items'], $exists)))
@@ -52,4 +51,3 @@
             </x-lynx-admin::ui.sidebar-menu-item>
         @endif
     @endforeach
-</nav>
