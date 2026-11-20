@@ -52,7 +52,7 @@ final class FormResults
     public function pages(Form $form): array
     {
         return $this->submissions($form)->whereNotNull('page_id')->groupBy('page_id')->selectRaw('page_id, count(*) as answers')
-            ->pluck('answers', 'page_id')->mapWithKeys(fn (mixed $count, mixed $page): array => [(int) $page => (int) $count])->all();
+            ->pluck('answers', 'page_id')->mapWithKeys(fn (mixed $count, mixed $page): array => [Value::int($page) => Value::int($count)])->all();
     }
 
     /** @return Builder<Submission> */
@@ -73,9 +73,20 @@ final class FormResults
                 ['value' => 'yes', 'label' => __('lynx-forms::forms.yes'), 'count' => count(array_filter($values, fn (mixed $value): bool => (bool) $value))],
             ]],
             $field->type === 'number' => $this->numbers($values),
-            $field->type === 'date' => $values === [] ? [] : ['earliest' => min(Value::strings($values)), 'latest' => max(Value::strings($values))],
+            $field->type === 'date' => $this->dates(Value::strings($values)),
             default => ['latest' => array_slice(Value::strings($values), 0, self::LATEST)],
         };
+    }
+
+    /**
+     * The earliest and latest date answered, or nothing without answers.
+     *
+     * @param  list<string>  $dates
+     * @return array{earliest?: string, latest?: string}
+     */
+    private function dates(array $dates): array
+    {
+        return $dates === [] ? [] : ['earliest' => min($dates), 'latest' => max($dates)];
     }
 
     /**
@@ -86,9 +97,9 @@ final class FormResults
      */
     private function counts(FormField $field, array $values): array
     {
-        $chosen = array_count_values(array_map(strval(...), array_merge(...array_map(fn (mixed $value): array => is_array($value) ? $value : [$value], $values))));
+        $chosen = array_count_values(Value::strings(array_merge(...array_map(fn (mixed $value): array => is_array($value) ? $value : [$value], $values))));
 
-        return array_map(fn (string $value): array => ['value' => $value, 'label' => $field->options[$value]->in(), 'count' => $chosen[$value] ?? 0], array_map(strval(...), array_keys($field->options)));
+        return array_map(fn (string $value): array => ['value' => $value, 'label' => $field->options[$value]->in(), 'count' => $chosen[$value] ?? 0], Value::strings(array_keys($field->options)));
     }
 
     /**

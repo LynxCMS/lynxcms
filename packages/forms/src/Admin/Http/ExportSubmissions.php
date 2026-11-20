@@ -7,6 +7,7 @@ namespace LynxCms\Forms\Admin\Http;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Http\SpreadsheetCell;
 use LynxCms\Core\Support\LocalizedText;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
 use LynxCms\Forms\SubmissionPresenter;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -59,12 +60,12 @@ final readonly class ExportSubmissions
      */
     private function columns(string $form): array
     {
-        $fields = lynx()->forms()->get($form)?->snapshot() ?? Submission::query()->where('form', $form)->latest('id')->first()?->fields ?? [];
+        $fields = lynx()->forms()->get($form)?->snapshot() ?? Submission::query()->where('form', $form)->latest('id')->first()->fields ?? [];
         $columns = [];
 
         foreach ((array) $fields as $field) {
             $field = (array) $field;
-            $columns[(string) ($field['name'] ?? '')] = LocalizedText::from($field['label'] ?? '')->in();
+            $columns[Value::string($field['name'] ?? '')] = LocalizedText::from($field['label'] ?? '')->in();
         }
 
         return $columns;

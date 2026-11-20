@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Builder;
 
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use LynxCms\Core\Fields\ChoiceOptions;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
@@ -66,18 +67,25 @@ final class PageFormCompiler
         return $blocks;
     }
 
-    /** A block's field name: its own, or one made from its default-language label ("Your name" → your_name). */
+    /**
+     * A block's field name: its own, or one made from its default-language label ("Your name" → your_name).
+     *
+     * @param  array<string, mixed>  $block
+     */
     public static function nameOf(array $block): string
     {
-        $name = trim(Value::string($block['values'][FormSchema::NAME] ?? ''));
+        $name = trim(Value::string(Value::map($block['values'] ?? [])[FormSchema::NAME] ?? ''));
 
         return $name !== '' ? $name : Str::slug(LocalizedText::from(self::label($block))->in((string) lynx()->languages->default()->code), '_');
     }
 
-    /** @return string|array<string, string> */
+    /**
+     * @param  array<string, mixed>  $block
+     * @return string|array<string, string>
+     */
     public static function label(array $block): string|array
     {
-        $label = $block['values'][FormSchema::LABEL] ?? '';
+        $label = Value::map($block['values'] ?? [])[FormSchema::LABEL] ?? '';
 
         return is_array($label) ? array_map(Value::string(...), Value::map($label)) : Value::string($label);
     }
@@ -147,7 +155,9 @@ final class PageFormCompiler
     private function field(array $block): FormField
     {
         $values = $block['values'];
-        $field = FormField::{$block['type']}(self::nameOf($block))->label(self::label($block))->required((bool) ($values[FormSchema::REQUIRED] ?? false));
+        $made = FormField::{$block['type']}(self::nameOf($block));
+        $field = $made instanceof FormField ? $made : throw new InvalidArgumentException("There is no form field type [{$block['type']}].");
+        $field = $field->label(self::label($block))->required(Value::bool($values[FormSchema::REQUIRED] ?? false));
         $help = $this->texts(Value::map($values[FormSchema::HELP] ?? []));
         $width = Value::int($values[FormSchema::WIDTH] ?? 100, 100);
         $showIf = trim(Value::string($values[FormSchema::SHOW_IF] ?? ''));

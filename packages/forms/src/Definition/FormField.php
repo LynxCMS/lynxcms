@@ -249,7 +249,11 @@ final class FormField
         return $this->with(fn (self $f): true => $f->isReplyTo = true);
     }
 
-    /** Whether the answers so far show this field. */
+    /**
+     * Whether the answers so far show this field.
+     *
+     * @param  array<string, mixed>  $data
+     */
     public function isShown(array $data): bool
     {
         if ($this->showIf === null) {

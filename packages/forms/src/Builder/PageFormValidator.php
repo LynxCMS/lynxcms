@@ -7,6 +7,7 @@ namespace LynxCms\Forms\Builder;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\FormRegistry;
 use LynxCms\Forms\FormSchema;
 
@@ -97,7 +98,7 @@ final readonly class PageFormValidator
     {
         $errors = [];
         $name = PageFormCompiler::nameOf($block);
-        $showIf = trim((string) ($block['values'][FormSchema::SHOW_IF] ?? ''));
+        $showIf = trim(Value::string($block['values'][FormSchema::SHOW_IF] ?? ''));
 
         if (preg_match(self::FIELD_NAME, $name) !== 1) {
             $errors[$key.'.'.FormSchema::NAME] = "[{$name}] cannot be a field name: use lowercase letters, digits and underscores, starting with a letter.";
@@ -113,7 +114,7 @@ final readonly class PageFormValidator
             $errors[$key.'.'.FormSchema::SHOW_IF] = "There is no field [{$showIf}] before this one.";
         }
 
-        [$operator, $values] = PageFormCompiler::parseCondition((string) ($block['values'][FormSchema::SHOW_IF_VALUES] ?? ''));
+        [$operator, $values] = PageFormCompiler::parseCondition(Value::string($block['values'][FormSchema::SHOW_IF_VALUES] ?? ''));
 
         if (in_array($operator, ['<', '<=', '>', '>='], true) && ! is_numeric($values[0] ?? null)) {
             $errors[$key.'.'.FormSchema::SHOW_IF_VALUES] = 'Compare with a number, e.g. ">= 18".';

@@ -68,8 +68,9 @@ final readonly class NotifyRecipients
             return;
         }
 
+        $confirmation = new SubmissionConfirmation($submission, $text, $form->label());
         $locale = $submission->language()?->appLocale();
-        Notification::route('mail', $email)->notify(new SubmissionConfirmation($submission, $text, $form->label())->locale($locale));
+        Notification::route('mail', $email)->notify($locale === null ? $confirmation : $confirmation->locale($locale));
     }
 
     /**

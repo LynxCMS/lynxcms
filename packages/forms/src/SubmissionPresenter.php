@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms;
 
-use Illuminate\Database\Eloquent\Collection;
 use LynxCms\Core\Support\LocalizedText;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
 
 /**
@@ -21,8 +21,9 @@ final class SubmissionPresenter
     {
         $parts = [];
 
-        foreach ($submission->fields as $field) {
-            $value = $submission->data[(string) ($field['name'] ?? '')] ?? null;
+        foreach (Value::list($submission->fields) as $field) {
+            $field = Value::map($field);
+            $value = $submission->data[Value::string($field['name'] ?? '')] ?? null;
 
             if (in_array($field['type'] ?? '', ['text', 'email', 'tel'], true) && is_string($value) && $value !== '') {
                 $parts[] = $value;
@@ -37,7 +38,11 @@ final class SubmissionPresenter
      */
     public function lines(Submission $submission, ?string $language = null): array
     {
-        $files = array_map(fn (Collection $group): array => $group->pluck('name')->map(strval(...))->all(), $submission->files->groupBy('field')->all());
+        $files = [];
+
+        foreach ($submission->files->groupBy('field') as $field => $group) {
+            $files[(string) $field] = Value::strings($group->pluck('name')->all());
+        }
 
         return $this->linesFor($submission->fields, $submission->data, $files, $language);
     }
@@ -55,7 +60,7 @@ final class SubmissionPresenter
         $lines = [];
 
         foreach ($fields as $field) {
-            $name = (string) ($field['name'] ?? '');
+            $name = Value::string($field['name'] ?? '');
             $value = ($field['type'] ?? '') === 'file'
                 ? implode(', ', $files[$name] ?? [])
                 : $this->text($field, $data[$name] ?? null, $language);
@@ -78,9 +83,9 @@ final class SubmissionPresenter
         }
 
         return match ($field['type'] ?? '') {
-            'checkbox' => $value ? __('lynx-forms::forms.yes') : __('lynx-forms::forms.no'),
+            'checkbox' => Value::string($value ? __('lynx-forms::forms.yes') : __('lynx-forms::forms.no')),
             'select', 'radio', 'checkboxes' => implode(', ', array_map(fn (mixed $option): string => $this->option($field, $option, $language), (array) $value)),
-            'group' => implode('; ', array_map(fn (mixed $row): string => $this->row($field, (array) $row, $language), (array) $value)),
+            'group' => implode('; ', array_map(fn (mixed $row): string => $this->row($field, Value::map($row), $language), (array) $value)),
             default => is_scalar($value) ? (string) $value : null,
         };
     }
@@ -90,9 +95,9 @@ final class SubmissionPresenter
      */
     private function option(array $field, mixed $option, ?string $language): string
     {
-        $label = ((array) ($field['options'] ?? []))[(string) $option] ?? null;
+        $label = Value::map($field['options'] ?? [])[Value::string($option)] ?? null;
 
-        return $label === null ? (string) $option : LocalizedText::from($label)->in($language);
+        return $label === null ? Value::string($option) : LocalizedText::from($label)->in($language);
     }
 
     /**
@@ -103,8 +108,9 @@ final class SubmissionPresenter
     {
         $parts = [];
 
-        foreach ((array) ($group['fields'] ?? []) as $field) {
-            $text = $this->text((array) $field, $row[(string) ($field['name'] ?? '')] ?? null, $language);
+        foreach (Value::list($group['fields'] ?? []) as $field) {
+            $field = Value::map($field);
+            $text = $this->text($field, $row[Value::string($field['name'] ?? '')] ?? null, $language);
 
             if ($text !== null) {
                 $parts[] = $text;

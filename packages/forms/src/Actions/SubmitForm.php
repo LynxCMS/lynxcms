@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use LogicException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
@@ -89,7 +90,7 @@ final class SubmitForm extends Action
         $key = (string) $input->string('form');
         $form = $this->forms->get($key) ?? throw ValidationException::withMessages(['form' => "There is no form [{$key}]."]);
         $language = $input->string('language') !== null ? $this->languages->get($input->string('language')) : $this->context->current();
-        $data = $input->array('data');
+        $data = Value::map($input->array('data'));
 
         lynx()->language((string) $language->code, fn () => $this->validator->make($form, $data)->validate());
 
@@ -111,7 +112,7 @@ final class SubmitForm extends Action
      */
     private function storeOnce(Form $form, array $data, Language $language, Input $input, Actor $actor): Submission
     {
-        return Cache::lock("lynx-forms:once:{$form->key()}:{$actor->id}", 10)->block(5, function () use ($form, $data, $language, $input, $actor): Submission {
+        $submission = Cache::lock("lynx-forms:once:{$form->key()}:{$actor->id}", 10)->block(5, function () use ($form, $data, $language, $input, $actor): Submission {
             $refusal = OncePerUser::refusal($form, $actor);
 
             if ($refusal !== null) {
@@ -120,6 +121,8 @@ final class SubmitForm extends Action
 
             return $this->store($form, $data, $language, $input, $actor);
         });
+
+        return $submission instanceof Submission ? $submission : throw new LogicException('The once-per-user lock returned no submission.');
     }
 
     /**
