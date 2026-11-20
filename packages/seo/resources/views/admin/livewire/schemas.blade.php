@@ -27,7 +27,7 @@
                 @endforelse
             </x-lynx-admin::ui.table-body>
         </x-lynx-admin::ui.table>
-        @error('mapping') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('mapping') <p data-error-for="mapping" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         <x-lynx-admin::ui.button wire:click="create">{{ __('lynx-seo::admin.schemas.map') }}</x-lynx-admin::ui.button>
     @else
         <form wire:submit="save" class="bg-card grid max-w-3xl gap-4 rounded-xl border p-5">

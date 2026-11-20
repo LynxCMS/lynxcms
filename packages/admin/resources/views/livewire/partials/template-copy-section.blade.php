@@ -38,13 +38,13 @@
                         <div class="grid gap-1 text-sm">
                             <label for="copy-section-prefix" class="font-medium">{{ __('lynx-admin::templates.copy.prefix') }}</label>
                             <input id="copy-section-prefix" type="text" class="blat-input w-48 font-mono" wire:model.live.debounce.400ms="copyPrefix" autocomplete="off" @error('prefix') aria-invalid="true" @enderror>
-                            @error('prefix') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                            @error('prefix') <p data-error-for="prefix" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                         </div>
                     @endif
                 </div>
 
-                @error('to') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-                @error('section') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('to') <p data-error-for="to" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('section') <p data-error-for="section" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
         @endif
 

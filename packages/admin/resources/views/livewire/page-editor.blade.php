@@ -1,6 +1,6 @@
 <div class="space-y-6" x-data="lynxEditorGuard" x-on:keydown.window.cmd.s="save($event)" x-on:keydown.window.ctrl.s="save($event)"
      @if (app(\LynxCms\Admin\AdminAccess::class)->allows('pages.edit', $page)) wire:poll.60s="renewEditLock" @endif>
-    <x-lynx-admin::ui.breadcrumb>
+    <x-lynx-admin::ui.breadcrumb :aria-label="__('lynx-admin::shell.ui.parent_pages')">
         <x-lynx-admin::ui.breadcrumb-list>
             <x-lynx-admin::ui.breadcrumb-item><x-lynx-admin::ui.breadcrumb-link :href="route('lynx.admin.pages')">{{ __('lynx-admin::pages.title') }}</x-lynx-admin::ui.breadcrumb-link></x-lynx-admin::ui.breadcrumb-item>
             @foreach ($ancestors as $ancestor)
@@ -17,7 +17,7 @@
     @endif
 
     @foreach (['page', 'id'] as $key)
-        @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
 
     @error('conflict')

@@ -10,7 +10,7 @@
                 <label for="new-subfield-name" class="font-medium">{{ __('lynx-admin::fields.create.name') }}</label>
                 <input id="new-subfield-name" type="text" class="blat-input font-mono" wire:model="newSubfield.name" autocomplete="off" @error('newSubfield.name') aria-invalid="true" @enderror>
                 <p class="text-muted-foreground">{!! __('lynx-admin::fields.create.name_help', ['example' => '<code>caption</code>', 'code' => '<code>$block->caption</code>']) !!}</p>
-                @error('newSubfield.name') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('newSubfield.name') <p data-error-for="newSubfield.name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1 text-sm">
                 <label for="new-subfield-type" class="font-medium">{{ __('lynx-admin::fields.create.holds') }}</label>
@@ -20,12 +20,12 @@
                     @endforeach
                 </select>
                 <p class="text-muted-foreground">{{ app(\LynxCms\Admin\Editor\FieldKinds::class)->for($newSubfield['type'])['description'] }}</p>
-                @error('newSubfield.type') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('newSubfield.type') <p data-error-for="newSubfield.type" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1 text-sm">
                 <label for="new-subfield-label" class="font-medium">{{ __('lynx-admin::fields.create.label') }}</label>
                 <x-lynx-admin::localized-input id="new-subfield-label" model="newSubfield.label" :placeholder="__('lynx-admin::fields.create.label_placeholder')" />
-                @error('newSubfield.label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('newSubfield.label') <p data-error-for="newSubfield.label" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
             </div>
             @if (lynx()->languages->isMultilingual() && ($types[$newSubfield['type']]['translatable'] ?? false))
                 <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" type="checkbox" wire:model="newSubfield.translatable"> {{ __('lynx-admin::fields.create.translatable') }}</label>

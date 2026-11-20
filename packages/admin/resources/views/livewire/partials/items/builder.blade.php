@@ -4,7 +4,7 @@
     listed, so each list can also create one on the spot. How it looks is on the Preview tab.
 --}}
 <div class="grid max-w-4xl gap-3">
-    @error($type === 'matrix' ? 'settings.types' : 'settings.fields') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error($type === 'matrix' ? 'settings.types' : 'settings.fields') <p data-error-for="{{ $type === 'matrix' ? 'settings.types' : 'settings.fields' }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     @if ($type === 'matrix')
         @include('lynx-admin::livewire.partials.items.types')
     @else
@@ -14,7 +14,7 @@
             <input id="setting-item-header" type="text" class="blat-input max-w-md font-mono" wire:model="settings.item_label" autocomplete="off"
                    placeholder="{{ isset($itemFields[0]) ? '{'.$itemFields[0]['name'].'}' : '{field}' }}">
             <p class="lynx-field-help">{{ __('lynx-admin::fields.builder.closed_item_help') }}</p>
-            @error('settings.item_label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('settings.item_label') <p data-error-for="settings.item_label" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
     @endif
 </div>

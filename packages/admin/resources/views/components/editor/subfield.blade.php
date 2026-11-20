@@ -45,8 +45,8 @@
     @if ($subfield->notes())
         <p class="text-muted-foreground text-xs">{{ $subfield->notes() }}</p>
     @endif
-    @error($errorKey) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error($errorKey) <p data-error-for="{{ $errorKey }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     @foreach ($codes as $code)
-        @error($errorKey.'.'.$code) <p role="alert" class="text-destructive text-sm">{{ strtoupper($code) }}: {{ $message }}</p> @enderror
+        @error($errorKey.'.'.$code) <p data-error-for="{{ $errorKey.'.'.$code }}" role="alert" class="text-destructive text-sm">{{ strtoupper($code) }}: {{ $message }}</p> @enderror
     @endforeach
 </div>

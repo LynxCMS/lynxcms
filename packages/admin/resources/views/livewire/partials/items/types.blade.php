@@ -41,7 +41,7 @@
                     <div class="grid gap-1.5">
                         <label for="type-{{ $blockType['key'] }}-label" class="text-sm font-medium">{{ __('lynx-admin::fields.types.editors_see') }}</label>
                         <x-lynx-admin::localized-input id="type-{{ $blockType['key'] }}-label" model="itemTypes.{{ $index }}.label" :placeholder="__('lynx-admin::fields.types.editors_see_placeholder')" />
-                        @error("settings.types.{$index}.label") <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                        @error("settings.types.{$index}.label") <p data-error-for="{{ "settings.types.{$index}.label" }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                         @if ($saved !== null)
                             <p class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm"><x-lucide-lock class="size-3.5" aria-hidden="true" /><span class="font-mono">{{ $saved }}</span> {{ __('lynx-admin::fields.types.renders_with') }}
                                 <code class="text-xs break-all">{{ str_replace('.', '/', (string) config('lynx.views_path')) }}/fields/{{ $field ?? $name }}/{{ $saved }}.blade.php</code></p>
@@ -50,7 +50,7 @@
                             <input id="type-{{ $blockType['key'] }}-slug" type="text" class="blat-input max-w-md font-mono" wire:model="itemTypes.{{ $index }}.slug" placeholder="{{ __('lynx-admin::fields.types.in_code_placeholder') }}" autocomplete="off"
                                    @error("settings.types.{$index}.slug") aria-invalid="true" @enderror>
                             <p class="lynx-field-help">{{ __('lynx-admin::fields.types.in_code_help') }}</p>
-                            @error("settings.types.{$index}.slug") <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                            @error("settings.types.{$index}.slug") <p data-error-for="{{ "settings.types.{$index}.slug" }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                         @endif
                     </div>
                     @include('lynx-admin::livewire.partials.items.subfields', ['list' => "types.{$index}", 'model' => "itemTypes.{$index}.fields", 'rows' => $blockType['fields'], 'flush' => true])

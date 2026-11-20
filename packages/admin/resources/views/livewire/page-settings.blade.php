@@ -1,7 +1,7 @@
 <div class="space-y-6">
 
     @foreach (['conflict', 'page'] as $key)
-        @error($key) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+        @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
     @endforeach
 
     {{-- Names and languages; a page without a URL has one name, which templates find it by --}}
@@ -18,7 +18,7 @@
                 <label for="name-{{ $defaultCode }}" class="sr-only">{{ __('lynx-admin::settings.name_in_templates') }}</label>
                 <input id="name-{{ $defaultCode }}" type="text" class="blat-input font-mono" wire:model.live.debounce.300ms="names.{{ $defaultCode }}" x-on:blur="$el.value.trim() === '' && $wire.suggestName(@js($defaultCode))" @error('names.'.$defaultCode) aria-invalid="true" @enderror>
                 <p class="lynx-field-help">{{ __($isMultilingual ? 'lynx-admin::settings.name_help_languages' : 'lynx-admin::settings.name_help') }}</p>
-                @error('names.'.$defaultCode) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                @error('names.'.$defaultCode) <p data-error-for="{{ 'names.'.$defaultCode }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 @if ($can['edit'])
                     <x-lynx-admin::ui.button type="button" class="mt-2 justify-self-start" wire:click="saveNames">{{ __('lynx-admin::settings.save_name') }}</x-lynx-admin::ui.button>
                 @endif
@@ -49,7 +49,7 @@
                             @elseif (! ($active[$code] ?? true))
                                 <p class="lynx-field-help">{{ __('lynx-admin::settings.not_published_in', ['language' => $language->name]) }}</p>
                             @endif
-                            @error('names.'.$code) <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                            @error('names.'.$code) <p data-error-for="{{ 'names.'.$code }}" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 @endforeach
@@ -89,7 +89,7 @@
                     </label>
                 @endforeach
             </div>
-            @error('add') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
+            @error('add') <p data-error-for="add" role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
         @endif
     </section>
 
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             @endif
-            @error('template') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+            @error('template') <p data-error-for="template" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
         @endif
     </section>
 
@@ -146,7 +146,7 @@
             <div class="space-y-3">
                 <livewire:lynx-admin.page-picker wire:model="parent" :multiple="false" :templates="$parentTemplates" :exclude="array_filter([(int) $page->parentId])" :exclude-below="$moveExcludedBelow" :placeholder="__('lynx-admin::settings.parent.search')" :key="'parent-picker-'.$page->id.'-'.$page->revision" />
                 <x-lynx-admin::ui.button variant="outline" type="button" wire:click="move">{{ __('lynx-admin::settings.parent.move') }}</x-lynx-admin::ui.button>
-                @error('parent') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('parent') <p data-error-for="parent" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
             @endif
         @endif
@@ -162,7 +162,7 @@
                 @endif
                 <x-lynx-admin::ui.button variant="outline" type="button" wire:click="duplicate">{{ __('lynx-admin::settings.duplicate.button') }}</x-lynx-admin::ui.button>
             </div>
-            @error('page') <p role="alert" class="text-destructive mt-2 text-sm">{{ $message }}</p> @enderror
+            @error('page') <p data-error-for="page" role="alert" class="text-destructive mt-2 text-sm">{{ $message }}</p> @enderror
         </section>
     @endif
 

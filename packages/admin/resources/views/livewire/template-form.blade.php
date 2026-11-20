@@ -11,12 +11,12 @@
                 <label for="template-name" class="text-sm font-medium">{{ __('lynx-admin::templates.form.name') }}</label>
                 <input id="template-name" type="text" class="blat-input max-w-sm" wire:model="name" autocomplete="off" @error('name') aria-invalid="true" @enderror>
                 <p class="lynx-field-help">{!! __('lynx-admin::templates.form.name_help', ['path' => '<code>templates/'.e($name !== '' ? $name : 'name').'.blade.php</code>']) !!}</p>
-                @error('name') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('name') <p data-error-for="name" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1">
                 <label for="template-label" class="text-sm font-medium">{{ __('lynx-admin::templates.form.label') }}</label>
                 <div class="max-w-sm"><x-lynx-admin::localized-input id="template-label" model="label" :placeholder="__('lynx-admin::templates.form.label_placeholder')" /></div>
-                @error('label') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('label') <p data-error-for="label" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
             <div class="grid gap-1">
                 <label for="template-from" class="text-sm font-medium">{{ __('lynx-admin::templates.form.copy_from') }}</label>
@@ -26,7 +26,7 @@
                         <option value="{{ $option }}">{{ $option }}</option>
                     @endforeach
                 </select>
-                @error('from') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+                @error('from') <p data-error-for="from" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
             </div>
             <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-admin::templates.form.create') }}</x-lynx-admin::ui.button></div>
         </form>
@@ -37,7 +37,7 @@
                 <div class="w-72"><x-lynx-admin::localized-input id="template-label" model="label" /></div>
             </div>
             @if ($canEdit) <x-lynx-admin::ui.button variant="outline" type="submit">{{ __('lynx-admin::templates.form.save_label') }}</x-lynx-admin::ui.button> @endif
-            @error('label') <p role="alert" class="text-destructive mt-1 text-sm w-full">{{ $message }}</p> @enderror
+            @error('label') <p data-error-for="label" role="alert" class="text-destructive mt-1 text-sm w-full">{{ $message }}</p> @enderror
         </form>
 
         <section class="bg-card text-card-foreground rounded-xl border shadow-sm" aria-labelledby="template-fields">
@@ -46,7 +46,7 @@
                 @if ($canEdit) <p class="text-muted-foreground text-sm">{{ __('lynx-admin::templates.form.drag_help') }}</p> @endif
             </div>
 
-            @error('fields') <p role="alert" class="text-destructive mt-1 text-sm px-5 pt-4">{{ $message }}</p> @enderror
+            @error('fields') <p data-error-for="fields" role="alert" class="text-destructive mt-1 text-sm px-5 pt-4">{{ $message }}</p> @enderror
 
             @include('lynx-admin::livewire.partials.template-layout')
             @if ($canEdit) @include('lynx-admin::livewire.partials.template-copy-section') @endif

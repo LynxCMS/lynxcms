@@ -35,7 +35,7 @@ jobs:
           fi
           # The sign-in flows' code, screens, wording and dependencies, and the browser tests
           # themselves: only these run the browser job (ADR-0137).
-          signin=$(echo "$changed" | grep -E '^packages/admin/src/(Auth/|Livewire/AccountSecurity\.php|Http/(InvitationController|NewPasswordController|RequireOwnPassword|RequireTwoFactor)\.php)|^packages/admin/resources/views/(auth/|account/|livewire/account-security\.blade\.php|components/(auth-layout|password-rules)\.blade\.php)|^packages/admin/resources/js/(admin|blatui-core|passkeys)\.js|^packages/admin/lang/[a-z]+/(auth|account)\.php|^(packages/admin/)?composer\.json$|^package(-lock)?\.json$|^phpunit\.xml\.dist$|^tests/Browser/|^\.github/workflows/tests\.yml$' || true)
+          signin=$(echo "$changed" | grep -E '^packages/admin/src/(Auth/|Livewire/AccountSecurity\.php|Http/(InvitationController|NewPasswordController|RequireOwnPassword|RequireTwoFactor)\.php)|^packages/admin/resources/views/(auth/|account/|livewire/account-security\.blade\.php|components/(auth-layout|password-rules|notifications)\.blade\.php)|^packages/admin/resources/js/(admin|blatui-core|passkeys|field-errors|notices)\.js|^packages/admin/lang/[a-z]+/(auth|account)\.php|^(packages/admin/)?composer\.json$|^package(-lock)?\.json$|^phpunit\.xml\.dist$|^tests/Browser/|^\.github/workflows/tests\.yml$' || true)
           echo "signin=$([ -n "$signin" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           # Docs and other workflows (starters, split, docs site) need no test run; this one does.
           code=$(echo "$changed" | grep -vE '^docs/(\.vitepress/|public/|package(-lock)?\.json$|wrangler[^/]*$)' | grep -vE '^docs/.+\.md$' | grep -vE '^\.github/' || true)
@@ -194,7 +194,13 @@ jobs:
             packages/admin/package-lock.json
       - run: npm ci && npm run build
         working-directory: packages/admin
-      - run: npm ci && npx playwright install --with-deps chromium
+      # Chromium kept between runs, by Playwright's version. GitHub's Ubuntu image has the
+      # libraries it needs, so no apt install (--with-deps), which can take minutes.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci && npx playwright install chromium
       - run: composer test:browser -- --ci
       - uses: actions/upload-artifact@v4
         if: failure()

@@ -3,7 +3,7 @@
 <div class="grid max-w-3xl gap-6" data-menu-settings>
     <form wire:submit="saveSettings" class="{{ $card }}" aria-labelledby="settings-title">
         <h2 id="settings-title" class="text-base font-semibold">{{ __('lynx-menus::admin.settings.heading') }}</h2>
-        @error('page') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('page') <p data-error-for="page" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 
         <div class="grid gap-2">
             <span id="settings-title-input-label" class="blat-label">{{ __('lynx-menus::admin.title_label') }}</span>

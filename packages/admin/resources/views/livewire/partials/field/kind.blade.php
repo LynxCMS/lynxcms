@@ -22,7 +22,7 @@
             @endforeach
             <x-lynx-admin::ui.button variant="ghost" size="sm" type="button" class="justify-self-start" x-show="! open" x-on:click="open = true">{{ __('lynx-admin::fields.kind.change') }}</x-lynx-admin::ui.button>
         </div>
-        @error('type') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('type') <p data-error-for="type" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     @else
         <p class="flex items-center gap-3 text-sm" data-field-kind="{{ $type }}">
             <span class="bg-muted text-muted-foreground grid size-8 place-items-center rounded-md"><x-dynamic-component :component="'lucide-'.$kind['icon']" class="size-4" aria-hidden="true" /></span>

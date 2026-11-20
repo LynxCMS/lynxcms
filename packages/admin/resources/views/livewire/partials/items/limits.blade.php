@@ -10,7 +10,7 @@
             <input id="setting-limit-max" type="number" min="0" class="blat-input w-20" wire:model="settings.max" placeholder="{{ __('lynx-admin::fields.limits.any') }}" @error('settings.max') aria-invalid="true" @enderror>
             <span>{{ __('lynx-admin::fields.limits.'.Str::plural($noun)) }}</span>
         </p>
-        @foreach (['settings.min', 'settings.max'] as $key) @error($key) <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror @endforeach
+        @foreach (['settings.min', 'settings.max'] as $key) @error($key) <p data-error-for="{{ $key }}" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror @endforeach
         <p class="flex flex-wrap items-center gap-2 text-sm">
             <label for="setting-limit-depth">{{ __('lynx-admin::fields.limits.indent_'.$noun) }}</label>
             <select id="setting-limit-depth" class="blat-select w-auto" wire:model="settings.max_depth">
@@ -21,7 +21,7 @@
             </select>
             <span>{{ __('lynx-admin::fields.limits.under') }}</span>
         </p>
-        @error('settings.max_depth') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('settings.max_depth') <p data-error-for="settings.max_depth" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     </section>
 
     <section class="grid gap-5 border-t pt-6" aria-labelledby="limits-display">
@@ -29,7 +29,7 @@
         <div class="grid gap-1.5">
             <label for="setting-limit-add" class="text-sm font-medium">{{ __('lynx-admin::fields.limits.add_text') }}</label>
             <x-lynx-admin::localized-input id="setting-limit-add" model="addLabel" :placeholder="__('lynx-admin::fields.limits.add')" />
-            @error('settings.add_label') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('settings.add_label') <p data-error-for="settings.add_label" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
         @if ($type === 'matrix')
             <div class="grid gap-1.5">
@@ -46,7 +46,7 @@
                     <span class="grid gap-0.5"><span class="font-medium">{{ $title }}</span><span class="text-muted-foreground">{{ $hint }}</span></span>
                 </label>
             @endforeach
-            @error('settings.collapse') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            @error('settings.collapse') <p data-error-for="settings.collapse" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
         </div>
     </section>
 </div>

@@ -16,7 +16,7 @@
             <span class="font-medium">{{ __('lynx-sitemap::admin.per_file') }}</span>
             <span class="text-muted-foreground">{{ __('lynx-sitemap::admin.per_file_help', ['default' => number_format($configPerFile), 'max' => number_format($max)]) }}</span>
             <input type="number" min="1" max="{{ $max }}" class="blat-input w-40" wire:model="perFile" placeholder="{{ $configPerFile }}" @error('perFile') aria-invalid="true" @enderror>
-            @error('perFile') <span role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
+            @error('perFile') <span data-error-for="perFile" role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </label>
 
         <fieldset class="grid gap-1.5 text-sm">
@@ -31,7 +31,7 @@
             @foreach ($templates as $name => $label)
                 <label class="flex items-center gap-2"><input type="checkbox" class="blat-checkbox" value="{{ $name }}" wire:model="exclude"> {{ $label }} <span class="text-muted-foreground font-mono text-xs">{{ $name }}</span></label>
             @endforeach
-            @error('exclude.*') <span role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
+            @error('exclude.*') <span data-error-for="exclude.*" role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </fieldset>
 
         <div class="flex flex-wrap items-center gap-2">

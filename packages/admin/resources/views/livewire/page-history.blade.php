@@ -24,8 +24,8 @@
         @empty
             <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.redirects.empty') }}</p>
         @endforelse
-        @error('path') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
-        @error('page') <p role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
+        @error('path') <p data-error-for="path" role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
+        @error('page') <p data-error-for="page" role="alert" class="text-destructive text-sm mt-2">{{ $message }}</p> @enderror
     </section>
     @endif
 

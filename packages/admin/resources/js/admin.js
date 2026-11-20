@@ -11,6 +11,8 @@ import { lynxEditorSection } from './editor-section.js'
 import { registerBlatUI } from './blatui-core.js'
 import { registerShortcuts } from './shortcuts.js'
 import { lynxPasskeyRegister, lynxPasskeyVerify } from './passkeys.js'
+import { keepFieldErrorsLinked } from './field-errors.js'
+import { lynxNotices } from './notices.js'
 import { TOOLS, TOOL_EXTENSIONS } from './rich-text-tools.js'
 
 /** Block tags that start a new line in the HTML view, so the markup reads one block per line. */
@@ -279,6 +281,7 @@ function configuredTheme() {
 
 // Once per page load: the listener stays on the document across Livewire's page changes.
 registerShortcuts()
+keepFieldErrorsLinked()
 
 document.addEventListener('alpine:init', () => {
     const configured = configuredTheme()
@@ -291,6 +294,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('lynxEditorSection', lynxEditorSection)
     window.Alpine.data('lynxPasskeyRegister', lynxPasskeyRegister)
     window.Alpine.data('lynxPasskeyVerify', lynxPasskeyVerify)
+    window.Alpine.data('lynxNotices', lynxNotices)
 })
 
 /** A field name made from a label, as the New field screen suggests it: "Opening hours" becomes "opening_hours". */

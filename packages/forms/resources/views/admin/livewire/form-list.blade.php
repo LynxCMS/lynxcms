@@ -4,12 +4,12 @@
             <label class="grid gap-1 text-sm">
                 <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.title_label') }}</span>
                 <input type="text" class="blat-input w-56" wire:model="label" placeholder="{{ __('lynx-forms::admin.list.title_placeholder') }}">
-                @error('label') <span role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+                @error('label') <span data-error-for="label" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
             </label>
             <label class="grid gap-1 text-sm">
                 <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.name_label') }}</span>
                 <input type="text" class="blat-input w-48 font-mono" wire:model="name" placeholder="{{ __('lynx-forms::admin.list.name_placeholder') }}">
-                @error('name') <span role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+                @error('name') <span data-error-for="name" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
             </label>
             <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
         </form>

@@ -7,7 +7,8 @@
     <a href="#lynx-main" class="bg-background text-foreground sr-only z-50 rounded-md border px-3 py-2 text-sm font-medium shadow-sm focus:not-sr-only focus:fixed focus:start-4 focus:top-4">{{ __('lynx-admin::shell.ui.skip_to_content') }}</a>
     {{-- Open or collapsed as the person left it, from the first paint: no flash between pages. --}}
     <x-lynx-admin::ui.sidebar-provider :default-open="request()->cookie(\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE) !== 'collapsed'" :cookie="\LynxCms\Admin\AdminServiceProvider::SIDEBAR_COOKIE">
-        <x-lynx-admin::ui.sidebar collapsible="icon">
+        {{-- One navigation landmark for the whole sidebar: the brand, the menu and the account menu. --}}
+        <x-lynx-admin::ui.sidebar collapsible="icon" role="navigation" aria-label="{{ __('lynx-admin::shell.nav.label') }}">
             <x-lynx-admin::ui.sidebar-header>
                 <a href="{{ route('lynx.admin.pages') }}" class="flex items-center gap-2 rounded-md p-1.5 font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
                     <x-lynx-admin::brand />
@@ -15,11 +16,9 @@
             </x-lynx-admin::ui.sidebar-header>
             <x-lynx-admin::ui.sidebar-content>
                 <x-lynx-admin::ui.sidebar-group>
-                    <nav aria-label="{{ __('lynx-admin::shell.nav.label') }}">
-                        <x-lynx-admin::ui.sidebar-menu>
-                            <x-lynx-admin::navigation />
-                        </x-lynx-admin::ui.sidebar-menu>
-                    </nav>
+                    <x-lynx-admin::ui.sidebar-menu>
+                        <x-lynx-admin::navigation />
+                    </x-lynx-admin::ui.sidebar-menu>
                 </x-lynx-admin::ui.sidebar-group>
             </x-lynx-admin::ui.sidebar-content>
             @auth

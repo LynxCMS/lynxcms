@@ -35,7 +35,7 @@
         <label class="mt-4 grid max-w-xs gap-1 text-sm" data-schedule-draft>
             <span class="text-muted-foreground">{{ __('lynx-admin::settings.schedule.publish_draft_at') }}</span>
             <input type="datetime-local" class="blat-input" wire:model="draftAt" @disabled(! $canPublishDraft) @error('draftAt') aria-invalid="true" @enderror>
-            @error('draftAt') <span role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
+            @error('draftAt') <span data-error-for="draftAt" role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </label>
     @endif
 

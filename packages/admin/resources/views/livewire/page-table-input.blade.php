@@ -48,7 +48,7 @@
             <input type="text" class="blat-input w-64" wire:model="title" wire:keydown.enter.prevent="create" placeholder="{{ __('lynx-admin::inputs.page_table.title') }}" aria-label="{{ __('lynx-admin::inputs.page_table.title') }}">
             <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="create">{{ __('lynx-admin::inputs.page_table.add') }}</x-lynx-admin::ui.button>
         </div>
-        @error('title') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+        @error('title') <p data-error-for="title" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
     @elseif (! $disabled)
         <p class="text-muted-foreground text-sm">{{ __('lynx-admin::inputs.page_table.save_first') }}</p>
     @endif

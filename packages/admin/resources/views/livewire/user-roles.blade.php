@@ -1,6 +1,6 @@
 <div class="space-y-4">
-    @error('roles') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
-    @error('user') <p role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+    @error('roles') <p data-error-for="roles" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
+    @error('user') <p data-error-for="user" role="alert" class="text-destructive mt-1 text-sm">{{ $message }}</p> @enderror
 
     @if ($issued)
         <div role="status" class="bg-card text-card-foreground grid max-w-2xl gap-3 rounded-xl border p-5 shadow-sm" data-temporary-password x-data="{ copied: false }">
@@ -95,12 +95,12 @@
                 <div class="grid gap-1">
                     <label for="invite-name" class="text-sm font-medium">{{ __('lynx-admin::users.invite.name') }}</label>
                     <input id="invite-name" type="text" class="blat-input" wire:model="invite.name" autocomplete="off" @error('invite.name') aria-invalid="true" @enderror>
-                    @error('invite.name') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('invite.name') <p data-error-for="invite.name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid gap-1">
                     <label for="invite-email" class="text-sm font-medium">{{ __('lynx-admin::users.invite.email') }}</label>
                     <input id="invite-email" type="email" class="blat-input" wire:model="invite.email" autocomplete="off" @error('invite.email') aria-invalid="true" @enderror>
-                    @error('invite.email') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('invite.email') <p data-error-for="invite.email" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </div>
             </div>
             @if ($roleNames !== [])
@@ -111,7 +111,7 @@
                             <label class="flex items-center gap-1.5"><input class="blat-checkbox" id="invite-role-{{ $name }}" type="checkbox" value="{{ $name }}" wire:model="invite.roles"> {{ $label }}</label>
                         @endforeach
                     </div>
-                    @error('invite.roles') <p role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                    @error('invite.roles') <p data-error-for="invite.roles" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
                 </fieldset>
             @endif
             @if ($sendsMail)

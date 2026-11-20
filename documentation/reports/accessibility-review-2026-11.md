@@ -12,7 +12,7 @@ Screens covered: home, pages (tree, new page under a parent, page editor), field
 
 ## Result
 
-Before: 6 WCAG rules failing, on every screen. After: none, in light and dark mode; two best-practice findings stay open (below).
+Before: 6 WCAG rules failing, on every screen. After: none, in light and dark mode; on 2026-11-20 the best-practice findings and the other open items were fixed too (below).
 
 | Finding | WCAG | Where | State |
 |---|---|---|---|
@@ -27,18 +27,20 @@ Before: 6 WCAG rules failing, on every screen. After: none, in light and dark mo
 | Two `<main>` landmarks: BlatUI's sidebar inset and the layout's own | 1.3.1 | Every screen | Fixed: the inset is a `<div>` |
 | Notices were added as new live regions, which screen readers may not announce | 4.1.3 | Every screen | Fixed: the notice area is a live region from the start |
 | Search results were shown without telling screen readers | 4.1.3 | Every screen | Fixed: the count is announced |
-| Error messages are not tied to their fields with `aria-describedby` | 1.3.1, 3.3.1 | Every form, about 130 messages | Open |
-| Notices disappear after 4 to 9 seconds | 2.2.1 | Every screen | Open, low |
-| The sidebar's brand and account menu sit outside any landmark (axe best practice `region`) | none | Every screen | Open, moderate |
-| Two navigations named "Breadcrumb" (axe best practice `landmark-unique`) | none | Page editor, new page | Open, moderate |
+| Error messages are not tied to their fields with `aria-describedby` | 1.3.1, 3.3.1 | Every form, about 130 messages | Fixed (ADR-0138): admin messages carry `data-error-for` and the admin ties them in the browser; public form fields point to their message in the HTML |
+| Notices disappear after 4 to 9 seconds | 2.2.1 | Every screen | Fixed: they wait while the pointer or the focus is on them |
+| The sidebar's brand and account menu sit outside any landmark (axe best practice `region`) | none | Every screen | Fixed: the whole sidebar is the navigation landmark |
+| Two navigations named "Breadcrumb" (axe best practice `landmark-unique`) | none | Page editor, new page | Fixed: the second one is "Parent pages" |
 
 One reported failure was not real: the brand name on the sign-in screens in dark mode. The page is dark (`color-scheme: dark`), but its background is translucent, and axe assumed white behind it. The admin now gives `<html>` an opaque background, so checkers measure what people see.
 
 ## Open
 
-* **Errors tied to their fields.** Fields with an error have `aria-invalid`, and the message shows next to the field with `role="alert"`, so it is announced when it appears. But moving back to the field later, a screen reader says "invalid" without the reason. Each message needs an id and its field an `aria-describedby`; a shared error component would do it for all of them.
-* **Landmarks.** The sidebar's brand and account menu belong in a landmark, which needs BlatUI's sidebar markup changed; and the page editor's second breadcrumb needs its own name.
-* **Notices that pause.** Errors stay next to their fields, so nothing is lost when a notice goes, but a notice should stay while the pointer or the focus is on it.
+* **A screen reader pass by a person.** Every finding above was fixed by reading the markup and checking it with axe and browser tests, not by listening. Someone who uses VoiceOver or NVDA daily should go through signing in, the page tree (including move mode), the page editor with its language tabs and errors, and a form in the Forms module.
+
+## Follow-up, 2026-11-20
+
+The open findings were fixed: errors tied to their fields (ADR-0138), notices that wait, the sidebar as one landmark and the second breadcrumb named. axe, with its best-practice rules as well, finds nothing on 29 admin screens in light and dark mode. Browser tests (`tests/Browser/FieldErrorsTest.php`, `NoticesTest.php`) check the error links, also after a Livewire update, and the notices' timing.
 
 ## Checked and found sound
 
