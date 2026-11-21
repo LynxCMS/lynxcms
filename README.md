@@ -157,6 +157,7 @@ composer test                          # SQLite, in parallel
 composer test:pgsql                    # PostgreSQL, a database per test process
 composer test:all                      # SQLite, PostgreSQL and a table prefix, as CI runs them
 composer check                         # Pint, Rector and PHPStan at level max
+git config core.hooksPath .githooks    # once per clone: composer check before each commit that touches PHP
 composer compat                        # what changed in @api code since the latest release that would break apps
 composer assets                        # build the admin's CSS and JS (run npm --prefix packages/admin ci once first)
 ```

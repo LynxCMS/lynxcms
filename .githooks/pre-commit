@@ -1,0 +1,14 @@
+#!/bin/sh
+# Pint, Rector and PHPStan in check mode, as CI's quality job runs them, before each commit
+# that touches PHP. Turn on once per clone: git config core.hooksPath .githooks
+# Fix with composer refactor, then composer format.
+
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -q '\.php$'; then
+    exit 0
+fi
+
+if ! composer check; then
+    echo >&2 ""
+    echo >&2 "Commit stopped: composer check failed. Run composer refactor, then composer format, and fix what PHPStan reports."
+    exit 1
+fi
