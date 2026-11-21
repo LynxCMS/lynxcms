@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Vite;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 
@@ -99,5 +100,5 @@ it('loads the built assets, not the Vite dev server, while it is running', funct
     expect($html)->toContain('src="/build/assets/app-1a2b.js"')
         ->not->toContain('5173')
         ->and(File::exists($this->dist.'/fonts-manifest.dev.json'))->toBeFalse()
-        ->and(app(Illuminate\Foundation\Vite::class)->hotFile())->toBe($this->public.'/hot');
+        ->and(app(Vite::class)->hotFile())->toBe($this->public.'/hot');
 });
