@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## 0.1.55
 
-Unreleased. Static exports that work on any host, and no more links to Vite's dev server in them. No database changes.
+Released November 21, 2026. Static exports that work on any host, and no more links to Vite's dev server in them. No database changes.
 
 - **One static export for any host.** Links, scripts, styles and images in an export start from the site's root (`/about`), so the same folder works on the live host, a preview and a local server (`php -S 127.0.0.1:8000 -t dist`). Canonical tags, alternates, meta tags, structured data and the sitemap keep the full address. The pages at old addresses send visitors on from the root too. Set `lynx-static.relative_links` to `false` for the earlier full addresses.
 - **Exports load the built assets while Vite's dev server runs.** An export made with `npm run dev` running pointed pages at the dev server on your machine, so the live site loaded no styles or scripts and the browser reported CORS errors. The export now ignores Vite's `hot` file and leaves `fonts-manifest.dev.json` out.

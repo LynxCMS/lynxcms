@@ -21,6 +21,10 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.54 to 0.1.55
+
+No database changes. Static exports now link to the site from its root (`/about`) rather than with the full address, so one export works on any host. If you serve an export from a subfolder, or need full addresses for another reason, set `LYNX_STATIC_RELATIVE_LINKS=false`.
+
 ## From 0.1.53 to 0.1.54
 
 No database changes and nothing to change in your code.
