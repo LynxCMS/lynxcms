@@ -31,7 +31,19 @@ The command reports what it wrote, the pages it left out and the pages that need
 - Everything in `public/`, copied after the pages render so the image sizes they made are included: built assets, media, icons. PHP entry points, `.htaccess` and the page cache's folder are left out, and so are the media files of pages a guest could not open: unpublished, in the trash, or kept from guests by a visibility rule. Other files your app keeps on the public disk are copied; add their folders to `exclude` if they are not for publishing. A file in `public/` wins over a route at the same address, as on the live site.
 - Scripts, styles and icons that pages load from this site through a route rather than a file in `public/`, such as Livewire's script.
 
-Links, canonical tags, alternates, the sitemap and media URLs (disks served from the app's address, such as `public`) use the static address (`--url`, `lynx-static.url`, then `app.url`). Pages render as production without debug by default, so an export made on your own machine is not marked noindex.
+Links, scripts, styles and images that point to the site start from its root (`/about`, `/build/app.css`), so one export works on any host: the live one, a preview and a server on your own machine. Canonical tags, alternates, meta tags such as Open Graph, structured data and the sitemap keep the full static address (`--url`, `lynx-static.url`, then `app.url`), as search engines and shared links need it. Set `relative_links` to `false` for full addresses everywhere, for example when the site is served from a subfolder.
+
+Pages load the built assets (`npm run build`), also while Vite's dev server runs: its `hot` file is ignored for the export, and neither it nor `fonts-manifest.dev.json` is copied.
+
+Pages render as production without debug by default, so an export made on your own machine is not marked noindex.
+
+To look at an export on your own machine, serve the folder:
+
+```bash
+php -S 127.0.0.1:8000 -t dist
+```
+
+Opening `index.html` straight from the disk does not work, as links start from the root of a web server.
 
 ## Redirects
 
@@ -148,9 +160,10 @@ The export makes the image sizes the templates ask for while it renders, so they
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `path` | `dist` in the app (`LYNX_STATIC_PATH`) | Folder the site is exported to. |
-| `url` | `null` (`LYNX_STATIC_URL`) | Address the static site is served at; `null` uses `app.url`. |
+| `url` | `null` (`LYNX_STATIC_URL`) | Address the static site is served at, for canonical tags, alternates, meta tags and the sitemap; `null` uses `app.url`. |
+| `relative_links` | `true` (`LYNX_STATIC_RELATIVE_LINKS`) | Links, scripts, styles and images from the site's root, so the export works on any host; `false` keeps full addresses. |
 | `environment` | `production` (`LYNX_STATIC_ENVIRONMENT`) | Environment pages render in, without debug; `null` keeps the app's own. |
 | `paths` | `['/sitemap.xml', '/robots.txt']` | Other addresses to export, written as the files they answer with. |
-| `exclude` | PHP entry points, `.htaccess`, `hot`, `lynx-cache` | Paths in `public/` that are not copied (patterns). |
+| `exclude` | PHP entry points, `.htaccess`, `hot`, `fonts-manifest.dev.json`, `lynx-cache` | Paths in `public/` that are not copied (patterns). |
 | `redirects.file` | `true` | Write `_redirects`. |
 | `redirects.pages` | `true` | Write a page at each old address. |

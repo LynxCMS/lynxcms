@@ -137,7 +137,7 @@ it('sends the old addresses of renamed pages on, with a redirects file and a pag
     $page = File::get($this->dist.'/a/index.html');
 
     expect(File::get($this->dist.'/_redirects'))->toContain('/a /renamed 301')
-        ->and($page)->toContain('<meta http-equiv="refresh" content="0; url=https://static.example/renamed">')
+        ->and($page)->toContain('<meta http-equiv="refresh" content="0; url=/renamed">')
         ->and($page)->toContain('<link rel="canonical" href="https://static.example/renamed">')
         ->and(File::get($this->dist.'/renamed/index.html'))->toContain('Note a');
 });
@@ -312,7 +312,7 @@ it('writes media at the static address, with the image sizes pages made while re
 
     $this->artisan('lynx:static')->assertSuccessful();
 
-    preg_match('#src="https://static\.example/storage/(lynx/[^"]+\.40x30\.jpg)"#', File::get($this->dist.'/photo/index.html'), $match);
+    preg_match('#src="/storage/(lynx/[^"]+\.40x30\.jpg)"#', File::get($this->dist.'/photo/index.html'), $match);
     expect($match)->toHaveCount(2)
         ->and(File::exists($this->dist.'/storage/'.$match[1]))->toBeTrue()
         ->and(Storage::disk('public')->url('x.jpg'))->toBe('http://localhost/storage/x.jpg');
