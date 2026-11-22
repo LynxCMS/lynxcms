@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Languages\EditorLanguage;
+use LynxCms\Core\Query\SelectorException;
 
 /*
  * What a refused save says (ADR-0141): Lynx's own messages in the editor's language, and Laravel's
@@ -82,3 +83,24 @@ it('reads an app\'s own rule messages', function (): void {
 
     expect($message)->toBe('O campo Preço deve ser um número inteiro.');
 });
+
+it('explains a selector it cannot run in the editor\'s language', function (string $selector, string $key, array $replace): void {
+    $messages = [];
+
+    foreach (['en', 'pt', 'es'] as $locale) {
+        app()->setLocale($locale);
+
+        try {
+            lynx()->pages->find($selector);
+        } catch (SelectorException $refused) {
+            $messages[$locale] = $refused->getMessage();
+        }
+    }
+
+    expect($messages)->toBe(array_map(fn (string $locale): string => __("lynx::selectors.{$key}", $replace, $locale), ['en' => 'en', 'pt' => 'pt', 'es' => 'es']))
+        ->and(array_unique($messages))->toHaveCount(3);
+})->with([
+    'an unknown field' => ['nope=1', 'unknown_field', ['field' => 'nope']],
+    'a status' => ['status=nope', 'status', ['status' => 'nope', 'statuses' => 'hidden, unpublished, locked']],
+    'a count on one value' => ['price.count>1', 'count', ['field' => 'price']],
+]);

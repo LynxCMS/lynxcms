@@ -12,6 +12,7 @@ use LynxCms\Core\Fields\Items\HasItemProperties;
 use LynxCms\Core\Fields\Items\ItemProperty;
 use LynxCms\Core\Fields\Items\Subfield;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Support\Value;
 
 /**
  * Selector clauses on what items hold beyond subfields (ADR-0049): "gallery.tags=hero" on the
@@ -60,7 +61,7 @@ final readonly class ItemPropertyCompiler
         $type = $subfield->type();
 
         if (! $type instanceof HasItemProperties) {
-            throw new SelectorException("Subfield [{$subfield->name()}] holds no items to select by.");
+            throw new SelectorException(Value::string(__('lynx::selectors.no_items', ['field' => $subfield->name()])));
         }
 
         $elements = JsonSql::elements('s.data', $subfield->name());
@@ -73,7 +74,7 @@ final readonly class ItemPropertyCompiler
         }
 
         $property = $type->itemProperties()[$name] ?? throw new SelectorException(
-            "Subfield [{$subfield->name()}] has no property [{$name}]. Use count or one of: ".implode(', ', array_keys($type->itemProperties())).'.',
+            Value::string(__('lynx::selectors.no_property', ['field' => $subfield->name(), 'property' => $name, 'properties' => implode(', ', array_keys($type->itemProperties()))])),
         );
 
         $q->whereExists(function (Builder $e) use ($elements, $enabled, $name, $property, $clause, $chain, $subfield): void {
@@ -146,7 +147,7 @@ final readonly class ItemPropertyCompiler
     private function assertListOperator(string $name, Clause $clause): void
     {
         if ($clause->operator !== '=') {
-            throw new SelectorException("[{$name}] holds a list: use = or !=.");
+            throw new SelectorException(Value::string(__('lynx::selectors.list', ['field' => $name])));
         }
     }
 }

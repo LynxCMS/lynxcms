@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Query;
 
+use LynxCms\Core\Support\Value;
+
 /**
  * Parses ProcessWire-style selectors:
  *
@@ -33,7 +35,7 @@ final class SelectorParser
         $parsed = $this->parseSelector($selector);
 
         if ($parsed->groups !== []) {
-            throw new SelectorException('This selector has OR groups: read it with SelectorParser::parseSelector().');
+            throw new SelectorException(Value::string(__('lynx::selectors.has_groups')));
         }
 
         return $parsed->clauses;
@@ -43,7 +45,7 @@ final class SelectorParser
     {
         // SQLite ends bound strings at a NUL byte, which would silently change what a value means.
         if (str_contains($selector, "\0")) {
-            throw new SelectorException('Selectors cannot contain NUL bytes.');
+            throw new SelectorException(Value::string(__('lynx::selectors.nul')));
         }
 
         $clauses = [];
@@ -92,7 +94,7 @@ final class SelectorParser
         }
 
         if (! str_ends_with($part, ')')) {
-            throw new SelectorException("Unbalanced parentheses in selector part [{$part}].");
+            throw new SelectorException(Value::string(__('lynx::selectors.parentheses', ['part' => $part])));
         }
 
         $open = strpos($part, '(');
@@ -111,26 +113,26 @@ final class SelectorParser
 
         foreach ($this->parts($inner) as $part) {
             if ($this->group($part) !== null) {
-                throw new SelectorException("OR groups cannot hold other groups: [{$part}].");
+                throw new SelectorException(Value::string(__('lynx::selectors.nested_groups', ['part' => $part])));
             }
 
             $clause = $this->clause($part);
             $isLanguage = in_array($clause->field, ['language', 'lang'], true) && $clause->operator !== '!=';
 
             if (in_array($clause->field, self::WHOLE_SELECTOR, true) || $isLanguage) {
-                throw new SelectorException("[{$clause->field}] applies to the whole selector, so it cannot sit inside an OR group.");
+                throw new SelectorException(Value::string(__('lynx::selectors.whole_selector', ['field' => $clause->field])));
             }
 
             $clauses[] = $clause;
         }
 
-        return $clauses === [] ? throw new SelectorException('An OR group cannot be empty.') : $clauses;
+        return $clauses === [] ? throw new SelectorException(Value::string(__('lynx::selectors.empty_group'))) : $clauses;
     }
 
     private function clause(string $part): Clause
     {
         if (! preg_match('/^\s*([a-z_][a-z0-9_.]*(?:\|[a-z_][a-z0-9_.]*)*)\s*(!=|<=|>=|%=|\*=|~=|\^=|\$=|=|<|>)\s*(.*)$/si', $part, $m)) {
-            throw new SelectorException("Cannot parse selector part [{$part}]. Expected field, operator and value, e.g. title%=Delivery.");
+            throw new SelectorException(Value::string(__('lynx::selectors.part', ['part' => $part])));
         }
 
         return new Clause(strtolower($m[1]), $m[2], $this->values($m[3]));

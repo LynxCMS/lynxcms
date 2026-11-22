@@ -16,6 +16,7 @@ use LynxCms\Core\Fields\Items\ItemTable;
 use LynxCms\Core\Fields\Items\Subfield;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Support\Value;
 
 /**
  * Selector clauses on item field subfields (ADR-0044): "credits.partner=7", "credits.role%=Real",
@@ -38,11 +39,11 @@ final readonly class SubfieldCompiler
     public function apply(Builder $query, Clause $clause, array $chain, Closure $pageId, string $pagesId): void
     {
         [$name, $sub] = explode('.', $clause->field, 2);
-        $field = $this->fields->find($name) ?? throw new SelectorException("Unknown field [{$name}] in selector.");
+        $field = $this->fields->find($name) ?? throw new SelectorException(Value::string(__('lynx::selectors.unknown_field', ['field' => $name])));
         $type = $field->fieldType();
 
         if (! $type instanceof ItemFieldType) {
-            throw new SelectorException("Field [{$name}] has no subfields; [{$clause->field}] cannot be used in selectors.");
+            throw new SelectorException(Value::string(__('lynx::selectors.no_subfields', ['field' => $name, 'clause' => $clause->field])));
         }
 
         $negate = $clause->operator === '!=';
@@ -100,7 +101,7 @@ final readonly class SubfieldCompiler
         $comparison = $subType->comparison();
 
         if ($comparison === Comparison::None) {
-            throw new SelectorException("Subfield [{$subfield->name()}] cannot be used in selectors.");
+            throw new SelectorException(Value::string(__('lynx::selectors.subfield', ['field' => $subfield->name()])));
         }
 
         if ($subType->multiple()) {
@@ -124,7 +125,7 @@ final readonly class SubfieldCompiler
     private function contains(Builder $q, Subfield $subfield, Clause $clause, Closure $toInt): void
     {
         if ($clause->operator !== '=') {
-            throw new SelectorException("Subfield [{$subfield->name()}] holds a list: use = or !=.");
+            throw new SelectorException(Value::string(__('lynx::selectors.subfield_list', ['field' => $subfield->name()])));
         }
 
         $q->where(function (Builder $any) use ($subfield, $clause, $toInt): void {
@@ -142,6 +143,6 @@ final readonly class SubfieldCompiler
             }
         }
 
-        throw new SelectorException("Field [{$field->name}] has no subfield [{$name}].");
+        throw new SelectorException(Value::string(__('lynx::selectors.no_subfield', ['field' => $field->name, 'subfield' => $name])));
     }
 }

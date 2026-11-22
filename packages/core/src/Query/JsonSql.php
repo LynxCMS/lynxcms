@@ -7,6 +7,7 @@ namespace LynxCms\Core\Query;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use LynxCms\Contracts\Fields\Comparison;
+use LynxCms\Core\Support\Value;
 
 /**
  * JSON in item field rows (ADR-0044), on SQLite and PostgreSQL. Keys are field names, checked
@@ -89,7 +90,7 @@ final class JsonSql
         $alias = self::ELEMENT;
 
         if ($language !== null && preg_match('/^[A-Za-z0-9_-]+$/', $language) !== 1) {
-            throw new SelectorException("[{$language}] is not a language code.");
+            throw new SelectorException(Value::string(__('lynx::selectors.language_code', ['language' => $language])));
         }
 
         if (DB::connection()->getDriverName() !== 'pgsql') {
@@ -119,7 +120,7 @@ final class JsonSql
     private static function assertKey(string $key): void
     {
         if (preg_match('/^[a-z][a-z0-9_]*$/', $key) !== 1) {
-            throw new SelectorException("[{$key}] is not a field name.");
+            throw new SelectorException(Value::string(__('lynx::selectors.field_name', ['field' => $key])));
         }
     }
 }

@@ -62,7 +62,7 @@ final readonly class PageStateMatch
     private function operator(Clause $clause): void
     {
         if (! in_array($clause->operator, ['=', '!='], true)) {
-            throw new SelectorException("[{$clause->field}] takes = or !=, not [{$clause->operator}].");
+            throw new SelectorException(Value::string(__('lynx::selectors.equality', ['field' => $clause->field, 'operator' => $clause->operator])));
         }
     }
 
@@ -79,7 +79,7 @@ final readonly class PageStateMatch
 
         foreach ($names as $name) {
             if (! in_array($name, self::STATUSES, true)) {
-                throw new SelectorException("Unknown status [{$name}]: use ".implode(', ', self::STATUSES).'.');
+                throw new SelectorException(Value::string(__('lynx::selectors.status', ['status' => $name, 'statuses' => implode(', ', self::STATUSES)])));
             }
 
             $flags |= PageStatus::NAMES[$name];
@@ -102,7 +102,7 @@ final readonly class PageStateMatch
         $value = Value::string($clause->value());
 
         if (! in_array($value, ['0', '1'], true)) {
-            throw new SelectorException("[{$clause->field}] takes 1 or 0, not [{$value}].");
+            throw new SelectorException(Value::string(__('lynx::selectors.flag', ['field' => $clause->field, 'value' => $value])));
         }
 
         $wanted = ($value === '1') !== ($clause->operator === '!=');
@@ -121,7 +121,7 @@ final readonly class PageStateMatch
     private function outdated(Builder $query, Clause $clause): array
     {
         $ids = array_map(fn (mixed $code): int => (int) ($this->languages->find(Value::string($code))
-            ?? throw new SelectorException('Unknown language ['.Value::string($code).'] in has_outdated.'))->id, $clause->values);
+            ?? throw new SelectorException(Value::string(__('lynx::selectors.language_outdated', ['language' => Value::string($code)]))))->id, $clause->values);
         $rows = fn (Builder $q) => $q->select(DB::raw(1))->from(Tables::FIELD_VALUE_META)
             ->where(Tables::FIELD_VALUE_META.'.outdated', true)
             ->whereIn(Tables::FIELD_VALUE_META.'.language_id', $ids)
@@ -143,7 +143,7 @@ final readonly class PageStateMatch
     {
         foreach ($clause->values as $code) {
             $language = $this->languages->find(Value::string($code))
-                ?? throw new SelectorException('Unknown language ['.Value::string($code).'] in selector.');
+                ?? throw new SelectorException(Value::string(__('lynx::selectors.language', ['language' => Value::string($code)])));
 
             $this->notIn($query, $language);
         }

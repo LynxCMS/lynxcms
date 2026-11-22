@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'operator' => 'El operador [:operator] no se admite en este campo.',
+    'date' => '[:value] no es una fecha. Usa una fecha como 2026-01-01, o today, -7 days.',
+    'unknown_field' => 'Campo desconocido en el selector: [:field].',
+    'count' => 'El campo [:field] tiene un solo valor; [:field.count] no puede usarse en selectores.',
+    'no_items' => 'El subcampo [:field] no tiene elementos por los que seleccionar.',
+    'no_property' => 'El subcampo [:field] no tiene la propiedad [:property]. Usa count o una de estas: :properties.',
+    'list' => '[:field] contiene una lista: usa = o !=.',
+    'language_code' => '[:language] no es un código de idioma.',
+    'field_name' => '[:field] no es un nombre de campo.',
+    'equality' => '[:field] admite = o !=; [:operator] no.',
+    'status' => 'Estado desconocido [:status]: usa :statuses.',
+    'flag' => '[:field] admite 1 o 0; [:value] no.',
+    'language_outdated' => 'Idioma desconocido en has_outdated: [:language].',
+    'language' => 'Idioma desconocido en el selector: [:language].',
+    'join' => 'No se puede usar join con [:field]: ese campo no existe.',
+    'combined' => '[:field] no puede combinarse con otros campos en [:fields].',
+    'type' => 'Los campos de tipo [:type], como [:field], no pueden usarse en selectores.',
+    'unknown_sort' => 'Campo de ordenación desconocido: [:field].',
+    'sort' => 'No se puede ordenar por [:field].',
+    'has_groups' => 'Este selector tiene grupos O: léelo con SelectorParser::parseSelector().',
+    'nul' => 'Los selectores no pueden contener bytes NUL.',
+    'parentheses' => 'Hay paréntesis sin cerrar o de más en esta parte del selector: [:part].',
+    'nested_groups' => 'Los grupos O no pueden contener otros grupos: [:part].',
+    'whole_selector' => '[:field] se aplica a todo el selector, por eso no puede estar dentro de un grupo O.',
+    'empty_group' => 'Un grupo O no puede quedar vacío.',
+    'part' => 'No se pudo leer esta parte del selector: [:part]. Escribe campo, operador y valor, por ejemplo title%=Delivery.',
+    'no_subfields' => 'El campo [:field] no tiene subcampos; [:clause] no puede usarse en selectores.',
+    'subfield' => 'El subcampo [:field] no puede usarse en selectores.',
+    'subfield_list' => 'El subcampo [:field] contiene una lista: usa = o !=.',
+    'no_subfield' => 'El campo [:field] no tiene el subcampo [:subfield].',
+    'search' => 'Busca en el índice con search*="palabras".',
+];

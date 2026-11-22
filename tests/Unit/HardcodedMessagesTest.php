@@ -6,8 +6,8 @@ use Symfony\Component\Finder\Finder;
 
 /*
  * Messages people read come from language files (ADR-0141): validation errors, rule failures,
- * repeater errors and refusals. Packages are being moved over; REMAINING counts the messages still
- * typed into their code, and only ever goes down. Errors for developers (selectors, drafts,
+ * repeater errors, refusals and selector errors. Packages are being moved over; REMAINING counts
+ * the messages still typed into their code, and only ever goes down. Errors for developers (drafts,
  * exceptions about code) and console output stay in English.
  */
 
@@ -55,7 +55,7 @@ function withoutTranslations(string $code): string
 function hardcodedMessages(string $code): int
 {
     $code = withoutTranslations($code);
-    $count = preg_match_all('/(?:\$fail|new AuthorizationException|->error\([^,()]*,)\s*\(?\s*["\']/', $code);
+    $count = preg_match_all('/(?:\$fail|new AuthorizationException|new SelectorException|->error\([^,()]*,)\s*\(?\s*["\']/', $code);
 
     preg_match_all('/withMessages\(/', $code, $calls, PREG_OFFSET_CAPTURE);
 

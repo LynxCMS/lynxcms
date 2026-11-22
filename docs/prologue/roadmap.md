@@ -58,7 +58,3 @@ A text changed once for every page of a template (all courses), between the site
 
 - Export only what changed since the last export, from `ContentChanged`.
 - Pagination in the path (`/news/page/2`), so paginated listings export every page.
-
-## Admin
-
-- Field and template labels in the editor's own language (ADR-0097). The admin's wording follows the editor's choice today, while these labels follow the language pages are edited in.

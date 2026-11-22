@@ -1523,3 +1523,13 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 Staying in English: action descriptions, console output, the change summaries the activity log stores, and errors for developers (selectors, drafts, exceptions about code).
 
 **Consequences:** A refused save reads in one language when the app has that language's `validation.php`; Lynx does not ship Laravel's messages. MCP over HTTP, queues, and Artisan read the messages in the app's locale, and an agent run from the admin reads them in the editor's. Code that must recognize a refusal compares the error's key or the exception, as the text is no longer fixed.
+
+## ADR-0142: Selector errors read from language files
+
+**Status:** Accepted. Amends ADR-0141, which left selector errors in English as errors for developers.
+
+**Context:** Page Finder and the admin's search show a `SelectorException` message to editors, beside wording in their language.
+
+**Decision:** Selector errors come from `lynx::selectors`, in English, Portuguese, and Spanish. `HardcodedMessagesTest` refuses a typed one. Field names, operators, and selector words (`include=all`, `today`) are code and stay as they are in every language.
+
+**Consequences:** A selector error in a log or on the command line reads in the app's locale. Code that catches a `SelectorException` should not compare its text.

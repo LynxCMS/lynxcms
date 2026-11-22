@@ -34,7 +34,7 @@ No database changes and nothing to change in your code.
 No database changes.
 
 - Code that passes a `$scope` to `lynx()->pages->find()` or `childCounts()`: drop the argument.
-- Modules that call `SchemaOwners::register()`: register templates and fields on `LynxCms\Core\Schema\SchemaRegistry` instead.
+- Modules that call `SchemaOwners::register()`: register templates and fields on `LynxCms\Core\Schema\SchemaOwners` instead of the admin's class of the same name.
 - Code that uses a class now marked `@internal` keeps working, without a promise that it will. The release notes list what to use instead; for the trash, `lynx()->pages->inTrash($page)` replaces the internal `Trash` class.
 - If your app configures Fortify itself, **Account security** now changes the password through your `UpdatesUserPasswords`, and replacing a temporary password fires Laravel's `PasswordReset` event, so your listeners for it run too.
 - If you published the Forms module's views (`lynx-forms-views`), publish them again, or add the `aria-describedby` links to their fields from the package's `fields/` views.
