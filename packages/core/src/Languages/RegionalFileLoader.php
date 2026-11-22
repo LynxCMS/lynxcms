@@ -27,6 +27,6 @@ final class RegionalFileLoader extends FileLoader
     /** @return array<array-key, mixed> */
     public function load($locale, $group, $namespace = null): array
     {
-        return RegionalLoader::merge(fn (string $candidate): array => parent::load($candidate, $group, $namespace), $locale);
+        return RegionalLoader::merge(fn (string $candidate): array => parent::load($candidate, $group, $namespace), $locale, $namespace);
     }
 }
