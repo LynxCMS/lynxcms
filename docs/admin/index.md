@@ -101,7 +101,7 @@ Editors who haven't chosen see the default. Set it with an environment variable,
 LYNX_ADMIN_LOCALE=pt
 ```
 
-To offer another language, list it in `config/lynx-admin.php`, with its name in that language, and add its files in `lang/vendor/lynx-admin/{code}`. Copy the English ones from `vendor/lynxcms/admin/lang/en`. A line you leave out shows in English.
+To offer another language, list it in `config/lynx-admin.php`, with its name in that language, and add its files in `lang/vendor/lynx-admin/{code}`. Copy the English ones from `vendor/lynxcms/admin/lang/en`. A line you leave out shows in the app's fallback language (`APP_FALLBACK_LOCALE`), or in English when Lynx has no text in that language either.
 
 ```php
 'locales' => [

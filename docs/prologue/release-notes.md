@@ -13,6 +13,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 - **Dates and numbers follow the language.** Dates in the admin, the finder, forms, and the static export take the order of the language the editor reads, where several always used the English order. Numbers and file sizes do too, in the forms visitors see as well. The home screen shows today's date without the weekday, and its lists show the year.
 - `lynx:make:view` prints date fields with `isoFormat('LL')` (or `LLL` with a time), where it wrote `D MMMM YYYY`, which put the parts in the wrong order in many languages. Views already written keep the old pattern: replace it in them. See [Field Types](/basics/field-types#date).
 - `lynxcms/core` now requires PHP's `intl` extension, which Laravel's `Number` class needs.
+- Fixed: on a site whose `APP_FALLBACK_LOCALE` is a language Lynx has no text in, such as French or Estonian, the admin showed translation keys (`lynx-admin::home.title`). Lynx's wording now reads English there. The app's own translations keep Laravel's rules.
 - The translation key `lynx-admin::home.date_format` is gone. An app that translates the admin into another language can delete it.
 
 ## 0.1.55
