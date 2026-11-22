@@ -4,7 +4,7 @@
     $style = (string) ($field->settings['input'] ?? ($isMultiple ? 'checkboxes' : 'select'));
     // Checkboxes pick several and radios one, whatever the setting says.
     $style = match (true) { $style === 'select' => 'select', $isMultiple => 'checkboxes', default => 'radios' };
-    $options = array_map(fn ($option) => ['value' => (string) ($option['value'] ?? ''), 'label' => \LynxCms\Core\Support\LocalizedText::from($option['label'] ?? '')->in()], (array) ($field->settings['options'] ?? []));
+    $options = array_map(fn ($option) => ['value' => (string) ($option['value'] ?? ''), 'label' => \LynxCms\Core\Support\LocalizedText::from($option['label'] ?? '')->forField($field->field())], (array) ($field->settings['options'] ?? []));
     $wire = ($live ?? false) ? 'wire:model.live' : 'wire:model';
 @endphp
 @if ($style === 'select')

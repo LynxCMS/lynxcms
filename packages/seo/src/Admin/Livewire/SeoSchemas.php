@@ -100,7 +100,7 @@ final class SeoSchemas extends Component
         $templates = lynx()->templates->all()->filter(fn (Template $template): bool => $template->hasUrl())->sortBy('name');
 
         return view('lynx-seo::admin.livewire.schemas', [
-            'templates' => $templates->mapWithKeys(fn (Template $template): array => [$template->name => $template->labels()->in()])->all(),
+            'templates' => $templates->mapWithKeys(fn (Template $template): array => [$template->name => $template->label])->all(),
             'types' => SchemaTypes::names(),
             'properties' => $this->properties(),
             'dot' => self::DOT,

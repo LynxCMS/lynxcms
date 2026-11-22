@@ -41,7 +41,7 @@ final class Template extends Model
     }
 
     /**
-     * The label in the current language (ADR-0043); labels() gives every language. Assigning takes
+     * The label in the current language (ADR-0043), in the admin the editor's (ADR-0140); labels() gives every language. Assigning takes
      * a string or a map of language codes to text.
      *
      * @return Attribute<string, string|array<string, string>|LocalizedText>
@@ -49,7 +49,7 @@ final class Template extends Model
     protected function label(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value): string => LocalizedText::from($value)->in(),
+            get: fn (mixed $value): string => LocalizedText::from($value)->forTemplate((string) $this->name),
             set: fn (mixed $value): string => LocalizedText::from($value)->toColumn(),
         );
     }

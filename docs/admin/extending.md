@@ -108,6 +108,23 @@ The tab is a Livewire component. Livewire sends every click to its own endpoint,
 
 The button saves the post like any other write, so the save action checks `pages.edit` on that post. If a reviewer has `blog.review` but not `pages.edit`, they see the checklist, but the button gets a 403 and writes nothing. The change also shows in the post's history under the reviewer's name.
 
+## Labels of the fields you install
+
+A module that installs fields or templates can translate their labels for editors. Register the module's translation namespace in its service provider, and ship `lang/{locale}/schema.php` with the installed text as the key:
+
+```php
+use LynxCms\Core\Schema\SchemaWording;
+
+$this->app->make(SchemaWording::class)->register('reports', templates: ['report'], fields: ['report_period']);
+```
+
+```php
+// lang/pt/schema.php
+return ['Period' => 'Período'];
+```
+
+Text the site rewords shows as the site wrote it. See [Labels in another language](/admin/#labels-in-another-language) for the labels of a site's own fields.
+
 ## Field types the field form offers
 
 The New field screen asks what a field holds, and lists each type by a name for people ("Paragraphs", "Blocks"), in a group, with an icon and one sentence. Give your type the same, or it shows its type name under **Other**:

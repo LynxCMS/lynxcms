@@ -43,7 +43,7 @@ lynx()->fields->add('role', 'text', translatable: true,
     settings: ['notes' => ['en' => 'For example, Direction', 'pt' => 'Por exemplo, Realização']]);
 ```
 
-The keys are language codes (see [Languages](/basics/languages#adding-a-language) for giving the default language a code such as `en`). Editors read each text in their own language, falling back like content does.
+The keys are language codes (see [Languages](/basics/languages#adding-a-language) for giving the default language a code such as `en`). Editors read each text in [the language they chose for the admin](/admin/#the-admin-s-language), falling back like content does. An editor who reads the admin in a language the site does not publish in gets translations from a file: see [Labels in another language](/admin/#labels-in-another-language).
 
 ### Duplicating a field
 

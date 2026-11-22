@@ -93,7 +93,7 @@ A random path keeps the admin out of reach of scripts that try common addresses.
 
 ## The admin's language
 
-Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording only, so a Portuguese editor can work on an English site. Lynx ships English, Portuguese and Spanish (Spain).
+Each editor can read the admin in their own language: open the menu with your name in the sidebar and pick one under **Language**. The admin remembers the choice for that account. It changes the admin's wording and the labels of fields and templates, so a Portuguese editor can work on an English site. Pages are still read and saved in the site's languages. Lynx ships English, Portuguese and Spanish (Spain).
 
 Editors who haven't chosen see the default. Set it with an environment variable, or leave it empty to use the app's locale:
 
@@ -112,6 +112,20 @@ To offer another language, list it in `config/lynx-admin.php`, with its name in 
 ```
 
 Each module has a folder of its own, such as `lang/vendor/lynx-forms`. The same folders change a line of Lynx's wording: `lang/vendor/lynx-admin/en/auth.php` holding only the lines you want to reword. With a single language in `locales`, the menu leaves the choice out.
+
+### Labels in another language
+
+Labels, descriptions, and notes of your fields and templates show in the editor's language when they are [given in it](/basics/templates-and-fields#labels-descriptions-and-notes). A label's languages are the site's languages. For an editor who reads another one, such as Estonian on an English site, translate them in `lang/et/lynx-schema.php`. Each key is the label's text in the site's default language:
+
+```php
+// lang/et/lynx-schema.php
+return [
+    'Published on' => 'Avaldatud',
+    'Summary' => 'Kokkuvõte',
+];
+```
+
+A label without a translation shows as it does on the site. When you reword a label, change its key here too.
 
 ## Look and feel
 

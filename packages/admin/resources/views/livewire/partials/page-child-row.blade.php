@@ -22,7 +22,7 @@
             @if (isset($drafts[$id])) <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-admin::children.draft') }}</x-lynx-admin::ui.badge> @endif
         </span>
         <span class="text-muted-foreground flex flex-wrap gap-x-3 text-xs">
-            <span>{{ $child->template()->labels()->in() }}</span>
+            <span>{{ $child->template()->label }}</span>
             @if ($child->updatedAt !== null) <span>{{ __('lynx-admin::children.modified') }} {{ now()->parse($child->updatedAt)->diffForHumans() }}</span> @endif
             @if ($grandchildren > 0)
                 <a href="{{ route('lynx.admin.pages.edit', ['page' => $id, 'tab' => 'children']) }}" wire:navigate class="hover:underline" aria-label="{{ __('lynx-admin::children.open_children', ['title' => $title]) }}">{{ trans_choice('lynx-admin::children.children', $grandchildren) }}</a>

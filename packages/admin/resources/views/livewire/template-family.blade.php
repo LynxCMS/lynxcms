@@ -1,7 +1,7 @@
 {{-- Part of template-form: family settings (ADR-0032), pages and delete. --}}
 @php
     $others = array_values(array_diff($templates, [$template]));
-    $templateOptions = array_map(fn (string $name): array => ['name' => $name, 'label' => lynx()->templates->get($name)->labels()->in()], $others);
+    $templateOptions = array_map(fn (string $name): array => ['name' => $name, 'label' => lynx()->templates->get($name)->label], $others);
 @endphp
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm grid gap-5 p-5" aria-labelledby="template-family">
     <h2 id="template-family" class="text-base font-semibold">{{ __('lynx-admin::templates.family.heading') }}</h2>

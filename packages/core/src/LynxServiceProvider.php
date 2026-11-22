@@ -39,6 +39,7 @@ use LynxCms\Core\Http\Middleware\RememberLocale;
 use LynxCms\Core\Http\Middleware\ServeAsVisitor;
 use LynxCms\Core\Http\NotFoundResponder;
 use LynxCms\Core\Indexes\IndexesServiceProvider;
+use LynxCms\Core\Languages\EditorLanguage;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Languages\RegionalLoader;
@@ -63,6 +64,7 @@ use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\Draft\DraftPaths;
 use LynxCms\Core\Schema\SchemaOwners;
+use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Core\Search\SearchServiceProvider;
 use LynxCms\Core\Strings\StringCatalog;
 use LynxCms\Core\Strings\StringDefinition;
@@ -180,6 +182,7 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(GlobalMiddleware::class);
         // Where a draft build keeps the schema folder and types up to date (ADR-0116); tests point it elsewhere.
         $this->app->bindIf(DraftPaths::class, DraftPaths::defaults(...));
+        $this->app->singleton(SchemaWording::class);
         // Schema that belongs to Lynx or a module, not the site (ADR-0115). The trash page's template is Lynx's own (ADR-0035).
         $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {
             $owners = new SchemaOwners;
@@ -194,6 +197,7 @@ final class LynxServiceProvider extends ServiceProvider
 
         $this->app->tag(self::FLUSHABLE, 'lynx.flushable');
         $this->app->scoped(LanguageContext::class);
+        $this->app->scoped(EditorLanguage::class);
     }
 
     /** tinker shows a page's own data only; other dumpers add it to the page's properties. */

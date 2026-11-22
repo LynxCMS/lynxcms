@@ -187,7 +187,7 @@ final class ConditionCatalog
      */
     private function options(Field $field): array
     {
-        return array_map(fn (string|array $label): string => LocalizedText::from($label)->in(), ChoiceOptions::labels($field->config()['options'] ?? []));
+        return array_map(fn (string|array $label): string => LocalizedText::from($label)->forField($field->name), ChoiceOptions::labels($field->config()['options'] ?? []));
     }
 
     /**

@@ -10,7 +10,7 @@
              wire:key="section-{{ $section->key }}" x-data="lynxEditorSection(@js($page->template()->name.':'.$section->key), @js($section->collapsed), @js($hasError))">
         <button type="button" class="flex w-full items-center gap-2 px-5 py-3 text-start" x-on:click="toggle()" x-bind:aria-expanded="open" aria-controls="section-{{ $section->key }}">
             <x-lucide-chevron-right class="text-muted-foreground size-4 shrink-0 transition-transform" x-bind:class="open && 'rotate-90'" aria-hidden="true" />
-            <span class="font-semibold">{{ $section->label->in() }}</span>
+            <span class="font-semibold">{{ $section->label->forTemplate((string) $page->template()->name) }}</span>
             <span class="text-muted-foreground text-sm">{{ trans_choice('lynx-admin::editor.fields_count', count($names)) }}</span>
             @if ($fallsBack)
                 <span class="lynx-tab-state is-fallback" title="{{ __('lynx-admin::editor.falls_back_here') }}"></span>
