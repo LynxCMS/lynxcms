@@ -55,7 +55,7 @@ final class EditLocks
         if ($row !== null) {
             $name = Value::string(DB::table(Tables::PAGE_LANGUAGES)->where('page_id', $row->page_id)->orderBy('language_id')->value('name'));
 
-            throw ValidationException::withMessages(['page' => "Page [{$name}] is being edited by ".Value::string($row->holder).' until '.CarbonImmutable::parse(Value::string($row->expires_at))->format('H:i').'. Try again when they are done.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.page.being_edited_retry', ['page' => $name, 'holder' => Value::string($row->holder), 'time' => CarbonImmutable::parse(Value::string($row->expires_at))->isoFormat('LT')]))]);
         }
     }
 

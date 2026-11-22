@@ -73,7 +73,7 @@ final class SwitchTemplate extends Action
     public function handle(Input $input, ActionContext $context): array
     {
         $page = $this->resolvePageReference($input->get('page'));
-        $this->guard->assertMovable($page, 'switched to another template');
+        $this->guard->assertMovable($page, 'switched');
 
         if ($this->drafts->of((int) $page->id) !== null) {
             throw ValidationException::withMessages(['page' => "Page [{$page->name()}] has a draft on its current template. Publish or discard the draft first."]);

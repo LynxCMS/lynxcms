@@ -40,7 +40,7 @@ final readonly class NameWriter
             $names[$languageId] = ['name' => $isRoot ? '' : PageName::from($entry['name']), 'status' => $entry['status']];
 
             if (! $isRoot && $names[$languageId]['name'] === '') {
-                $errors["names.{$this->code($languageId)}"] = 'The page name cannot be empty.';
+                $errors["names.{$this->code($languageId)}"] = Value::string(__('lynx::validation.names.empty'));
             }
         }
 
@@ -91,8 +91,8 @@ final readonly class NameWriter
         }
 
         $errors['names.'.$default->code] = ! $hasTitle
-            ? 'A name in the default language is required.'
-            : 'A name or a title in the default language is required.';
+            ? Value::string(__('lynx::validation.names.required'))
+            : Value::string(__('lynx::validation.names.required_or_title'));
     }
 
     private function assertFreeAmongSiblings(int $pageId, ?int $parentId, int $languageId, string $name): void
@@ -105,7 +105,7 @@ final readonly class NameWriter
             ->exists();
 
         if ($isTaken) {
-            throw ValidationException::withMessages(["names.{$this->code($languageId)}" => "Another page under the same parent already uses the name [{$name}]."]);
+            throw ValidationException::withMessages(["names.{$this->code($languageId)}" => Value::string(__('lynx::validation.names.taken', ['name' => $name]))]);
         }
     }
 

@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\EditLocks;
+use LynxCms\Core\Support\Value;
 
 /**
  * Takes or renews the edit lock on a page (ADR-0037), so nobody else saves it while it is open
@@ -71,7 +72,7 @@ final class LockEdit extends Action
         $current = $this->locks->current((int) $page->id);
 
         if ($current !== null && $current['holder'] !== EditLocks::holder($context->actor)) {
-            throw ValidationException::withMessages(['page' => "Page [{$page->name()}] is being edited by {$current['holder']} until {$current['expires_at']->format('H:i')}."]);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.page.being_edited', ['page' => $page->name(), 'holder' => $current['holder'], 'time' => $current['expires_at']->isoFormat('LT')]))]);
         }
 
         $lock = $this->locks->acquire($context->actor, (int) $page->id);

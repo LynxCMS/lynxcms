@@ -24,10 +24,6 @@ final readonly class PageGuard
     /** Ids per query, below the bound parameter limits of SQLite and PostgreSQL. */
     private const int CHUNK = 1000;
 
-    private const string LOCKED_MESSAGE = 'Page [%s] is locked. Unlock it first (pages.status with remove ["locked"]).';
-
-    private const string SYSTEM_MESSAGE = 'Page [%s] is a system page that the CMS or a module depends on; it cannot be %s.';
-
     public function __construct(private EditLocks $editLocks, private ActionRunner $runner) {}
 
     /** Values, names and translations. */
@@ -36,7 +32,7 @@ final readonly class PageGuard
         $this->assertNotBeingEdited((int) $page->id);
 
         if ($this->has($this->stored($page), PageStatus::LOCKED)) {
-            $this->fail(sprintf(self::LOCKED_MESSAGE, $page->name()));
+            $this->fail(Value::string(__('lynx::validation.page.locked', ['page' => $page->name()])));
         }
     }
 
@@ -46,13 +42,13 @@ final readonly class PageGuard
         $this->assertEditable($page);
     }
 
-    /** Parent and template. */
-    public function assertMovable(Page $page, string $verb = 'moved'): void
+    /** Parent and template. $change names the refusal: "moved" or "switched" (to another template). */
+    public function assertMovable(Page $page, string $change = 'moved'): void
     {
         $this->assertEditable($page);
 
         if ($this->has($this->stored($page), PageStatus::SYSTEM)) {
-            $this->fail(sprintf(self::SYSTEM_MESSAGE, $page->name(), $verb));
+            $this->fail(Value::string(__("lynx::validation.page.system.{$change}", ['page' => $page->name()])));
         }
     }
 
@@ -66,11 +62,11 @@ final readonly class PageGuard
         $stored = $this->stored($page);
 
         if ($this->has($stored, PageStatus::SYSTEM)) {
-            $this->fail(sprintf(self::SYSTEM_MESSAGE, $page->name(), 'hidden, unpublished or locked'));
+            $this->fail(Value::string(__('lynx::validation.page.system.status', ['page' => $page->name()])));
         }
 
         if ($this->has($stored, PageStatus::LOCKED) && ($flags & ~PageStatus::LOCKED) !== 0) {
-            $this->fail(sprintf(self::LOCKED_MESSAGE, $page->name()));
+            $this->fail(Value::string(__('lynx::validation.page.locked', ['page' => $page->name()])));
         }
     }
 
@@ -92,25 +88,25 @@ final readonly class PageGuard
 
         ksort($statuses);
 
-        foreach ([PageStatus::LOCKED => 'is locked. Unlock it first.', PageStatus::SYSTEM => 'is a system page that the CMS or a module depends on; it cannot be deleted.'] as $flag => $reason) {
+        foreach ([PageStatus::LOCKED => 'locked', PageStatus::SYSTEM => 'system'] as $flag => $reason) {
             foreach ($statuses as $id => $status) {
                 if ($this->has($status, $flag)) {
-                    $this->fail($this->describe($page, (int) $id).' '.$reason);
+                    $this->fail($this->undeletable($page, (int) $id, $reason));
                 }
             }
         }
     }
 
-    /** "Page [lesson] below [alpha]" for a page under the one acted on, else "Page [alpha]". */
-    private function describe(Page $page, int $blockingId): string
+    /** Names the page that blocks, and the page acted on when it is another, above it. */
+    private function undeletable(Page $page, int $blockingId, string $reason): string
     {
         if ($blockingId === $page->id) {
-            return "Page [{$page->name()}]";
+            return Value::string(__("lynx::validation.page.delete.{$reason}", ['page' => $page->name()]));
         }
 
         $name = Value::string(DB::table(Tables::PAGE_LANGUAGES)->where('page_id', $blockingId)->orderBy('language_id')->value('name'));
 
-        return "Page [{$name}] below [{$page->name()}]";
+        return Value::string(__("lynx::validation.page.delete.{$reason}_below", ['page' => $name, 'above' => $page->name()]));
     }
 
     /** Someone else has the page open in an editor (ADR-0037). New pages have no id yet. */

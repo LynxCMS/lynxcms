@@ -32,11 +32,11 @@ final readonly class UniqueNames
         $owner = array_search(true, array_map(fn (int $status): bool => ($status & PageStatus::UNIQUE) !== 0, $others), true);
 
         if ($owner !== false) {
-            $this->fail($key, "The name [{$name}] belongs to the unique page {$this->describe($owner)}; choose another name.");
+            $this->fail($key, Value::string(__('lynx::validation.names.unique_taken', ['name' => $name, 'page' => $this->describe($owner)])));
         }
 
         if ($isUnique && $others !== []) {
-            $this->fail($key, "A unique page's name must not be used anywhere else, but [{$name}] is already used by {$this->describe(array_key_first($others))}.");
+            $this->fail($key, Value::string(__('lynx::validation.names.unique_used', ['name' => $name, 'page' => $this->describe(array_key_first($others))])));
         }
     }
 

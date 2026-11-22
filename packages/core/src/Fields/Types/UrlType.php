@@ -64,7 +64,7 @@ final class UrlType extends BaseFieldType implements DescribesPhpType, ProvidesS
 
         return ['nullable', 'string', 'max:'.self::MAX_LENGTH, function (string $attribute, mixed $value, Closure $fail) use ($allowsPaths): void {
             if (! $this->isWebAddress(Value::string($value)) && (! $allowsPaths || ! $this->isPath(Value::string($value)))) {
-                $fail($allowsPaths ? 'Enter an address starting with https:// or a path starting with /.' : 'Enter an address starting with https://.');
+                $fail(Value::string(__($allowsPaths ? 'lynx::validation.values.url_or_path' : 'lynx::validation.values.url')));
             }
         }];
     }

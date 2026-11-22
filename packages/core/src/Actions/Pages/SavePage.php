@@ -215,19 +215,19 @@ final class SavePage extends Action
     private function assertPlacement(Page $page, Template $template, bool $isNew): void
     {
         if ($isNew && $template->isSingleton() && DB::table(Tables::PAGES)->where('template_id', $template->id)->whereNull('draft_of')->exists()) {
-            throw ValidationException::withMessages(['template' => "Template [{$template->name}] is a singleton and already has a page."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.singleton', ['template' => $template->name]))]);
         }
 
         if ($isNew && $page->parentId === null && DB::table(Tables::PAGES)->whereNull('parent_id')->whereNull('draft_of')->exists()) {
-            throw ValidationException::withMessages(['parent' => 'A parent page is required.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.required'))]);
         }
 
         if ($page->parentId !== null && ! DB::table(Tables::PAGES)->where('id', $page->parentId)->exists()) {
-            throw ValidationException::withMessages(['parent' => "Parent page [{$page->parentId}] does not exist."]);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.missing', ['page' => $page->parentId]))]);
         }
 
         if ($isNew && $page->parentId !== null && $this->trash->holds($page->parentId)) {
-            throw ValidationException::withMessages(['parent' => 'Pages cannot be created in the trash.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.trash'))]);
         }
 
         // A module's system branch (menus under /_menus/, form pages) sits outside the content
@@ -258,12 +258,11 @@ final class SavePage extends Action
         $row = $expected === null ? null : DB::table(Tables::PAGES)->where('id', $page->id)->first(['revision', 'modified_by', 'updated_at']);
 
         if ($row !== null && Value::int($row->revision) !== $expected) {
-            throw ValidationException::withMessages(['conflict' => sprintf(
-                'Page [%s] was saved by %s at %s after you loaded it. Reload it to see those changes; your edits were not saved.',
-                $page->name(),
-                Value::string($row->modified_by, 'someone'),
-                Value::string($row->updated_at),
-            )]);
+            throw ValidationException::withMessages(['conflict' => Value::string(__('lynx::validation.page.conflict', [
+                'page' => $page->name(),
+                'holder' => Value::string($row->modified_by, 'someone'),
+                'time' => Value::string($row->updated_at),
+            ]))]);
         }
     }
 

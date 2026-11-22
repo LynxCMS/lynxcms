@@ -69,7 +69,7 @@ final class ComponentType extends BaseFieldType implements DescribesPhpType
         $component = $this->components->find($alias);
 
         if ($component === null || (isset($settings['allowed']) && ! in_array($alias, Value::strings($settings['allowed']), true))) {
-            throw ValidationException::withMessages(['component' => "Component [{$alias}] is not registered or not allowed here."]);
+            throw ValidationException::withMessages(['component' => Value::string(__('lynx::validation.values.component', ['component' => $alias]))]);
         }
 
         return ['component' => $alias, 'settings' => $component->validateSettings(Value::map($value['settings'] ?? []))];
