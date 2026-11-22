@@ -77,7 +77,7 @@ final class PurgeOrphanedValues extends Action
             $template = $this->templates->get($name);
             $byTemplate[$template->id] = DB::table(Tables::PAGES)->where('template_id', $template->id)->pluck('id')->map(fn ($id): int => Value::int($id))->all();
         } else {
-            throw ValidationException::withMessages(['page' => 'Give a page or a template.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.page.or_template'))]);
         }
 
         $deleted = [];

@@ -61,7 +61,7 @@ final class AssignRoles extends Action
         $roles = Role::query()->whereIn('name', $names)->get();
 
         if ($roles->count() !== count(array_unique($names))) {
-            throw ValidationException::withMessages(['roles' => 'Unknown role ['.implode(', ', array_diff($names, Value::strings($roles->pluck('name')->all()))).'].']);
+            throw ValidationException::withMessages(['roles' => Value::string(__('lynx::access.roles.unknown', ['roles' => implode(', ', array_diff($names, Value::strings($roles->pluck('name')->all())))]))]);
         }
 
         $removed = RoleAssignment::query()->where('user_id', $user)->whereNotIn('role_id', $roles->modelKeys())->pluck('id')->all();

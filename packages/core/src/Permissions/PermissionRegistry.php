@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Permissions;
 
+use Illuminate\Support\Facades\Lang;
+use LynxCms\Core\Support\Value;
+
 /**
  * The permissions roles can grant (ADR-0033). Core registers its own; modules add theirs:
  * lynx()->permissions()->register('menus.manage', 'Manage menus').
@@ -86,6 +89,14 @@ final class PermissionRegistry
     public function has(string $name): bool
     {
         return isset($this->permissions[$name]);
+    }
+
+    /** The permission's label in the reader's language: Lynx's own from lynx::permissions, others as the app translates them. */
+    public function label(string $name): string
+    {
+        $translated = __("lynx::permissions.{$name}");
+
+        return is_string($translated) && Lang::has("lynx::permissions.{$name}") ? $translated : Value::string(__($this->permissions[$name]['label'] ?? $name));
     }
 
     public function isScoped(string $name): bool

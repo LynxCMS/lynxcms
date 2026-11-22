@@ -13,6 +13,7 @@ use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Strings\PageStringEdits;
+use LynxCms\Core\Support\Value;
 
 /**
  * Puts a page's values back as they were in a revision (ADR-0038), as a new pages.save, so the
@@ -63,7 +64,7 @@ final class RestoreRevision extends Action
         $revision = $this->revisions->find($id);
 
         if ($revision === null || $revision['page'] !== $page->id) {
-            throw ValidationException::withMessages(['revision' => "Revision [{$id}] is not a revision of page [{$page->name()}]."]);
+            throw ValidationException::withMessages(['revision' => Value::string(__('lynx::validation.page.revision', ['revision' => $id, 'page' => $page->name()]))]);
         }
 
         $context->authorize('pages.edit', $page);

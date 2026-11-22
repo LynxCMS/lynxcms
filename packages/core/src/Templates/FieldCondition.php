@@ -30,11 +30,11 @@ final readonly class FieldCondition
 
         foreach (explode(',', $condition) as $part) {
             if (preg_match(self::CLAUSE, $part, $match) !== 1 || str_starts_with($match[3], '=')) {
-                throw new InvalidArgumentException("Cannot read the condition [{$condition}]: write it as field=value, for example format=online|hybrid.");
+                throw new InvalidArgumentException(Value::string(__('lynx::structure.condition.unreadable', ['condition' => $condition])));
             }
 
             if ($match[3] === '' && ! in_array($match[2], ['=', '!='], true)) {
-                throw new InvalidArgumentException("Cannot read the condition [{$condition}]: [{$match[2]}] needs a value.");
+                throw new InvalidArgumentException(Value::string(__('lynx::structure.condition.no_value', ['condition' => $condition, 'operator' => $match[2]])));
             }
 
             $clauses[] = ['field' => $match[1], 'operator' => $match[2], 'values' => explode('|', $match[3])];

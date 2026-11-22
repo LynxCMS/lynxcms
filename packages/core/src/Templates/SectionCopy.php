@@ -32,7 +32,7 @@ final readonly class SectionCopy
     {
         $config = $template->config();
         $section = self::find(Value::list($config['sections'] ?? []), $key)
-            ?? throw ValidationException::withMessages(['section' => "Template [{$template->name}] has no section [{$key}]."]);
+            ?? throw ValidationException::withMessages(['section' => Value::string(__('lynx::structure.section.missing', ['template' => $template->name, 'section' => $key]))]);
 
         $fields = $templates->fields($template)
             ->filter(fn (TemplateField $field): bool => ($field->settings['section'] ?? null) === $key)

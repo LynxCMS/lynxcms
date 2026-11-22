@@ -102,7 +102,7 @@ final class UpdateLanguage extends Action
 
         foreach (['code' => 'code', 'url_prefix' => 'prefix'] as $column => $key) {
             if (isset($attributes[$column]) && Language::query()->where($column, $attributes[$column])->whereKeyNot($language->id)->exists()) {
-                throw ValidationException::withMessages([$key => "The {$key} [".Value::string($attributes[$column]).'] is already used by another language.']);
+                throw ValidationException::withMessages([$key => Value::string(__("lynx::structure.language.{$key}_taken", [$key => Value::string($attributes[$column])]))]);
             }
         }
 
@@ -137,13 +137,13 @@ final class UpdateLanguage extends Action
         }
 
         if ($language->id === $this->languages->default()->id) {
-            throw ValidationException::withMessages(['fallback' => 'The default language is the end of every fallback chain and cannot fall back to another language.']);
+            throw ValidationException::withMessages(['fallback' => Value::string(__('lynx::structure.language.default_fallback'))]);
         }
 
         $fallback = $this->languages->get($code);
 
         if ($fallback->id === $language->id) {
-            throw ValidationException::withMessages(['fallback' => 'A language cannot fall back to itself.']);
+            throw ValidationException::withMessages(['fallback' => Value::string(__('lynx::structure.language.self_fallback'))]);
         }
 
         // Walk the new fallback's chain; reaching this language means a cycle.
@@ -152,7 +152,7 @@ final class UpdateLanguage extends Action
 
         while ($current !== null && ! isset($seen[$current->id])) {
             if ($current->id === $language->id) {
-                throw ValidationException::withMessages(['fallback' => "Falling back to {$fallback->code} would create a cycle."]);
+                throw ValidationException::withMessages(['fallback' => Value::string(__('lynx::structure.language.cycle', ['language' => $fallback->code]))]);
             }
 
             $seen[$current->id] = true;

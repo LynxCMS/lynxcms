@@ -117,13 +117,13 @@ final class CopySection extends Action
         $sections = array_column(Value::list($target->config()['sections'] ?? []), 'key');
 
         if (in_array($copy->key(), $sections, true)) {
-            throw ValidationException::withMessages(['to' => "Template [{$target->name}] already has a section [{$copy->key()}]."]);
+            throw ValidationException::withMessages(['to' => Value::string(__('lynx::structure.section.taken', ['template' => $target->name, 'section' => $copy->key()]))]);
         }
 
         $clashes = array_values(array_intersect($copy->fieldNames(), $this->templates->fields($target)->keys()->all()));
 
         if ($clashes !== [] && ! $rename) {
-            throw ValidationException::withMessages(['to' => "Template [{$target->name}] already has [".implode(', ', $clashes).']. Rename the fields that clash, or remove them from that template first.']);
+            throw ValidationException::withMessages(['to' => Value::string(__('lynx::structure.section.clashes', ['template' => $target->name, 'fields' => implode(', ', $clashes)]))]);
         }
 
         return array_combine($clashes, array_map(fn (string $name): string => $prefix.$name, $clashes));
@@ -147,7 +147,7 @@ final class CopySection extends Action
 
         foreach ($clones as $new => $old) {
             if ($this->fields->find($new) !== null) {
-                throw ValidationException::withMessages(['prefix' => "Field [{$new}] already exists: choose another prefix."]);
+                throw ValidationException::withMessages(['prefix' => Value::string(__('lynx::structure.section.prefix', ['field' => $new]))]);
             }
 
             $original = $this->fields->get($old);

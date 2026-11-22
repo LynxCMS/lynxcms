@@ -102,7 +102,7 @@ final class EmptyTrash extends Action
 
         return in_array($page, $branches, true)
             ? [$page]
-            : throw ValidationException::withMessages(['page' => "Page [{$page}] is not the top of a trashed branch."]);
+            : throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.trash.not_top', ['page' => $page]))]);
     }
 
     /**

@@ -17,6 +17,7 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PathBuilder;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\FamilyRules;
 
 /**
@@ -96,8 +97,8 @@ final class RestorePage extends Action
     private function notTrashed(Page $page): string
     {
         return $this->trash->contains((int) $page->id)
-            ? "Page [{$page->name()}] is inside a trashed branch; restore the top page of that branch."
-            : "Page [{$page->name()}] is not in the trash.";
+            ? Value::string(__('lynx::validation.trash.inside', ['page' => $page->name()]))
+            : Value::string(__('lynx::validation.trash.not_in', ['page' => $page->name()]));
     }
 
     private function originalParent(int $parentId): Page
@@ -105,11 +106,11 @@ final class RestorePage extends Action
         $parent = lynx()->pages->get($parentId);
 
         if (! $parent instanceof Page) {
-            throw ValidationException::withMessages(['parent' => 'Choose a new parent: the page this one was under no longer exists.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.gone'))]);
         }
 
         if ($this->trash->contains($parentId)) {
-            throw ValidationException::withMessages(['parent' => "Choose a new parent: [{$parent->name()}], where this page was, is in the trash."]);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.old_in_trash', ['parent' => $parent->name()]))]);
         }
 
         return $parent;
@@ -120,7 +121,7 @@ final class RestorePage extends Action
         $parent = $this->resolvePageReference($reference, 'parent');
 
         if ($parent->id === $this->trash->rootId() || $this->trash->contains((int) $parent->id)) {
-            throw ValidationException::withMessages(['parent' => "Page [{$parent->name()}] is in the trash; choose a parent outside it."]);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.in_trash', ['parent' => $parent->name()]))]);
         }
 
         $this->family->assertAllowed($page->template(), (int) $parent->id, 'parent');
@@ -138,7 +139,7 @@ final class RestorePage extends Action
                 ->where('language_id', $languageId)->where('name', $name)->where('page_id', '!=', $pageId)->exists();
 
             if ($isTaken) {
-                throw ValidationException::withMessages(['parent' => "A page named [{$name}] is already there; choose another parent."]);
+                throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.name_there', ['name' => $name]))]);
             }
         }
     }

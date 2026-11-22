@@ -95,14 +95,14 @@ final class SaveStrings extends Action
         $unknown = array_diff(array_keys($values), array_keys($declared));
 
         if ($unknown !== []) {
-            throw ValidationException::withMessages(['values' => 'The template of this page declares no string ['.implode(', ', $unknown).'].']);
+            throw ValidationException::withMessages(['values' => Value::string(__('lynx::validation.strings.undeclared', ['strings' => implode(', ', $unknown)]))]);
         }
 
         $site = array_filter($values, fn (string $key): bool => $declared[$key]->isSite(), ARRAY_FILTER_USE_KEY);
         $own = array_diff_key($values, $site);
 
         if ($input->bool('draft') && $site !== []) {
-            throw ValidationException::withMessages(['values' => 'Site texts are shared by every page and are not drafted: '.implode(', ', array_keys($site)).'.']);
+            throw ValidationException::withMessages(['values' => Value::string(__('lynx::validation.strings.site_draft', ['strings' => implode(', ', array_keys($site))]))]);
         }
 
         if ($site !== []) {

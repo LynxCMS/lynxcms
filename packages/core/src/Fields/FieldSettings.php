@@ -67,11 +67,11 @@ final class FieldSettings
 
         foreach ($names as $name) {
             if (! is_string($name) || ! $formatters->has($name)) {
-                return 'Unknown formatter ['.Value::string($name).']. Available: '.implode(', ', array_keys($formatters->forType($fieldType))).'.';
+                return Value::string(__('lynx::structure.formatter.unknown', ['formatter' => Value::string($name), 'formatters' => implode(', ', array_keys($formatters->forType($fieldType)))]));
             }
 
             if (! $formatters->get($name)->appliesTo($fieldType)) {
-                return "The formatter [{$name}] does not apply to {$fieldType} fields.";
+                return Value::string(__('lynx::structure.formatter.type', ['formatter' => $name, 'type' => $fieldType]));
             }
         }
 

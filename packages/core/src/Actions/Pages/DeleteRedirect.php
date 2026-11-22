@@ -17,6 +17,7 @@ use LynxCms\Core\Pages\OldPath;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGuard;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * Forgets an old path of a page, so it stops redirecting (and becomes free for other pages without
@@ -67,7 +68,7 @@ final class DeleteRedirect extends Action
         $context->authorize('pages.edit', $page);
 
         $language = $this->languages->find($input->string('language') ?? $this->languages->default()->code)
-            ?? throw ValidationException::withMessages(['language' => 'Unknown language.']);
+            ?? throw ValidationException::withMessages(['language' => Value::string(__('lynx::validation.language.unknown'))]);
         $old = new OldPath($language, trim((string) $input->string('path'), '/'), true);
 
         $deleted = DB::table(Tables::PAGE_PATHS)
@@ -78,7 +79,7 @@ final class DeleteRedirect extends Action
             ->delete();
 
         if ($deleted === 0) {
-            throw ValidationException::withMessages(['path' => "Page [{$page->name()}] has no old URL {$old->url()}."]);
+            throw ValidationException::withMessages(['path' => Value::string(__('lynx::validation.page.no_old_url', ['page' => $page->name(), 'url' => $old->url()]))]);
         }
 
         // Filed under the page, so it shows in the page's activity; destructive because search engines may still link it.

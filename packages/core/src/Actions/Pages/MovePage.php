@@ -94,23 +94,23 @@ final class MovePage extends Action
     private function assertCanMoveInto(Page $page, Page $parent): void
     {
         if ($page->parentId === null) {
-            throw ValidationException::withMessages(['page' => 'The home page cannot be moved.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.home.moved'))]);
         }
 
         if ($this->trash->contains((int) $page->id)) {
-            throw ValidationException::withMessages(['page' => "Page [{$page->name()}] is in the trash. Take it out with pages.restore."]);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.trash.restore', ['page' => $page->name()]))]);
         }
 
         if ($this->trash->holds((int) $parent->id)) {
-            throw ValidationException::withMessages(['parent' => 'Use pages.trash to move pages to the trash.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.use_trash'))]);
         }
 
         if ($page->parentId === $parent->id) {
-            throw ValidationException::withMessages(['parent' => 'The page is already under this parent. Use pages.sort to change its position.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.same'))]);
         }
 
         if (DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $page->id)->where('descendant_id', $parent->id)->exists()) {
-            throw ValidationException::withMessages(['parent' => 'A page cannot be moved under itself or its own descendants.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.inside'))]);
         }
 
         $this->assertNamesAreFree($page, $parent);
@@ -123,7 +123,7 @@ final class MovePage extends Action
                 ->where('language_id', $row->language_id)->where('name', $row->name)->where('page_id', '!=', $page->id)->exists();
 
             if ($taken) {
-                throw ValidationException::withMessages(['parent' => 'The new parent already has a child named ['.Value::string($row->name).'].']);
+                throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.name_taken', ['name' => Value::string($row->name)]))]);
             }
         }
     }

@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\EditLocks;
 use LynxCms\Core\Permissions\Authorizer;
+use LynxCms\Core\Support\Value;
 
 /**
  * Releases the edit lock on a page (ADR-0037): the holder's own, or anyone's for a superuser
@@ -65,7 +66,7 @@ final class UnlockEdit extends Action
         }
 
         if ($current['holder'] !== EditLocks::holder($context->actor) && ! $this->authorizer->isSuperuser($context->actor)) {
-            throw ValidationException::withMessages(['page' => "The edit lock on [{$page->name()}] is held by {$current['holder']}; only they or a superuser may release it."]);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.page.edit_lock', ['page' => $page->name(), 'holder' => $current['holder']]))]);
         }
 
         $this->locks->release((int) $page->id);

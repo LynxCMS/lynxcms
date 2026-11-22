@@ -58,9 +58,9 @@ final readonly class FamilyRules
         $parents = Value::strings($childConfig['parent_templates'] ?? []);
 
         return match (true) {
-            ! (bool) ($parentConfig['allow_children'] ?? true) => "Pages using [{$parent}] cannot have children.",
-            $children !== [] && ! in_array($child, $children, true) => "Under [{$parent}] pages may only use: ".implode(', ', $children).'.',
-            $parents !== [] && ! in_array($parent, $parents, true) => "Pages using [{$child}] may only be placed under: ".implode(', ', $parents).'.',
+            ! (bool) ($parentConfig['allow_children'] ?? true) => Value::string(__('lynx::validation.family.no_children', ['parent' => $parent])),
+            $children !== [] && ! in_array($child, $children, true) => Value::string(__('lynx::validation.family.children', ['parent' => $parent, 'templates' => implode(', ', $children)])),
+            $parents !== [] && ! in_array($parent, $parents, true) => Value::string(__('lynx::validation.family.parents', ['template' => $child, 'parents' => implode(', ', $parents)])),
             default => null,
         };
     }

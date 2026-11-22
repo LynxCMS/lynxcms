@@ -6,6 +6,7 @@ namespace LynxCms\Core\Fields;
 
 use Illuminate\Support\Facades\Validator;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Support\Value;
 
 /**
  * A field's settings where a template or a block type uses it (ADR-0094): the field's own, with
@@ -49,13 +50,13 @@ final class UseSettings
         $refused = array_diff(array_keys($given), $allowed);
 
         if ($refused !== []) {
-            return "Field [{$field->name}] can't set [".implode(', ', $refused).'] where it is used: set it on the field.';
+            return Value::string(__('lynx::structure.field.per_use', ['field' => $field->name, 'settings' => implode(', ', $refused)]));
         }
 
         // The type's own rules for these settings, and for their items ("templates.*").
         $names = [...array_keys($given), ...array_map(fn (string $key): string => $key.'.*', array_keys($given))];
         $validator = Validator::make($given, array_intersect_key($type->settingsRules(), array_flip($names)));
 
-        return $validator->fails() ? "Field [{$field->name}]: ".$validator->errors()->first() : null;
+        return $validator->fails() ? Value::string(__('lynx::structure.field.problem', ['field' => $field->name, 'problem' => $validator->errors()->first()])) : null;
     }
 }

@@ -74,7 +74,7 @@ final class ChoiceType extends BaseFieldType implements ChecksSettings, Describe
             'input' => ['sometimes', 'in:'.implode(',', self::INPUTS)],
             'default' => ['sometimes', 'nullable', function (string $attribute, mixed $value, Closure $fail): void {
                 if (! is_string($value) && ! (is_array($value) && array_is_list($value) && array_filter($value, is_string(...)) === $value)) {
-                    $fail('The default is an option value, or a list of them.');
+                    $fail(Value::string(__('lynx::structure.choice.default')));
                 }
             }],
         ];
@@ -85,14 +85,14 @@ final class ChoiceType extends BaseFieldType implements ChecksSettings, Describe
         $defaults = Value::strings((array) ($settings['default'] ?? []));
 
         if (count($defaults) > 1 && ($settings['multiple'] ?? false) !== true) {
-            throw ValidationException::withMessages(['settings.default' => 'A single choice takes one default.']);
+            throw ValidationException::withMessages(['settings.default' => Value::string(__('lynx::structure.choice.single'))]);
         }
 
         $values = array_map(strval(...), array_keys(ChoiceOptions::labels($settings['options'] ?? [])));
 
         foreach ($defaults as $default) {
             if (! in_array($default, $values, true)) {
-                throw ValidationException::withMessages(['settings.default' => "The default [{$default}] is not one of the options."]);
+                throw ValidationException::withMessages(['settings.default' => Value::string(__('lynx::structure.choice.not_an_option', ['default' => $default]))]);
             }
         }
     }

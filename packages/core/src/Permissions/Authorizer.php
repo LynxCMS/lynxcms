@@ -80,14 +80,13 @@ final class Authorizer implements Flushable
             return;
         }
 
-        $label = $this->permissions->all()[$permission]['label'] ?? $permission;
-        $scope = match (true) {
-            $template !== null => " for template [{$template->name}]",
-            $page instanceof Page => ' on page ['.($page->path() !== null ? '/'.$page->path() : '#'.$page->id).']',
-            default => '',
-        };
+        $named = ['permission' => $permission, 'label' => $this->permissions->label($permission)];
 
-        throw new AuthorizationException("You do not have permission [{$permission}] ({$label}){$scope}.");
+        throw new AuthorizationException(Value::string(match (true) {
+            $template !== null => __('lynx::access.denied.template', [...$named, 'template' => $template->name]),
+            $page instanceof Page => __('lynx::access.denied.page', [...$named, 'page' => $page->path() !== null ? '/'.$page->path() : '#'.$page->id]),
+            default => __('lynx::access.denied.anywhere', $named),
+        }));
     }
 
     /**
@@ -118,9 +117,9 @@ final class Authorizer implements Flushable
             || ($permission === null ? $this->isSuperuser($actor) : array_any($names, fn (string $name): bool => $this->allowsSomewhere($actor, $name)));
 
         if (! $isAllowed) {
-            throw new AuthorizationException($permission === null
-                ? "Only superusers may run [{$action}]."
-                : 'You do not have permission ['.implode('] or [', $names)."] needed by [{$action}].");
+            throw new AuthorizationException(Value::string($permission === null
+                ? __('lynx::access.denied.superusers', ['action' => $action])
+                : __('lynx::access.denied.action', ['permissions' => implode(']'.Value::string(__('lynx::validation.or')).'[', $names), 'action' => $action])));
         }
     }
 

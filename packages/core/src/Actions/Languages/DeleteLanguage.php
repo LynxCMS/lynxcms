@@ -74,7 +74,7 @@ final class DeleteLanguage extends Action
         $language = $this->languages->get(Value::string($input->get('language')));
 
         if ($language->id === $this->languages->default()->id) {
-            throw ValidationException::withMessages(['language' => 'The default language cannot be deleted.']);
+            throw ValidationException::withMessages(['language' => Value::string(__('lynx::structure.language.delete_default'))]);
         }
 
         Language::query()->where('fallback_id', $language->id)->update(['fallback_id' => null]);

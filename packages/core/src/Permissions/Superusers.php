@@ -46,7 +46,7 @@ final readonly class Superusers
         $leavesNoAccount = $existing !== [] && array_diff_key($existing, $removed) === [];
 
         if ($leavesNone || $leavesNoAccount) {
-            throw ValidationException::withMessages([$key => 'This would remove the last superuser. Give another user a superuser role first.']);
+            throw ValidationException::withMessages([$key => Value::string(__('lynx::access.last_superuser'))]);
         }
     }
 

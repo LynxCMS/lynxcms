@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
+use LynxCms\Core\Support\Value;
 use Override;
 
 /**
@@ -67,7 +68,7 @@ final class DuplicateField extends Action
     public function handle(Input $input, ActionContext $context): Field
     {
         $original = $this->fields->find((string) $input->string('field'))
-            ?? throw ValidationException::withMessages(['field' => 'Field ['.$input->string('field').'] does not exist.']);
+            ?? throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.missing', ['field' => $input->string('field')]))]);
 
         $copy = $context->run(CreateField::class, [
             'name' => $input->string('name'),

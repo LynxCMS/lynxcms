@@ -42,7 +42,7 @@ final class MatrixType extends ItemFieldType
     public function settingsRules(): array
     {
         return [
-            'types' => [new FilledList('Add at least one block type.')],
+            'types' => [new FilledList(Value::string(__('lynx::structure.items.no_types')))],
             'types.*.slug' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/', 'distinct'],
             'types.*.label' => ['sometimes', 'nullable', ...LocalizedText::rules()],
             'types.*.item_label' => ['sometimes', 'nullable', 'string', 'max:255'],

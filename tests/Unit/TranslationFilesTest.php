@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Lang;
 use Symfony\Component\Finder\Finder;
 
 /*
@@ -59,3 +60,25 @@ it('has every English key and placeholder', function (string $root, string $lang
         expect(placeholdersIn($translated[$key]))->toBe(placeholdersIn($line), "{$file}: {$key}");
     }
 })->with(translatedFiles());
+
+/** @return array<string, list<string>> the keys a package's code names in full, by the file that names them */
+function namedKeys(): array
+{
+    $keys = [];
+
+    foreach (Finder::create()->files()->name('*.php')->in([dirname(__DIR__, 2).'/packages/*/src', dirname(__DIR__, 2).'/packages/*/resources/views']) as $file) {
+        preg_match_all('/(?:__|trans_choice)\(\'(lynx(?:-[a-z-]+)?::[a-z0-9_.-]+)\'\s*[,)]/', $file->getContents(), $matches);
+
+        if ($matches[1] !== []) {
+            $keys[$file->getPathname()] = array_values(array_unique($matches[1]));
+        }
+    }
+
+    return $keys;
+}
+
+it('has every key the code names', function (): void {
+    $missing = array_filter(array_map(fn (array $keys): array => array_values(array_filter($keys, fn (string $key): bool => ! Lang::hasForLocale($key, 'en'))), namedKeys()));
+
+    expect($missing)->toBe([]);
+});

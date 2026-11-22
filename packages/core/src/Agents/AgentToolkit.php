@@ -254,7 +254,7 @@ final readonly class AgentToolkit
         $denied = array_values(array_diff(array_unique($this->languagesWritten($arguments)), $allowed));
 
         if ($denied !== []) {
-            throw ValidationException::withMessages(['language' => 'This agent may not write in: '.implode(', ', $denied).'.']);
+            throw ValidationException::withMessages(['language' => Value::string(__('lynx::access.agent_languages', ['languages' => implode(', ', $denied)]))]);
         }
     }
 

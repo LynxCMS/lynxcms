@@ -6,6 +6,7 @@ namespace LynxCms\Core\Schema;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use LynxCms\Contracts\Actions\Actor;
+use LynxCms\Core\Support\Value;
 
 /**
  * Who may change the schema (ADR-0117). With lynx.schema_editing off, the site's schema comes from
@@ -39,7 +40,7 @@ final readonly class SchemaEditing
     public function authorize(Actor $actor, string $action): void
     {
         if (! $this->allows($actor)) {
-            throw new AuthorizationException("[{$action}] changes the schema, and schema editing is turned off on this site (lynx.schema_editing): its schema comes from files. Change lynx/schema and run php artisan lynx:schema:apply.");
+            throw new AuthorizationException(Value::string(__('lynx::access.schema_editing', ['action' => $action])));
         }
     }
 

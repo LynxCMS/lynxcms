@@ -99,7 +99,7 @@ final class RunSchedules extends Action
 
         $isPublish = $entry->action === 'publish';
         $language = $this->languages->all()->firstWhere('id', Value::int($entry->language_id))
-            ?? throw ValidationException::withMessages(['language' => 'The language no longer exists.']);
+            ?? throw ValidationException::withMessages(['language' => Value::string(__('lynx::validation.language.gone'))]);
 
         $language->code === $this->languages->default()->code
             ? $context->run(SetPageStatus::class, ['page' => $pageId, ($isPublish ? 'remove' : 'add') => ['unpublished']])
