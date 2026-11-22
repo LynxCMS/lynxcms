@@ -40,7 +40,7 @@ final readonly class TreeDetails
             'languages' => $this->languages($page),
             'status' => $this->status($page),
             'changed' => $changedAt?->diffForHumans(),
-            'changedAt' => $changedAt?->toDayDateTimeString(),
+            'changedAt' => $changedAt?->isoFormat('llll'),
             'changedBy' => $this->changedBy($page->modifiedBy),
         ];
     }

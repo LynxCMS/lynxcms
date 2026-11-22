@@ -98,8 +98,8 @@ final class AtlasContentSeeder extends Seeder
         $name = $starts->format('Y-m-d').'-'.$location;
         $this->page('session', '/'.$course->path().'/', $name, ['pt' => $name,
             'title' => [
-                'en' => $course->getLanguageValue('en', 'title').', '.$starts->format('j F Y'),
-                'pt' => $course->getLanguageValue('pt', 'title').', '.$starts->locale('pt')->isoFormat('D [de] MMMM [de] YYYY'),
+                'en' => $course->getLanguageValue('en', 'title').', '.$starts->locale('en-GB')->isoFormat('LL'),
+                'pt' => $course->getLanguageValue('pt', 'title').', '.$starts->locale('pt')->isoFormat('LL'),
             ],
             'starts' => $starts->format('Y-m-d H:i'), 'location' => $this->ids[$location], 'seats' => 16, 'availability' => 'scheduled',
         ]);

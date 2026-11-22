@@ -93,7 +93,13 @@ A whole number, such as a count, a duration or a price in cents.
 
 ### `decimal`
 
-A number with decimals, such as a price or a rating. Templates read a float. Editors may type a comma as the decimal point.
+A number with decimals, such as a price or a rating. Templates read a float. Editors may type a comma as the decimal point. Print it with Laravel's `Number` class, which takes the locale, since it formats in English otherwise:
+
+```blade
+{{ Number::currency($page->price, 'EUR', app()->getLocale()) }}
+```
+
+That prints *€1,234.50* in English and *1 234,50 €* in Portuguese. `Number::format($page->price, locale: app()->getLocale())` prints a plain number.
 
 | Setting | Meaning |
 | --- | --- |
@@ -105,8 +111,10 @@ A number with decimals, such as a price or a rating. Templates read a float. Edi
 A date, or a date and a time. Templates read a `CarbonImmutable`, or `null` when empty:
 
 ```blade
-{{ $page->starts_on?->isoFormat('D MMMM YYYY') }}
+{{ $page->starts_on?->isoFormat('LL') }}
 ```
+
+The date prints in the page's language: *July 29, 2026* in English, *29 de julho de 2026* in Portuguese. `LL` names a style, and the language decides the order of its parts, so a new language needs no formatting code. The other styles are `ll` (shorter), `LLL` (with the time), `LLLL` (with the weekday and the time), and `LT` (the time alone).
 
 | Setting | Meaning |
 | --- | --- |

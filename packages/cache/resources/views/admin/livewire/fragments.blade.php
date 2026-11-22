@@ -31,7 +31,7 @@
                             <td class="px-4 py-3 font-mono whitespace-nowrap">{{ $entry->name }}@if ($entry->audience !== 'guest') <span class="text-muted-foreground" title="{{ __('lynx-cache::admin.fragments.unlocked') }}">*</span>@endif</td>
                             <td class="py-2 pr-3">{{ $entry->language }}</td>
                             <td class="px-4 py-3 font-mono text-xs">{{ implode(', ', array_map(fn ($dependency) => $dependency === 'any' ? __('lynx-cache::admin.fragments.any_change') : $dependency, $entry->dependencies())) }}</td>
-                            <td class="px-4 py-3 whitespace-nowrap">{{ number_format($entry->size / 1024, 1) }} KB</td>
+                            <td class="px-4 py-3 whitespace-nowrap">{{ \LynxCms\Core\Support\LocalizedNumber::fileSize($entry->size, 1) }}</td>
                             <td class="py-2 pr-3" title="{{ $entry->created_at }}">{{ $entry->created_at->diffForHumans() }}@if ($entry->expires_at){{ __('lynx-cache::admin.fragments.until', ['when' => $entry->expires_at->diffForHumans()]) }}@endif</td>
                             <td class="px-4 py-2 text-right whitespace-nowrap">
                                 <x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="view({{ $entry->id }})" :aria-expanded="$viewing === $entry->id ? 'true' : 'false'">{{ __($viewing === $entry->id ? 'lynx-cache::admin.fragments.hide' : 'lynx-cache::admin.fragments.view') }}</x-lynx-admin::ui.button>

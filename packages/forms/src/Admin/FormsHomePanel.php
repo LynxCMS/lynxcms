@@ -52,8 +52,8 @@ final class FormsHomePanel
                 'summary' => $presenter->summary($submission) ?: __('lynx-forms::admin.inbox.submission', ['id' => $submission->id]),
                 'form' => $forms[$submission->form] ?? $submission->form,
                 'url' => route('lynx.admin.forms.show', $submission->uuid),
-                'date' => $submission->created_at->isoFormat($submission->created_at->isCurrentYear() ? 'D MMM' : 'D MMM YYYY'),
-                'at' => $submission->created_at->toDayDateTimeString(),
+                'date' => $submission->created_at->isoFormat('ll'),
+                'at' => $submission->created_at->isoFormat('llll'),
             ];
         }
 

@@ -73,6 +73,6 @@ trait HoldsEditLock
 
         $parts = explode(':', $lock['holder'], 2);
         $this->editedBy = app(ActorNames::class)->label($parts[0], $parts[1] ?? null);
-        $this->editedUntil = $lock['expires_at']->format('H:i');
+        $this->editedUntil = $lock['expires_at']->isoFormat('LT');
     }
 }

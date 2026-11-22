@@ -96,7 +96,7 @@ Use a [selector](/basics/selectors) to list pages. `$page->children()` lists the
 @endforeach
 
 @foreach (lynx()->pages->find('template=event, starts_on>=today, sort=starts_on, limit=3') as $event)
-    <p>@field($event->title), {{ $event->starts_on->isoFormat('D MMMM') }}</p>
+    <p>@field($event->title), {{ $event->starts_on->isoFormat('LL') }}</p>
 @endforeach
 ```
 

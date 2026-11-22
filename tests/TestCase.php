@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Tests;
 
 use BladeUI\Icons\BladeIconsServiceProvider;
+use Carbon\Laravel\ServiceProvider as CarbonServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\FortifyServiceProvider;
 use Laravel\Passkeys\PasskeysServiceProvider;
@@ -54,6 +55,8 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            // Apps discover it: Carbon's dates follow the app's locale.
+            CarbonServiceProvider::class,
             \Laravel\Mcp\Server\McpServiceProvider::class,
             \Laravel\Ai\AiServiceProvider::class,
             LynxServiceProvider::class,

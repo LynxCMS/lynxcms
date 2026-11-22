@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Home;
 
-use Carbon\CarbonInterface;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ActivityEntry;
 use LynxCms\Admin\Editor\ActorNames;
@@ -55,7 +54,7 @@ final readonly class HomeOverview
 
         foreach ($found as $page) {
             $changedAt = $page->updatedAt === null ? null : now()->parse($page->updatedAt);
-            $pages[] = [...$this->link($page), 'date' => $changedAt === null ? null : $this->shortDate($changedAt), 'changedAt' => $changedAt?->toDayDateTimeString()];
+            $pages[] = [...$this->link($page), 'date' => $changedAt?->isoFormat('ll'), 'changedAt' => $changedAt?->isoFormat('llll')];
         }
 
         return ['total' => $found->total(), 'pages' => $pages];
@@ -82,7 +81,7 @@ final readonly class HomeOverview
                 $upcoming[$key]['languages'] = array_values(array_filter([...$upcoming[$key]['languages'], $labels[$entry['language']] ?? '']));
                 $upcoming[$key]['failed'] = $upcoming[$key]['failed'] || $entry['error'] !== null;
             } elseif (isset($pages[$entry['page']]) && count($upcoming) < self::LIMIT) {
-                $upcoming[$key] = [...$this->link($pages[$entry['page']]), 'action' => $entry['action'], 'languages' => array_values(array_filter([$labels[$entry['language']] ?? ''])), 'date' => $this->shortDate($entry['at'], withTime: true), 'when' => $entry['at']->diffForHumans(), 'at' => $entry['at']->toDayDateTimeString(), 'iso' => $entry['at']->toIso8601String(), 'failed' => $entry['error'] !== null];
+                $upcoming[$key] = [...$this->link($pages[$entry['page']]), 'action' => $entry['action'], 'languages' => array_values(array_filter([$labels[$entry['language']] ?? ''])), 'date' => $entry['at']->isoFormat('lll'), 'when' => $entry['at']->diffForHumans(), 'at' => $entry['at']->isoFormat('llll'), 'iso' => $entry['at']->toIso8601String(), 'failed' => $entry['error'] !== null];
             }
         }
 
@@ -142,14 +141,6 @@ final readonly class HomeOverview
         }
 
         return lynx()->languages->all()->mapWithKeys(fn (Language $language): array => [Value::string($language->code) => $language->tabLabel()])->all();
-    }
-
-    /** "4 Nov", with the year when it is not this year's, and the time when asked. */
-    private function shortDate(CarbonInterface $at, bool $withTime = false): string
-    {
-        $format = ($at->isCurrentYear() ? 'D MMM' : 'D MMM YYYY').($withTime ? ', HH:mm' : '');
-
-        return $at->isoFormat($format);
     }
 
     /** @return array{id: int, title: string, url: string} */

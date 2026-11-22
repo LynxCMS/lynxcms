@@ -21,7 +21,7 @@ final class HomeController
 
         return view('lynx-admin::home', [
             'name' => is_string($name) && $name !== '' ? $name : null,
-            'today' => now()->isoFormat(__('lynx-admin::home.date_format')),
+            'today' => now()->isoFormat('LL'),
             'actions' => $home->actions(),
             'stats' => $home->stats(),
             'panels' => $home->panels(),

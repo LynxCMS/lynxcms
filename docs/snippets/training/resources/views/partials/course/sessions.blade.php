@@ -6,7 +6,7 @@
         @forelse ($page->children('template=session, starts>=now, sort=starts') as $session)
             <li>
                 <a href="{{ $session->url }}" class="atlas-session">
-                    <span class="font-semibold">{{ $session->starts->locale(lynx()->languages->current()->appLocale())->isoFormat('D MMM YYYY, HH:mm') }}</span>
+                    <span class="font-semibold">{{ $session->starts->locale(lynx()->languages->current()->appLocale())->isoFormat('lll') }}</span>
                     <span class="atlas-muted text-sm">{{ $session->location?->title }}</span>
                     @if ($session->availability?->value === 'cancelled')
                         <x-ui.badge variant="destructive">{{ $session->availability }}</x-ui.badge>

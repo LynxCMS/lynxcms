@@ -26,7 +26,7 @@
                 <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span class="text-warning inline-flex items-center gap-1.5" data-page-draft title="{{ __('lynx-admin::editor.draft_note') }}"><span class="size-1.5 rounded-full bg-current" aria-hidden="true"></span>{{ __('lynx-admin::editor.draft_changes') }}</span>
                     @if ($draftGoesLive)
-                        <span data-draft-goes-live>{{ __('lynx-admin::editor.goes_live', ['when' => $draftGoesLive['at']->isoFormat('ddd, ll LT')]) }}</span>
+                        <span data-draft-goes-live>{{ __('lynx-admin::editor.goes_live', ['when' => $draftGoesLive['at']->isoFormat('llll')]) }}</span>
                     @endif
                     @if ($page->template()->hasUrl() && ! auth()->check())
                         {{-- The site only shows drafts to signed in users who may edit the page; signed out it would show the live page. --}}

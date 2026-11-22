@@ -12,7 +12,7 @@
     @foreach ($days ?? [] as $day)
         <li class="flex items-center gap-3 border-b py-2.5 text-sm" data-weather-day="{{ $day['date'] }}">
             <x-lynx-admin::ui.icon :name="$kind($day['code'])[1]" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-            <span class="font-medium">{{ \Illuminate\Support\Carbon::parse($day['date'])->isoFormat('ddd D') }}</span>
+            <span class="font-medium">{{ \Illuminate\Support\Carbon::parse($day['date'])->isoFormat('dddd') }}</span>
             <span class="text-muted-foreground">{{ $kind($day['code'])[0] }}</span>
             <span class="ms-auto tabular-nums">{{ round($day['max']) }}° <span class="text-muted-foreground">{{ round($day['min']) }}°</span></span>
         </li>

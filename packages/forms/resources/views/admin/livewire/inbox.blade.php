@@ -57,7 +57,7 @@
             @forelse ($submissions as $submission)
                 <x-lynx-admin::ui.table-row wire:key="submission-{{ $submission->uuid }}" @class(['font-semibold' => $submission->status === 'new'])>
                     <x-lynx-admin::ui.table-cell class="px-4 py-2"><input type="checkbox" class="blat-checkbox" value="{{ $submission->uuid }}" wire:model.live="selected" aria-label="{{ __('lynx-forms::admin.inbox.select') }}"></x-lynx-admin::ui.table-cell>
-                    <x-lynx-admin::ui.table-cell class="whitespace-nowrap px-4 py-2 tabular-nums text-muted-foreground" title="{{ $submission->created_at->toDateTimeString() }}">{{ $submission->created_at->diffForHumans() }}</x-lynx-admin::ui.table-cell>
+                    <x-lynx-admin::ui.table-cell class="whitespace-nowrap px-4 py-2 tabular-nums text-muted-foreground" title="{{ $submission->created_at->isoFormat('llll') }}">{{ $submission->created_at->diffForHumans() }}</x-lynx-admin::ui.table-cell>
                     <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2">
                         <a href="{{ route('lynx.admin.forms.show', $submission->uuid) }}" class="hover:underline">{{ $this->summaryOf($submission) ?: __('lynx-forms::admin.inbox.submission', ['id' => $submission->id]) }}</a>
                         @if ($submission->files->isNotEmpty())
