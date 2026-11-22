@@ -236,7 +236,7 @@ final class ActivityDescription
         $schedule = [];
 
         foreach (is_array($data['schedule'] ?? null) ? $data['schedule'] : [] as $action => $at) {
-            $schedule[] = ['action' => (string) $action, 'at' => is_string($at) ? now()->parse($at)->toDayDateTimeString() : null];
+            $schedule[] = ['action' => (string) $action, 'at' => is_string($at) ? now()->parse($at)->isoFormat('llll') : null];
         }
 
         return $schedule;

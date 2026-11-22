@@ -14,7 +14,7 @@
     <form wire:submit="save" class="bg-card grid gap-5 rounded-xl border p-5">
         <label class="grid gap-1.5 text-sm">
             <span class="font-medium">{{ __('lynx-sitemap::admin.per_file') }}</span>
-            <span class="text-muted-foreground">{{ __('lynx-sitemap::admin.per_file_help', ['default' => number_format($configPerFile), 'max' => number_format($max)]) }}</span>
+            <span class="text-muted-foreground">{{ __('lynx-sitemap::admin.per_file_help', ['default' => \LynxCms\Core\Support\LocalizedNumber::format($configPerFile), 'max' => \LynxCms\Core\Support\LocalizedNumber::format($max)]) }}</span>
             <input type="number" min="1" max="{{ $max }}" class="blat-input w-40" wire:model="perFile" placeholder="{{ $configPerFile }}" @error('perFile') aria-invalid="true" @enderror>
             @error('perFile') <span data-error-for="perFile" role="alert" class="text-destructive text-sm">{{ $message }}</span> @enderror
         </label>

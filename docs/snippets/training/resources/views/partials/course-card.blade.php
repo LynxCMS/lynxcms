@@ -16,7 +16,7 @@
         @if ($next)
             <p class="atlas-muted text-xs">
                 @string('courses.next', ['en' => 'Next', 'pt' => 'Próxima'], scope: 'site'):
-                {{ $next->starts->locale(lynx()->languages->current()->appLocale())->isoFormat('D MMM') }} · {{ $next->location?->title }}
+                {{ $next->starts->locale(lynx()->languages->current()->appLocale())->isoFormat('ll') }} · {{ $next->location?->title }}
             </p>
         @endif
     </div>

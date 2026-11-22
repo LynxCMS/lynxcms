@@ -99,6 +99,6 @@ trait InvitesUsers
     private function pendingInvitations(array $ids): array
     {
         return Invitation::query()->whereIn('user_id', $ids)->get()
-            ->mapWithKeys(fn (Invitation $invitation): array => [$invitation->user_id => $invitation->sent_at->toFormattedDateString()])->all();
+            ->mapWithKeys(fn (Invitation $invitation): array => [$invitation->user_id => $invitation->sent_at->isoFormat('ll')])->all();
     }
 }

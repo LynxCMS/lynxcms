@@ -272,7 +272,7 @@ Build the panel from the home screen's own components, so it looks like Lynx's l
     @foreach ($reports as $report)
         <x-lynx-admin::home.row :url="route('lynx.admin.reports.show', $report)" :title="$report->name">
             {{ $report->summary }}
-            <x-slot:aside>{{ $report->created_at->isoFormat('D MMM') }}</x-slot:aside>
+            <x-slot:aside>{{ $report->created_at->isoFormat('ll') }}</x-slot:aside>
         </x-lynx-admin::home.row>
     @endforeach
 </x-lynx-admin::home.section>
@@ -413,7 +413,7 @@ Its view, `resources/views/livewire/weather-panel.blade.php`, uses the home scre
     @foreach ($days ?? [] as $day)
         <li class="flex items-center gap-3 border-b py-2.5 text-sm">
             <x-lynx-admin::ui.icon :name="$kind($day['code'])[1]" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-            <span class="font-medium">{{ \Illuminate\Support\Carbon::parse($day['date'])->isoFormat('ddd D') }}</span>
+            <span class="font-medium">{{ \Illuminate\Support\Carbon::parse($day['date'])->isoFormat('dddd') }}</span>
             <span class="text-muted-foreground">{{ $kind($day['code'])[0] }}</span>
             <span class="ms-auto tabular-nums">{{ round($day['max']) }}° <span class="text-muted-foreground">{{ round($day['min']) }}°</span></span>
         </li>

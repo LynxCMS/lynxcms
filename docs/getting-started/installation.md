@@ -11,7 +11,7 @@ This page installs Lynx and its admin, and creates the first account that can si
 
 Lynx is a set of Laravel packages, so it needs what Laravel 13 needs, plus:
 
-- PHP 8.5 or newer.
+- PHP 8.5 or newer, with the `intl` extension.
 - SQLite (for most sites) or PostgreSQL. MySQL and MariaDB are not supported. [Choosing a Database](/getting-started/database) helps you pick.
 - Laravel's scheduler, which needs one cron entry (cron is the server's timer for recurring commands), if editors schedule pages or you want automatic backups.
 
@@ -163,7 +163,7 @@ Lynx runs on low cost shared and managed hosting (DreamHost, for example) as lon
 - **PHP version on the command line.** The `php` command over SSH and in cron may be an older version than the site uses. Call PHP 8.5 by its full path (the host's documentation gives it), in the cron entry too.
 - **Composer.** Shared servers stop processes that use too much memory, and `composer install` can be one of them. Install locally or in CI with `composer install --no-dev --optimize-autoloader` and upload the `vendor` folder.
 - **Queues.** A shared plan can't keep a queue worker running. Set `QUEUE_CONNECTION=sync` so form notifications are sent during the request, or let cron run `php artisan queue:work --stop-when-empty` every minute.
-- **Extensions.** Check with `php -m` that `pdo_sqlite` and `gd` (or `imagick`, for image fields) are there, besides those Laravel needs.
+- **Extensions.** Check with `php -m` that `pdo_sqlite`, `intl`, and `gd` (or `imagick`, for image fields) are there, besides those Laravel needs.
 
 A shared server divides its processor among many customers, so the numbers in [Server capacity](/deeper/deployment#server-capacity) don't apply. With the page cache on, most visitors never reach PHP, which is what makes cheap hosting work. Once the site needs PostgreSQL, a queue worker or steady performance, move to a VPS (a virtual server of your own) with root access.
 

@@ -8,6 +8,13 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- **Dates and numbers follow the language.** Dates in the admin, the finder, forms, and the static export take the order of the language the editor reads, where several always used the English order. Numbers and file sizes do too, in the forms visitors see as well. The home screen shows today's date without the weekday, and its lists show the year.
+- `lynx:make:view` prints date fields with `isoFormat('LL')` (or `LLL` with a time), where it wrote `D MMMM YYYY`, which put the parts in the wrong order in many languages. Views already written keep the old pattern: replace it in them. See [Field Types](/basics/field-types#date).
+- `lynxcms/core` now requires PHP's `intl` extension, which Laravel's `Number` class needs.
+- The translation key `lynx-admin::home.date_format` is gone. An app that translates the admin into another language can delete it.
+
 ## 0.1.55
 
 Released November 21, 2026. Static exports that work on any host, and no more links to Vite's dev server in them. No database changes.

@@ -37,7 +37,7 @@ final class FieldSnippet
             'url' => $this->ifFilled($value, ["<a href=\"{{ {$value} }}\">{{ {$value} }}</a>"]),
             'email' => $this->ifFilled($value, ["<a href=\"mailto:{{ {$value} }}\">{{ {$value} }}</a>"]),
             'integer', 'decimal', 'time' => ["@if ({$value} !== null)", self::INDENT."<p>{{ {$value} }}</p>", '@endif'],
-            'date' => $this->ifFilled($value, ["<time datetime=\"{{ {$value}->toAtomString() }}\">{{ {$value}?->isoFormat('".((bool) ($config['time'] ?? false) ? 'D MMMM YYYY, HH:mm' : 'D MMMM YYYY')."') }}</time>"]),
+            'date' => $this->ifFilled($value, ["<time datetime=\"{{ {$value}->toAtomString() }}\">{{ {$value}?->isoFormat('".((bool) ($config['time'] ?? false) ? 'LLL' : 'LL')."') }}</time>"]),
             'toggle' => ["@if ({$value})", self::INDENT.'{{-- '.$field->name.' is on --}}', '@endif'],
             'choice' => (bool) ($config['multiple'] ?? false) ? $this->loop($value, $field->name, ['<span>{{ $%s->label() }}</span>']) : $this->ifFilled($value, ["<p>{{ {$value} }}</p>"]),
             'page' => (bool) ($config['multiple'] ?? true) ? $this->loop($value, $field->name, ['<a href="{{ $%s->url }}">@field($%1$s->title)</a>']) : $this->ifFilled($value, ["<a href=\"{{ {$value}->url }}\">@field({$value}->title)</a>"]),

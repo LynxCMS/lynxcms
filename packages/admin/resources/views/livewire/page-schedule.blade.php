@@ -5,7 +5,7 @@
     @foreach ($failed as $entry)
         <x-lynx-admin::ui.alert variant="destructive" class="mb-3">
             <x-lucide-circle-alert aria-hidden="true" />
-            <x-lynx-admin::ui.alert-description>{{ __('lynx-admin::settings.schedule.failed', ['action' => __('lynx-admin::settings.schedule.action_'.$entry['action']), 'error' => $entry['error'], 'language' => $entry['language'] === \LynxCms\Core\Actions\Pages\SchedulePage::ALL_LANGUAGES ? __('lynx-admin::settings.schedule.every_language') : $entry['language'], 'at' => $entry['at']->format('Y-m-d H:i')]) }}</x-lynx-admin::ui.alert-description>
+            <x-lynx-admin::ui.alert-description>{{ __('lynx-admin::settings.schedule.failed', ['action' => __('lynx-admin::settings.schedule.action_'.$entry['action']), 'error' => $entry['error'], 'language' => $entry['language'] === \LynxCms\Core\Actions\Pages\SchedulePage::ALL_LANGUAGES ? __('lynx-admin::settings.schedule.every_language') : $entry['language'], 'at' => $entry['at']->isoFormat('lll')]) }}</x-lynx-admin::ui.alert-description>
         </x-lynx-admin::ui.alert>
     @endforeach
 

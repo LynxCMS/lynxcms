@@ -93,7 +93,7 @@ The course page shows its curriculum in an accordion, its instructors, and the u
 
 <<< @/snippets/training/resources/views/partials/course/sessions.blade.php{blade}
 
-Prices print with Laravel's `Number::currency()` in the visitor's locale: *€2,400.00* in English, *2 400,00 €* in Portuguese. Dates use Carbon's `isoFormat()` the same way.
+Prices print with Laravel's `Number::currency()` in the visitor's locale: *€2,400.00* in English, *2 400,00 €* in Portuguese. Dates use Carbon's `isoFormat()` with a style such as `ll`, and the visitor's language decides the order of the day, the month, and the year.
 
 ## What you get
 

@@ -61,7 +61,7 @@ final readonly class ResultRows
             'template' => Value::string($template->label) ?: Value::string($template->name),
             'statuses' => $this->statuses($page),
             'changed' => $changed?->isoFormat('ll'),
-            'changedAt' => $changed?->toDayDateTimeString(),
+            'changedAt' => $changed?->isoFormat('llll'),
             'cells' => $cells,
         ];
     }

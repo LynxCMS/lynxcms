@@ -21,7 +21,7 @@ final class ActivityEntry
     {
         return [
             'when' => $event->created_at->diffForHumans(),
-            'at' => $event->created_at->toDayDateTimeString(),
+            'at' => $event->created_at->isoFormat('llll'),
             'who' => $names->label($event->actor_kind, $event->actor_id),
             'what' => (new ActivityDescription)->of($event),
         ];

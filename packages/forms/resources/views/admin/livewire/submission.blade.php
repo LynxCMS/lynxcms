@@ -9,7 +9,7 @@
         <div>
             <h1 class="text-2xl font-semibold tracking-tight">{{ $form?->text('label')->in() ?? $submission->form }}</h1>
             <p class="text-muted-foreground text-sm">
-                {{ __('lynx-forms::admin.submission.received', ['when' => $submission->created_at->isoFormat('ddd, ll LT')]) }}
+                {{ __('lynx-forms::admin.submission.received', ['when' => $submission->created_at->isoFormat('llll')]) }}
                 @if ($submission->language() && lynx()->languages->isMultilingual()) · {{ __('lynx-forms::admin.submission.in_language', ['language' => $submission->language()->name]) }} @endif
                 @if ($page) · {{ __('lynx-forms::admin.submission.from') }} <a href="{{ $page->url }}" class="underline" target="_blank" rel="noopener">{{ $page->title }}</a> @endif
                 @if ($account = $submission->account()) · {{ __('lynx-forms::admin.submission.by', ['account' => $account]) }} @endif
@@ -53,7 +53,7 @@
                 <p class="text-muted-foreground text-sm">{{ __('lynx-forms::admin.submission.files') }}</p>
                 <ul class="grid gap-1">
                     @foreach ($submission->files as $file)
-                        <li><a href="{{ route('lynx.admin.forms.file', [$submission->uuid, $file->id]) }}" class="underline">{{ $file->name }}</a> <span class="text-muted-foreground text-xs">{{ \Illuminate\Support\Number::fileSize($file->bytes) }}</span></li>
+                        <li><a href="{{ route('lynx.admin.forms.file', [$submission->uuid, $file->id]) }}" class="underline">{{ $file->name }}</a> <span class="text-muted-foreground text-xs">{{ \LynxCms\Core\Support\LocalizedNumber::fileSize($file->bytes) }}</span></li>
                     @endforeach
                 </ul>
             </div>

@@ -14,7 +14,7 @@
                             @endif
                             <span class="truncate" title="{{ $stat['label'] }}">{{ $stat['label'] }}</span>
                         </span>
-                        <span class="text-2xl font-semibold tabular-nums">{{ is_int($stat['value']) ? \Illuminate\Support\Number::format($stat['value'], locale: app()->getLocale()) : $stat['value'] }}</span>
+                        <span class="text-2xl font-semibold tabular-nums">{{ is_int($stat['value']) ? \LynxCms\Core\Support\LocalizedNumber::format($stat['value']) : $stat['value'] }}</span>
                     </{{ $tag }}>
                 </li>
             @endforeach

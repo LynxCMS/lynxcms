@@ -29,6 +29,6 @@ final class SendTwoFactorNotice
             return;
         }
 
-        Notification::send($user, new TwoFactorChanged($event instanceof TwoFactorAuthenticationConfirmed, now()->toDayDateTimeString()));
+        Notification::send($user, new TwoFactorChanged($event instanceof TwoFactorAuthenticationConfirmed, now()->isoFormat('llll')));
     }
 }

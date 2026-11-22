@@ -7,7 +7,6 @@ return [
     'welcome' => 'Welcome, :name',
     'welcome_plain' => 'Welcome',
     'today' => 'Today is :date.',
-    'date_format' => 'dddd, MMMM D',
     'stats' => [
         'label' => 'At a glance',
         'pages' => 'Pages',
