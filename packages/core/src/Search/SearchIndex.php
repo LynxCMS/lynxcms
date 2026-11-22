@@ -79,7 +79,7 @@ final readonly class SearchIndex
     public function apply(Builder $query, Clause $clause, int $languageId): void
     {
         if (! in_array($clause->operator, ['*=', '%=', '~='], true)) {
-            throw new SelectorException('Search the index with search*="words".');
+            throw new SelectorException(Value::string(__('lynx::selectors.search')));
         }
 
         $query->where(function (Builder $any) use ($clause, $languageId): void {

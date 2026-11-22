@@ -64,7 +64,7 @@ final readonly class ClauseComparison
     private function like(Builder $q, string $sql, string $operator, mixed $value, bool $likeAllowed): void
     {
         if (! $likeAllowed) {
-            throw new SelectorException("Operator [{$operator}] is not supported for this field.");
+            throw new SelectorException(Value::string(__('lynx::selectors.operator', ['operator' => $operator])));
         }
 
         $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], mb_strtolower(Value::string($value)));
@@ -101,7 +101,7 @@ final readonly class ClauseComparison
         try {
             return CarbonImmutable::parse($value)->format(DateType::STORAGE_FORMAT);
         } catch (Throwable) {
-            throw new SelectorException("[{$value}] is not a date. Use a date such as 2026-01-01, or today, -7 days.");
+            throw new SelectorException(Value::string(__('lynx::selectors.date', ['value' => $value])));
         }
     }
 }

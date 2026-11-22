@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'operator' => 'Operator [:operator] is not supported for this field.',
+    'date' => '[:value] is not a date. Use a date such as 2026-01-01, or today, -7 days.',
+    'unknown_field' => 'Unknown field [:field] in selector.',
+    'count' => 'Field [:field] holds one value; [:field.count] cannot be used in selectors.',
+    'no_items' => 'Subfield [:field] holds no items to select by.',
+    'no_property' => 'Subfield [:field] has no property [:property]. Use count or one of: :properties.',
+    'list' => '[:field] holds a list: use = or !=.',
+    'language_code' => '[:language] is not a language code.',
+    'field_name' => '[:field] is not a field name.',
+    'equality' => '[:field] takes = or !=, not [:operator].',
+    'status' => 'Unknown status [:status]: use :statuses.',
+    'flag' => '[:field] takes 1 or 0, not [:value].',
+    'language_outdated' => 'Unknown language [:language] in has_outdated.',
+    'language' => 'Unknown language [:language] in selector.',
+    'join' => 'Cannot join [:field]: there is no such field.',
+    'combined' => '[:field] cannot be combined with other fields in [:fields].',
+    'type' => 'Fields of type [:type] such as [:field] cannot be used in selectors.',
+    'unknown_sort' => 'Unknown sort field [:field].',
+    'sort' => 'Cannot sort by [:field].',
+    'has_groups' => 'This selector has OR groups: read it with SelectorParser::parseSelector().',
+    'nul' => 'Selectors cannot contain NUL bytes.',
+    'parentheses' => 'Unbalanced parentheses in selector part [:part].',
+    'nested_groups' => 'OR groups cannot hold other groups: [:part].',
+    'whole_selector' => '[:field] applies to the whole selector, so it cannot sit inside an OR group.',
+    'empty_group' => 'An OR group cannot be empty.',
+    'part' => 'Cannot parse selector part [:part]. Expected field, operator and value, e.g. title%=Delivery.',
+    'no_subfields' => 'Field [:field] has no subfields; [:clause] cannot be used in selectors.',
+    'subfield' => 'Subfield [:field] cannot be used in selectors.',
+    'subfield_list' => 'Subfield [:field] holds a list: use = or !=.',
+    'no_subfield' => 'Field [:field] has no subfield [:subfield].',
+    'search' => 'Search the index with search*="words".',
+];

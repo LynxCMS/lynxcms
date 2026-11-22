@@ -13,6 +13,7 @@ use LynxCms\Core\Fields\Items\ItemTable;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * "{name}.count" clauses (ADR-0060): the number of child pages ("children.count>0", drafts and
@@ -53,7 +54,7 @@ final readonly class CountClause
 
     private function values(string $name, string $pagesId): string
     {
-        $field = $this->fields->find($name) ?? throw new SelectorException("Unknown field [{$name}] in selector.");
+        $field = $this->fields->find($name) ?? throw new SelectorException(Value::string(__('lynx::selectors.unknown_field', ['field' => $name])));
         $grammar = DB::connection()->getQueryGrammar();
         $table = $grammar->wrapTable($field->table());
         $count = "SELECT COUNT(*) FROM {$table} WHERE {$table}.".$grammar->wrap('page_id').' = '.$grammar->wrap($pagesId);
@@ -63,7 +64,7 @@ final readonly class CountClause
         }
 
         if (! $this->isCountable($field)) {
-            throw new SelectorException("Field [{$name}] holds one value; [{$name}.count] cannot be used in selectors.");
+            throw new SelectorException(Value::string(__('lynx::selectors.count', ['field' => $name])));
         }
 
         return $count;

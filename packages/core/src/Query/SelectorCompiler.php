@@ -140,7 +140,7 @@ final class SelectorCompiler
 
         foreach ($names as $name) {
             if ($name !== 'all' && ! $this->fields->find($name) instanceof Field) {
-                throw new SelectorException("Cannot join [{$name}]: there is no such field.");
+                throw new SelectorException(Value::string(__('lynx::selectors.join', ['field' => $name])));
             }
         }
 
@@ -189,7 +189,7 @@ final class SelectorCompiler
         $query->where(function (Builder $any) use ($clause, $chain, $boolean): void {
             foreach (explode('|', $clause->field) as $field) {
                 if (in_array($field, self::RESERVED, true)) {
-                    throw new SelectorException("[{$field}] cannot be combined with other fields in [{$clause->field}].");
+                    throw new SelectorException(Value::string(__('lynx::selectors.combined', ['field' => $field, 'fields' => $clause->field])));
                 }
 
                 $any->where(fn (Builder $one) => $this->where($one, new Clause($field, $clause->operator, $clause->values), $chain), boolean: $boolean);
@@ -251,12 +251,12 @@ final class SelectorCompiler
     private function whereField(Builder $query, Clause $clause): void
     {
         $field = $this->fields->find($clause->field)
-            ?? throw new SelectorException("Unknown field [{$clause->field}] in selector.");
+            ?? throw new SelectorException(Value::string(__('lynx::selectors.unknown_field', ['field' => $clause->field])));
 
         $type = $field->fieldType();
 
         if ($type->comparison() === Comparison::None) {
-            throw new SelectorException("Fields of type [{$field->type}] such as [{$field->name}] cannot be used in selectors.");
+            throw new SelectorException(Value::string(__('lynx::selectors.type', ['type' => $field->type, 'field' => $field->name])));
         }
 
         $cast = ClauseComparison::caster($type->comparison());
@@ -289,10 +289,10 @@ final class SelectorCompiler
         };
 
         if ($column === null) {
-            $field = $this->fields->find($name) ?? throw new SelectorException("Unknown sort field [{$name}].");
+            $field = $this->fields->find($name) ?? throw new SelectorException(Value::string(__('lynx::selectors.unknown_sort', ['field' => $name])));
 
             if ($field->fieldType()->multiple() || $field->type === 'component') {
-                throw new SelectorException("Cannot sort by [{$name}].");
+                throw new SelectorException(Value::string(__('lynx::selectors.sort', ['field' => $name])));
             }
 
             if ($this->sortKeys->covers($field)) {
