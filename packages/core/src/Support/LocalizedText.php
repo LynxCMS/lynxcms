@@ -6,15 +6,18 @@ namespace LynxCms\Core\Support;
 
 use Closure;
 use JsonSerializable;
+use LynxCms\Core\Languages\EditorLanguage;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Schema\SchemaWording;
 use Stringable;
 
 /**
  * Schema text editors read, such as a field's label, description or notes (ADR-0043): one string
  * for every language, or a map of language codes to text. Reading picks the language (by default
  * the current one), then its fallback chain, then the default language, then any text there is.
+ * Labels in the admin read in the language of the person at it instead (forField(), forTemplate()).
  *
  * @api
  */
@@ -68,6 +71,18 @@ final readonly class LocalizedText implements JsonSerializable, Stringable
         }
 
         return array_first($this->value) ?? '';
+    }
+
+    /** A field's label, description or other text as an editor reads it (ADR-0140). */
+    public function forField(string $field): string
+    {
+        return app(EditorLanguage::class)->read($this, app(SchemaWording::class)->ofField($field));
+    }
+
+    /** A template's label, tab or section as an editor reads it (ADR-0140). */
+    public function forTemplate(string $template): string
+    {
+        return app(EditorLanguage::class)->read($this, app(SchemaWording::class)->ofTemplate($template));
     }
 
     public function isLocalized(): bool

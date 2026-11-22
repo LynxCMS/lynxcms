@@ -41,7 +41,7 @@ final class ItemHeaders
             $values = $this->texts($field, $type, $item, $code, $titles);
             $template = $this->template($field, $type, $itemType);
             $label = $template === ''
-                ? trim(($type instanceof MatrixType ? $type->typeLabel($field->config(), (string) $itemType) : '#'.($index + 1)).' '.(array_first(array_filter($values)) ?? ''))
+                ? trim(($type instanceof MatrixType ? $type->typeLabel($field->config(), (string) $itemType, $field->name) : '#'.($index + 1)).' '.(array_first(array_filter($values)) ?? ''))
                 : trim(preg_replace_callback('/\{([a-z][a-z0-9_]*)\}/', fn (array $m): string => $values[$m[1]] ?? '', $template) ?? '', ' ·-–|');
             $headers[] = $label === '' ? '#'.($index + 1) : $label;
         }

@@ -44,7 +44,7 @@ final readonly class TemplateField
     /** The template's label for the field, else the field's, in the current language (ADR-0043). */
     public function label(): string
     {
-        return $this->labels()->in();
+        return $this->labels()->forField($this->name());
     }
 
     public function labels(): LocalizedText
@@ -58,14 +58,14 @@ final readonly class TemplateField
     {
         $own = LocalizedText::from($this->settings['description'] ?? null);
 
-        return $own->isEmpty() ? $this->field->description() : $own->in();
+        return $own->isEmpty() ? $this->field->description() : $own->forField($this->name());
     }
 
     public function notes(): string
     {
         $own = LocalizedText::from($this->settings['notes'] ?? null);
 
-        return $own->isEmpty() ? $this->field->notes() : $own->in();
+        return $own->isEmpty() ? $this->field->notes() : $own->forField($this->name());
     }
 
     /** Required fields are validated in the default language only (ADR-0006). */
@@ -86,7 +86,7 @@ final readonly class TemplateField
     /** Text shown in the empty input, in the current language. */
     public function placeholder(): string
     {
-        return LocalizedText::from($this->settings['placeholder'] ?? null)->in();
+        return LocalizedText::from($this->settings['placeholder'] ?? null)->forField($this->name());
     }
 
     /** A Lucide icon name shown before the label, or null. */

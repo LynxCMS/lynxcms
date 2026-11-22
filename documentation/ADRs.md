@@ -1495,3 +1495,19 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 
 **Consequences:** The first run found two writes outside actions, both on sign-in screens: Account security saved the password itself (now Fortify's `UpdatesUserPasswords`), and the new password screen deleted the temporary password itself (now Laravel's `PasswordReset` event, as invitations do). The rule checks where a write is made, not who called it: a listed class called from a controller is not caught, so the list stays short and each entry says who calls it. Code PHPStan does not analyse is not checked: `packages/forms/src` was missing from its paths, and was added with its 40 type errors fixed.
 
+
+## ADR-0140: Labels follow the language the editor reads the admin in
+
+**Status:** Accepted. Amends ADR-0043 and ADR-0097, where labels followed the content language.
+
+**Context:** An editor who reads the admin in Portuguese saw field labels in the site's default language, next to Portuguese wording, even when the site had stored Portuguese labels. The admin collected label translations that nobody reading in that language could see. The editor's language can also be one the site does not publish in, such as an Estonian editor on an English site. Label maps can't hold it, because their keys are site languages (ADR-0043). Modules install their labels in English only, as plain text.
+
+**Decision:** The editor's language is a locale. `UseAdminLocale` gives it to `EditorLanguage`, a scoped service that outside the admin holds nothing. The text of a field or template that an editor reads (label, description, notes, placeholder, tab, section, group, block type, add button, choice option) reads through `LocalizedText::forField()` or `forTemplate()`, in this order:
+
+1. The text stored in a site language that matches the locale: the same code or locale, then the bare language, then another variant of it.
+2. A translation in a language file, looked up by the text in the site's default language: the app's `lang/{locale}/lynx-schema.php`, then, for the templates and fields a module installs, the module's `schema.php`. The module registers its namespace with `SchemaWording`. The app's fallback locale plays no part, as an English editor needs no file for English labels.
+3. The text as it read before.
+
+`LocalizedText::in()` keeps its meaning and stays the read for content: choice labels on pages, `@string`, forms, image descriptions. An explicit read was preferred to changing `in()` for admin requests, where a static export or a cache warming renders public pages. Installing module labels as maps was rejected: every existing site would need an update, and a site without the language could not hold it. Adding module labels to `lang/{locale}.json` was rejected, as they would change the app's own `__('Title')` (ADR-0097).
+
+**Consequences:** No database change. Stored text, schema files, exports and sync are untouched, so code that compares a label with what it installed must compare `labels()->toStorage()`. A label the site rewords no longer matches a file's key and shows as the site wrote it. Two texts that read the same in the default language share a translation in a file. Values keep the content language, so a choice input offers Portuguese options while a table cell shows the stored value's label in the content language. Form titles and questions are content and stay in the content language too.

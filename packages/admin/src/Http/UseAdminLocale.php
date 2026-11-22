@@ -7,12 +7,13 @@ namespace LynxCms\Admin\Http;
 use Closure;
 use Illuminate\Http\Request;
 use LynxCms\Admin\Locale\AdminLocale;
+use LynxCms\Core\Languages\EditorLanguage;
 use LynxCms\Core\Support\Value;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Sets Laravel's locale for an admin request (ADR-0097). Only the locale: the language pages are
- * read and saved in stays with LanguageContext.
+ * Sets Laravel's locale for an admin request (ADR-0097) and the language labels read in (ADR-0140).
+ * The language pages are read and saved in stays with LanguageContext.
  *
  * @internal
  */
@@ -24,7 +25,9 @@ final class UseAdminLocale
     public function handle(Request $request, Closure $next): Response
     {
         $id = $request->user()?->getAuthIdentifier();
-        app()->setLocale(AdminLocale::forUser(is_int($id) ? $id : ($id === null ? null : Value::string($id))));
+        $locale = AdminLocale::forUser(is_int($id) ? $id : ($id === null ? null : Value::string($id)));
+        app()->setLocale($locale);
+        app(EditorLanguage::class)->use($locale);
 
         return $next($request);
     }

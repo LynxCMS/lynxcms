@@ -63,21 +63,21 @@ final readonly class Subfield
 
     public function label(): string
     {
-        return $this->labels()->in();
+        return $this->labels()->forField($this->name());
     }
 
     public function description(): string
     {
         $own = LocalizedText::from($this->entry['description'] ?? null);
 
-        return $own->isEmpty() ? $this->field->description() : $own->in();
+        return $own->isEmpty() ? $this->field->description() : $own->forField($this->name());
     }
 
     public function notes(): string
     {
         $own = LocalizedText::from($this->entry['notes'] ?? null);
 
-        return $own->isEmpty() ? $this->field->notes() : $own->in();
+        return $own->isEmpty() ? $this->field->notes() : $own->forField($this->name());
     }
 
     /** The group this subfield starts, if any: the fields from here to the next group share a box. */
@@ -89,11 +89,11 @@ final readonly class Subfield
             return null;
         }
 
-        $text = fn (string $key): string => LocalizedText::from($group[$key] ?? null)->in();
+        $text = fn (string $key): string => LocalizedText::from($group[$key] ?? null)->forField($this->name());
 
         $link = is_array($group['link'] ?? null) ? $group['link'] : [];
 
-        return new SubfieldGroup($text('label'), $text('description'), $text('notes'), [$this], LocalizedText::from($link['label'] ?? null)->in(), Value::string($link['url'] ?? ''));
+        return new SubfieldGroup($text('label'), $text('description'), $text('notes'), [$this], LocalizedText::from($link['label'] ?? null)->forField($this->name()), Value::string($link['url'] ?? ''));
     }
 
     /** Share of the row, in percent (100 = full width). */

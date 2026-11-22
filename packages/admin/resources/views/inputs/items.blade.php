@@ -11,7 +11,7 @@
     $collapse = (string) ($config['collapse'] ?? 'new_open');
     $allowed = (array) ($field->settings['allowed_types'] ?? []);
     $types = $isMatrix ? array_values(array_filter($itemType->slugs($config), fn ($slug) => $allowed === [] || in_array($slug, $allowed, true))) : [];
-    $addLabel = \LynxCms\Core\Support\LocalizedText::from($config['add_label'] ?? null)->in();
+    $addLabel = \LynxCms\Core\Support\LocalizedText::from($config['add_label'] ?? null)->forField($field->name);
 @endphp
 <div class="grid gap-2" aria-labelledby="field-{{ $field->name }}">
     @if ($items !== [])
@@ -35,7 +35,7 @@
                             <span class="truncate">{{ $headers[$index] ?? '#'.($index + 1) }}</span>
                         </button>
                         @if ($isMatrix)
-                            <x-lynx-admin::ui.badge variant="outline">{{ $itemType->typeLabel($config, (string) ($item['type'] ?? '')) }}</x-lynx-admin::ui.badge>
+                            <x-lynx-admin::ui.badge variant="outline">{{ $itemType->typeLabel($config, (string) ($item['type'] ?? ''), $field->name) }}</x-lynx-admin::ui.badge>
                         @endif
                         @unless ($item['enabled'] ?? true) <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-admin::inputs.items.off') }}</x-lynx-admin::ui.badge> @endunless
                         @unless ($disabled)
@@ -92,7 +92,7 @@
         <div class="flex flex-wrap gap-2">
             @if ($isMatrix)
                 @foreach ($types as $slug)
-                    <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }}, {{ Js::from($slug) }})"><x-lucide-plus aria-hidden="true" /> {{ $itemType->typeLabel($config, $slug) }}</x-lynx-admin::ui.button>
+                    <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }}, {{ Js::from($slug) }})"><x-lucide-plus aria-hidden="true" /> {{ $itemType->typeLabel($config, $slug, $field->name) }}</x-lynx-admin::ui.button>
                 @endforeach
             @else
                 <x-lynx-admin::ui.button type="button" variant="outline" size="sm" wire:click="addItem({{ Js::from($field->name) }})"><x-lucide-plus aria-hidden="true" /> {{ $addLabel !== '' ? $addLabel : __('lynx-admin::inputs.items.add') }}</x-lynx-admin::ui.button>

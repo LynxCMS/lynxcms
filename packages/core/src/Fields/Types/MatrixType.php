@@ -70,15 +70,16 @@ final class MatrixType extends ItemFieldType
     }
 
     /**
-     * A type's label in the current language, falling back to its slug.
+     * A type's label in the current language, in the admin the editor's (ADR-0140), falling back to its slug.
      *
      * @param  array<string, mixed>  $settings
+     * @param  string  $field  the matrix field's name, so a module's block types read in its translation
      */
-    public function typeLabel(array $settings, string $type): string
+    public function typeLabel(array $settings, string $type, string $field = ''): string
     {
         $label = LocalizedText::from($this->type($settings, $type)['label'] ?? null);
 
-        return $label->isEmpty() ? $type : $label->in();
+        return $label->isEmpty() ? $type : $label->forField($field);
     }
 
     /**

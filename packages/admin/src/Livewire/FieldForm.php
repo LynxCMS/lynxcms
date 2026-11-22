@@ -208,7 +208,7 @@ final class FieldForm extends Component
 
         return array_values(lynx()->templates->all()
             ->reject(fn (Template $template): bool => $owners->isSystemTemplate((string) $template->name))
-            ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->labels()->in()])
+            ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->label])
             ->sortBy('label')->all());
     }
 

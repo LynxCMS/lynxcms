@@ -48,7 +48,7 @@ final class Field extends Model
     }
 
     /**
-     * The label in the current language (ADR-0043); labels() gives every language. Assigning takes
+     * The label in the current language (ADR-0043), in the admin the editor's (ADR-0140); labels() gives every language. Assigning takes
      * a string or a map of language codes to text.
      *
      * @return Attribute<string, string|array<string, string>|LocalizedText>
@@ -56,7 +56,7 @@ final class Field extends Model
     protected function label(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value): string => LocalizedText::from($value)->in(),
+            get: fn (mixed $value): string => LocalizedText::from($value)->forField((string) $this->name),
             set: fn (mixed $value): string => LocalizedText::from($value)->toColumn(),
         );
     }
@@ -69,13 +69,13 @@ final class Field extends Model
     /** The description under the field's label, in the current language. */
     public function description(): string
     {
-        return LocalizedText::from($this->config()['description'] ?? '')->in();
+        return LocalizedText::from($this->config()['description'] ?? '')->forField($this->name);
     }
 
     /** A short hint next to the field's input, in the current language. */
     public function notes(): string
     {
-        return LocalizedText::from($this->config()['notes'] ?? '')->in();
+        return LocalizedText::from($this->config()['notes'] ?? '')->forField($this->name);
     }
 
     public function fieldType(): FieldType

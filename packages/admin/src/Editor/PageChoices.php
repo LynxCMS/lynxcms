@@ -92,7 +92,7 @@ final readonly class PageChoices
     public function emptyNote(array $settings): string
     {
         $labels = array_map(
-            fn (string $name): string => lynx()->templates->find($name)?->labels()->in() ?? $name,
+            fn (string $name): string => lynx()->templates->find($name)->label ?? $name,
             Value::strings($settings['templates'] ?? []),
         );
 

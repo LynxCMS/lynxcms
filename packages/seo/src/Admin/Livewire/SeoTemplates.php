@@ -50,7 +50,7 @@ final class SeoTemplates extends Component
         return view('lynx-seo::admin.livewire.templates', [
             'rows' => $templates->map(fn (Template $template): array => [
                 'name' => $template->name,
-                'label' => $template->labels()->in(),
+                'label' => $template->label,
                 'pages' => lynx()->pages->count('template='.$template->name.', include=all'),
                 'isOn' => $this->hasSeo($template->name),
             ])->values()->all(),

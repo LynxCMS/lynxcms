@@ -179,6 +179,6 @@ final class PageCacheScreen extends Component
     private function templates(): Collection
     {
         return lynx()->templates->all()->filter(fn (Template $template): bool => $template->hasUrl())->sortBy('name')
-            ->mapWithKeys(fn (Template $template): array => [$template->name => $template->labels()->in()]);
+            ->mapWithKeys(fn (Template $template): array => [$template->name => $template->label]);
     }
 }
