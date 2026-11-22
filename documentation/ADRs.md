@@ -1511,3 +1511,15 @@ A database view was considered instead. A plain view only names the `COALESCE`, 
 `LocalizedText::in()` keeps its meaning and stays the read for content: choice labels on pages, `@string`, forms, image descriptions. An explicit read was preferred to changing `in()` for admin requests, where a static export or a cache warming renders public pages. Installing module labels as maps was rejected: every existing site would need an update, and a site without the language could not hold it. Adding module labels to `lang/{locale}.json` was rejected, as they would change the app's own `__('Title')` (ADR-0097).
 
 **Consequences:** No database change. Stored text, schema files, exports and sync are untouched, so code that compares a label with what it installed must compare `labels()->toStorage()`. A label the site rewords no longer matches a file's key and shows as the site wrote it. Two texts that read the same in the default language share a translation in a file. Values keep the content language, so a choice input offers Portuguese options while a table cell shows the stored value's label in the content language. Form titles and questions are content and stay in the content language too.
+
+## ADR-0141: Messages people read come from language files
+
+**Status:** Accepted. Amends ADR-0097, where validation errors from actions stayed in English.
+
+**Context:** An editor who reads the admin in Portuguese met English when a save was refused ("Title is required in the default language."), beside Laravel's own rule messages in Portuguese when the app has them. With labels in the editor's language (ADR-0140), the two mixed in one sentence. Laravel's messages also named every field "value", because Lynx validates each value under that key. ADR-0097 kept the errors in English because agents and MCP clients read them too. Laravel's rule messages already reach those in the app's language.
+
+**Decision:** Validation errors, rule failures, the errors of repeater and matrix items, and authorization refusals read from language files, under the package's namespace (`lynx::validation.page.locked`), in English, Portuguese, and Spanish. The English text does not change. A field's value is validated with its label as the attribute. Packages move over in steps: `tests/Unit/HardcodedMessagesTest.php` counts the messages still typed into each package's code and refuses a higher count.
+
+Staying in English: action descriptions, console output, the change summaries the activity log stores, and errors for developers (selectors, drafts, exceptions about code).
+
+**Consequences:** A refused save reads in one language when the app has that language's `validation.php`; Lynx does not ship Laravel's messages. MCP over HTTP, queues, and Artisan read the messages in the app's locale, and an agent run from the admin reads them in the editor's. Code that must recognize a refusal compares the error's key or the exception, as the text is no longer fixed.

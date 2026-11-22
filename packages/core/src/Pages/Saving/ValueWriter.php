@@ -47,7 +47,7 @@ final readonly class ValueWriter
             $templateField = $page->templateField($fieldName);
 
             if ($templateField === null) {
-                $errors["values.{$fieldName}"] = "Template [{$template->name}] has no field [{$fieldName}].";
+                $errors["values.{$fieldName}"] = Value::string(__('lynx::validation.values.template_no_field', ['template' => $template->name, 'field' => $fieldName]));
 
                 continue;
             }
@@ -55,7 +55,7 @@ final readonly class ValueWriter
             foreach (array_keys($languageIds) as $languageId) {
                 // A removed value is not in $values: it falls back and needs no checks.
                 if (array_key_exists($languageId, $values[$fieldName] ?? [])) {
-                    $problems = $this->normalize($templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}");
+                    $problems = $this->normalize($templateField, $values[$fieldName][$languageId], "values.{$fieldName}");
                     $errors += $problems === [] ? $this->references->errors($page->id, $templateField->field, $templateField->config(), $values[$fieldName][$languageId], "values.{$fieldName}") : $problems;
                     $errors += $this->disallowedTypes($templateField, $values[$fieldName][$languageId], "values.{$fieldName}");
                 }
@@ -99,12 +99,12 @@ final readonly class ValueWriter
      * Normalizes in place; returns errors keyed under $key. A type's own error keys (an item
      * field's "2.role.pt") are appended to it.
      *
-     * @param  array<string, mixed>  $settings  the field's settings on the template (ADR-0094)
      * @return array<string, string>
      */
-    private function normalize(Field $field, array $settings, mixed &$value, string $key): array
+    private function normalize(TemplateField $templateField, mixed &$value, string $key): array
     {
-        $type = $field->fieldType();
+        $type = $templateField->field->fieldType();
+        $settings = $templateField->config();
 
         try {
             $normalized = $type->normalize($value, $settings);
@@ -122,7 +122,7 @@ final readonly class ValueWriter
             return $errors;
         }
 
-        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($settings)]);
+        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($settings)], attributes: ['value' => $templateField->label() ?: $templateField->name()]);
 
         if ($validator->fails()) {
             return [$key => $validator->errors()->first('value')];
@@ -152,7 +152,7 @@ final readonly class ValueWriter
             $type = Value::string(Value::array($item)['type'] ?? '');
 
             if ($type !== '' && ! in_array($type, $allowed, true)) {
-                $errors["{$key}.{$index}.type"] = "Blocks of type [{$type}] are not allowed here. Allowed: ".implode(', ', $allowed).'.';
+                $errors["{$key}.{$index}.type"] = Value::string(__('lynx::validation.items.type_not_allowed', ['type' => $type, 'types' => implode(', ', $allowed)]));
             }
         }
 
@@ -184,12 +184,12 @@ final readonly class ValueWriter
     private function requiredMessage(Page $page, TemplateField $templateField): string
     {
         if (! $templateField->field->fieldType() instanceof NeedsSavedPage || $page->id !== null) {
-            return "{$templateField->label()} is required in the default language.";
+            return Value::string(__('lynx::validation.values.required_default', ['field' => $templateField->label()]));
         }
 
         return ($page->status & PageStatus::UNPUBLISHED) !== 0
             ? ''
-            : "{$templateField->label()} is required. Create the page unpublished, add it, then publish.";
+            : Value::string(__('lynx::validation.values.required_after_saving', ['field' => $templateField->label()]));
     }
 
     private function replaceRows(int $pageId, Field $field, int $languageId, mixed $value): void

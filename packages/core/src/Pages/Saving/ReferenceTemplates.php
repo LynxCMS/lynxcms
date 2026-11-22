@@ -126,7 +126,7 @@ final readonly class ReferenceTemplates
             if (! in_array($page->template()->name, $templates, true)) {
                 $name = $page->name() === '' ? '/' : $page->name();
 
-                return 'Pick pages that use '.implode(' or ', $templates).": [{$name}] uses {$page->template()->name}.";
+                return Value::string(__('lynx::validation.values.page_template', ['templates' => implode(Value::string(__('lynx::validation.or')), $templates), 'page' => $name, 'template' => $page->template()->name]));
             }
         }
 

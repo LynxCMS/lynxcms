@@ -75,9 +75,9 @@ final class PageReferenceType extends BaseFieldType implements DescribesPhpType,
             $count = count(Value::ints($ids));
 
             if ($max > 0 && $count > $max) {
-                $fail("Pick at most {$max} pages.");
+                $fail(trans_choice('lynx::validation.values.pages_max', $max));
             } elseif ($count > 0 && $count < $min) {
-                $fail("Pick at least {$min} pages.");
+                $fail(trans_choice('lynx::validation.values.pages_min', $min));
             }
         }];
     }

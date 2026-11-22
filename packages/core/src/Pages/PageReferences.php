@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Query\PageFinder;
+use LynxCms\Core\Support\Value;
 
 /**
  * Turns a page reference string into a page id, as ProcessWire's $pages->get() does (ADR-0029):
@@ -42,7 +43,7 @@ final readonly class PageReferences
             $ids = $this->named($name, 2);
 
             if (count($ids) > 1) {
-                throw ValidationException::withMessages([$key => "Several pages are named [{$name}]; give the page's path or id."]);
+                throw ValidationException::withMessages([$key => Value::string(__('lynx::validation.page.ambiguous', ['name' => $name]))]);
             }
 
             return $ids[0] ?? null;

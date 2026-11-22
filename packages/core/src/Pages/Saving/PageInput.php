@@ -54,10 +54,10 @@ final readonly class PageInput
     private function existing(Input $input): Page
     {
         $id = (int) $input->int('id');
-        $page = $this->loader->find($id) ?? throw ValidationException::withMessages(['id' => "Page [{$id}] does not exist."]);
+        $page = $this->loader->find($id) ?? throw ValidationException::withMessages(['id' => Value::string(__('lynx::validation.page.missing', ['page' => $id]))]);
 
         if ($input->string('template') !== null && $this->templates->get($input->string('template'))->id !== $page->templateId) {
-            throw ValidationException::withMessages(['template' => 'Use pages.switch_template to change a page\'s template.']);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.page.switch_template'))]);
         }
 
         return $page;
@@ -65,8 +65,8 @@ final readonly class PageInput
 
     private function new(Input $input): Page
     {
-        $name = $input->string('template') ?? throw ValidationException::withMessages(['template' => 'A template is required for new pages.']);
-        $template = $this->templates->find($name) ?? throw ValidationException::withMessages(['template' => "Template [{$name}] does not exist."]);
+        $name = $input->string('template') ?? throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.page.template_required'))]);
+        $template = $this->templates->find($name) ?? throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.missing', ['template' => $name]))]);
 
         return new Page($template->id, $this->parentId($input->get('parent')));
     }
@@ -93,13 +93,13 @@ final readonly class PageInput
 
         foreach ($input->array('values') as $fieldName => $value) {
             $templateField = $page->templateField((string) $fieldName)
-                ?? throw ValidationException::withMessages(["values.{$fieldName}" => "This template has no field [{$fieldName}]."]);
+                ?? throw ValidationException::withMessages(["values.{$fieldName}" => Value::string(__('lynx::validation.values.no_field', ['field' => $fieldName]))]);
 
             $isLanguageMap = is_array($value) && $value !== [] && $this->isLanguageMap($value);
 
             // A shared field would turn the map into an empty value; say so instead of dropping it.
             if ($isLanguageMap && ! $templateField->field->isTranslatable()) {
-                throw ValidationException::withMessages(["values.{$fieldName}" => "Field [{$fieldName}] is not translatable: give one value, not one per language."]);
+                throw ValidationException::withMessages(["values.{$fieldName}" => Value::string(__('lynx::validation.values.not_translatable', ['field' => $fieldName]))]);
             }
 
             if ($isLanguageMap) {
@@ -130,11 +130,11 @@ final readonly class PageInput
         }
 
         if (! is_string($parent)) {
-            throw ValidationException::withMessages(['parent' => 'The parent must be a page id or path.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.reference'))]);
         }
 
         return $this->paths->resolve($this->languages->default(), $parent)[0]
-            ?? throw ValidationException::withMessages(['parent' => "No page at path [{$parent}]."]);
+            ?? throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.no_path', ['path' => $parent]))]);
     }
 
     /**

@@ -121,7 +121,7 @@ final class ChoiceType extends BaseFieldType implements ChecksSettings, Describe
             $unknown = array_diff(Value::strings($values), $allowed);
 
             if ($unknown !== []) {
-                $fail('['.implode(', ', $unknown).'] is not one of the options: '.implode(', ', $allowed).'.');
+                $fail(Value::string(__('lynx::validation.values.not_an_option', ['values' => implode(', ', $unknown), 'options' => implode(', ', $allowed)])));
             }
         }];
     }

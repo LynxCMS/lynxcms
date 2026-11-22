@@ -111,6 +111,8 @@ To offer another language, list it in `config/lynx-admin.php`, with its name in 
 ],
 ```
 
+Messages about refused saves come from `lang/vendor/lynx` (the core's files) and from Laravel's own `lang/{code}/validation.php`, which Laravel ships in English only.
+
 Each module has a folder of its own, such as `lang/vendor/lynx-forms`. The same folders change a line of Lynx's wording: `lang/vendor/lynx-admin/en/auth.php` holding only the lines you want to reword. With a single language in `locales`, the menu leaves the choice out.
 
 ### Labels in another language

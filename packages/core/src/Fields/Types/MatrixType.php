@@ -99,8 +99,8 @@ final class MatrixType extends ItemFieldType
 
         if ($slug === '' || $this->type($settings, $slug) === null) {
             $normalizer->error("{$index}.type", $slug === ''
-                ? 'Every block needs a type: '.implode(', ', $this->slugs($settings)).'.'
-                : "There is no block type [{$slug}]. Use one of: ".implode(', ', $this->slugs($settings)).'.');
+                ? Value::string(__('lynx::validation.items.type_required', ['types' => implode(', ', $this->slugs($settings))]))
+                : Value::string(__('lynx::validation.items.no_type', ['type' => $slug, 'types' => implode(', ', $this->slugs($settings))])));
         }
 
         return $slug === '' ? null : $slug;

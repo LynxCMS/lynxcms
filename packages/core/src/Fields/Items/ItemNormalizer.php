@@ -41,7 +41,7 @@ final class ItemNormalizer
         $this->errors = [];
         $items = [];
 
-        foreach ($value === null ? [] : (is_array($value) && array_is_list($value) ? $value : $this->fail('', 'The items must be a list.')) as $index => $raw) {
+        foreach ($value === null ? [] : (is_array($value) && array_is_list($value) ? $value : $this->fail('', Value::string(__('lynx::validation.items.list')))) as $index => $raw) {
             $raw = is_array($raw) ? $raw : [];
             $itemType = $type($raw['type'] ?? null, $index);
             $fields = $subfields($itemType);
@@ -94,11 +94,11 @@ final class ItemNormalizer
             if (! in_array($normalized, [null, [], ''], true)) {
                 $result[$name] = $normalized;
             } elseif ($subfield->isRequired()) {
-                $this->error("{$index}.{$name}", "{$subfield->label()} is required.");
+                $this->error("{$index}.{$name}", Value::string(__('lynx::validation.values.required', ['field' => $subfield->label()])));
             }
 
             if ($subfield->isTranslatable() && $subfield->isRequired() && is_array($normalized) && ! isset($normalized[$this->languages->default()->code])) {
-                $this->error("{$index}.{$name}", "{$subfield->label()} is required in the default language.");
+                $this->error("{$index}.{$name}", Value::string(__('lynx::validation.values.required_default', ['field' => $subfield->label()])));
             }
         }
 
@@ -117,7 +117,7 @@ final class ItemNormalizer
 
         foreach ($map as $code => $languageValue) {
             if (! $this->languages->find((string) $code) instanceof Language) {
-                $this->error("{$key}.{$code}", "There is no language [{$code}].");
+                $this->error("{$key}.{$code}", Value::string(__('lynx::validation.language.missing', ['language' => $code])));
 
                 continue;
             }
@@ -149,7 +149,7 @@ final class ItemNormalizer
             return null;
         }
 
-        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($settings)]);
+        $validator = Validator::make(['value' => $normalized], ['value' => $type->rules($settings)], attributes: ['value' => $subfield->label() ?: $subfield->name()]);
 
         if ($validator->fails()) {
             $this->error($key, $validator->errors()->first('value'));
@@ -167,7 +167,7 @@ final class ItemNormalizer
         }
 
         if (! is_string($key) || preg_match('/^[0-9A-Z]{26}$/', $key) !== 1) {
-            $this->error("{$index}.key", 'An item key is a ULID: leave it out for new items.');
+            $this->error("{$index}.key", Value::string(__('lynx::validation.items.key')));
 
             return (string) Str::ulid();
         }
@@ -184,9 +184,9 @@ final class ItemNormalizer
         $min = Value::int($settings['min'] ?? 0);
 
         if ($max > 0 && $count > $max) {
-            $this->error('', "There may be at most {$max} items.");
+            $this->error('', trans_choice('lynx::validation.items.max', $max));
         } elseif ($count > 0 && $count < $min) {
-            $this->error('', "There must be at least {$min} items.");
+            $this->error('', trans_choice('lynx::validation.items.min', $min));
         }
     }
 

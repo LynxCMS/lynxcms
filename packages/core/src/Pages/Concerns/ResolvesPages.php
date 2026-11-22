@@ -27,6 +27,6 @@ trait ResolvesPages
         $id = is_int($reference) ? $reference : app(PageReferences::class)->single(Value::string($reference), $key);
 
         return ($id === null ? null : app(PageLoader::class)->find($id))
-            ?? throw ValidationException::withMessages([$key => 'Page ['.(is_scalar($reference) ? $reference : '?').'] does not exist.']);
+            ?? throw ValidationException::withMessages([$key => Value::string(__('lynx::validation.page.missing', ['page' => is_scalar($reference) ? $reference : '?']))]);
     }
 }
