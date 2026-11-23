@@ -8,7 +8,7 @@ order: 2
 
 | Command | Does |
 | --- | --- |
-| `lynx:install --user= --migrate` | Default language, root page and roles. With the admin installed and no superuser yet, offers to create one; `--user` (an id or email) makes an existing account one instead. |
+| `lynx:install --user= --modules= --migrate` | Asks which free modules to add and adds them with Composer (`--modules=admin,menus` names them), then the default language, root page and roles. With the admin installed and no superuser yet, offers to create one; `--user` (an id or email) makes an existing account one instead. |
 | `lynx:superuser --email= --name= --password=` | Creates a superuser's account, or makes the account with that email one. Asks for what the options don't give. Comes with `lynxcms/admin`. |
 | `lynx:migrate --force` | Lists the database changes waiting in Lynx packages, asks whether the database is backed up, then applies them; `--force` skips the question. Installs Lynx afterwards when it is not installed yet. |
 | `lynx:languages` | Lists the languages. |
