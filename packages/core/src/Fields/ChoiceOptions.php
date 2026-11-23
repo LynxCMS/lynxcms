@@ -52,9 +52,9 @@ final class ChoiceOptions
             $value = self::valueOf($raw['value'] ?? '', $label);
 
             if (preg_match(self::VALUE_PATTERN, $value) !== 1) {
-                $errors["{$errorPrefix}{$index}.value"] = "[{$value}] is not a valid option value: use lowercase letters, digits, dashes and underscores.";
+                $errors["{$errorPrefix}{$index}.value"] = Value::string(__('lynx::structure.choice.value', ['value' => $value]));
             } elseif (in_array($value, array_column($rows, 'value'), true)) {
-                $errors["{$errorPrefix}{$index}.value"] = "The option value [{$value}] appears twice.";
+                $errors["{$errorPrefix}{$index}.value"] = Value::string(__('lynx::structure.choice.twice', ['value' => $value]));
             }
 
             $rows[] = ['value' => $value, 'label' => $label];

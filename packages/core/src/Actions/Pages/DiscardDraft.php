@@ -13,6 +13,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * Deletes a page's draft (ADR-0039); the live page stays as it is.
@@ -58,7 +59,7 @@ final class DiscardDraft extends Action
     public function handle(Input $input, ActionContext $context): bool
     {
         $page = $this->resolvePageReference($input->get('page'));
-        $draftId = $this->drafts->of((int) $page->id) ?? throw ValidationException::withMessages(['page' => "Page [{$page->name()}] has no draft."]);
+        $draftId = $this->drafts->of((int) $page->id) ?? throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.draft.none', ['page' => $page->name()]))]);
         $context->authorize('pages.edit', $page);
 
         $this->drafts->delete($draftId);

@@ -78,7 +78,7 @@ final readonly class PageStringEdits
 
         foreach (Value::map($strings) as $code => $texts) {
             if ($this->languages->find((string) $code) === null) {
-                $errors["strings.{$code}"] = "There is no language [{$code}].";
+                $errors["strings.{$code}"] = Value::string(__('lynx::validation.language.missing', ['language' => $code]));
 
                 continue;
             }
@@ -152,9 +152,9 @@ final readonly class PageStringEdits
         }
 
         if (! $isDeclared) {
-            return "Template [{$template}] declares no page string [{$key}]. Site texts are saved with strings.save.";
+            return Value::string(__('lynx::validation.strings.no_page_string', ['template' => $template, 'string' => $key]));
         }
 
-        return is_string($text) && mb_strlen($text) <= self::MAX_LENGTH ? null : 'A string is text of at most '.self::MAX_LENGTH.' characters.';
+        return is_string($text) && mb_strlen($text) <= self::MAX_LENGTH ? null : Value::string(__('lynx::validation.strings.max', ['max' => self::MAX_LENGTH]));
     }
 }

@@ -44,11 +44,10 @@ final readonly class TemplateUsage
     public function refusal(Template $template): string
     {
         $count = $this->count($template);
-        $named = array_map(fn (array $page): string => $page['title'].($page['trashed'] ? ' (in the trash)' : " ({$page['url']})"), $this->pages($template, self::NAMED));
-        $more = $count > count($named) ? ', and '.($count - count($named)).' more' : '';
+        $named = array_map(fn (array $page): string => $page['title'].' ('.($page['trashed'] ? Value::string(__('lynx::structure.usage.trashed')) : $page['url']).')', $this->pages($template, self::NAMED));
+        $more = $count > count($named) ? Value::string(__('lynx::structure.usage.more', ['count' => $count - count($named)])) : '';
 
-        return "Template [{$template->name}] is used by {$count} ".($count === 1 ? 'page' : 'pages').': '.implode(', ', $named).$more.'. '
-            .'Switch them to another template (pages.switch_template) or delete them, then delete the template.';
+        return trans_choice('lynx::structure.usage.refusal', $count, ['template' => $template->name, 'pages' => implode(', ', $named).$more]);
     }
 
     private function query(Template $template): Builder

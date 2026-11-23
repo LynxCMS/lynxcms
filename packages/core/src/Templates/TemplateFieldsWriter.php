@@ -45,7 +45,7 @@ final readonly class TemplateFieldsWriter
             $field = $this->fields->find($name);
 
             if ($field === null) {
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] does not exist. Create it first with lynx()->fields->add('{$name}', ...) or the fields.create action."]);
+                throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.field.create_first', ['field' => $name]))]);
             }
 
             $result[$name] = array_intersect_key($spec, array_flip(self::PIVOT_KEYS));
@@ -74,7 +74,7 @@ final readonly class TemplateFieldsWriter
         $validator = Validator::make($settings, $rules);
 
         if ($validator->fails()) {
-            throw ValidationException::withMessages(['fields' => "Field [{$name}]: ".$validator->errors()->first()]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.field.problem', ['field' => $name, 'problem' => $validator->errors()->first()]))]);
         }
     }
 
@@ -130,17 +130,17 @@ final readonly class TemplateFieldsWriter
         try {
             $read = FieldCondition::parse($condition)->fields();
         } catch (InvalidArgumentException $exception) {
-            throw ValidationException::withMessages(['fields' => "The {$key} of [{$name}]: {$exception->getMessage()}"]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.condition.problem', ['setting' => $key, 'field' => $name, 'problem' => $exception->getMessage()]))]);
         }
 
         if (in_array($name, $read, true)) {
-            throw ValidationException::withMessages(['fields' => "The {$key} of [{$name}] cannot depend on itself."]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.condition.itself', ['setting' => $key, 'field' => $name]))]);
         }
 
         $missing = array_diff($read, $templateFields);
 
         if ($missing !== []) {
-            throw ValidationException::withMessages(['fields' => "The {$key} of [{$name}] reads [".implode(', ', $missing).'], which is not on this template.']);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.condition.missing', ['setting' => $key, 'field' => $name, 'fields' => implode(', ', $missing)]))]);
         }
     }
 }

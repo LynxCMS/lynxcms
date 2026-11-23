@@ -24,11 +24,11 @@ final readonly class ContentPackage
         $manifest = is_file($directory.'/manifest.json') ? Value::map(json_decode(File::get($directory.'/manifest.json'), true)) : [];
 
         if (($manifest['format'] ?? null) !== ContentExporter::FORMAT || ! is_file($directory.'/pages.jsonl')) {
-            throw ValidationException::withMessages(['path' => "[{$directory}] is not a Lynx content package (no manifest.json and pages.jsonl)."]);
+            throw ValidationException::withMessages(['path' => Value::string(__('lynx::validation.content.not_package', ['path' => $directory]))]);
         }
 
         if (Value::int($manifest['version'] ?? 0) > ContentExporter::VERSION) {
-            throw ValidationException::withMessages(['path' => 'The package was written by a newer Lynx (format version '.Value::int($manifest['version']).').']);
+            throw ValidationException::withMessages(['path' => Value::string(__('lynx::validation.content.newer', ['version' => Value::int($manifest['version'])]))]);
         }
 
         return new self($directory);

@@ -14,6 +14,7 @@ use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Support\Value;
 use stdClass;
 
 /**
@@ -94,9 +95,9 @@ final class CleanHtmlValues extends Action
             return $this->fields->all()->filter($isHtml)->values();
         }
 
-        $field = $this->fields->find($name) ?? throw ValidationException::withMessages(['field' => "Field [{$name}] does not exist."]);
+        $field = $this->fields->find($name) ?? throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.missing', ['field' => $name]))]);
 
-        return $isHtml($field) ? collect([$field]) : throw ValidationException::withMessages(['field' => "Field [{$name}] is not an html field."]);
+        return $isHtml($field) ? collect([$field]) : throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.not_html', ['field' => $name]))]);
     }
 
     /** Rows are read in key order; only "data" changes, so the order stays stable while writing. */

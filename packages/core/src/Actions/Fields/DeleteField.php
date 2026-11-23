@@ -74,7 +74,7 @@ final class DeleteField extends Action
         $itemFields = $this->fields->itemFieldsUsing($field->name);
 
         if ($itemFields !== []) {
-            throw ValidationException::withMessages(['field' => "Field [{$field->name}] is a subfield of ".implode(', ', $itemFields).'. Remove it there first.']);
+            throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.subfield_of', ['field' => $field->name, 'fields' => implode(', ', $itemFields)]))]);
         }
 
         $values = DB::table($field->table())->count();

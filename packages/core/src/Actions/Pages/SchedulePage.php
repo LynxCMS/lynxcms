@@ -17,6 +17,7 @@ use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * Sets when a page is published or unpublished in one language, or in every language with
@@ -138,12 +139,12 @@ final class SchedulePage extends Action
         }
 
         if ($this->drafts->of((int) $page->id) === null) {
-            throw ValidationException::withMessages(['publish_draft_at' => "Page [{$page->name()}] has no draft to publish."]);
+            throw ValidationException::withMessages(['publish_draft_at' => Value::string(__('lynx::validation.schedule.no_draft', ['page' => $page->name()]))]);
         }
 
         $at = CarbonImmutable::parse($value);
 
-        return $at->isPast() ? throw ValidationException::withMessages(['publish_draft_at' => 'The draft\'s publish time must be in the future.']) : $at;
+        return $at->isPast() ? throw ValidationException::withMessages(['publish_draft_at' => Value::string(__('lynx::validation.schedule.draft_past'))]) : $at;
     }
 
     /** @return array<string, string|null> */
@@ -169,7 +170,7 @@ final class SchedulePage extends Action
         }
 
         return [$this->languages->find($input->string('language') ?? $this->languages->default()->code)
-            ?? throw ValidationException::withMessages(['language' => 'Language ['.$input->string('language').'] does not exist.'])];
+            ?? throw ValidationException::withMessages(['language' => Value::string(__('lynx::validation.language.not_found', ['language' => $input->string('language')]))])];
     }
 
     /**
@@ -212,12 +213,12 @@ final class SchedulePage extends Action
         }
 
         if ($times === []) {
-            throw ValidationException::withMessages(['publish_at' => 'Give publish_at, unpublish_at or both.']);
+            throw ValidationException::withMessages(['publish_at' => Value::string(__('lynx::validation.schedule.empty'))]);
         }
 
         foreach (array_filter($times) as $action => $at) {
             if ($at->isPast()) {
-                throw ValidationException::withMessages([$action.'_at' => "The {$action} time must be in the future."]);
+                throw ValidationException::withMessages([$action.'_at' => Value::string(__("lynx::validation.schedule.{$action}_past"))]);
             }
         }
 
@@ -225,7 +226,7 @@ final class SchedulePage extends Action
         $unpublish = array_key_exists('unpublish', $times) ? $times['unpublish'] : $this->stored((int) $page->id, $languageId, 'unpublish');
 
         if ($publish !== null && $unpublish !== null && $unpublish->lessThanOrEqualTo($publish)) {
-            throw ValidationException::withMessages(['unpublish_at' => 'The unpublish time must be after the publish time.']);
+            throw ValidationException::withMessages(['unpublish_at' => Value::string(__('lynx::validation.schedule.order'))]);
         }
 
         return $times;

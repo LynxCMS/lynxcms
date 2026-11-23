@@ -126,7 +126,7 @@ final class SaveRole extends Action
             $missing = array_diff($this->permissions->requires($permission), $granted);
 
             if ($missing !== []) {
-                throw ValidationException::withMessages(['grants' => "[{$permission}] needs [".implode('], [', $missing).'] in the same role.']);
+                throw ValidationException::withMessages(['grants' => Value::string(__('lynx::access.roles.needs', ['permission' => $permission, 'permissions' => implode('], [', $missing)]))]);
             }
         }
     }
@@ -138,10 +138,10 @@ final class SaveRole extends Action
     private function assertGrant(string $key, string $permission, ?array $templates, ?array $branches): void
     {
         $problem = match (true) {
-            ! $this->permissions->has($permission) => "Unknown permission [{$permission}].",
-            ($templates !== null || $branches !== null) && ! $this->permissions->isScoped($permission) => "[{$permission}] cannot be limited to templates or branches.",
-            $templates !== null && ($missing = array_filter($templates, fn (string $name): bool => $this->templates->find($name) === null)) !== [] => 'Unknown template ['.implode(', ', $missing).'].',
-            $branches !== null && ($missing = array_filter($branches, fn (int $id): bool => $this->pages->find($id) === null)) !== [] => 'Unknown page ['.implode(', ', $missing).'].',
+            ! $this->permissions->has($permission) => Value::string(__('lynx::access.roles.unknown_permission', ['permission' => $permission])),
+            ($templates !== null || $branches !== null) && ! $this->permissions->isScoped($permission) => Value::string(__('lynx::access.roles.not_scoped', ['permission' => $permission])),
+            $templates !== null && ($missing = array_filter($templates, fn (string $name): bool => $this->templates->find($name) === null)) !== [] => Value::string(__('lynx::access.roles.unknown_template', ['templates' => implode(', ', $missing)])),
+            $branches !== null && ($missing = array_filter($branches, fn (int $id): bool => $this->pages->find($id) === null)) !== [] => Value::string(__('lynx::access.roles.unknown_page', ['pages' => implode(', ', $missing)])),
             default => null,
         };
 

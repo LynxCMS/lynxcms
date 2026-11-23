@@ -124,29 +124,29 @@ final class DuplicatePage extends Action
     private function assertCopyable(Page $page): void
     {
         if ($page->parentId === null) {
-            throw ValidationException::withMessages(['page' => 'The home page cannot be duplicated.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.home.duplicated'))]);
         }
 
         if ($this->trash->contains((int) $page->id)) {
-            throw ValidationException::withMessages(['page' => "Page [{$page->name()}] is in the trash. Take it out with pages.restore first."]);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.trash.restore_first', ['page' => $page->name()]))]);
         }
 
         if ($this->drafts->isDraft((int) $page->id)) {
-            throw ValidationException::withMessages(['page' => 'Duplicate the live page, not its draft.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.draft.duplicated'))]);
         }
     }
 
     private function assertCanGoUnder(Page $page, int $parentId, bool $withChildren): void
     {
         if ($this->trash->holds($parentId)) {
-            throw ValidationException::withMessages(['parent' => 'A copy cannot go to the trash.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.copy_to_trash'))]);
         }
 
         // The branch would grow while it is copied: each copy of the page would be copied again.
         $isInBranch = DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $page->id)->where('descendant_id', $parentId)->exists();
 
         if ($withChildren && $isInBranch) {
-            throw ValidationException::withMessages(['parent' => 'A page cannot be copied with its children under itself or one of them.']);
+            throw ValidationException::withMessages(['parent' => Value::string(__('lynx::validation.parent.copy_inside'))]);
         }
     }
 }

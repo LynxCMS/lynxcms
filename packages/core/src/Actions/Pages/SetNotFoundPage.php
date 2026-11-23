@@ -69,9 +69,9 @@ final class SetNotFoundPage extends Action
     private function assertShowable(Page $page): void
     {
         $problem = match (true) {
-            $page->id === $this->root->id() => 'The home page cannot be the page not found.',
-            $this->trash->holds(Value::int($page->id)) => 'That page is in the trash.',
-            ! $page->template()->hasUrl() => 'That page has no URL to show.',
+            $page->id === $this->root->id() => Value::string(__('lynx::validation.home.not_found')),
+            $this->trash->holds(Value::int($page->id)) => Value::string(__('lynx::validation.trash.that_page')),
+            ! $page->template()->hasUrl() => Value::string(__('lynx::validation.page.no_url')),
             default => null,
         };
 

@@ -105,7 +105,7 @@ final class TranslatePage extends Action
         $from = $this->languages->get($input->string('from') ?? $this->languages->default()->code);
 
         if ($to->id === $from->id) {
-            throw ValidationException::withMessages(['to' => 'Source and target language are the same.']);
+            throw ValidationException::withMessages(['to' => Value::string(__('lynx::validation.language.same'))]);
         }
 
         $provider = $this->providers->get($input->string('provider'));

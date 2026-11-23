@@ -76,7 +76,7 @@ final class SwitchTemplate extends Action
         $this->guard->assertMovable($page, 'switched');
 
         if ($this->drafts->of((int) $page->id) !== null) {
-            throw ValidationException::withMessages(['page' => "Page [{$page->name()}] has a draft on its current template. Publish or discard the draft first."]);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.draft.on_template', ['page' => $page->name()]))]);
         }
 
         $context->authorize('pages.template', $page);
@@ -85,13 +85,13 @@ final class SwitchTemplate extends Action
         $context->authorize('pages.template', $page, $target);
 
         if ($current->allowedTemplates() !== [] && ! in_array($target->name, $current->allowedTemplates(), true)) {
-            throw ValidationException::withMessages(['template' => "Pages on [{$current->name}] may only switch to: ".implode(', ', $current->allowedTemplates()).'.']);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.switch_to', ['template' => $current->name, 'templates' => implode(', ', $current->allowedTemplates())]))]);
         }
 
         $this->assertFamily($page, $target);
 
         if ($target->isSingleton() && DB::table(Tables::PAGES)->where('template_id', $target->id)->whereNull('draft_of')->exists()) {
-            throw ValidationException::withMessages(['template' => "Template [{$target->name}] is a singleton and already has a page."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.singleton', ['template' => $target->name]))]);
         }
 
         $orphaned = array_values(array_diff(
@@ -124,7 +124,7 @@ final class SwitchTemplate extends Action
             $child = $this->templates->get(Value::int($templateId));
 
             if (! $this->family->allows($target, $child)) {
-                throw ValidationException::withMessages(['template' => "Pages using [{$target->name}] cannot have the children this page has (template [{$child->name}])."]);
+                throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.children', ['template' => $target->name, 'child' => $child->name]))]);
             }
         }
     }

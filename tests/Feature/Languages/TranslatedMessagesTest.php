@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Languages\EditorLanguage;
+use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Query\SelectorException;
 
 /*
@@ -104,3 +107,58 @@ it('explains a selector it cannot run in the editor\'s language', function (stri
     'a status' => ['status=nope', 'status', ['status' => 'nope', 'statuses' => 'hidden, unpublished, locked']],
     'a count on one value' => ['price.count>1', 'count', ['field' => 'price']],
 ]);
+
+/**
+ * What a refused change says in each language Lynx ships.
+ *
+ * @return array<string, string>
+ */
+function refusedIn(Closure $change): array
+{
+    $messages = [];
+
+    foreach (['en', 'pt', 'es'] as $locale) {
+        app()->setLocale($locale);
+
+        try {
+            $change();
+        } catch (ValidationException|AuthorizationException $refused) {
+            $messages[$locale] = $refused instanceof ValidationException ? (string) collect($refused->errors())->flatten()->first() : $refused->getMessage();
+        }
+    }
+
+    return $messages;
+}
+
+it('refuses a change in the editor\'s language', function (Closure $change, string $key, array $replace): void {
+    $messages = refusedIn($change);
+
+    expect($messages)->toBe(array_map(fn (string $locale): string => __("lynx::{$key}", $replace, $locale), ['en' => 'en', 'pt' => 'pt', 'es' => 'es']))
+        ->and(array_unique($messages))->toHaveCount(3);
+})->with([
+    'a page' => [fn () => lynx()->pages->delete('/'), 'validation.home.deleted', []],
+    'a field' => [fn () => lynx()->fields->add('status', 'text'), 'structure.field.reserved', ['name' => 'status']],
+    'a template' => [fn () => lynx()->templates->update('course', ['add' => [['name' => 'nope']]]), 'structure.field.create_first', ['field' => 'nope']],
+    'a language' => [fn () => lynx()->languages->delete('default'), 'structure.language.delete_default', []],
+]);
+
+it('names the pages that use a template it cannot delete', function (): void {
+    createCourses('alpha', 'beta');
+    $messages = refusedIn(fn () => lynx()->templates->delete('course'));
+
+    expect(array_unique($messages))->toHaveCount(3)->each->toContain('/courses/alpha')->toContain('2');
+});
+
+it('names the permission a person lacks by its label in their language', function (): void {
+    createCourses('alpha');
+    Role::query()->where('name', 'superuser')->firstOrFail()->assign(1);
+    $elsewhere = Role::query()->create(['name' => 'elsewhere', 'label' => 'Elsewhere']);
+    $elsewhere->grants()->create(['permission' => 'pages.delete', 'templates' => ['courses']]);
+    $elsewhere->assign(5);
+
+    $messages = refusedIn(fn (): mixed => lynx()->actingAs(Actor::user(5), fn () => lynx()->pages->delete('/courses/alpha/')));
+
+    foreach (['en', 'pt', 'es'] as $locale) {
+        expect($messages[$locale])->toContain('[pages.delete]')->toContain(__('lynx::permissions.pages.delete', [], $locale));
+    }
+});

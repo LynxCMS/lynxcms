@@ -28,7 +28,7 @@ final class ItemSettingsRules
     public static function fields(string $prefix): array
     {
         return [
-            $prefix => [new FilledList('List at least one field.')],
+            $prefix => [new FilledList(Value::string(__('lynx::structure.items.no_fields')))],
             "{$prefix}.*.name" => ['required', 'string', self::subfieldExists()],
             "{$prefix}.*" => [self::settingsPerUse()],
             "{$prefix}.*.required" => ['sometimes', 'boolean'],
@@ -107,9 +107,9 @@ final class ItemSettingsRules
             $field = app(FieldRegistry::class)->find($name);
 
             if ($field === null) {
-                $fail("Field [{$name}] does not exist. Create it first with lynx()->fields->add('{$name}', ...) or the fields.create action.");
+                $fail(Value::string(__('lynx::structure.field.create_first', ['field' => $name])));
             } elseif (! self::canBeSubfield($field->fieldType())) {
-                $fail("Field [{$name}] stores items itself; items cannot nest. Use depth instead.");
+                $fail(Value::string(__('lynx::structure.field.nested', ['field' => $name])));
             }
         };
     }

@@ -67,7 +67,7 @@ final class DeletePage extends Action
         $page = $this->resolvePageReference($input->get('page'));
 
         if ($page->parentId === null) {
-            throw ValidationException::withMessages(['page' => 'The home page cannot be deleted.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.home.deleted'))]);
         }
 
         $ids = Value::ints(DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $page->id)->orderByDesc('depth')

@@ -61,11 +61,11 @@ final readonly class FieldListInput
         $key = Value::string($spec['section']);
 
         if (preg_match('/^[a-z][a-z0-9_-]{0,63}$/', $key) !== 1) {
-            throw ValidationException::withMessages(['fields' => "The section key [{$key}] must be lowercase letters, digits, - and _, starting with a letter."]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.section.key', ['section' => $key]))]);
         }
 
         if (in_array($key, $seen, true)) {
-            throw ValidationException::withMessages(['fields' => "The section [{$key}] appears twice."]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.section.twice', ['section' => $key]))]);
         }
 
         return ['key' => $key] + array_intersect_key($spec, array_flip(self::SECTION_KEYS)) + ['label' => $key];
@@ -78,12 +78,12 @@ final readonly class FieldListInput
 
         if (isset($spec['section'])) {
             $nested = Value::string($spec['section']);
-            throw ValidationException::withMessages(['fields' => "Sections cannot be inside sections: [{$nested}] is inside [{$section}]."]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.section.nested', ['nested' => $nested, 'section' => $section]))]);
         }
 
         if (isset($spec['tab']) || isset($spec['column'])) {
             $name = Value::string($spec['name'] ?? '');
-            throw ValidationException::withMessages(['fields' => "Field [{$name}] is in section [{$section}]: set the tab and column on the section."]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.section.place', ['field' => $name, 'section' => $section]))]);
         }
 
         return ['section' => $section] + $spec;

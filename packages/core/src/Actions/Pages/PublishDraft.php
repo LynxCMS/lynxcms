@@ -18,6 +18,7 @@ use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Strings\PageStringEdits;
 use LynxCms\Core\Support\Tables;
+use LynxCms\Core\Support\Value;
 
 /**
  * Makes a page's draft live (ADR-0039): its values and its own template strings (ADR-0048) are
@@ -66,11 +67,11 @@ final class PublishDraft extends Action
     public function handle(Input $input, ActionContext $context): Page
     {
         $page = $this->resolvePageReference($input->get('page'));
-        $draftId = $this->drafts->of((int) $page->id) ?? throw ValidationException::withMessages(['page' => "Page [{$page->name()}] has no draft."]);
+        $draftId = $this->drafts->of((int) $page->id) ?? throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.draft.none', ['page' => $page->name()]))]);
         $this->guard->assertEditable($page);
         $context->authorize('pages.edit', $page);
 
-        $draft = $this->loader->find($draftId) ?? throw ValidationException::withMessages(['page' => "The draft of page [{$page->name()}] could not be read."]);
+        $draft = $this->loader->find($draftId) ?? throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.draft.unreadable', ['page' => $page->name()]))]);
         $saved = $context->run(SavePage::class, [
             'id' => $page->id,
             'values' => $this->revisions->saveInput($page, $draft->valuesByLanguage()),

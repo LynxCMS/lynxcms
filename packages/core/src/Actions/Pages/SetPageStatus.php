@@ -96,7 +96,7 @@ final class SetPageStatus extends Action
         }
 
         if ($add === 0 && $remove === 0) {
-            throw ValidationException::withMessages(['add' => 'Give at least one flag to add or remove.']);
+            throw ValidationException::withMessages(['add' => Value::string(__('lynx::validation.page.no_flags'))]);
         }
 
         $from = $page->status;

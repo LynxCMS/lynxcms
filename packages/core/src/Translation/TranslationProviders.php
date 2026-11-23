@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Translation\TranslationProvider;
+use LynxCms\Core\Support\Value;
 
 /**
  * The machine translation providers a site can use, by name (ADR-0100). Packages register theirs
@@ -86,7 +87,7 @@ final class TranslationProviders
 
         return $default?->name() === $name
             ? $default
-            : throw ValidationException::withMessages(['provider' => "No translation provider is named [{$name}]."]);
+            : throw ValidationException::withMessages(['provider' => Value::string(__('lynx::access.providers.unknown', ['provider' => $name]))]);
     }
 
     private function default(): TranslationProvider
@@ -98,7 +99,7 @@ final class TranslationProviders
         }
 
         $first = array_key_first($this->factories)
-            ?? throw ValidationException::withMessages(['provider' => 'No translation provider is configured. Install lynxcms/ai or a translation module.']);
+            ?? throw ValidationException::withMessages(['provider' => Value::string(__('lynx::access.providers.none'))]);
 
         return ($this->factories[$first])();
     }

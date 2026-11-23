@@ -136,23 +136,23 @@ final readonly class LocalizedText implements JsonSerializable, Stringable
         return [function (string $attribute, mixed $value, Closure $fail) use ($max): void {
             if (is_string($value)) {
                 if (mb_strlen($value) > $max) {
-                    $fail("The {$attribute} may not be longer than {$max} characters.");
+                    $fail(Value::string(__('lynx::structure.text.max', ['attribute' => $attribute, 'max' => $max])));
                 }
 
                 return;
             }
 
             if (! is_array($value)) {
-                $fail("The {$attribute} must be text, or text per language code.");
+                $fail(Value::string(__('lynx::structure.text.type', ['attribute' => $attribute])));
 
                 return;
             }
 
             foreach ($value as $code => $text) {
                 if (! app(LanguageRegistry::class)->find((string) $code) instanceof Language) {
-                    $fail("The {$attribute} uses the language [{$code}], which does not exist.");
+                    $fail(Value::string(__('lynx::structure.text.language', ['attribute' => $attribute, 'language' => $code])));
                 } elseif (! is_string($text) || mb_strlen($text) > $max) {
-                    $fail("The {$attribute} in [{$code}] must be text of at most {$max} characters.");
+                    $fail(Value::string(__('lynx::structure.text.language_max', ['attribute' => $attribute, 'language' => $code, 'max' => $max])));
                 }
             }
         }];

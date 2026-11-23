@@ -1533,3 +1533,17 @@ Staying in English: action descriptions, console output, the change summaries th
 **Decision:** Selector errors come from `lynx::selectors`, in English, Portuguese, and Spanish. `HardcodedMessagesTest` refuses a typed one. Field names, operators, and selector words (`include=all`, `today`) are code and stay as they are in every language.
 
 **Consequences:** A selector error in a log or on the command line reads in the app's locale. Code that catches a `SelectorException` should not compare its text.
+
+## ADR-0143: Core's remaining messages and permission labels read from language files
+
+**Status:** Accepted. Continues ADR-0141.
+
+**Context:** ADR-0141 moved the messages about saving a page. The rest of core (fields, templates, roles, drafts, schedules, the trash, and refusals for lack of a permission) was still typed in English. Refusals also name the permission by its label, which only the role form translated, from the admin's language files.
+
+**Decision:**
+
+- Core has three files beside `selectors.php`: `validation.php` for pages and content, `structure.php` for fields, templates, and languages, and `access.php` for roles, permissions, and providers. `HardcodedMessagesTest` no longer allows a typed message in core, and `TranslationFilesTest` checks that every key the code names exists.
+- Permission labels move from `lynx-admin::roles.permissions` to `lynx::permissions`, and `PermissionRegistry::label()` reads them for the role form and for refusals. A label another module registers is translated by the app, as before.
+- Setting names, flags, and action names (`width`, `show_if`, `pages.restore`) are code and stay as they are in every language.
+
+**Consequences:** An app that overrides `lynx-admin::roles.permissions` moves those lines to `lynx::permissions`. A draft error (`lynx:draft`) that quotes a template rule reads that rule in the app's locale.

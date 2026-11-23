@@ -15,7 +15,6 @@ use Symfony\Component\Finder\Finder;
 const REMAINING = [
     'admin' => 9,
     'cache' => 2,
-    'core' => 96,
     'finder' => 2,
     'forms' => 6,
     'media' => 10,

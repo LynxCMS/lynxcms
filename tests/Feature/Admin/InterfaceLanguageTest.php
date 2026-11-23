@@ -174,7 +174,7 @@ it('names permissions in the admin language, and keeps a module\'s own label', f
     $permissions = $component->viewData('permissions');
     app()->setLocale('en');
 
-    expect(array_column($permissions, 'label', 'name')['pages.create'])->toBe(__('lynx-admin::roles.permissions.pages.create', [], 'pt'))
+    expect(array_column($permissions, 'label', 'name')['pages.create'])->toBe(__('lynx::permissions.pages.create', [], 'pt'))
         ->and(array_column($permissions, 'label', 'name')['reports.view'])->toBe('View reports');
 });
 

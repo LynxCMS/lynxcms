@@ -88,11 +88,11 @@ final class MakeFieldTranslatable extends Action
     private function assertConvertible(Field $field): void
     {
         if ($field->isTranslatable()) {
-            throw ValidationException::withMessages(['field' => "Field [{$field->name}] is translatable already."]);
+            throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.translatable', ['field' => $field->name]))]);
         }
 
         if (! $field->fieldType()->supportsTranslation()) {
-            throw ValidationException::withMessages(['field' => "Fields of type [{$field->type}] cannot be translatable."]);
+            throw ValidationException::withMessages(['field' => Value::string(__('lynx::structure.field.not_translatable', ['type' => $field->type]))]);
         }
     }
 

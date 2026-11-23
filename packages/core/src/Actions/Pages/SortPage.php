@@ -14,6 +14,7 @@ use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGuard;
 use LynxCms\Core\Pages\SiblingOrder;
+use LynxCms\Core\Support\Value;
 
 /**
  * Changes a page's position among its siblings. Use pages.move to change the parent.
@@ -61,7 +62,7 @@ final class SortPage extends Action
         $context->authorize('pages.move', $page);
 
         if ($page->parentId === null) {
-            throw ValidationException::withMessages(['page' => 'The home page has no siblings to sort.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.home.sorted'))]);
         }
 
         $from = $this->order->positionOf($page->parentId, (int) $page->id);

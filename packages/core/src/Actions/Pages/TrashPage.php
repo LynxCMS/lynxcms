@@ -91,9 +91,9 @@ final class TrashPage extends Action
     private function assertTrashable(Page $page): void
     {
         $problem = match (true) {
-            $page->parentId === null => 'The home page cannot be trashed.',
-            $page->id === $this->trash->rootId() => 'The trash cannot be trashed.',
-            $this->trash->contains((int) $page->id) => "Page [{$page->name()}] is already in the trash.",
+            $page->parentId === null => Value::string(__('lynx::validation.home.trashed')),
+            $page->id === $this->trash->rootId() => Value::string(__('lynx::validation.trash.root')),
+            $this->trash->contains((int) $page->id) => Value::string(__('lynx::validation.trash.already', ['page' => $page->name()])),
             default => null,
         };
 

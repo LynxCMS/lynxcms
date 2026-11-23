@@ -72,20 +72,20 @@ final class CreateField extends Action
             'name' => ['bail', 'required', 'string', 'regex:/^[a-z][a-z0-9_]*$/', Rule::unique(Tables::FIELDS, 'name'),
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (in_array($value, self::RESERVED, true)) {
-                        $fail("The name \"{$value}\" is reserved, because pages and selectors already use it. Choose another name.");
+                        $fail(Value::string(__('lynx::structure.field.reserved', ['name' => $value])));
                     }
                 },
                 function (string $attribute, mixed $value, Closure $fail): void {
                     $max = Tables::maxFieldNameLength(DB::getTablePrefix());
 
                     if (is_string($value) && strlen($value) > $max) {
-                        $fail("The field name may not be longer than {$max} characters.");
+                        $fail(Value::string(__('lynx::structure.field.name_max', ['max' => $max])));
                     }
                 },
                 // A leftover or app table with the same name would make the CREATE TABLE fail.
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (is_string($value) && Schema::hasTable(Tables::FIELD_PREFIX.$value)) {
-                        $fail('A database table named '.Tables::FIELD_PREFIX.$value.' already exists.');
+                        $fail(Value::string(__('lynx::structure.field.table', ['table' => Tables::FIELD_PREFIX.$value])));
                     }
                 },
             ],
@@ -116,14 +116,14 @@ final class CreateField extends Action
         $typeName = (string) $input->string('type');
 
         if (! $this->types->has($typeName)) {
-            throw ValidationException::withMessages(['type' => "Unknown field type [{$typeName}]. Available: ".implode(', ', array_keys($this->types->all())).'.']);
+            throw ValidationException::withMessages(['type' => Value::string(__('lynx::structure.field.unknown_type', ['type' => $typeName, 'types' => implode(', ', array_keys($this->types->all()))]))]);
         }
 
         $type = $this->types->get($typeName);
         $translatable = $input->bool('translatable');
 
         if ($translatable && ! $type->supportsTranslation()) {
-            throw ValidationException::withMessages(['translatable' => "Fields of type [{$typeName}] cannot be translatable."]);
+            throw ValidationException::withMessages(['translatable' => Value::string(__('lynx::structure.field.not_translatable', ['type' => $typeName]))]);
         }
 
         $settings = $input->array('settings');

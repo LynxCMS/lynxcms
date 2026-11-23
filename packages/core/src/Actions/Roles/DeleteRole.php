@@ -55,7 +55,7 @@ final class DeleteRole extends Action
     public function handle(Input $input, ActionContext $context): Role
     {
         $name = (string) $input->string('role');
-        $role = Role::query()->where('name', $name)->first() ?? throw ValidationException::withMessages(['role' => "Role [{$name}] does not exist."]);
+        $role = Role::query()->where('name', $name)->first() ?? throw ValidationException::withMessages(['role' => Value::string(__('lynx::access.roles.missing', ['role' => $name]))]);
         $this->superusers->assertKept(array_values(array_map(Value::int(...), $role->assignments()->pluck('id')->all())), 'role');
 
         $users = $role->assignments()->count();

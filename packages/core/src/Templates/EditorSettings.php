@@ -29,15 +29,15 @@ final class EditorSettings
         $editor = isset($settings['editor']) ? FieldDisplay::tryFrom(Value::string($settings['editor'])) : FieldDisplay::Open;
 
         $problem = match (true) {
-            $editor === null => 'editor is one of '.implode(', ', array_column(FieldDisplay::cases(), 'value')).'.',
-            isset($settings['width']) && ! in_array(Value::int($settings['width']), self::WIDTHS, true) => 'width is one of '.implode(', ', self::WIDTHS).'.',
-            isset($settings['icon']) && preg_match(self::ICON_PATTERN, Value::string($settings['icon'])) !== 1 => 'icon is a Lucide icon name, such as "calendar".',
-            ! $editor->isEditable() && (($settings['required'] ?? false) === true || trim(Value::string($settings['required_if'] ?? '')) !== '') => 'a '.$editor->value.' field cannot be required: editors could not fill it.',
+            $editor === null => Value::string(__('lynx::structure.editor.display', ['values' => implode(', ', array_column(FieldDisplay::cases(), 'value'))])),
+            isset($settings['width']) && ! in_array(Value::int($settings['width']), self::WIDTHS, true) => Value::string(__('lynx::structure.editor.width', ['values' => implode(', ', self::WIDTHS)])),
+            isset($settings['icon']) && preg_match(self::ICON_PATTERN, Value::string($settings['icon'])) !== 1 => Value::string(__('lynx::structure.editor.icon')),
+            ! $editor->isEditable() && (($settings['required'] ?? false) === true || trim(Value::string($settings['required_if'] ?? '')) !== '') => Value::string(__('lynx::structure.editor.required', ['display' => $editor->value])),
             default => null,
         };
 
         if ($problem !== null) {
-            throw ValidationException::withMessages(['fields' => "Field [{$name}]: {$problem}"]);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.field.problem', ['field' => $name, 'problem' => $problem]))]);
         }
     }
 }
