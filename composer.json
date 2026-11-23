@@ -50,6 +50,7 @@
         "lynxcms/page-password": "self.version",
         "lynxcms/cache": "self.version",
         "lynxcms/finder": "self.version",
+        "lynxcms/page-references": "self.version",
         "lynxcms/static-site": "self.version"
     },
     "autoload": {
@@ -67,6 +68,7 @@
             "LynxCms\\PagePassword\\": "packages/page-password/src/",
             "LynxCms\\Cache\\": "packages/cache/src/",
             "LynxCms\\Finder\\": "packages/finder/src/",
+            "LynxCms\\PageReferences\\": "packages/page-references/src/",
             "LynxCms\\StaticSite\\": "packages/static-site/src/"
         },
         "files": [
@@ -98,6 +100,7 @@
                 "LynxCms\\PagePassword\\PagePasswordServiceProvider",
                 "LynxCms\\Cache\\CacheServiceProvider",
                 "LynxCms\\Finder\\FinderServiceProvider",
+                "LynxCms\\PageReferences\\PageReferencesServiceProvider",
                 "LynxCms\\StaticSite\\StaticSiteServiceProvider"
             ],
             "aliases": {

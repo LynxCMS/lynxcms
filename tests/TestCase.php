@@ -22,6 +22,7 @@ use LynxCms\Mcp\McpServiceProvider;
 use LynxCms\Media\MediaServiceProvider;
 use LynxCms\Menus\MenusServiceProvider;
 use LynxCms\PagePassword\PagePasswordServiceProvider;
+use LynxCms\PageReferences\PageReferencesServiceProvider;
 use LynxCms\Seo\SeoServiceProvider;
 use LynxCms\Sitemap\SitemapServiceProvider;
 use LynxCms\StaticSite\StaticSiteServiceProvider;
@@ -76,6 +77,7 @@ abstract class TestCase extends Orchestra
             SitemapServiceProvider::class,
             PagePasswordServiceProvider::class,
             FinderServiceProvider::class,
+            PageReferencesServiceProvider::class,
             CacheServiceProvider::class,
             StaticSiteServiceProvider::class,
             WorkbenchServiceProvider::class,
