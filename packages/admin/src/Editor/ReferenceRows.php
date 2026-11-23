@@ -73,7 +73,7 @@ final readonly class ReferenceRows
     /**
      * @return array{label: string, url: string}
      */
-    private function location(Page $page, PageReference $reference): array
+    public function location(Page $page, PageReference $reference): array
     {
         $name = (string) $this->fields->find($reference->fieldId)?->name;
         $label = $page->templateField($name)?->label() ?: $name;

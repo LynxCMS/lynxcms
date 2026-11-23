@@ -14,6 +14,7 @@ return [
         'templates' => 'Modelos',
         'languages' => 'Idiomas',
         'search_index' => 'Índice de pesquisa',
+        'page_references' => 'Referências entre páginas',
         'general' => 'Geral',
         'roles' => 'Funções',
         'users' => 'Utilizadores',

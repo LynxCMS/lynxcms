@@ -27,6 +27,7 @@ Route::get('templates/{template}/edit', EditTemplateController::class)->where('t
 Route::view('site-texts', 'lynx-admin::site-texts')->name('site-texts');
 Route::get('languages', [EditLanguageController::class, 'index'])->name('languages');
 Route::view('search-index', 'lynx-admin::search-index')->name('search-index');
+Route::view('page-references', 'lynx-admin::page-references')->name('page-references');
 Route::get('languages/create', [EditLanguageController::class, 'edit'])->name('languages.create');
 Route::get('languages/{language}/edit', [EditLanguageController::class, 'edit'])->where('language', '[a-z0-9][a-z0-9_-]*')->name('languages.edit');
 Route::get('roles', [SuperuserScreenController::class, 'roles'])->name('roles');
