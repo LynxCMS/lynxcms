@@ -7,7 +7,6 @@ namespace LynxCms\Core\Actions\Runner;
 use Closure;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\DatabaseTransactionsManager;
 use Illuminate\Database\DetectsConcurrencyErrors;
@@ -42,8 +41,7 @@ final class ActionRunner
 
     private bool $dryRun = false;
 
-    /** @var list<object> */
-    private array $events = [];
+    private readonly EventQueue $events;
 
     private ?Actor $actor = null;
 
@@ -53,7 +51,9 @@ final class ActionRunner
         private readonly Container $container,
         private readonly HookRegistry $hooks,
         private readonly DatabaseManager $db,
-    ) {}
+    ) {
+        $this->events = new EventQueue($container);
+    }
 
     /**
      * @param  class-string  $action
@@ -91,7 +91,7 @@ final class ActionRunner
 
         if ($outer) {
             $this->changes = new ChangeSet;
-            $this->events = [];
+            $this->events->clear();
             $this->dryRun = $dryRun;
         }
 
@@ -154,12 +154,12 @@ final class ActionRunner
         $changes = $context->changes;
 
         if ($outer) {
-            $events = $this->takeEvents();
-            $dispatch = ! $this->dryRun;
+            $dispatch = $this->events->take();
+            $isDryRun = $this->dryRun;
             $this->finish();
 
-            foreach ($dispatch ? $events : [] as $event) {
-                $this->container->make(Dispatcher::class)->dispatch($event);
+            if (! $isDryRun) {
+                $dispatch();
             }
         }
 
@@ -237,18 +237,7 @@ final class ActionRunner
 
     public function queueEvent(object $event): void
     {
-        $this->events[] = $event;
-    }
-
-    /**
-     * @return list<object>
-     */
-    private function takeEvents(): array
-    {
-        $events = $this->events;
-        $this->events = [];
-
-        return $events;
+        $this->events->push($event);
     }
 
     public function isRunning(): bool
@@ -259,7 +248,7 @@ final class ActionRunner
     private function finish(): void
     {
         $this->changes = null;
-        $this->events = [];
+        $this->events->clear();
         $this->dryRun = false;
         $this->flushCaches();
     }

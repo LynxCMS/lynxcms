@@ -12,6 +12,7 @@ use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Actions\Runner\EventMuting;
 use LynxCms\Core\Actions\Runner\HookBuilder;
 use LynxCms\Core\Actions\Runner\HookRegistry;
 use LynxCms\Core\Api\FieldsApi;
@@ -98,6 +99,22 @@ final class Lynx
     public function hook(string $action): HookBuilder
     {
         return new HookBuilder($this->container->make(HookRegistry::class), $action);
+    }
+
+    /**
+     * Run a callback with action events muted: every event, or only the listed classes (ADR-0145).
+     * Muted content changes reach listeners as one ContentBatchChanged once the callback ends, and
+     * Lynx's own upkeep (sort keys, the search index, media folders) still runs.
+     *
+     * @template T
+     *
+     * @param  Closure(): T  $callback
+     * @param  list<class-string>  $events
+     * @return T
+     */
+    public function withoutEvents(Closure $callback, array $events = []): mixed
+    {
+        return $this->container->make(EventMuting::class)->run($callback, $events);
     }
 
     /**

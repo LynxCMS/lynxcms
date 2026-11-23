@@ -111,6 +111,7 @@ Hooks run inside the transaction. For side effects, such as sending mail, cleari
 | `PageTemplateSwitched` | A page switches to another template. |
 | `PageReferencesChanged` | A save or a template switch adds or removes references to other pages. `$event->added` and `$event->removed` list each one with `linked_page_id`, `field`, and `item_key` (the repeater or matrix item that holds it). |
 | `SiteStringsSaved` | Editors change site texts. |
+| `ContentBatchChanged` | Content changed while events were muted (see [Muting events](#muting-events)). |
 
 Every event that can change what visitors see implements `ContentChanged`, so one listener can react to all of them, for example to purge an external cache:
 
@@ -124,6 +125,28 @@ Event::listen(ContentChanged::class, function (ContentChanged $event) {
 ```
 
 `affectedPages()` lists the pages whose own content or list of children changed. Pages that only show a changed page through a page reference are not included. `PageReferencesChanged` also lists the pages it adds or removes, since a page may show what links to it.
+
+### Muting events
+
+An import of thousands of pages dispatches thousands of events. `lynx()->withoutEvents()` mutes them while a callback runs, like Eloquent's `withoutEvents()` for models:
+
+```php
+lynx()->withoutEvents(function () use ($rows) {
+    foreach ($rows as $row) {
+        $page = lynx()->pages->new('course', '/courses/');
+        $page->title = $row['title'];
+        $page->save();
+    }
+});
+```
+
+Pass a list of classes as the second argument to mute only those: `lynx()->withoutEvents($callback, [PageSaved::class])`. Muting ends when the callback returns or throws, and the callback's return value is passed back.
+
+Muted events that implement `ContentChanged` are not lost. Once the callback ends, listeners get one `ContentBatchChanged` whose `affectedPages()` lists every page they named, or null past 1,000 pages. The page cache, menus, and the sitemap listen to `ContentChanged`, so they stay correct.
+
+Lynx keeps its own stored data correct whatever is muted: sort keys, the search index, and media folders are updated from every event after the action commits. `Event::fake()` does not stop them either.
+
+`content.import` takes `events: false`, and `lynx:import` takes `--without-events`, to import this way.
 
 ## Writing your own actions
 

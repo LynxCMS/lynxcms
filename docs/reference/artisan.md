@@ -23,7 +23,7 @@ order: 2
 | `lynx:phpstan --path=` | Writes the field types Lynx's PHPStan extension reads, so `$page->field` and `$item->field` are checked (default `lynx/phpstan/types.php`). |
 | `lynx:ide-helper --path=` | Writes `_ide_helper_lynx.php`, so editors autocomplete `$page->field` and `$item->field` with their types. See [Autocomplete in your editor](/deeper/custom-field-types#autocomplete-in-your-editor). |
 | `lynx:export path --with-files` | Writes a content package (a directory or a `.zip`). Media files stay out unless `--with-files` asks for them, as a large site's media can take long to copy; machines can [download them from production](/deeper/live-site#media-from-production) instead. |
-| `lynx:import path --with-schema --prune --dry-run` | Imports a content package. |
+| `lynx:import path --with-schema --prune --without-events --dry-run` | Imports a content package. `--without-events` mutes the events of each page; listeners get one `ContentBatchChanged` at the end. |
 | `lynx:backup` | Writes a content backup, files included, and keeps the newest ones. Content only: back up the database as well. |
 | `lynx:schedule:run` | Applies due publishing schedules (the scheduler runs it every minute). |
 | `lynx:clean-html --field= --dry-run` | Cleans stored HTML the way a save would. |

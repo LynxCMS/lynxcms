@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Pages\DeletePage;
 use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Runner\ActionResult;
+use LynxCms\Core\Actions\Runner\EventMuting;
 use LynxCms\Core\Actions\Search\RebuildSearchIndex;
 use LynxCms\Core\Query\SelectorException;
 use LynxCms\Core\Search\Engines\LikeSearchEngine;
@@ -114,7 +114,7 @@ it('follows a changed language fallback', function (): void {
 });
 
 it('rebuilds the index with search.rebuild', function (): void {
-    Event::fakeFor(fn () => saveValues($this->alpha->id, ['blocks' => [['type' => 'text', 'values' => ['body' => ['default' => 'Rebuilt']]]]]));
+    withoutUpkeep(fn () => saveValues($this->alpha->id, ['blocks' => [['type' => 'text', 'values' => ['body' => ['default' => 'Rebuilt']]]]]));
 
     $dry = lynx()->run(RebuildSearchIndex::class, [], dryRun: true);
 
@@ -143,7 +143,7 @@ it('matches word beginnings with LIKE on databases without a known full text eng
 });
 
 it('rebuilds only the pages of one template, leaving the rest as they are', function (): void {
-    Event::fakeFor(function (): void {
+    withoutUpkeep(function (): void {
         saveValues($this->alpha->id, ['blocks' => [['type' => 'text', 'values' => ['body' => ['default' => 'Rebuilt']]]]]);
         saveValues(lynx()->pages->get('/courses/')->id, ['title' => ['default' => 'Catalogue']]);
     });
@@ -157,7 +157,7 @@ it('rebuilds only the pages of one template, leaving the rest as they are', func
 });
 
 it('rebuilds one template from the command line', function (): void {
-    Event::fakeFor(fn () => saveValues($this->alpha->id, ['blocks' => [['type' => 'text', 'values' => ['body' => ['default' => 'Rebuilt']]]]]));
+    withoutUpkeep(fn () => saveValues($this->alpha->id, ['blocks' => [['type' => 'text', 'values' => ['body' => ['default' => 'Rebuilt']]]]]));
 
     $this->artisan('lynx:search-index', ['--template' => 'course'])
         ->expectsOutputToContain('Indexed 2 page(s).')
@@ -180,3 +180,16 @@ it('indexes email and url fields', function (): void {
         ->and(searchNames('esferacubica'))->toBe(['alpha'])
         ->and(searchNames('acores formacao'))->toBe(['alpha']);
 });
+
+/** Run writes without Lynx's upkeep listeners, so the search index falls behind as after an upgrade. */
+function withoutUpkeep(Closure $callback): void
+{
+    $muting = app(EventMuting::class);
+    app()->instance(EventMuting::class, new EventMuting(app()));
+
+    try {
+        $callback();
+    } finally {
+        app()->instance(EventMuting::class, $muting);
+    }
+}
