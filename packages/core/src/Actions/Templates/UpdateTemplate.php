@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Events\TemplateUpdated;
 use LynxCms\Core\Models\Template;
+use LynxCms\Core\Pages\References\PageReferenceIndex;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\Layout\FieldListInput;
@@ -29,6 +30,7 @@ final class UpdateTemplate extends Action
     public function __construct(
         private readonly TemplateRegistry $templates,
         private readonly TemplateFieldsWriter $writer,
+        private readonly PageReferenceIndex $references,
     ) {}
 
     public static function name(): string
@@ -144,6 +146,7 @@ final class UpdateTemplate extends Action
 
         $removed = array_values(array_diff(array_keys($before), array_keys($fields)));
         $added = array_values(array_diff(array_keys($fields), array_keys($before)));
+        $this->references->syncTemplate($template->id, [...$added, ...$removed]);
         $context->changes->schema('template', "Update template {$template->name}"
             .($added !== [] ? '; add '.implode(', ', $added) : '')
             .($removed !== [] ? '; remove '.implode(', ', $removed).' (values kept as orphans)' : ''), [

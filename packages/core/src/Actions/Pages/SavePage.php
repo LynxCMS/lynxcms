@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Events\PageReferencesChanged;
 use LynxCms\Core\Events\PageSaved;
 use LynxCms\Core\Fields\DefaultValues;
 use LynxCms\Core\Languages\LanguageRegistry;
@@ -24,6 +25,7 @@ use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Pages\PathBuilder;
 use LynxCms\Core\Pages\PathResolver;
+use LynxCms\Core\Pages\References\PageReferenceIndex;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Pages\Saving\NameWriter;
 use LynxCms\Core\Pages\Saving\PageInput;
@@ -68,6 +70,7 @@ final class SavePage extends Action
         private readonly Drafts $drafts,
         private readonly PageStringEdits $strings,
         private readonly DefaultValues $defaults,
+        private readonly PageReferenceIndex $references,
     ) {}
 
     public static function name(): string
@@ -160,10 +163,11 @@ final class SavePage extends Action
         $id = $this->rows->write($page, $actor, $now);
         $namesChanged = $this->names->write($id, $page->parentId, $changedNames, $actor, $now);
         $written = [...$this->values->write($id, $page, $values, $input, $now), ...$this->strings->write($id, Value::map($input->get('strings') ?? []), $actor)];
+        $references = $this->references->summary($written === [] ? null : $this->references->sync([$id])[$id] ?? null);
 
         $page->hydrate($values, $names);
         $this->loader->forget($id);
-        $this->recordChange($context, $page, $template, $isNew, $written, $input->string('origin') ?? 'human');
+        $this->recordChange($context, $page, $template, $isNew, $written, $input->string('origin') ?? 'human', $references);
 
         // A draft's saves are not revisions: publishing it makes one on the live page (ADR-0039).
         if ($written !== [] && ! $this->drafts->isDraft($id)) {
@@ -176,6 +180,10 @@ final class SavePage extends Action
         }
 
         $context->event(new PageSaved($id, $isNew));
+
+        if ($references !== []) {
+            $context->event(new PageReferencesChanged($id, $references['added'], $references['removed']));
+        }
 
         return $page;
     }
@@ -241,15 +249,16 @@ final class SavePage extends Action
      * The page change comes first: the activity log files the action under its first change.
      *
      * @param  list<string>  $written
+     * @param  array<string, mixed>  $references  added and removed references, when there are any
      */
-    private function recordChange(ActionContext $context, Page $page, Template $template, bool $isNew, array $written, string $origin): void
+    private function recordChange(ActionContext $context, Page $page, Template $template, bool $isNew, array $written, string $origin, array $references): void
     {
         $label = $page->name($this->languages->default()) !== '' ? $page->name($this->languages->default()) : 'home';
         $summary = ($isNew ? "Create {$template->name} page {$label}" : "Update page {$label}").($written !== [] ? ': '.implode(', ', $written) : '');
 
         $isNew
-            ? $context->changes->created('page', $page->id, $summary, ['template' => $template->name, 'fields' => $written, 'origin' => $origin])
-            : $context->changes->updated('page', $page->id, $summary, ['fields' => $written, 'origin' => $origin]);
+            ? $context->changes->created('page', $page->id, $summary, ['template' => $template->name, 'fields' => $written, 'origin' => $origin] + array_filter(['references' => $references]))
+            : $context->changes->updated('page', $page->id, $summary, ['fields' => $written, 'origin' => $origin] + array_filter(['references' => $references]));
     }
 
     /** Optimistic locking: refuse to overwrite a save made after the caller loaded the page. */

@@ -28,6 +28,7 @@ final class PermissionRegistry
         'pages.template' => ['Switch the template of pages', true],
         'schema.manage' => ['Manage fields, templates and languages', false],
         'search.manage' => ['Rebuild the search index and see what it holds', false],
+        'page_references.manage' => ['Rebuild the index of page references', false],
         'agent.use' => ['Use the built-in agent and approve its plans', false],
         'system.manage' => ['Change system pages (for example when uninstalling a module)', false],
     ];

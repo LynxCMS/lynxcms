@@ -41,6 +41,9 @@ return [
     'search' => [
         'manage' => 'Rebuild the search index and see what it holds',
     ],
+    'page_references' => [
+        'manage' => 'Rebuild the index of page references',
+    ],
     'finder' => [
         'share' => 'Share saved searches in Find pages',
     ],

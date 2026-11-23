@@ -25,6 +25,7 @@ use LynxCms\Core\Actions\Pages\LockEdit;
 use LynxCms\Core\Actions\Pages\MovePage;
 use LynxCms\Core\Actions\Pages\PublishDraft;
 use LynxCms\Core\Actions\Pages\PurgeOrphanedValues;
+use LynxCms\Core\Actions\Pages\RebuildPageReferences;
 use LynxCms\Core\Actions\Pages\RestorePage;
 use LynxCms\Core\Actions\Pages\RestoreRevision;
 use LynxCms\Core\Actions\Pages\RunSchedules;
@@ -63,6 +64,7 @@ use LynxCms\Core\Console\InstallCommand;
 use LynxCms\Core\Console\LanguagesCommand;
 use LynxCms\Core\Console\MakeViewCommand;
 use LynxCms\Core\Console\MigrateCommand;
+use LynxCms\Core\Console\PageReferencesCommand;
 use LynxCms\Core\Console\PhpStanCommand;
 use LynxCms\Core\Console\ScanStringsCommand;
 use LynxCms\Core\Console\ScheduleRunCommand;
@@ -167,6 +169,7 @@ final class CoreRegistrations
         TranslatePage::class,
         DeleteRedirect::class,
         CleanHtmlValues::class,
+        RebuildPageReferences::class,
         SaveRole::class,
         DeleteRole::class,
         AssignRoles::class,
@@ -194,5 +197,6 @@ final class CoreRegistrations
         MakeViewCommand::class,
         PhpStanCommand::class,
         IdeHelperCommand::class,
+        PageReferencesCommand::class,
     ];
 }

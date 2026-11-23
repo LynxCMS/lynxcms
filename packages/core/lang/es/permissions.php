@@ -41,6 +41,9 @@ return [
     'search' => [
         'manage' => 'Reconstruir el índice de búsqueda y ver lo que contiene',
     ],
+    'page_references' => [
+        'manage' => 'Reconstruir el índice de referencias entre páginas',
+    ],
     'finder' => [
         'share' => 'Compartir búsquedas guardadas en Buscar páginas',
     ],
