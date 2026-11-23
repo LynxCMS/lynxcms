@@ -21,11 +21,21 @@ A page's status flags change how visitors and editors see it:
 | `unique` | No other page anywhere may use its default language URL name. |
 | `system` | Needed by Lynx or a module: it can't be deleted, moved or switched to another template, but its values can be edited. |
 
-Editors set them in the page's **Settings** tab. In code, add and remove flags:
+Editors set them in the page's **Settings** tab. In code, each common flag has a pair of methods, which take a page, its id or its path:
 
 ```php
-lynx()->pages->setStatus('/news/launch', add: ['hidden']);
-lynx()->pages->setStatus('/news/launch', remove: ['unpublished']); // publishes the page
+lynx()->pages->publish('/news/launch');
+lynx()->pages->unpublish('/news/launch');
+lynx()->pages->hide('/news/launch');
+lynx()->pages->unhide('/news/launch');
+lynx()->pages->lock('/news/launch');
+lynx()->pages->unlock('/news/launch');
+```
+
+`setStatus()` changes several flags at once, and the `unique` flag:
+
+```php
+lynx()->pages->setStatus('/news/launch', add: ['hidden', 'unique'], remove: ['unpublished']);
 ```
 
 ### Publishing in a language

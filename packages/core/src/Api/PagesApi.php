@@ -17,6 +17,7 @@ use LynxCms\Core\Actions\Pages\SwitchTemplate;
 use LynxCms\Core\Actions\Pages\TranslatePage;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Api\Concerns\ChangesPageStatus;
 use LynxCms\Core\Api\Concerns\ManagesPageHistory;
 use LynxCms\Core\Api\Concerns\TrashesPages;
 use LynxCms\Core\Api\Concerns\VersionsPages;
@@ -46,6 +47,7 @@ use UnexpectedValueException;
  */
 final readonly class PagesApi
 {
+    use ChangesPageStatus;
     use ManagesPageHistory;
     use TrashesPages;
     use VersionsPages;

@@ -59,6 +59,24 @@ final readonly class LanguagesApi
     }
 
     /**
+     * The same as add(), under the name Laravel uses for making records.
+     *
+     * @param  array<string, string>|null  $providerCodes
+     */
+    public function create(
+        string $code,
+        string $name,
+        ?string $locale = null,
+        ?string $fallback = null,
+        ?string $prefix = null,
+        bool $active = true,
+        ?array $providerCodes = null,
+        bool $dryRun = false,
+    ): Language|ActionResult {
+        return $this->add($code, $name, $locale, $fallback, $prefix, $active, $providerCodes, $dryRun);
+    }
+
+    /**
      * @param  array<string, mixed>  $changes  code, name, locale, fallback, prefix, active, provider_codes
      */
     public function update(Language|string $language, array $changes, bool $dryRun = false): Language|ActionResult
