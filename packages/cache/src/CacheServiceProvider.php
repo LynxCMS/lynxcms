@@ -47,6 +47,7 @@ use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Lynx as CoreLynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\SchemaOwners;
+use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Core\Support\Value;
 
 /**
@@ -98,6 +99,7 @@ final class CacheServiceProvider extends ServiceProvider
 
         // The schema this module installs is its own, not the site's (ADR-0115).
         $this->app->make(SchemaOwners::class)->register('Page cache', [PageCacheSchema::SETTINGS_TEMPLATE], array_keys(PageCacheSchema::fields()));
+        $this->app->make(SchemaWording::class)->register('lynx-cache', templates: [PageCacheSchema::SETTINGS_TEMPLATE], fields: array_keys(PageCacheSchema::fields()));
 
         if ($this->app->bound(Navigation::class)) {
             AdminIntegration::register();

@@ -53,7 +53,7 @@ final class DisableSeo extends Action
         $template = $input->string('template') ?? '';
 
         if (lynx()->templates->find($template) === null) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] does not exist."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.missing', ['template' => $template]))]);
         }
 
         $present = array_values(array_intersect(SeoSchema::pageFields(), lynx()->templates->fields($template)->keys()->all()));

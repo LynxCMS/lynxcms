@@ -7,6 +7,7 @@ namespace LynxCms\Seo\JsonLd;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateField;
 use LynxCms\Seo\SeoSchema;
 
@@ -19,18 +20,6 @@ use LynxCms\Seo\SeoSchema;
  */
 final class MappingValidator
 {
-    private const array KIND_NAMES = [
-        SchemaTypes::IMAGE => 'an image field',
-        SchemaTypes::DATE => 'a date field',
-        SchemaTypes::NUMBER => 'a number field',
-        SchemaTypes::PAGE => 'a page reference field',
-        SchemaTypes::LIST => 'a repeater or matrix field',
-        SchemaTypes::ENUM => 'a choice or text field',
-        SchemaTypes::LINES => 'a text field',
-        SchemaTypes::URL => 'a URL, text or page reference field',
-        SchemaTypes::TEXT => 'a text field',
-    ];
-
     public function check(mixed $page): void
     {
         if (! $page instanceof Page || $page->template()->name !== SeoSchema::SETTINGS_TEMPLATE) {
@@ -64,19 +53,19 @@ final class MappingValidator
         $template = lynx()->templates->find($item['template']);
 
         if ($template === null || ! $template->hasUrl()) {
-            return ["Template [{$item['template']}] does not exist or has no URL."];
+            return [Value::string(__('lynx-seo::validation.mapping.template', ['template' => $item['template']]))];
         }
 
         if (isset($seen[$item['template']])) {
-            return ["Template [{$item['template']}] is already mapped above."];
+            return [Value::string(__('lynx-seo::validation.mapping.twice', ['template' => $item['template']]))];
         }
 
         if (! SchemaTypes::has($item['type'])) {
-            return ["[{$item['type']}] is not a type structured data offers: use one of ".implode(', ', SchemaTypes::names()).'.'];
+            return [Value::string(__('lynx-seo::validation.mapping.not_offered', ['type' => $item['type'], 'types' => implode(', ', SchemaTypes::names())]))];
         }
 
         [$sources, $invalid] = Mapping::parse($item['lines']);
-        $problems = array_map(fn (string $line): string => "Line [{$line}]: write property: source.", $invalid);
+        $problems = array_map(fn (string $line): string => Value::string(__('lynx-seo::validation.mapping.line', ['line' => $line])), $invalid);
         $fields = lynx()->templates->fields($item['template']);
 
         foreach ($sources as $property => $source) {
@@ -95,7 +84,7 @@ final class MappingValidator
         $kind = SchemaTypes::properties($type)[$property] ?? null;
 
         if ($kind === null) {
-            return "{$type} has no property [{$property}].";
+            return Value::string(__('lynx-seo::validation.mapping.no_property', ['type' => $type, 'property' => $property]));
         }
 
         if (Mapping::isConstant($source)) {
@@ -105,11 +94,11 @@ final class MappingValidator
         $list = SchemaTypes::listOf($type, $property);
 
         if ($source === Mapping::ORGANIZATION) {
-            return $kind === SchemaTypes::PAGE && $list === null ? null : '['.Mapping::ORGANIZATION.'] only fits properties that take a page, such as author, provider, organizer or worksFor.';
+            return $kind === SchemaTypes::PAGE && $list === null ? null : Value::string(__('lynx-seo::validation.mapping.organization', ['source' => Mapping::ORGANIZATION]));
         }
 
         if (Mapping::isBuiltIn($source)) {
-            return $list === null && in_array($source, Mapping::BUILT_INS, true) ? null : "[{$source}] is not a built-in source here: use ".implode(', ', Mapping::BUILT_INS).'.';
+            return $list === null && in_array($source, Mapping::BUILT_INS, true) ? null : Value::string(__('lynx-seo::validation.mapping.built_in', ['source' => $source, 'sources' => implode(', ', Mapping::BUILT_INS)]));
         }
 
         return $this->fieldProblem($property, $kind, $source, $list, $sources, $fields);
@@ -126,9 +115,9 @@ final class MappingValidator
         $field = $list === null ? $fields->get($source)?->field : collect(ListSubfields::of($fields->get($sources[$list] ?? '')?->field))->firstWhere('name', $source);
 
         if ($field === null) {
-            return $list === null ? "The template has no field [{$source}]." : "The [{$list}] list has no subfield [{$source}].";
+            return $list === null ? Value::string(__('lynx-seo::validation.mapping.no_field', ['field' => $source])) : Value::string(__('lynx-seo::validation.mapping.no_subfield', ['list' => $list, 'field' => $source]));
         }
 
-        return in_array($field->type, SchemaTypes::FIELD_TYPES[$kind], true) ? null : "Property [{$property}] needs ".self::KIND_NAMES[$kind]."; [{$source}] is a {$field->type} field.";
+        return in_array($field->type, SchemaTypes::FIELD_TYPES[$kind], true) ? null : Value::string(__('lynx-seo::validation.mapping.needs', ['property' => $property, 'kind' => Value::string(__("lynx-seo::validation.kinds.{$kind}")), 'field' => $source, 'type' => $field->type]));
     }
 }

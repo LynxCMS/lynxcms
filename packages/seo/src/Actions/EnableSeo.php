@@ -56,11 +56,11 @@ final class EnableSeo extends Action
         $definition = lynx()->templates->find($template);
 
         if ($definition === null) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] does not exist."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.missing', ['template' => $template]))]);
         }
 
         if (! $definition->hasUrl()) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] has no URL: search engines never see its pages."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx-seo::validation.no_url', ['template' => $template]))]);
         }
 
         $context->run(InstallSeo::class);

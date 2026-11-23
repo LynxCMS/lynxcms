@@ -65,11 +65,11 @@ final class CreateForm extends Action
             || (lynx()->templates->find(FormSchema::FORM_TEMPLATE) !== null && lynx()->pages->findOne('template='.FormSchema::FORM_TEMPLATE.', name='.$name.', include=all') !== null);
 
         if ($isTaken) {
-            throw ValidationException::withMessages(['name' => "A form named [{$name}] already exists."]);
+            throw ValidationException::withMessages(['name' => Value::string(__('lynx-forms::validation.form.taken', ['form' => $name]))]);
         }
 
         $context->run(InstallForms::class);
-        $root = lynx()->pages->findOne('template='.FormSchema::ROOT_TEMPLATE.', include=all') ?? throw ValidationException::withMessages(['name' => 'The forms page is missing.']);
+        $root = lynx()->pages->findOne('template='.FormSchema::ROOT_TEMPLATE.', include=all') ?? throw ValidationException::withMessages(['name' => Value::string(__('lynx-forms::validation.form.no_root'))]);
         $label = $input->get('label');
         $default = (string) lynx()->languages->default()->code;
 
@@ -81,6 +81,6 @@ final class CreateForm extends Action
             'status' => ['unpublished'],
         ]);
 
-        return $page instanceof Page ? $page : throw ValidationException::withMessages(['name' => 'The form could not be created.']);
+        return $page instanceof Page ? $page : throw ValidationException::withMessages(['name' => Value::string(__('lynx-forms::validation.form.failed'))]);
     }
 }

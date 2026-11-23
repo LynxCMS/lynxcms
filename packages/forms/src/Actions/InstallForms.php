@@ -95,7 +95,7 @@ final class InstallForms extends Action
             $existing = lynx()->fields->find($name);
 
             if ($existing !== null && ($existing->type !== $type || $existing->isTranslatable() !== $translatable)) {
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] exists with other settings; the form builder needs [{$type}".($translatable ? ', translatable' : '').'].']);
+                throw ValidationException::withMessages(['fields' => Value::string(__('lynx-forms::validation.field', ['field' => $name, 'needs' => $type.($translatable ? ', translatable' : '')]))]);
             }
 
             if ($existing === null) {

@@ -67,7 +67,7 @@ final class MapTemplate extends Action
         $this->assertTemplate($template);
 
         if (! SchemaTypes::has($type)) {
-            throw ValidationException::withMessages(['type' => "[{$type}] is not a type Lynx maps. Use one of: ".implode(', ', SchemaTypes::names()).'.']);
+            throw ValidationException::withMessages(['type' => Value::string(__('lynx-seo::validation.mapping.type', ['type' => $type, 'types' => implode(', ', SchemaTypes::names())]))]);
         }
 
         $lines = [];
@@ -92,8 +92,8 @@ final class MapTemplate extends Action
 
         if ($definition === null || ! $definition->hasUrl()) {
             throw ValidationException::withMessages(['template' => $definition === null
-                ? "Template [{$template}] does not exist."
-                : "Template [{$template}] has no URL: search engines never see its pages."]);
+                ? Value::string(__('lynx::validation.template.missing', ['template' => $template]))
+                : Value::string(__('lynx-seo::validation.no_url', ['template' => $template]))]);
         }
     }
 }

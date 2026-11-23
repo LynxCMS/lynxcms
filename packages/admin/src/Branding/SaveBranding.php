@@ -13,6 +13,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Models\Setting;
+use LynxCms\Core\Support\Value;
 
 /**
  * Saves the admin's branding (ADR-0084): the site's name, logo and colours on the sign-in screens
@@ -140,11 +141,11 @@ final class SaveBranding extends Action
         $bytes = preg_match('#^data:[\w/+.-]+;base64,(.+)$#s', $dataUrl, $match) === 1 ? base64_decode($match[1], true) : false;
 
         if ($bytes === false || $bytes === '') {
-            throw ValidationException::withMessages([$key => 'Send the logo as a data URL: data:image/png;base64,...']);
+            throw ValidationException::withMessages([$key => Value::string(__('lynx-admin::validation.logo.data_url'))]);
         }
 
         if (strlen($bytes) > self::MAX_LOGO_BYTES) {
-            throw ValidationException::withMessages([$key => 'The logo may be 1 MB at most.']);
+            throw ValidationException::withMessages([$key => Value::string(__('lynx-admin::validation.logo.size'))]);
         }
 
         $type = (string) new finfo(FILEINFO_MIME_TYPE)->buffer($bytes);
@@ -152,7 +153,7 @@ final class SaveBranding extends Action
         $extension = $isSvg ? 'svg' : (self::EXTENSIONS[$type] ?? null);
 
         if ($extension === null) {
-            throw ValidationException::withMessages([$key => 'The logo must be a PNG, JPEG, WebP or SVG image.']);
+            throw ValidationException::withMessages([$key => Value::string(__('lynx-admin::validation.logo.type'))]);
         }
 
         $file = 'logo-'.substr(hash('sha256', $bytes), 0, 16).'.'.$extension;

@@ -68,7 +68,7 @@ final class ItemValues
             : [lynx()->languages->default()->code => trim(Value::string($item->getLanguageValue(lynx()->languages->default(), 'title'))) ?: null];
 
         if ($kind !== 'page' && ! Translations::hasDefault($label)) {
-            throw ValidationException::withMessages(['label' => 'A label in the default language is required.']);
+            throw ValidationException::withMessages(['label' => Value::string(__('lynx-menus::validation.item.label'))]);
         }
 
         return $input->has('label') || ! $item instanceof Page ? ['title' => $label] : [];
@@ -85,7 +85,7 @@ final class ItemValues
         $unknown = array_diff($shown, $codes);
 
         if ($shown === [] || $unknown !== []) {
-            throw ValidationException::withMessages(['languages' => $shown === [] ? 'Show the item in at least one language.' : 'Unknown language ['.implode(', ', $unknown).'].']);
+            throw ValidationException::withMessages(['languages' => $shown === [] ? Value::string(__('lynx-menus::validation.item.no_language')) : Value::string(__('lynx-menus::validation.languages', ['languages' => implode(', ', $unknown)]))]);
         }
 
         $kept = array_values(array_intersect($codes, $shown));
@@ -99,7 +99,7 @@ final class ItemValues
         $page = is_int($reference) || is_string($reference) ? lynx()->pages->get($reference) : null;
 
         if (! $page instanceof Page || in_array($page->template()->name, self::UNLINKABLE, true) || ! $page->template()->hasUrl()) {
-            throw ValidationException::withMessages(['page' => 'Choose an existing page that has a URL.']);
+            throw ValidationException::withMessages(['page' => Value::string(__('lynx-menus::validation.item.page'))]);
         }
 
         return (int) $page->id;
@@ -113,14 +113,14 @@ final class ItemValues
         $urls = Translations::normalize($input->get('url'), 'url');
 
         if (! Translations::hasDefault($urls)) {
-            throw ValidationException::withMessages(['url' => 'A URL in the default language is required.']);
+            throw ValidationException::withMessages(['url' => Value::string(__('lynx-menus::validation.item.url'))]);
         }
 
         foreach ($urls as $code => $url) {
             if ($url !== null && ! LinkRules::isSafeUrl($url)) {
                 $language = lynx()->languages->get($code)->name;
 
-                throw ValidationException::withMessages(['url' => "The {$language} URL must be relative, a #fragment, or use ".implode(', ', LinkRules::SCHEMES).'.']);
+                throw ValidationException::withMessages(['url' => Value::string(__('lynx-menus::validation.item.url_scheme', ['language' => $language, 'schemes' => implode(', ', LinkRules::SCHEMES)]))]);
             }
         }
 
@@ -132,7 +132,7 @@ final class ItemValues
         $target = $input->string('target') ?: null;
 
         if ($target !== null && ! LinkRules::isValidTarget($target)) {
-            throw ValidationException::withMessages(['target' => 'Use _blank, _self, _parent, _top or a frame name (letters, digits, - and _).']);
+            throw ValidationException::withMessages(['target' => Value::string(__('lynx-menus::validation.item.target'))]);
         }
 
         return $target;

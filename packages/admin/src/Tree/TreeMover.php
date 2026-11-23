@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Tree;
 
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 
 /**
  * Turns tree gestures (drop, up, down, indent, outdent) into pages.sort and pages.move calls.
@@ -85,6 +86,6 @@ final class TreeMover
 
     private function page(int $id): Page
     {
-        return lynx()->pages->get($id) ?? throw ValidationException::withMessages(['page' => "Page [{$id}] does not exist."]);
+        return lynx()->pages->get($id) ?? throw ValidationException::withMessages(['page' => Value::string(__('lynx::validation.page.missing', ['page' => $id]))]);
     }
 }

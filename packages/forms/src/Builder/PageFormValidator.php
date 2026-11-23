@@ -56,8 +56,8 @@ final readonly class PageFormValidator
 
             if ($block['depth'] > 0) {
                 $problem = match (true) {
-                    ! $inGroup => 'Indented blocks belong to a group: add a group above it, or outdent it.',
-                    in_array($block['type'], ['group', 'step'], true) => 'A group cannot hold a group or a step.',
+                    ! $inGroup => Value::string(__('lynx-forms::validation.builder.indented')),
+                    in_array($block['type'], ['group', 'step'], true) => Value::string(__('lynx-forms::validation.builder.nested')),
                     default => null,
                 };
 
@@ -79,11 +79,11 @@ final readonly class PageFormValidator
         }
 
         if ($fieldCount === 0 && ! $page->hasStatus(PageStatus::UNPUBLISHED)) {
-            $errors['values.'.FormSchema::FIELDS] = 'Add at least one field before publishing the form.';
+            $errors['values.'.FormSchema::FIELDS] = Value::string(__('lynx-forms::validation.builder.no_fields'));
         }
 
         if (FormSchema::key($page) !== '' && $this->forms->codeForm(FormSchema::key($page)) !== null) {
-            $errors['names.'.lynx()->languages->default()->code] = 'A form defined in code already uses the name ['.FormSchema::key($page).'].';
+            $errors['names.'.lynx()->languages->default()->code] = Value::string(__('lynx-forms::validation.builder.code_form', ['form' => FormSchema::key($page)]));
         }
 
         return $errors;
@@ -101,23 +101,23 @@ final readonly class PageFormValidator
         $showIf = trim(Value::string($block['values'][FormSchema::SHOW_IF] ?? ''));
 
         if (preg_match(self::FIELD_NAME, $name) !== 1) {
-            $errors[$key.'.'.FormSchema::NAME] = "[{$name}] cannot be a field name: use lowercase letters, digits and underscores, starting with a letter.";
+            $errors[$key.'.'.FormSchema::NAME] = Value::string(__('lynx-forms::validation.builder.name', ['name' => $name]));
         } elseif (in_array($name, $names, true)) {
-            $errors[$key.'.'.FormSchema::NAME] = "Another field is already named [{$name}]; give this one its own name.";
+            $errors[$key.'.'.FormSchema::NAME] = Value::string(__('lynx-forms::validation.builder.name_taken', ['name' => $name]));
         }
 
         if (in_array($block['type'], self::CHOICE_TYPES, true) && ($block['values'][FormSchema::OPTIONS] ?? []) === []) {
-            $errors[$key.'.'.FormSchema::OPTIONS] = 'Add at least one option.';
+            $errors[$key.'.'.FormSchema::OPTIONS] = Value::string(__('lynx-forms::validation.builder.no_options'));
         }
 
         if ($showIf !== '' && ! in_array($showIf, $names, true)) {
-            $errors[$key.'.'.FormSchema::SHOW_IF] = "There is no field [{$showIf}] before this one.";
+            $errors[$key.'.'.FormSchema::SHOW_IF] = Value::string(__('lynx-forms::validation.builder.show_if', ['field' => $showIf]));
         }
 
         [$operator, $values] = PageFormCompiler::parseCondition(Value::string($block['values'][FormSchema::SHOW_IF_VALUES] ?? ''));
 
         if (in_array($operator, ['<', '<=', '>', '>='], true) && ! is_numeric($values[0] ?? null)) {
-            $errors[$key.'.'.FormSchema::SHOW_IF_VALUES] = 'Compare with a number, e.g. ">= 18".';
+            $errors[$key.'.'.FormSchema::SHOW_IF_VALUES] = Value::string(__('lynx-forms::validation.builder.number'));
         }
 
         $names[] = $name;

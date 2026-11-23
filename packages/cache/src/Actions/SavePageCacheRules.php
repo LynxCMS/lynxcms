@@ -110,7 +110,7 @@ final class SavePageCacheRules extends Action
     {
         foreach (array_keys(Value::map($value)) as $template) {
             if ($template !== self::ANY_TEMPLATE && lynx()->templates->find($template) === null) {
-                $fail("Template [{$template}] does not exist.");
+                $fail(Value::string(__('lynx::validation.template.missing', ['template' => $template])));
             }
         }
     }

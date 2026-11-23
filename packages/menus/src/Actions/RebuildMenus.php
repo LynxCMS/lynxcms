@@ -75,7 +75,7 @@ final class RebuildMenus extends Action
         $page = $this->menus->page($name);
 
         if (! $page instanceof Page) {
-            throw ValidationException::withMessages(['menu' => "There is no menu [{$name}]."]);
+            throw ValidationException::withMessages(['menu' => Value::string(__('lynx-menus::validation.menu.missing', ['menu' => $name]))]);
         }
 
         return (int) $page->id;

@@ -18,6 +18,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\Translator;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\ActionRegistry;
+use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Actions\Runner\HookRegistry;
 use LynxCms\Core\Activity\ActivityRecorder;
@@ -182,7 +183,13 @@ final class LynxServiceProvider extends ServiceProvider
         $this->app->singleton(GlobalMiddleware::class);
         // Where a draft build keeps the schema folder and types up to date (ADR-0116); tests point it elsewhere.
         $this->app->bindIf(DraftPaths::class, DraftPaths::defaults(...));
-        $this->app->singleton(SchemaWording::class);
+        // The labels of what InstallLynx creates; a site that rewords them keeps its own words (ADR-0144).
+        $this->app->singleton(SchemaWording::class, function (): SchemaWording {
+            $wording = new SchemaWording;
+            $wording->register('lynx', ['home', InstallLynx::SIMPLE_PAGE_TEMPLATE, InstallLynx::NOT_FOUND_TEMPLATE, Trash::TEMPLATE], ['title']);
+
+            return $wording;
+        });
         // Schema that belongs to Lynx or a module, not the site (ADR-0115). The trash page's template is Lynx's own (ADR-0035).
         $this->app->singleton(SchemaOwners::class, function (): SchemaOwners {
             $owners = new SchemaOwners;

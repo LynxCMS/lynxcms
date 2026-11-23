@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Pages\SavePage;
+use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Languages\EditorLanguage;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Query\SelectorException;
+use LynxCms\Menus\Actions\RebuildMenus;
 
 /*
  * What a refused save says (ADR-0141): Lynx's own messages in the editor's language, and Laravel's
@@ -50,7 +52,7 @@ it('names a missing field by its label, in the editor\'s language', function (st
 
     expect($message)->toBe(__('lynx::validation.values.required_default', ['field' => $label], $locale))
         ->and($message)->toContain($label);
-})->with([['en', 'Title'], ['pt', 'Título'], ['es', 'Title']]);
+})->with([['en', 'Title'], ['pt', 'Título'], ['es', 'Título']]);
 
 it('says something different in each language Lynx ships', function (): void {
     $messages = array_map(fn (string $locale): string => refusals([], $locale)['values.title'][0], ['en', 'pt', 'es']);
@@ -133,13 +135,14 @@ function refusedIn(Closure $change): array
 it('refuses a change in the editor\'s language', function (Closure $change, string $key, array $replace): void {
     $messages = refusedIn($change);
 
-    expect($messages)->toBe(array_map(fn (string $locale): string => __("lynx::{$key}", $replace, $locale), ['en' => 'en', 'pt' => 'pt', 'es' => 'es']))
+    expect($messages)->toBe(array_map(fn (string $locale): string => __($key, $replace, $locale), ['en' => 'en', 'pt' => 'pt', 'es' => 'es']))
         ->and(array_unique($messages))->toHaveCount(3);
 })->with([
-    'a page' => [fn () => lynx()->pages->delete('/'), 'validation.home.deleted', []],
-    'a field' => [fn () => lynx()->fields->add('status', 'text'), 'structure.field.reserved', ['name' => 'status']],
-    'a template' => [fn () => lynx()->templates->update('course', ['add' => [['name' => 'nope']]]), 'structure.field.create_first', ['field' => 'nope']],
-    'a language' => [fn () => lynx()->languages->delete('default'), 'structure.language.delete_default', []],
+    'a page' => [fn () => lynx()->pages->delete('/'), 'lynx::validation.home.deleted', []],
+    'a field' => [fn () => lynx()->fields->add('status', 'text'), 'lynx::structure.field.reserved', ['name' => 'status']],
+    'a template' => [fn () => lynx()->templates->update('course', ['add' => [['name' => 'nope']]]), 'lynx::structure.field.create_first', ['field' => 'nope']],
+    'a module' => [fn (): ActionResult => lynx()->run(RebuildMenus::class, ['menu' => 'nope']), 'lynx-menus::validation.menu.missing', ['menu' => 'nope']],
+    'a language' => [fn () => lynx()->languages->delete('default'), 'lynx::structure.language.delete_default', []],
 ]);
 
 it('names the pages that use a template it cannot delete', function (): void {
