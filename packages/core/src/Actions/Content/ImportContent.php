@@ -73,7 +73,7 @@ final class ImportContent extends Action
 
     public static function rules(): array
     {
-        return ['path' => ['required', 'string'], 'prune' => ['sometimes', 'boolean'], 'with_schema' => ['sometimes', 'boolean']];
+        return ['path' => ['required', 'string'], 'prune' => ['sometimes', 'boolean'], 'with_schema' => ['sometimes', 'boolean'], 'events' => ['sometimes', 'boolean']];
     }
 
     public static function schema(JsonSchema $schema): array
@@ -82,6 +82,7 @@ final class ImportContent extends Action
             'path' => $schema->string()->description('Directory of an extracted content package.')->required(),
             'prune' => $schema->boolean()->description('Move pages that are not in the package to the trash.'),
             'with_schema' => $schema->boolean()->description('Also apply the package\'s languages, fields, templates and roles.'),
+            'events' => $schema->boolean()->description('Dispatch events for each page (default true). False mutes them: listeners get one ContentBatchChanged at the end.'),
         ];
     }
 
@@ -89,6 +90,14 @@ final class ImportContent extends Action
      * @return array{created: int, updated: int, unchanged: int, trashed: int, skipped: list<string>}
      */
     public function handle(Input $input, ActionContext $context): array
+    {
+        return $input->bool('events', true) ? $this->import($input, $context) : lynx()->withoutEvents(fn (): array => $this->import($input, $context));
+    }
+
+    /**
+     * @return array{created: int, updated: int, unchanged: int, trashed: int, skipped: list<string>}
+     */
+    private function import(Input $input, ActionContext $context): array
     {
         $package = ContentPackage::open((string) $input->string('path'));
         $withSchema = $input->bool('with_schema');

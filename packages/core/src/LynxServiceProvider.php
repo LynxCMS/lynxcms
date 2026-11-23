@@ -20,6 +20,7 @@ use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Actions\Runner\EventMuting;
 use LynxCms\Core\Actions\Runner\HookRegistry;
 use LynxCms\Core\Activity\ActivityRecorder;
 use LynxCms\Core\Agents\ReadToolRegistry;
@@ -171,6 +172,7 @@ final class LynxServiceProvider extends ServiceProvider
 
         $this->app->singleton(Lynx::class);
         $this->app->singleton(ActionRunner::class);
+        $this->app->singleton(EventMuting::class);
         $this->app->singleton(HookRegistry::class);
         $this->app->singleton(TranslationProviders::class);
         $this->app->singleton(ActionRegistry::class);

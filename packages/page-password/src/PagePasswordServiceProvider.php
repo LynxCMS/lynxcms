@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Core\Actions\ActionRegistry;
+use LynxCms\Core\Actions\Runner\EventMuting;
 use LynxCms\Core\Events\PageDeleted;
 use LynxCms\Core\Events\PageMoved;
 use LynxCms\Core\Events\PageRestored;
@@ -62,7 +63,7 @@ final class PagePasswordServiceProvider extends ServiceProvider
         $this->app->make(ActionRegistry::class)->register(InstallPagePassword::class, EnablePagePassword::class, DisablePagePassword::class);
         $this->app->make(PageVisibility::class)->add($this->app->make(PasswordVisibility::class));
 
-        Event::listen(self::CHANGES, function (): void {
+        $this->app->make(EventMuting::class)->upkeep(self::CHANGES, function (): void {
             $this->app->make(ProtectedRoots::class)->flush();
             $this->app->make(PasswordVisibility::class)->flush();
         });

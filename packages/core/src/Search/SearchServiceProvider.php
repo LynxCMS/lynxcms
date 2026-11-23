@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Core\Search;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use LynxCms\Core\Actions\ActionRegistry;
+use LynxCms\Core\Actions\Runner\EventMuting;
 use LynxCms\Core\Actions\Search\RebuildSearchIndex;
 use LynxCms\Core\Agents\ReadToolRegistry;
 use LynxCms\Core\Console\SearchIndexCommand;
@@ -62,7 +62,7 @@ final class SearchServiceProvider extends ServiceProvider
     {
         $this->app->make(ActionRegistry::class)->register(RebuildSearchIndex::class);
         $this->app->make(ReadToolRegistry::class)->register(SearchInspectTool::class);
-        Event::listen(UpdateSearchIndex::EVENTS, UpdateSearchIndex::class);
+        $this->app->make(EventMuting::class)->upkeep(UpdateSearchIndex::EVENTS, UpdateSearchIndex::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([SearchIndexCommand::class]);

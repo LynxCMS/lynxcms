@@ -37,6 +37,7 @@ final class ImportCommand extends Command implements PromptsForMissingInput
     protected $signature = 'lynx:import {path : Package directory or .zip}
         {--with-schema : Also apply the package\'s schema: languages, fields and templates first, roles after the pages}
         {--prune : Move pages that are not in the package to the trash}
+        {--without-events : Mute events per page; listeners get one ContentBatchChanged at the end}
         {--dry-run : Show what would change without writing}';
 
     #[Override]
@@ -105,6 +106,7 @@ final class ImportCommand extends Command implements PromptsForMissingInput
             'path' => $directory,
             'prune' => (bool) $this->option('prune'),
             'with_schema' => (bool) $this->option('with-schema'),
+            'events' => ! $this->option('without-events'),
         ], dryRun: $dryRun)->value);
     }
 
