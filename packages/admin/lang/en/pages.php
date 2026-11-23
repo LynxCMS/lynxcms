@@ -35,6 +35,10 @@ return [
             'off' => 'Unique name no longer required.',
         ],
     ],
+    'references' => [
+        'linked' => ':count page elsewhere links here. Visitors stop seeing the link:|:count pages elsewhere link here. Visitors stop seeing the links:',
+        'more' => 'and :count more|and :count more',
+    ],
     'tree' => [
         'deleted' => 'Deleted :count branch.|Deleted :count branches.',
         'kept_locked' => 'Kept because a page is locked:',

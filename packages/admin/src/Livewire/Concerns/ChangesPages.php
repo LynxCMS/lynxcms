@@ -7,6 +7,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use LynxCms\Admin\Editor\ReferenceWarning;
 use LynxCms\Core\Actions\Pages\TrashPage;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
@@ -31,6 +32,14 @@ trait ChangesPages
     #[Locked]
     public array $trashing = [];
 
+    /**
+     * Pages elsewhere that reference the branches waiting for the trash (ReferenceWarning).
+     *
+     * @var array{count: int, pages: list<array{id: int, title: string, context: string}>}|null
+     */
+    #[Locked]
+    public ?array $trashReferences = null;
+
     public function bulk(string $action): void
     {
         if (! isset(self::BULK[$action])) {
@@ -47,18 +56,20 @@ trait ChangesPages
     public function confirmTrash(array $ids): void
     {
         $this->trashing = array_values(array_map(fn (Page $page): int => (int) $page->id, array_map($this->changeablePage(...), Value::ints($ids))));
+        $this->trashReferences = ReferenceWarning::for($this->trashing);
         $this->trashConfirming();
     }
 
     public function cancelTrash(): void
     {
         $this->trashing = [];
+        $this->trashReferences = null;
     }
 
     public function trash(): void
     {
         $this->selected = $this->trashing;
-        $this->trashing = [];
+        $this->cancelTrash();
         $this->report($this->each(fn (Page $page): mixed => lynx()->run(TrashPage::class, ['page' => (int) $page->id])));
     }
 

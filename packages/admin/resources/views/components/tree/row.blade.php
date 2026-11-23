@@ -92,6 +92,7 @@
                 <x-lynx-admin::ui.button variant="destructive" size="xs" wire:click="delete({{ $id }})">{{ __('lynx-admin::pages.tree.yes_delete') }}</x-lynx-admin::ui.button>
             @endif
             <x-lynx-admin::ui.button variant="ghost" size="xs" wire:click="cancelDelete">{{ __('lynx-admin::pages.tree.cancel') }}</x-lynx-admin::ui.button>
+            <x-lynx-admin::reference-warning :warning="$state['deleteReferences'] ?? null" />
         </span>
     @else
         <x-lynx-admin::tree.actions :node="$node" :state="$state" />

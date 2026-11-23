@@ -202,6 +202,16 @@ In the admin, editors search for pages to add and drag them into order, or move 
 
 Selectors take a page's path or id: `category=/categories/news`, `related=42`. `related.count>=2` counts the references.
 
+The other way round, `lynx()->pages->backlinks()` lists the pages that reference a page through any page field, of any status, lowest id first. It takes a page or a list of pages, a `limit` (50 by default), and a selector to narrow them. `total()` counts them past the limit. With `branch: true`, each page counts with every page below it, and references from inside those branches or from the trash are left out. The trash confirmation lists these pages:
+
+```php
+$linking = lynx()->pages->backlinks('/courses/delivery/', limit: 10, selector: 'template=course');
+
+$outside = lynx()->pages->backlinks($section, branch: true);
+```
+
+The Settings tab lists the pages that link to the page it edits under **Linked from**.
+
 One page field can hold a different number of pages, or offer other templates, where it is used. A template's entry, or a block type's entry in a matrix, sets `min`, `max` and `templates` for itself:
 
 ```php

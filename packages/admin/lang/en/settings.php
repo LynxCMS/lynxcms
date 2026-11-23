@@ -100,6 +100,7 @@ return [
         'title' => 'Linked from',
         'intro' => 'Pages that reference this page in a page field.',
         'empty' => 'No pages link here.',
+        'context' => ':template under :parent',
     ],
     'activity' => [
         'title' => 'Activity',

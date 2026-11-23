@@ -35,6 +35,10 @@ return [
             'off' => 'Nome único já não obrigatório.',
         ],
     ],
+    'references' => [
+        'linked' => ':count página noutro ponto do site liga para aqui. Os visitantes deixam de ver a ligação:|:count páginas noutros pontos do site ligam para aqui. Os visitantes deixam de ver as ligações:',
+        'more' => 'e mais :count|e mais :count',
+    ],
     'tree' => [
         'deleted' => ':count ramo eliminado.|:count ramos eliminados.',
         'kept_locked' => 'Mantidos porque uma página está bloqueada:',

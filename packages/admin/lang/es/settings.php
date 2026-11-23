@@ -100,6 +100,7 @@ return [
         'title' => 'Enlazada desde',
         'intro' => 'Páginas que hacen referencia a esta página en un campo de página.',
         'empty' => 'Ninguna página enlaza aquí.',
+        'context' => ':template en :parent',
     ],
     'activity' => [
         'title' => 'Actividad',

@@ -100,6 +100,7 @@ return [
         'title' => 'Referida em',
         'intro' => 'Páginas que referem esta página num campo de página.',
         'empty' => 'Nenhuma página liga para aqui.',
+        'context' => ':template em :parent',
     ],
     'activity' => [
         'title' => 'Atividade',

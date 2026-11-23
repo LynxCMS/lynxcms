@@ -79,6 +79,7 @@
             <span class="me-auto">{{ trans_choice('lynx-admin::children.confirm_trash', count($trashing)) }}</span>
             <x-lynx-admin::ui.button size="sm" variant="destructive" type="button" wire:click="trash">{{ __('lynx-admin::children.confirm') }}</x-lynx-admin::ui.button>
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="cancelTrash">{{ __('lynx-admin::children.cancel') }}</x-lynx-admin::ui.button>
+            <x-lynx-admin::reference-warning :warning="$trashReferences" />
         </div>
     @endif
 
