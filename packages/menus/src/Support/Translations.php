@@ -25,7 +25,7 @@ final class Translations
         $unknown = array_diff(array_map(strval(...), array_keys($given)), $codes);
 
         if ($unknown !== []) {
-            throw ValidationException::withMessages([$key => 'Unknown language ['.implode(', ', $unknown).'].']);
+            throw ValidationException::withMessages([$key => Value::string(__('lynx-menus::validation.languages', ['languages' => implode(', ', $unknown)]))]);
         }
 
         $result = [];

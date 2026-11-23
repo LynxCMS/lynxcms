@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Actions\Templates\UpdateTemplate;
+use LynxCms\Core\Support\Value;
 use LynxCms\PagePassword\PagePasswordSchema;
 
 /**
@@ -51,7 +52,7 @@ final class DisablePagePassword extends Action
         $template = $input->string('template') ?? '';
 
         if (lynx()->templates->find($template) === null) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] does not exist."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.missing', ['template' => $template]))]);
         }
 
         if (! lynx()->templates->fields($template)->has(PagePasswordSchema::FIELD)) {

@@ -22,10 +22,10 @@ trait ResolvesSearches
     {
         $id = Value::int($reference);
         $search = SavedSearch::query()->find($id)
-            ?? throw ValidationException::withMessages(['search' => "There is no saved search [{$id}]."]);
+            ?? throw ValidationException::withMessages(['search' => Value::string(__('lynx-finder::validation.search.missing', ['search' => $id]))]);
 
         if ($search->owner !== SavedSearch::ownerKey($context->actor) && ! app(Authorizer::class)->isSuperuser($context->actor)) {
-            throw new AuthorizationException("Only the user who saved the search [{$search->name}], or a superuser, may change it.");
+            throw new AuthorizationException(Value::string(__('lynx-finder::validation.search.owner', ['search' => $search->name])));
         }
 
         return $search;

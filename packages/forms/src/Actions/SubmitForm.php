@@ -88,7 +88,7 @@ final class SubmitForm extends Action
     public function handle(Input $input, ActionContext $context): Submission
     {
         $key = (string) $input->string('form');
-        $form = $this->forms->get($key) ?? throw ValidationException::withMessages(['form' => "There is no form [{$key}]."]);
+        $form = $this->forms->get($key) ?? throw ValidationException::withMessages(['form' => Value::string(__('lynx-forms::validation.form.missing', ['form' => $key]))]);
         $language = $input->string('language') !== null ? $this->languages->get($input->string('language')) : $this->context->current();
         $data = Value::map($input->array('data'));
 

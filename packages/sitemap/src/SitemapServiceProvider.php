@@ -13,6 +13,7 @@ use LynxCms\Core\Events\ContentChanged;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\SchemaOwners;
+use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Seo\SeoSchema;
 use LynxCms\Sitemap\Actions\ClearSitemapCache;
 use LynxCms\Sitemap\Actions\InstallSitemap;
@@ -56,6 +57,7 @@ final class SitemapServiceProvider extends ServiceProvider
 
         // The schema this module installs is its own, not the site's (ADR-0115).
         $this->app->make(SchemaOwners::class)->register('Sitemap', [SitemapSchema::SETTINGS_TEMPLATE], array_keys(SitemapSchema::fields()));
+        $this->app->make(SchemaWording::class)->register('lynx-sitemap', templates: [SitemapSchema::SETTINGS_TEMPLATE], fields: array_keys(SitemapSchema::fields()));
 
         if ($this->app->bound(Navigation::class)) {
             AdminIntegration::register();

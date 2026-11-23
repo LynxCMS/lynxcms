@@ -42,7 +42,7 @@ final class IconType extends BaseFieldType implements DescribesPhpType
     {
         return ['nullable', 'string', 'max:'.self::MAX_LENGTH, function (string $attribute, mixed $value, Closure $fail): void {
             if (! app(IconSet::class)->has(Value::string($value))) {
-                $fail('Choose an icon from the list.');
+                $fail(Value::string(__('lynx-admin::validation.icon')));
             }
         }];
     }

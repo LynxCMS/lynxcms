@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Actions\Templates\UpdateTemplate;
+use LynxCms\Core\Support\Value;
 use LynxCms\PagePassword\PagePasswordSchema;
 
 /**
@@ -52,11 +53,11 @@ final class EnablePagePassword extends Action
         $definition = lynx()->templates->find($template);
 
         if ($definition === null) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] does not exist."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx::validation.template.missing', ['template' => $template]))]);
         }
 
         if (! $definition->hasUrl()) {
-            throw ValidationException::withMessages(['template' => "Template [{$template}] has no URL: visitors never open its pages."]);
+            throw ValidationException::withMessages(['template' => Value::string(__('lynx-page-password::validation.no_url', ['template' => $template]))]);
         }
 
         $context->run(InstallPagePassword::class);

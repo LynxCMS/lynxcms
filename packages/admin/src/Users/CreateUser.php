@@ -70,7 +70,7 @@ final class CreateUser extends Action
         $roles = Value::strings($input->array('roles'));
 
         if ($this->users->emailExists($email)) {
-            throw ValidationException::withMessages(['email' => "[{$email}] already has an account."]);
+            throw ValidationException::withMessages(['email' => Value::string(__('lynx-admin::validation.account', ['email' => $email]))]);
         }
 
         $user = $this->users->create($name, $email);

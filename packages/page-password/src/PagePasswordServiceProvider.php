@@ -21,6 +21,7 @@ use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\Visibility\PageVisibility;
+use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\PagePassword\Access\PasswordGate;
 use LynxCms\PagePassword\Access\PasswordVisibility;
 use LynxCms\PagePassword\Access\ProtectedRoots;
@@ -68,6 +69,7 @@ final class PagePasswordServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-page-password');
         $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-page-password');
+        $this->app->make(SchemaWording::class)->register('lynx-page-password', fields: [PagePasswordSchema::FIELD]);
         $this->app->make(PageGates::class)->add(fn (Page $page, Request $request): ?Response => $this->app->make(PasswordGate::class)($page, $request));
         Route::post('lynx-page-password/unlock', UnlockController::class)->middleware('web')->name('lynx.page-password.unlock');
 

@@ -13,6 +13,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Actions\Templates\UpdateTemplate;
+use LynxCms\Core\Support\Value;
 use LynxCms\Seo\SeoSchema;
 
 /**
@@ -79,7 +80,7 @@ final class InstallSeo extends Action
             if ($existing !== null && ($existing->type !== $type || $existing->isTranslatable() !== $translatable)) {
                 $needs = $type.($translatable ? ', translatable' : ', not translatable');
 
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] exists with other settings; the SEO module needs [{$needs}]."]);
+                throw ValidationException::withMessages(['fields' => Value::string(__('lynx-seo::validation.field', ['field' => $name, 'needs' => $needs]))]);
             }
 
             if ($existing === null) {

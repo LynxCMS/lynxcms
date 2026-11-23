@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 use LynxCms\Menus\Menus;
 use LynxCms\Menus\MenuSchema;
 use LynxCms\Menus\Support\Translations;
@@ -62,13 +63,13 @@ final class CreateMenu extends Action
         $name = (string) $input->string('name');
 
         if ($this->menus->page($name) instanceof Page) {
-            throw ValidationException::withMessages(['name' => "A menu named [{$name}] already exists."]);
+            throw ValidationException::withMessages(['name' => Value::string(__('lynx-menus::validation.menu.taken', ['menu' => $name]))]);
         }
 
         $title = Translations::normalize($input->get('title'), 'title');
 
         if (! Translations::hasDefault($title)) {
-            throw ValidationException::withMessages(['title' => 'A title in the default language is required.']);
+            throw ValidationException::withMessages(['title' => Value::string(__('lynx-menus::validation.menu.title'))]);
         }
 
         $page = $context->run(SavePage::class, [

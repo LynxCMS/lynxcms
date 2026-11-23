@@ -18,6 +18,7 @@ use LynxCms\Core\Lynx;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\SchemaOwners;
+use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Core\Support\Value;
 use LynxCms\Seo\Actions\DisableSeo;
 use LynxCms\Seo\Actions\EnableSeo;
@@ -88,6 +89,7 @@ final class SeoServiceProvider extends ServiceProvider
 
         // The schema this module installs is its own, not the site's (ADR-0115).
         $this->app->make(SchemaOwners::class)->register('SEO', [SeoSchema::SETTINGS_TEMPLATE], SeoSchema::names());
+        $this->app->make(SchemaWording::class)->register('lynx-seo', templates: [SeoSchema::SETTINGS_TEMPLATE], fields: SeoSchema::names());
 
         if ($this->app->bound(Navigation::class)) {
             AdminIntegration::register();

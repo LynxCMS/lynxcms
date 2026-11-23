@@ -10,6 +10,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Fields\CreateField;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Support\Value;
 use LynxCms\PagePassword\PagePasswordSchema;
 
 /**
@@ -50,7 +51,7 @@ final class InstallPagePassword extends Action
         $existing = lynx()->fields->find(PagePasswordSchema::FIELD);
 
         if ($existing !== null && ($existing->type !== PagePasswordSchema::TYPE || $existing->isTranslatable())) {
-            throw ValidationException::withMessages(['fields' => 'Field ['.PagePasswordSchema::FIELD.'] exists with other settings; page passwords need a shared field of type ['.PagePasswordSchema::TYPE.'].']);
+            throw ValidationException::withMessages(['fields' => Value::string(__('lynx-page-password::validation.field', ['field' => PagePasswordSchema::FIELD, 'type' => PagePasswordSchema::TYPE]))]);
         }
 
         if ($existing !== null) {

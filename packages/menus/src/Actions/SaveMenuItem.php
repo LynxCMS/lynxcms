@@ -14,6 +14,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Fields\LinkRel;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\Value;
 use LynxCms\Menus\Menus;
 use LynxCms\Menus\MenuSchema;
 use LynxCms\Menus\Support\ItemValues;
@@ -133,7 +134,7 @@ final class SaveMenuItem extends Action
 
         return $item instanceof Page && $item->template()->name === MenuSchema::ITEM_TEMPLATE
             ? $item
-            : throw ValidationException::withMessages(['item' => 'Menu item ['.$input->int('item').'] does not exist.']);
+            : throw ValidationException::withMessages(['item' => Value::string(__('lynx-menus::validation.item.missing', ['item' => $input->int('item')]))]);
     }
 
     /** The item's own menu; when "menu" is given too it must match, so an item id cannot reach into another menu. */
@@ -144,13 +145,13 @@ final class SaveMenuItem extends Action
 
         return $expected === null || $expected === $menu->name(lynx()->languages->default())
             ? $menu
-            : throw ValidationException::withMessages(['item' => "Menu item [{$item->id}] is not in menu [{$expected}]."]);
+            : throw ValidationException::withMessages(['item' => Value::string(__('lynx-menus::validation.item.other_menu', ['item' => $item->id, 'menu' => $expected]))]);
     }
 
     private function menu(Input $input): Page
     {
         return $this->menus->page((string) $input->string('menu'))
-            ?? throw ValidationException::withMessages(['menu' => 'Menu ['.$input->string('menu').'] does not exist.']);
+            ?? throw ValidationException::withMessages(['menu' => Value::string(__('lynx-menus::validation.menu.not_found', ['menu' => $input->string('menu')]))]);
     }
 
     /** The menu itself or one of its items. */
@@ -160,6 +161,6 @@ final class SaveMenuItem extends Action
         $isInMenu = $parent === $menu->id
             || lynx()->pages->count("id={$parent}, has_parent={$menu->id}, template=".MenuSchema::ITEM_TEMPLATE.', include=all') === 1;
 
-        return $isInMenu ? $parent : throw ValidationException::withMessages(['parent' => 'The parent must be this menu or one of its items.']);
+        return $isInMenu ? $parent : throw ValidationException::withMessages(['parent' => Value::string(__('lynx-menus::validation.item.parent'))]);
     }
 }

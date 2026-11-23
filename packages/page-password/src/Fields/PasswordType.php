@@ -56,7 +56,7 @@ final class PasswordType extends BaseFieldType implements DescribesPhpType, Pres
             $value = Value::string($value);
 
             if (! StoredPassword::isStored($value) && mb_strlen(trim($value)) > self::MAX_LENGTH) {
-                $fail('The password may have at most '.self::MAX_LENGTH.' characters.');
+                $fail(Value::string(__('lynx-page-password::validation.max', ['max' => self::MAX_LENGTH])));
             }
         }];
     }

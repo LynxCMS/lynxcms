@@ -20,6 +20,6 @@ trait ResolvesSubmissions
         $reference = Value::string($reference);
 
         return Submission::query()->where('uuid', $reference)->orWhere('id', ctype_digit($reference) ? (int) $reference : 0)->first()
-            ?? throw ValidationException::withMessages(['submission' => "There is no submission [{$reference}]."]);
+            ?? throw ValidationException::withMessages(['submission' => Value::string(__('lynx-forms::validation.submission', ['submission' => $reference]))]);
     }
 }

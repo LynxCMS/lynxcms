@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Models\Setting;
+use LynxCms\Core\Support\Value;
 
 /**
  * Saves the language a signed-in editor reads the admin in (ADR-0097). Empty goes back to the
@@ -58,13 +59,13 @@ final class SaveAdminLocale extends Action
     public function handle(Input $input, ActionContext $context): string
     {
         if ($context->actor->kind !== Actor::USER || $context->actor->id === null) {
-            throw ValidationException::withMessages(['locale' => 'Only a signed-in user has an admin language.']);
+            throw ValidationException::withMessages(['locale' => Value::string(__('lynx-admin::validation.locale.signed_in'))]);
         }
 
         $locale = (string) $input->string('locale', '');
 
         if ($locale !== '' && ! isset(AdminLocale::options()[$locale])) {
-            throw ValidationException::withMessages(['locale' => "The admin does not offer the language [{$locale}]."]);
+            throw ValidationException::withMessages(['locale' => Value::string(__('lynx-admin::validation.locale.not_offered', ['locale' => $locale]))]);
         }
 
         $setting = AdminLocale::setting($context->actor->id);

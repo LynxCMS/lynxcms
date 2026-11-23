@@ -73,7 +73,7 @@ final class InstallMenus extends Action
             if ($existing !== null && ($existing->type !== $type || $existing->isTranslatable() !== $translatable)) {
                 $needs = $type.($translatable ? ', translatable' : ', not translatable');
 
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] exists with other settings; the menu builder needs [{$needs}]."]);
+                throw ValidationException::withMessages(['fields' => Value::string(__('lynx-menus::validation.field', ['field' => $name, 'needs' => $needs]))]);
             }
 
             if ($existing === null) {

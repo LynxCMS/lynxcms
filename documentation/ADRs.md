@@ -1547,3 +1547,17 @@ Staying in English: action descriptions, console output, the change summaries th
 - Setting names, flags, and action names (`width`, `show_if`, `pages.restore`) are code and stay as they are in every language.
 
 **Consequences:** An app that overrides `lynx-admin::roles.permissions` moves those lines to `lynx::permissions`. A draft error (`lynx:draft`) that quotes a template rule reads that rule in the app's locale.
+
+## ADR-0144: Modules translate their messages and the labels they install
+
+**Status:** Accepted. Completes ADR-0140 and ADR-0141.
+
+**Context:** The modules and the admin still typed 56 messages in English, and the fields and templates they install (menus, forms, SEO, sitemap, page cache, page passwords) showed English labels on a Portuguese or Spanish admin. Installing labels per language would write text a site never asked for and would miss languages added later.
+
+**Decision:**
+
+- Each package keeps its messages in `lang/{locale}/validation.php`. `HardcodedMessagesTest` refuses a typed message in every package.
+- Each module registers the fields and templates it installs with `SchemaWording`, and ships `lang/{pt,es}/schema.php`: the English text it installs, then its translation. Core does the same for what `InstallLynx` and the trash create (Title, Home, Simple page, Page not found, Trash).
+- `ModuleLabelsTest` installs every module and requires a translation of each text, with no stale line.
+
+**Consequences:** No database change. Existing sites read the labels translated after an update, and text a site reworded stays as the site wrote it. Rewording an installed label in English means changing its key in each `schema.php`, and the old wording on existing sites then reads untranslated. Languages Lynx does not ship add `lang/vendor/{namespace}/{locale}/schema.php`.

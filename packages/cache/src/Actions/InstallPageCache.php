@@ -13,6 +13,7 @@ use LynxCms\Core\Actions\Pages\SavePage;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Actions\Templates\CreateTemplate;
+use LynxCms\Core\Support\Value;
 
 /**
  * Creates the page cache settings fields, template and hidden system page. Safe to run again.
@@ -65,7 +66,7 @@ final class InstallPageCache extends Action
             $existing = lynx()->fields->find($name);
 
             if ($existing !== null && $existing->type !== $type) {
-                throw ValidationException::withMessages(['fields' => "Field [{$name}] exists with another type; the page cache needs [{$type}]."]);
+                throw ValidationException::withMessages(['fields' => Value::string(__('lynx-cache::validation.field', ['field' => $name, 'needs' => $type]))]);
             }
 
             if ($existing === null) {
