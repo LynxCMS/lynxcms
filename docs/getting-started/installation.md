@@ -91,9 +91,28 @@ Three things show that Lynx is installed and working:
 - **Pages** in the admin's menu shows the page tree, with one page in it: the home page.
 - `/` shows the home page with Lynx's plain built-in view, a list of its fields, until you write a view for it.
 
+`php artisan lynx:doctor` checks the rest of the setup and names any problem with a way to fix it: templates without a view, pages hidden behind one of your app's routes, a scheduler that never ran, and middleware Lynx needs.
+
 If `/` still shows Laravel's welcome page, the welcome route is still in `routes/web.php` ([Installing Lynx](#installing-lynx)). If `/lynx` refuses your account, it has no role yet: run `php artisan lynx:superuser`.
 
 The admin also offers password resets, two-factor authentication and passkeys. Some of them need a few lines in your `User` model; see [Sign-in and Accounts](/admin/sign-in).
+
+## Lynx without the admin
+
+`lynxcms/core` runs a site on its own, for sites whose schema and content come from code, seeders, YAML drafts, content packages or AI tools rather than editors in a browser:
+
+```bash
+composer require lynxcms/core
+php artisan lynx:migrate
+```
+
+`lynx:migrate` creates Lynx's tables and, on a database where Lynx is not installed yet, runs `lynx:install` for you: the default language, the home page, the `simple-page` template, and the roles, which MCP clients and the agent use too. Without the admin, nobody needs to be a superuser to finish installing.
+
+There is no `/lynx` to check, so open `/`, which shows the home page with Lynx's built-in view, and run `php artisan lynx:doctor`. From there:
+
+- Create fields and templates in a seeder with `lynx()->fields->create()` and `lynx()->templates->create()`, or write them as a YAML draft and run `php artisan lynx:draft` ([Drafting the schema](/basics/templates-and-fields#drafting-the-schema)).
+- Write a view for each template, or let `php artisan lynx:make:view --all` start them ([Views](/basics/views#starting-a-view)).
+- Add the admin later with `php artisan lynx:install --modules=admin`. Your pages and schema stay as they are, and it offers to create the first superuser.
 
 ## Next steps
 
