@@ -105,9 +105,10 @@ A page appears in a language once it has an address in that language, such as `/
 A Laravel app decides which code answers a URL with **routes**. Lynx adds one route of its own, after your app's routes, that answers every URL they don't. For each request it:
 
 1. reads the language from the start of the URL: no prefix for the default language, `/pt` for Portuguese;
-2. finds the page at that address;
-3. checks that the visitor may see it;
-4. renders the page with its template's view.
+2. finds the page at that address, in that language. The old address of a renamed or moved page redirects to its current one (status 301), and so does an address written with another language's names, such as `/pt/courses/risk` for `/pt/cursos/risco`. When nothing matches, the page not found answers, with status 404;
+3. checks that the visitor may see it. An unpublished page, or one with no address in that language, answers 404, except to signed-in users who may see it in the admin. A module may answer instead, as page passwords do with their form;
+4. renders the page with its template's view, `resources/views/templates/{template}.blade.php`, or Lynx's built-in view, which lists the fields, until you write one;
+5. reads each field the view prints in the page's language first, then in its fallback languages, as [Languages](#languages) describes.
 
 Your own routes keep working. A controller of yours at `/account` still answers `/account`, and Lynx serves every other URL. When an editor renames or moves a page, its old address redirects to the new one, in every language, so bookmarks, old newsletters and that forum post from 2019 keep working.
 
