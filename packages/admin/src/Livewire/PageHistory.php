@@ -12,9 +12,8 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ActivityEntry;
 use LynxCms\Admin\Editor\ActorNames;
 use LynxCms\Admin\Editor\BacklinkFilter;
-use LynxCms\Admin\Tree\DefaultPresenter;
+use LynxCms\Admin\Editor\LinkedPages;
 use LynxCms\Core\Activity\ActivityEvent;
-use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 
 /**
@@ -64,26 +63,10 @@ final class PageHistory extends Component
             'redirects' => lynx()->pages->redirects($this->pageId),
             // A page without a URL has no old URLs to send on.
             'hasUrl' => lynx()->pages->get($this->pageId)?->template()->hasUrl() ?? true,
-            'backlinks' => lynx()->pages->backlinks($this->pageId, selector: app(BacklinkFilter::class)->selector())->map($this->backlink(...)),
+            'backlinks' => LinkedPages::rows(lynx()->pages->backlinks($this->pageId, selector: app(BacklinkFilter::class)->selector())),
             'isLocked' => lynx()->pages->get($this->pageId)?->hasStatus(PageStatus::LOCKED) ?? true,
             'activity' => array_map(fn (ActivityEvent $event): array => ActivityEntry::from($event, $names), array_slice($activity, 0, $this->activityLimit)),
             'hasMoreActivity' => count($activity) > $this->activityLimit,
         ]);
-    }
-
-    /**
-     * @return array{id: int, title: string, context: string}
-     */
-    private function backlink(Page $page): array
-    {
-        $titles = new DefaultPresenter;
-        $parent = $page->parent();
-        $template = $page->template()->label ?: $page->template()->name;
-
-        return [
-            'id' => (int) $page->id,
-            'title' => $titles->title($page),
-            'context' => $template.($parent instanceof Page ? ' under '.$titles->title($parent) : ''),
-        ];
     }
 }

@@ -35,6 +35,10 @@ return [
             'off' => 'Ya no se exige un nombre único.',
         ],
     ],
+    'references' => [
+        'linked' => ':count página en otra parte del sitio enlaza aquí. Los visitantes dejan de ver el enlace:|:count páginas en otras partes del sitio enlazan aquí. Los visitantes dejan de ver los enlaces:',
+        'more' => 'y :count más|y :count más',
+    ],
     'tree' => [
         'deleted' => 'Se ha eliminado :count rama.|Se han eliminado :count ramas.',
         'kept_locked' => 'Se han conservado porque hay una página bloqueada:',

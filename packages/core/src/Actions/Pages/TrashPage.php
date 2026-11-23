@@ -11,6 +11,7 @@ use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Events\PageTrashed;
+use LynxCms\Core\Pages\BranchBacklinks;
 use LynxCms\Core\Pages\BranchMover;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Page;
@@ -36,6 +37,7 @@ final class TrashPage extends Action
         private readonly Trash $trash,
         private readonly BranchMover $mover,
         private readonly PathBuilder $paths,
+        private readonly BranchBacklinks $references,
     ) {}
 
     public static function name(): string
@@ -50,7 +52,7 @@ final class TrashPage extends Action
 
     public static function description(): string
     {
-        return 'Move a page and all pages under it to the trash. Visitors can no longer reach them; pages.restore puts them back, pages.empty_trash deletes them for good.';
+        return 'Move a page and all pages under it to the trash. Visitors can no longer reach them; pages.restore puts them back, pages.empty_trash deletes them for good. The change lists the pages elsewhere that reference the branch (referenced_by): their references stop showing to visitors.';
     }
 
     public static function rules(): array
@@ -72,6 +74,7 @@ final class TrashPage extends Action
         // Rule 1 of the trash plan: whatever would stop a delete stops trashing, so nothing locked ends up stuck there.
         $this->guard->assertDeletable($page, $ids);
         $context->authorizePages('pages.delete', $ids);
+        $referencedBy = $this->references->outside($ids);
 
         $names = $this->names((int) $page->id);
         $ancestors = Value::ints(DB::table(Tables::PAGE_CLOSURE)->where('descendant_id', $page->parentId)->pluck('ancestor_id')->all());
@@ -82,7 +85,7 @@ final class TrashPage extends Action
         $this->mover->move($page, $this->trash->ensureRoot($context));
         $this->paths->rebuild((int) $page->id, descendants: true);
 
-        $context->changes->updated('page', $page->id, "Trash page {$page->name()} and ".(count($ids) - 1).' page(s) under it', ['ids' => $ids, 'from' => $from]);
+        $context->changes->updated('page', $page->id, "Trash page {$page->name()} and ".(count($ids) - 1).' page(s) under it'.BranchBacklinks::note($referencedBy), ['ids' => $ids, 'from' => $from, 'referenced_by' => $referencedBy]);
         $context->event(new PageTrashed((int) $page->id, $from, $ids));
 
         return $page;

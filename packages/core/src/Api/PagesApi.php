@@ -21,6 +21,7 @@ use LynxCms\Core\Api\Concerns\ManagesPageHistory;
 use LynxCms\Core\Api\Concerns\TrashesPages;
 use LynxCms\Core\Api\Concerns\VersionsPages;
 use LynxCms\Core\Languages\LanguageRegistry;
+use LynxCms\Core\Pages\BranchBacklinks;
 use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Pages\EditLocks;
 use LynxCms\Core\Pages\Page;
@@ -57,6 +58,7 @@ final readonly class PagesApi
         private LanguageRegistry $languages,
         private TemplateRegistry $templates,
         private Backlinks $backlinks,
+        private BranchBacklinks $branchBacklinks,
         private PageReferences $references,
         private Trash $trash,
         private ScheduleReader $scheduleReader,

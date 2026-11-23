@@ -55,15 +55,29 @@ trait ManagesPageHistory
     }
 
     /**
-     * Pages that reference this page in a page reference field, whatever their status. A selector
-     * narrows them, e.g. "template!=menu-item".
+     * Pages that reference these pages in a field that references pages, whatever their status,
+     * lowest id first. A selector narrows them, e.g. "template!=menu-item". With $branch, each
+     * page counts with every page below it, and references from inside those branches or from
+     * the trash are left out: what a trash confirmation lists. total() counts past the limit.
+     *
+     * @param  Page|int|string|list<Page|int|string>  $pages
      */
-    public function backlinks(Page|int|string $page, int $limit = 50, string $selector = ''): PageArray
+    public function backlinks(Page|int|string|array $pages, int $limit = 50, string $selector = '', bool $branch = false): PageArray
     {
-        $ids = $this->backlinks->pageIds((int) ($this->get($page)->id ?? 0));
+        $targets = $this->pageIds(is_array($pages) ? $pages : [$pages]);
+        $ids = $branch ? $this->branchBacklinks->outsideBranches($targets) : $this->backlinks->referencing($targets);
         $selector = trim($selector) === '' ? '' : trim($selector).', ';
 
         return $ids === [] ? new PageArray([]) : $this->finder->find($selector.'id='.implode('|', $ids).', include=all, sort=id, limit='.max(1, $limit));
+    }
+
+    /**
+     * @param  list<Page|int|string>  $pages
+     * @return list<int> the ids of those that exist
+     */
+    private function pageIds(array $pages): array
+    {
+        return array_values(array_filter(array_map(fn (Page|int|string $page): int => (int) ($this->get($page)->id ?? 0), $pages)));
     }
 
     /**

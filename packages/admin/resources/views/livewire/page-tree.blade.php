@@ -85,7 +85,7 @@
                 <span class="ms-auto w-56">{{ __('lynx-admin::pages.tree.column_languages') }}</span><span class="w-28">{{ __('lynx-admin::pages.tree.column_status') }}</span><span class="w-48">{{ __('lynx-admin::pages.tree.column_changed') }}</span>
             </div>
         @endif
-        @php($state = ['moving' => $moving, 'deleting' => $deleting, 'deleteCount' => $deleteCount, 'sortable' => $sortable, 'events' => $events, 'trash' => $usesTrash])
+        @php($state = ['moving' => $moving, 'deleting' => $deleting, 'deleteCount' => $deleteCount, 'deleteReferences' => $deleteReferences, 'sortable' => $sortable, 'events' => $events, 'trash' => $usesTrash])
         @if ($filtered !== null)
             {{-- A filter's pages, flat and paged; nothing to reorder here. --}}
             <div role="tree" aria-label="{{ __('lynx-admin::pages.tree.label') }}" class="-mb-px" data-tree-filtered>

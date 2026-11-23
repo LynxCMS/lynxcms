@@ -12,6 +12,7 @@ use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Events\PageDeleted;
 use LynxCms\Core\Fields\FieldRegistry;
+use LynxCms\Core\Pages\BranchBacklinks;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
 use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Pages\PageGuard;
@@ -27,7 +28,12 @@ final class DeletePage extends Action
 {
     use ResolvesPages;
 
-    public function __construct(private readonly PageGuard $guard, private readonly FieldRegistry $fields, private readonly Drafts $drafts) {}
+    public function __construct(
+        private readonly PageGuard $guard,
+        private readonly FieldRegistry $fields,
+        private readonly Drafts $drafts,
+        private readonly BranchBacklinks $references,
+    ) {}
 
     public static function name(): string
     {
@@ -41,7 +47,7 @@ final class DeletePage extends Action
 
     public static function description(): string
     {
-        return 'Permanently delete a page and all pages under it, with all their values in every language.';
+        return 'Permanently delete a page and all pages under it, with all their values in every language. The change lists the pages elsewhere that reference the branch (referenced_by).';
     }
 
     public static function destructive(): bool
@@ -76,6 +82,8 @@ final class DeletePage extends Action
 
         // Every page of the branch, so a branch or template limited grant cannot delete beyond it.
         $context->authorizePages('pages.delete', $ids);
+        // Read before the values go: pages elsewhere that will point at nothing.
+        $referencedBy = $this->references->outside($ids);
 
         foreach ($this->fields->all() as $field) {
             DB::table($field->table())->whereIn('page_id', $ids)->delete();
@@ -98,7 +106,7 @@ final class DeletePage extends Action
             DB::table(Tables::PAGES)->where('id', $id)->delete();
         }
 
-        $context->changes->deleted('page', $page->id, "Delete page {$page->name()} and ".(count($ids) - 1).' page(s) under it', ['ids' => $ids]);
+        $context->changes->deleted('page', $page->id, "Delete page {$page->name()} and ".(count($ids) - 1).' page(s) under it'.BranchBacklinks::note($referencedBy), ['ids' => $ids, 'referenced_by' => $referencedBy]);
         $context->event(new PageDeleted($ids));
 
         return $ids;

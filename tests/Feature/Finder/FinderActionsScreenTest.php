@@ -54,6 +54,16 @@ it('trashes the ticked pages once confirmed', function (): void {
     expect(lynx()->pages->findOne("id={$beta}"))->toBeNull();
 });
 
+it('warns before trashing a page other pages reference', function (): void {
+    ['alpha' => $alpha, 'beta' => $beta] = $this->courses;
+    $alpha->related = [(int) $beta->id];
+    $alpha->save();
+
+    Livewire::test(FinderScreen::class)
+        ->call('confirmTrash', [(int) $beta->id])
+        ->assertSeeHtml('data-referencing-page="'.$alpha->id.'"');
+});
+
 it('refuses changes the user may not make, and pages outside the finder', function (): void {
     lynx()->run(SaveRole::class, ['name' => 'viewer', 'grants' => [['permission' => 'admin.access'], ['permission' => 'pages.view']]]);
     lynx()->run(AssignRoles::class, ['user' => '5', 'roles' => ['viewer']]);

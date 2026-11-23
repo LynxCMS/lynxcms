@@ -100,6 +100,8 @@ lynx()->pages->restore('/news/old');
 lynx()->pages->emptyTrash();
 ```
 
+Before a page goes to the trash, or is deleted for good, the confirmation lists the pages elsewhere that reference it or a page below it in a page field. Visitors stop seeing those references, so editors can fix them first. The page tree, the Children tab, and Page Finder all show this list, which `lynx()->pages->backlinks($page, branch: true)` returns (see [the page field](/basics/field-types#page)). In code, a dry run of `trash()` or `delete()` lists their ids under `referenced_by` in the change for the page, and the activity log keeps them.
+
 Trashed pages have no URL, so code that reacts to a page by its id, such as a listener on `PageSaved`, asks whether the page is in the trash with `lynx()->pages->inTrash($page)`, which takes the page or its id and counts pages below a trashed page too.
 
 `lynx()->pages->delete()` removes a page and its children for good, without the trash. Prefer the trash, which editors can undo.

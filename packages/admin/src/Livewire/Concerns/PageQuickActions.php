@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Livewire\Concerns;
 
 use Closure;
 use Livewire\Attributes\Locked;
+use LynxCms\Admin\Editor\ReferenceWarning;
 use LynxCms\Admin\Editor\StatusNotice;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Pages\Page;
@@ -26,6 +27,14 @@ trait PageQuickActions
 
     #[Locked]
     public int $deleteCount = 0;
+
+    /**
+     * Pages elsewhere that reference the branch waiting to be trashed or deleted (ReferenceWarning).
+     *
+     * @var array{count: int, pages: list<array{id: int, title: string, context: string}>}|null
+     */
+    #[Locked]
+    public ?array $deleteReferences = null;
 
     /**
      * What the last Empty trash did, for the report above the tree.
@@ -50,7 +59,7 @@ trait PageQuickActions
         });
     }
 
-    /** Ask before trashing or deleting, with the number of pages below from a dry run. */
+    /** Ask before trashing or deleting, with the pages below and the pages referencing them from a dry run. */
     public function confirmDelete(int $id): void
     {
         $this->attempt(function () use ($id): void {
@@ -65,6 +74,7 @@ trait PageQuickActions
             }
 
             $this->deleteCount = max(0, count($ids) - 1);
+            $this->deleteReferences = ReferenceWarning::for([$id]);
             $this->deleting = $id;
         });
     }
@@ -72,6 +82,7 @@ trait PageQuickActions
     public function cancelDelete(): void
     {
         $this->deleting = null;
+        $this->deleteReferences = null;
     }
 
     public function delete(int $id): void
@@ -89,7 +100,7 @@ trait PageQuickActions
                 default => lynx()->pages->delete($id),
             };
         });
-        $this->deleting = null;
+        $this->cancelDelete();
     }
 
     /** Put a trashed branch back where it was. */

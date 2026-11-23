@@ -33,16 +33,7 @@
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-backlinks">
         <h2 id="settings-backlinks" class="mb-1 text-base font-semibold">{{ __('lynx-admin::settings.backlinks.title') }}</h2>
         <p class="text-muted-foreground text-sm mb-4">{{ __('lynx-admin::settings.backlinks.intro') }}</p>
-        @forelse ($backlinks as $link)
-            @if ($loop->first) <ul class="divide-y divide-border text-sm"> @endif
-            <li class="flex flex-wrap items-baseline justify-between gap-2 py-2" wire:key="backlink-{{ $link['id'] }}">
-                <a href="{{ route('lynx.admin.pages.edit', $link['id']) }}" class="text-primary font-medium underline-offset-4 hover:underline">{{ $link['title'] }}</a>
-                <span class="text-muted-foreground">{{ $link['context'] }}</span>
-            </li>
-            @if ($loop->last) </ul> @endif
-        @empty
-            <p class="text-muted-foreground text-sm">{{ __('lynx-admin::settings.backlinks.empty') }}</p>
-        @endforelse
+        <x-lynx-admin::linked-pages :links="$backlinks" :empty="__('lynx-admin::settings.backlinks.empty')" />
     </section>
 
     {{-- Activity --}}
