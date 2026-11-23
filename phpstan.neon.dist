@@ -17,7 +17,6 @@ parameters:
         - packages/cache/src
         - packages/static-site/src
         - packages/finder/src
-        - packages/page-references/src
         - packages/forms/src
     tmpDir: build/phpstan
     treatPhpDocTypesAsCertain: false

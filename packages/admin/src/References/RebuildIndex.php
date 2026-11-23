@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LynxCms\PageReferences;
+namespace LynxCms\Admin\References;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

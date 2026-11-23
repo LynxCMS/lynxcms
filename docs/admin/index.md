@@ -47,6 +47,18 @@ An address such as `/lynx/pages/42/edit?field=sections&item=01J…&lang=pt` open
 
 Superusers also see developer details in the page editor: the template's name, each field's type, and on the Texts tab each string's key and the view that declares it. Other users see only the labels.
 
+## Page references
+
+**Settings > Page references** reports on how pages link to each other through page fields and menus. It reads the index of page references that Lynx keeps as pages are saved, and each report lists only the pages you may view.
+
+- **Broken links** lists page fields that point at a page that was deleted, is in the trash, or is unpublished. Visitors don't see these links. Each row links to the field (and the repeater or matrix item) that holds the reference.
+- **Not linked** lists pages that no page field or menu links to. Visitors reach them only through lists, search, or their address. The home page, the trash, and pages a module manages, such as menus, are left out.
+- **Most linked** lists the 20 pages linked from the most pages, with how many.
+
+Broken links and Not linked show 50 pages at a time.
+
+Users whose role has **Rebuild the index of page references** (`page_references.manage`) also see the index's health. **Check index** runs the rebuild as a [dry run](/deeper/actions-and-hooks#dry-runs) and says how many pages' rows differ from their stored values. **Rebuild index** runs `page_references.rebuild` on the queue, as the user who asked, so a large site's rebuild does not hold up the admin. With the `sync` queue it runs at once. Saves keep the index current, so it only falls behind when something writes field tables outside Lynx's actions.
+
 ## Search
 
 The box in the top bar (Cmd or Ctrl+K) finds pages. Plain text searches titles and the fields templates mark searchable (see [Search](/basics/templates-and-fields#making-fields-searchable)), matching word beginnings in any order, and singular and plural forms in Portuguese, English, French, Spanish, Italian, German and Dutch. **Settings › Search index** shows what the index holds and rebuilds it. Anything with an operator (`=`, `<`, `>`) runs as a [selector](/basics/selectors), the same one `lynx()->pages->find()` takes:

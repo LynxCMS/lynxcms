@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LynxCms\PageReferences\Admin;
+namespace LynxCms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
@@ -10,19 +10,20 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Admin\References\RebuildIndex;
+use LynxCms\Admin\References\ReportRows;
 use LynxCms\Core\Actions\Pages\RebuildPageReferences;
 use LynxCms\Core\Support\Value;
-use LynxCms\PageReferences\RebuildIndex;
 
 /**
- * The Page references screen: one report at a time (broken links, pages nothing links to, the
+ * Settings > Page references (ADR-0145): one report at a time (broken links, pages nothing links to, the
  * most linked pages), 50 rows a page, limited to the pages the user may view. Users with
  * page_references.manage also see the index's health: a check (the rebuild's dry run) and a
  * rebuild that runs on the queue.
  *
  * @internal
  */
-final class ReferencesScreen extends Component
+final class PageReferencesScreen extends Component
 {
     use Notifies;
 
@@ -87,7 +88,7 @@ final class ReferencesScreen extends Component
         $this->authorizeManage();
         RebuildIndex::dispatch(Value::string(auth()->id()));
         $this->health = null;
-        $this->notify(Value::string(__('lynx-page-references::admin.health.queued')));
+        $this->notify(Value::string(__('lynx-admin::page_references.health.queued')));
     }
 
     public function render(ReportRows $rows): View
@@ -96,7 +97,7 @@ final class ReferencesScreen extends Component
         $this->start = max(0, $this->start);
         $report = $rows->for($this->report, $this->access->viewScope(), self::PER_PAGE, $this->start);
 
-        return view('lynx-page-references::admin.screen', [
+        return view('lynx-admin::livewire.page-references', [
             'rows' => $report['rows'],
             'total' => $report['total'],
             'canManage' => $this->access->allows('page_references.manage'),

@@ -14,6 +14,7 @@ return [
         'templates' => 'Plantillas',
         'languages' => 'Idiomas',
         'search_index' => 'Índice de búsqueda',
+        'page_references' => 'Referencias entre páginas',
         'general' => 'General',
         'roles' => 'Roles',
         'users' => 'Usuarios',

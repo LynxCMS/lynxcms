@@ -14,6 +14,7 @@ return [
         'templates' => 'Templates',
         'languages' => 'Languages',
         'search_index' => 'Search index',
+        'page_references' => 'Page references',
         'general' => 'General',
         'roles' => 'Roles',
         'users' => 'Users',

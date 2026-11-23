@@ -20,7 +20,6 @@ providers:
   - LynxCms\Sitemap\SitemapServiceProvider
   - LynxCms\PagePassword\PagePasswordServiceProvider
   - LynxCms\Finder\FinderServiceProvider
-  - LynxCms\PageReferences\PageReferencesServiceProvider
   - LynxCms\Cache\CacheServiceProvider
   - LynxCms\StaticSite\StaticSiteServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider

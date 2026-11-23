@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use LynxCms\Admin\Editor\FieldAddress;
+use LynxCms\Admin\Livewire\PageReferencesScreen;
+use LynxCms\Admin\References\RebuildIndex;
 use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\References\ReferenceReports;
 use LynxCms\Core\Support\Tables;
-use LynxCms\PageReferences\Admin\ReferencesScreen;
-use LynxCms\PageReferences\RebuildIndex;
 
 /*
- * The page references module (ADR-0145): reports on the links between pages, and the index's health.
+ * Settings > Page references (ADR-0145): reports on the links between pages, and the index's health.
  */
 
 beforeEach(function (): void {
@@ -45,7 +45,7 @@ function brokenReasons(): array
 }
 
 it('opens from the admin', function (): void {
-    $this->get(route('lynx.admin.page-references'))->assertOk()->assertSeeLivewire(ReferencesScreen::class);
+    $this->get(route('lynx.admin.page-references'))->assertOk()->assertSeeLivewire(PageReferencesScreen::class);
 });
 
 it('finds references to deleted, trashed and unpublished pages', function (): void {
@@ -66,7 +66,7 @@ it('lists broken links with a link to the field that holds each', function (): v
     linkPage($this->alpha, $this->beta);
     lynx()->pages->trash($this->beta);
 
-    Livewire::test(ReferencesScreen::class)
+    Livewire::test(PageReferencesScreen::class)
         ->assertSeeHtml('data-report-page="'.$this->alpha->id.'"')
         ->assertSeeHtml('href="'.e(FieldAddress::url($this->alpha, 'related')).'"');
 });
@@ -74,7 +74,7 @@ it('lists broken links with a link to the field that holds each', function (): v
 it('lists the pages nothing links to', function (): void {
     linkPage($this->alpha, $this->beta);
 
-    Livewire::test(ReferencesScreen::class)
+    Livewire::test(PageReferencesScreen::class)
         ->call('show', 'unlinked')
         ->assertSet('report', 'unlinked')
         ->assertSeeHtml('data-report-page="'.$this->gamma->id.'"')
@@ -98,7 +98,7 @@ it('lists the most linked pages first', function (): void {
         ['id' => (int) $this->gamma->id, 'count' => 2],
         ['id' => (int) $this->alpha->id, 'count' => 1],
     ]);
-    Livewire::test(ReferencesScreen::class)->call('show', 'linked')->assertSeeHtml('data-report-page="'.$this->gamma->id.'"');
+    Livewire::test(PageReferencesScreen::class)->call('show', 'linked')->assertSeeHtml('data-report-page="'.$this->gamma->id.'"');
 });
 
 it('lists only references from pages the user may view', function (): void {
@@ -110,7 +110,7 @@ it('lists only references from pages the user may view', function (): void {
     lynx()->run(AssignRoles::class, ['user' => '8', 'roles' => ['alpha-only']]);
     $this->actingAs(new GenericUser(['id' => 8]));
 
-    Livewire::test(ReferencesScreen::class)
+    Livewire::test(PageReferencesScreen::class)
         ->assertSeeHtml('data-report-page="'.$this->alpha->id.'"')
         ->assertDontSeeHtml('data-report-page="'.$this->beta->id.'"')
         ->assertDontSeeHtml('data-index-health')
@@ -122,7 +122,7 @@ it('checks the index and queues a rebuild', function (): void {
     linkPage($this->alpha, $this->beta);
     Queue::fake();
 
-    $screen = Livewire::test(ReferencesScreen::class)->call('checkIndex')->assertSeeHtml('data-index-check="current"');
+    $screen = Livewire::test(PageReferencesScreen::class)->call('checkIndex')->assertSeeHtml('data-index-check="current"');
     DB::table(Tables::PAGE_REFERENCES)->delete();
     $screen->call('checkIndex')->assertSeeHtml('data-index-check="differs"')->call('rebuild');
 

@@ -135,7 +135,6 @@ export default defineConfig({
                     { text: 'Page Passwords', link: '/modules/page-passwords' },
                     { text: 'Static Site Export', link: '/modules/static-site' },
                     { text: 'Page Finder', link: '/modules/finder' },
-                    { text: 'Page References', link: '/modules/page-references' },
                     { text: 'Translate', link: '/modules/translate' },
                 ],
             },

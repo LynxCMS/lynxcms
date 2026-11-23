@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LynxCms\PageReferences\Admin;
+namespace LynxCms\Admin\References;
 
 use LynxCms\Admin\Editor\LinkedPages;
 use LynxCms\Admin\Editor\ReferenceRows;
@@ -59,7 +59,7 @@ final readonly class ReportRows
             if ($page !== null) {
                 $target = $targets[$reference->linkedPageId] ?? null;
                 $rows[] = LinkedPages::row($page) + [
-                    'detail' => Value::string(__('lynx-page-references::admin.broken.'.$reason, ['page' => $target === null ? '#'.$reference->linkedPageId : $titles->title($target)])),
+                    'detail' => Value::string(__('lynx-admin::page_references.broken.'.$reason, ['page' => $target === null ? '#'.$reference->linkedPageId : $titles->title($target)])),
                     'links' => [$this->references->location($page, $reference)],
                 ];
             }
@@ -98,7 +98,7 @@ final readonly class ReportRows
         foreach ($found as ['id' => $id, 'count' => $count]) {
             if (isset($pages[$id])) {
                 $rows[] = LinkedPages::row($pages[$id]) + [
-                    'detail' => trans_choice('lynx-page-references::admin.linked.count', $count, ['count' => LocalizedNumber::format($count)]),
+                    'detail' => trans_choice('lynx-admin::page_references.linked.count', $count, ['count' => LocalizedNumber::format($count)]),
                     'links' => [],
                 ];
             }
