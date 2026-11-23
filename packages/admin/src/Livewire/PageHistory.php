@@ -11,14 +11,13 @@ use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Editor\ActivityEntry;
 use LynxCms\Admin\Editor\ActorNames;
-use LynxCms\Admin\Editor\BacklinkFilter;
-use LynxCms\Admin\Editor\LinkedPages;
 use LynxCms\Core\Activity\ActivityEvent;
 use LynxCms\Core\Pages\PageStatus;
 
 /**
  * The read only part of the Settings tab: the page's old URLs and whether they still redirect,
- * the pages that link to it, and its activity. Reloads whenever the settings change the page.
+ * and its activity. The References tab lists the pages that link to it. Reloads whenever the
+ * settings change the page.
  *
  * @internal
  */
@@ -63,7 +62,6 @@ final class PageHistory extends Component
             'redirects' => lynx()->pages->redirects($this->pageId),
             // A page without a URL has no old URLs to send on.
             'hasUrl' => lynx()->pages->get($this->pageId)?->template()->hasUrl() ?? true,
-            'backlinks' => LinkedPages::rows(lynx()->pages->backlinks($this->pageId, selector: app(BacklinkFilter::class)->selector())),
             'isLocked' => lynx()->pages->get($this->pageId)?->hasStatus(PageStatus::LOCKED) ?? true,
             'activity' => array_map(fn (ActivityEvent $event): array => ActivityEntry::from($event, $names), array_slice($activity, 0, $this->activityLimit)),
             'hasMoreActivity' => count($activity) > $this->activityLimit,

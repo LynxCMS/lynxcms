@@ -65,6 +65,26 @@ final readonly class PageReferenceIndex
     }
 
     /**
+     * Where each of the pages references $linkedPageId: its rows, by field and order.
+     *
+     * @param  list<int>  $pageIds
+     * @return array<int, list<PageReference>> page id => references, for pages that have any
+     */
+    public function locations(int $linkedPageId, array $pageIds): array
+    {
+        $locations = [];
+        $rows = $pageIds === [] ? [] : DB::table(Tables::PAGE_REFERENCES)->where('linked_page_id', $linkedPageId)->whereIn('page_id', $pageIds)
+            ->orderBy('field_id')->orderBy('sort')->get();
+
+        foreach ($rows as $row) {
+            $reference = PageReference::fromRow($row);
+            $locations[$reference->pageId][] = $reference;
+        }
+
+        return $locations;
+    }
+
+    /**
      * How every page's rows differ from its stored values.
      *
      * @return array<int, ReferenceChanges>

@@ -35,7 +35,7 @@ function renameTo(Page $page, string $name): void
     $page->save();
 }
 
-it('shows redirects, backlinks and activity in the Settings tab', function (): void {
+it('shows redirects and activity in the Settings tab', function (): void {
     Livewire::test(PageSettings::class, ['pageId' => historyPage()->id])->assertSeeLivewire(PageHistory::class);
 });
 
@@ -48,26 +48,6 @@ it('lists old URLs and whether they still redirect', function (): void {
     historyFor($alpha)
         ->assertSeeInOrder(['/courses/alpha-2', 'Redirects', '/courses/alpha', 'Taken by another page'])
         ->assertDontSee('No old URLs.');
-});
-
-it('lists the pages that link to the page with what they are', function (): void {
-    $alpha = historyPage();
-    $beta = historyPage('beta');
-    $beta->related = [$alpha->id];
-    $beta->save();
-
-    historyFor($alpha)
-        ->assertSee('Beta')
-        ->assertSeeHtml('href="'.route('lynx.admin.pages.edit', $beta->id).'"')
-        ->assertSee('Course under Courses');
-});
-
-it('leaves out backlinks from menu items', function (): void {
-    $alpha = historyPage();
-    lynx()->menus()->create('top', 'Top bar');
-    lynx()->menus()->saveItem(['menu' => 'top', 'kind' => 'page', 'page' => $alpha->id]);
-
-    historyFor($alpha)->assertSee('No pages link here.')->assertDontSee('Menu item');
 });
 
 it('deletes an old URL', function (): void {
@@ -109,7 +89,7 @@ it('says when there is nothing to list yet', function (): void {
     $page = historyPage();
     DB::table(Tables::ACTIVITY)->delete();
 
-    historyFor($page)->assertSee(['No old URLs.', 'No pages link here.', 'No activity yet.']);
+    historyFor($page)->assertSee(['No old URLs.', 'No activity yet.']);
 });
 
 it('shows more activity on request', function (): void {

@@ -13,6 +13,7 @@ return [
     'sections' => 'Editor sections',
     'tab_texts' => 'Texts',
     'tab_settings' => 'Settings',
+    'tab_references' => 'References',
     'has_errors' => 'has errors',
     'save_changes' => 'Save these changes',
     'keep_editing' => 'Keep editing',
@@ -117,5 +118,12 @@ return [
         'missing_page' => 'Missing page #:id',
         'yes' => 'Yes',
         'no' => 'No',
+    ],
+    'references' => [
+        'intro' => 'Pages that reference this page in a page field. Each link opens the field that holds the reference.',
+        'empty' => 'No pages link here.',
+        'more' => 'Show more',
+        'item' => ':field, item :number',
+        'loading' => 'Loading references',
     ],
 ];

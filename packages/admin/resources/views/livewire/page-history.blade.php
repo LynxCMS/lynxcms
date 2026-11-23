@@ -29,13 +29,6 @@
     </section>
     @endif
 
-    {{-- Backlinks --}}
-    <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-backlinks">
-        <h2 id="settings-backlinks" class="mb-1 text-base font-semibold">{{ __('lynx-admin::settings.backlinks.title') }}</h2>
-        <p class="text-muted-foreground text-sm mb-4">{{ __('lynx-admin::settings.backlinks.intro') }}</p>
-        <x-lynx-admin::linked-pages :links="$backlinks" :empty="__('lynx-admin::settings.backlinks.empty')" />
-    </section>
-
     {{-- Activity --}}
     <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="settings-activity">
         <h2 id="settings-activity" class="mb-4 text-base font-semibold">{{ __('lynx-admin::settings.activity.title') }}</h2>

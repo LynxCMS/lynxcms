@@ -212,7 +212,7 @@ $outside = lynx()->pages->backlinks($section, branch: true);
 
 Backlinks come from an index of page references that every save keeps current, and finding them takes one query. Only fields the referencing page's template uses count: values a template no longer shows are left out, and so are drafts until they are published. After writing field tables outside Lynx's actions, `php artisan lynx:page-references:rebuild` brings the index back in step (`--dry-run` counts the rows that differ).
 
-The Settings tab lists the pages that link to the page it edits under **Linked from**.
+The editor's **References** tab lists the pages that link to the page it edits, with a link to the field that holds each reference. See [The admin](/admin/).
 
 One page field can hold a different number of pages, or offer other templates, where it is used. A template's entry, or a block type's entry in a matrix, sets `min`, `max` and `templates` for itself:
 

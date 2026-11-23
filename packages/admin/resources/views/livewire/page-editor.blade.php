@@ -56,7 +56,7 @@
             {{-- Content and the template's own tabs hold fields; a dot marks one with an error. --}}
             @php($errorTabs = collect($errors->keys())->filter(fn ($key) => str_starts_with($key, 'values.'))->map(fn ($key) => $layout->tabOf(explode('.', $key)[1] ?? ''))->unique()->all())
             {{-- Then the tabs modules add for this page (EditorTabs). --}}
-            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->key === \LynxCms\Core\Templates\Layout\LayoutTab::CONTENT ? __('lynx-admin::editor.content') : $t->label->forTemplate((string) $page->template()->name)])->all() + ($hasStrings ? ['texts' => __('lynx-admin::editor.tab_texts')] : []) + array_map(fn ($t) => __($t['label']), $moduleTabs) + ['settings' => __('lynx-admin::editor.tab_settings')] as $value => $label)
+            @foreach (collect($layout->tabs())->mapWithKeys(fn ($t) => [$t->key => $t->key === \LynxCms\Core\Templates\Layout\LayoutTab::CONTENT ? __('lynx-admin::editor.content') : $t->label->forTemplate((string) $page->template()->name)])->all() + ($hasStrings ? ['texts' => __('lynx-admin::editor.tab_texts')] : []) + array_map(fn ($t) => __($t['label']), $moduleTabs) + ['references' => __('lynx-admin::editor.tab_references'), 'settings' => __('lynx-admin::editor.tab_settings')] as $value => $label)
                 <x-lynx-admin::ui.tabs-trigger :value="$value" :panel="false" wire:click="$set('tab', '{{ $value }}')">
                     {{ $label }}
                     @if (in_array($value, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="{{ __('lynx-admin::editor.has_errors') }}"></span>@endif
@@ -81,6 +81,8 @@
         <livewire:lynx-admin.page-settings :page-id="$pageId" :key="'settings-'.$pageId" />
     @elseif ($tab === 'texts' && $hasStrings)
         <livewire:lynx-admin.page-strings :page-id="$pageId" :key="'texts-'.$pageId" />
+    @elseif ($tab === 'references' && ! $isFieldsTab)
+        <livewire:lynx-admin.page-references-tab :page-id="$pageId" :key="'references-'.$pageId" lazy />
     @elseif (isset($moduleTabs[$tab]))
         @livewire($moduleTabs[$tab]['component'], ['pageId' => $pageId], key($tab.'-'.$pageId))
     @elseif ($panel !== null)
@@ -90,5 +92,21 @@
         </div>
     @else
         @include('lynx-admin::livewire.partials.editor-layout')
+    @endif
+
+    {{-- A field address (FieldAddress) opened the editor: show its language, open its item, and scroll to it once. --}}
+    @if ($focus !== null)
+        <div hidden wire:key="field-focus" data-focus-field="{{ $focus['field'] }}" data-focus-item="{{ $focus['item'] }}" data-focus-language="{{ $focus['language'] }}"
+             x-data x-init="$nextTick(() => {
+                const focus = $el.dataset;
+                if (focus.focusLanguage) window.dispatchEvent(new CustomEvent('lynx-editor-language', { detail: focus.focusLanguage }));
+                if (focus.focusItem) window.dispatchEvent(new CustomEvent('lynx-open-item', { detail: focus.focusItem }));
+                $nextTick(() => {
+                    const field = document.querySelector('[data-field=&quot;' + CSS.escape(focus.focusField) + '&quot;]');
+                    const target = (focus.focusItem && field?.querySelector('[data-item-key=&quot;' + CSS.escape(focus.focusItem) + '&quot;]')) || field;
+                    target?.scrollIntoView({ block: 'center' });
+                    target?.querySelector('input:not([type=hidden]), textarea, select, [contenteditable=true]')?.focus({ preventScroll: true });
+                });
+             })"></div>
     @endif
 </div>

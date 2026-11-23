@@ -16,6 +16,7 @@ use LynxCms\Admin\Editor\ChildList;
 use LynxCms\Admin\Editor\EditorForm;
 use LynxCms\Admin\Editor\EditorPanel;
 use LynxCms\Admin\Editor\FieldConditions;
+use LynxCms\Admin\Editor\FieldFocus;
 use LynxCms\Admin\Editor\FieldInputs;
 use LynxCms\Admin\Editor\FieldViews;
 use LynxCms\Admin\EditorTabs;
@@ -76,9 +77,13 @@ final class PageEditor extends Component
     /** A field the last save refused; render() opens its tab (set by exception()). */
     private ?string $errorField = null;
 
-    /** "content", a tab of the template's layout, "texts" or "settings", kept in the URL. */
+    /** "content", a tab of the template's layout, "texts", "references" or "settings", kept in the URL. */
     #[Url(as: 'tab')]
     public string $tab = 'content';
+
+    /** @var array{field: string, item: string|null, language: string|null, tab: string}|null the field a field address opened (FieldAddress) */
+    #[Locked]
+    public ?array $focus = null;
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
     /** Set by boot() on every request: the signed in user's rights. */
@@ -95,6 +100,8 @@ final class PageEditor extends Component
         $this->pageId = $pageId;
         $this->load();
         $this->nextPageId = app(ChildList::class)->next($this->page());
+        $this->focus = FieldFocus::from($this->page(), request()->query());
+        $this->tab = $this->focus['tab'] ?? $this->tab;
 
         if ($this->access->allows('pages.edit', $this->page())) {
             $this->takeEditLock();
@@ -194,7 +201,7 @@ final class PageEditor extends Component
         // A template's own tab keeps its key when a module uses the same one.
         $moduleTabs = array_diff_key(app(EditorTabs::class)->for($page), array_flip($fieldTabs));
 
-        if (! in_array($this->tab, [...$fieldTabs, ...array_keys($moduleTabs), 'texts', 'settings'], true)) {
+        if (! in_array($this->tab, [...$fieldTabs, ...array_keys($moduleTabs), 'texts', 'references', 'settings'], true)) {
             $this->tab = LayoutTab::CONTENT;
         }
 

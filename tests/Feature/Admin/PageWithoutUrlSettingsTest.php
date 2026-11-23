@@ -84,7 +84,7 @@ it('hides the template and parent of pages a module manages', function (): void 
 it('leaves old URLs out of a page without one', function (): void {
     Livewire::test(PageHistory::class, ['pageId' => $this->snippet->id])
         ->assertDontSeeHtml('aria-labelledby="settings-redirects"')
-        ->assertSeeHtml('aria-labelledby="settings-backlinks"');
+        ->assertSeeHtml('aria-labelledby="settings-activity"');
 });
 
 it('leaves Unique out of a page without a URL, unless it is set', function (): void {
