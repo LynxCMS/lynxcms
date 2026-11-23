@@ -18,8 +18,9 @@ use Override;
 use function Laravel\Prompts\confirm;
 
 /**
- * Installs Lynx, then makes sure someone can open the admin: --user promotes an account (by id or
- * email), and without one, when no one is a superuser, it offers lynx:superuser (ADR-0079).
+ * Installs Lynx, then, when lynxcms/admin is installed, makes sure someone can open the admin:
+ * --user promotes an account (by id or email), and without one, when no one is a superuser, it
+ * offers lynx:superuser (ADR-0079). --user works without the admin too, for MCP and the agent.
  *
  * @internal
  */
@@ -59,11 +60,18 @@ final class InstallCommand extends Command
         } else {
             $this->box('Lynx installed', [
                 Element::bulletedList($result->changes->summary()),
-                'Add languages with lynx()->languages->add(...) or the MCP server.',
+                'Add languages with lynx()->languages->add(\'pt\', \'Português\')'.($this->hasAdmin() ? ' or under Settings › Languages in the admin.' : '.'),
             ]);
         }
 
-        return $holders->hasSuperuser() ? self::SUCCESS : $this->offerSuperuser();
+        // Without lynxcms/admin there is no admin to open, so nobody needs to be a superuser.
+        return $holders->hasSuperuser() || ! $this->hasAdmin() ? self::SUCCESS : $this->offerSuperuser();
+    }
+
+    /** Whether lynxcms/admin is installed: it brings the command that creates a superuser. */
+    private function hasAdmin(): bool
+    {
+        return $this->getApplication()?->has(self::SUPERUSER_COMMAND) ?? false;
     }
 
     /** An id as given, or the id of the account with the email; null for none. */
@@ -80,14 +88,12 @@ final class InstallCommand extends Command
 
     private function offerSuperuser(): int
     {
-        $canCreate = $this->getApplication()?->has(self::SUPERUSER_COMMAND) ?? false;
-
-        if ($canCreate && $this->canAsk() && confirm('No one is a superuser yet. Create one now?')) {
+        if ($this->canAsk() && confirm('No one is a superuser yet. Create one now?')) {
             return $this->call(self::SUPERUSER_COMMAND);
         }
 
-        $this->components->warn('No one is a superuser yet, so no one can open the admin. Run php artisan '
-            .($canCreate ? self::SUPERUSER_COMMAND.' to create one, or ' : '').'php artisan lynx:install --user=EMAIL to make an existing account one.');
+        $this->components->warn('No one is a superuser yet, so no one can open the admin. Run php artisan '.self::SUPERUSER_COMMAND
+            .' to create one, or php artisan lynx:install --user=EMAIL to make an existing account one.');
 
         return self::SUCCESS;
     }
