@@ -49,6 +49,17 @@ final readonly class FieldsApi
     }
 
     /**
+     * The same as add(), under the name Laravel uses for making records.
+     *
+     * @param  string|array<string, string>|null  $label
+     * @param  array<string, mixed>  $settings
+     */
+    public function create(string $name, string $type, bool $translatable = false, string|array|null $label = null, array $settings = [], bool $dryRun = false): Field|ActionResult
+    {
+        return $this->add($name, $type, $translatable, $label, $settings, $dryRun);
+    }
+
+    /**
      * A new field like $field (type, labels, translation, settings) named $name; no template uses it yet.
      *
      * @param  string|array<string, string>|null  $label  default: the original's labels

@@ -21,6 +21,8 @@ lynx()->fields->add('price', 'decimal', settings: ['places' => 2]);
 lynx()->fields->add('related', 'page', settings: ['templates' => ['course']]);
 ```
 
+`create()` does the same as `add()`, on fields, templates and languages alike, for code that reads better with Laravel's name for making records: `lynx()->fields->create('summary', 'textarea')`.
+
 Field names use lowercase letters, digits and underscores, and start with a letter: they become property names in your templates (`$page->related`). Each field gets its own table, `lynx_f_{name}`, created at once.
 
 Some names are taken, because pages or selectors already use them. Lynx refuses them with a message saying so, so you find out when you create the field, not when a selector misbehaves: `id`, `name`, `names`, `template`, `parent`, `parents`, `children`, `status`, `sort`, `path`, `url`, `created`, `modified`, `published`, `created_at`, `updated_at`, `published_at`, `created_by`, `modified_by`, `language`, `languages`, `page`, `pages`, `settings`, `has_parent`, `has_draft`, `has_schedule`, `has_outdated`, `limit`, `start`, `include`, `join`, `lang` and `search`. Name the field after what it holds instead, such as `availability` for a session's state.

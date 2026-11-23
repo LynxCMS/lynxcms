@@ -24,7 +24,7 @@ $post = lynx()->pages->get('/blog/hello-world');
 $post->summary = 'Our first post.';
 $post->save();                                    // pages.save
 
-lynx()->pages->setStatus($post, add: ['hidden']); // pages.status
+lynx()->pages->hide($post);                       // pages.status
 lynx()->pages->trash($post);                      // pages.trash
 ```
 

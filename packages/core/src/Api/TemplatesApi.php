@@ -57,6 +57,26 @@ final readonly class TemplatesApi
     }
 
     /**
+     * The same as add(), under the name Laravel uses for making records.
+     *
+     * @param  list<string|array<string, mixed>>  $fields
+     * @param  string|array<string, string>|null  $label
+     * @param  list<string>|null  $allowedTemplates
+     */
+    public function create(
+        string $name,
+        array $fields = [],
+        string|array|null $label = null,
+        ?string $from = null,
+        ?bool $hasUrl = null,
+        ?bool $singleton = null,
+        ?array $allowedTemplates = null,
+        bool $dryRun = false,
+    ): Template|ActionResult {
+        return $this->add($name, $fields, $label, $from, $hasUrl, $singleton, $allowedTemplates, $dryRun);
+    }
+
+    /**
      * @param  array<string, mixed>  $changes  label, fields, add, remove, has_url, singleton, allowed_templates
      */
     public function update(Template|string $template, array $changes, bool $dryRun = false): Template|ActionResult
