@@ -36,6 +36,8 @@ use LynxCms\Core\Actions\Pages\SavePage;
 lynx()->run(SavePage::class, ['id' => $post->id, 'values' => ['summary' => 'Our first post.']]);
 ```
 
+The name in each comment, such as `pages.save`, is the action's name, which maps to one class, here `SavePage`. The activity log records actions by name, and MCP tools and the agent's tools are named after it. Hooks name the class. An action's permission is separate: `pages.save` needs `pages.edit`, or `pages.create` for a new page.
+
 Never write to Lynx's tables directly, and never call an action's `handle()` method yourself: both skip validation, permissions, hooks and the activity log.
 
 ### Dry runs

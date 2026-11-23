@@ -21,6 +21,8 @@ Lynx registers one catch-all route after your app's routes: a route that answers
 
 The view receives the page as `$page`. A template without a view renders with Lynx's own `lynx::page`, which lists the page's fields, so a new template shows something before you write its view. With `APP_DEBUG` on, that page also names the view to create and the command that starts it, [`lynx:make:view`](#starting-a-view); visitors of a live site never see the note.
 
+Your editor and PHPStan don't know which fields a template has, so `$page->summary` is untyped to them at first. `php artisan lynx:ide-helper` writes a file that gives PhpStorm and VS Code autocomplete for every field, with its type, and `php artisan lynx:phpstan` does the same for PHPStan. Run them again after changing fields ([Static analysis](/deeper/custom-field-types#static-analysis)).
+
 ```blade
 {{-- resources/views/templates/post.blade.php --}}
 <x-layout :page="$page">
