@@ -7,7 +7,9 @@ namespace LynxCms\Core\Pages\References;
 use Illuminate\Support\Facades\DB;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Fields\Items\ItemFieldType;
+use LynxCms\Core\Fields\ReferenceFields;
 use LynxCms\Core\Fields\ReferencesPages;
+use LynxCms\Core\Fields\Types\TextareaType;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Tables;
@@ -62,7 +64,7 @@ final readonly class ReferenceScanner
 
         return array_values($this->templates->fields($templateId)
             ->map(fn (TemplateField $templateField): Field => $templateField->field)
-            ->filter(fn (Field $field): bool => $field->fieldType() instanceof ReferencesPages)
+            ->filter(ReferenceFields::holds(...))
             ->all());
     }
 
@@ -180,10 +182,11 @@ final readonly class ReferenceScanner
     private function located(int $pageId, Field $field, ReferencesPages $type, mixed $value, ?int $languageId, ?string $itemKey, int $firstSort, ?Field $valueField = null): array
     {
         $references = [];
+        $kind = ($valueField ?? $field)->fieldType() instanceof TextareaType ? PageReference::KIND_TEXT : PageReference::KIND_FIELD;
 
         foreach ($type->pageIds($value, ($valueField ?? $field)->config()) as $linkedPageId) {
             if ($linkedPageId > 0) {
-                $references[] = new PageReference($pageId, $linkedPageId, Value::int($field->id), $languageId, $itemKey, $firstSort + count($references));
+                $references[] = new PageReference($pageId, $linkedPageId, Value::int($field->id), $languageId, $itemKey, $firstSort + count($references), $kind);
             }
         }
 

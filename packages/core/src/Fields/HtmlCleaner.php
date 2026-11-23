@@ -44,11 +44,13 @@ final class HtmlCleaner
         }
 
         $config = new HtmlSanitizerConfig()
-            ->allowElement('a', ['href', 'target', 'title', 'rel'])
+            ->allowElement('a', ['href', 'target', 'title', 'rel', PageLinks::ATTRIBUTE])
             ->allowLinkSchemes(self::LINK_SCHEMES)
             ->allowRelativeLinks()
             // Only the relations editors may choose; noopener is added above for new windows.
             ->withAttributeSanitizer(new LinkRelSanitizer)
+            // A link may name the page it points at by id (ADR-0145).
+            ->withAttributeSanitizer(new PageIdSanitizer)
             // Of styles, only a block's text alignment (the editor's text_align tool).
             ->withAttributeSanitizer(new TextAlignSanitizer)
             // The default cuts input at 20,000 characters, which would truncate long articles.

@@ -10,6 +10,7 @@ use LynxCms\Core\Fields\ChoiceOptions;
 use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Fields\Types\ChoiceType;
+use LynxCms\Core\Fields\Types\TextareaType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\LocalizedText;
@@ -163,7 +164,8 @@ final class ConditionCatalog
             return Kind::Items;
         }
 
-        if ($type instanceof ReferencesPages) {
+        // Rich text names pages in its links, yet is found by its words.
+        if ($type instanceof ReferencesPages && ! $type instanceof TextareaType) {
             return Kind::Pages;
         }
 

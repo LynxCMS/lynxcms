@@ -82,7 +82,7 @@ final class LinkDialog extends Component
     }
 
     #[On('lynx-link-open')]
-    public function open(string $requestId, string $href = '', string $text = '', string $title = '', string $target = '', string $rel = '', ?int $pageId = null, string $language = ''): void
+    public function open(string $requestId, string $href = '', string $text = '', string $title = '', string $target = '', string $rel = '', ?int $pageId = null, string $language = '', string $page = ''): void
     {
         $this->resetErrorBag();
         $this->requestId = $requestId;
@@ -93,6 +93,8 @@ final class LinkDialog extends Component
         $this->target = array_key_exists($target, $this->targets()) ? $target : '';
         $this->rel = $this->relations($rel);
         [$this->panel, $this->browseId, $this->pageQuery, $this->chosenPageId] = ['', null, '', null];
+        // A link that names its page (data-page) keeps naming it while its address stays that page's.
+        $this->chosenPageId = ctype_digit($page) && $this->access->viewable([(int) $page]) !== [] ? (int) $page : null;
         $this->dispatch('open-dialog-lynx-link');
     }
 
@@ -182,8 +184,22 @@ final class LinkDialog extends Component
 
     private function answer(string $href): void
     {
-        $this->dispatch('lynx-link-chosen', requestId: $this->requestId, href: $href, text: $this->text, title: trim($this->title), target: $this->target, rel: implode(' ', Value::strings($this->rel)));
+        $this->dispatch('lynx-link-chosen', requestId: $this->requestId, href: $href, text: $this->text, title: trim($this->title), target: $this->target, rel: implode(' ', Value::strings($this->rel)), page: $this->pageOf($href));
         $this->dispatch('close-dialog-lynx-link');
+    }
+
+    /** The page chosen, while the address is still that page's (or one of its sections), else null. */
+    private function pageOf(string $href): ?int
+    {
+        $page = $this->chosenPageId === null || $href === '' ? null : lynx()->pages->get($this->chosenPageId);
+
+        if (! $page instanceof Page || ! $page->template()->hasUrl()) {
+            return null;
+        }
+
+        $url = $page->localUrl($this->language);
+
+        return $href === $url || str_starts_with($href, $url.'#') ? (int) $page->id : null;
     }
 
     /**

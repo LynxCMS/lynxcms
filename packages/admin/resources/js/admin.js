@@ -23,10 +23,21 @@ function readableHtml(html) {
     return (html || '').replace(BLOCK_END, '$1\n').replace(/(<(?:ul|ol)>)(?!\n)/gi, '$1\n').trim()
 }
 
-/** Links keep the title, target and rel the link dialog sets; no defaults are added. */
+/**
+ * Links keep the title, target and rel the link dialog sets; no defaults are added. A link to a
+ * page also keeps the page's id as data-page, so the site can follow the page when it moves.
+ */
 const LynxLink = Link.extend({
     addAttributes() {
-        return { ...this.parent?.(), title: { default: null } }
+        return {
+            ...this.parent?.(),
+            title: { default: null },
+            page: {
+                default: null,
+                parseHTML: (element) => element.getAttribute('data-page'),
+                renderHTML: (attributes) => (attributes.page ? { 'data-page': attributes.page } : {}),
+            },
+        }
     },
 }).configure({ openOnClick: false, autolink: true, protocols: ['mailto', 'tel'], HTMLAttributes: { target: null, rel: null } })
 
@@ -145,6 +156,7 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
                 title: current.title || '',
                 target: current.target || '',
                 rel: current.rel || '',
+                page: current.page ? String(current.page) : '',
                 pageId: linkContext.pageId ?? null,
                 language: linkContext.language || '',
             })
@@ -157,7 +169,7 @@ function lynxRichText(model, disabled, placeholder, labelledBy, linkContext = {}
             if (!chosen.href) {
                 chain.extendMarkRange('link').unsetLink().run()
             } else {
-                const attrs = { href: chosen.href, title: chosen.title || null, target: chosen.target || null, rel: chosen.rel || null }
+                const attrs = { href: chosen.href, title: chosen.title || null, target: chosen.target || null, rel: chosen.rel || null, page: chosen.page ? String(chosen.page) : null }
                 const text = chosen.text || previousText || chosen.href
 
                 text === previousText && from !== to

@@ -15,6 +15,9 @@ final readonly class PageReference
 {
     public const string KIND_FIELD = 'field';
 
+    /** A link in rich text that names the page (PageLinks). */
+    public const string KIND_TEXT = 'text';
+
     public function __construct(
         public int $pageId,
         public int $linkedPageId,
