@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Events;
 
-/** @api */
+/**
+ * A page moved to another place among its siblings.
+ *
+ * @api
+ */
 final readonly class PageSorted implements ContentChanged
 {
     public function __construct(public int $pageId, public int $parentId, public int $fromPosition, public int $position) {}

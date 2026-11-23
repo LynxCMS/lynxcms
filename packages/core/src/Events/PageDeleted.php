@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Events;
 
-/** @api */
+/**
+ * A page was deleted for good, with every page below it: their ids, dispatched after the action commits.
+ *
+ * @api
+ */
 final readonly class PageDeleted implements ContentChanged
 {
     /**

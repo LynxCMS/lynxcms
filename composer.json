@@ -114,6 +114,7 @@
         "post-autoload-dump": [
             "@prepare"
         ],
+        "docs:api": "@php tools/docs/public-api.php",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "build": [

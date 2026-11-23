@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Events;
 
-/** @api */
+/**
+ * A page moved to another parent, dispatched after the action commits.
+ *
+ * @api
+ */
 final readonly class PageMoved implements ContentChanged
 {
     public function __construct(public int $pageId, public ?int $fromParentId, public int $toParentId) {}

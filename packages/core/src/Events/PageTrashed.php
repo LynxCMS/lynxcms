@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Events;
 
-/** @api */
+/**
+ * A page went to the trash, with every page below it.
+ *
+ * @api
+ */
 final readonly class PageTrashed implements ContentChanged
 {
     /**

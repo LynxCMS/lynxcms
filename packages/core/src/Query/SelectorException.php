@@ -6,5 +6,9 @@ namespace LynxCms\Core\Query;
 
 use InvalidArgumentException;
 
-/** @api */
+/**
+ * Thrown for a selector Lynx cannot read; its message says what is wrong.
+ *
+ * @api
+ */
 final class SelectorException extends InvalidArgumentException {}
