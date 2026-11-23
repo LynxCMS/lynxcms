@@ -10,8 +10,8 @@ use LynxCms\Core\Pages\PageArray;
 
 /**
  * Pages that link to others, as the admin lists them: each one's title, to open in the editor, and
- * where it sits (its template and parent). Feed it $lynx->pages->backlinks(); the Settings tab's
- * "Linked from" panel and the trash's warning use it, through <x-lynx-admin::linked-pages>.
+ * where it sits (its template and parent). Feed it $lynx->pages->backlinks(); the trash's warning
+ * and the References tab use it.
  *
  * @internal
  */

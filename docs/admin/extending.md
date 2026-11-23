@@ -161,7 +161,7 @@ use LynxCms\Admin\Editor\TemplateChoices;
 // The New page screen doesn't offer these templates: the module's screen creates their pages.
 app(TemplateChoices::class)->exclude('report', 'report-section');
 
-// The Settings tab's "Linked from" list leaves out pages of these templates.
+// The References tab leaves out pages of these templates.
 app(BacklinkFilter::class)->exclude('report-section');
 ```
 

@@ -50,6 +50,7 @@ use LynxCms\Admin\Livewire\PageCreator;
 use LynxCms\Admin\Livewire\PageEditor;
 use LynxCms\Admin\Livewire\PageHistory;
 use LynxCms\Admin\Livewire\PagePicker;
+use LynxCms\Admin\Livewire\PageReferencesTab;
 use LynxCms\Admin\Livewire\PageRevisions;
 use LynxCms\Admin\Livewire\PageSchedule;
 use LynxCms\Admin\Livewire\PageSettings;
@@ -153,6 +154,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('lynx-admin.page-settings', PageSettings::class);
         Livewire::component('lynx-admin.page-schedule', PageSchedule::class);
         Livewire::component('lynx-admin.page-history', PageHistory::class);
+        Livewire::component('lynx-admin.page-references-tab', PageReferencesTab::class);
         Livewire::component('lynx-admin.page-revisions', PageRevisions::class);
         Livewire::component('lynx-admin.field-list', FieldList::class);
         Livewire::component('lynx-admin.field-form', FieldForm::class);

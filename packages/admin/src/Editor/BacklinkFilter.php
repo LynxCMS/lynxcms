@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Admin\Editor;
 
 /**
- * Templates whose pages the Settings tab leaves out of "Linked from". Modules exclude pages that
+ * Templates whose pages the References tab leaves out. Modules exclude pages that
  * link through their own screens, e.g. menu items: app(BacklinkFilter::class)->exclude('menu-item').
  *
  * @api

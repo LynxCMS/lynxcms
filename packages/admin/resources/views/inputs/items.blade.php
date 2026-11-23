@@ -23,7 +23,8 @@
                     $subfields = $itemType->subfields($config, $item['type'] ?? null);
                 @endphp
                 <li wire:key="item-{{ $field->name }}-{{ $key }}" wire:sort:item="{{ $field->name }}:{{ $key }}"
-                    x-data="{ open: @js($open) }"
+                    x-data="{ open: @js($open) }" data-item-key="{{ $key }}"
+                    x-on:lynx-open-item.window="if ($event.detail === @js($key)) open = true"
                     @class(['bg-card min-w-0 rounded-md border', 'opacity-60' => ! ($item['enabled'] ?? true)])
                     style="margin-inline-start: {{ ((int) ($item['depth'] ?? 0)) * 1.5 }}rem">
                     <div class="flex flex-wrap items-center gap-2 px-3 py-2 text-sm">

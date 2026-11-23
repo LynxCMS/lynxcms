@@ -13,6 +13,7 @@ return [
     'sections' => 'Secciones del editor',
     'tab_texts' => 'Textos',
     'tab_settings' => 'Ajustes',
+    'tab_references' => 'Referencias',
     'has_errors' => 'tiene errores',
     'save_changes' => 'Guardar estos cambios',
     'keep_editing' => 'Seguir editando',
@@ -117,5 +118,12 @@ return [
         'missing_page' => 'Falta la página n.º :id',
         'yes' => 'Sí',
         'no' => 'No',
+    ],
+    'references' => [
+        'intro' => 'Páginas que hacen referencia a esta página en un campo de página. Cada enlace abre el campo que contiene la referencia.',
+        'empty' => 'Ninguna página enlaza aquí.',
+        'more' => 'Mostrar más',
+        'item' => ':field, elemento :number',
+        'loading' => 'Cargando referencias',
     ],
 ];
