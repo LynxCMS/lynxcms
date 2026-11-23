@@ -23,15 +23,16 @@ final class FormatterChain implements Flushable
     /** @var array<string, string> */
     private array $memo = [];
 
-    public function __construct(private readonly FormatterRegistry $formatters, private readonly HtmlCleaner $cleaner) {}
+    public function __construct(private readonly FormatterRegistry $formatters, private readonly HtmlCleaner $cleaner, private readonly PageLinks $pageLinks) {}
 
     public function render(Field $field, mixed $value, ?Language $language = null, ?int $pageId = null): string
     {
         $text = Value::string($value);
         $names = Value::strings($field->config()['formatters'] ?? []);
-        $key = $field->name.'|'.($language->code ?? '').'|'.md5($text);
+        // Page links read differently for visitors and in the admin (PageLinks).
+        $key = $field->name.'|'.($language->code ?? '').'|'.$this->pageLinks->audience().'|'.md5($text);
 
-        return $this->memo[$key] ??= $this->format($this->base($field, $text), $names, new FormatContext($field->name, $field->type, $language?->code, $pageId));
+        return $this->memo[$key] ??= $this->format($this->base($field, $text, $language), $names, new FormatContext($field->name, $field->type, $language?->code, $pageId));
     }
 
     public function flush(): void
@@ -39,11 +40,11 @@ final class FormatterChain implements Flushable
         $this->memo = [];
     }
 
-    /** The conversion every value gets, decided by the field's "format". */
-    private function base(Field $field, string $text): string
+    /** The conversion every value gets, decided by the field's "format"; links that name a page get its address (PageLinks). */
+    private function base(Field $field, string $text, ?Language $language): string
     {
         return match ($field->config()['format'] ?? 'plain') {
-            'html' => $text,
+            'html' => $this->pageLinks->resolve($text, $language ?? lynx()->languages->current()),
             'markdown' => trim((string) new GithubFlavoredMarkdownConverter(['html_input' => 'strip', 'allow_unsafe_links' => false])->convert($text)),
             default => e($text),
         };

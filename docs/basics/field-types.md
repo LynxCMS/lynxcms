@@ -69,6 +69,8 @@ So a chemistry page can write H₂O, and a news page keeps its toolbar short. Tu
 
 The rich text editor's **link dialog** links to an address, an email, a page found by its title, a section of a page (its headings, when the field uses `heading_anchors`) or a file of the page. Its Attributes tab sets the link's title, target and relations (`nofollow`, `sponsored`, `noreferrer`; add `ugc` in `lynx-admin.links` for sites whose visitors write content). Links that open a new window get `noopener`.
 
+A link to a page found in the dialog also stores the page's id: `<a href="/courses/alpha/" data-page="42">`. When the page is shown, the link gets the page's current address in the language shown, keeping a section such as `#fees`, so renaming or moving the page never breaks it. Visitors see only the link's text when they could not open the page: unpublished, in the trash, deleted, or hidden from them by [page access rules](/deeper/visibility). These links count as references, so the page's **References** tab, `backlinks()`, and the trash warning list them, and content packages carry them by page key. Typing another address into the dialog drops the id.
+
 ### `url`
 
 A web address starting with `http://` or `https://`, so a link can never run script. Can be translatable, for sites that link to a different page per language.

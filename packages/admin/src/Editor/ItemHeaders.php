@@ -8,6 +8,7 @@ use LynxCms\Admin\Tree\DefaultPresenter;
 use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Fields\Types\MatrixType;
+use LynxCms\Core\Fields\Types\TextareaType;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\Value;
 
@@ -81,7 +82,7 @@ final class ItemHeaders
             $value = $subfield->isTranslatable() ? ($languages[$code] ?? null) : (array_first($languages) ?? null);
 
             $texts[$subfield->name()] = match (true) {
-                $subfield->type() instanceof ReferencesPages => implode(', ', array_filter(array_map(fn (int $id): ?string => $titles[$id] ?? null, Value::ints(Value::array($value))))),
+                $subfield->type() instanceof ReferencesPages && ! $subfield->type() instanceof TextareaType => implode(', ', array_filter(array_map(fn (int $id): ?string => $titles[$id] ?? null, Value::ints(Value::array($value))))),
                 is_scalar($value) => mb_strimwidth(trim(strip_tags((string) $value)), 0, 60, '…'),
                 default => '',
             };
@@ -104,7 +105,7 @@ final class ItemHeaders
             $item = Value::array($item);
 
             foreach ($type->subfields($field->config(), Value::nullableString($item['type'] ?? null)) as $subfield) {
-                if ($subfield->type() instanceof ReferencesPages) {
+                if ($subfield->type() instanceof ReferencesPages && ! $subfield->type() instanceof TextareaType) {
                     foreach (Value::map(Value::map($item['values'] ?? [])[$subfield->name()] ?? []) as $value) {
                         array_push($ids, ...Value::ints(Value::array($value)));
                     }
