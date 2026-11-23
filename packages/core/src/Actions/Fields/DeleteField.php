@@ -82,6 +82,7 @@ final class DeleteField extends Action
 
         DB::table(Tables::TEMPLATE_FIELDS)->where('field_id', $field->id)->delete();
         DB::table(Tables::FIELD_VALUE_META)->where('field_id', $field->id)->delete();
+        DB::table(Tables::PAGE_REFERENCES)->where('field_id', $field->id)->delete();
         $this->schema->drop($field);
         Field::query()->whereKey($field->id)->delete();
         $this->fields->flush();

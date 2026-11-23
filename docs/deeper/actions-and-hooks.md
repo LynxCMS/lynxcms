@@ -109,6 +109,7 @@ Hooks run inside the transaction. For side effects, such as sending mail, cleari
 | `PageStatusChanged` | A page is published, unpublished, hidden or locked. |
 | `PageTrashed`, `PageRestored`, `PageDeleted` | A page goes to the trash, comes back, or is deleted for good. |
 | `PageTemplateSwitched` | A page switches to another template. |
+| `PageReferencesChanged` | A save or a template switch adds or removes references to other pages. `$event->added` and `$event->removed` list each one with `linked_page_id`, `field`, and `item_key` (the repeater or matrix item that holds it). |
 | `SiteStringsSaved` | Editors change site texts. |
 
 Every event that can change what visitors see implements `ContentChanged`, so one listener can react to all of them, for example to purge an external cache:
@@ -122,7 +123,7 @@ Event::listen(ContentChanged::class, function (ContentChanged $event) {
 });
 ```
 
-`affectedPages()` lists the pages whose own content or list of children changed. Pages that only show a changed page through a page reference are not included.
+`affectedPages()` lists the pages whose own content or list of children changed. Pages that only show a changed page through a page reference are not included. `PageReferencesChanged` also lists the pages it adds or removes, since a page may show what links to it.
 
 ## Writing your own actions
 

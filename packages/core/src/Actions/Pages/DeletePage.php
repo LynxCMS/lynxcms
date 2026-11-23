@@ -90,6 +90,7 @@ final class DeletePage extends Action
         }
 
         DB::table(Tables::FIELD_VALUE_META)->whereIn('page_id', $ids)->delete();
+        DB::table(Tables::PAGE_REFERENCES)->whereIn('page_id', $ids)->delete();
         DB::table(Tables::PAGE_PATHS)->whereIn('page_id', $ids)->delete();
         DB::table(Tables::STRINGS)->whereIn('page_id', $ids)->delete();
         DB::table(Tables::PAGE_LANGUAGES)->whereIn('page_id', $ids)->delete();

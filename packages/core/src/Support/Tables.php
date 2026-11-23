@@ -63,6 +63,9 @@ final class Tables
     /** Sort keys: the value a page shows per field and language, for sorting (ADR-0061). */
     public const string SORT_KEYS = 'lynx_sort_keys';
 
+    /** Page references: one row per reference a page's fields hold (ADR-0145). */
+    public const string PAGE_REFERENCES = 'lynx_page_references';
+
     /** Field tables: lynx_f_{name}, e.g. lynx_f_title. */
     public const string FIELD_PREFIX = 'lynx_f_';
 

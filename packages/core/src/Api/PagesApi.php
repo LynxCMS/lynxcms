@@ -27,7 +27,7 @@ use LynxCms\Core\Pages\EditLocks;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Pages\PageLoader;
-use LynxCms\Core\Pages\PageReferences;
+use LynxCms\Core\Pages\PageLookup;
 use LynxCms\Core\Pages\PathResolver;
 use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Pages\ScheduleReader;
@@ -59,7 +59,7 @@ final readonly class PagesApi
         private TemplateRegistry $templates,
         private Backlinks $backlinks,
         private BranchBacklinks $branchBacklinks,
-        private PageReferences $references,
+        private PageLookup $lookup,
         private Trash $trash,
         private ScheduleReader $scheduleReader,
         private EditLocks $editLocks,
@@ -91,7 +91,7 @@ final readonly class PagesApi
             return $this->finder->findOne($reference);
         }
 
-        $id = is_int($reference) ? $reference : $this->references->id($reference);
+        $id = is_int($reference) ? $reference : $this->lookup->id($reference);
 
         return $id === null ? null : $this->loader->find($id);
     }

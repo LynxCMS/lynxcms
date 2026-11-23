@@ -88,6 +88,7 @@ final class DeleteLanguage extends Action
         $names = DB::table(Tables::PAGE_LANGUAGES)->where('language_id', $language->id)->delete();
         DB::table(Tables::PAGE_PATHS)->where('language_id', $language->id)->delete();
         DB::table(Tables::FIELD_VALUE_META)->where('language_id', $language->id)->delete();
+        DB::table(Tables::PAGE_REFERENCES)->where('language_id', $language->id)->delete();
         DB::table(Tables::SCHEDULES)->where('language_id', $language->id)->delete();
         Language::query()->whereKey($language->id)->delete();
         $this->languages->flush();

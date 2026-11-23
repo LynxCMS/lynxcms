@@ -494,7 +494,7 @@ Sections are the package and its first folder under src, in alphabetical order; 
 | `Pages\Items\ItemList` | class | 15 | 8 | `__construct()` | 7 | 68 |
 | `Pages\UniqueNames` | class | 15 | 5 | `assertAllowed()` | 6 | 67 |
 | `Pages\Concerns\TracksChanges` | trait | 14 | 4 | `isDirty()` | 10 | 107 |
-| `Pages\PageReferences` | class | 13 | 5 | `resolve()` | 5 | 67 |
+| `Pages\PageLookup` | class | 13 | 5 | `resolve()` | 5 | 67 |
 | `Pages\Saving\PageRowWriter` | class | 13 | 5 | `write()` | 4 | 61 |
 | `Pages\Drafts` | class | 12 | 3 | `create()` | 7 | 77 |
 | `Pages\EditLocks` | class | 12 | 4 | `assertFree()` | 5 | 61 |

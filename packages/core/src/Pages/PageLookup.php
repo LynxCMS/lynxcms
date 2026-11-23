@@ -17,7 +17,7 @@ use LynxCms\Core\Support\Value;
  *
  * @internal
  */
-final readonly class PageReferences
+final readonly class PageLookup
 {
     public function __construct(
         private PathResolver $paths,

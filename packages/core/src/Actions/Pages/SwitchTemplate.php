@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Events\PageReferencesChanged;
 use LynxCms\Core\Events\PageTemplateSwitched;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Concerns\ResolvesPages;
@@ -17,6 +18,7 @@ use LynxCms\Core\Pages\Drafts;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageGuard;
 use LynxCms\Core\Pages\PathBuilder;
+use LynxCms\Core\Pages\References\PageReferenceIndex;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\FamilyRules;
@@ -37,6 +39,7 @@ final class SwitchTemplate extends Action
         private readonly PathBuilder $paths,
         private readonly FamilyRules $family,
         private readonly Drafts $drafts,
+        private readonly PageReferenceIndex $references,
     ) {}
 
     public static function name(): string
@@ -101,11 +104,16 @@ final class SwitchTemplate extends Action
 
         DB::table(Tables::PAGES)->where('id', $page->id)->update(['template_id' => $target->id, 'updated_at' => now(), 'revision' => DB::raw('revision + 1')]);
         $page->templateId = $target->id;
+        $references = $this->references->summary($this->references->sync([(int) $page->id])[(int) $page->id] ?? null);
 
         $context->changes->updated('page', $page->id, "Switch page {$page->name()} from {$current->name} to {$target->name}"
-            .($orphaned !== [] ? '; orphaned (kept): '.implode(', ', $orphaned) : ''), ['from' => $current->name, 'to' => $target->name, 'orphaned' => $orphaned]);
+            .($orphaned !== [] ? '; orphaned (kept): '.implode(', ', $orphaned) : ''), ['from' => $current->name, 'to' => $target->name, 'orphaned' => $orphaned] + array_filter(['references' => $references]));
 
         $context->event(new PageTemplateSwitched((int) $page->id, (string) $current->name, (string) $target->name));
+
+        if ($references !== []) {
+            $context->event(new PageReferencesChanged((int) $page->id, $references['added'], $references['removed']));
+        }
 
         if ($current->hasUrl() !== $target->hasUrl()) {
             $this->paths->rebuild((int) $page->id, descendants: true, changes: $context->changes);

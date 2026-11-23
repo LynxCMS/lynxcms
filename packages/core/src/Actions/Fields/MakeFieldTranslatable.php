@@ -15,6 +15,7 @@ use LynxCms\Core\Fields\FieldSchemaManager;
 use LynxCms\Core\Fields\Items\SubfieldLanguageRows;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Pages\References\PageReferenceIndex;
 use LynxCms\Core\Search\SearchIndex;
 use LynxCms\Core\Support\Value;
 use Override;
@@ -34,6 +35,7 @@ final class MakeFieldTranslatable extends Action
         private readonly SubfieldLanguageRows $items,
         private readonly LanguageRegistry $languages,
         private readonly SearchIndex $search,
+        private readonly PageReferenceIndex $references,
     ) {}
 
     public static function name(): string
@@ -117,6 +119,8 @@ final class MakeFieldTranslatable extends Action
     /** @param  array<int, true>  $pages */
     private function reindex(array $pages): void
     {
+        $this->references->sync(array_keys($pages));
+
         foreach (array_keys($pages) as $pageId) {
             $this->search->update($pageId);
         }
