@@ -66,6 +66,8 @@ php artisan lynx:install
 
 `lynx:install` creates the default language, the home page, a `simple-page` template with a title for your first pages, and two roles, the sets of permissions people get: `superuser` (allowed everything) and `editor` (works on pages). With the admin installed and no one a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
 
+When the site lacks some of the free modules, `lynx:install` first asks which to add, with the admin ticked, adds them with Composer, then applies their database changes and installs Lynx. In a deploy script or CI, name them instead: `php artisan lynx:install --modules=admin,menus,seo`. Run without a terminal and without `--modules`, it adds none. The [introduction](/getting-started/introduction#packages) says what each module does. If Composer can't run from PHP on your server, `lynx:install` prints the `composer require` line to run yourself.
+
 If your app already has accounts, make one of them the superuser instead:
 
 ```bash

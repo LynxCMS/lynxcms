@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Prompts\Elements\Element;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Console\Concerns\AddsModules;
 use LynxCms\Core\Console\Concerns\AsksInTerminal;
 use LynxCms\Core\Console\Concerns\TerminalFeedback;
+use LynxCms\Core\Install\ModuleCatalog;
 use LynxCms\Core\Permissions\PermissionHolders;
 use LynxCms\Core\Support\Value;
 use Override;
@@ -18,7 +21,7 @@ use Override;
 use function Laravel\Prompts\confirm;
 
 /**
- * Installs Lynx, then, when lynxcms/admin is installed, makes sure someone can open the admin:
+ * Installs Lynx, after adding the modules picked or given with --modules (AddsModules), then, when lynxcms/admin is installed, makes sure someone can open the admin:
  * --user promotes an account (by id or email), and without one, when no one is a superuser, it
  * offers lynx:superuser (ADR-0079). --user works without the admin too, for MCP and the agent.
  *
@@ -26,6 +29,7 @@ use function Laravel\Prompts\confirm;
  */
 final class InstallCommand extends Command
 {
+    use AddsModules;
     use AsksInTerminal;
     use TerminalFeedback;
 
@@ -33,13 +37,20 @@ final class InstallCommand extends Command
     private const string SUPERUSER_COMMAND = 'lynx:superuser';
 
     #[Override]
-    protected $signature = 'lynx:install {--migrate : Run the database migrations first} {--user= : Id or email of an existing account to make a superuser}';
+    protected $signature = 'lynx:install {--migrate : Run the database migrations first} {--user= : Id or email of an existing account to make a superuser} {--modules= : Modules to add with Composer, comma separated, such as admin,menus}';
 
     #[Override]
     protected $description = 'Install Lynx: the default language, the home page and the superuser and editor roles';
 
-    public function handle(ActionRunner $runner, PermissionHolders $holders): int
+    public function handle(ActionRunner $runner, PermissionHolders $holders, ModuleCatalog $modules, Composer $composer): int
     {
+        $chosen = $this->chosenModules($modules);
+        $requirements = $chosen === null ? [] : $modules->requirements($chosen);
+
+        if ($chosen === null || $requirements !== []) {
+            return $chosen === null ? self::FAILURE : $this->addModules($requirements, $composer);
+        }
+
         if ($this->option('migrate')) {
             $this->call('migrate', ['--force' => true]);
         }
