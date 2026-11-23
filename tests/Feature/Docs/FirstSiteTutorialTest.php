@@ -34,7 +34,7 @@ it('lists the posts on the blog page, newest first', function (): void {
 
 it('shows a post with its date and body', function (): void {
     $this->get('/blog/hello-world')->assertOk()
-        ->assertSee('<time datetime="2026-10-01">Oct 1, 2026</time>', false)
+        ->assertSee('<time datetime="2026-10-01">October 1, 2026</time>', false)
         ->assertSee('Welcome to our new <strong>blog</strong>.', false);
 });
 

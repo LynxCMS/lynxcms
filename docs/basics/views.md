@@ -104,7 +104,7 @@ Both return a `PageArray`, which you can loop, count and filter. `implode()` joi
 
 ```blade
 {{ $page->topics->implode(', ', 'title') }}
-{{ $pages->filter(fn ($page) => $page->featured)->implode(' · ', fn ($page) => $page->name()) }}
+{{ lynx()->pages->find('template=post')->filter(fn ($post) => $post->featured)->implode(' · ', fn ($post) => $post->name()) }}
 ```
 
 Lists leave out unpublished and hidden pages, and pages the visitor may not see. Fields load the first time a template reads them, in one query for the whole list, so listing fifty pages with their summaries costs one query for the summaries, not fifty.
@@ -298,6 +298,8 @@ A view can show a link to the page editor to the people allowed to edit the page
     <a href="{{ route('lynx.admin.pages.edit', $page->id) }}">Edit this page</a>
 @endcan
 ```
+
+The `lynx.admin.pages.edit` route comes with `lynxcms/admin`; on a site without the admin, leave the link out. `LynxCms\Admin\Editor\FieldAddress::url($page, 'body')` links to one field instead, opening the editor on its tab and scrolled to it, and takes an `item:` key for a repeater or matrix item and a `language:` code.
 
 `@can` is Laravel's Blade directive for authorization checks. Lynx answers it for every permission listed in [Roles and permissions](/admin/permissions), written with a `lynx.` prefix: `lynx.pages.publish`, `lynx.pages.delete`, or a module's own, such as `lynx.forms.view`. `@cannot` and `Gate::allows()` work the same way.
 

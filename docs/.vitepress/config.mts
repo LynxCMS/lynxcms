@@ -28,10 +28,13 @@ function draftPages(folder = DOCS): string[] {
 const drafts = process.argv.includes('build') && process.env.DOCS_DRAFTS !== '1' ? draftPages() : []
 const draftLinks = new Set(drafts.map((page) => '/' + page.replace(/\.md$/, '').replace(/(^|\/)index$/, '$1')))
 
+// A group left with no pages (a guide whose chapters are all drafts) goes too, so the sidebar
+// never shows a heading with nothing to open.
 function withoutDrafts(items: DefaultTheme.SidebarItem[]): DefaultTheme.SidebarItem[] {
     return items
         .filter((item) => item.link === undefined || !draftLinks.has(item.link))
         .map((item) => (item.items ? { ...item, items: withoutDrafts(item.items) } : item))
+        .filter((item) => item.link !== undefined || item.items === undefined || item.items.length > 0)
 }
 
 // The Lynx documentation site, built from this folder and served at lynxcms.org/cms/docs by a

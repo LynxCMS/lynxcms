@@ -100,7 +100,7 @@ Required fields are checked in the default language only, so a page can be saved
 
 Two options change what a template is for:
 
-- `has_url: false` makes a template for content that is never shown at its own address, such as a settings page or a list of partners other pages reference.
+- `hasUrl: false` makes a template for content that is never shown at its own address, such as a settings page or a list of partners other pages reference.
 - `singleton: true` allows only one page on the template, such as the site's settings or a blog's index page.
 
 ```php
@@ -117,6 +117,8 @@ Templates can say where their pages belong in the tree. These **family rules** k
 lynx()->templates->update('blog', ['allow_children' => true, 'child_templates' => ['post']]);
 lynx()->templates->update('post', ['allow_children' => false, 'parent_templates' => ['blog']]);
 ```
+
+`add()` takes PHP's named arguments, written in camelCase (`hasUrl: false`). `update()` takes an array of changes whose keys are the action's input, written in snake_case (`'has_url' => false`), the same keys MCP clients and the agent send.
 
 | Rule | Meaning |
 | --- | --- |

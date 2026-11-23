@@ -21,6 +21,19 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.55 to 0.1.56
+
+One new table, `lynx_page_references`, which lists every link from a page field or rich text to another page.
+
+- Run `php artisan lynx:migrate`. The migration creates the table and fills it from the values pages already hold, one pass over every page, so it takes longer than usual on a large site. Rows it adds have no `created_at`.
+- If anything writes field tables without Lynx's actions, such as a script or an SQL import, run `php artisan lynx:page-references:rebuild` afterwards. `--dry-run` counts the rows that differ first. Saves keep the table current otherwise.
+- `lynx()->pages->backlinks()` and the trash warning read the new table. They no longer list values of fields a page's template stopped using, or drafts that are not published yet.
+- The Settings tab's **Linked from** panel moved to the page editor's **References** tab. **Settings › Page references** reports broken links, pages nothing links to, and the most linked pages.
+- Roles that should rebuild the table from the admin or through an agent need the new `page_references.manage` permission. Superusers have it.
+- Sort keys, the search index, media folders, and page password caches now update even while `Event::fake()` is on. Tests that faked events to leave the search index out of date need another way, such as deleting its rows.
+- Code that reads every `ReferencesPages` field's value as a list of page ids should skip `TextareaType`, which now implements the interface for rich text links.
+- Code that used the internal `LynxCms\Core\Pages\PageReferences` class: it is renamed `PageLookup`.
+
 ## From 0.1.54 to 0.1.55
 
 No database changes. Static exports now link to the site from its root (`/about`) rather than with the full address, so one export works on any host. If you serve an export from a subfolder, or need full addresses for another reason, set `LYNX_STATIC_RELATIVE_LINKS=false`.
