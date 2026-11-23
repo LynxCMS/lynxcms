@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use LynxCms\Core\Permissions\Role;
+use LynxCms\Core\Support\Tables;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -82,4 +85,22 @@ it('stays quiet after package:discover when the database cannot be reached', fun
     } finally {
         config(['database.default' => $default]);
     }
+});
+
+it('installs Lynx when it is not installed yet', function (): void {
+    expect(DB::table(Tables::LANGUAGES)->count())->toBe(0);
+
+    $this->artisan('lynx:migrate', ['--force' => true])->assertSuccessful();
+
+    expect(DB::table(Tables::LANGUAGES)->where('code', 'default')->exists())->toBeTrue()
+        ->and(lynx()->pages->get('/'))->not->toBeNull();
+});
+
+it('leaves an installed site as it is', function (): void {
+    installLynx();
+    Role::query()->where('name', 'editor')->delete();
+
+    $this->artisan('lynx:migrate', ['--force' => true])->assertSuccessful();
+
+    expect(Role::query()->where('name', 'editor')->exists())->toBeFalse();
 });

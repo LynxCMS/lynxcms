@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace LynxCms\Core\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Prompts\Elements\Element;
 use LynxCms\Core\Console\Concerns\TerminalFeedback;
+use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Migrations\PendingMigrations;
+use LynxCms\Core\Support\Tables;
 use Override;
 
 use function Laravel\Prompts\confirm;
 
 /**
  * Runs the pending migrations of Lynx packages, after the user confirms the database is backed
- * up. The app's own migrations are left to php artisan migrate.
+ * up, then installs Lynx when it is not installed yet (no default language), so a new site has
+ * its language, home page and roles. The app's own migrations are left to php artisan migrate.
  *
  * @internal
  */
@@ -35,7 +39,7 @@ final class MigrateCommand extends Command
         if ($pending === []) {
             $this->components->info('Nothing to migrate: every Lynx package is up to date.');
 
-            return self::SUCCESS;
+            return $this->installIfNeeded(self::SUCCESS);
         }
 
         $this->showPending($pending);
@@ -48,7 +52,20 @@ final class MigrateCommand extends Command
 
         $paths = array_values(array_intersect_key($migrations->paths(), $pending));
 
-        return $this->call('migrate', ['--path' => $paths, '--realpath' => true, '--force' => true]);
+        return $this->installIfNeeded($this->call('migrate', ['--path' => $paths, '--realpath' => true, '--force' => true]));
+    }
+
+    /** A site whose tables exist but that has no default language is installed now; installed sites are left as they are. */
+    private function installIfNeeded(int $status): int
+    {
+        $languages = $this->laravel->make(LanguageRegistry::class);
+        $languages->flush();
+
+        if ($status !== self::SUCCESS || ! Schema::hasTable(Tables::LANGUAGES) || $languages->hasDefault()) {
+            return $status;
+        }
+
+        return $this->call('lynx:install', ['--no-interaction' => true]);
     }
 
     /** @param  array<string, list<string>>  $pending */

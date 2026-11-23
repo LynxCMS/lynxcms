@@ -64,7 +64,7 @@ Route::get('/', function () {
 php artisan lynx:install
 ```
 
-`lynx:install` creates the default language, the home page, a `simple-page` template with a title for your first pages, and two roles, the sets of permissions people get: `superuser` (allowed everything) and `editor` (works on pages). When no one is a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
+`lynx:install` creates the default language, the home page, a `simple-page` template with a title for your first pages, and two roles, the sets of permissions people get: `superuser` (allowed everything) and `editor` (works on pages). With the admin installed and no one a superuser yet, it offers to create one: give a name, an email and a password, and the account is created in your app's `users` table with the `superuser` role. Running it again changes nothing, so it is safe in deployment scripts. It asks only when you type it in a terminal; run from code (`Artisan::call('lynx:install')` in a seeder or a test) or with `--no-interaction`, it only warns.
 
 If your app already has accounts, make one of them the superuser instead:
 
@@ -112,7 +112,7 @@ composer require lynxcms/cache
 php artisan lynx:migrate
 ```
 
-`lynx:migrate` lists the changes by package and asks whether the database is backed up before it runs them. `--force` skips the question, for deployments. It runs only the migrations of Lynx packages; `php artisan migrate` works too and runs your app's as well.
+`lynx:migrate` lists the changes by package and asks whether the database is backed up before it runs them. `--force` skips the question, for deployments. It runs only the migrations of Lynx packages; `php artisan migrate` works too and runs your app's as well. When Lynx is not installed yet, `lynx:migrate` then runs `lynx:install` for you, without its questions, so a site set up with `composer require` and `lynx:migrate` has its default language and home page.
 
 The media module stores uploads on Laravel's `public` disk, so after installing it, make that disk reachable from the web once:
 
