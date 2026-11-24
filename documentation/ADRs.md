@@ -1627,3 +1627,18 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** A data request takes one screen. A site that sets retention loses submissions for good on schedule, which is the intent; the setting is empty by default. The email match reads every row's JSON, as the inbox search does, which is fine for thousands and slow for hundreds of thousands (the search index could take it over). The builder field reaches existing sites when `forms.install` runs again.
 
+## ADR-0148: Cloudflare Turnstile guards public forms when a site sets its keys
+
+**Status:** Accepted (builds on ADR-0052)
+
+**Context:** Public forms had Spatie's honeypot, its timing check and a rate limit per visitor. The timing check is useless on cached pages, where every visitor gets the time the page was rendered, and bots that fill visible fields slowly get past the honeypot. Captchas with puzzles cost real visitors. Cloudflare Turnstile checks visitors without a puzzle for most, needs a free account, and verifies a token on the server.
+
+**Decision:**
+
+- **Off by default.** Turnstile runs only when a site key and a secret key are set, as it loads a third party's script in visitors' browsers, which some sites must declare under the GDPR.
+- **Keys in two places.** `.env` (`LYNX_FORMS_TURNSTILE_SITE_KEY`, `LYNX_FORMS_TURNSTILE_SECRET`), as Laravel keeps secrets, or a superuser saves them with `forms.save_turnstile`, the secret encrypted with the app key in Lynx's settings. Keys in `.env` win, and the admin then only says where they come from. An admin setting lets a site owner without server access turn it on; the cost is a secret in the database, unreadable without the app key, and lost if the key changes (Turnstile then stays off until it is saved again).
+- **Checked in the form component**, after the rate limit and before the honeypot, by Cloudflare's `siteverify` with a 5 second timeout. A check that can't reach Cloudflare fails, so an outage doesn't open the form to bots; it is logged. `forms.submit` itself doesn't check, so code and MCP clients that submit on purpose aren't asked for a browser token.
+- **One widget per form**, rendered explicitly with Alpine, its token handed to the component and reset after each check, as a token is good once.
+
+**Consequences:** Sites with cached pages get a spam check that works. A Cloudflare outage stops form submissions on sites that turned it on. A Content Security Policy must allow `challenges.cloudflare.com`.
+

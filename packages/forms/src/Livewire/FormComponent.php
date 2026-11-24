@@ -21,6 +21,7 @@ use LynxCms\Forms\Livewire\Concerns\GuardsSubmissions;
 use LynxCms\Forms\Livewire\Concerns\NarrowsChoices;
 use LynxCms\Forms\Models\Submission;
 use LynxCms\Forms\OncePerUser;
+use LynxCms\Forms\Spam\Turnstile;
 use LynxCms\Forms\SubmissionPresenter;
 use Throwable;
 
@@ -104,6 +105,12 @@ class FormComponent extends Component
 
         $this->countAttempt();
 
+        if ($this->failsTurnstile()) {
+            $this->problem = __('lynx-forms::forms.turnstile');
+
+            return;
+        }
+
         $submission = $this->looksLikeSpam() ? null : $this->send();
 
         if ($this->problem === null) {
@@ -167,6 +174,7 @@ class FormComponent extends Component
             'isLastStep' => $steps === [] || $this->step >= count($steps) - 1,
             'aside' => $this->asideView(),
             'summary' => count($steps) > 1 && $this->step === count($steps) - 1 ? $this->summary() : [],
+            'turnstileKey' => app(Turnstile::class)->isEnabled() ? app(Turnstile::class)->siteKey() : null,
         ]);
     }
 

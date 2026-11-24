@@ -51,6 +51,10 @@
                     @endforeach
                 </div>
 
+                @if ($turnstileKey !== null && $isLastStep)
+                    @include('lynx-forms::fields.turnstile', ['siteKey' => $turnstileKey])
+                @endif
+
                 <div class="lynx-form-actions">
                     @if ($step > 0)
                         <button type="button" class="lynx-form-button is-secondary" wire:click="back">{{ __('lynx-forms::forms.back') }}</button>

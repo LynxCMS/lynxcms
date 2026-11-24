@@ -29,6 +29,7 @@ use LynxCms\Forms\Admin\Livewire\Inbox;
 use LynxCms\Forms\Admin\Livewire\PersonalDataSearch;
 use LynxCms\Forms\Admin\Livewire\PreviewForm;
 use LynxCms\Forms\Admin\Livewire\SubmissionView;
+use LynxCms\Forms\Admin\Livewire\TurnstileSettings;
 use LynxCms\Forms\FormSchema;
 use LynxCms\Forms\Models\Submission;
 
@@ -53,6 +54,7 @@ final class AdminIntegration
         Livewire::component('lynx-forms.list', FormList::class);
         Livewire::component('lynx-forms.preview', PreviewForm::class);
         Livewire::component('lynx-forms.personal-data', PersonalDataSearch::class);
+        Livewire::component('lynx-forms.turnstile', TurnstileSettings::class);
         self::registerBuilder();
 
         $canSee = fn (): bool => app(AdminAccess::class)->allows('forms.view');

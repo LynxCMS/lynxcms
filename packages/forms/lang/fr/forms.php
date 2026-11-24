@@ -13,6 +13,7 @@ return [
     'step' => 'Étape :current de :total',
     'check_fields' => 'Vérifiez les champs indiqués ci-dessous.',
     'too_many' => 'Trop de tentatives. Réessayez dans :seconds secondes.',
+    'turnstile' => 'Nous n\'avons pas pu confirmer que vous êtes une personne. Veuillez réessayer.',
     'add_row' => 'Ajouter',
     'remove' => 'Retirer',
     'files_hint' => 'Jusqu’à :count fichiers, :size chacun. :types',
