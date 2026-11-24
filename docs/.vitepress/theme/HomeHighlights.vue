@@ -19,11 +19,11 @@ const features: Feature[] = [
     {
         title: 'Fields without migrations',
         details: 'Define templates and fields in the admin, in PHP or in YAML files you commit. Lynx creates their tables while the site runs.',
-        code: `lynx()->fields->add('summary', 'textarea', translatable: true);
-lynx()->fields->add('body', 'textarea', translatable: true, settings: ['format' => 'html']);
-lynx()->fields->add('published_on', 'date');
+        code: `lynx()->fields->create('summary', 'textarea', translatable: true);
+lynx()->fields->create('body', 'textarea', translatable: true, settings: ['format' => 'html']);
+lynx()->fields->create('published_on', 'date');
 
-lynx()->templates->add('post', fields: ['title', 'summary', 'body', 'published_on']);`,
+lynx()->templates->create('post', fields: ['title', 'summary', 'body', 'published_on']);`,
         output: {
             label: 'Changes recorded',
             text: `+ Create textarea field summary (translatable)
