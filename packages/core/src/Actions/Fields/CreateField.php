@@ -95,6 +95,7 @@ final class CreateField extends Action
             'settings' => ['sometimes', 'array'],
             'settings.fallback' => ['sometimes', Rule::in(['inherit', 'none'])],
             'settings.autoload' => ['sometimes', 'boolean'],
+            'settings.locked' => ['sometimes', 'boolean'],
             'settings.description' => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
             'settings.notes' => ['sometimes', 'nullable', ...LocalizedText::rules(500)],
         ];

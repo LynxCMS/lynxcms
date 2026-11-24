@@ -24,6 +24,7 @@ use LynxCms\Admin\Livewire\Concerns\EditsDraft;
 use LynxCms\Admin\Livewire\Concerns\HoldsEditLock;
 use LynxCms\Admin\Livewire\Concerns\ManagesItems;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Admin\Livewire\Concerns\OpensLazyFields;
 use LynxCms\Admin\Livewire\Concerns\PublishesPage;
 use LynxCms\Admin\Livewire\Concerns\ReviewsChanges;
 use LynxCms\Admin\Tree\DefaultPresenter;
@@ -51,6 +52,7 @@ final class PageEditor extends Component
     use HoldsEditLock;
     use ManagesItems;
     use Notifies;
+    use OpensLazyFields;
     use PublishesPage;
     use ReviewsChanges;
 

@@ -125,6 +125,7 @@ final readonly class DraftJsonSchema
                 ...$settings,
                 'fallback' => ['enum' => ['inherit', 'none']],
                 'autoload' => ['type' => 'boolean'],
+                'locked' => ['type' => 'boolean', 'description' => 'Only the site\'s code fills it; editors and agents see it read only (ADR-0149).'],
                 'description' => ['$ref' => '#/$defs/label'],
                 'notes' => ['$ref' => '#/$defs/label'],
             ],
@@ -201,7 +202,7 @@ final readonly class DraftJsonSchema
                 'column' => ['enum' => ['main', 'sidebar']], 'collapsed' => ['type' => 'boolean'],
                 'fields' => ['type' => 'array', 'items' => ['$ref' => '#/$defs/entry']],
             ]],
-            ['type' => 'object', 'required' => ['name'], 'description' => 'A field with settings for this template: required, label, show_if, width...'],
+            ['type' => 'object', 'required' => ['name'], 'description' => 'A field with settings for this template: required, label, show_if, width, editor, locked, lazy...'],
             ['type' => 'object', 'minProperties' => 1, 'maxProperties' => 1, 'additionalProperties' => ['$ref' => '#/$defs/field'], 'description' => 'A field defined in place: {name: type}.'],
         ]];
     }

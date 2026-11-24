@@ -228,7 +228,10 @@ final class TemplateForm extends Component
             'show_if' => Value::string($settings['show_if'] ?? ''),
             'required_if' => Value::string($settings['required_if'] ?? ''),
             'icon' => Value::string($settings['icon'] ?? ''),
-            'editor' => Value::string($settings['editor'] ?? FieldDisplay::Open->value),
+            // The older editor: locked is open and locked (ADR-0149).
+            'editor' => Value::string($settings['editor'] ?? '') === FieldDisplay::Locked->value ? FieldDisplay::Open->value : Value::string($settings['editor'] ?? FieldDisplay::Open->value),
+            'locked' => ($settings['locked'] ?? false) === true || Value::string($settings['editor'] ?? '') === FieldDisplay::Locked->value,
+            'lazy' => ($settings['lazy'] ?? false) === true,
             'width' => (string) Value::int($settings['width'] ?? EditorSettings::FULL_WIDTH),
         ];
     }
@@ -269,7 +272,8 @@ final class TemplateForm extends Component
     }
 
     /**
-     * How the field shows in the page editor (ADR-0063), left out at the defaults.
+     * How the field shows in the page editor (ADR-0063), whether it is locked and loads when
+     * opened (ADR-0149), left out at the defaults.
      *
      * @param  array<string, mixed>  $row
      * @return array<string, mixed>
@@ -281,6 +285,8 @@ final class TemplateForm extends Component
 
         return array_filter([
             'editor' => in_array($editor, ['', FieldDisplay::Open->value], true) ? null : $editor,
+            'locked' => ($row['locked'] ?? false) === true ? true : null,
+            'lazy' => ($row['lazy'] ?? false) === true ? true : null,
             'width' => $width === EditorSettings::FULL_WIDTH ? null : $width,
         ], fn (mixed $value): bool => $value !== null);
     }

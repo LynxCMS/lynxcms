@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'obrigatório',
         'locked' => 'Definido pelo site, não editável aqui.',
+        'loading' => 'A carregar…',
         'translatable' => 'traduzível',
         'searchable' => 'pesquisável',
         'filled' => 'Preenchido',

@@ -70,6 +70,7 @@ return [
         'unique_used' => 'A unique page\'s name must not be used anywhere else, but [:name] is already used by :page.',
     ],
     'values' => [
+        'locked' => 'This field is locked: only the site\'s code changes it.',
         'required' => ':field is required.',
         'required_default' => ':field is required in the default language.',
         'required_after_saving' => ':field is required. Create the page unpublished, add it, then publish.',

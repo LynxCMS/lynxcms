@@ -122,3 +122,7 @@ it('reads checkbox as the toggle type, in the short and the long form', function
 it('reads a toggle\'s argument as its input', function (): void {
     expect(draftField('featured', 'toggle:switch')['settings'])->toBe(['input' => 'switch']);
 });
+
+it('reads locked as a setting every field has', function (): void {
+    expect(draftField('isbn', 'text locked')['settings'])->toBe(['locked' => true]);
+});

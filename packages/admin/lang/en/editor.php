@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'required',
         'locked' => 'Set by the site, not editable here.',
+        'loading' => 'Loading…',
         'translatable' => 'translatable',
         'searchable' => 'searchable',
         'filled' => 'Filled',

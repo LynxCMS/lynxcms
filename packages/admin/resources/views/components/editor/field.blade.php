@@ -1,25 +1,28 @@
-@props(['field', 'languages', 'page' => null, 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false])
+@props(['field', 'languages', 'page' => null, 'input' => null, 'disabled' => false, 'live' => false, 'current' => [], 'required' => null, 'showType' => false, 'cell' => false, 'deferred' => false])
 {{-- showType: the field type under the label, for superusers only, and whether it is searchable (ADR-0120).
      cell: a cell of a page editor card, which wraps fields side by side by their width (ADR-0063).
-     page: the page edited; under each language, views modules add to the editor.field slot (AdminSlots) get it. --}}
+     page: the page edited; under each language, views modules add to the editor.field slot (AdminSlots) get it.
+     deferred: a lazy field not opened yet (ADR-0149): closed, its value and input render once it opens. --}}
 @php
     $codes = array_keys($field->values);
     $hasError = collect($errors->keys())->contains(fn (string $key): bool => $key === 'values.'.$field->name || str_starts_with($key, 'values.'.$field->name.'.'));
     $isCollapsible = $field->display->isCollapsible();
     $startsClosed = $isCollapsible && $field->startsCollapsed() && ! $hasError;
+    // A lazy field that starts open, or holds an error, renders at once.
+    $isDeferred = $deferred && $startsClosed;
     $isNarrow = $cell && $field->width < \LynxCms\Core\Templates\EditorSettings::FULL_WIDTH;
     $slotViews = $page instanceof \LynxCms\Core\Pages\Page ? app(\LynxCms\Admin\AdminSlots::class)->viewsFor(\LynxCms\Admin\AdminSlots::EDITOR_FIELD, $page) : [];
     $widthClass = [25 => '@xl:basis-1/4', 33 => '@xl:basis-1/3', 50 => '@xl:basis-1/2', 66 => '@xl:basis-2/3', 75 => '@xl:basis-3/4'][$field->width] ?? '';
 @endphp
 {{-- BlatUI tabs hold the language shown (tab); double-clicking a tab switches every field. The label sits above the input, so the editor reads top to bottom. --}}
-<div data-field="{{ $field->name }}" data-editor="{{ $field->display->value }}" data-collapsed="{{ $startsClosed ? 'true' : 'false' }}" data-width="{{ $field->width }}"
+<div data-field="{{ $field->name }}" data-editor="{{ $field->display->value }}" data-collapsed="{{ $startsClosed ? 'true' : 'false' }}" data-width="{{ $field->width }}" data-locked="{{ $field->isLocked ? 'true' : 'false' }}" data-deferred="{{ $isDeferred ? 'true' : 'false' }}"
      @class(['min-w-0', 'shrink-0 grow-0 basis-full border-b border-border -mb-px' => $cell, $widthClass => $cell, 'border-e -me-px' => $isNarrow])
      x-data="{ open: @js(! $startsClosed) }">
 <x-lynx-admin::ui.tabs :value="$codes[0]" class="grid gap-2 p-5"
      x-on:lynx-editor-language.window="if ({{ Js::from($codes) }}.includes($event.detail)) tab = $event.detail">
     <div>
         @if ($isCollapsible)
-            <button type="button" id="field-{{ $field->name }}" class="flex items-center gap-1.5 font-medium text-start" x-on:click="open = ! open" x-bind:aria-expanded="open" aria-controls="field-{{ $field->name }}-input">
+            <button type="button" id="field-{{ $field->name }}" class="flex items-center gap-1.5 font-medium text-start" x-on:click="open = ! open{{ $isDeferred ? "; if (open) \$wire.openField('".$field->name."')" : '' }}" x-bind:aria-expanded="open" aria-controls="field-{{ $field->name }}-input">
                 <x-lynx-admin::ui.icon name="chevron-right" class="text-muted-foreground size-4 shrink-0 transition-transform" x-bind:class="open && 'rotate-90'" aria-hidden="true" />
                 @if ($field->icon)<x-lynx-admin::ui.icon :name="$field->icon" data-icon="{{ $field->icon }}" class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />@endif
                 <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="{{ __('lynx-admin::editor.field.required') }}"> *</span>@endif</span>
@@ -30,7 +33,7 @@
                 <span>{{ $field->label }}@if ($required ?? $field->isRequired)<span class="text-destructive" aria-label="{{ __('lynx-admin::editor.field.required') }}"> *</span>@endif</span>
             </p>
         @endif
-        @if ($field->display === \LynxCms\Core\Templates\FieldDisplay::Locked)
+        @if ($field->isLocked)
             <p class="text-muted-foreground text-xs">{{ __('lynx-admin::editor.field.locked') }}</p>
         @endif
         @if ($showType)
@@ -42,6 +45,9 @@
     </div>
 
     <div class="min-w-0" id="field-{{ $field->name }}-input" aria-labelledby="field-{{ $field->name }}" @if ($isCollapsible) x-show="open" @if ($startsClosed) x-cloak @endif @endif>
+        @if ($isDeferred)
+            <p class="text-muted-foreground text-sm" role="status">{{ __('lynx-admin::editor.field.loading') }}</p>
+        @else
         @if ($field->isTranslatable && count($languages) > 1)
             <x-lynx-admin::ui.tabs-list variant="compact" class="mb-2">
                 @foreach ($languages as $language)
@@ -95,6 +101,8 @@
                 @endforeach
             </div>
         @endforeach
+
+        @endif
 
         @if ($field->notes)
             <p class="text-muted-foreground text-xs mt-1">{{ $field->notes }}</p>

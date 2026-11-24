@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
+use LynxCms\Admin\Livewire\FieldForm;
 use LynxCms\Admin\Livewire\PageEditor;
 
 /*
@@ -31,7 +32,8 @@ it('shows locked fields read only and leaves hidden fields out', function (): vo
     courseEditorSettings([['name' => 'price', 'editor' => 'locked'], ['name' => 'body', 'editor' => 'hidden']]);
 
     Livewire::test(PageEditor::class, ['pageId' => $this->page->id])
-        ->assertSeeHtml('data-field="price" data-editor="locked"')
+        ->assertSeeHtml('data-field="price" data-editor="open"')
+        ->assertSeeHtml('data-locked="true"')
         ->assertDontSeeHtml('wire:model="values.price')
         ->assertSee('120')
         ->assertDontSeeHtml('data-field="body"');
@@ -75,4 +77,48 @@ it('places fields by width, with their placeholder and icon', function (): void 
         ->assertSeeHtml('data-width="50"')
         ->assertSeeHtml('placeholder="One line about the course"')
         ->assertSeeHtml('data-icon="text"');
+});
+
+it('shows a field locked on its own as read only on every template (ADR-0149)', function (): void {
+    lynx()->fields->update('price', ['settings' => ['locked' => true]]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->page->id])
+        ->assertSeeHtml('data-field="price" data-editor="open" data-collapsed="false" data-width="100" data-locked="true"')
+        ->assertSeeHtml('data-field="summary" data-editor="open" data-collapsed="false" data-width="100" data-locked="false"');
+});
+
+it('renders a lazy closed field once it is opened', function (): void {
+    courseEditorSettings([['name' => 'summary', 'editor' => 'collapsed', 'lazy' => true]]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->page->id])
+        ->assertSeeHtml('data-locked="false" data-deferred="true"')
+        ->assertDontSeeHtml('wire:model="values.summary.default"')
+        ->call('openField', 'summary')
+        ->assertSet('openedFields', ['summary'])
+        ->assertDontSeeHtml('data-deferred="true"');
+});
+
+it('renders a lazy field that starts open at once', function (): void {
+    courseEditorSettings([['name' => 'price', 'editor' => 'collapsed_blank', 'lazy' => true]]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->page->id])
+        ->assertDontSeeHtml('data-deferred="true"');
+});
+
+it('lets a field open and close that starts open', function (): void {
+    courseEditorSettings([['name' => 'summary', 'editor' => 'open_collapsible']]);
+
+    Livewire::test(PageEditor::class, ['pageId' => $this->page->id])
+        ->assertSeeHtml('data-field="summary" data-editor="open_collapsible" data-collapsed="false"')
+        ->assertSeeHtml('aria-controls="field-summary-input"');
+});
+
+it('locks a field on the field form', function (): void {
+    Livewire::test(FieldForm::class, ['field' => 'price'])
+        ->assertSeeHtml('data-field-locked')
+        ->set('locked', true)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('price')->isLocked())->toBeTrue();
 });

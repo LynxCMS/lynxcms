@@ -68,11 +68,44 @@ final readonly class TemplateField
         return $own->isEmpty() ? $this->field->notes() : $own->forField($this->name());
     }
 
-    /** Required fields are validated in the default language only (ADR-0006). */
-    /** How the field shows in the page editor (ADR-0063). */
+    /**
+     * How the field shows in the page editor (ADR-0063): the stored "editor" setting, with the
+     * older "locked" read as open (isLocked() says it is locked).
+     */
+    public function display(): FieldDisplay
+    {
+        $display = FieldDisplay::tryFrom(Value::string($this->settings['editor'] ?? '')) ?? FieldDisplay::Open;
+
+        return $display === FieldDisplay::Locked ? FieldDisplay::Open : $display;
+    }
+
+    /** @deprecated since 0.1.58: display(), with isLocked() (ADR-0149). */
     public function editor(): FieldDisplay
     {
-        return FieldDisplay::tryFrom(Value::string($this->settings['editor'] ?? '')) ?? FieldDisplay::Open;
+        return $this->display();
+    }
+
+    /**
+     * Whether only the site's code writes the field here (ADR-0149): the field is locked on its
+     * own, or on this template ("locked", or the older editor: locked).
+     */
+    public function isLocked(): bool
+    {
+        return $this->field->isLocked()
+            || ($this->settings['locked'] ?? false) === true
+            || Value::string($this->settings['editor'] ?? '') === FieldDisplay::Locked->value;
+    }
+
+    /** Whether editors change the value in the page editor: shown and not locked. Hidden fields stay writable by code and agents (ADR-0063). */
+    public function isEditable(): bool
+    {
+        return ! $this->isLocked() && $this->display() !== FieldDisplay::Hidden;
+    }
+
+    /** Whether the page editor renders the input only once the field or its tab is opened (ADR-0149). */
+    public function isLazy(): bool
+    {
+        return ($this->settings['lazy'] ?? false) === true;
     }
 
     /** Percent of a page editor card the field takes; 100 by default. */
@@ -154,11 +187,14 @@ final readonly class TemplateField
      */
     public function toSummary(): array
     {
-        return $this->field->toSummary() + [
+        $summary = $this->field->toSummary() + [
             'label' => $this->labels()->toStorage(),
             'required' => $this->required(),
             'show_if' => $this->settings['show_if'] ?? null,
             'required_if' => $this->settings['required_if'] ?? null,
         ];
+
+        // Agents may not write it (ADR-0149).
+        return $this->isLocked() ? $summary + ['locked' => true] : $summary;
     }
 }

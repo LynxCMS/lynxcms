@@ -64,7 +64,7 @@ use LynxCms\Contracts\Actions\Actor;
 lynx()->actingAs(Actor::user($userId), fn () => lynx()->pages->trash('/blog/old-news'));
 ```
 
-The action then checks that user's roles, and the activity log names them.
+The action then checks that user's roles, and the activity log names them. `Actor::system()` may do everything, and is how code in a web request writes a [locked field](/basics/templates-and-fields#locked-fields).
 
 ## Hooks
 

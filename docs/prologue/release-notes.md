@@ -8,6 +8,20 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+### Breaking changes
+
+- `TemplateField::editor()` returns `FieldDisplay::Open` for a field stored as `editor: locked`, and `isLocked()` says it is locked. `editor()` and `FieldDisplay::Locked` are deprecated: use `display()`, `isLocked()` and `isEditable()`.
+- `pages.save` refuses values for locked fields unless the code runs as the command line or the system: people in the admin, MCP clients and the agent are refused, where before only the page editor's input was hidden. Code in a web request that writes them wraps the save in `lynx()->actingAs(Actor::system(), ...)`.
+- The constructor of `PublishDraft` takes a `TemplateRegistry`. Laravel's container builds it as before; code that builds one with `new` resolves it with `app()` instead.
+
+### Changes
+
+- Locked fields: lock a field on every template (its **Advanced** settings, or `locked` in its settings) or on one template (`locked` on the template's field). Editors, MCP clients and the agent see the value and can't change it; only the site's code writes it. Publishing a draft and restoring a revision keep a locked field's live value, and `describe_schema` marks it. See [Locked fields](/basics/templates-and-fields#locked-fields).
+- A template's field can be `open_collapsible`: open, with a header that closes it. Locked combines with every display, so a field can be closed and locked.
+- `lazy` on a template's field draws a field that starts closed only once an editor opens it, for pages with big repeaters, matrices or page lists.
+
 ## 0.1.57
 
 Released November 24, 2026. Drafts that add and rename languages, forms copied between sites as JSON, an inbox with pages, a date filter, select all and bulk delete, a person's data found by email address, retention per form, Duplicate, a daily summary for busy forms, optional Cloudflare Turnstile, toggles shown as a switch, and the admin's sections as one component. No database changes. Sites with forms get two new form settings when `forms.install` next runs. See the [upgrade guide](/prologue/upgrade#from-0-1-56-to-0-1-57).

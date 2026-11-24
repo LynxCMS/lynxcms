@@ -70,11 +70,13 @@ final class FieldViews
             $templateField->config() + array_filter(['allowed_types' => $templateField->settings['allowed_types'] ?? null]),
             $notes === '' ? null : $notes,
             $page?->id,
-            display: $templateField->editor(),
+            display: $templateField->display(),
             width: $templateField->width(),
             placeholder: $templateField->placeholder() === '' ? null : $templateField->placeholder(),
             icon: $this->icon($templateField->icon()),
             isSearchable: SearchText::indexes($templateField->name(), $templateField),
+            isLocked: $templateField->isLocked(),
+            isLazy: $templateField->isLazy(),
         );
     }
 

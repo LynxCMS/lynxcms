@@ -19,6 +19,8 @@ use LynxCms\Core\Pages\Revisions;
 use LynxCms\Core\Strings\PageStringEdits;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\Templates\TemplateField;
+use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Makes a page's draft live (ADR-0039): its values and its own template strings (ADR-0048) are
@@ -37,6 +39,7 @@ final class PublishDraft extends Action
         private readonly PageLoader $loader,
         private readonly Revisions $revisions,
         private readonly PageStringEdits $strings,
+        private readonly TemplateRegistry $templates,
     ) {}
 
     public static function name(): string
@@ -77,7 +80,7 @@ final class PublishDraft extends Action
             'values' => $this->revisions->saveInput($page, $draft->valuesByLanguage()),
             'strings' => $this->strings->replacement((int) $page->id, $this->strings->snapshot($draftId)),
         ]);
-        $this->keepOrigins((int) $page->id, $draftId);
+        $this->keepOrigins($page, $draftId);
         $this->drafts->delete($draftId);
         // A draft published or discarded by hand no longer has a time to go live (ADR-0092).
         DB::table(Tables::SCHEDULES)->where('page_id', $page->id)->where('action', SchedulePage::PUBLISH_DRAFT)->delete();
@@ -89,15 +92,19 @@ final class PublishDraft extends Action
 
     /**
      * The save above records every value it writes as human. The draft began with the live page's
-     * origins and recorded each later save's, so its rows are the true ones.
+     * origins and recorded each later save's, so its rows are the true ones; locked fields keep the
+     * live page's, as their values were not published (ADR-0149).
      */
-    private function keepOrigins(int $pageId, int $draftId): void
+    private function keepOrigins(Page $page, int $draftId): void
     {
-        $rows = DB::table(Tables::FIELD_VALUE_META)->where('page_id', $draftId)->get()
+        $pageId = (int) $page->id;
+        $locked = $this->templates->fields($page->templateId)->filter(fn (TemplateField $field): bool => $field->isLocked())
+            ->map(fn (TemplateField $field): int => (int) $field->field->id)->values()->all();
+        $rows = DB::table(Tables::FIELD_VALUE_META)->where('page_id', $draftId)->whereNotIn('field_id', $locked)->get()
             ->map(fn (object $row): array => ['page_id' => $pageId] + (array) $row)
             ->all();
 
-        DB::table(Tables::FIELD_VALUE_META)->where('page_id', $pageId)->delete();
+        DB::table(Tables::FIELD_VALUE_META)->where('page_id', $pageId)->whereNotIn('field_id', $locked)->delete();
 
         foreach (array_chunk($rows, 500) as $chunk) {
             DB::table(Tables::FIELD_VALUE_META)->insert($chunk);

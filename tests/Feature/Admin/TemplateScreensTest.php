@@ -207,18 +207,19 @@ it('keeps the template layout when the field list is saved', function (): void {
 
 it('saves how a field shows in the page editor', function (): void {
     Livewire::test(TemplateForm::class, ['template' => 'course'])
-        ->set('rows.price.editor', 'locked')
+        ->set('rows.price.editor', 'collapsed')
+        ->set('rows.price.locked', true)
+        ->set('rows.price.lazy', true)
         ->set('rows.price.width', '50')
         ->set('rows.price.placeholder.default', 'In euros')
         ->set('rows.price.icon', 'euro')
         ->set('rows.summary.editor', 'open')
         ->set('rows.summary.width', '100')
         ->call('saveFields')
-        ->assertHasNoErrors()
-        ->assertSee('locked');
+        ->assertHasNoErrors();
 
     $fields = lynx()->templates->fields('course');
-    expect([$fields['price']->editor()->value, $fields['price']->width(), $fields['price']->placeholder(), $fields['price']->icon()])->toBe(['locked', 50, 'In euros', 'euro'])
+    expect([$fields['price']->display()->value, $fields['price']->isLocked(), $fields['price']->isLazy(), $fields['price']->width(), $fields['price']->placeholder(), $fields['price']->icon()])->toBe(['collapsed', true, true, 50, 'In euros', 'euro'])
         ->and(array_intersect_key($fields['summary']->settings, array_flip(['editor', 'width'])))->toBe([]);
 });
 

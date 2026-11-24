@@ -101,6 +101,8 @@ return [
         'always' => 'Siempre se carga con la página.',
         'autoload' => 'Cargar con la página',
         'autoload_hint' => 'Para los campos que muestran casi todas las listas. Los demás se cargan la primera vez que una plantilla los lee, para todas las páginas listadas a la vez.',
+        'locked' => 'Bloqueado',
+        'locked_hint' => 'Los editores ven el valor y no pueden cambiarlo, en todas las plantillas. Solo el código del sitio lo rellena, como una importación o una sincronización con otro servicio.',
     ],
     'delete' => [
         'heading' => 'Eliminar este campo',

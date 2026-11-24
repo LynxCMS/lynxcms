@@ -87,6 +87,7 @@ final class SavePage extends Action
     {
         return 'Create or update a page. For a new page give "template" and "parent" (id or path, "/" for the home page). '
             .'"names" sets the URL name per language code ({"default": "my-course", "pt": "meu-curso"}). '
+            .'Fields describe_schema marks "locked" are filled by the site\'s code: saving them is refused. '
             .'"values" sets field values: shared fields take a value; translatable fields take a value for "language" '
             .'(default: current language) or an object keyed by language code. null removes a value so it falls back; "" stores an explicit empty value.';
     }
