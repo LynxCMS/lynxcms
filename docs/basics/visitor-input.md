@@ -23,27 +23,26 @@ The query string is the part of an address after `?`. Read it with `request()`, 
 $pageNumber = max(1, request()->integer('page', 1));
 ```
 
-For a choice, compare the value with the list you allow, and ignore anything else:
+For a choice, accept only the values the site has, read from where they are stored. A choice field's options are stored with the field, so `lynx()->fields->choices()` lists them. Their values stay the same in every language, while their labels are translated:
 
 ```php
-$categories = ['yoga', 'pilates', 'nutrition'];
-$category = request()->query('category');
-$category = in_array($category, $categories, true) ? $category : null;
+$level = request()->query('level');
+$level = in_array($level, lynx()->fields->choices('level')->values(), true) ? $level : null;
 ```
 
-`in_array()` with `true` compares exactly, so an array sent as `?category[]=yoga`, or a value with extra characters, doesn't match. The visitor then sees the unfiltered list, which is what an address you don't recognize should show.
+`in_array()` with `true` compares exactly, so an array sent as `?level[]=advanced`, or a value with extra characters, doesn't match. The visitor then sees the unfiltered list, which is what an address you don't recognize should show. Options that editors add to the field are accepted at once, with no change to your code.
 
-In a controller, Laravel's validation does the same with rules, such as `'page' => ['integer', 'min:1']`. Use whichever fits: the result is a value you know.
+Lists that grow, such as categories or tags, are usually pages, and a visitor names one by its page name. [Values in a selector](#values-in-a-selector) shows how to find it.
 
 ## Values in a selector
 
 A selector is a small language, and a visitor's text can add conditions of its own: `?category=yoga, include=unpublished` (or `status=unpublished`) would list unpublished pages. Bound parameters keep the database safe, but they can't tell your conditions from the visitor's. Put a visitor's value in a selector only after checking that it is what you expect: a value from your list, a number, a date, or a page name.
 
-The example below filters the courses listed on a `courses` page: `/courses?category=yoga&max_price=200`. It takes three steps.
+The example below filters the courses listed on a `courses` page: `/courses?category=yoga&level=advanced&max_price=200`. Categories are pages on a `category` template, and each course links to its category with a [page field](/basics/field-types#page). A site with hundreds of categories in several languages works the same way, as the code never lists them. The example takes three steps.
 
 **1. Check the query string.** Laravel's validator checks a set of values against [rules](https://laravel.com/docs/validation#available-validation-rules). Its `valid()` method returns the values that passed and leaves out the rest, so a value with a comma, an extra condition or an array never gets through. Unlike `$request->validate()`, it doesn't send the visitor back with errors, which suits filters in an address ([Laravel's docs](https://laravel.com/docs/validation#manually-creating-validators)).
 
-**2. Build the selector** from the values that passed, one condition per filter, and list the page's children with it.
+**2. Find the category and build the selector.** The category is found by its page name in the visitor's language, so `/pt/cursos?category=ioga` finds the same category as `/courses?category=yoga`. A name that doesn't exist, or a category that isn't published, finds nothing, and the filter is left out. Then each value that passed becomes one condition, and the page's children are listed with them.
 
 Both steps go in a view composer: a class that Laravel runs before it renders a view, to give the view more data ([Laravel's docs](https://laravel.com/docs/views#view-composers)). Lynx renders a `courses` page with the view `templates.courses` and gives it the page as `$page`, so the composer reads `$page` and adds `$courses`:
 
@@ -60,17 +59,22 @@ final class CourseFilters
     public function compose(View $view): void
     {
         $filters = Validator::make(request()->query(), [
-            'category' => [Rule::in(['yoga', 'pilates', 'nutrition'])],
+            'category' => ['string', 'regex:/^[a-z0-9-]+$/'],
+            'level' => [Rule::in(lynx()->fields->choices('level')->values())],
             'max_price' => ['integer', 'min:0'],
             'from' => ['date_format:Y-m-d'],
-            'teacher' => ['string', 'regex:/^[a-z0-9-]+$/'],
         ])->valid();
 
+        // A category is a page: find it by its name in the visitor's language.
+        $category = isset($filters['category'])
+            ? lynx()->pages->findOne("template=category, name={$filters['category']}")
+            : null;
+
         $conditions = array_filter([
-            isset($filters['category']) ? "category={$filters['category']}" : null,
+            $category !== null ? "category={$category->id}" : null,
+            isset($filters['level']) ? "level={$filters['level']}" : null,
             isset($filters['max_price']) ? "price<={$filters['max_price']}" : null,
             isset($filters['from']) ? "starts_on>={$filters['from']}" : null,
-            isset($filters['teacher']) ? "teacher=/teachers/{$filters['teacher']}" : null,
         ]);
 
         $page = $view->getData()['page'];
@@ -100,10 +104,10 @@ Each rule fits one kind of value:
 
 | Value | Rule | Accepts |
 | --- | --- | --- |
-| One of your options | `Rule::in([...])` | Only the listed values. |
+| A page, such as a category or a tag | `regex:/^[a-z0-9-]+$/`, then `findOne()` | Lowercase letters, digits and hyphens, the characters of a page's URL name. The lookup then checks that the page exists and is published. |
+| An option of a choice field | `Rule::in(lynx()->fields->choices('level')->values())` | The field's current options. |
 | A number | `integer`, `min:0` | Whole numbers. `numeric` takes decimals. |
 | A date | `date_format:Y-m-d` | Dates such as `2026-03-01`. |
-| A page name | `regex:/^[a-z0-9-]+$/` | Lowercase letters, digits and hyphens, the characters of a page's URL name. |
 
 `valid()` also returns query values that have no rule, such as `?utm_source=`, so build the selector from the keys you listed only, as the example does. A filter that fails its rule is left out, and the visitor sees the list without it. A single value can be checked without the validator, as [Reading the query string](#reading-the-query-string) shows. Words typed into a search box can't be checked against rules like these; quote them instead ([Words in a selector](#words-in-a-selector)). [Filters and pagination](/basics/selectors#filters-and-pagination) adds paging, and the [training site guide](/guides/training-site/front-end#the-catalog) has a complete catalog built this way.
 
