@@ -95,7 +95,8 @@ export default defineConfig({
         nav: [
             { text: 'Docs', link: '/getting-started/introduction', activeMatch: '^/(getting-started|basics|admin|modules|ai|deeper)/' },
             { text: 'Guides', link: '/guides/', activeMatch: '^/guides/' },
-            { text: 'Reference', link: '/reference/configuration', activeMatch: '^/reference/' },
+            { text: 'Cookbook', link: '/reference/recipes', activeMatch: '^/reference/recipes' },
+            { text: 'Reference', link: '/reference/configuration', activeMatch: '^/reference/(?!recipes)' },
             { text: 'Roadmap', link: '/prologue/roadmap' },
         ],
 
@@ -232,7 +233,7 @@ export default defineConfig({
                     { text: 'Configuration', link: '/reference/configuration' },
                     { text: 'Selector Cheat Sheet', link: '/reference/selectors' },
                     { text: 'Public API', link: '/reference/public-api' },
-                    { text: 'Recipes', link: '/reference/recipes' },
+                    { text: 'Cookbook', link: '/reference/recipes' },
                 ],
             },
         ]),

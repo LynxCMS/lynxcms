@@ -1,10 +1,10 @@
 ---
-title: Recipes
+title: Cookbook
 description: Common tasks and the section of the docs that shows each one.
 order: 5
 ---
 
-# Recipes
+# Cookbook
 
 Each entry below names a task and links to the section that shows its code. The code lives on one page only, so it stays tested and current.
 
@@ -44,6 +44,7 @@ Each entry below names a task and links to the section that shows its code. The 
 - [Tell a translation from a fallback](/basics/languages#telling-a-translation-from-a-fallback)
 - [Turn fallback off](/basics/languages#turning-fallback-off)
 - [Make an existing field translatable](/basics/templates-and-fields#making-a-field-translatable)
+- [Build a site in two languages from one draft](/basics/templates-and-fields#a-draft-in-two-languages)
 
 ## Saving and publishing
 
