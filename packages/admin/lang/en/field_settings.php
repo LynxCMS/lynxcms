@@ -55,6 +55,8 @@ return [
     'tags_hint' => 'Comma separated. Empty allows any tag.',
     'private' => 'Keep the files private',
     'private_hint' => 'Stored off the public disk and served only to visitors who may open the page. Switching moves existing files.',
+    'per_language' => 'A file per language',
+    'per_language_hint' => 'Each file is for one language, or for every language. Pages show the visitor\'s language\'s files, else the files for every language, else the fallback language\'s. Max files counts per language.',
     'min_width' => 'Smallest width',
     'min_height' => 'Smallest height',
     'max_width' => 'Scale wider images down to',

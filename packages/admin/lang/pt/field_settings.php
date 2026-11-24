@@ -55,6 +55,8 @@ return [
     'tags_hint' => 'Separadas por vírgulas. Vazio permite qualquer etiqueta.',
     'private' => 'Manter os ficheiros privados',
     'private_hint' => 'Guardados fora do disco público e servidos apenas a visitantes que possam abrir a página. Mudar esta opção move os ficheiros existentes.',
+    'per_language' => 'Um ficheiro por língua',
+    'per_language_hint' => 'Cada ficheiro é para uma língua, ou para todas. As páginas mostram os ficheiros da língua do visitante, senão os de todas as línguas, senão os da língua de recurso. O máximo de ficheiros conta por língua.',
     'min_width' => 'Largura mínima',
     'min_height' => 'Altura mínima',
     'max_width' => 'Reduzir imagens mais largas para',

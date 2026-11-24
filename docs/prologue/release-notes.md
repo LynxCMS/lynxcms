@@ -21,6 +21,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 - Locked fields: lock a field on every template (its **Advanced** settings, or `locked` in its settings) or on one template (`locked` on the template's field). Editors, MCP clients and the agent see the value and can't change it; only the site's code writes it. Publishing a draft and restoring a revision keep a locked field's live value, and `describe_schema` marks it. See [Locked fields](/basics/templates-and-fields#locked-fields).
 - A template's field can be `open_collapsible`: open, with a header that closes it. Locked combines with every display, so a field can be closed and locked.
 - `lazy` on a template's field draws a field that starts closed only once an editor opens it, for pages with big repeaters, matrices or page lists.
+- Images and files fields can have a file per language (`per_language`, **A file per language** in the field's settings): the editor shows a tab per language, templates read the current language's files with fallback, and a single-image field returns the visitor's language's image. `media.store` takes a `language`. See [A file per language](/basics/images-and-files#a-file-per-language).
 
 ## 0.1.57
 

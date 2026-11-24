@@ -4,9 +4,26 @@
 --}}
 @php($zoomDialog = 'media-zoom-'.strtolower($this->getId()))
 <div class="grid gap-3" x-data="{ zoom: { url: '', name: '' } }">
+    @if ($isPerLanguage && count($languages) > 1)
+        {{-- A file per language (ADR-0150): a tab per language shows its files and those for every language. --}}
+        <div class="flex flex-wrap items-center gap-1" role="group" aria-label="{{ __('lynx-media::admin.languages') }}" data-media-languages>
+            @foreach ([['code' => '', 'label' => __('lynx-media::admin.every_file')], ...$languages] as $tab)
+                @php($hasOwn = $tab['code'] !== '' && collect($items)->contains(fn ($item) => ($item['language'] ?? '') === $tab['code']))
+                <x-lynx-admin::ui.button size="xs" type="button" :variant="$language === $tab['code'] ? 'secondary' : 'ghost'" wire:click="$set('language', {{ Js::from($tab['code']) }})"
+                    aria-pressed="{{ $language === $tab['code'] ? 'true' : 'false' }}" data-media-language="{{ $tab['code'] }}">
+                    {{ $tab['label'] }}
+                    @if ($tab['code'] !== '')<span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $hasOwn])></span>@endif
+                </x-lynx-admin::ui.button>
+            @endforeach
+        </div>
+        @if ($fallsBackTo !== null)
+            <p class="text-muted-foreground text-sm" data-media-fallback>{{ $fallsBackTo === '' ? __('lynx-media::admin.no_language_file') : __('lynx-media::admin.falls_back_to', ['language' => $fallsBackTo]) }}</p>
+        @endif
+    @endif
     @if ($items !== [])
         <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4" @unless ($disabled) wire:sort="sort" @endunless>
             @foreach ($items as $index => $item)
+                @continue(! $this->isShown($item))
                 @php($url = app(\LynxCms\Media\MediaPaths::class)->url((string) $item['file']))
                 <li wire:key="file-{{ $item['key'] }}" wire:sort:item="{{ $item['key'] }}" @class(['bg-card overflow-hidden rounded-md border', 'opacity-50' => ! ($item['enabled'] ?? true)])>
                     @if ($isImages)
@@ -27,6 +44,10 @@
                     @endif
                     <div class="grid gap-1 p-2 text-xs">
                         <span class="truncate font-medium" title="{{ basename((string) $item['file']) }}">{{ basename((string) $item['file']) }}</span>
+                        @if ($isPerLanguage)
+                            @php($itemLanguage = collect($languages)->firstWhere('code', $item['language'] ?? ''))
+                            <span class="text-muted-foreground" data-file-language="{{ $item['language'] ?? '' }}">{{ $itemLanguage['label'] ?? __('lynx-media::admin.every_language') }}</span>
+                        @endif
                         <span class="text-muted-foreground">{{ $isImages ? ($item['width'] ?? 0).' × '.($item['height'] ?? 0).' · ' : '' }}{{ \LynxCms\Core\Support\LocalizedNumber::fileSize((int) ($item['bytes'] ?? 0)) }}</span>
                         @unless ($disabled)
                             <span class="flex flex-wrap gap-2">
@@ -81,6 +102,17 @@
                                 @endforeach
                             </x-lynx-admin::ui.tabs>
                         </div>
+                        @if ($isPerLanguage)
+                            <label class="grid gap-1 text-sm">
+                                <span class="font-medium">{{ __('lynx-media::admin.language') }}</span>
+                                <select class="blat-select" wire:model.live="items.{{ $index }}.language">
+                                    <option value="">{{ __('lynx-media::admin.every_language') }}</option>
+                                    @foreach ($languages as $option)
+                                        <option value="{{ $option['code'] }}">{{ $option['label'] }}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        @endif
                         <label class="grid gap-1 text-sm">
                             <span class="font-medium">{{ __('lynx-media::admin.tags') }}</span>
                             <input type="text" class="blat-input" wire:model="items.{{ $index }}.tags" placeholder="{{ $allowedTags !== [] ? implode(', ', $allowedTags) : __('lynx-media::admin.tags_placeholder') }}">

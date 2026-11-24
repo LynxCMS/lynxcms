@@ -55,6 +55,8 @@ return [
     'tags_hint' => 'Separadas por comas. Vacío permite cualquier etiqueta.',
     'private' => 'Mantener los archivos privados',
     'private_hint' => 'Se guardan fuera del disco público y solo se sirven a los visitantes que pueden abrir la página. Al cambiarlo se mueven los archivos existentes.',
+    'per_language' => 'Un archivo por idioma',
+    'per_language_hint' => 'Cada archivo es para un idioma, o para todos. Las páginas muestran los archivos del idioma del visitante, si no los de todos los idiomas, si no los del idioma de respaldo. El máximo de archivos cuenta por idioma.',
     'min_width' => 'Ancho mínimo',
     'min_height' => 'Alto mínimo',
     'max_width' => 'Reducir las imágenes más anchas a',
