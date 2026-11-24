@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms\Admin\Http;
 
+use Illuminate\Http\Request;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Http\SpreadsheetCell;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
+use LynxCms\Forms\SubmissionFilter;
 use LynxCms\Forms\SubmissionPresenter;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * A form's submissions as CSV, newest first: date, status, language, then one column per field,
- * read through each submission's own snapshot. What visitors typed never runs as a formula.
+ * read through each submission's own snapshot. What visitors typed never runs as a formula. The
+ * query string narrows them as the inbox does (SubmissionFilter: show, search, from, to); without
+ * one, every status is exported.
  *
  * @internal
  */
@@ -24,12 +28,13 @@ final readonly class ExportSubmissions
 
     public function __construct(private AdminAccess $access, private SubmissionPresenter $presenter) {}
 
-    public function __invoke(string $form): StreamedResponse
+    public function __invoke(Request $request, string $form): StreamedResponse
     {
         abort_unless($this->access->allows('forms.view'), 403);
         $columns = $this->columns($form);
+        $filter = SubmissionFilter::fromArray(['show' => 'all', ...$request->query(), 'form' => $form]);
 
-        return response()->streamDownload(function () use ($form, $columns): void {
+        return response()->streamDownload(function () use ($filter, $columns): void {
             $out = fopen('php://output', 'w');
 
             if ($out === false) {
@@ -37,7 +42,7 @@ final readonly class ExportSubmissions
             }
 
             fputcsv($out, ['Date', 'Status', 'Language', 'Account', ...array_values($columns)], escape: '');
-            Submission::query()->with('files')->where('form', $form)->orderByDesc('id')->chunk(self::CHUNK, function ($submissions) use ($out, $columns): void {
+            $filter->query()->with('files')->orderByDesc('id')->chunk(self::CHUNK, function ($submissions) use ($out, $columns): void {
                 foreach ($submissions as $submission) {
                     $values = array_column($this->presenter->lines($submission), 'value', 'name');
                     fputcsv($out, [

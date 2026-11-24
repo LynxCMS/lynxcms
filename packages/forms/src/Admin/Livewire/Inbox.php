@@ -4,29 +4,37 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms\Admin\Livewire;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Support\Value;
-use LynxCms\Forms\Actions\UpdateSubmission;
+use LynxCms\Forms\Admin\Livewire\Concerns\ActsOnSubmissions;
 use LynxCms\Forms\Definition\Form;
 use LynxCms\Forms\Models\Submission;
+use LynxCms\Forms\SubmissionFilter;
 use LynxCms\Forms\SubmissionPresenter;
 
 /**
- * The submissions inbox: filtered by form and status, searched by text, newest first, a page at
- * a time, with the selected ones marked read, archived or spam in one go.
+ * The submissions inbox: filtered by form, status, text and when they arrived, newest first, a
+ * numbered page at a time, with bulk actions on the selection (ActsOnSubmissions).
  *
  * @internal
  */
 final class Inbox extends Component
 {
+    use ActsOnSubmissions;
     use Notifies;
 
-    private const int PER_PAGE = 25;
+    public const array PAGE_SIZES = [25, 50, 100];
+
+    /** Periods the date filter offers, besides any time ("") and custom dates. */
+    public const array PERIODS = ['7_days', '30_days', 'this_month', 'last_month', 'custom'];
+
+    /** Pages linked on either side of the current one. */
+    private const int PAGE_WINDOW = 2;
 
     /** "open" (new and read), a status, or "all". */
     #[Url]
@@ -38,11 +46,23 @@ final class Inbox extends Component
     #[Url]
     public string $search = '';
 
+    /** "" for any time, a period of PERIODS, or "custom" with $from and $to. */
+    #[Url]
+    public string $period = '';
+
+    #[Url]
+    public string $from = '';
+
+    #[Url]
+    public string $to = '';
+
+    #[Url]
     public int $page = 1;
 
-    /** @var list<string> uuids */
-    public array $selected = [];
+    #[Url(as: 'per')]
+    public int $perPage = self::PAGE_SIZES[0];
 
+    /** The latest notice, for Notifies. */
     public ?string $status = null;
 
     public function boot(AdminAccess $access): void
@@ -52,43 +72,43 @@ final class Inbox extends Component
 
     public function updated(string $property): void
     {
-        if (in_array($property, ['show', 'form', 'search'], true)) {
+        if (in_array($property, ['show', 'form', 'search', 'period', 'from', 'to', 'perPage'], true)) {
             $this->page = 1;
-            $this->selected = [];
+            $this->clearSelection();
         }
     }
 
-    public function markSelected(string $status): void
+    public function goToPage(int $page): void
     {
-        foreach ($this->selected as $uuid) {
-            lynx()->run(UpdateSubmission::class, ['submission' => $uuid, 'status' => $status]);
-        }
-
-        $count = count($this->selected);
-        $this->selected = [];
-        $this->notify($count === 1 ? '1 submission updated.' : "{$count} submissions updated.");
+        $this->page = max(1, $page);
     }
 
     /** Every submission, in any status: what an empty filtered list offers. */
     public function clearFilters(): void
     {
-        $this->reset('form', 'search');
+        $this->reset('form', 'search', 'period', 'from', 'to');
         $this->show = 'all';
         $this->page = 1;
+        $this->clearSelection();
     }
 
     public function render(): View
     {
-        $query = $this->query();
+        $query = $this->filter()->query();
         $total = (clone $query)->count();
-        $submissions = $query->with('files')->orderByDesc('id')->forPage($this->page, self::PER_PAGE)->get();
+        $lastPage = max(1, (int) ceil($total / $this->pageSize()));
+        $this->page = min($this->page, $lastPage);
 
         return view('lynx-forms::admin.livewire.inbox', [
-            'submissions' => $submissions,
+            'submissions' => $query->with('files')->orderByDesc('id')->forPage($this->page, $this->pageSize())->get(),
             'forms' => array_map(fn (Form $form): string => $form->text('label')->in(), lynx()->forms()->all()),
-            'hasMore' => $total > $this->page * self::PER_PAGE,
             'total' => $total,
+            'lastPage' => $lastPage,
+            'pages' => $this->pageLinks($lastPage),
             'hasAny' => $total > 0 || Submission::query()->exists(),
+            'isPageSelected' => $this->isPageSelected(),
+            'canDelete' => app(AdminAccess::class)->allows('forms.manage'),
+            'exportQuery' => array_diff_key($this->filter()->toArray(), ['form' => true]),
         ]);
     }
 
@@ -98,31 +118,70 @@ final class Inbox extends Component
         return (new SubmissionPresenter)->summary($submission);
     }
 
-    /** @return Builder<Submission> */
-    private function query(): Builder
+    protected function filter(): SubmissionFilter
     {
-        $query = Submission::query();
+        [$from, $to] = $this->dates();
 
-        match ($this->show) {
-            'open' => $query->whereIn('status', ['new', 'read']),
-            'all' => null,
-            default => $query->where('status', $this->show),
+        return new SubmissionFilter($this->show, $this->form, $this->search, $from, $to);
+    }
+
+    /** @return list<string> */
+    protected function pageUuids(): array
+    {
+        return Value::strings($this->filter()->query()->orderByDesc('id')->forPage($this->page, $this->pageSize())->pluck('uuid')->all());
+    }
+
+    private function isPageSelected(): bool
+    {
+        $uuids = $this->pageUuids();
+
+        return $this->allMatching || ($uuids !== [] && array_diff($uuids, $this->selected) === []);
+    }
+
+    private function pageSize(): int
+    {
+        return in_array($this->perPage, self::PAGE_SIZES, true) ? $this->perPage : self::PAGE_SIZES[0];
+    }
+
+    /**
+     * The period as dates, in the app's time zone.
+     *
+     * @return array{0: CarbonImmutable|null, 1: CarbonImmutable|null}
+     */
+    private function dates(): array
+    {
+        $now = CarbonImmutable::now();
+        $date = fn (string $value): ?CarbonImmutable => preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1 ? CarbonImmutable::parse($value) : null;
+
+        return match ($this->period) {
+            '7_days' => [$now->subDays(6)->startOfDay(), null],
+            '30_days' => [$now->subDays(29)->startOfDay(), null],
+            'this_month' => [$now->startOfMonth(), null],
+            'last_month' => [$now->subMonthNoOverflow()->startOfMonth(), $now->subMonthNoOverflow()->endOfMonth()],
+            'custom' => [$date($this->from)?->startOfDay(), $date($this->to)?->endOfDay()],
+            default => [null, null],
         };
+    }
 
-        if ($this->form !== '') {
-            $query->where('form', $this->form);
+    /**
+     * The first, the last, and the pages around the current one; null marks a gap.
+     *
+     * @return list<int|null>
+     */
+    private function pageLinks(int $lastPage): array
+    {
+        $links = [];
+
+        foreach (range(1, $lastPage) as $page) {
+            $isShown = $page === 1 || $page === $lastPage || abs($page - $this->page) <= self::PAGE_WINDOW;
+
+            if ($isShown) {
+                $links[] = $page;
+            } elseif (end($links) !== null) {
+                $links[] = null;
+            }
         }
 
-        $search = mb_strtolower(trim($this->search));
-
-        if ($search !== '') {
-            // Answers are JSON: match the text as typed and as JSON escapes it (ã → ã).
-            $escaped = mb_strtolower(trim(Value::string(json_encode($search)), '"'));
-            $query->where(fn (Builder $q) => $q
-                ->whereRaw('LOWER(CAST(data AS TEXT)) LIKE ?', ['%'.$search.'%'])
-                ->orWhereRaw('LOWER(CAST(data AS TEXT)) LIKE ?', ['%'.$escaped.'%']));
-        }
-
-        return $query;
+        return $links;
     }
 }

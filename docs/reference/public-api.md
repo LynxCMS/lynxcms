@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 264 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 267 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -270,11 +270,13 @@ In `LynxCms\Forms`.
 | --- | --- | --- |
 | `Actions\CreateForm` | class | Creates a form in the builder: an unpublished page under the hidden forms page, named by the form's key. |
 | `Actions\DeleteSubmission` | class | Deletes a submission and, once that commits, its files. |
+| `Actions\DeleteSubmissions` | class | Deletes many submissions for good, with their files once that commits: a list, or every submission a filter matches, a chunk at a time. |
 | `Actions\ImportForm` | class | Creates a form from another site's export: forms.create, then its fields and messages with pages.save, unpublished and without recipients, so the owner adds them before publishing. |
 | `Actions\InstallForms` | class | Installs the form builder: its fields, templates and the hidden page that holds the forms. |
 | `Actions\PurgeSubmissions` | class | Deletes spam and archived submissions older than some days (lynx-forms.purge_after_days), with their files. |
 | `Actions\SubmitForm` | class | Receives a form's answers: validates them in the visitor's language, stores the submission with a snapshot of the form and its files on the private forms disk, and announces it after commit, which mails the people who handle it. |
 | `Actions\UpdateSubmission` | class | Sets a submission's status (new, read, archived, spam) and the editors' notes on it. |
+| `Actions\UpdateSubmissions` | class | Marks many submissions new, read, archived or spam in one go: a list, or every submission a filter matches, a chunk at a time. |
 | `Definition\Form` | class | A form defined in code: its fields, optional steps, who hears about submissions and what visitors read. |
 | `Definition\FormField` | class | A field of a code form, built fluently: FormField::text('name')-&gt;label(['pt' =&gt; 'Nome', 'en' =&gt; 'Name'])-&gt;required()-&gt;max(120). |
 | `Definition\FormStep` | class | One step of a multi-step form: a title and the fields it asks for, in order. |
@@ -286,6 +288,7 @@ In `LynxCms\Forms`.
 | `Models\SubmissionFile` | class | A file sent with a submission, on the private forms disk. |
 | `Results\FormResults` | class | A form's answers summed up per question, as a survey's results: how many chose each option, the average of a number, the range of a date, the latest written answers. |
 | `Rules\FormName` | class | A form's name, which is its key: lowercase letters, digits and single dashes, starting with a letter, as "contact-us". |
+| `SubmissionFilter` | class | Which submissions the inbox shows and its bulk actions and export act on: a form, a status ("open" is new and read, "all" every status), text in the answers, a date range, and the newest id when the selection was made, so a submission that arrives later is left alone. |
 | `Transfer\FormExporter` | class | A builder form's structure as data, for JSON: its name, title, messages and the blocks of its fields, with texts keyed by language code and the code of the site's default language, so another site can key them by its own. |
 | `Transfer\FormTransferError` | class | A form that can't be exported: one the site lacks, or one defined in code, which travels with the app's code instead. |
 

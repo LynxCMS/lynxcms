@@ -188,13 +188,17 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 ## In the admin
 
-**Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first. You can filter by status (new and read, archived, spam) and form, search any answer, and mark several at once. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes. Each form exports to CSV, where answers that start like a formula (`=`, `+`, `-`, `@`) get a leading quote so spreadsheets show them as text.
+**Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first, 25, 50 or 100 to a page. You can filter by status (new and read, archived, spam), form and when they arrived (the last 7 or 30 days, this month, last month, or between two dates), and search any answer. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes.
+
+Tick submissions to mark them read, archived or spam, or to delete them. The box in the table's header ticks the whole page; then **Select all** takes every submission the filters match, on every page. Submissions that arrive after that stay out of it. **Delete** first says how many submissions and files would go, and needs `forms.manage`. A deleted submission can't be brought back.
+
+Each form exports to CSV, with the inbox's filters, where answers that start like a formula (`=`, `+`, `-`, `@`) get a leading quote so spreadsheets show them as text.
 
 **Results**, next to each form in **Forms › Forms**, sums the answers up per question, as a survey's results: how many chose each option, the average of numbers, the range of dates, and the latest written answers, with spam left out. A form placed on several pages, such as one survey per course, filters the results by the page it was sent from. In code, `app(\LynxCms\Forms\Results\FormResults::class)->summarize($form, $pageId)` returns the same.
 
 ## Agents
 
-MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
+MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`, or many at once with `forms_update_submissions` (a list, or every submission a filter matches). `forms_delete_submissions` deletes many, after a dry run; it needs `forms.manage`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
 
 ## Permissions
 

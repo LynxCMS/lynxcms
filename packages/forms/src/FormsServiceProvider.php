@@ -21,11 +21,13 @@ use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Forms\Actions\CreateForm;
 use LynxCms\Forms\Actions\DeleteSubmission;
+use LynxCms\Forms\Actions\DeleteSubmissions;
 use LynxCms\Forms\Actions\ImportForm;
 use LynxCms\Forms\Actions\InstallForms;
 use LynxCms\Forms\Actions\PurgeSubmissions;
 use LynxCms\Forms\Actions\SubmitForm;
 use LynxCms\Forms\Actions\UpdateSubmission;
+use LynxCms\Forms\Actions\UpdateSubmissions;
 use LynxCms\Forms\Admin\AdminIntegration;
 use LynxCms\Forms\Agents\GetSubmissionTool;
 use LynxCms\Forms\Agents\ListSubmissionsTool;
@@ -60,7 +62,7 @@ final class FormsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->make(FieldTypeRegistry::class)->register(OptionsType::class);
-        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class);
+        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class, UpdateSubmissions::class, DeleteSubmissions::class);
         // A form page that would make a broken form is refused, and the save rolled back (ADR-0053).
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(PageFormValidator::class)->check($page));
         $permissions = $this->app->make(PermissionRegistry::class);
