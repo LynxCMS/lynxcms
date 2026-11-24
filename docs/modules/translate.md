@@ -135,7 +135,7 @@ Give them to roles in **Access › Roles**. Superusers have both. See [Permissio
 
 ## In code
 
-The module adds its services to Lynx's own translation, so [`pages.translate`](/ai/#translation) can use them by name:
+The module adds its services to Lynx's own translation, so [`pages.translate`](/ai/#translation) can use them by name. The call works anywhere in the app:
 
 ```php
 lynx()->pages->translate('/products/ledger', 'pt', draft: true, provider: 'deepl');

@@ -27,7 +27,7 @@ A role is a set of **grants**. A grant is a permission, optionally limited to so
 | `system.manage` | Change system pages. |
 | `menus.manage` | Manage menus (with `lynxcms/menus`). |
 
-The admin's **Roles** screen edits roles and **Users** assigns them. In code:
+The admin's **Roles** screen edits roles and **Users** assigns them. In code, run this once, in `php artisan tinker` (Laravel's interactive shell) or a seeder (a class that fills the database, run with `php artisan db:seed`):
 
 ```php
 use LynxCms\Core\Actions\Roles\AssignRoles;
@@ -42,7 +42,7 @@ lynx()->run(AssignRoles::class, ['user' => '42', 'roles' => ['course-editor']]);
 
 A user without a role can do nothing in Lynx: the admin answers 403, and the actions they run are refused. `php artisan lynx:superuser` creates a superuser, or makes an existing account one, on a new site or on one where nobody is.
 
-Visitors who are not signed in can run only the actions open to everyone, such as submitting a form. Code that writes on a visitor's behalf, such as a webhook that updates a page, says so:
+Visitors who are not signed in can run only the actions open to everyone, such as submitting a form. Code that writes on a visitor's behalf, such as the controller of a webhook that updates a page, says so:
 
 ```php
 use LynxCms\Contracts\Actions\Actor;
@@ -54,7 +54,7 @@ lynx()->actingAs(Actor::system(), fn () => $session->save());
 
 If your app lets visitors sign up (Fortify, Breeze or your own registration), the new users get no role. A user without a role has no rights, so they see the website like any visitor, and the admin answers 403.
 
-Lynx never gives a role on sign-up. To give members a role of your own, assign it in your registration code, such as Fortify's `CreateNewUser`, after the user is created:
+Lynx never gives a role on sign-up. To give members a role of your own, assign it in your registration code, such as Fortify's `CreateNewUser` in `app/Actions/Fortify/CreateNewUser.php`, after the user is created:
 
 ```php
 use LynxCms\Contracts\Actions\Actor;
@@ -70,6 +70,8 @@ Running it as the system records the assignment in the activity log. Anyone can 
 
 ## Checking permissions
 
+Check a permission anywhere in PHP code, such as a controller or a Livewire component:
+
 ```php
 Gate::allows('lynx.pages.edit', $page);
 ```
@@ -78,7 +80,7 @@ In Blade, `@can('lynx.pages.edit', $page)` does the same. [Showing an edit link 
 
 ## Your own permissions
 
-Register a permission in a service provider. It then shows in the Roles screen, and roles grant it like the built-in ones:
+Register a permission in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The permission then shows in the Roles screen, and roles grant it like the built-in ones:
 
 <<< @/snippets/review/BlogReviewServiceProvider.php#permission{php}
 

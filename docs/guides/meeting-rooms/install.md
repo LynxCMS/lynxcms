@@ -56,7 +56,7 @@ php artisan lynx:install --user=1
 
 ## The app's own provider
 
-The app's wiring lives in one provider, `App\Providers\RoomsServiceProvider`, added to `bootstrap/providers.php`. Each chapter adds its part there. It starts with two permissions:
+The app's wiring lives in one service provider, `app/Providers/RoomsServiceProvider.php`, added to `bootstrap/providers.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. Each chapter adds its part there. It starts with two permissions:
 
 ```php
 public function boot(): void
@@ -70,7 +70,7 @@ Registered permissions show in the admin's role editor next to Lynx's own, and t
 
 ## Roles
 
-Two roles cover the firm. Staff book rooms and never open the admin. Office managers open the admin, edit pages and manage everyone's bookings. The seeder makes them through Lynx's role action, so they land in the activity log like any other change:
+Two roles cover the firm. Staff book rooms and never open the admin. Office managers open the admin, edit pages and manage everyone's bookings. The seeder, `database/seeders/RoomsSchemaSeeder.php`, makes them through Lynx's role action, so they land in the activity log like any other change:
 
 ```php
 lynx()->run(SaveRole::class, ['name' => 'staff', 'label' => 'Staff', 'grants' => [['permission' => 'rooms.book']]]);
@@ -84,7 +84,7 @@ People join by invitation from the admin's Users screen, which sends a link to s
 
 ## Time zones
 
-Each office page has a time zone field, and each room an office. A booking's times are wall-clock times in its room's office: 10:00 in Montreal is 10:00 on the Montreal door screen and in the Montreal staff's calendars. The app reads the zone through the room:
+Each office page has a time zone field, and each room an office. A booking's times are wall-clock times in its room's office: 10:00 in Montreal is 10:00 on the Montreal door screen and in the Montreal staff's calendars. The app reads the zone through the room, in `app/Models/Room.php`:
 
 ```php
 public function timeZone(): string

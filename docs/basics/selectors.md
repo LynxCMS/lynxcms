@@ -11,7 +11,7 @@ Each selector runs as a single database query. It compares the values visitors s
 
 ## Getting pages
 
-The page API lives at `lynx()->pages`:
+The page API lives at `lynx()->pages`. It works anywhere in your app: a template's view, a controller, a job, or Tinker (`php artisan tinker`). The examples on this page run in any of them.
 
 ```php
 // One page, by path, id or selector.
@@ -36,7 +36,7 @@ Paths are written in the default language, whatever language the request is in. 
 
 `find()` returns a `PageArray`, which you can loop, count, filter and join (see [Views](/basics/views#listing-pages)).
 
-A page also finds its own children, with an optional selector:
+A page also finds its own children, with an optional selector. In a template's view, such as `resources/views/templates/post.blade.php`, `$page` is the page being shown:
 
 ```php
 $page->children();
@@ -230,7 +230,7 @@ Without `sort`, pages come in the order editors gave them among their siblings (
 
 ### Selectors from visitors
 
-Some apps take a whole selector from a request, such as an API that lets its clients filter pages. Give it a cap, so a client can't ask for every page at once:
+Some apps take a whole selector from a request, such as an API that lets its clients filter pages. In the controller, give it a cap, so a client can't ask for every page at once:
 
 ```php
 lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
@@ -240,11 +240,11 @@ The usual case is different: your selector, with a visitor's words in it. Never 
 
 ## Filters and pagination
 
-A list that visitors filter, sort and page through is a controller like any other. Validate the query string, map each choice to a selector clause you wrote yourself, and keep visitors' text out of the selector's syntax. `start` and `limit` select one page of results, and `total()` counts every match, so Laravel's paginator can draw the links:
+A list that visitors filter, sort and page through is a controller like any other. Validate the query string, map each choice to a selector clause you wrote yourself, and keep visitors' text out of the selector's syntax. `start` and `limit` select one page of results, and `total()` counts every match, so Laravel's paginator can draw the links. The controller goes in `app/Http/Controllers/PostIndexController.php`:
 
 <<< @/snippets/advanced/PostIndexController.php#controller{php}
 
-The view uses the paginator like any Eloquent one:
+The view, `resources/views/blog/index.blade.php`, uses the paginator like any Eloquent one:
 
 <<< @/snippets/advanced/views/blog/index.blade.php{blade}
 

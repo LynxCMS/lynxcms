@@ -158,7 +158,7 @@ The menu cache, persistent connections and fragments bring the render close to S
 
 Each worker then holds a connection open, so keep the number of workers (on every server) below PostgreSQL's `max_connections`. A connection pooler (PgBouncer, or the pooled endpoint of a managed database) gives the same saving without that limit.
 
-**Menus in fragments** skip the rest of the menu work on every page. Menu links mark the current page, so the fragment varies by page:
+**Menus in fragments** skip the rest of the menu work on every page. Menu links mark the current page, so the fragment around the tag in your layout varies by page:
 
 ```blade
 @lynxCache('top-menu', ['vary' => [$page->id]])
@@ -184,6 +184,8 @@ With `LYNX_PAGE_CACHE_DEBUG=true`, responses carry `X-Lynx-Cache: HIT`, `MISS`, 
 
 ## Template rules
 
+Template rules go in the `pages` array of `config/lynx-cache.php`. Publish that file with `php artisan vendor:publish --tag=lynx-cache-config`.
+
 ```php
 'templates' => [
     '*' => [],
@@ -199,7 +201,7 @@ A template missing from the list, with no `'*'` entry, is never stored.
 
 Editors with the `page_cache.manage` permission change the rules in the admin, under **Settings > Page cache**, without a deploy. Rules saved there win over the config for the same template, and a template switched off there is not stored even if the config lists it. The screen has four tabs. **Overview** shows how many pages are stored, in all and per template, and clears them. **Rules** lists each template with its rule summed up ("Cached for 5 minutes · a change clears pages above it"); open one to change it. **Page parts** lists stored fragments, and **Web server setup** prints the web server rules. The page editor links to the Overview for pages that are stored.
 
-From code, MCP or the agent, the `page_cache.save_rules` action saves the same rules:
+From code, MCP or the agent, the `page_cache.save_rules` action saves the same rules. In code, run it once, in `php artisan tinker` (Laravel's interactive shell) or a seeder (a class that fills the database):
 
 ```php
 lynx()->run(SavePageCacheRules::class, [
@@ -265,7 +267,7 @@ A page that was rendering while a clear ran is not stored, so a slow request can
 
 ### When your own data changes
 
-Lynx clears pages when Lynx content changes. It can't see your app's own tables. If a post page shows comments stored by your app, clear the post when a comment arrives:
+Lynx clears pages when Lynx content changes. It can't see your app's own tables. If a post page shows comments stored by your app, clear the post when a comment arrives, from a listener in `app/Listeners/ClearPostOnComment.php`:
 
 <<< @/snippets/modules/ClearPostOnComment.php#listener{php}
 
@@ -340,7 +342,7 @@ if (window.livewireScriptConfig?.csrf === 'lynx-cache-csrf-placeholder') {
 
 ## Islands
 
-An island is a part of a stored page rendered for each visitor: a cart, a greeting, or a form that must be fresh. On a page that may be stored, it prints a placeholder; the refresh script fetches every island of the page in one request, with the token, and puts them in. Signed in users, and pages that are not stored, get the island rendered in place.
+An island is a part of a stored page rendered for each visitor: a cart, a greeting, or a form that must be fresh. On a page that may be stored, it prints a placeholder; the refresh script fetches every island of the page in one request, with the token, and puts them in. Signed in users, and pages that are not stored, get the island rendered in place. Islands go in a template's view or the layout:
 
 ```blade
 <x-lynx-island view="partials.cart" :with="['compact' => true]">
@@ -362,7 +364,7 @@ A form in an island is rendered for each visitor, so the honeypot's "sent too fa
 
 ## Fragment cache
 
-For pages that are not stored whole, or parts that cost a lot to render, keep fragments:
+For pages that are not stored whole, or parts that cost a lot to render, keep fragments in any Blade view, such as a template's view or the layout:
 
 ```blade
 @lynxCache('main-menu', ['vary' => [$page->id]])
@@ -373,6 +375,8 @@ For pages that are not stored whole, or parts that cost a lot to render, keep fr
     @foreach (lynx()->pages->find('template=course, sort=title') as $course) … @endforeach
 @endLynxCache
 ```
+
+In PHP, `remember()` does the same anywhere in the app, such as a controller:
 
 ```php
 $html = lynx()->cache()->remember('related-'.$page->id, fn () => view('partials.related', ['page' => $page])->render(), dependsOn: ['page:'.$page->id]);
@@ -388,7 +392,7 @@ The page cache screen's **Page parts** tab lists stored fragments: their name, l
 
 ## Edge caches
 
-`edge_ttl` lets an edge cache, such as Laravel Cloud's Cloudflare edge, keep stored pages for that many seconds:
+`edge_ttl`, in the `pages` array of `config/lynx-cache.php`, lets an edge cache, such as Laravel Cloud's Cloudflare edge, keep stored pages for that many seconds:
 
 ```php
 'edge_ttl' => 30,

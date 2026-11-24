@@ -11,7 +11,7 @@ After each course, the school wants to know how it went. This chapter adds a fee
 
 Staff build forms in **Forms › Builder**: each question is a block (choose one, choose several, long text and so on), with its label in both languages. The survey's setting **Signed-in visitors only, one answer each** asks guests to sign in and refuses a second answer from the same account.
 
-The starter seeds the survey so it has one to show. This is what the builder stores:
+The starter seeds the survey so it has one to show. This is what the builder stores, from `database/seeders/AtlasSurveySeeder.php`:
 
 <<< @/snippets/training/database/seeders/AtlasSurveySeeder.php#survey{php}
 
@@ -19,7 +19,7 @@ A form built here is used like a form written in PHP: by its name, in the visito
 
 ## Only for the people who took the course
 
-"Signed in" isn't enough: only people who booked should answer. The survey goes on the course's **materials** page, which only they can open (chapter 8):
+"Signed in" isn't enough: only people who booked should answer. The survey goes on the course's **materials** page, which only they can open (chapter 8). In `resources/views/templates/materials.blade.php`:
 
 ```blade
 <livewire:lynx-form form="course-feedback" :page-id="$page->id" />
@@ -31,7 +31,7 @@ So the rule that guards the materials also guards the survey. The `page-id` keep
 
 **Forms › Forms** has a **Results** button next to each form. It sums the answers up per question: how many chose each rating, how the pace felt, what worked best, and the latest comments. Spam is left out. Because the survey sits on every course's materials page, the results filter by course.
 
-The owner can ask an AI assistant too, through the MCP server: "how did the yoga teacher training survey go?" uses the `summarize_form` tool with the course's page. In code, the same numbers come from `FormResults`:
+The owner can ask an AI assistant too, through the MCP server: "how did the yoga teacher training survey go?" uses the `summarize_form` tool with the course's page. In code, such as a controller or `php artisan tinker`, the same numbers come from `FormResults`:
 
 ```php
 use LynxCms\Forms\Results\FormResults;

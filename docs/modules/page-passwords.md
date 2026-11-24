@@ -14,7 +14,7 @@ The `lynxcms/page-password` module asks visitors for a password before showing a
 composer require lynxcms/page-password
 ```
 
-Then choose the templates whose pages may have a password, in **Settings > Page passwords**, or with the action (also an MCP and agent tool):
+Then choose the templates whose pages may have a password, in **Settings > Page passwords**, or with the action (also an MCP and agent tool). Run it once, in `php artisan tinker` (Laravel's interactive shell) or a seeder (a class that fills the database, run with `php artisan db:seed`):
 
 ```php
 lynx()->run(\LynxCms\PagePassword\Actions\EnablePagePassword::class, ['template' => 'members']);
@@ -37,7 +37,7 @@ In the admin, protected pages have a key in the page tree, and pages protected f
 
 ## In templates
 
-The field reads as a `StoredPassword`:
+In the template's view, such as `resources/views/templates/members.blade.php`, the field reads as a `StoredPassword`:
 
 ```blade
 @if ($page->page_password->isSet())

@@ -18,6 +18,8 @@ php artisan storage:link
 
 ## Adding fields
 
+Create the fields once, in `php artisan tinker` or a seeder (a Laravel class that fills the database, run with `php artisan db:seed`):
+
 ```php
 lynx()->fields->create('gallery', 'images', settings: ['max_files' => 12, 'tags' => ['hero', 'detail']]);
 lynx()->fields->create('cover', 'images', settings: ['max_files' => 1, 'min_width' => 800]);
@@ -44,7 +46,7 @@ Files are stored with their page, so a page must exist before it can hold them. 
 
 ## Showing images
 
-The `<x-lynx-image>` component prints an `<img>` tag with the size you ask for, its `width` and `height`, a `srcset` for sharp images on every screen, and lazy loading:
+The `<x-lynx-image>` component prints an `<img>` tag with the size you ask for, its `width` and `height`, a `srcset` for sharp images on every screen, and lazy loading. Use it in the template's view, such as `resources/views/templates/post.blade.php`:
 
 ```blade
 <x-lynx-image :image="$page->cover" :width="1200" sizes="100vw" />
@@ -76,7 +78,7 @@ Sizes are made the first time their file or URL is asked for, always from the or
 
 ## Tags
 
-Tags group the files of a field. `tagged()` keeps the files with a tag:
+Tags group the files of a field. `tagged()` keeps the files with a tag, here in a template's view:
 
 ```blade
 @foreach ($page->gallery->tagged('hero') as $image)
@@ -86,7 +88,7 @@ Tags group the files of a field. `tagged()` keeps the files with a tag:
 
 ## Downloads per language
 
-For documents in several languages, tag each file with its language's code (`en`, `pt`). `inLanguage()` keeps the files of the current language; when there are none, it tries the next language of the fallback chain, then the files tagged with no language. `withTags()` keeps the files that have every tag given:
+For documents in several languages, tag each file with its language's code (`en`, `pt`). `inLanguage()` keeps the files of the current language; when there are none, it tries the next language of the fallback chain, then the files tagged with no language. `withTags()` keeps the files that have every tag given. In a template's view:
 
 ```blade
 @php($sheet = $page->downloads->withTags('a4', 'color')->inLanguage()->first())
@@ -98,7 +100,7 @@ For documents in several languages, tag each file with its language's code (`en`
 
 ## Finding pages by their files
 
-Selectors look inside images and files, one item per file:
+Selectors look inside images and files, one item per file. These calls work anywhere in your app: a view, a controller, a job:
 
 ```php
 lynx()->pages->find('gallery.tags=hero');
@@ -110,7 +112,7 @@ See [Finding Pages](/basics/selectors#inside-repeaters-blocks-and-files) for eve
 
 ## Storing files from code
 
-To attach a file from code, such as an image an importer downloads, store it with the `media.store` action, then add the returned entry to the field:
+To attach a file from code, such as an image an importer downloads, store it with the `media.store` action, then add the returned entry to the field. The code runs wherever your import does, such as an Artisan command (a `php artisan` command of your app), a queued job or Tinker:
 
 <<< @/snippets/media/store-from-code.php#store{php}
 
@@ -122,7 +124,7 @@ URLs are downloaded only from public web servers: `http` and `https` on their us
 
 ## Private files
 
-Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting:
+Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
 
 ```php
 lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
@@ -141,7 +143,7 @@ Private files cost a PHP request each, so keep public images (logos, photos on p
 
 ### Temporary links
 
-A temporary link hands one file to whoever holds it, until it runs out, without asking the page's rules. Use it for a gated download: a visitor fills a form, and gets a link to a private report they could not open otherwise.
+A temporary link hands one file to whoever holds it, until it runs out, without asking the page's rules. Use it for a gated download: a visitor fills a form, and gets a link to a private report they could not open otherwise. Make the link where you answer the form, such as a controller or an event listener:
 
 ```php
 $file = $page->report->inLanguage('pt')->first();

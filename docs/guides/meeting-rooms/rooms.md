@@ -52,7 +52,7 @@ Once the site is live, the schema moves between environments as YAML with `lynx:
 
 ## A Zap model for each room page
 
-Zap hangs schedules on an Eloquent model with its `HasSchedules` trait. Lynx pages are domain objects, not Eloquent models, so the app keeps a small `rooms` table, one row per room page, and reads everything else from the page:
+Zap hangs schedules on an Eloquent model with its `HasSchedules` trait. Lynx pages are domain objects, not Eloquent models, so the app keeps a small `rooms` table, one row per room page, and reads everything else from the page. The model is `app/Models/Room.php`:
 
 ```php
 final class Room extends Model
@@ -78,13 +78,13 @@ The page is read inside `withoutRules()` because the Rooms section is behind a p
 
 ## Keeping it in step
 
-Lynx fires events after a page action commits. One listener passes them on:
+Lynx fires events after a page action commits. One listener passes them on. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The listener is registered in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`:
 
 ```php
 Event::listen([PageSaved::class, PageRestored::class, PageTemplateSwitched::class, PageTrashed::class, PageDeleted::class], SyncRoomWithPage::class);
 ```
 
-`App\Rooms\RoomSync` creates the room's row when a room page is saved, removes it with its schedules when the page goes to the trash, and brings it back on restore. On every save it rewrites the room's availability from the opening hours, one Zap availability schedule per group of weekdays that share hours:
+`App\Rooms\RoomSync` creates the room's row when a room page is saved, removes it with its schedules when the page goes to the trash, and brings it back on restore. On every save it rewrites the room's availability from the opening hours, one Zap availability schedule per group of weekdays that share hours. The method is in `app/Rooms/RoomSync.php`:
 
 ```php
 private function rewriteAvailability(Room $room, Page $page): void
@@ -105,7 +105,7 @@ Editors never see this. They change the Friday hours, save, and the booking page
 
 ## A room's page
 
-The room's template shows its next open days with their meetings and free times. A view composer prepares the data, so the Blade view only prints:
+The room's template shows its next open days with their meetings and free times. A view composer (a class that hands data to a view before it renders) prepares the data, so the Blade view only prints. The provider's `boot()` method registers it:
 
 ```php
 View::composer('templates.room', RoomSchedule::class);

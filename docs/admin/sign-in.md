@@ -49,7 +49,7 @@ The email needs a working mail setup in your app. Without one, use temporary pas
 
 Every form that sets a password (reset, invitation, new password, **Account security**) follows your app's `Password::defaults()` and lists its rules under the inputs. Each rule is ticked as the user types, and a last line says whether both passwords match. The server checks the rules again when the form is sent; "not found in known data breaches" is checked only then.
 
-Without `Password::defaults()`, Laravel asks for 8 characters. Set your own in a service provider:
+Without `Password::defaults()`, Laravel asks for 8 characters. Set your own in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
 
 ```php
 use Illuminate\Validation\Rules\Password;
@@ -67,7 +67,7 @@ The user is required to set a new password on first sign-in, before any other ad
 
 **New temporary password**, on each user's row, replaces the password of a user who forgot theirs. Their current password stops working, and a pending invitation is cancelled. It isn't offered on your own row: change your own on the **Account security** screen, in your menu.
 
-In code, both are actions, for superusers only and never offered to agents. The password is in the result, and the activity log never holds it:
+In code, both are actions, for superusers only and never offered to agents. The password is in the result, and the activity log never holds it. The calls work anywhere in the app, such as a console command or `php artisan tinker`:
 
 ```php
 use LynxCms\Admin\Auth\CreateUserWithTemporaryPassword;
@@ -93,6 +93,8 @@ Users stay your app's: Lynx uses the model of the `users` auth provider. For eac
 | Invitations | An Eloquent model with `name`, `email` and `password`. |
 | Two-factor authentication | Fortify's `TwoFactorAuthenticatable` trait. |
 | Passkeys | Fortify's `PasskeyAuthenticatable` trait and the `PasskeyUser` contract. |
+
+With all four, the model in `app/Models/User.php` looks like this:
 
 ```php
 use Illuminate\Foundation\Auth\User as Authenticatable;

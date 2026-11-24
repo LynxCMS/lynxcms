@@ -7,13 +7,15 @@ description: Every field type, its settings, and how its values read in template
 
 A field's **type** decides what it stores, how editors fill it in, and what your templates read. This page lists every type, with its settings. [Templates and Fields](/basics/templates-and-fields) explains how to create fields and attach them to templates.
 
-Settings go in the field's settings panel in the admin (**Settings › Fields**), or in the `settings` array in code:
+Settings go in the field's settings panel in the admin (**Settings › Fields**), or in the `settings` array in code. Code that creates a field runs once, in `php artisan tinker` or a seeder (a Laravel class that fills the database):
 
 ```php
 lynx()->fields->create('price', 'decimal', settings: ['places' => 2, 'min' => 0]);
 ```
 
 `lynx()->fields->types()` returns every type with its description and settings, which is also what the MCP server and the AI agent read.
+
+The Blade examples on this page go in a template's view, such as `resources/views/templates/course.blade.php`, where `$page` is the page being shown.
 
 ## Shared and translatable
 
@@ -214,7 +216,7 @@ In the admin, editors search for pages to add and drag them into order, or move 
 
 Selectors take a page's path or id: `category=/categories/news`, `related=42`. `related.count>=2` counts the references.
 
-The other way round, `lynx()->pages->backlinks()` lists the pages that reference a page through any page field, of any status, lowest id first. It takes a page or a list of pages, a `limit` (50 by default), and a selector to narrow them. `total()` counts them past the limit. With `branch: true`, each page counts with every page below it, and references from inside those branches or from the trash are left out. The trash confirmation lists these pages:
+The other way round, `lynx()->pages->backlinks()` lists the pages that reference a page through any page field, of any status, lowest id first. It takes a page or a list of pages, a `limit` (50 by default), and a selector to narrow them. `total()` counts them past the limit. With `branch: true`, each page counts with every page below it, and references from inside those branches or from the trash are left out. The trash confirmation lists these pages. Your code can call it anywhere in your app, such as a view or a controller:
 
 ```php
 $linking = lynx()->pages->backlinks('/courses/delivery/', limit: 10, selector: 'template=course');
@@ -272,7 +274,7 @@ Each item lists fields of the site, so create them first:
 
 In the admin, the repeater's field screen opens on its fields, in order, each with **Required** and a width (Half, Third, Full…). Search for an existing field to add it, or create a new one on the spot. The **Preview** tab shows an item as editors see it, and **Limits and display** sets how many items, the add button's text in every language and whether items start open.
 
-A field's `group` starts a box in the admin around it and the fields after it, up to the next group: a heading (`label`, required), help above the fields (`description`) and notes below them (`notes`), each text or one per language, and a `link` after the notes (`label` and an http or https `url`), which opens in a new tab. Use it to set apart fields that belong together, such as a condition's two fields. Fields before the first group show as usual.
+A field's `group` starts a box in the admin around it and the fields after it, up to the next group: a heading (`label`, required), help above the fields (`description`) and notes below them (`notes`), each text or one per language, and a `link` after the notes (`label` and an http or https `url`), which opens in a new tab. Use it to set apart fields that belong together, such as a condition's two fields. Fields before the first group show as usual. These entries go in the repeater's `fields` setting:
 
 ```php
 ['name' => 'show_if', 'width' => 50, 'group' => [
@@ -292,7 +294,7 @@ Templates loop over the items that are switched on, in order. Each item reads it
 @endforeach
 ```
 
-Translatable fields inside an item keep one value per language and fall back per field. To save items from code, give each one its `values`; pass back an item's `key` to update it, and leave it out for a new item:
+Translatable fields inside an item keep one value per language and fall back per field. To save items from code, give each one its `values`; pass back an item's `key` to update it, and leave it out for a new item. This runs anywhere in your app, such as a controller, a job, or a seeder:
 
 ```php
 $page->credits = [
@@ -356,7 +358,7 @@ An icon from the admin's [Lucide](https://lucide.dev/icons) set, such as `calend
 
 ### `component`
 
-A Livewire component of your app that editors place on a page, with settings they fill in. Register the components editors may choose in a service provider:
+A Livewire component of your app that editors place on a page, with settings they fill in. Register the components editors may choose in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
 
 ```php
 use Illuminate\Contracts\JsonSchema\JsonSchema;

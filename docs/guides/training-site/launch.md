@@ -15,7 +15,7 @@ Most visitors are guests reading the same pages. The page cache stores each page
 LYNX_PAGE_CACHE=true
 ```
 
-Then say which pages are kept and what a change clears:
+Then say which pages are kept and what a change clears, in a seeder, `database/seeders/AtlasCacheSeeder.php`:
 
 <<< @/snippets/training/database/seeders/AtlasCacheSeeder.php#rules{php}
 
@@ -25,7 +25,7 @@ Signed-in users never get stored pages, so members, staff and their previews alw
 
 ## Islands keep the live parts live
 
-A stored page is the same for every guest, but some parts are not: the seats left on a session, and the forms, whose CSRF token and honeypot timing must be fresh. Those parts are **islands**. The stored page holds a placeholder, and one request after the page loads fills in every island of the page for that visitor:
+A stored page is the same for every guest, but some parts are not: the seats left on a session, and the forms, whose CSRF token and honeypot timing must be fresh. Those parts are **islands**. The stored page holds a placeholder, and one request after the page loads fills in every island of the page for that visitor. These lines come from `resources/views/templates/session.blade.php` and `resources/views/templates/course.blade.php`:
 
 ```blade
 <x-lynx-island view="partials.session.booking" />

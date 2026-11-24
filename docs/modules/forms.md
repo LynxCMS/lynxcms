@@ -10,11 +10,11 @@ With `lynxcms/forms`, visitors can send you messages, requests and files from yo
 
 ## Defining a form
 
-A form is a PHP class. Texts are a string, or a map of [language codes](/basics/languages#adding-a-language) to text, read in the visitor's language with fallback. This quote request has two steps, a field that shows only for livestreams, a repeating group and file uploads:
+A form is a PHP class. Texts are a string, or a map of [language codes](/basics/languages#adding-a-language) to text, read in the visitor's language with fallback. This quote request, in `app/Forms/QuoteForm.php`, has two steps, a field that shows only for livestreams, a repeating group and file uploads:
 
 <<< @/snippets/modules/QuoteForm.php#form{php}
 
-Register it in a service provider:
+Register it in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
 
 ```php
 lynx()->forms()->register(QuoteForm::class);
@@ -45,7 +45,7 @@ Each block has a label and help text in every language, a name (made from the la
 
 The form's own settings say who receives submissions (emails, or else everyone who may see submissions), what visitors read after sending or when sending fails, and the confirmation mailed to them.
 
-Templates let editors pick a form with the `form` field, and render it:
+Templates let editors pick a form with the `form` field, and render it in the template's view, such as `resources/views/templates/contact.blade.php`:
 
 ```blade
 <x-lynx-form :form="$page->form" />
@@ -87,6 +87,8 @@ Texts are keyed by language code. Texts in the other site's default language bec
 
 ## Placing a form
 
+A template's view can also place the form's Livewire component itself. A Livewire component is a PHP class with a Blade view that updates in the browser without reloading the page.
+
 ```blade
 <livewire:lynx-form form="quote" :page-id="$page->id" />
 ```
@@ -111,7 +113,7 @@ Or publish the views (`php artisan vendor:publish --tag=lynx-forms-views`) and s
 
 ### Adding behavior
 
-Extend the component for live extras, such as a price estimate, and show them beside the form:
+Extend the component for live extras, such as a price estimate, and show them beside the form. The class goes in `app/Livewire/QuoteRequest.php`:
 
 ```php
 use Livewire\Attributes\Computed;
@@ -136,6 +138,8 @@ Two more methods are there for subclasses to override:
 
 - `fieldOptions(FormField $field)` gives a choice's options on this component. Return fewer than the form has to offer only some of them on this page, such as the languages a document exists in. The component shows and checks the options it gives, so an answer outside them is refused before anything is stored.
 - `afterSent(Submission $submission)` runs once the submission is stored, in the same request, so the component can answer the visitor with something made for them, such as a [temporary link](/basics/images-and-files#temporary-links). It doesn't run for spam, which is never stored.
+
+This component, in `app/Livewire/ReportRequest.php`, uses both:
 
 ```php
 use LynxCms\Forms\Definition\FormField;

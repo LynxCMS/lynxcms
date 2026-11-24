@@ -74,7 +74,7 @@ lynx()->pages->find('template=post, published_on>=2026-01-01, sort=-published_on
 
 This one reads as "pages on the `post` template, published on 1 January 2026 or later, newest first, at most ten". Each part between commas is a condition, and a page must match all of them.
 
-In a view, you loop over the result with `@foreach`:
+In a template's view, such as `resources/views/templates/blog.blade.php`, you loop over the result with `@foreach`:
 
 ```blade
 @foreach (lynx()->pages->find('template=post, sort=-published_on, limit=10') as $post)

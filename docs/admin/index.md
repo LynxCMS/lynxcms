@@ -182,7 +182,7 @@ The defaults come from `config/lynx-admin.php`, so a developer can ship them wit
 ],
 ```
 
-What a superuser saves wins over the config; an empty field goes back to it. Uploaded logos are kept in private storage and served by the admin, so no `storage:link` is needed; an uploaded SVG is served sandboxed, so it cannot run scripts. The same settings can be changed with the `admin.branding` action, from code or an agent:
+What a superuser saves wins over the config; an empty field goes back to it. Uploaded logos are kept in private storage and served by the admin, so no `storage:link` is needed; an uploaded SVG is served sandboxed, so it cannot run scripts. The same settings can be changed with the `admin.branding` action, from code or an agent. The call works anywhere in the app:
 
 ```php
 use LynxCms\Admin\Branding\SaveBranding;

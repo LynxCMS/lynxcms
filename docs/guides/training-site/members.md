@@ -11,17 +11,17 @@ Members and staff share one users table and one sign-in. **Roles** decide who op
 
 ## Sign-up and sign-in
 
-The site signs everyone in with Laravel Fortify, at the site's root: `/login`, `/register`, `/forgot-password`. Publish its config with registration on:
+The site signs everyone in with Laravel Fortify, at the site's root: `/login`, `/register`, `/forgot-password`. Publish its config, `config/fortify.php`, with registration on:
 
 <<< @/snippets/training/config/fortify.php{php}
 
 Because `config/fortify.php` exists, Lynx's admin stops showing its own sign-in screens and uses these (`LYNX_ADMIN_AUTH=auto`). Staff sign in at `/login` too, and a staff member who opens `/lynx` while signed out comes back to the admin after signing in. Lynx keeps inviting staff from **Access › Users**, and keeps the admin's **Account security** screen. See [Who signs users in](/admin/sign-in#who-signs-users-in). Staff set up two-factor authentication there before any other admin screen, because the user model has Fortify's `TwoFactorAuthenticatable` trait and `config/fortify.php` turns the feature on (see [Requiring two-factor authentication](/admin/sign-in#requiring-two-factor-authentication)); members never open the admin, so they are not asked.
 
-A provider gives Fortify the site's screens and its sign-up action:
+A provider, `app/Providers/FortifyServiceProvider.php`, gives Fortify the site's screens and its sign-up action:
 
 <<< @/snippets/training/app/Providers/FortifyServiceProvider.php#provider{php}
 
-The screens are Blade views in the Bloom style, around one card. The sign-in screen, for example:
+The screens are Blade views in `resources/views/auth`, in the Bloom style, around one card. The sign-in screen, `login.blade.php`, for example:
 
 <<< @/snippets/training/resources/views/auth/login.blade.php{blade}
 
@@ -31,9 +31,11 @@ A new account gets no role. A user without a role has no rights in Lynx: they se
 
 ## The members area
 
-Fortify sends members to `/account` after they sign in. It is a route of the app's, listing the member's bookings:
+Fortify sends members to `/account` after they sign in. It is a route of the app's, in `routes/web.php`, listing the member's bookings:
 
 <<< @/snippets/training/routes/web.php#account{php}
+
+Its controller is `app/Http/Controllers/AccountController.php`:
 
 <<< @/snippets/training/app/Http/Controllers/AccountController.php#account{php}
 
@@ -46,7 +48,11 @@ Each course has a child page on the `materials` template: reading lists, prepara
 - A **visibility rule** leaves materials pages out of everything visitors find (lists, menus, search, page references) unless they booked that course.
 - A **page gate** guards the URL, and the page's private downloads: guests are sent to sign in, and members who didn't book see what the page is for.
 
+The rule is a class, `app/Members/CourseMaterials.php`:
+
 <<< @/snippets/training/app/Members/CourseMaterials.php#rule{php}
+
+The `boot()` method of `app/Providers/AtlasServiceProvider.php` registers the rule and the gate:
 
 <<< @/snippets/training/app/Providers/AtlasServiceProvider.php#members{php}
 
@@ -54,13 +60,13 @@ Each course has a child page on the `materials` template: reading lists, prepara
 
 ### Downloads only for them
 
-Materials pages have a `downloads` field with **Private** on (chapter 2's seeder sets it). Files in a public field have public addresses, which anyone with a link could share. A private field's files live off the public disk, and their links go through Lynx, which asks the materials page's own questions. People who booked get the file. Guests are sent to sign in by the same gate, and other members see what the page is for.
+Materials pages have a `downloads` field with **Private** on (chapter 2's seeder sets it). Files in a public field have public addresses, which anyone with a link could share. A private field's files live off the public disk, and their links go through Lynx, which asks the materials page's own questions. People who booked get the file. Guests are sent to sign in by the same gate, and other members see what the page is for. Chapter 2's `database/seeders/AtlasSchemaSeeder.php` creates the field:
 
 ```php
 lynx()->fields->create('downloads', 'files', label: 'Downloads', settings: ['private' => true, 'extensions' => 'pdf zip mp3 mp4']);
 ```
 
-The view lists them like any files, and `$file->url()` gives the private address:
+The view, `resources/views/templates/materials.blade.php`, lists them like any files, and `$file->url()` gives the private address:
 
 <<< @/snippets/training/resources/views/templates/materials.blade.php{blade}
 

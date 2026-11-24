@@ -7,7 +7,7 @@ description: Page statuses, drafts, revisions, scheduled publishing, the trash, 
 
 Editors rarely change a live page in one step. Lynx gives them statuses that take a page offline or out of lists, drafts that wait for review, revisions to compare and restore, publishing on a schedule, and a trash to recover from mistakes.
 
-Each of these is an [action](/getting-started/concepts#actions), so it checks the user's permissions, can run as a dry run, and shows up in the activity log, whether an editor clicks a button or your code calls it.
+Each of these is an [action](/getting-started/concepts#actions), so it checks the user's permissions, can run as a dry run, and shows up in the activity log, whether an editor clicks a button or your code calls it. The code on this page works anywhere in your app: Tinker, a seeder, a controller, a queued job.
 
 ## Page status
 

@@ -44,7 +44,7 @@ The **Sitemap** screen sets the URLs per file, the grouping and the templates le
 
 ## In code
 
-Leave pages out in a service provider:
+Leave pages out in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
 
 ```php
 use LynxCms\Core\Models\Language;

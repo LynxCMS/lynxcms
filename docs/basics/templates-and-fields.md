@@ -9,7 +9,7 @@ Templates and fields decide what each kind of page holds. A course has a title, 
 
 Every page uses a **template**, and a template is a list of **fields**. Together they are the site's *schema*: what each kind of page holds and how editors fill it in. If you have used Laravel's models, a template plays the part of a model's database table, and a field the part of a column, except that you change them while the site runs and Lynx creates the tables for you.
 
-You can build the schema in the admin, under **Settings › Fields** and **Settings › Templates**, or in PHP. Both run the same actions, so they validate the same way and show up in the same activity log. The examples on this page use PHP; every setting has a matching control in the admin.
+You can build the schema in the admin, under **Settings › Fields** and **Settings › Templates**, or in PHP. Both run the same actions, so they validate the same way and show up in the same activity log. The examples on this page use PHP; every setting has a matching control in the admin. Run them once, in `php artisan tinker` or a seeder (a Laravel class that fills the database, run with `php artisan db:seed`).
 
 ## Creating fields
 

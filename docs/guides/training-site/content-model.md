@@ -5,7 +5,7 @@ description: Chapter 2 of the training site guide. Languages, fields and templat
 
 # The Content Model
 
-The content model is what the school's staff will fill in: a course has a level, hours, a price and a curriculum; a session has a date, a place and seats. This chapter writes it as a seeder, so it is code you can review, run on a fresh database and commit.
+The content model is what the school's staff will fill in: a course has a level, hours, a price and a curriculum; a session has a date, a place and seats. This chapter writes it as a seeder, `database/seeders/AtlasSchemaSeeder.php`, so it is code you can review, run on a fresh database and commit.
 
 ## Two languages
 
@@ -36,7 +36,7 @@ A few choices worth explaining:
 
 ## Demo content
 
-A second seeder fills the site with six courses, twelve sessions, three instructors, two studios, news and the home page's sections, in both languages. Its data lives in `database/seeders/data/atlas.php`; the seeder turns it into pages:
+A second seeder fills the site with six courses, twelve sessions, three instructors, two studios, news and the home page's sections, in both languages. Its data lives in `database/seeders/data/atlas.php`; the seeder, `database/seeders/AtlasContentSeeder.php`, turns it into pages:
 
 <<< @/snippets/training/database/seeders/AtlasContentSeeder.php{php}
 

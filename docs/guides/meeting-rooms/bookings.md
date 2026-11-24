@@ -17,7 +17,7 @@ A booking can come from the admin, the staff's booking page, a door screen or an
 
 ## Anatomy of `rooms.book`
 
-An action has a name, a description, a permission, validation rules and a JSON schema. The description and schema are what an AI assistant reads in chapter 7, so they say what the action does in plain words:
+An action has a name, a description, a permission, validation rules and a JSON schema. The description and schema are what an AI assistant reads in chapter 7, so they say what the action does in plain words. The class is `app/Actions/Bookings/BookRoom.php`:
 
 ```php
 final class BookRoom extends Action
@@ -90,7 +90,7 @@ final class BookRoom extends Action
 
 The organizer is `$context->actor`, whoever runs the action: a signed-in person on the booking page, a manager in the admin, or the person an assistant's token belongs to. The starter's version also handles repeating meetings and invitations; the shape stays the same.
 
-Register the actions in the provider:
+A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. Register the actions in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`:
 
 ```php
 $this->app->make(ActionRegistry::class)->register(BookRoom::class, ChangeBooking::class, CancelBooking::class, BlockRoom::class);
@@ -100,7 +100,7 @@ $this->app->make(ActionRegistry::class)->register(BookRoom::class, ChangeBooking
 
 `App\Bookings\BookingRules` holds what Zap does not know: a meeting lasts between `rooms.min_minutes` (15) and `rooms.max_minutes` (240), is not in the past in the room's time zone, and fits inside the room's opening hours that day. Zap's free slots follow availability, but it saves an appointment outside it if asked, so the rule is the app's.
 
-Zap then refuses overlaps, with `rooms.buffer_minutes` (5) kept between meetings, which the provider hands to Zap's config so one setting serves both. Its refusal names the schedules in the way, which may be someone's private meeting, so the app turns it into a message about times only:
+Zap then refuses overlaps, with `rooms.buffer_minutes` (5) kept between meetings, which the provider hands to Zap's config so one setting serves both. Its refusal names the schedules in the way, which may be someone's private meeting, so `app/Bookings/BookingRules.php` turns it into a message about times only:
 
 ```php
 public static function conflict(Room $room, ScheduleConflictException $exception): ValidationException
@@ -120,7 +120,7 @@ A `ValidationException` is the form's error on the booking page, a red line in t
 
 ## Who may change what
 
-`rooms.change` and `rooms.cancel` need `rooms.book`, then check the booking itself: its organizer may change it, a manager may change anyone's, and blocked times are managers' only.
+`rooms.change` and `rooms.cancel` need `rooms.book`, then check the booking itself: its organizer may change it, a manager may change anyone's, and blocked times are managers' only. The check is in the actions' shared trait, `app/Actions/Bookings/HandlesBookings.php`:
 
 ```php
 private function authorizeChange(ActionContext $context, Booking $booking): void
@@ -137,7 +137,7 @@ private function authorizeChange(ActionContext $context, Booking $booking): void
 
 ## Run it from anywhere
 
-Every caller runs the action the same way:
+Every caller runs the action the same way, from a controller, a Livewire component, a command or `php artisan tinker`:
 
 ```php
 lynx()->run(BookRoom::class, ['room' => '/rooms/lodge/', 'date' => '2026-11-02', 'from' => '10:00', 'to' => '11:00', 'title' => 'Otter habitat review']);
@@ -152,7 +152,7 @@ And gets, without writing them:
 
 ## Tests
 
-Each action has the four tests Lynx asks of every action: the happy path, a validation failure, a rollback and a dry run, plus the rules. The starter's `tests/Feature/Bookings` runs them against an in-memory database:
+Each action has the four tests Lynx asks of every action: the happy path, a validation failure, a rollback and a dry run, plus the rules. The starter's `tests/Feature/Bookings` runs them against an in-memory database. Two of them are in `tests/Feature/Bookings/BookRoomTest.php`:
 
 ```php
 it('keeps 5 minutes between meetings', function (): void {

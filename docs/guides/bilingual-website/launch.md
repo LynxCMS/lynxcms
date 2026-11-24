@@ -44,7 +44,7 @@ $settings->save();
 
 ### Structured data
 
-Search engines read **structured data**, a description of the page in a shared vocabulary ([schema.org](https://schema.org)), to show richer results, such as an office's address and phone number. Lynx prints it for every page. To describe a kind of page, map its template to a schema.org type and say which field holds each property:
+Search engines read **structured data**, a description of the page in a shared vocabulary ([schema.org](https://schema.org)), to show richer results, such as an office's address and phone number. Lynx prints it for every page. To describe a kind of page, map its template to a schema.org type and say which field holds each property. The seeder maps the office template:
 
 ```php
 use LynxCms\Seo\Actions\MapTemplate;

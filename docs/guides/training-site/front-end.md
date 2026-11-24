@@ -30,18 +30,18 @@ Point the app's CSS and JavaScript at them, and add Atlas's own styles, taken fr
 
 ## The layout
 
-Each page view renders inside one layout component: Bloom's floating navigation, the page, and the footer. The menus come from the menus module, so staff change the navigation in the admin, and the contact details from the settings page:
+Each page view renders inside one layout component: Bloom's floating navigation, the page, and the footer. The menus come from the menus module, so staff change the navigation in the admin, and the contact details from the settings page. It lives in `resources/views/components/layouts/site.blade.php`:
 
 <<< @/snippets/training/resources/views/components/layouts/site.blade.php{blade}
 
 Two Lynx features carry the layout:
 
 - **`@string`** declares a short text in the view, with a default per language. Staff change it under **Site texts** in the admin; texts in a `layouts` folder are shared by every page. A button label needs no field of its own.
-- **`@hreflang($page)`** tells search engines about the page in each language, and the language switcher links to it:
+- **`@hreflang($page)`** tells search engines about the page in each language, and the language switcher, `resources/views/partials/language-switcher.blade.php`, links to it:
 
 <<< @/snippets/training/resources/views/partials/language-switcher.blade.php{blade}
 
-The main menu is rendered by a view of your own, with Bloom's pill links. Its items know whether they link to the current page:
+The main menu is rendered by a view of your own, `resources/views/menus/nav.blade.php`, with Bloom's pill links. Its items know whether they link to the current page:
 
 <<< @/snippets/training/resources/views/menus/nav.blade.php{blade}
 
@@ -59,37 +59,39 @@ Bloom's sections map onto the home template's fields:
 | Testimonials carousel | `testimonials` (repeater) |
 | FAQ accordion | `faqs` (repeater) |
 
-The view includes one partial per section. The hero:
+The view, `resources/views/templates/home.blade.php`, includes one partial per section from `resources/views/partials/home`. The hero, `hero.blade.php`:
 
 <<< @/snippets/training/resources/views/partials/home/hero.blade.php{blade}
 
-The course tabs are BlatUI tabs. The first tab shows the courses the staff picked; the others run a [selector](/basics/selectors) per level. `lynx()->fields->choices('level')` lists the field's options with labels in the visitor's language, so a new level in the admin adds a tab:
+The course tabs, in `courses.blade.php`, are BlatUI tabs. The first tab shows the courses the staff picked; the others run a [selector](/basics/selectors) per level. `lynx()->fields->choices('level')` lists the field's options with labels in the visitor's language, so a new level in the admin adds a tab:
 
 <<< @/snippets/training/resources/views/partials/home/courses.blade.php{blade}
 
-The questions are an accordion over a repeater:
+The questions, in `faqs.blade.php`, are an accordion over a repeater:
 
 <<< @/snippets/training/resources/views/partials/home/faqs.blade.php{blade}
 
-Every course appears as the same card, with its next open session:
+Every course appears as the same card, with its next open session, from `resources/views/partials/course-card.blade.php`:
 
 <<< @/snippets/training/resources/views/partials/course-card.blade.php{blade}
 
 ## The catalog
 
-The catalog filters courses by level and by a search, with pagination. A view composer reads the query string, validates it, and builds one selector; the template only prints. Register it in a service provider, and add the provider to `bootstrap/providers.php`:
+The catalog filters courses by level and by a search, with pagination. A view composer (a class that hands data to a view before it renders) reads the query string, validates it, and builds one selector; the template only prints. Register it in the `boot()` method of a service provider, `app/Providers/AtlasServiceProvider.php`, and add the provider to `bootstrap/providers.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages:
 
 <<< @/snippets/training/app/Providers/AtlasServiceProvider.php#views{php}
 
+The composer itself is `app/View/Composers/CourseCatalogue.php`:
+
 <<< @/snippets/training/app/View/Composers/CourseCatalogue.php#composer{php}
 
-Anything the composer doesn't know, such as `?level=nonsense`, is dropped by validation, and the search loses the characters that would end a selector value early. The filters are links, so they work without JavaScript and keep the language:
+Anything the composer doesn't know, such as `?level=nonsense`, is dropped by validation, and the search loses the characters that would end a selector value early. The filters, in `resources/views/partials/course/filters.blade.php`, are links, so they work without JavaScript and keep the language:
 
 <<< @/snippets/training/resources/views/partials/course/filters.blade.php{blade}
 
 ## A course and its sessions
 
-The course page shows its curriculum in an accordion, its instructors, and the upcoming sessions, each linking to its own page:
+The course page shows its curriculum in an accordion, its instructors, and the upcoming sessions, each linking to its own page. The sessions come from `resources/views/partials/course/sessions.blade.php`:
 
 <<< @/snippets/training/resources/views/partials/course/sessions.blade.php{blade}
 

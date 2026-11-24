@@ -13,7 +13,7 @@ Out of scope here, and worth planning for a real school: refunds, invoices and V
 
 ## The bookings table
 
-A booking points at its session page by id, and keeps who booked, in which language, and what Stripe said:
+A booking points at its session page by id, and keeps who booked, in which language, and what Stripe said. A migration in `database/migrations` creates the table:
 
 <<< @/snippets/training/database/migrations/2026_10_24_000000_create_bookings_table.php{php}
 
@@ -25,23 +25,23 @@ The session page shows the seats left and a booking form, which posts to a route
 
 <<< @/snippets/training/routes/web.php#bookings{php}
 
-The controller checks that the session is still open, records a pending booking, and sends the buyer to Stripe:
+The controller, `app/Http/Controllers/BookingController.php`, checks that the session is still open, records a pending booking, and sends the buyer to Stripe:
 
 <<< @/snippets/training/app/Http/Controllers/BookingController.php#controller{php}
 
 The price comes from the session, or from its course when the session has none, so staff change prices in the page editor and never in code. The form sends the visitor's language, because `/book/42` is the app's URL and has no `/pt/` in it.
 
-Stripe Checkout takes the payment on Stripe's own page, so card details never reach your server. Creating the session is one HTTP call:
+Stripe Checkout takes the payment on Stripe's own page, so card details never reach your server. Creating the session is one HTTP call, in `app/Bookings/StripeCheckout.php`:
 
 <<< @/snippets/training/app/Bookings/StripeCheckout.php#checkout{php}
 
 ## The webhook
 
-Stripe tells your app a payment succeeded by posting to a webhook. Anyone could post to that URL, so the webhook first checks Stripe's signature:
+Stripe tells your app a payment succeeded by posting to a webhook. Anyone could post to that URL, so the webhook first checks Stripe's signature with `app/Bookings/StripeSignature.php`:
 
 <<< @/snippets/training/app/Bookings/StripeSignature.php#signature{php}
 
-Then it confirms the booking. Stripe may send the same event more than once, so the booking is confirmed, a seat taken and the email sent only the first time:
+Then `app/Http/Controllers/StripeWebhookController.php` confirms the booking. Stripe may send the same event more than once, so the booking is confirmed, a seat taken and the email sent only the first time:
 
 <<< @/snippets/training/app/Http/Controllers/StripeWebhookController.php#webhook{php}
 
@@ -49,13 +49,13 @@ In Stripe's dashboard, add the endpoint `https://your-site/stripe/webhook` for t
 
 ## Seats
 
-The seats left are the session page's `seats` field, the same one staff edit. Taking a seat saves the page as the system, since the buyer is not an editor, and the page's history shows the change:
+The seats left are the session page's `seats` field, the same one staff edit. Taking a seat saves the page as the system, since the buyer is not an editor, and the page's history shows the change. `app/Bookings/Seats.php` takes the seat:
 
 <<< @/snippets/training/app/Bookings/Seats.php#seats{php}
 
 The lock keeps two payments that arrive at the same moment from both taking the last seat. Once seats reach zero, the booking form says the session is full, and the controller refuses it even if an old page is still open in someone's browser.
 
-Session pages will be served from the page cache in chapter 10, so the seats and the form sit in an **island**: the stored page holds a placeholder, and every visitor gets the current count.
+Session pages will be served from the page cache in chapter 10, so the seats and the form sit in an **island**: the stored page holds a placeholder, and every visitor gets the current count. In `resources/views/templates/session.blade.php`:
 
 ```blade
 <x-lynx-island view="partials.session.booking">
@@ -65,7 +65,7 @@ Session pages will be served from the page cache in chapter 10, so the seats and
 
 ## The confirmation email
 
-The email is a queued mailable. It reads the course, date and studio in the buyer's language when it is built, so the queue worker that sends it later can't get the language wrong:
+The email is `app/Mail/BookingConfirmed.php`, a queued mailable (Laravel's class for one email). It reads the course, date and studio in the buyer's language when it is built, so the queue worker that sends it later can't get the language wrong:
 
 <<< @/snippets/training/app/Mail/BookingConfirmed.php#mail{php}
 

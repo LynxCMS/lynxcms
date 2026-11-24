@@ -9,7 +9,7 @@ Atlas Training's staff are not developers. A course manager adds next season's d
 
 ## Editor layouts that match the work
 
-By default the page editor lists a template's fields in order. Arrange them so the form reads like the job: the course's facts in a sidebar, its teaching on a tab of its own, notes that say what a field is for:
+By default the page editor lists a template's fields in order. Arrange them so the form reads like the job: the course's facts in a sidebar, its teaching on a tab of its own, notes that say what a field is for. This chapter's seeder, `database/seeders/AtlasEditorsSeeder.php`, sets the layouts:
 
 <<< @/snippets/training/database/seeders/AtlasEditorsSeeder.php#layouts{php}
 
@@ -17,7 +17,7 @@ The layout only changes the editor. Values, selectors and schema files stay the 
 
 ## Roles for the staff
 
-`lynx:install` made a `superuser` role for the owner and an `editor` role that can work on every page. Atlas wants narrower ones: a course manager who runs the catalog and nothing else, and a news writer:
+`lynx:install` made a `superuser` role for the owner and an `editor` role that can work on every page. Atlas wants narrower ones: a course manager who runs the catalog and nothing else, and a news writer. The same seeder creates them:
 
 <<< @/snippets/training/database/seeders/AtlasEditorsSeeder.php#roles{php}
 
@@ -27,7 +27,7 @@ Give staff their roles under **Access › Users**, where superusers also invite 
 
 ## Drafts and previews
 
-A news writer can prepare an update without changing the live page. In the editor that is **Save as draft**, in the menu beside **Publish**; in code:
+A news writer can prepare an update without changing the live page. In the editor that is **Save as draft**, in the menu beside **Publish**. In code, such as `php artisan tinker` or a class of your app:
 
 ```php
 lynx()->pages->saveDraft('/posts/new-porto-studio/', ['summary' => ['en' => 'Classes start on Monday.']]);
@@ -38,7 +38,7 @@ Visitors keep seeing the published page. Signed-in staff open the draft at the p
 
 ## Publishing on a schedule
 
-A post about the summer intensive can go live at nine on Monday while everyone is busy:
+A post about the summer intensive can go live at nine on Monday while everyone is busy. This line runs in `php artisan tinker` or any class of your app:
 
 ```php
 lynx()->pages->schedule('/posts/summer-intensive/', '*', publishAt: now()->next('Monday')->setTime(9, 0));

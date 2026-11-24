@@ -14,7 +14,7 @@ A rule alone keeps pages out of lists, but someone who knows a URL could still o
 
 ## Example: members-only pages
 
-Say posts have a `members_only` toggle, and only signed in users may see the posts that have it on. First, the rule:
+Say posts have a `members_only` toggle, and only signed in users may see the posts that have it on. First, the rule. It is a class of your app, in `app/Lynx/MembersOnly.php` with the namespace `App\Lynx` (any folder under `app/` works):
 
 <<< @/snippets/advanced/MembersOnly.php#rule{php}
 
@@ -23,7 +23,7 @@ A rule has two methods, which must agree:
 - `apply()` narrows the query of every selector, so lists and counts are right and fast. It receives Laravel's query builder over `lynx_pages`; a field's values are in its table, `lynx_f_{name}`, keyed by `page_id`.
 - `allows()` judges one page, such as the pages a page reference field holds.
 
-Then register the rule, with a gate for the URLs:
+Then register the rule, with a gate for the URLs, in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages:
 
 <<< @/snippets/advanced/members-only.php#register{php}
 

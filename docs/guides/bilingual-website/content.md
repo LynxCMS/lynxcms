@@ -69,7 +69,7 @@ The role is a choice, so the page stores its value. The office is a page field, 
 
 ## The offices
 
-The lawyers point at offices, so the offices come first. Each office is a page under `/offices/` with its city, address and phone:
+The lawyers point at offices, so the offices come first. Each office is a page under `/offices/` with its city, address and phone. `SiteContentSeeder` makes them with one more method:
 
 ```php
 private function office(string $name, string $title, string $city, string $address, string $phone): Page
@@ -114,7 +114,7 @@ Posts work the same way, with their date and category. A date field takes a date
 
 ## The home page's figures
 
-The home page shows three figures, such as *4 generations* of lawyers. They are a **repeater**: a list of items, each with the same fields, that editors add, sort and switch off. The list is shared, and each item's text has a value per language:
+The home page shows three figures, such as *4 generations* of lawyers. They are a **repeater**: a list of items, each with the same fields, that editors add, sort and switch off. The list is shared, and each item's text has a value per language. The content seeder sets it like this:
 
 ```php
 $home->highlights = [

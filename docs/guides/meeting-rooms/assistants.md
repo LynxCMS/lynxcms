@@ -17,7 +17,7 @@ LYNX_MCP_WEB=true
 
 Add Sanctum's `HasApiTokens` trait to `App\Models\User` and run its migration. Lynx only accepts tokens made for the MCP server, with the `lynx:mcp` ability, so a token the app makes for something else does not open it.
 
-Staff get their token on My bookings, under **Your AI assistant**. Issuing and revoking are actions too, so they are logged, but they are kept off the MCP server: an assistant never mints a key or sees one.
+Staff get their token on My bookings, under **Your AI assistant**. Issuing and revoking are actions too, so they are logged, but they are kept off the MCP server: an assistant never mints a key or sees one. The issuing action is `app/Actions/Assistant/IssueAssistantToken.php`:
 
 ```php
 final class IssueAssistantToken extends Action
@@ -47,7 +47,7 @@ One token per person: a new one replaces the old, and **Stop the token** revokes
 
 ## Read tools
 
-Writes are actions; reads are [read tools](/ai/#your-own-read-tools), classes that extend `AgentReadTool`. The app adds three, registered in the provider:
+Writes are actions; reads are [read tools](/ai/#your-own-read-tools), classes that extend `AgentReadTool`. The app adds three. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The tools are registered in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`:
 
 ```php
 $this->app->make(ReadToolRegistry::class)->register(FindFreeRoomsTool::class, RoomScheduleTool::class, MyBookingsTool::class);
@@ -59,7 +59,7 @@ $this->app->make(ReadToolRegistry::class)->register(FindFreeRoomsTool::class, Ro
 | `room_schedule` | A room's day: opening hours, meetings with their booking ids, and free times. |
 | `my_bookings` | The meetings the person organizes, with the people invited, to change or cancel. |
 
-The model reads nothing but a tool's name, description and schema before calling it, so the description says what comes back and which tool to use next:
+The model reads nothing but a tool's name, description and schema before calling it, so the description says what comes back and which tool to use next. This is the start of `app/Agents/FindFreeRoomsTool.php`:
 
 ```php
 final class FindFreeRoomsTool extends AgentReadTool

@@ -12,7 +12,7 @@ In technical terms, it writes the title, the description, the canonical link, th
 
 ## Rendering
 
-Put the component in your layout's `<head>`. It replaces `<title>` and `@hreflang`:
+Put the component in the `<head>` of your layout, such as `resources/views/components/layout.blade.php`. It replaces `<title>` and `@hreflang`:
 
 ```blade
 <head>
@@ -25,7 +25,7 @@ Put the component in your layout's `<head>`. It replaces `<title>` and `@hreflan
 
 ### Overrides for lists and filters
 
-A template or controller can override the title, description, canonical link and robots rule for one response. A list filtered by query string, for example, should not be indexed and should point search engines at the unfiltered list:
+A template or controller can override the title, description, canonical link and robots rule for one response. A list filtered by query string, for example, should not be indexed and should point search engines at the unfiltered list. The list's template view, such as `resources/views/templates/blog.blade.php`, passes both to the component:
 
 ```blade
 <x-lynx-seo :page="$page" robots="noindex, follow" :canonical="$page->url" />
@@ -56,7 +56,7 @@ Pages ask robots not to index them (`noindex, follow`) when `seo_noindex` is on,
 
 ## SEO per template
 
-The page fields are opt in. Turn SEO on for a template in the admin (**SEO**, then **Templates**) or with an action:
+The page fields are opt in. Turn SEO on for a template in the admin (**SEO**, then **Templates**) or with an action. Run it once, in `php artisan tinker` (Laravel's interactive shell) or a seeder (a class that fills the database, run with `php artisan db:seed`):
 
 ```php
 lynx()->run(\LynxCms\Seo\Actions\EnableSeo::class, ['template' => 'article']);
@@ -121,7 +121,7 @@ A mapping that would make broken structured data is refused when saved, with the
 
 ### In code
 
-Map a template with an action, which is also a tool for MCP clients and the agent. Each property names its source, as in the admin, and the same checks refuse a mapping that would make broken structured data. It replaces the template's mapping and leaves the others:
+Map a template with an action, which is also a tool for MCP clients and the agent. Each property names its source, as in the admin, and the same checks refuse a mapping that would make broken structured data. It replaces the template's mapping and leaves the others. Run it once, in `php artisan tinker` or a seeder:
 
 ```php
 use LynxCms\Seo\Actions\MapTemplate;
@@ -137,7 +137,7 @@ lynx()->run(MapTemplate::class, ['template' => 'event', 'type' => 'Event', 'map'
 lynx()->run(UnmapTemplate::class, ['template' => 'event']);
 ```
 
-Add or change nodes in a service provider:
+Add or change nodes in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
 
 ```php
 use LynxCms\Core\Pages\Page;
@@ -155,7 +155,7 @@ app(JsonLd::class)->extend(function (Page $page, JsonLdGraph $graph): void {
 
 `/robots.txt` allows everything, then adds the lines from the settings and the lines modules add. Outside production it disallows everything. A real `public/robots.txt` file is served by the web server first, so delete it to use this one.
 
-Modules add lines in a service provider:
+Modules add lines in their service provider's `boot()` method, and your app can in `app/Providers/AppServiceProvider.php`:
 
 ```php
 app(\LynxCms\Seo\RobotsTxt::class)->line(fn (): string => 'Sitemap: '.url('/sitemap.xml'));

@@ -9,7 +9,7 @@ Staff should not need the admin to book a room. They get two pages of their own,
 
 ## Pages behind a gate
 
-The booking pages are Lynx pages: `/book` (`/fr/reserver`) with a `book` template, and `/my-bookings` (`/fr/mes-reservations`) with a `my-bookings` template. Editors write their titles and summaries in both languages, Lynx gives them their French addresses, and their status is `hidden`, so they never appear in menus, search or the sitemap. Each template's view places a Livewire component and passes it the page:
+The booking pages are Lynx pages: `/book` (`/fr/reserver`) with a `book` template, and `/my-bookings` (`/fr/mes-reservations`) with a `my-bookings` template. Editors write their titles and summaries in both languages, Lynx gives them their French addresses, and their status is `hidden`, so they never appear in menus, search or the sitemap. Each template's view places a Livewire component and passes it the page. This is `resources/views/templates/book.blade.php`:
 
 ```blade
 <x-layout :title="(string) $page->title" robots="noindex, nofollow">
@@ -18,7 +18,7 @@ The booking pages are Lynx pages: `/book` (`/fr/reserver`) with a `book` templat
 </x-layout>
 ```
 
-Only staff may open them. A [gate](/deeper/visibility) decides what happens when someone opens a page: it sends people who are not signed in to sign in and back, and refuses people who may not book:
+Only staff may open them. A [gate](/deeper/visibility) decides what happens when someone opens a page: it sends people who are not signed in to sign in and back, and refuses people who may not book. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The first line goes in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`, and `staffOnly()` is a method of the same class:
 
 ```php
 app(PageGates::class)->add(fn (Page $page, Request $request): ?Response => $this->staffOnly($page, $request));
@@ -49,13 +49,13 @@ Livewire answers at its own address, without the `/fr` prefix, so a shared trait
 
 ## Refusals as the page's texts
 
-When the office's rules refuse a booking, the person should read why in their language, in words the firm chose. The actions serve the admin and AI assistants too, which read English messages, so they don't translate. They say why instead: `BookingRules` throws a `BookingRefused`, a `ValidationException` that also carries a reason and the values it names:
+When the office's rules refuse a booking, the person should read why in their language, in words the firm chose. The actions serve the admin and AI assistants too, which read English messages, so they don't translate. They say why instead: `BookingRules` throws a `BookingRefused`, a `ValidationException` that also carries a reason and the values it names. `app/Bookings/BookingRules.php` throws it like this:
 
 ```php
 throw BookingRefused::because('from', 'taken', ['room' => $name, 'times' => '11:15–12:15', 'buffer' => 5], "{$name} is taken from 11:15 to 12:15.");
 ```
 
-The component keeps the reason and values, and its view shows them as one of the booking page's [editable texts](/basics/views#editable-template-wide-or-site-wide-texts), with the values filled into placeholders:
+The component keeps the reason and values, and its view shows them as one of the booking page's [editable texts](/basics/views#editable-template-wide-or-site-wide-texts), with the values filled into placeholders. This excerpt is from `resources/views/livewire/partials/refusal.blade.php`:
 
 ```blade
 @case('taken')
@@ -68,7 +68,7 @@ Lynx finds these texts through the component's view ([Texts in Livewire componen
 
 ## Mail after the commit
 
-Booking, changing and canceling a meeting mails each person concerned an `.ics` invite their calendar app reads. The mail must not go out for a dry run, nor for a booking a later hook rolls back. So the actions don't send it: they record an event with `$context->event()`, which Lynx dispatches once the action's transaction commits, and never for a dry run:
+Booking, changing and canceling a meeting mails each person concerned an `.ics` invite their calendar app reads. The mail must not go out for a dry run, nor for a booking a later hook rolls back. So the actions don't send it: they record an event with `$context->event()`, which Lynx dispatches once the action's transaction commits, and never for a dry run. The actions call `app/Calendar/Invitations.php`, which records it:
 
 ```php
 $context->event(new MeetingChanged(
@@ -83,7 +83,7 @@ $context->event(new MeetingChanged(
 ));
 ```
 
-A listener queues one mail per person, in the language the meeting was booked in:
+A listener, `app/Listeners/SendMeetingMails.php`, queues one mail per person, in the language the meeting was booked in:
 
 ```php
 foreach (User::query()->whereIn('id', $event->invited)->get() as $person) {

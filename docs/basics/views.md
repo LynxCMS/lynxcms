@@ -113,7 +113,7 @@ Lists leave out unpublished and hidden pages, and pages the visitor may not see.
 
 ## Languages
 
-The request's language decides which value of each translatable field you get, and which URLs pages have.
+The request's language decides which value of each translatable field you get, and which URLs pages have. The tags below and the language switcher usually go in your layout component, such as `resources/views/components/layout.blade.php`.
 
 ```blade
 <html lang="{{ lynx()->languages->current()->appLocale() }}">
@@ -140,7 +140,7 @@ The switcher keeps the query string, such as filters or a draft preview, while `
 
 ## Matrix blocks
 
-A [matrix field](/basics/field-types#matrix) holds a list of blocks that editors add and reorder, each of a type you define, such as a quote, an image or a video. `@matrix` renders each block with the view of its type:
+A [matrix field](/basics/field-types#matrix) holds a list of blocks that editors add and reorder, each of a type you define, such as a quote, an image or a video. In the template's view, `@matrix` renders each block with the view of its type:
 
 ```blade
 @matrix($page->blocks)
@@ -167,7 +167,7 @@ Pages render with Blade, so a template can use any [Livewire](https://livewire.l
 <livewire:course-filter :page-id="$page->id" />
 ```
 
-Components on Lynx pages can use the `LynxCms\Core\Livewire\UsesLynxPage` trait. Livewire sends its updates to its own URL, without the page's language prefix; the trait remembers the visitor's language and restores it on every update, so `__()` and page fields stay in that language. Pass the page's id as `page-id`, as above, and `$this->page()` returns the page:
+Components on Lynx pages can use the `LynxCms\Core\Livewire\UsesLynxPage` trait. Livewire sends its updates to its own URL, without the page's language prefix; the trait remembers the visitor's language and restores it on every update, so `__()` and page fields stay in that language. Pass the page's id as `page-id`, as above, and `$this->page()` returns the page. The component's class goes in `app/Livewire/CourseFilter.php`:
 
 ```php
 use Livewire\Component;
@@ -194,7 +194,7 @@ A lazy component (`lazy`, which Livewire renders once it scrolls into view) moun
 
 ### Components editors choose
 
-A [`component` field](/basics/field-types#component) lets editors place one of your registered Livewire components on a page and fill in its settings. Render it with `@lynxComponent`, giving the page and the field's name:
+A [`component` field](/basics/field-types#component) lets editors place one of your registered Livewire components on a page and fill in its settings. Render it in the template's view with `@lynxComponent`, giving the page and the field's name:
 
 ```blade
 @lynxComponent($page, 'enrol')
@@ -281,7 +281,7 @@ Give it a view like any template, and add fields to the template for whatever th
 </x-layout>
 ```
 
-Superusers can pick another page, or none, under **Settings > General** in the admin, which marks the chosen page in the tree. Without one, and for JSON requests and the admin's own screens, Laravel's `errors/404` view answers as usual. If the page's view fails, the error is reported and Laravel's 404 answers instead. The same choice is the `pages.set_not_found` action:
+Superusers can pick another page, or none, under **Settings > General** in the admin, which marks the chosen page in the tree. Without one, and for JSON requests and the admin's own screens, Laravel's `errors/404` view answers as usual. If the page's view fails, the error is reported and Laravel's 404 answers instead. The same choice is the `pages.set_not_found` action, which you can run once in `php artisan tinker` or a seeder:
 
 ```php
 use LynxCms\Core\Actions\Pages\SetNotFoundPage;
@@ -322,7 +322,7 @@ Editors preview a page's draft at its URL with `?preview=draft`; templates need 
 
 ## Using your own routes
 
-Lynx's route serves every URL your routes leave free, so a controller of your own at `/account` keeps working. To serve pages entirely from your own routes, turn Lynx's route off with `LYNX_ROUTES=false` and load pages yourself:
+Lynx's route serves every URL your routes leave free, so a controller of your own at `/account` keeps working. To serve pages entirely from your own routes, turn Lynx's route off with `LYNX_ROUTES=false` and load pages yourself in `routes/web.php`:
 
 ```php
 Route::get('/news/{name}', function (string $name) {

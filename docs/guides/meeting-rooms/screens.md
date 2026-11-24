@@ -9,7 +9,7 @@ Each office has a TV in its lobby with every room, and a tablet at each door wit
 
 ## Routes without a session
 
-The kiosk routes are registered in the provider, outside the `web` middleware group, so they start no session, set no cookie and need no CSRF token. The secret in the address is the credential:
+The kiosk routes are registered in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`, outside the `web` middleware group, so they start no session, set no cookie and need no CSRF token. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The secret in the address is the credential:
 
 ```php
 Route::prefix('screens/{token}')->where(['token' => '[A-Za-z0-9]+'])->middleware('throttle:120,1')->group(function (): void {
@@ -20,7 +20,7 @@ Route::prefix('screens/{token}')->where(['token' => '[A-Za-z0-9]+'])->middleware
 });
 ```
 
-The controller finds the screen by the token's hash and answers `no-store`, so neither the [page cache](/modules/page-cache) nor a browser keeps a copy:
+The controller, `app/Http/Controllers/KioskController.php`, finds the screen by the token's hash and answers `no-store`, so neither the [page cache](/modules/page-cache) nor a browser keeps a copy:
 
 ```php
 private const array NO_STORE = ['Cache-Control' => 'no-store, private', 'X-Robots-Tag' => 'noindex, nofollow'];
@@ -33,7 +33,7 @@ public function state(string $token): JsonResponse|Response
 }
 ```
 
-The hash lookup is a trait the app's secret links share (kiosk links here, calendar feeds in chapter 6): the token is random, shown once, and only its SHA-256 is stored.
+The hash lookup is a trait, `app/Models/Concerns/HasSecretToken.php`, that the app's secret links share (kiosk links here, calendar feeds in chapter 6): the token is random, shown once, and only its SHA-256 is stored.
 
 ```php
 public static function findByToken(string $token): ?static
@@ -46,7 +46,7 @@ public static function findByToken(string $token): ?static
 
 ## What a screen shows
 
-`App\Screens\ScreenState` builds the JSON a screen polls: the office's local date and minute, each room's hours and meetings today, and the announcements running now. Private meetings read "Busy", with no organizer: a TV in a lobby is the most public place in the office. It reads past the Rooms password and in the screen's own language (Montreal's screens speak French):
+`App\Screens\ScreenState` (`app/Screens/ScreenState.php`) builds the JSON a screen polls: the office's local date and minute, each room's hours and meetings today, and the announcements running now. Private meetings read "Busy", with no organizer: a TV in a lobby is the most public place in the office. It reads past the Rooms password and in the screen's own language (Montreal's screens speak French):
 
 ```php
 public static function of(Page $screen): array
@@ -84,13 +84,13 @@ A failed poll keeps the last state on screen and shows "Reconnecting…"; the ne
 
 ## Check in and end early
 
-A door screen has two buttons: **Check in**, from a few minutes before a meeting, and **End meeting now**. They post to the kiosk link, which runs the actions as the system, with the screen's id:
+A door screen has two buttons: **Check in**, from a few minutes before a meeting, and **End meeting now**. They post to the kiosk link, which runs the actions as the system, with the screen's id. This line is in `KioskController`:
 
 ```php
 lynx()->actingAs(Actor::system(), fn () => lynx()->run($action, ['booking' => $request->integer('booking'), 'screen' => (int) $screen->id]));
 ```
 
-The system may act on any booking, so the action makes sure a screen acts on its own room only:
+The system may act on any booking, so the action makes sure a screen acts on its own room only. The check is in `app/Actions/Bookings/HandlesMeetingsNow.php`, a trait both actions use:
 
 ```php
 if ($input->get('screen') !== null && $this->doorRoomId($input->get('screen')) !== $room->page_id) {
@@ -106,7 +106,7 @@ The same `rooms.check_in` and `rooms.end_early` work for a signed-in organizer, 
 
 ## No-shows
 
-In rooms whose page says meetings need a check in, a meeting nobody checked into within `rooms.check_in_minutes` (10) of its start is released: the rest of it is freed, and its organizer is mailed. The release is an action too, run every minute by the scheduler:
+In rooms whose page says meetings need a check in, a meeting nobody checked into within `rooms.check_in_minutes` (10) of its start is released: the rest of it is freed, and its organizer is mailed. The release is an action too, run every minute by the scheduler. Both parts go in `routes/console.php`:
 
 ```php
 Artisan::command('rooms:release-no-shows', function () {

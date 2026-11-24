@@ -8,6 +8,8 @@ order: 3
 
 Your app can add its own screens to the admin, such as reports or a booking calendar, with links in its sidebar, add tabs to the page editor, and change how the page tree shows your pages. A screen is a Laravel route with a Blade view, and only users with the permission you name can open it.
 
+Unless a section names another file, the PHP on this page registers things and goes in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php` (or your module's own provider). A service provider is a Laravel class whose `boot()` method runs on every request, before your pages.
+
 ## A new screen
 
 ```php
@@ -63,7 +65,7 @@ A module that keeps its pages in a hidden branch registers it with `AdminBranche
 
 `Admin::routes()` adds the admin prefix, middleware and access gate. Route to `Admin::screen()` or controllers, not closures: `php artisan route:cache` stores a closure by its line, so a closure route written inside the `Admin::routes()` closure on one line comes back as the wrong closure, and the screen fails once routes are cached.
 
-Wrap the view in the admin layout and use the BlatUI components:
+Wrap the screen's view, such as `resources/views/admin/reports.blade.php`, in the admin layout and use the BlatUI components:
 
 ```blade
 <x-lynx-admin::layout title="Reports" :crumbs="['Pages' => route('lynx.admin.pages')]">
@@ -74,7 +76,7 @@ Wrap the view in the admin layout and use the BlatUI components:
 
 Colors come from theme tokens (`bg-primary`, `text-muted-foreground`), never raw palette classes. Writes go through Lynx actions.
 
-When a list has nothing to show, say what would be there, how it gets there and, in the slot, offer the action that adds the first one. `compact` fits a panel or a narrow column:
+When a list in a screen's view has nothing to show, say what would be there, how it gets there and, in the slot, offer the action that adds the first one. `compact` fits a panel or a narrow column:
 
 ```blade
 <x-lynx-admin::empty-state icon="chart-bar" title="No reports yet." help="Reports you run show here.">
@@ -88,21 +90,23 @@ When a filter or search found nothing, say so instead, and offer a button that c
 
 This example adds a review step to the blog from [Your First Site](/getting-started/first-site). Editors who hold a new `blog.review` permission get three things. A **Review** screen lists the posts with something to fix, and its sidebar link shows how many there are. Each post gets a **Checklist** tab with a button that writes a missing summary. MCP clients and the agent get the same list as a [read tool](/ai/#your-own-read-tools). The test suite runs every file below.
 
-Write the checks once, in a class that each part of the example uses:
+Write the checks once, in `app/Blog/PostChecks.php`, a class that each part of the example uses:
 
 <<< @/snippets/review/PostChecks.php#checks{php}
 
-Register everything in a service provider. The permission and the tool work without the admin, so the admin part only runs when the admin is installed:
+Register everything in a service provider, `app/Providers/BlogReviewServiceProvider.php`, listed in `bootstrap/providers.php`. The permission and the tool work without the admin, so the admin part only runs when the admin is installed:
 
 <<< @/snippets/review/BlogReviewServiceProvider.php{php}
 
-`Admin::screen()` renders the view only for users with `blog.review`; others get a 403. The screen's view wraps the list in the admin layout:
+`Admin::screen()` renders the view only for users with `blog.review`; others get a 403. The screen's view, `resources/views/blog/review.blade.php`, wraps the list in the admin layout:
 
 <<< @/snippets/review/views/blog/review.blade.php{blade}
 
-The tab is a Livewire component. Livewire sends every click to its own endpoint, which is outside the admin's routes and their middleware. So the component checks access itself in `boot()`, which runs on every request, not only the first one. `AdminAccess::authorizeScreen()` checks the admin gate, then the permission you name, and answers 403 when either says no; `authorizeSuperuser()` does the same for screens only superusers use:
+The tab is a Livewire component. Livewire sends every click to its own endpoint, which is outside the admin's routes and their middleware. So the component checks access itself in `boot()`, which runs on every request, not only the first one. `AdminAccess::authorizeScreen()` checks the admin gate, then the permission you name, and answers 403 when either says no; `authorizeSuperuser()` does the same for screens only superusers use. The component goes in `app/Livewire/ChecklistTab.php`:
 
 <<< @/snippets/review/ChecklistTab.php#tab{php}
+
+Its view is `resources/views/blog/checklist-tab.blade.php`:
 
 <<< @/snippets/review/views/blog/checklist-tab.blade.php{blade}
 
@@ -213,7 +217,7 @@ app(AdminSlots::class)->add(
 
 The editor mounts the component with the page's id as `pageId`. It shows the slot to people who may edit the page, on its content tabs, and skips the component on pages where the last argument returns `false`. Leave that argument out to show it on every page.
 
-When the component changes the page's draft, tell the editor, so it shows the new values:
+When the component changes the page's draft, tell the editor from the component's method, so it shows the new values:
 
 ```php
 $this->dispatch('lynx-draft-changed');
@@ -279,7 +283,7 @@ A stat is one number. A list, such as the most searched pages, is a panel. The p
 View::composer('reports::home-panel', fn ($view) => $view->with('reports', Report::latest()->limit(5)->get()));
 ```
 
-Build the panel from the home screen's own components, so it looks like Lynx's lists: a section with an icon, a heading linking to the full list, a count and an empty state, and a row per item, its title linking to it, details below and a date at the end:
+Build the panel's view (the one `panel()` names) from the home screen's own components, so it looks like Lynx's lists: a section with an icon, a heading linking to the full list, a count and an empty state, and a row per item, its title linking to it, details below and a date at the end:
 
 ```blade
 <x-lynx-admin::home.section id="home-reports" icon="chart-bar" :href="route('lynx.admin.reports')"
@@ -336,7 +340,7 @@ Here is a panel with the weather for the next three days from [Open-Meteo](https
 ],
 ```
 
-The component asks Open-Meteo at most every 30 minutes, waits 3 seconds at most, and reports a failure without caching it, so the next visit tries again:
+The component, in `app/Livewire/WeatherPanel.php`, asks Open-Meteo at most every 30 minutes, waits 3 seconds at most, and reports a failure without caching it, so the next visit tries again:
 
 ```php
 namespace App\Livewire;
@@ -479,7 +483,7 @@ The closure runs when the tree shows its filters, so it can read the site's lang
 
 ## Hints
 
-A hint is a small help icon beside a heading or a label. It explains the thing in a tooltip, so the screen keeps only what people need every time. The editor's Settings tab uses one beside **Names and languages** to say how a cleared URL name fills again.
+A hint is a small help icon beside a heading or a label. It explains the thing in a tooltip, so the screen keeps only what people need every time. The editor's Settings tab uses one beside **Names and languages** to say how a cleared URL name fills again. Put one in a screen's view or a Livewire component's view:
 
 ```blade
 <div class="flex items-center gap-2">

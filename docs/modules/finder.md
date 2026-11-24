@@ -67,7 +67,7 @@ The whole search lives in the address bar, so a bookmark or a link sent to a col
 
 A search can be **shared** with everyone who may find pages, for users whose role has the **finder.share** permission. Shared searches run with each viewer's own permissions, so a colleague limited to one branch sees only the pages there.
 
-Saving and deleting are actions, so they also work from code, MCP and the agent:
+Saving and deleting are actions, so they also work from code, MCP and the agent. The call works anywhere in the app:
 
 ```php
 use LynxCms\Finder\Actions\SaveSearch;

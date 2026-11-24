@@ -5,7 +5,7 @@ description: Check what visitors send before it reaches a selector, a view or th
 
 # Visitor Input
 
-Any input coming from an HTTP request—query parameters (`/courses?category=yoga`), search terms, or form submissions, should be untrusted. Lynx and Laravel handle transport-level safety (SQL parameter binding, HTML sanitization, output escaping) automatically, while your application code is responsible for validating domain constraints before interpolating user values into Lynx selectors.
+Any input coming from an HTTP request, such as query parameters (`/courses?category=yoga`), search terms, or form submissions, should be untrusted. Lynx and Laravel handle transport-level safety (SQL parameter binding, HTML sanitization, output escaping) automatically, while your application code is responsible for validating domain constraints before interpolating user values into Lynx selectors.
 
 
 ## Security Boundaries: What Lynx Handles vs. What You Handle
@@ -22,7 +22,7 @@ Any input coming from an HTTP request—query parameters (`/courses?category=yog
 
 ## Reading the query string
 
-The query string is the part of an address after `?`. Read it with `request()`, and accept only the values you expect. For a number, `integer()` gives a whole number, or the default when the value isn't one:
+The query string is the part of an address after `?`. Read it with `request()` where you prepare the page's data, such as a view composer ([Values in a selector](#values-in-a-selector) shows one), and accept only the values you expect. For a number, `integer()` gives a whole number, or the default when the value isn't one:
 
 ```php
 $pageNumber = max(1, request()->integer('page', 1));
@@ -118,7 +118,7 @@ Each rule fits one kind of value:
 
 ### Words in a selector
 
-Search words can't be checked against a list. Make them safe to quote instead: limit their length, remove double quotes, which would end the quoted value early, and put them inside double quotes. Inside double quotes, commas, pipes and single quotes are plain text:
+Search words can't be checked against a list. Make them safe to quote instead: limit their length, remove double quotes, which would end the quoted value early, and put them inside double quotes. Inside double quotes, commas, pipes and single quotes are plain text. This code goes where the search page gets its data, such as a view composer like the one above:
 
 ```php
 use Illuminate\Support\Str;
@@ -134,7 +134,7 @@ $results = $words === '' ? null : lynx()->pages->find('search*="'.$words.'", lim
 
 ## Printing what visitors sent
 
-Print visitor text with `{{ }}`, which escapes it, in the page and in attributes:
+Print visitor text with `{{ }}`, which escapes it, in the page and in attributes. This goes in the template's view, such as `resources/views/templates/search.blade.php`:
 
 ```blade
 <input type="search" name="q" value="{{ $query }}">

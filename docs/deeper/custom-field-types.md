@@ -9,15 +9,15 @@ Lynx's [field types](/basics/field-types) cover most content, but a site can nee
 
 ## A first field type: star ratings
 
-A rating from 1 to 5 stars, or up to a maximum the field sets, is a small, complete example. Extend `BaseFieldType` and answer only what differs from the defaults:
+A rating from 1 to 5 stars, or up to a maximum the field sets, is a small, complete example. Extend `BaseFieldType` and answer only what differs from the defaults. The class goes in `app/Lynx/Fields/RatingType.php`:
 
 <<< @/snippets/advanced/RatingType.php#type{php}
 
-Register the type in a service provider. With the admin installed, also tell the page editor which input to show; a rating is a whole number, so the built-in integer input and its converter do:
+Register the type in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. With the admin installed, also tell the page editor which input to show; a rating is a whole number, so the built-in integer input and its converter do:
 
 <<< @/snippets/advanced/rating-register.php#register{php}
 
-The type now works like a built-in one:
+The type now works like a built-in one. Create the field once, in `php artisan tinker` or a seeder; saving and finding pages work anywhere in your app:
 
 ```php
 lynx()->fields->create('rating', 'rating', settings: ['max' => 10]);
@@ -28,6 +28,8 @@ $post->save();
 
 lynx()->pages->find('template=post, rating>=7, sort=-rating');
 ```
+
+In the template's view, such as `resources/views/templates/post.blade.php`:
 
 ```blade
 @if ($post->rating)
@@ -83,6 +85,8 @@ It writes `_ide_helper_lynx.php` at the root of your app (`--path` changes it). 
 
 ## In the admin
 
+The page editor shows a field type with the input you register for it, in a service provider's `boot()` method:
+
 ```php
 app(\LynxCms\Admin\Editor\FieldInputs::class)->register(
     'rating',
@@ -100,7 +104,7 @@ The `icon` field type that comes with the admin is a small, complete field type,
 
 ### 1. The data source
 
-Keep the custom data in a class of its own, so the field type, the admin input and your templates all ask the same thing. `LynxCms\Admin\Icons\IconSet` reads the names from the Lucide icon set once per request and answers three questions:
+Keep the custom data in a class of its own, so the field type, the admin input and your templates all ask the same thing. `LynxCms\Admin\Icons\IconSet` reads the names from the Lucide icon set once per request and answers three questions. Any code can ask it, such as the field type, the admin input or a view:
 
 ```php
 $icons = app(IconSet::class);
@@ -129,7 +133,7 @@ The data could as well come from a config file, a database table or an API; regi
 
 ### 3. Registering the type
 
-In a service provider's `boot()`:
+Register both in a service provider's `boot()` method. The admin does it in its own `AdminServiceProvider`, and your app would use `app/Providers/AppServiceProvider.php`:
 
 ```php
 $this->app->singleton(IconSet::class);
@@ -140,7 +144,7 @@ From then on `lynx()->fields->create('badge', 'icon')` works, and so do `pages.s
 
 ### 4. The admin input
 
-The input is a Livewire component, `LynxCms\Admin\Livewire\IconPicker`, because it searches the data source as the editor types. Its `$value` property has `#[Modelable]`, so the page editor binds it like any input. It accepts only names `IconSet` has, and shows at most 60 icons at a time. The input view only places it:
+The input is a Livewire component, `LynxCms\Admin\Livewire\IconPicker`, because it searches the data source as the editor types. Its `$value` property has `#[Modelable]`, so the page editor binds it like any input. It accepts only names `IconSet` has, and shows at most 60 icons at a time. The input view, `resources/views/inputs/icon.blade.php` in the admin package, only places it:
 
 ```blade
 {{-- inputs/icon.blade.php --}}
@@ -155,6 +159,8 @@ Locked fields, and editors without edit access, see the value through a display 
 
 ### 6. Registering the input
 
+In the same `boot()` method:
+
 ```php
 app(FieldInputs::class)->register('icon', 'lynx-admin::inputs.icon', TextConverter::class, 'lynx-admin::values.icon');
 ```
@@ -163,7 +169,7 @@ The converter turns stored values into form values and back. A name is the same 
 
 ### 7. In templates
 
-The value is the name, so the template chooses how to draw it:
+The value is the name, so the template's view, such as `resources/views/templates/post.blade.php`, chooses how to draw it:
 
 ```blade
 @if ($page->badge)

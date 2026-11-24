@@ -9,7 +9,7 @@ Office managers already edit rooms and screens in Lynx's admin. Their bookings b
 
 ## A Bookings screen
 
-`Admin::routes()` adds the admin's prefix, middleware and access gate; `Admin::screen()` renders a view for users with a permission and answers 403 to others. `Navigation` adds the sidebar link:
+`Admin::routes()` adds the admin's prefix, middleware and access gate; `Admin::screen()` renders a view for users with a permission and answers 403 to others. `Navigation` adds the sidebar link. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. These lines go in the `boot()` method of the app's provider, `app/Providers/RoomsServiceProvider.php`:
 
 ```php
 Admin::routes(function (): void {
@@ -20,7 +20,7 @@ $canManage = fn (): bool => app(AdminAccess::class)->allows('rooms.manage');
 app(Navigation::class)->add('Bookings', 'lynx.admin.bookings', order: 15, visible: $canManage, icon: 'calendar-days');
 ```
 
-The view wraps a Livewire component in the admin's layout:
+The view, `resources/views/admin/bookings.blade.php`, wraps a Livewire component in the admin's layout:
 
 ```blade
 <x-lynx-admin::layout title="Bookings" :crumbs="['Pages' => route('lynx.admin.pages')]">
@@ -29,7 +29,7 @@ The view wraps a Livewire component in the admin's layout:
 </x-lynx-admin::layout>
 ```
 
-`App\Livewire\Admin\RoomsWeek` shows an office's rooms against the working week, in the office's time zone. A click on a day opens a form to book or block; a click on a booking opens it to change or cancel. Saving runs the actions from chapter 3, and a refusal lands on the form:
+`App\Livewire\Admin\RoomsWeek` shows an office's rooms against the working week, in the office's time zone. A click on a day opens a form to book or block; a click on a booking opens it to change or cancel. Saving runs the actions from chapter 3, and a refusal lands on the form. This excerpt is from the components' shared trait, `app/Livewire/Admin/Concerns/EditsBookings.php`:
 
 ```php
 $this->attempt(fn () => match (true) {
@@ -41,7 +41,7 @@ $this->attempt(fn () => match (true) {
 
 The form has no rules of its own. "Kingfisher is taken from 10:00 to 11:00" comes from the action, as it does on the staff's page and for assistants.
 
-Livewire answers clicks at its own address, outside the admin's routes and their middleware, so each component checks access itself in a boot hook, which runs on every request:
+Livewire answers clicks at its own address, outside the admin's routes and their middleware, so each component checks access itself in a boot hook, which runs on every request. The same trait holds it:
 
 ```php
 public function bootEditsBookings(): void
@@ -53,7 +53,7 @@ public function bootEditsBookings(): void
 
 ## Tabs on room and screen pages
 
-A room's page editor gets a **Bookings** tab with that room's week, and a **Calendar feed** tab (chapter 6). A screen's gets a **Kiosk link** tab. Each tab is a Livewire component, shown when its closure says so:
+A room's page editor gets a **Bookings** tab with that room's week, and a **Calendar feed** tab (chapter 6). A screen's gets a **Kiosk link** tab. Each tab is a Livewire component, shown when its closure says so. The provider's `boot()` method registers them:
 
 ```php
 Livewire::component('admin.room-bookings', RoomBookingsTab::class);
@@ -67,7 +67,7 @@ The tab receives the page's id as `$pageId`. Editors write the room's descriptio
 
 ## Kiosk links
 
-A screen needs a way to read bookings without anyone signing in on the TV. The **Kiosk link** tab issues a secret address for it, through an action, so issuing and revoking are logged like everything else:
+A screen needs a way to read bookings without anyone signing in on the TV. The **Kiosk link** tab issues a secret address for it, through an action, `app/Actions/Screens/IssueKioskLink.php`, so issuing and revoking are logged like everything else:
 
 ```php
 public function handle(Input $input, ActionContext $context): string
@@ -87,7 +87,7 @@ Only the token's hash is stored, in the app's own `kiosk_links` table and never 
 
 ## The admin's look for app views
 
-The admin ships its CSS already built, so Tailwind classes it never used are missing from it. The app's admin views get their own small stylesheet, built by Vite from the admin's color tokens, and added to the admin's pages:
+The admin ships its CSS already built, so Tailwind classes it never used are missing from it. The app's admin views get their own small stylesheet, built by Vite from the admin's color tokens, and added to the admin's pages from the provider's `boot()` method:
 
 ```php
 config(['lynx-admin.stylesheets' => [...Value::strings(config('lynx-admin.stylesheets', [])), Vite::asset('resources/css/admin.css')]]);

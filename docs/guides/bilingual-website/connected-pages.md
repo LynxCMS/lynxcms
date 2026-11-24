@@ -37,7 +37,7 @@ Each post shows its date in the visitor's language. A date field reads as a [Car
 
 ## The latest cases on the home page
 
-To find pages anywhere in the tree, not only below one page, use `lynx()->pages->find()`:
+To find pages anywhere in the tree, not only below one page, use `lynx()->pages->find()`. It works in any view, such as `resources/views/templates/home.blade.php`, and in any PHP class:
 
 ```php
 $latest = lynx()->pages->find('template=post, sort=-published_on, limit=3');

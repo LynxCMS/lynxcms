@@ -9,21 +9,21 @@ Most people who look at a 2,400 euro course have a question before they book. Th
 
 ## The forms
 
-Forms are PHP classes. Texts are maps of language codes, read in the visitor's language. The enquiry asks for a name, an email, a question and consent:
+Forms are PHP classes in `app/Forms`. Texts are maps of language codes, read in the visitor's language. The enquiry, `app/Forms/EnquiryForm.php`, asks for a name, an email, a question and consent:
 
 <<< @/snippets/training/app/Forms/EnquiryForm.php#form{php}
 
-`recipients()` names who gets the email: here the front desk, from your config. Return `null` to mail everyone whose role may see submissions, or `[]` to mail nobody, as the newsletter does:
+`recipients()` names who gets the email: here the front desk, from your config. Return `null` to mail everyone whose role may see submissions, or `[]` to mail nobody, as the newsletter (`app/Forms/NewsletterForm.php`) does:
 
 <<< @/snippets/training/app/Forms/NewsletterForm.php#form{php}
 
-Register both in the service provider:
+Register both in the `boot()` method of the app's service provider, `app/Providers/AtlasServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages:
 
 <<< @/snippets/training/app/Providers/AtlasServiceProvider.php#forms{php}
 
 ## Placing them
 
-The enquiry goes on the course page, under the dates, and the newsletter goes in the layout's footer:
+The enquiry goes in `resources/views/templates/course.blade.php`, under the dates, and the newsletter goes in the footer of `resources/views/components/layouts/site.blade.php`:
 
 ```blade
 <livewire:lynx-form form="enquiry" :page-id="$page->id" />
@@ -50,7 +50,7 @@ Spam is handled for you. A hidden honeypot field and a timing check catch bots, 
 
 ## Leads to the CRM
 
-`FormSubmitted` fires once a submission is stored and committed. A queued listener sends each enquiry to the CRM, with the course it came from:
+`FormSubmitted` fires once a submission is stored and committed. A queued listener, `app/Listeners/SendEnquiryToCrm.php`, sends each enquiry to the CRM, with the course it came from:
 
 <<< @/snippets/training/app/Listeners/SendEnquiryToCrm.php#listener{php}
 
@@ -58,7 +58,7 @@ The listener is queued, so a slow CRM never slows the visitor. It throws when th
 
 ## Sign-ups to the mailing list
 
-The newsletter's listener tags each address with its language, so Portuguese readers get the Portuguese edition:
+The newsletter's listener, `app/Listeners/SubscribeToNewsletter.php`, tags each address with its language, so Portuguese readers get the Portuguese edition:
 
 <<< @/snippets/training/app/Listeners/SubscribeToNewsletter.php#listener{php}
 

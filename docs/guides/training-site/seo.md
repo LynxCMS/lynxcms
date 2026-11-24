@@ -11,7 +11,7 @@ A training school lives on search: people look for "pilates instructor course Li
 
 The layout's `@seo($page, $seo)` (from chapter 3) prints the title, description, canonical link, robots rule, share cards for social networks, hreflang links and the JSON-LD graph. Values come from the page itself, then from the site's settings, so pages look right before anyone writes SEO texts.
 
-Turn the SEO fields on for the templates that matter, and fill in the site's settings:
+Turn the SEO fields on for the templates that matter, and fill in the site's settings, in a seeder, `database/seeders/AtlasSeoSeeder.php`:
 
 <<< @/snippets/training/database/seeders/AtlasSeoSeeder.php#settings{php}
 
@@ -19,7 +19,7 @@ Each of those templates gets an **SEO** tab in the page editor, where staff can 
 
 ## Structured data
 
-Map each template to a [schema.org](https://schema.org) type, saying where each property comes from: a field, `@title`, `@url`, `@organization` (the school, from the settings) or a fixed value after `=`:
+Map each template to a [schema.org](https://schema.org) type, saying where each property comes from: a field, `@title`, `@url`, `@organization` (the school, from the settings) or a fixed value after `=`. The same seeder does it:
 
 <<< @/snippets/training/database/seeders/AtlasSeoSeeder.php#structured-data{php}
 
@@ -40,7 +40,7 @@ These mappings are actions, so the owner's AI assistant can make them too (`seo_
 
 ## Filtered lists
 
-`/courses?level=beginner` shows the same courses as part of `/courses`. Search engines should index the catalog once, so the catalog's view passes overrides to the layout when a filter is set:
+`/courses?level=beginner` shows the same courses as part of `/courses`. Search engines should index the catalog once, so the catalog's view, `resources/views/templates/courses.blade.php`, passes overrides to the layout when a filter is set:
 
 ```blade
 <x-layouts.site :page="$page" :seo="isset($filters['level']) || isset($filters['q']) ? ['robots' => 'noindex, follow', 'canonical' => $page->url] : []">

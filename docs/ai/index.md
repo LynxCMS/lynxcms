@@ -43,7 +43,7 @@ Other clients take the same command in their configuration, such as `.mcp.json`:
 
 A client started this way acts for no user. It gets the role named by `LYNX_ANONYMOUS_ROLE`, or is refused without one. On your own machine, `LYNX_ANONYMOUS_ROLE=superuser` in `.env` is convenient. Never set it on a server that others can reach.
 
-To serve the MCP server over HTTP, set `LYNX_MCP_WEB=true`. It listens at `/mcp/lynx` behind `auth:sanctum` (see `lynx.mcp.web`), and each client acts as the user its token belongs to, with that user's roles. Tokens must be made for it, with the `lynx:mcp` ability, so tokens your app issues for other uses don't open the MCP server:
+To serve the MCP server over HTTP, set `LYNX_MCP_WEB=true`. It listens at `/mcp/lynx` behind `auth:sanctum` (see `lynx.mcp.web`), and each client acts as the user its token belongs to, with that user's roles. Tokens must be made for it, with the `lynx:mcp` ability, so tokens your app issues for other uses don't open the MCP server. Make one for a user in `php artisan tinker` or in your own code:
 
 ```php
 $token = $user->createToken('assistant', ['lynx:mcp'])->plainTextToken;
@@ -51,11 +51,11 @@ $token = $user->createToken('assistant', ['lynx:mcp'])->plainTextToken;
 
 ### Your own read tools
 
-Writes are always actions, which become tools automatically. To let clients read something Lynx doesn't offer, add a read tool. This one answers "which posts need work?" for the [blog review example](/admin/extending#example-reviewing-blog-posts):
+Writes are always actions, which become tools automatically. To let clients read something Lynx doesn't offer, add a read tool. This one, in `app/Blog/ReviewQueueTool.php`, answers "which posts need work?" for the [blog review example](/admin/extending#example-reviewing-blog-posts):
 
 <<< @/snippets/review/ReviewQueueTool.php#tool{php}
 
-Register it in a service provider, and the MCP server and the built-in agent both offer it:
+Register it in the `boot()` method of a service provider, here the example's `app/Providers/BlogReviewServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The MCP server and the built-in agent then both offer it:
 
 <<< @/snippets/review/BlogReviewServiceProvider.php#tool{php}
 
@@ -96,7 +96,7 @@ Plan mode undoes database changes only. Anything a tool does outside the databas
 
 `pages.translate` fills a page's missing values in another language and marks them as machine translations. With `overwrite` it also replaces earlier machine translations; text a person wrote is never replaced.
 
-To review a translation before visitors see it, send it to the page's draft. Lynx creates the draft if the page has none, translates the draft's own text, and leaves the live page as it is until someone publishes the draft:
+To review a translation before visitors see it, send it to the page's draft. Lynx creates the draft if the page has none, translates the draft's own text, and leaves the live page as it is until someone publishes the draft. The call works anywhere in the app, such as a controller, a job, or `php artisan tinker`:
 
 ```php
 lynx()->pages->translate('/blog/hello-world', 'pt', draft: true);
@@ -104,7 +104,7 @@ lynx()->pages->translate('/blog/hello-world', 'pt', draft: true);
 
 A draft has no URL of its own, so a page translated this way into a language it isn't published in yet still needs that language turned on in its settings.
 
-When someone changes the text a machine translated, the translation is marked outdated, until the text is back to what was translated or the field is translated again. Read each field's state for a language:
+When someone changes the text a machine translated, the translation is marked outdated, until the text is back to what was translated or the field is translated again. Read each field's state for a language, anywhere in the app:
 
 ```php
 lynx()->pages->translationStates($page, 'pt');

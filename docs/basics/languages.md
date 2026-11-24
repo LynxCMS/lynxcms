@@ -11,13 +11,13 @@ The examples on this page follow a blog written in English, with Portuguese adde
 
 ## Adding a language
 
-`lynx:install` creates the default language with the code `default` and the name "Default". First give it its real code, name and locale, so your code and labels can call it `en`:
+`lynx:install` creates the default language with the code `default` and the name "Default". First give it its real code, name and locale, so your code and labels can call it `en`. Run this once, in `php artisan tinker` (Laravel's interactive shell) or a seeder (a class that fills the database, run with `php artisan db:seed`):
 
 ```php
 lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'locale' => 'en']);
 ```
 
-Then add languages in the admin under **Settings › Languages** (it needs the `schema.manage` permission), or in code:
+Then add languages in the admin under **Settings › Languages** (it needs the `schema.manage` permission), or in code, in the same place:
 
 ```php
 lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
@@ -54,7 +54,7 @@ A page is **published in a language** once it has a URL name in that language, a
 
 Lists keep such a page. A Portuguese visitor of the blog still sees the post that has no Portuguese version yet, linking to the English one: `find()`, `children()` and page fields list it, much as a field without a Portuguese value shows the English one. Menus, the sitemap and the links between languages leave it out, since they promise an address in Portuguese.
 
-A page that features pages for one market, such as a home page whose sections pick products, can keep only those published in the visitor's language:
+A page that features pages for one market, such as a home page whose sections pick products, can keep only those published in the visitor's language. This goes in the template's view, such as `resources/views/templates/home.blade.php`:
 
 ```blade
 @foreach ($section->cards->publishedIn() as $card)
@@ -72,7 +72,7 @@ Only **translatable** fields, such as a title or a body, have a value per langua
 
 In the admin, each translatable field has a tab per language, and the page's **Settings** tab holds its URL name in each language.
 
-In code, set another language's values with `setLanguageValue()`, and the URL name with `setLanguageName()`:
+In code, such as Tinker, a seeder or an import command, set another language's values with `setLanguageValue()`, and the URL name with `setLanguageName()`:
 
 ```php
 $post = lynx()->pages->get('/blog/hello-world');
@@ -101,7 +101,7 @@ Fallback happens field by field, each time a page is read. Lynx never copies val
 
 ### Telling a translation from a fallback
 
-`@field` marks text that came from another language with that language's `lang` attribute, so browsers and screen readers pronounce it correctly (see [Views](/basics/views#printing-fields)). To check it yourself:
+`@field` marks text that came from another language with that language's `lang` attribute, so browsers and screen readers pronounce it correctly (see [Views](/basics/views#printing-fields)). To check it yourself, anywhere you have a page, such as a template's view or a controller:
 
 ```php
 lynx()->language('pt-br', function () use ($page) {
@@ -129,7 +129,7 @@ On the site, the URL prefix decides the language: `/pt/blogue` is Portuguese. On
 
 A language switcher of your own saves the visitor's choice with `lynx()->languages->setCurrent($code, remember: true)`. It keeps the language in the session and, for a signed in user, on their account ([Users](/deeper/users#columns-on-your-users-table)).
 
-In code, `lynx()->languages->current()` is the language of the request. To run code in another language, use `lynx()->language()`: it switches the language for the callback, and back afterwards.
+In code, `lynx()->languages->current()` is the language of the request. To run code in another language, use `lynx()->language()`: it switches the language for the callback, and back afterwards. Both work anywhere in your app: a view, a controller, a job.
 
 ```php
 $title = lynx()->language('pt', fn () => (string) $post->title);
@@ -137,9 +137,11 @@ $title = lynx()->language('pt', fn () => (string) $post->title);
 
 ### Mail in the reader's language
 
-To send a subscriber a new post in the language they read, build the mail inside `lynx()->language()`. The mailable reads the post's title and URL in its constructor, so a queued mail, which a worker sends later outside that language, keeps them:
+To send a subscriber a new post in the language they read, build the mail inside `lynx()->language()`. The mailable reads the post's title and URL in its constructor, so a queued mail, which a worker sends later outside that language, keeps them. The mailable is a class in `app/Mail/NewPostMail.php`:
 
 <<< @/snippets/advanced/NewPostMail.php#mailable{php}
+
+Send it where a new post is announced, such as a controller, an event listener or a queued job:
 
 <<< @/snippets/advanced/language-mail.php#send{php}
 
@@ -151,15 +153,15 @@ A language gets the rules of its locale, and the default language uses `lynx.bas
 
 Italian and German plurals change the end of the word in ways no rule can undo. In those languages, singular and plural are both reduced to the part they share. Words that differ only in their last letters then meet too, so in Italian `casa` also finds "caso".
 
-To add rules for a language, write a class that turns a plural into its singular:
+To add rules for a language, write a class that turns a plural into its singular, in `app/Lynx/SwedishPlurals.php`:
 
 <<< @/snippets/advanced/SwedishPlurals.php#reducer{php}
 
-and register it for the locale in a service provider. Registering a locale Lynx already has replaces its rules, and a full locale (`pt-BR`) wins over the bare language (`pt`):
+Then register it for the locale in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. Registering a locale Lynx already has replaces its rules, and a full locale (`pt-BR`) wins over the bare language (`pt`):
 
 <<< @/snippets/advanced/plurals-register.php#register{php}
 
-Lynx's reducers can be extended too, for a regional locale that needs a few more exceptions. `endings()` and `exceptions()` return the rules; add yours to the parent's:
+Lynx's reducers can be extended too, for a regional locale that needs a few more exceptions. `endings()` and `exceptions()` return the rules; add yours to the parent's. The class goes in `app/Lynx/CanadianFrenchPlurals.php`, and the registration in the same `boot()` method:
 
 <<< @/snippets/advanced/CanadianFrenchPlurals.php#reducer{php}
 
@@ -177,7 +179,7 @@ Fields whose type can be translated are still created translatable, because a tr
 
 ## Deleting a language
 
-Deleting a language removes every value, page name and URL stored in it. Languages that fell back to it fall back to the default language instead. The default language can't be deleted. Try it as a dry run first, which lists what would be removed:
+Deleting a language removes every value, page name and URL stored in it. Languages that fell back to it fall back to the default language instead. The default language can't be deleted. Try it as a dry run first, in `php artisan tinker`, which lists what would be removed:
 
 ```php
 lynx()->languages->delete('pt-br', dryRun: true);

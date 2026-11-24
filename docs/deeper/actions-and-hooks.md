@@ -17,7 +17,7 @@ Because every path goes through the runner, a rule you add here applies everywhe
 
 ## Running actions
 
-The page API runs actions for you, so most code never names them:
+The page API runs actions for you, so most code never names them. This code works anywhere in your app: a controller, a queued job, an Artisan command or Tinker:
 
 ```php
 $post = lynx()->pages->get('/blog/hello-world');
@@ -73,7 +73,7 @@ Hooks run inside an action's transaction: **before** hooks run before the action
 - a `ValidationException` keyed by a field, such as `values.summary`, is shown on that field in the page editor, and returned as a validation error to the API, MCP clients and the agent;
 - `ActionHalted` stops the action with a message, for rules that are not about one field.
 
-Register hooks in a service provider's `boot()` method.
+Register hooks in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. A service provider is a Laravel class whose `boot()` method runs on every request, before your pages. The examples below all go there.
 
 ### A business rule for every way of saving
 
@@ -100,7 +100,7 @@ lynx()->hook(SavePage::class)->before(function (Input $input): void {
 
 ## Events
 
-Hooks run inside the transaction. For side effects, such as sending mail, clearing a cache or calling another service, listen to **events** instead: they are dispatched only after the transaction has committed, and never for a dry run.
+Hooks run inside the transaction. For side effects, such as sending mail, clearing a cache or calling another service, listen to **events** instead: they are dispatched only after the transaction has committed, and never for a dry run. Register listeners in the same `boot()` method as hooks.
 
 <<< @/snippets/advanced/hooks.php#notify{php}
 
@@ -130,7 +130,7 @@ Event::listen(ContentChanged::class, function (ContentChanged $event) {
 
 ### Muting events
 
-An import of thousands of pages dispatches thousands of events. `lynx()->withoutEvents()` mutes them while a callback runs, like Eloquent's `withoutEvents()` for models:
+An import of thousands of pages dispatches thousands of events. `lynx()->withoutEvents()` mutes them while a callback runs, like Eloquent's `withoutEvents()` for models. Wrap the code wherever your import runs, such as an Artisan command or a queued job:
 
 ```php
 lynx()->withoutEvents(function () use ($rows) {
@@ -152,7 +152,7 @@ Lynx keeps its own stored data correct whatever is muted: sort keys, the search 
 
 ## Writing your own actions
 
-When a change is part of your site's language, such as "archive a post" or "close enrolments", make it an action of its own. It gets validation, permissions, dry runs, the activity log and hooks, and the MCP server and the AI agent offer it as a tool automatically.
+When a change is part of your site's language, such as "archive a post" or "close enrolments", make it an action of its own. It gets validation, permissions, dry runs, the activity log and hooks, and the MCP server and the AI agent offer it as a tool automatically. An action is a class of your app, here in `app/Lynx/Actions/ArchivePost.php`:
 
 <<< @/snippets/advanced/ArchivePost.php#action{php}
 
@@ -169,7 +169,7 @@ An action has:
 | `exposedAsTool()` | Return `false` to keep an action out of the MCP server and the agent. |
 | `logsActivity()`, `logsActivityPerPage()` | Return `false` from the first to keep an action out of the activity log. Return `true` from the second when one run changes many pages, such as a nightly import: each page then gets its own entry in its history, and a run that changed nothing leaves none. |
 
-Register it in a service provider:
+Register it in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`:
 
 ```php
 use App\Lynx\Actions\ArchivePost;
@@ -180,7 +180,7 @@ public function boot(): void
 }
 ```
 
-Then run it like any other action, including as a dry run:
+Then run it like any other action, anywhere in your app, including as a dry run:
 
 ```php
 lynx()->run(ArchivePost::class, ['post' => '/blog/hello-world']);

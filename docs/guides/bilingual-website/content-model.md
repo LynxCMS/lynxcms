@@ -12,7 +12,7 @@ You can build the schema by clicking through the admin, under **Settings › Fie
 
 ## Two languages
 
-`lynx:install` made one language, with the code `default`. Give it its real code and locale, then add French:
+`lynx:install` made one language, with the code `default`. Give it its real code and locale, then add French, in the seeder's `run()` method:
 
 ```php
 lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'locale' => 'en-CA']);

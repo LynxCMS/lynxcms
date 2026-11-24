@@ -26,7 +26,7 @@ A plain page, such as the legal notice, is a title and a text:
 
 ## Printing fields
 
-`{{ $page->title }}` prints a field's value, escaped so that text can't break the page's HTML. For text visitors read, the views use `@field` instead:
+`{{ $page->title }}` prints a field's value, escaped so that text can't break the page's HTML. For text visitors read, the views use `@field` instead, as in `resources/views/templates/lawyer.blade.php`:
 
 ```blade
 <p>{{ $page->species }}</p>
@@ -35,7 +35,7 @@ A plain page, such as the legal notice, is a title and a text:
 
 `@field` does two things more. It prints a rich text field's HTML, which Lynx cleaned when the page was saved. And when a value comes from the fallback language, because the French text isn't written yet, it wraps the value in an element with `lang="en"`, so browsers and screen readers pronounce it as English.
 
-A field with no value reads as `null`, so a view can leave out what a page doesn't have:
+A field with no value reads as `null`, so a view can leave out what a page doesn't have. The lawyer's view does it for the fun fact:
 
 ```blade
 @if ($page->fun_fact)
@@ -90,7 +90,7 @@ The starter styles the site with [Tailwind CSS](https://tailwindcss.com). To get
 
 ## Menus editors change
 
-The main menu is a **menu** from the menus module: a list of links that editors reorder, rename and extend in the admin's **Menus** screen. The seeder creates it with the five sections:
+The main menu is a **menu** from the menus module: a list of links that editors reorder, rename and extend in the admin's **Menus** screen. The seeder `database/seeders/SiteFeaturesSeeder.php` creates it with the five sections:
 
 ```php
 lynx()->menus()->create('main', ['en' => 'Main navigation', 'fr' => 'Navigation principale']);
