@@ -17,6 +17,7 @@ use LynxCms\Admin\EditorLinks;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
+use LynxCms\Forms\Admin\Http\DownloadFormStructure;
 use LynxCms\Forms\Admin\Http\DownloadSubmissionFile;
 use LynxCms\Forms\Admin\Http\ExportSubmissions;
 use LynxCms\Forms\Admin\Http\ShowFormPreview;
@@ -61,6 +62,7 @@ final class AdminIntegration
             Admin::screen('forms/builder', 'lynx-forms::admin.builder', 'forms.view')->name('forms.builder');
             Route::get('forms/preview/{form}', ShowFormPreview::class)->name('forms.preview');
             Route::get('forms/export/{form}', ExportSubmissions::class)->name('forms.export');
+            Route::get('forms/structure/{form}', DownloadFormStructure::class)->name('forms.structure');
             Route::get('forms/results/{form}', ShowFormResults::class)->name('forms.results');
             Route::get('forms/{submission}', ShowSubmission::class)->name('forms.show');
             Route::get('forms/{submission}/files/{file}', DownloadSubmissionFile::class)->name('forms.file');

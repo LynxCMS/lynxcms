@@ -78,6 +78,8 @@ Each needs its module.
 | `lynx:media:prune --older-than= --dry-run` | Deletes media files that no page, draft or revision uses (the scheduler runs it daily). Needs `lynxcms/media`. |
 | `lynx:media:pull --page=` | Queues downloads from production for the media files this machine lacks (`LYNX_MEDIA_REMOTE`). Needs `lynxcms/media`. |
 | `lynx:forms:purge --days=` | Deletes old spam and archived form submissions with their files. Needs `lynxcms/forms`. |
+| `lynx:forms:export form path` | Writes a form built in the admin as JSON: its title, messages and fields, without recipients. Without a path, prints it. See [Copying a form to another site](/modules/forms#copying-a-form-to-another-site). |
+| `lynx:forms:import path --name= --dry-run` | Creates a form from a form export, unpublished and without recipients. |
 | `lynx:sitemap --clear --warm` | Lists the sitemap's parts; `--clear` drops the cached files, `--warm` builds them all now. Needs `lynxcms/sitemap`. |
 | `lynx:page-cache --clear --prune --warm --stats --compile` | Drops every stored page, drops expired ones (scheduled every minute), stores every public page now, counts them per template, or writes the settings `serve.php` reads. Needs `lynxcms/cache`. |
 | `lynx:page-cache:server nginx` | Prints web server rules (nginx, apache or caddy) that send stored pages without PHP. Needs `lynxcms/cache`. |

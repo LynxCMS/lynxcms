@@ -11,6 +11,9 @@ return [
     ],
     'field' => 'El campo [:field] ya existe con otros ajustes; el creador de formularios necesita [:needs].',
     'submission' => 'No existe el envío [:submission].',
+    'import' => [
+        'value' => 'Los campos de tipo [:type] no tienen el ajuste [:value].',
+    ],
     'builder' => [
         'indented' => 'Los bloques con sangría pertenecen a un grupo: añade un grupo encima, o quita la sangría.',
         'nested' => 'Un grupo no puede contener otro grupo ni un paso.',

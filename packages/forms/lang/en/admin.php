@@ -122,5 +122,13 @@ return [
         'preview' => 'Preview',
         'empty' => 'No forms yet.',
         'empty_help' => 'Name a form above to start building it.',
+        'import_file' => 'Form export (JSON)',
+        'import_name' => 'Name',
+        'import_name_placeholder' => 'the export\'s',
+        'import' => 'Import form',
+        'import_not_json' => 'This file is not a form export: it can\'t be read as JSON.',
+        'imported' => 'Form imported, unpublished. Add its recipients, then publish it.',
+        'imported_dropped' => 'Form imported, unpublished. Texts in :languages were left out, as this site has no such language.',
+        'export' => 'Export',
     ],
 ];

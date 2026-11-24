@@ -13,6 +13,19 @@
             </label>
             <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
         </form>
+        <form wire:submit="import" class="bg-card flex flex-wrap items-end gap-3 rounded-xl border p-4" data-form-import>
+            <label class="grid gap-1 text-sm">
+                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_file') }}</span>
+                <input type="file" accept="application/json,.json" class="blat-input max-w-sm" wire:model="importFile" @error('importFile') aria-invalid="true" @enderror>
+                @error('importFile') <span data-error-for="importFile" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+            </label>
+            <label class="grid gap-1 text-sm">
+                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_name') }}</span>
+                <input type="text" class="blat-input w-48 font-mono" wire:model="importName" placeholder="{{ __('lynx-forms::admin.list.import_name_placeholder') }}">
+                @error('importName') <span data-error-for="importName" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+            </label>
+            <x-lynx-admin::ui.button type="submit" variant="outline">{{ __('lynx-forms::admin.list.import') }}</x-lynx-admin::ui.button>
+        </form>
     @endif
 
     <x-lynx-admin::ui.table variant="card">
@@ -44,6 +57,9 @@
                         <span class="inline-flex gap-2">
                             @if ($row['edit'] !== null && $canBuild)
                                 <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['edit']">{{ __('lynx-forms::admin.list.edit') }}</x-lynx-admin::ui.button>
+                            @endif
+                            @if ($row['structure'] !== null && $canBuild)
+                                <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['structure']" data-form-export="{{ $row['key'] }}">{{ __('lynx-forms::admin.list.export') }}</x-lynx-admin::ui.button>
                             @endif
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.results', $row['key'])">{{ __('lynx-forms::admin.list.results') }}</x-lynx-admin::ui.button>
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.preview', $row['key'])">{{ __('lynx-forms::admin.list.preview') }}</x-lynx-admin::ui.button>

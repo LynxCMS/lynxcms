@@ -11,6 +11,9 @@ return [
     ],
     'field' => 'O campo [:field] já existe com outras definições; o construtor de formulários precisa de [:needs].',
     'submission' => 'Não existe a resposta [:submission].',
+    'import' => [
+        'value' => 'Os campos do tipo [:type] não têm a definição [:value].',
+    ],
     'builder' => [
         'indented' => 'Os blocos recuados pertencem a um grupo: adicione um grupo acima, ou retire o recuo.',
         'nested' => 'Um grupo não pode conter outro grupo nem um passo.',

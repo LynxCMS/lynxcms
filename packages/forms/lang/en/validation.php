@@ -11,6 +11,9 @@ return [
     ],
     'field' => 'Field [:field] exists with other settings; the form builder needs [:needs].',
     'submission' => 'There is no submission [:submission].',
+    'import' => [
+        'value' => 'Fields of type [:type] have no setting [:value].',
+    ],
     'builder' => [
         'indented' => 'Indented blocks belong to a group: add a group above it, or outdent it.',
         'nested' => 'A group cannot hold a group or a step.',

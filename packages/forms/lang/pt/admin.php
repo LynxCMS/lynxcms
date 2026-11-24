@@ -122,5 +122,13 @@ return [
         'preview' => 'Pré-visualizar',
         'empty' => 'Ainda não há formulários.',
         'empty_help' => 'Dê um nome a um formulário acima para o começar a construir.',
+        'import_file' => 'Exportação de formulário (JSON)',
+        'import_name' => 'Nome',
+        'import_name_placeholder' => 'o da exportação',
+        'import' => 'Importar formulário',
+        'import_not_json' => 'Este ficheiro não é uma exportação de formulário: não pode ser lido como JSON.',
+        'imported' => 'Formulário importado, por publicar. Adicione os destinatários e publique-o.',
+        'imported_dropped' => 'Formulário importado, por publicar. Os textos em :languages ficaram de fora, porque este site não tem essas línguas.',
+        'export' => 'Exportar',
     ],
 ];
