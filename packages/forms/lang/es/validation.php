@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'form' => [
+        'name' => 'Usa letras minúsculas, dígitos y guiones, empezando por una letra, como contacto (como máximo :max caracteres).',
         'taken' => 'Ya existe un formulario con el nombre [:form].',
         'no_root' => 'Falta la página de los formularios.',
         'failed' => 'No se pudo crear el formulario.',

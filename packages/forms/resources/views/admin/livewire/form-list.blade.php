@@ -8,7 +8,8 @@
             </label>
             <label class="grid gap-1 text-sm">
                 <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.name_label') }}</span>
-                <input type="text" class="blat-input w-48 font-mono" wire:model="name" placeholder="{{ __('lynx-forms::admin.list.name_placeholder') }}">
+                <input type="text" class="blat-input w-48 font-mono" wire:model="name" placeholder="{{ __('lynx-forms::admin.list.name_placeholder') }}" aria-describedby="form-name-help">
+                <span id="form-name-help" class="text-muted-foreground max-w-48 text-xs">{{ __('lynx-forms::admin.list.name_help') }}</span>
                 @error('name') <span data-error-for="name" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
             </label>
             <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
@@ -24,7 +25,8 @@
                 </label>
                 <label class="grid gap-1 text-sm">
                     <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_name') }}</span>
-                    <input type="text" class="blat-input w-48 font-mono" wire:model.blur="importName">
+                    <input type="text" class="blat-input w-48 font-mono" wire:model.blur="importName" aria-describedby="import-name-help">
+                    <span id="import-name-help" class="text-muted-foreground max-w-48 text-xs">{{ __('lynx-forms::admin.list.name_help') }}</span>
                     @error('importName') <span data-error-for="importName" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
                 </label>
                 @if ($importPreview !== null)

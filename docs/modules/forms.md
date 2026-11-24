@@ -28,7 +28,7 @@ A form that members answer once each, such as a course survey, returns `true` fr
 
 ## Building forms in the admin
 
-Editors make forms without code. **Forms › Forms** lists them (with the forms defined in code) and their submissions; **New form** asks for a title and a name, then opens the form in the page editor. **Preview** shows the form as visitors will see it, unpublished forms too, and sending there only checks the answers. Each form is a page under a hidden branch that the page tree leaves out; its **Fields** are blocks:
+Editors make forms without code. **Forms › Forms** lists them (with the forms defined in code) and their submissions; **New form** asks for a title and a name, then opens the form in the page editor. The name is the form's key, which templates and submissions use: lowercase letters, digits and dashes, starting with a letter, such as `contact-us`. The admin lowercases what you type, so `Contact` becomes `contact`. **Preview** shows the form as visitors will see it, unpublished forms too, and sending there only checks the answers. Each form is a page under a hidden branch that the page tree leaves out; its **Fields** are blocks:
 
 | Block | Field |
 | --- | --- |

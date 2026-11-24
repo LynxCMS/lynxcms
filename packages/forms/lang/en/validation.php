@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'form' => [
+        'name' => 'Use lowercase letters, digits and dashes, starting with a letter, such as contact-us (at most :max characters).',
         'taken' => 'A form named [:form] already exists.',
         'no_root' => 'The forms page is missing.',
         'failed' => 'The form could not be created.',

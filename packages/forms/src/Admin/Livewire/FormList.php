@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Pages\Page;
@@ -40,7 +41,9 @@ final class FormList extends Component
     public function create(): void
     {
         abort_unless(app(AdminAccess::class)->allows('forms.manage'), 403);
-        $page = lynx()->run(CreateForm::class, ['name' => trim($this->name), 'label' => trim($this->label)])->valueAs(Page::class);
+        // A name is a key in lowercase: "Contact" is taken as "contact", and the box shows it.
+        $this->name = Str::lower(trim($this->name));
+        $page = lynx()->run(CreateForm::class, ['name' => $this->name, 'label' => trim($this->label)])->valueAs(Page::class);
 
         $this->redirectRoute('lynx.admin.pages.edit', ['page' => $page->id]);
     }

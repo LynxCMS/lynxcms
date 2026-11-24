@@ -124,6 +124,7 @@ return [
         'empty_help' => 'Name a form above to start building it.',
         'import_file' => 'Form export (JSON)',
         'import_name' => 'Form name',
+        'name_help' => 'Lowercase letters, digits and dashes, such as contact-us. Templates and submissions use it.',
         'import' => 'Import form',
         'import_submit' => 'Create form',
         'import_preview' => 'Creates :name, unpublished and without recipients, with :fields in :steps.',

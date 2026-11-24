@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'form' => [
+        'name' => 'Use letras minúsculas, algarismos e hífenes, a começar por uma letra, como contacto (no máximo :max caracteres).',
         'taken' => 'Já existe um formulário com o nome [:form].',
         'no_root' => 'Falta a página dos formulários.',
         'failed' => 'Não foi possível criar o formulário.',

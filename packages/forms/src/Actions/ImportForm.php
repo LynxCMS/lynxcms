@@ -14,6 +14,7 @@ use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\FormSchema;
+use LynxCms\Forms\Rules\FormName;
 use LynxCms\Forms\Transfer\FormExporter;
 use LynxCms\Forms\Transfer\FormTexts;
 
@@ -49,7 +50,7 @@ final class ImportForm extends Action
         return [
             'form' => ['required', 'array'],
             'form.lynx_form' => ['required', Rule::in([FormExporter::FORMAT])],
-            'form.name' => ['required', 'string', 'max:64', 'regex:'.FormSchema::NAME_PATTERN],
+            'form.name' => ['required', 'string', new FormName],
             'form.default_language' => ['required', 'string'],
             'form.title' => ['nullable', 'array'],
             'form.messages' => ['sometimes', 'array'],
@@ -58,7 +59,7 @@ final class ImportForm extends Action
             'form.fields.*.depth' => ['sometimes', 'integer', 'min:0', 'max:1'],
             'form.fields.*.enabled' => ['sometimes', 'boolean'],
             'form.fields.*.values' => ['present', 'array'],
-            'name' => ['sometimes', 'string', 'max:64', 'regex:'.FormSchema::NAME_PATTERN],
+            'name' => ['sometimes', 'string', new FormName],
         ];
     }
 

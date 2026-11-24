@@ -124,6 +124,7 @@ return [
         'empty_help' => 'Dê um nome a um formulário acima para o começar a construir.',
         'import_file' => 'Exportação de formulário (JSON)',
         'import_name' => 'Nome do formulário',
+        'name_help' => 'Letras minúsculas, algarismos e hífenes, como contacto. Os modelos e as respostas usam-no.',
         'import' => 'Importar formulário',
         'import_submit' => 'Criar formulário',
         'import_preview' => 'Cria :name, por publicar e sem destinatários, com :fields em :steps.',

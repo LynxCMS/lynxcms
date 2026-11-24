@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms\Admin\Livewire\Concerns;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use JsonException;
 use Livewire\Attributes\Locked;
@@ -48,6 +49,9 @@ trait ImportsForms
 
     public function updatedImportName(): void
     {
+        // A name is a key in lowercase: "Resources" is taken as "resources", and the box shows it.
+        $this->importName = Str::lower(trim($this->importName));
+
         if ($this->importFile !== null) {
             $this->previewImport();
         }

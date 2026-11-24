@@ -124,6 +124,7 @@ return [
         'empty_help' => 'Ponle nombre a un formulario arriba para empezar a crearlo.',
         'import_file' => 'Exportación de formulario (JSON)',
         'import_name' => 'Nombre del formulario',
+        'name_help' => 'Letras minúsculas, dígitos y guiones, como contacto. Las plantillas y las respuestas lo usan.',
         'import' => 'Importar formulario',
         'import_submit' => 'Crear formulario',
         'import_preview' => 'Crea :name, sin publicar y sin destinatarios, con :fields en :steps.',

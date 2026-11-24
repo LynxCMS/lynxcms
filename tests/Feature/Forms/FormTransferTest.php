@@ -243,3 +243,28 @@ it('says a file is not a form export in the forms list', function (): void {
     Livewire::test(FormList::class)->set('importFile', UploadedFile::fake()->createWithContent('notes.json', 'not json'))
         ->assertHasErrors('importFile')->assertSet('importPreview', null);
 });
+
+it('takes a form name in capitals as lowercase in the forms list, and says what a name may hold', function (): void {
+    transferForm();
+    $this->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    $upload = UploadedFile::fake()->createWithContent('contact.form.json', json_encode(exported(), JSON_THROW_ON_ERROR));
+
+    Livewire::test(FormList::class)->assertSeeHtml('id="import-name-help"')->assertSeeHtml('id="form-name-help"')
+        ->set('importFile', $upload)->set('importName', ' Resources ')
+        ->assertSet('importName', 'resources')->assertHasNoErrors()->assertSet('importPreview.name', 'resources')
+        ->set('importName', 'my form')->assertHasErrors(['importName']);
+
+    Livewire::test(FormList::class)->set('name', 'Newsletter')->set('label', 'Newsletter')->call('create')->assertHasNoErrors();
+
+    expect(lynx()->pages->findOne('template=form, name=newsletter, include=all'))->not->toBeNull();
+});
+
+it('says what a form name may hold when it refuses one', function (): void {
+    try {
+        lynx()->run(CreateForm::class, ['name' => 'My form', 'label' => 'My form']);
+        $this->fail('The name was accepted.');
+    } catch (ValidationException $e) {
+        expect($e->errors()['name'][0])->toBe(__('lynx-forms::validation.form.name', ['max' => 64]));
+    }
+});
