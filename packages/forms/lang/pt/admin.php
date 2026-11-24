@@ -13,6 +13,7 @@ return [
     'tabs' => [
         'inbox' => 'Caixa de entrada',
         'forms' => 'Formulários',
+        'personal' => 'Dados pessoais',
     ],
     'status' => [
         'new' => 'nova',
@@ -158,5 +159,13 @@ return [
         'imported' => 'Formulário importado, por publicar. Adicione os destinatários e publique-o.',
         'imported_dropped' => 'Formulário importado, por publicar. Os textos em :languages ficaram de fora, porque este site não tem essas línguas.',
         'export' => 'Exportar',
+    ],
+    'personal' => [
+        'description' => 'Todas as respostas com um endereço de email, para quem pede os seus dados ou que sejam eliminados.',
+        'email' => 'Endereço de email',
+        'email_help' => 'Lista todas as respostas, em qualquer formulário e estado, em que este endereço é uma resposta inteira.',
+        'found' => '{0} Nenhuma resposta tem este endereço.|{1} :count resposta tem este endereço.|[2,*] :count respostas têm este endereço.',
+        'export' => 'Exportar (JSON)',
+        'more' => 'Estão listadas as :shown mais recentes. Exportar e Eliminar incluem todas.',
     ],
 ];

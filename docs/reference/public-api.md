@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 267 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 268 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -286,9 +286,10 @@ In `LynxCms\Forms`.
 | `Livewire\FormComponent` | class | A form on a page: &lt;livewire:lynx-form form="quote" :page-id="$page-&gt;id" /&gt;. |
 | `Models\Submission` | class | A form submission: the answers, a snapshot of the form's fields when it was sent, the page and language it came from, and how editors handled it. |
 | `Models\SubmissionFile` | class | A file sent with a submission, on the private forms disk. |
+| `PersonalData` | class | What the site holds about one person from its forms: every submission, in any status and form, where their email address is a whole answer. |
 | `Results\FormResults` | class | A form's answers summed up per question, as a survey's results: how many chose each option, the average of a number, the range of a date, the latest written answers. |
 | `Rules\FormName` | class | A form's name, which is its key: lowercase letters, digits and single dashes, starting with a letter, as "contact-us". |
-| `SubmissionFilter` | class | Which submissions the inbox shows and its bulk actions and export act on: a form, a status ("open" is new and read, "all" every status), text in the answers, a date range, and the newest id when the selection was made, so a submission that arrives later is left alone. |
+| `SubmissionFilter` | class | Which submissions the inbox shows and its bulk actions and export act on: a form, a status ("open" is new and read, "all" every status), text in the answers, a date range, an email address that is a whole answer (for a person's data), and the newest id when the selection was made, so a submission that arrives later is left alone. |
 | `Transfer\FormExporter` | class | A builder form's structure as data, for JSON: its name, title, messages and the blocks of its fields, with texts keyed by language code and the code of the site's default language, so another site can key them by its own. |
 | `Transfer\FormTransferError` | class | A form that can't be exported: one the site lacks, or one defined in code, which travels with the app's code instead. |
 

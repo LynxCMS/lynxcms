@@ -26,4 +26,10 @@ return [
     | lynx:forms:purge deletes spam and archived submissions older than this.
     */
     'purge_after_days' => (int) env('LYNX_FORMS_PURGE_DAYS', 180),
+
+    /*
+    | Days a submission is kept in any status before lynx:forms:purge deletes it with its files,
+    | for forms that set none of their own. Null keeps them.
+    */
+    'retention_days' => env('LYNX_FORMS_RETENTION_DAYS'),
 ];

@@ -11,8 +11,9 @@ use LynxCms\Forms\Models\Submission;
 
 /**
  * Which submissions the inbox shows and its bulk actions and export act on: a form, a status
- * ("open" is new and read, "all" every status), text in the answers, a date range, and the
- * newest id when the selection was made, so a submission that arrives later is left alone.
+ * ("open" is new and read, "all" every status), text in the answers, a date range, an email
+ * address that is a whole answer (for a person's data, ADR-0147), and the newest id when the
+ * selection was made, so a submission that arrives later is left alone.
  *
  * @api
  */
@@ -28,10 +29,11 @@ final readonly class SubmissionFilter
         public ?CarbonImmutable $from = null,
         public ?CarbonImmutable $to = null,
         public ?int $upTo = null,
+        public string $email = '',
     ) {}
 
     /**
-     * From an action's or a request's input: show, form, search, from and to (Y-m-d), up_to.
+     * From an action's or a request's input: show, form, search, from and to (Y-m-d), up_to, email.
      *
      * @param  array<array-key, mixed>  $input
      */
@@ -47,6 +49,7 @@ final readonly class SubmissionFilter
             from: $date('from')?->startOfDay(),
             to: $date('to')?->endOfDay(),
             upTo: isset($input['up_to']) ? Value::int($input['up_to']) : null,
+            email: trim(Value::string($input['email'] ?? '')),
         );
     }
 
@@ -60,12 +63,13 @@ final readonly class SubmissionFilter
             'from' => $this->from?->toDateString(),
             'to' => $this->to?->toDateString(),
             'up_to' => $this->upTo,
+            'email' => $this->email,
         ], fn (mixed $value): bool => $value !== null && $value !== '');
     }
 
     public function withUpTo(?int $id): self
     {
-        return new self($this->show, $this->form, $this->search, $this->from, $this->to, $id);
+        return new self($this->show, $this->form, $this->search, $this->from, $this->to, $id, $this->email);
     }
 
     /** @return Builder<Submission> */
@@ -84,7 +88,27 @@ final readonly class SubmissionFilter
             ->when($this->to !== null, fn (Builder $q) => $q->where('created_at', '<=', $this->to))
             ->when($this->upTo !== null, fn (Builder $q) => $q->where('id', '<=', $this->upTo));
 
-        return $this->searched($query);
+        return $this->withEmail($this->searched($query));
+    }
+
+    /**
+     * Submissions where the address is a whole answer: its JSON string, quotes included, so
+     * "ana@example.com" doesn't match "joana@example.com". LIKE's wildcards are escaped, as
+     * addresses often hold "_".
+     *
+     * @param  Builder<Submission>  $query
+     * @return Builder<Submission>
+     */
+    private function withEmail(Builder $query): Builder
+    {
+        if ($this->email === '') {
+            return $query;
+        }
+
+        $value = mb_strtolower(Value::string(json_encode($this->email)));
+        $escaped = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $value);
+
+        return $query->whereRaw("LOWER(CAST(data AS TEXT)) LIKE ? ESCAPE '!'", ['%'.$escaped.'%']);
     }
 
     /**

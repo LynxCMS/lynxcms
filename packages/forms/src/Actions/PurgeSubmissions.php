@@ -29,7 +29,7 @@ final class PurgeSubmissions extends Action
 
     public static function description(): string
     {
-        return 'Delete spam and archived form submissions older than some days, with their files.';
+        return 'Delete spam and archived form submissions older than some days, and submissions in any status older than their form\'s retention, with their files.';
     }
 
     public static function permission(): string
@@ -55,6 +55,11 @@ final class PurgeSubmissions extends Action
     /** @return int how many were deleted */
     public function handle(Input $input, ActionContext $context): int
     {
+        return $this->purgeOld($input, $context) + $this->purgeRetained($context);
+    }
+
+    private function purgeOld(Input $input, ActionContext $context): int
+    {
         $days = $input->int('older_than_days') ?? Value::int(config('lynx-forms.purge_after_days'), 180);
         $old = Submission::query()->whereIn('status', ['spam', 'archived'])->where('created_at', '<', now()->subDays($days))->get();
 
@@ -67,5 +72,23 @@ final class PurgeSubmissions extends Action
         $context->changes->deleted('form_submission', null, "Purge {$old->count()} spam and archived submissions older than {$days} days", ['count' => $old->count()]);
 
         return $old->count();
+    }
+
+    /** Submissions in any status older than their form's retention (ADR-0147). */
+    private function purgeRetained(ActionContext $context): int
+    {
+        $count = 0;
+
+        foreach (lynx()->forms()->all() as $key => $form) {
+            $days = $form->retentionDays();
+
+            if ($days !== null) {
+                // Whole days: everything received on or before the day $days + 1 days ago.
+                $filter = ['show' => 'all', 'form' => (string) $key, 'to' => now()->subDays($days + 1)->toDateString()];
+                $count += Value::int(Value::map($context->run(DeleteSubmissions::class, ['filter' => $filter]))['submissions'] ?? 0);
+            }
+        }
+
+        return $count;
     }
 }
