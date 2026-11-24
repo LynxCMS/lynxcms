@@ -90,8 +90,10 @@ Lynx code uses two names for pages:
 
 | Name | What it is | Where you have it |
 | --- | --- | --- |
-| `$page` | One page: its fields, `url`, `parent()` and `children()`. | In a template's view, as the page the visitor asked for. Anywhere else, as a variable you set from `get()`, `find()` or a loop. |
+| `$page` | The page object in the context of a template: the page being rendered, with its fields, `url`, `parent()` and `children()`. | In the template's view. Lynx passes it in. |
 | `lynx()->pages` | The page API, for every page on the site: `get()`, `find()`, `findOne()` and `count()` read pages, and `save()`, `move()`, `publish()` and the rest change them. | Everywhere: views, controllers, jobs, Artisan commands and Tinker. |
+
+`get()`, `find()` and loops return page objects of the same kind, such as `$post` in `@foreach ($page->children() as $post)`. They work like `$page`, but they aren't the page being rendered.
 
 There is no `lynx()->page`. The page the visitor asked for exists only in the template's view, as `$page`, and code that needs it receives it from there:
 
