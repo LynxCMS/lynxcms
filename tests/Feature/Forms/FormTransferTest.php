@@ -192,7 +192,7 @@ it('downloads a form\'s structure from the forms list, for people who may build 
     $this->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 
-    Livewire::test(FormList::class)->assertSeeHtml('data-form-export="contact"')->assertSeeHtml('wire:ignore.self data-form-import>');
+    Livewire::test(FormList::class)->assertSeeHtml('data-form-export="contact"')->assertSeeHtml('data-collapsed="true"')->assertSeeHtml('data-form-import');
     $response = $this->get(route('lynx.admin.forms.structure', 'contact'))->assertOk();
 
     expect(json_decode($response->streamedContent(), true))->toBe(exported())

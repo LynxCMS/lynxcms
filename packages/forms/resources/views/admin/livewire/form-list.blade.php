@@ -14,10 +14,9 @@
             </label>
             <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
         </form>
-        {{-- Closed until needed; wire:ignore.self keeps it open while Livewire shows a refusal. --}}
-        <details class="bg-card rounded-xl border" wire:ignore.self data-form-import>
-            <summary class="w-fit cursor-pointer p-4 text-sm font-medium">{{ __('lynx-forms::admin.list.import') }}</summary>
-            <form wire:submit="import" class="flex flex-wrap items-end gap-3 px-4 pb-4">
+        <x-lynx-admin::section id="forms-import" :title="__('lynx-forms::admin.list.import')" remember="forms:import" collapsed
+            :has-error="$errors->has('importFile') || $errors->has('importName')" data-form-import>
+            <form wire:submit="import" class="flex flex-wrap items-end gap-3">
                 <label class="grid gap-1 text-sm">
                     <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_file') }}</span>
                     <input type="file" accept="application/json,.json" class="blat-input max-w-sm" wire:model="importFile" @error('importFile') aria-invalid="true" @enderror>
@@ -43,7 +42,7 @@
                     </div>
                 @endif
             </form>
-        </details>
+        </x-lynx-admin::section>
     @endif
 
     <x-lynx-admin::ui.table variant="card">
