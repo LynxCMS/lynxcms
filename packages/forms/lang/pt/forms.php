@@ -13,6 +13,7 @@ return [
     'step' => 'Passo :current de :total',
     'check_fields' => 'Verifique os campos assinalados abaixo.',
     'too_many' => 'Demasiadas tentativas. Tente novamente dentro de :seconds segundos.',
+    'turnstile' => 'Não foi possível confirmar que é uma pessoa. Tente novamente.',
     'add_row' => 'Adicionar',
     'remove' => 'Remover',
     'files_hint' => 'Até :count ficheiros, :size cada. :types',

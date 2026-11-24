@@ -18,6 +18,15 @@ return [
     ],
 
     /*
+    | Cloudflare Turnstile on public forms (ADR-0148): on when both keys are set. Without them here,
+    | a superuser can set them in Forms > Forms. Test keys: https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+    */
+    'turnstile' => [
+        'site_key' => env('LYNX_FORMS_TURNSTILE_SITE_KEY'),
+        'secret' => env('LYNX_FORMS_TURNSTILE_SECRET'),
+    ],
+
+    /*
     | Addresses mailed about submissions when no user holds forms.view and the form names none.
     */
     'notify' => array_filter(explode(',', (string) env('LYNX_FORMS_NOTIFY', ''))),

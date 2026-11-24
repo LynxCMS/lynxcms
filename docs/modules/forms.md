@@ -172,6 +172,15 @@ Labels, help, options, step titles and the success and error messages come from 
 
 Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a hidden field and a timing check. A caught bot sees the usual thanks, and nothing is stored or mailed. Each visitor may send a form 5 times in 10 minutes (`LYNX_FORMS_RATE_ATTEMPTS`, `LYNX_FORMS_RATE_DECAY`).
 
+[Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) adds a check that a visitor is a person, which most people pass without a puzzle. It is off until the site has a site key and a secret key, from a free Cloudflare account. Put them in `.env`:
+
+```ini
+LYNX_FORMS_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+LYNX_FORMS_TURNSTILE_SECRET=0x4AAAAAAA...
+```
+
+Or a superuser sets them in **Forms › Forms › Spam protection**, where the secret is stored encrypted with the app key. Keys in `.env` win. Every form then shows the widget above its Send button, and a submission is sent only once Cloudflare confirms it; when Cloudflare can't be reached, the submission is refused. Turnstile loads a script from `challenges.cloudflare.com` on pages with forms, so mention it in the site's privacy notice, and allow that host in a Content Security Policy. Cloudflare's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass or always fail, for local sites and tests. The timing check above doesn't survive the [page cache](/modules/page-cache); Turnstile does, as its token is made in the visitor's browser.
+
 ## Who hears about submissions
 
 Each submission is mailed (queued) to the form's `recipients()`. A busy form can send one summary a day instead: the builder's **Mail a daily summary instead of each submission**, or `digest()` returning `true` in code. `lynx:forms:digest` runs daily at `LYNX_FORMS_DIGEST_AT` (08:00, in the app's time zone) and mails how many arrived since the last summary, the first answers of the latest 20, and a link to them in the inbox. Spam is left out. Without them, it goes to the users whose roles grant `forms.view`, superusers included. When nobody holds it, it goes to the addresses in `LYNX_FORMS_NOTIFY`. Files are never attached; they stay on the private disk (`LYNX_FORMS_DISK`, default `local`).

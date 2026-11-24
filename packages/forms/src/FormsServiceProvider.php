@@ -27,6 +27,7 @@ use LynxCms\Forms\Actions\DuplicateForm;
 use LynxCms\Forms\Actions\ImportForm;
 use LynxCms\Forms\Actions\InstallForms;
 use LynxCms\Forms\Actions\PurgeSubmissions;
+use LynxCms\Forms\Actions\SaveTurnstile;
 use LynxCms\Forms\Actions\SendDigest;
 use LynxCms\Forms\Actions\SubmitForm;
 use LynxCms\Forms\Actions\UpdateSubmission;
@@ -66,7 +67,7 @@ final class FormsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->make(FieldTypeRegistry::class)->register(OptionsType::class);
-        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class, UpdateSubmissions::class, DeleteSubmissions::class, DuplicateForm::class, SendDigest::class);
+        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class, UpdateSubmissions::class, DeleteSubmissions::class, DuplicateForm::class, SendDigest::class, SaveTurnstile::class);
         // A form page that would make a broken form is refused, and the save rolled back (ADR-0053).
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(PageFormValidator::class)->check($page));
         $permissions = $this->app->make(PermissionRegistry::class);

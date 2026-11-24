@@ -26,4 +26,5 @@ return [
         'show_if' => 'There is no field [:field] before this one.',
         'number' => 'Compare with a number, e.g. ">= 18".',
     ],
+    'turnstile_secret' => 'Give the secret key too.',
 ];

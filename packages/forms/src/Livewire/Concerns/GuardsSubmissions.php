@@ -6,20 +6,25 @@ namespace LynxCms\Forms\Livewire\Concerns;
 
 use Illuminate\Support\Facades\RateLimiter;
 use LynxCms\Core\Support\Value;
+use LynxCms\Forms\Spam\Turnstile;
 use Spatie\Honeypot\Events\SpamDetectedEvent;
 use Spatie\Honeypot\Exceptions\SpamException;
 use Spatie\Honeypot\Http\Livewire\Concerns\HoneypotData;
 use Spatie\Honeypot\SpamProtection;
 
 /**
- * Spam protection for public forms (ADR-0052): Spatie's honeypot and timing check, and Laravel's
- * rate limiter per form and visitor (a hash of the IP, never stored).
+ * Spam protection for public forms (ADR-0052): Spatie's honeypot and timing check, Laravel's
+ * rate limiter per form and visitor (a hash of the IP, never stored), and Cloudflare Turnstile
+ * when the site turns it on (ADR-0148).
  *
  * @internal
  */
 trait GuardsSubmissions
 {
     public HoneypotData $extraFields;
+
+    /** The token the Turnstile widget gives once the visitor passes, until it is checked. */
+    public string $turnstileToken = '';
 
     public function mountGuardsSubmissions(): void
     {
@@ -53,6 +58,23 @@ trait GuardsSubmissions
 
             return true;
         }
+    }
+
+    /** Whether Turnstile is on and Cloudflare doesn't confirm the visitor's token. */
+    protected function failsTurnstile(): bool
+    {
+        $turnstile = app(Turnstile::class);
+
+        if (! $turnstile->isEnabled()) {
+            return false;
+        }
+
+        $passes = $turnstile->verify($this->turnstileToken, request()->ip());
+        // A token is good for one check: the widget makes a new one for the next try.
+        $this->turnstileToken = '';
+        $this->dispatch('lynx-turnstile-reset');
+
+        return ! $passes;
     }
 
     private function rateLimitKey(): string
