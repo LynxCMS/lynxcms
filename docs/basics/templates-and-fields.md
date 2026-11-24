@@ -118,7 +118,7 @@ lynx()->templates->update('blog', ['allow_children' => true, 'child_templates' =
 lynx()->templates->update('post', ['allow_children' => false, 'parent_templates' => ['blog']]);
 ```
 
-`add()` takes PHP's named arguments, written in camelCase (`hasUrl: false`). `update()` takes an array of changes whose keys are the action's input, written in snake_case (`'has_url' => false`), the same keys MCP clients and the agent send.
+`add()` and `create()` take PHP's named arguments, written in camelCase (`hasUrl: false`). `update()` takes an array of changes whose keys are the action's input, written in snake_case (`'has_url' => false`), the same keys MCP clients and the agent send. A key `update()` doesn't know, such as `'hasUrl'`, is refused with a message naming the right one ([Naming](/getting-started/concepts#naming)).
 
 | Rule | Meaning |
 | --- | --- |

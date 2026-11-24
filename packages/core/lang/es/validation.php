@@ -140,4 +140,8 @@ return [
         'not_package' => '[:path] no es un paquete de contenido de Lynx (faltan manifest.json y pages.jsonl).',
         'newer' => 'El paquete lo creó un Lynx más reciente (versión de formato :version).',
     ],
+    'input' => [
+        'unknown_snake' => 'Clave desconocida [:key]. ¿Quería decir [:suggestion]? Las claves se escriben en snake_case.',
+        'unknown' => 'Clave desconocida [:key]. Claves conocidas: :known.',
+    ],
 ];

@@ -8,6 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Actions\Runner\RefusesUnknownInput;
 use LynxCms\Core\Events\TemplateUpdated;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\References\PageReferenceIndex;
@@ -25,7 +26,7 @@ use Override;
  *
  * @api
  */
-final class UpdateTemplate extends Action
+final class UpdateTemplate extends Action implements RefusesUnknownInput
 {
     public function __construct(
         private readonly TemplateRegistry $templates,

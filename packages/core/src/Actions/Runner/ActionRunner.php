@@ -96,6 +96,11 @@ final class ActionRunner
         }
 
         $data = $input instanceof Input ? $input->all() : $input;
+
+        if (is_subclass_of($action, RefusesUnknownInput::class)) {
+            UnknownInput::refuse($data, $action::rules());
+        }
+
         // Validated values win, but recursively: rules for some nested keys ("settings.description")
         // must not drop their siblings ("settings.format") that the action validates itself.
         $input = new Input(Value::map(array_replace_recursive($data, Validator::make($data, $action::rules())->validate())));

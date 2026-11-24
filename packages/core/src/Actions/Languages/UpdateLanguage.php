@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Actions\Runner\RefusesUnknownInput;
 use LynxCms\Core\Events\LanguagePrefixChanged;
 use LynxCms\Core\Events\LanguageUpdated;
 use LynxCms\Core\Languages\LanguageRegistry;
@@ -23,7 +24,7 @@ use Override;
  *
  * @api
  */
-final class UpdateLanguage extends Action
+final class UpdateLanguage extends Action implements RefusesUnknownInput
 {
     public function __construct(
         private readonly LanguageRegistry $languages,
