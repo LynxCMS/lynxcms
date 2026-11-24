@@ -31,7 +31,8 @@ return [
     'language' => 'Língua',
     'no_language_file' => 'Nenhum ficheiro para esta língua. Os visitantes não veem nenhum.',
     'falls_back_to' => 'Nenhum ficheiro para esta língua. Os visitantes veem os ficheiros de :language.',
-    'language_files' => 'Ficheiros em :language',
+    'language_files' => '{1} Ficheiro em :language|[0,*] Ficheiros em :language',
+    'language_images' => '{1} Imagem em :language|[0,*] Imagens em :language',
     'shared_files' => 'Partilhados por todas as línguas',
     'uses_shared' => 'Ainda não há ficheiro para esta língua. Os visitantes veem os partilhados.',
 ];

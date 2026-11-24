@@ -12,6 +12,8 @@
             $own = array_filter($items, fn ($item) => ($item['language'] ?? '') === $language);
             $shared = array_filter($items, fn ($item) => ($item['language'] ?? '') === '');
             $languageLabel = collect($languages)->firstWhere('code', $language)['label'] ?? $language;
+            // "PT image" on a field with one file, "PT images" on others.
+            $groupTitle = trans_choice($isImages ? 'lynx-media::admin.language_images' : 'lynx-media::admin.language_files', $multiple ? 2 : 1, ['language' => $languageLabel]);
         @endphp
         <div class="flex flex-wrap items-center gap-1" role="group" aria-label="{{ __('lynx-media::admin.languages') }}" data-media-languages>
             @foreach ($languages as $tab)
@@ -25,8 +27,8 @@
                 </x-lynx-admin::ui.button>
             @endforeach
         </div>
-        <section class="grid gap-2" data-media-group="language" aria-label="{{ __('lynx-media::admin.language_files', ['language' => $languageLabel]) }}">
-            <p class="text-sm font-medium">{{ __('lynx-media::admin.language_files', ['language' => $languageLabel]) }}</p>
+        <section class="grid gap-2" data-media-group="language" aria-label="{{ $groupTitle }}">
+            <p class="text-sm font-medium" data-media-group-title>{{ $groupTitle }}</p>
             @if ($own !== [])
                 @include('lynx-media::livewire.partials.media-list', ['shown' => $own])
             @elseif ($fallsBackTo !== null)

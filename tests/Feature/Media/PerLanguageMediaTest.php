@@ -187,3 +187,14 @@ it('shows no language tabs on a field that is not per language', function (): vo
     Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures'])
         ->assertDontSeeHtml('data-media-languages');
 });
+
+it('titles the language\'s group in the singular on a field with one file', function (): void {
+    test()->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    $label = lynx()->languages->default()->tabLabel();
+
+    Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'hero'])
+        ->assertSeeHtml('data-media-group-title>'.e(trans_choice('lynx-media::admin.language_images', 1, ['language' => $label])).'<');
+    Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures'])
+        ->assertSeeHtml('data-media-group-title>'.e(trans_choice('lynx-media::admin.language_files', 2, ['language' => $label])).'<');
+});
