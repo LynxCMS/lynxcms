@@ -8,7 +8,15 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.57
+
+Released November 24, 2026. Drafts that add and rename languages, forms copied between sites as JSON, an inbox with pages, a date filter, select all and bulk delete, a person's data found by email address, retention per form, Duplicate, a daily summary for busy forms, optional Cloudflare Turnstile, toggles shown as a switch, and the admin's sections as one component. No database changes. Sites with forms get two new form settings when `forms.install` next runs. See the [upgrade guide](/prologue/upgrade#from-0-1-56-to-0-1-57).
+
+### Breaking changes
+
+- The constructor of `BuildDraft` takes a `DraftRunner` in place of a `DraftCompiler` and a `DraftBuilder`. Laravel's container builds it as before; code that builds one with `new` resolves it with `app()` instead.
+
+### Changes
 
 - Drafts: `children: false` makes a template whose pages may have no children, and `lynx:draft --from-site` writes it that way instead of under `settings`. `checkbox` is read as `toggle`, in the short and the long form. The drafting docs list the settings a field can have on a template (`show_if`, `width`, `description` and more) and every template key. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
 - A toggle field's new `input` setting shows it as one checkbox (`checkbox`, the default and what editors saw before) or as a switch (`switch`). In a draft, `toggle:switch`. See [the toggle field](/basics/field-types#toggle).

@@ -23,7 +23,9 @@ To go back to the previous version on a live site, restore that database backup.
 
 ## From 0.1.56 to 0.1.57
 
-- With `lynxcms/forms` installed, existing sites get the form's new **Delete submissions after (days)** and **Mail a daily summary instead of each submission** settings the next time `forms.install` runs, for example when someone creates a form in the admin. To add it now: `php artisan tinker --execute="lynx()->run(LynxCms\\Forms\\Actions\\InstallForms::class)"`.
+No database changes.
+
+- With `lynxcms/forms` installed, existing sites get the form's new **Delete submissions after (days)** and **Mail a daily summary instead of each submission** settings the next time `forms.install` runs, for example when someone creates a form in the admin. To add them now: `php artisan tinker --execute="lynx()->run(LynxCms\\Forms\\Actions\\InstallForms::class)"`.
 
 ## From 0.1.55 to 0.1.56
 
