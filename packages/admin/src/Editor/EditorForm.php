@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Fields\NeedsSavedPage;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
@@ -28,19 +29,20 @@ final readonly class EditorForm
     public function editableFields(string $template): array
     {
         return lynx()->templates->fields($template)
-            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && $field->isEditable())
+            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && $field->isEditable() && app(FieldAccess::class)->canEdit($field->field))
             ->all();
     }
 
     /**
-     * Locked and hidden fields (ADR-0063): never in the form, but conditions read their saved values.
+     * Locked and hidden fields (ADR-0063), and those the editor's role may not edit (ADR-0151):
+     * never in the form, but conditions read their saved values.
      *
      * @return array<string, TemplateField>
      */
     public function readOnlyFields(string $template): array
     {
         return lynx()->templates->fields($template)
-            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && ! $field->isEditable())
+            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && (! $field->isEditable() || ! app(FieldAccess::class)->canEdit($field->field)))
             ->all();
     }
 

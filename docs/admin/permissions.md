@@ -68,6 +68,19 @@ lynx()->actingAs(Actor::system(), fn () => lynx()->run(AssignRoles::class, [
 
 Running it as the system records the assignment in the activity log. Anyone can sign up, so give this role no `admin.access` and never make it a superuser. Staff get their roles from Setup › Users, by invitation or with a temporary password.
 
+## Field access per role
+
+A field can limit which roles see it and which edit it, such as a price only the sales team changes, or internal notes editors don't see. On the field's page in **Settings › Fields**, open the **Access** tab, tick **Manage access for this field**, and tick **View** or **Edit** for each role. **Edit** lets a role see the field too, and it is off for roles that can't edit pages. With no box ticked, only superusers see and edit the field. In code, once in `php artisan tinker` or a seeder:
+
+```php
+lynx()->fields->update('price', ['settings' => ['access' => ['view' => ['editor'], 'edit' => ['sales']]]]);
+lynx()->fields->update('internal_notes', ['settings' => ['access' => ['view' => ['managers'], 'edit' => ['managers']]]]);
+```
+
+A field without `access` is open to every role that may see or edit the page, as before. `null` stops managing it.
+
+A role that may not see a field doesn't find it in the page editor, in `get_page` or in the schema agents read, and the [Finder](/modules/finder) doesn't offer it. A role that may see a field but not edit it sees the value read only, and `pages.save` refuses its changes to that field while its other fields save. Superusers always see and edit every field, and so does the site's own code: Artisan commands, queued jobs, the scheduler and code that runs as the system. Field access governs the admin, `pages.save` and agents. It doesn't change what visitors see: a template that prints a field prints it. To keep a field from every role and fill it from code, [lock it](/basics/templates-and-fields#locked-fields) instead. ProcessWire's Access tab inspired this setting.
+
 ## Checking permissions
 
 Check a permission anywhere in PHP code, such as a controller or a Livewire component:

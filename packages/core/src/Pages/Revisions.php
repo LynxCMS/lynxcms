@@ -6,6 +6,7 @@ namespace LynxCms\Core\Pages;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Strings\PageStringEdits;
 use LynxCms\Core\Support\Tables;
@@ -95,8 +96,8 @@ final readonly class Revisions
     /**
      * Stored values as pages.save takes them ({"code": value} for translatable fields), for the
      * fields the page's template has now; values the revision did not have become null. Locked
-     * fields are left out unless asked: the site's code wrote the live value, which publishing a
-     * draft or restoring a revision keeps (ADR-0149).
+     * fields, and those the actor's role may not edit, are left out unless asked: publishing a draft
+     * or restoring a revision keeps their live value (ADR-0149, ADR-0151).
      *
      * @param  array<string, array<string, mixed>>  $stored  by language code ("*" for untranslated)
      * @return array<string, mixed>
@@ -106,7 +107,8 @@ final readonly class Revisions
         $values = [];
 
         foreach ($this->templates->fields($page->templateId) as $name => $templateField) {
-            if ($templateField->isLocked() && ! $withLocked) {
+            // Locked fields, and those the actor's role may not edit, keep the live value (ADR-0149, ADR-0151).
+            if (! $withLocked && ($templateField->isLocked() || ! app(FieldAccess::class)->canEdit($templateField->field))) {
                 continue;
             }
 

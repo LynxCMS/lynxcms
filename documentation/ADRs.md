@@ -1670,3 +1670,19 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** A banner per language is one field and no template code. Turning the setting on keeps existing files for every language, so nothing changes until an editor assigns languages. `getUnformatted()`, exports and content packages keep every file. A file per language and a description per language are separate: a Portuguese file still has a description in each language.
 
+## ADR-0151: A field names the roles that may see it and the roles that may edit it
+
+**Status:** Accepted (builds on ADR-0033 and ADR-0149)
+
+**Context:** Roles grant permissions such as `pages.edit`, limited to templates and branches (ADR-0033), so a role edits every field of the pages it may edit. Projects need finer rules: a price only sales changes, internal notes editors shouldn't see. ADR-0149 locked fields for everyone but code and left roles for later. ProcessWire sets this on the field, in its Access tab. Two places were considered: on the field, a list of roles; or on the role, a list of fields in its `pages.edit` grant beside templates and branches. The grant fits the permission model, but answering "who may edit this field" means reading every role; the field answers it at once and leaves roles as they are.
+
+**Decision:** A field setting, `access: {view: [roles], edit: [roles]}`. A field with the setting manages its access: only the roles it lists see or edit it, and with none listed, only superusers. A field without it is open to every role that may see or edit the page. A role that may edit a field may also see it. Superusers and the site's code (the console and the system) always may. A first version read an empty list as every role; it was changed before release to follow ProcessWire, where managing access is a choice of its own and an empty table means superusers only, which reads more plainly than an empty list meaning everyone.
+
+- **Writes.** `pages.save` refuses a field's value from an actor whose roles may not edit it, with a message on the field; its other fields save. MCP clients and the agent are judged by their user's roles, or the anonymous role. Publishing a draft and restoring a revision leave such fields out, so they keep their live value and the rest publishes.
+- **The admin.** The page editor leaves out a field the editor's role may not see, and shows read only a field it may see but not edit. The Finder doesn't offer fields a role may not see. The field form has an Access tab: a **Manage access for this field** checkbox, then a table with a row per role (superusers left out) and View and Edit columns; Edit is off for roles without `pages.edit`.
+- **Agents.** `get_page` and the page results of actions leave out fields the actor may not see; `describe_schema` leaves them out and marks `editable: false` on those it may not edit.
+- **Not visitors.** Templates read every field, so field access changes nothing on the site's pages. Selectors in code are not filtered by it either.
+- Role names are checked when saved; deleting a role leaves its name in a field's list, where it matches nobody.
+
+**Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
+

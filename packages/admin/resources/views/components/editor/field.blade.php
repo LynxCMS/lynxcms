@@ -15,7 +15,7 @@
     $widthClass = [25 => '@xl:basis-1/4', 33 => '@xl:basis-1/3', 50 => '@xl:basis-1/2', 66 => '@xl:basis-2/3', 75 => '@xl:basis-3/4'][$field->width] ?? '';
 @endphp
 {{-- BlatUI tabs hold the language shown (tab); double-clicking a tab switches every field. The label sits above the input, so the editor reads top to bottom. --}}
-<div data-field="{{ $field->name }}" data-editor="{{ $field->display->value }}" data-collapsed="{{ $startsClosed ? 'true' : 'false' }}" data-width="{{ $field->width }}" data-locked="{{ $field->isLocked ? 'true' : 'false' }}" data-deferred="{{ $isDeferred ? 'true' : 'false' }}"
+<div data-field="{{ $field->name }}" data-editor="{{ $field->display->value }}" data-collapsed="{{ $startsClosed ? 'true' : 'false' }}" data-width="{{ $field->width }}" data-locked="{{ $field->isLocked ? 'true' : 'false' }}" data-deferred="{{ $isDeferred ? 'true' : 'false' }}" data-restricted="{{ $field->isRestricted ? 'true' : 'false' }}"
      @class(['min-w-0', 'shrink-0 grow-0 basis-full border-b border-border -mb-px' => $cell, $widthClass => $cell, 'border-e -me-px' => $isNarrow])
      x-data="{ open: @js(! $startsClosed) }">
 <x-lynx-admin::ui.tabs :value="$codes[0]" class="grid gap-2 p-5"
@@ -35,6 +35,8 @@
         @endif
         @if ($field->isLocked)
             <p class="text-muted-foreground text-xs">{{ __('lynx-admin::editor.field.locked') }}</p>
+        @elseif ($field->isRestricted)
+            <p class="text-muted-foreground text-xs">{{ __('lynx-admin::editor.field.restricted') }}</p>
         @endif
         @if ($showType)
             <p class="text-muted-foreground text-sm">{{ $field->type }}{{ $field->isTranslatable && count($languages) > 1 ? ', '.__('lynx-admin::editor.field.translatable') : '' }}@if ($field->isSearchable), <span data-searchable="{{ $field->field() }}">{{ __('lynx-admin::editor.field.searchable') }}</span>@endif</p>

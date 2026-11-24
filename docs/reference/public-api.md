@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 271 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 272 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -124,6 +124,7 @@ In `LynxCms\Core`.
 | `Fields\Choices\Choice` | class | One chosen option of a choice field: its stable value and its label in the current language. |
 | `Fields\Choices\ChoiceList` | class | The chosen options of a choice field that allows several, in the order of the field's options. |
 | `Fields\DescribesPhpType` | interface | A field type that tells static analysis what templates read: the PHPDoc type of $page-&gt;field for a shared (not translatable) field, as the type presents it, null included when an empty value reads as null. |
+| `Fields\FieldAccess` | class | Field access per role: a field with an "access" setting is managed, and only the roles it lists may see it ("view") or edit it ("edit"); a role that may edit may also see. |
 | `Fields\FieldRegistry` | class | Read access to field definitions, cached per request. |
 | `Fields\FieldTypeRegistry` | class | Registered field types. |
 | `Fields\FormatterRegistry` | class | Registered text formatters. |

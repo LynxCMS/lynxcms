@@ -39,12 +39,13 @@ final readonly class FieldView
         public bool $isSearchable = false,
         public bool $isLocked = false,
         public bool $isLazy = false,
+        public bool $isRestricted = false,
     ) {}
 
-    /** Whether editors change the value here: shown and not locked (ADR-0149). */
+    /** Whether editors change the value here: shown, not locked (ADR-0149), and their role may edit it (ADR-0151). */
     public function isEditable(): bool
     {
-        return ! $this->isLocked && $this->display !== FieldDisplay::Hidden;
+        return ! $this->isLocked && ! $this->isRestricted && $this->display !== FieldDisplay::Hidden;
     }
 
     /** Whether the field starts closed in the editor (ADR-0063): by its mode and whether it has a value. */

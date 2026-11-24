@@ -96,6 +96,11 @@ final class CreateField extends Action
             'settings.fallback' => ['sometimes', Rule::in(['inherit', 'none'])],
             'settings.autoload' => ['sometimes', 'boolean'],
             'settings.locked' => ['sometimes', 'boolean'],
+            'settings.access' => ['sometimes', 'nullable', 'array:view,edit'],
+            'settings.access.view' => ['sometimes', 'nullable', 'array'],
+            'settings.access.view.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
+            'settings.access.edit' => ['sometimes', 'nullable', 'array'],
+            'settings.access.edit.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
             'settings.description' => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
             'settings.notes' => ['sometimes', 'nullable', ...LocalizedText::rules(500)],
         ];
