@@ -36,6 +36,7 @@ trait SelectsSubmissions
             'filter.from' => ['sometimes', 'date_format:Y-m-d'],
             'filter.to' => ['sometimes', 'date_format:Y-m-d'],
             'filter.up_to' => ['sometimes', 'integer'],
+            'filter.email' => ['sometimes', 'string', 'max:254'],
         ];
     }
 
@@ -44,7 +45,7 @@ trait SelectsSubmissions
     {
         return [
             'submissions' => $schema->array()->items($schema->string())->description('Uuids or ids, at most 1000. Or give filter.'),
-            'filter' => $schema->object()->description('Every submission that matches: {show: open|all|new|read|archived|spam, form, search, from: Y-m-d, to: Y-m-d, up_to: the newest id to include}.'),
+            'filter' => $schema->object()->description('Every submission that matches: {show: open|all|new|read|archived|spam, form, search, from: Y-m-d, to: Y-m-d, up_to: the newest id to include, email: an address that is a whole answer}.'),
         ];
     }
 

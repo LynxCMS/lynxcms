@@ -69,6 +69,17 @@ abstract class Form
         return false;
     }
 
+    /**
+     * Days a submission is kept, in any status, before the daily purge deletes it with its files
+     * (ADR-0147); null keeps them, unless lynx-forms.retention_days sets a default.
+     */
+    public function retentionDays(): ?int
+    {
+        $days = config('lynx-forms.retention_days');
+
+        return is_numeric($days) && (int) $days > 0 ? (int) $days : null;
+    }
+
     /** Runs after a submission is stored and committed. */
     public function afterSubmit(Submission $submission): void {}
 

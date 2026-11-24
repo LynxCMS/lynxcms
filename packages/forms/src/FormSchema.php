@@ -56,6 +56,8 @@ final class FormSchema
 
     public const string ONCE_PER_USER = 'form_once_per_user';
 
+    public const string RETENTION = 'form_retention_days';
+
     public const string SUCCESS = 'form_success';
 
     public const string ERROR = 'form_error';
@@ -101,6 +103,7 @@ final class FormSchema
             self::FIELDS => ['matrix', false, 'Fields', ['types' => self::blockTypes(), 'max_depth' => 1]],
             self::RECIPIENTS => ['text', false, 'Send submissions to (emails, comma separated)', []],
             self::ONCE_PER_USER => ['toggle', false, 'Signed-in visitors only, one answer each', ['description' => 'For surveys of people who have an account on this site, such as a course\'s participants: each account answers once, and visitors who aren\'t signed in see a sign-in link instead of the form. The site needs its own sign-in for visitors; without one, only people who sign in to the admin could answer.']],
+            self::RETENTION => ['integer', false, 'Delete submissions after (days)', ['min' => 1, 'description' => 'Every submission older than this is deleted with its files, whatever its status, by the daily purge. 365 keeps a year. Empty keeps them.']],
             self::SUCCESS => ['textarea', true, 'Message after sending', []],
             self::ERROR => ['textarea', true, 'Message when sending fails', []],
             self::AUTO_REPLY => ['textarea', true, 'Confirmation mailed to the visitor', []],
@@ -117,7 +120,7 @@ final class FormSchema
     {
         return [
             self::ROOT_TEMPLATE => ['Forms', ['title'], true, ['child_templates' => [self::FORM_TEMPLATE]]],
-            self::FORM_TEMPLATE => ['Form', [['name' => 'title', 'required' => true], self::FIELDS, self::RECIPIENTS, self::ONCE_PER_USER, self::SUCCESS, self::ERROR, self::AUTO_REPLY], false, ['allow_children' => false, 'parent_templates' => [self::ROOT_TEMPLATE]]],
+            self::FORM_TEMPLATE => ['Form', [['name' => 'title', 'required' => true], self::FIELDS, self::RECIPIENTS, self::ONCE_PER_USER, self::RETENTION, self::SUCCESS, self::ERROR, self::AUTO_REPLY], false, ['allow_children' => false, 'parent_templates' => [self::ROOT_TEMPLATE]]],
         ];
     }
 

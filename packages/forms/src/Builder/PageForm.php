@@ -32,6 +32,7 @@ final class PageForm extends Form
         private readonly ?array $recipients,
         private readonly array $texts,
         private readonly bool $isOncePerUser = false,
+        private readonly ?int $retentionDays = null,
     ) {}
 
     public function key(): string
@@ -62,6 +63,11 @@ final class PageForm extends Form
     public function oncePerUser(): bool
     {
         return $this->isOncePerUser;
+    }
+
+    public function retentionDays(): ?int
+    {
+        return $this->retentionDays ?? parent::retentionDays();
     }
 
     public function successMessage(): string|array

@@ -44,7 +44,16 @@ final class PageFormCompiler
             $this->recipients(Value::string($page->getUnformatted(FormSchema::RECIPIENTS))),
             ['success' => $byLanguage(FormSchema::SUCCESS), 'error' => $byLanguage(FormSchema::ERROR), 'auto_reply' => $byLanguage(FormSchema::AUTO_REPLY)],
             $page->templateField(FormSchema::ONCE_PER_USER) !== null && Value::bool($page->getUnformatted(FormSchema::ONCE_PER_USER)),
+            $this->retentionDays($page),
         );
+    }
+
+    /** The form's own retention, when its site has the setting and it is filled in. */
+    private function retentionDays(Page $page): ?int
+    {
+        $days = $page->templateField(FormSchema::RETENTION) === null ? null : $page->getUnformatted(FormSchema::RETENTION);
+
+        return is_numeric($days) && (int) $days > 0 ? (int) $days : null;
     }
 
     /**

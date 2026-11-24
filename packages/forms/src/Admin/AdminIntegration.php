@@ -19,12 +19,14 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Admin\Http\DownloadFormStructure;
 use LynxCms\Forms\Admin\Http\DownloadSubmissionFile;
+use LynxCms\Forms\Admin\Http\ExportPersonalData;
 use LynxCms\Forms\Admin\Http\ExportSubmissions;
 use LynxCms\Forms\Admin\Http\ShowFormPreview;
 use LynxCms\Forms\Admin\Http\ShowFormResults;
 use LynxCms\Forms\Admin\Http\ShowSubmission;
 use LynxCms\Forms\Admin\Livewire\FormList;
 use LynxCms\Forms\Admin\Livewire\Inbox;
+use LynxCms\Forms\Admin\Livewire\PersonalDataSearch;
 use LynxCms\Forms\Admin\Livewire\PreviewForm;
 use LynxCms\Forms\Admin\Livewire\SubmissionView;
 use LynxCms\Forms\FormSchema;
@@ -50,6 +52,7 @@ final class AdminIntegration
         Livewire::component('lynx-forms.submission', SubmissionView::class);
         Livewire::component('lynx-forms.list', FormList::class);
         Livewire::component('lynx-forms.preview', PreviewForm::class);
+        Livewire::component('lynx-forms.personal-data', PersonalDataSearch::class);
         self::registerBuilder();
 
         $canSee = fn (): bool => app(AdminAccess::class)->allows('forms.view');
@@ -60,6 +63,8 @@ final class AdminIntegration
         Admin::routes(function (): void {
             Admin::screen('forms', 'lynx-forms::admin.index', 'forms.view')->name('forms');
             Admin::screen('forms/builder', 'lynx-forms::admin.builder', 'forms.view')->name('forms.builder');
+            Admin::screen('forms/personal-data', 'lynx-forms::admin.personal-data', 'forms.manage')->name('forms.personal-data');
+            Route::get('forms/personal-data/export', ExportPersonalData::class)->name('forms.personal-data.export');
             Route::get('forms/preview/{form}', ShowFormPreview::class)->name('forms.preview');
             Route::get('forms/export/{form}', ExportSubmissions::class)->name('forms.export');
             Route::get('forms/structure/{form}', DownloadFormStructure::class)->name('forms.structure');

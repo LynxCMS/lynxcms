@@ -196,6 +196,12 @@ Each form exports to CSV, with the inbox's filters, where answers that start lik
 
 **Results**, next to each form in **Forms › Forms**, sums the answers up per question, as a survey's results: how many chose each option, the average of numbers, the range of dates, and the latest written answers, with spam left out. A form placed on several pages, such as one survey per course, filters the results by the page it was sent from. In code, `app(\LynxCms\Forms\Results\FormResults::class)->summarize($form, $pageId)` returns the same.
 
+## Personal data
+
+People may ask what a site holds about them, or for it to be deleted, as the GDPR allows in the EU. **Forms › Personal data** answers that for the forms. Type an email address, and it lists every submission where that address is a whole answer, in any form and status: `ana@example.com` doesn't match `joana@example.com`, and capitals don't matter. **Export (JSON)** downloads them to hand the person: each submission's form, date, status, language, answers as the form asked them, and the names of its files. **Delete** says how many submissions and files would go, then deletes them for good. The tab needs `forms.manage`.
+
+In code, `app(\LynxCms\Forms\PersonalData::class)->export('ana@example.com')` returns the same data, and `forms.delete_submissions` with `filter: {show: all, email: ana@example.com}` deletes it.
+
 ## Agents
 
 MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`, or many at once with `forms_update_submissions` (a list, or every submission a filter matches). `forms_delete_submissions` deletes many, after a dry run; it needs `forms.manage`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
@@ -209,4 +215,6 @@ MCP clients and the built-in agent can import a form export with `forms_import`,
 
 ## Housekeeping
 
-`php artisan lynx:forms:purge` runs daily. It deletes spam and archived submissions older than `LYNX_FORMS_PURGE_DAYS` (180), with their files. New and read submissions are kept.
+`php artisan lynx:forms:purge` runs daily. It deletes spam and archived submissions older than `LYNX_FORMS_PURGE_DAYS` (180), with their files.
+
+New and read submissions are kept, unless their form keeps submissions for a set time. In the builder, that is the form's **Delete submissions after (days)** setting: 365 keeps a year, and empty keeps them. A form in code returns the days from `retentionDays()`. `LYNX_FORMS_RETENTION_DAYS` sets it for every form that sets none of its own. The purge then deletes that form's submissions older than the setting, in any status, with their files. Job applications and contact forms that hold personal data are the usual candidates.

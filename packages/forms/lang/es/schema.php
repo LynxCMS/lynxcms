@@ -51,4 +51,6 @@ return [
     'Tick box' => 'Casilla',
     'Width (100, 50, 33 or 25)' => 'Ancho (100, 50, 33 o 25)',
     'has the answer' => 'tiene la respuesta',
+    'Delete submissions after (days)' => 'Eliminar respuestas tras (días)',
+    'Every submission older than this is deleted with its files, whatever its status, by the daily purge. 365 keeps a year. Empty keeps them.' => 'Todas las respuestas más antiguas se eliminan con sus archivos, sea cual sea su estado, en la limpieza diaria. 365 guarda un año. Vacío las guarda.',
 ];

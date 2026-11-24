@@ -1614,3 +1614,16 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** One file copies a form between sites, and between environments. Drafts stay core-only. A later format change bumps `lynx_form` and keeps reading version 1. Updating a form that exists from a file is not supported: replacing its blocks would turn submissions' fields into orphans, so a copy gets a new name.
 
+## ADR-0147: A person's form data is found by their email address, and forms can expire their submissions
+
+**Status:** Accepted (builds on ADR-0053 and ADR-0146)
+
+**Context:** Forms collect personal data: names, addresses, job applications. Under the GDPR a person may ask what a site holds about them and ask for it to be deleted, and data should be kept no longer than needed. The inbox searched one text at a time with `LIKE` on part of an answer, so "ana@example.com" also found "joana@example.com", and a search covered the statuses one filter showed. The daily purge deleted only old spam and archived submissions, so everything else stayed forever.
+
+**Decision:**
+
+- **By email.** `SubmissionFilter` takes an `email`: submissions where that address is a whole answer, matched as its JSON string with quotes, lowercased, and with `LIKE`'s wildcards escaped, since addresses often hold `_`. Matching an email field by name was considered and left out: forms name their fields freely (`email`, `your_email`, a field in a group), and the address in any answer is what the person asks about. `PersonalData` lists, exports (JSON, answers as the form asked them, file names) and deletes through `forms.delete_submissions`, so a deletion is one action with a dry run. **Forms › Personal data** needs `forms.manage`, as it reads across forms and deletes.
+- **Retention.** A form keeps submissions for a number of days: the builder's `form_retention_days` field, `Form::retentionDays()` in code, or `lynx-forms.retention_days` for forms without their own. `forms.purge` deletes older submissions in any status through `forms.delete_submissions`, by whole days. Days were chosen over months for one unit everywhere; the help text gives 365 as a year.
+
+**Consequences:** A data request takes one screen. A site that sets retention loses submissions for good on schedule, which is the intent; the setting is empty by default. The email match reads every row's JSON, as the inbox search does, which is fine for thousands and slow for hundreds of thousands (the search index could take it over). The builder field reaches existing sites when `forms.install` runs again.
+

@@ -13,6 +13,7 @@ return [
     'tabs' => [
         'inbox' => 'Inbox',
         'forms' => 'Forms',
+        'personal' => 'Personal data',
     ],
     'status' => [
         'new' => 'new',
@@ -158,5 +159,13 @@ return [
         'imported' => 'Form imported, unpublished. Add its recipients, then publish it.',
         'imported_dropped' => 'Form imported, unpublished. Texts in :languages were left out, as this site has no such language.',
         'export' => 'Export',
+    ],
+    'personal' => [
+        'description' => 'Every submission that holds one email address, for a person who asks for their data or for it to be deleted.',
+        'email' => 'Email address',
+        'email_help' => 'Lists every submission, in any form and status, where this address is a whole answer.',
+        'found' => '{0} No submissions hold this address.|{1} :count submission holds this address.|[2,*] :count submissions hold this address.',
+        'export' => 'Export (JSON)',
+        'more' => 'The :shown newest are listed. Export and Delete take them all.',
     ],
 ];

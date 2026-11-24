@@ -21,6 +21,10 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.56 to 0.1.57
+
+- With `lynxcms/forms` installed, existing sites get the form's new **Delete submissions after (days)** setting the next time `forms.install` runs, for example when someone creates a form in the admin. To add it now: `php artisan tinker --execute="lynx()->run(LynxCms\\Forms\\Actions\\InstallForms::class)"`.
+
 ## From 0.1.55 to 0.1.56
 
 One new table, `lynx_page_references`, which lists every link from a page field or rich text to another page.
