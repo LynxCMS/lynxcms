@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use LogicException;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Fields\Items\StoresItems;
 use LynxCms\Core\Fields\NeedsSavedPage;
 use LynxCms\Core\Languages\LanguageRegistry;
@@ -32,7 +33,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked, private FieldAccess $access) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").
@@ -56,6 +57,13 @@ final readonly class ValueWriter
             // Only the site's code writes a locked field (ADR-0149).
             if ($templateField->isLocked() && ! $this->locked->mayWrite()) {
                 $errors["values.{$fieldName}"] = Value::string(__('lynx::validation.values.locked'));
+
+                continue;
+            }
+
+            // Only the roles the field names edit it (ADR-0151).
+            if (! $this->access->canEdit($templateField->field)) {
+                $errors["values.{$fieldName}"] = Value::string(__('lynx::validation.values.no_access'));
 
                 continue;
             }

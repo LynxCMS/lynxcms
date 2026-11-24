@@ -15,6 +15,7 @@ use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Fields\FieldSettings;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Support\LocalizedText;
+use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
 use Override;
 
@@ -57,6 +58,11 @@ final class UpdateField extends Action implements RefusesUnknownInput
             'settings.fallback' => ['sometimes', 'nullable', Rule::in(['inherit', 'none'])],
             'settings.autoload' => ['sometimes', 'nullable', 'boolean'],
             'settings.locked' => ['sometimes', 'nullable', 'boolean'],
+            'settings.access' => ['sometimes', 'nullable', 'array:view,edit'],
+            'settings.access.view' => ['sometimes', 'nullable', 'array'],
+            'settings.access.view.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
+            'settings.access.edit' => ['sometimes', 'nullable', 'array'],
+            'settings.access.edit.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
         ];
     }
 

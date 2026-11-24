@@ -158,6 +158,25 @@ final class Authorizer implements Flushable
         return $this->scopeRules->scope($grants, array_map(strval(...), $moduleTemplates));
     }
 
+    /**
+     * The names of the actor's roles: a user's, or for MCP clients and the agent without a user, the
+     * configured anonymous role. Empty for the console, the system and visitors.
+     *
+     * @return list<string>
+     */
+    public function roleNames(Actor $actor): array
+    {
+        if ($actor->id !== null) {
+            $roleIds = RoleAssignment::query()->where('user_id', (string) $actor->id)->pluck('role_id')->all();
+
+            return Value::strings(Role::query()->whereKey($roleIds)->pluck('name')->all());
+        }
+
+        $anonymous = Value::string(config('lynx.permissions.anonymous_role'));
+
+        return $anonymous !== '' && in_array($actor->kind, [Actor::MCP, Actor::AI], true) ? [$anonymous] : [];
+    }
+
     public function isSuperuser(Actor $actor): bool
     {
         if ($this->hasEveryRight($actor)) {

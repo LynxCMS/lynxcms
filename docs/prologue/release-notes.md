@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Field access per role: a field can list the roles that may see it and the roles that may edit it (`access` in its settings, **Advanced › Access** in the admin). Other roles don't see the field in the page editor, through agents or in the Finder, or see it read only, and `pages.save` refuses their changes to it. Superusers and the site's code always may, and visitors are not affected. See [Field access per role](/admin/permissions#field-access-per-role).
+
 ## 0.1.58
 
 Released November 24, 2026. Locked fields that only the site's code writes, kept when drafts are published and revisions restored; the editor's display and locking as separate settings, with fields that open and close and fields that load when opened; and images and files with a file per language. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-57-to-0-1-58).

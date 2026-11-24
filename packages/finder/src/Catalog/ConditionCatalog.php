@@ -7,6 +7,7 @@ namespace LynxCms\Finder\Catalog;
 use LynxCms\Admin\AdminBranches;
 use LynxCms\Contracts\Fields\Comparison;
 use LynxCms\Core\Fields\ChoiceOptions;
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Fields\Items\ItemFieldType;
 use LynxCms\Core\Fields\ReferencesPages;
 use LynxCms\Core\Fields\Types\ChoiceType;
@@ -141,6 +142,11 @@ final class ConditionCatalog
         $subjects = [];
 
         foreach (lynx()->fields->all() as $field) {
+            // A field the user's role may not see is not offered to search by (ADR-0151).
+            if (! app(FieldAccess::class)->canView($field)) {
+                continue;
+            }
+
             $name = Value::string($field->name);
             $kind = isset($holders[$name]) ? $this->kindOf($field) : null;
 

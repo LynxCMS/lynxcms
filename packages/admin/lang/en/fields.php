@@ -103,6 +103,10 @@ return [
         'autoload_hint' => 'For fields almost every list shows. Others load the first time a template reads them, for all listed pages at once.',
         'locked' => 'Locked',
         'locked_hint' => 'Editors see the value and can\'t change it, on every template. Only the site\'s code fills it, such as an import or a sync with another service.',
+        'access' => 'Access',
+        'access_hint' => 'Superusers always see and edit it. Without a role ticked, every role that may see or edit the page does. Visitors and templates are not affected.',
+        'access_view' => 'Roles that may see it',
+        'access_edit' => 'Roles that may edit it',
     ],
     'delete' => [
         'heading' => 'Delete this field',

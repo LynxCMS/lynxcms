@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'obligatorio',
         'locked' => 'Lo define el sitio; no se puede editar aquí.',
+        'restricted' => 'Tu rol puede ver este campo, pero no cambiarlo.',
         'loading' => 'Cargando…',
         'translatable' => 'traducible',
         'searchable' => 'buscable',

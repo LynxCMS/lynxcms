@@ -15,6 +15,7 @@ use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Components\ComponentRegistry;
 use LynxCms\Core\Components\RegisteredComponent;
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Lynx;
@@ -48,6 +49,7 @@ final readonly class AgentToolkit
         private ComponentRegistry $components,
         private Authorizer $authorizer,
         private PageStrings $strings,
+        private FieldAccess $fieldAccess,
     ) {}
 
     /**
@@ -149,7 +151,11 @@ final readonly class AgentToolkit
                 'allow_children' => $t->allowsChildren(),
                 'child_templates' => $t->childTemplates(),
                 'parent_templates' => $t->parentTemplates(),
-                'fields' => $this->templates->fields($t)->map(fn (TemplateField $f): array => $f->toSummary())->values()->all(),
+                // Fields the actor's role may not see are left out, and those it may not edit say so (ADR-0151).
+                'fields' => $this->templates->fields($t)
+                    ->filter(fn (TemplateField $f): bool => $this->fieldAccess->canView($f->field))
+                    ->map(fn (TemplateField $f): array => $f->toSummary() + ($this->fieldAccess->canEdit($f->field) ? [] : ['editable' => false]))
+                    ->values()->all(),
             ])->values()->all(),
             'field_types' => $this->lynx->fields->types(),
             'formatters' => array_filter(array_map(fn (string $class): array => $this->lynx->formatters()->forType($class::name()), $this->lynx->fieldTypes()->all())),
@@ -213,10 +219,35 @@ final readonly class AgentToolkit
 
             $strings = $this->strings->describe($page);
 
-            return $page->toArray() + ['values_by_language' => $page->valuesByLanguage()] + ($strings === [] ? [] : ['strings' => $strings]);
+            return $this->withoutHiddenFields($page->toArray() + ['values_by_language' => $page->valuesByLanguage()], $page) + ($strings === [] ? [] : ['strings' => $strings]);
         };
 
         return $language === null ? $run() : $this->context->with($language, fn (): ?array => $run());
+    }
+
+    /**
+     * A page's data without the fields the actor's role may not see (ADR-0151).
+     *
+     * @param  array<string, mixed>  $data  toArray(), with values_by_language
+     * @return array<string, mixed>
+     */
+    private function withoutHiddenFields(array $data, Page $page): array
+    {
+        $hidden = $this->templates->fields($page->templateId)
+            ->filter(fn (TemplateField $f): bool => ! $this->fieldAccess->canView($f->field))
+            ->keys()->map(strval(...))->all();
+
+        if ($hidden === []) {
+            return $data;
+        }
+
+        $data['fields'] = array_diff_key(Value::map($data['fields'] ?? []), array_flip($hidden));
+
+        if (isset($data['values_by_language'])) {
+            $data['values_by_language'] = array_map(fn (mixed $values): array => array_diff_key(Value::map($values), array_flip($hidden)), Value::map($data['values_by_language']));
+        }
+
+        return $data;
     }
 
     public static function usageGuide(): string
@@ -227,7 +258,7 @@ final readonly class AgentToolkit
     public function serialize(mixed $value): mixed
     {
         return match (true) {
-            $value instanceof Page => $value->toArray(),
+            $value instanceof Page => $this->withoutHiddenFields($value->toArray(), $value),
             $value instanceof PageArray => $value->jsonSerialize(),
             $value instanceof Language => $value->toSummary(),
             $value instanceof Model && method_exists($value, 'toSummary') => $value->toSummary(),

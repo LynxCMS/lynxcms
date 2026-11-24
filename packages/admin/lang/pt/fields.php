@@ -103,6 +103,10 @@ return [
         'autoload_hint' => 'Para campos que quase todas as listas mostram. Os outros carregam na primeira vez que um modelo os lê, para todas as páginas listadas de uma só vez.',
         'locked' => 'Bloqueado',
         'locked_hint' => 'Os editores veem o valor e não o podem alterar, em todos os modelos. Só o código do site o preenche, como uma importação ou uma sincronização com outro serviço.',
+        'access' => 'Acesso',
+        'access_hint' => 'Os superutilizadores veem-no e editam-no sempre. Sem uma função assinalada, todas as funções que podem ver ou editar a página podem. Os visitantes e os modelos não são afetados.',
+        'access_view' => 'Funções que o podem ver',
+        'access_edit' => 'Funções que o podem editar',
     ],
     'delete' => [
         'heading' => 'Eliminar este campo',

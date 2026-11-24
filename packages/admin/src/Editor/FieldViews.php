@@ -6,6 +6,7 @@ namespace LynxCms\Admin\Editor;
 
 use BladeUI\Icons\Exceptions\SvgNotFound;
 use BladeUI\Icons\Factory as IconFactory;
+use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Search\SearchText;
@@ -28,7 +29,10 @@ final class FieldViews
         $views = [];
 
         foreach (lynx()->templates->fields($page->template()->name) as $templateField) {
-            $views[] = $this->view($templateField, $page);
+            // A field the editor's role may not see is left out (ADR-0151).
+            if (app(FieldAccess::class)->canView($templateField->field)) {
+                $views[] = $this->view($templateField, $page);
+            }
         }
 
         return $views;
@@ -77,6 +81,7 @@ final class FieldViews
             isSearchable: SearchText::indexes($templateField->name(), $templateField),
             isLocked: $templateField->isLocked(),
             isLazy: $templateField->isLazy(),
+            isRestricted: ! app(FieldAccess::class)->canEdit($field),
         );
     }
 

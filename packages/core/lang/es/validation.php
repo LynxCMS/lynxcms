@@ -70,6 +70,7 @@ return [
         'unique_used' => 'El nombre de una página única no puede usarse en otro sitio, pero [:name] ya lo usa :page.',
     ],
     'values' => [
+        'no_access' => 'Tu rol no puede cambiar este campo.',
         'locked' => 'Este campo está bloqueado: solo el código del sitio lo cambia.',
         'required' => 'Rellena el campo :field.',
         'required_default' => 'Rellena el campo :field en el idioma predeterminado.',
