@@ -1,6 +1,13 @@
 {{-- A list of the field's files ($shown: index => form item), sortable by drag or the arrow buttons. --}}
 <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4" @unless ($disabled) wire:sort="sort" @endunless>
     @foreach ($shown as $index => $item)
+        @if ($editing === $item['key'])
+            {{-- The details take the card's place, across the row, until closed. --}}
+            <li wire:key="file-{{ $item['key'] }}" wire:sort:item="{{ $item['key'] }}" class="col-span-full">
+                @include('lynx-media::livewire.partials.media-details')
+            </li>
+            @continue
+        @endif
         @php($url = app(\LynxCms\Media\MediaPaths::class)->url((string) $item['file']))
         <li wire:key="file-{{ $item['key'] }}" wire:sort:item="{{ $item['key'] }}" @class(['bg-card overflow-hidden rounded-md border', 'opacity-50' => ! ($item['enabled'] ?? true)])>
             @if ($isImages)

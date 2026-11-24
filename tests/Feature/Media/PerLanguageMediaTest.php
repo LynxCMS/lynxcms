@@ -198,3 +198,22 @@ it('titles the language\'s group in the singular on a field with one file', func
     Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures'])
         ->assertSeeHtml('data-media-group-title>'.e(trans_choice('lynx-media::admin.language_files', 2, ['language' => $label])).'<');
 });
+
+it('shows a file\'s details in place of its card while it is edited', function (): void {
+    test()->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    saveFiles('brochures', [languageFile('brochures', 'guide-en', 'default'), languageFile('brochures', 'guide-2', 'default')]);
+    $items = app(MediaConverter::class)->toForm(alphaPage()->getUnformatted('brochures'));
+    [$first, $second] = array_column($items, 'key');
+
+    $component = Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures', 'items' => $items])
+        ->set('editing', $first)
+        ->assertSeeHtml('data-media-details="'.$first.'"')
+        ->assertDontSeeHtml('data-media-details="'.$second.'"');
+
+    expect(substr_count($component->html(), 'wire:sort:handle'))->toBe(1);
+
+    $component->set('editing')->assertDontSeeHtml('data-media-details');
+
+    expect(substr_count($component->html(), 'wire:sort:handle'))->toBe(2);
+});
