@@ -7,7 +7,7 @@ description: Pages, templates, fields, languages, routing and actions, the ideas
 
 Lynx is a content management system (CMS) built on Laravel. It can be the whole site, in a new Laravel app that does nothing else, or you can add it to an app you already have. People write and publish the site's content in a web admin, and your Blade views show it to visitors, in as many languages as the site needs.
 
-This page explains the ideas Lynx is built on: pages, templates and fields, selectors, languages and actions. Each section says what the idea lets you do, shows a little code, then explains how it works. You don't need to remember all of it now. [Your First Site](/getting-started/first-site) puts these ideas to work step by step.
+This page explains the ideas Lynx is built on: pages, templates and fields, selectors, languages and actions. Each section says what the idea lets you do, shows a little code, then explains how it works. You don't need to remember all of it now. [Your First Site](/getting-started/first-site) puts these ideas to work step by step, and [Recipes](/reference/recipes) lists common tasks with a link to the code for each.
 
 ## Who does what
 

@@ -216,6 +216,7 @@ export default defineConfig({
                     { text: 'Configuration', link: '/reference/configuration' },
                     { text: 'Selector Cheat Sheet', link: '/reference/selectors' },
                     { text: 'Public API', link: '/reference/public-api' },
+                    { text: 'Recipes', link: '/reference/recipes' },
                 ],
             },
         ]),
