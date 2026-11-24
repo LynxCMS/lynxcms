@@ -80,3 +80,10 @@ it('builds back a site with labels, choices, repeaters, sections, tabs and famil
 
     expect(roundTripPlan())->toBe([]);
 });
+
+it('writes children: false for a template whose pages may have no children, and builds it back', function (): void {
+    lynx()->templates->update('course', ['allow_children' => false]);
+
+    expect(app(DraftWriter::class)->write())->toMatch('/^\s+children: false$/m')->not->toContain('allow_children')
+        ->and(roundTripPlan())->toBe([]);
+});

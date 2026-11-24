@@ -127,6 +127,9 @@ return [
         'new_item' => 'New item',
         'drop_images' => 'Drop images here',
         'drop_files' => 'Drop files here',
+        'options_here' => 'Options you add show here.',
+        'pages_here' => 'Pages of the allowed templates show here.',
+        'search_pages' => 'Search pages by title',
     ],
     'mock' => [
         'buttons' => 'Editors add blocks with one button per type, in this order',

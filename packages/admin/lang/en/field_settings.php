@@ -34,6 +34,8 @@ return [
     'input_select' => 'A menu',
     'input_radios' => 'Radio buttons',
     'input_checkboxes' => 'Checkboxes',
+    'input_checkbox' => 'A checkbox',
+    'input_switch' => 'A switch',
     'allowed' => 'Components editors may choose',
     'allowed_hint' => 'Comma separated. Empty allows any.',
     'time' => 'Also a time of day',

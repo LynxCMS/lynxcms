@@ -4,6 +4,7 @@
     $shownHelp = collect($description)->filter()->first();
     $shownNote = collect($notes)->filter()->first();
     $addText = collect($addLabel)->filter()->first() ?: __('lynx-admin::fields.preview.add');
+    $choices = app(\LynxCms\Admin\Editor\FieldPreviewChoices::class)->for($type, $settings);
 @endphp
 <div class="grid max-w-2xl gap-3" data-field-preview>
     <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.preview.intro') }}</p>
@@ -20,8 +21,15 @@
         @elseif ($type === 'repeater')
             @include('lynx-admin::livewire.partials.items.block-mock', ['title' => __('lynx-admin::fields.preview.new_item'), 'rows' => $itemFields])
             <span class="bg-background inline-flex h-8 w-fit items-center gap-1.5 rounded-md border px-3 font-medium shadow-xs" aria-hidden="true"><x-lucide-plus class="size-4" /> {{ $addText }}</span>
+        @elseif ($type === 'toggle' && ($settings['input'] ?? '') === 'switch')
+            <span class="inline-flex" data-preview-input="switch" inert><x-lynx-admin::ui.switch /></span>
         @elseif ($type === 'toggle')
-            <span class="bg-muted h-5 w-9 rounded-full border" aria-hidden="true"></span>
+            {{-- As inputs/toggle draws it: one checkbox labeled Yes. --}}
+            <label class="inline-flex items-center gap-2" data-preview-input="checkbox" inert>
+                <input type="checkbox" class="blat-checkbox"> {{ __('lynx-admin::inputs.yes') }}
+            </label>
+        @elseif ($choices !== null)
+            @include('lynx-admin::livewire.partials.field.preview-choices', $choices)
         @elseif (in_array($type, ['images', 'files'], true))
             <span class="text-muted-foreground grid h-20 place-items-center rounded-md border border-dashed" aria-hidden="true">{{ __($type === 'images' ? 'lynx-admin::fields.preview.drop_images' : 'lynx-admin::fields.preview.drop_files') }}</span>
         @else

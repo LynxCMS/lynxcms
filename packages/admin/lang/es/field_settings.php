@@ -34,6 +34,8 @@ return [
     'input_select' => 'Un menú',
     'input_radios' => 'Botones de opción',
     'input_checkboxes' => 'Casillas',
+    'input_checkbox' => 'Una casilla',
+    'input_switch' => 'Un interruptor',
     'allowed' => 'Componentes que se pueden elegir',
     'allowed_hint' => 'Separados por comas. Vacío permite cualquiera.',
     'time' => 'También una hora del día',

@@ -64,6 +64,7 @@ final class BuildDraft extends Action
         return [
             'draft' => $schema->string()->description(
                 'The draft as YAML: {fields: {name: definition}, templates: {name: {label, url, singleton, children, parents, allowed, tabs, fields}}}. '
+                .'children is a list of templates, or false for pages that may have no children. A yes or no field is "toggle" ("checkbox" is read as toggle). '
                 .'A field definition is "type[:argument] tokens", e.g. "textarea translatable", "decimal:2 min:0", "choice:Small,Large multiple", "page:course multiple", "text label:\"Button text\"", '
                 .'or an object {type, label, translatable, ...settings}; a repeater lists item fields as {type: repeater, fields: [name, other*]}. '
                 .'Template fields are names ("title*" is required there), {name: type} to define a field in place, or {section: "Label", tab, fields: [...]}. Call describe_field_types for the types and their settings.'

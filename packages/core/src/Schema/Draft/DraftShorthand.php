@@ -34,7 +34,10 @@ use LynxCms\Core\Support\Value;
 final readonly class DraftShorthand
 {
     /** The setting a type's argument fills. */
-    public const array ARGUMENTS = ['text' => 'max_length', 'textarea' => 'format', 'decimal' => 'places', 'choice' => 'options', 'page' => 'templates', 'page_table' => 'templates'];
+    /** Other names people write for a type: a yes or no field is a toggle, which the admin shows as one checkbox. */
+    public const array TYPE_ALIASES = ['checkbox' => 'toggle'];
+
+    public const array ARGUMENTS = ['text' => 'max_length', 'textarea' => 'format', 'decimal' => 'places', 'choice' => 'options', 'page' => 'templates', 'page_table' => 'templates', 'toggle' => 'input'];
 
     /** Settings every field accepts beside its type's (CreateField), with how a token value is read. */
     private const array COMMON_SETTINGS = ['fallback' => 'string', 'autoload' => 'boolean', 'description' => 'string', 'notes' => 'string'];
@@ -259,6 +262,8 @@ final readonly class DraftShorthand
 
     private function knownType(string $name, string $type): string
     {
+        $type = self::TYPE_ALIASES[$type] ?? $type;
+
         if (! $this->types->has($type)) {
             throw new DraftError("Field [{$name}]: there is no field type [{$type}].".DraftError::suggestion($type, array_keys($this->types->all())));
         }

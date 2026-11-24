@@ -127,6 +127,9 @@ return [
         'new_item' => 'Novo item',
         'drop_images' => 'Largue imagens aqui',
         'drop_files' => 'Largue ficheiros aqui',
+        'options_here' => 'As opções que adicionar aparecem aqui.',
+        'pages_here' => 'As páginas dos modelos permitidos aparecem aqui.',
+        'search_pages' => 'Procurar páginas pelo título',
     ],
     'mock' => [
         'buttons' => 'Os editores adicionam blocos com um botão por tipo, por esta ordem',

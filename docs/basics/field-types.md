@@ -130,7 +130,17 @@ A time of day without a date, such as an opening hour. Stored and read as `HH:MM
 
 ### `toggle`
 
-On or off. Templates read `true` or `false`.
+One yes or no value, such as "sold out" or "featured". Templates read `true` or `false`, and selectors compare `0` and `1` (`sold_out=0`). A [draft](/basics/templates-and-fields#drafting-the-schema) also reads `checkbox` as `toggle`.
+
+| Setting | Meaning |
+| --- | --- |
+| `input` | How editors set it: `checkbox` (default), one checkbox labeled "Yes", or `switch`. Both store the same value. |
+
+```php
+lynx()->fields->create('featured', 'toggle', settings: ['input' => 'switch']);
+```
+
+To let editors tick several options from a list, use a [`choice`](#choice) field with `multiple`, or a [`page`](#page) field with `multiple` for a list of pages such as topics, and set `input` to `checkboxes`.
 
 ## Choices
 

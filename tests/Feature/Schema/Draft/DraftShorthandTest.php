@@ -111,5 +111,14 @@ it('suggests the setting meant by an unknown one, and lists the known ones', fun
 });
 
 it('refuses an argument on a type that takes none', function (): void {
-    draftField('open', 'toggle:yes');
+    draftField('seats', 'integer:yes');
 })->throws(DraftError::class, 'takes no argument');
+
+it('reads checkbox as the toggle type, in the short and the long form', function (): void {
+    expect(draftField('sold_out', 'checkbox')['type'])->toBe('toggle')
+        ->and(draftField('sold_out', ['type' => 'checkbox'])['type'])->toBe('toggle');
+});
+
+it('reads a toggle\'s argument as its input', function (): void {
+    expect(draftField('featured', 'toggle:switch')['settings'])->toBe(['input' => 'switch']);
+});

@@ -251,6 +251,7 @@ templates:
     fields: [title*, intro]
   event:
     parents: [events]
+    children: false
     fields:
       - title*
       - intro
@@ -260,9 +261,9 @@ templates:
         fields: [ticket_price, seats, sold_out, topics]
 ```
 
-A field is its type, then what you want to change about it. Pick the type that matches the data, since a field's type can't change later: `toggle` for yes or no, `integer` for whole numbers such as a year, `decimal` for prices, `date` and `time`, `choice` for a fixed list, `page` for links to other pages. They store and filter as what they are, so `sold_out=0` and `year>=2020` compare real values. [Field Types](/basics/field-types#available-types) lists them all.
+A field is its type, then what you want to change about it. Pick the type that matches the data, since a field's type can't change later: `toggle` for yes or no (one checkbox in the admin, or a switch with `toggle:switch`; a draft reads `checkbox` as `toggle`), `integer` for whole numbers such as a year, `decimal` for prices, `date` and `time`, `choice` for a fixed list, `page` for links to other pages. They store and filter as what they are, so `sold_out=0` and `year>=2020` compare real values. [Field Types](/basics/field-types#available-types) lists them all.
 
-- `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options) and `page` and `page_table` (templates).
+- `decimal:2` fills the type's main setting, here two decimal places. The types that take one are `text` (maximum length), `textarea` (format), `decimal` (places), `choice` (options), `page` and `page_table` (templates) and `toggle` (input, so `toggle:switch` shows a switch).
 - Text, textarea and URL fields get a value per language, as the admin creates them on a site with one language, so a language added later can be translated without changing any field. `translatable:false` makes the field [shared](/basics/field-types#shared-and-translatable), with one value for every language, as for a product code. A field the site already has keeps its choice unless the draft says so: `translatable` makes a shared field translatable, keeping its values as the default language's.
 - A word on its own, such as `multiple`, turns a setting on. `key:value` sets any other setting, and a list is written with commas: `templates:course,workshop`.
 - `label:"Ticket price (EUR)"` sets the label. Without one, `ticket_price` is labelled "Ticket price".
@@ -291,7 +292,30 @@ fields:
 
 An option the site has keeps its translations when the draft gives it in one language only, as in `choice:Beginner,Advanced`, so options translated in the admin survive building the draft again. Giving a translation in the draft replaces the site's.
 
-In a template, `title*` makes a field required there, and `venue: text:120` defines a field in place. `url: false` makes a template for settings or reusable content, `singleton: true` allows one page, and `children`, `parents` and `allowed` set where pages may go. Sections and tabs work as in [Arranging the page editor](#arranging-the-page-editor).
+In a template, `title*` makes a field required there, and `venue: text:120` defines a field in place. A field can also be a map of its name and its settings on that template, the same ones [`update()` takes](#arranging-the-page-editor): `required`, `label`, `description`, `notes`, `placeholder`, `width`, `editor`, `icon`, `searchable`, and [`show_if` and `required_if`](#showing-fields-only-when-needed):
+
+```yaml
+templates:
+  event:
+    fields:
+      - title*
+      - format
+      - { name: venue, show_if: format=onsite, width: 50, description: Where it happens }
+```
+
+The template's own keys set where its pages may go and what they are ([Where pages may go](#where-pages-may-go)):
+
+| Key | Meaning |
+| --- | --- |
+| `url: false` | Pages without a URL, for settings or reusable content. |
+| `singleton: true` | One page at most. |
+| `children` | Templates a page's children may use. `children: false` allows no children, as for a blog post. Left out, children may use any template. |
+| `parents` | Templates the parent may use. |
+| `allowed` | Templates a page may switch to. |
+| `label`, `tabs` | The template's label, and the editor's tabs as `key: label`. |
+| `settings` | Any other template setting, as [schema files](/deeper/schema-and-content#schema-files) write it. |
+
+Sections and tabs work as in [Arranging the page editor](#arranging-the-page-editor).
 
 ```bash
 php artisan lynx:draft --stub        # writes lynx/draft.yaml to start from

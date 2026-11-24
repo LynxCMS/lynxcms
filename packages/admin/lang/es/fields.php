@@ -127,6 +127,9 @@ return [
         'new_item' => 'Nuevo elemento',
         'drop_images' => 'Suelta aquí las imágenes',
         'drop_files' => 'Suelta aquí los archivos',
+        'options_here' => 'Las opciones que añada aparecen aquí.',
+        'pages_here' => 'Las páginas de las plantillas permitidas aparecen aquí.',
+        'search_pages' => 'Buscar páginas por título',
     ],
     'mock' => [
         'buttons' => 'Se añaden bloques con un botón por tipo, en este orden',
