@@ -85,9 +85,8 @@ final class DraftTemplates
             $settings['singleton'] = Value::bool($definition['singleton']);
         }
 
-        if (isset($definition['children'])) {
-            $settings['allow_children'] = true;
-            $settings['child_templates'] = Value::strings($definition['children']);
+        if (array_key_exists('children', $definition)) {
+            $settings = [...$settings, ...$this->children($definition['children'])];
         }
 
         if (isset($definition['parents'])) {
@@ -101,6 +100,20 @@ final class DraftTemplates
         }
 
         return $settings;
+    }
+
+    /**
+     * "children: false" lets pages have no children; a list names the templates children may use.
+     *
+     * @return array<string, mixed>
+     */
+    private function children(mixed $children): array
+    {
+        return match (true) {
+            $children === false => ['allow_children' => false],
+            is_array($children) && array_is_list($children) => ['allow_children' => true, 'child_templates' => Value::strings($children)],
+            default => throw new DraftError('A template\'s children are a list of templates, or false for pages that may have none.'),
+        };
     }
 
     /**

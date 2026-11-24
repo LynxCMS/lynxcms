@@ -203,3 +203,13 @@ it('places a field where the draft puts it, not in its old section', function ()
 
     expect(courseEntries(['title', 'summary', 'body', 'price', 'related']))->toBe(['title', 'summary', 'body', 'price', 'related']);
 });
+
+it('forbids children with children: false', function (): void {
+    $template = compileDraft(['templates' => ['course' => ['children' => false, 'fields' => ['title*']]]])->templates[0];
+
+    expect($template['settings'])->toBe(['allow_children' => false]);
+});
+
+it('refuses children that is neither a list of templates nor false', function (): void {
+    compileDraft(['templates' => ['course' => ['children' => true, 'fields' => ['title*']]]]);
+})->throws(DraftError::class, 'children');

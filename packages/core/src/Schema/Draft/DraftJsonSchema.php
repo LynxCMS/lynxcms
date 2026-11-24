@@ -49,7 +49,10 @@ final readonly class DraftJsonSchema
             '$defs' => [
                 'field' => ['anyOf' => [['$ref' => '#/$defs/shortField'], ['$ref' => '#/$defs/longField']]],
                 'shortField' => $this->shortField(),
-                'longField' => ['anyOf' => array_map($this->longField(...), array_keys($this->types->all()))],
+                'longField' => ['anyOf' => [
+                    ...array_map($this->longField(...), array_keys($this->types->all())),
+                    ...array_map(fn (string $alias, string $type): array => array_replace_recursive($this->longField($type), ['properties' => ['type' => ['const' => $alias]]]), array_keys(DraftShorthand::TYPE_ALIASES), DraftShorthand::TYPE_ALIASES),
+                ]],
                 'template' => $this->template(),
                 'entry' => $this->entry(),
                 'itemFields' => ['type' => 'array', 'items' => ['anyOf' => [['type' => 'string', 'pattern' => self::ITEM_NAME_PATTERN], ['type' => 'object', 'required' => ['name']]]]],
@@ -65,7 +68,7 @@ final readonly class DraftJsonSchema
 
         return [
             'type' => 'string',
-            'pattern' => '^(?:'.implode('|', array_map(preg_quote(...), array_keys($this->types->all()))).')(?::\S+)?(?:\s.*)?$',
+            'pattern' => '^(?:'.implode('|', array_map(preg_quote(...), [...array_keys($this->types->all()), ...array_keys(DraftShorthand::TYPE_ALIASES)])).')(?::\S+)?(?:\s.*)?$',
             'description' => 'type[:argument] then flags (translatable, true settings), label:"Text" and key:value settings. Text, textarea and URL fields are translatable unless given translatable:false. Arguments: '.$arguments.'.',
         ];
     }
@@ -150,7 +153,7 @@ final readonly class DraftJsonSchema
             'label' => ['$ref' => '#/$defs/label'],
             'url' => ['type' => 'boolean', 'description' => 'Whether pages have a URL. Default true; false for settings and reusable content.'],
             'singleton' => ['type' => 'boolean', 'description' => 'Only one page may use the template.'],
-            'children' => $names + ['description' => 'Templates children may use.'],
+            'children' => ['anyOf' => [$names, ['const' => false]], 'description' => 'Templates children may use, or false for pages that may have no children.'],
             'parents' => $names + ['description' => 'Templates the parent may use.'],
             'allowed' => $names + ['description' => 'Templates pages may switch to.'],
             'tabs' => ['anyOf' => [['type' => 'object', 'additionalProperties' => ['type' => 'string']], ['type' => 'array']], 'description' => 'Editor tabs as key: label.'],

@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Drafts: `children: false` makes a template whose pages may have no children, and `lynx:draft --from-site` writes it that way instead of under `settings`. `checkbox` is read as `toggle`, in the short and the long form. The drafting docs list the settings a field can have on a template (`show_if`, `width`, `description` and more) and every template key. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
+
 ## 0.1.56
 
 Released November 24, 2026. An index of page references with a References tab, reports and rich text links that follow their page, events muted during imports, a warning before trashing a referenced page, labels and messages in the editor's language, `lynx:install` without the admin and with a module picker, page status shortcuts and `create()`, and `update()` refusing keys it doesn't know. One new table, `lynx_page_references`: run `php artisan lynx:migrate`. See the [upgrade guide](/prologue/upgrade#from-0-1-55-to-0-1-56).

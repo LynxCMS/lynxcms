@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\File;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Schema\Draft\DraftJsonSchema;
+use LynxCms\Core\Schema\Draft\DraftShorthand;
 use LynxCms\Core\Schema\Draft\DraftTemplates;
 use Symfony\Component\Yaml\Yaml;
 
@@ -34,7 +35,10 @@ it('describes a draft as fields, templates and pages, and nothing else', functio
 it('lists every registered field type with its settings in the long form', function (): void {
     $long = collect(draftJsonSchema()['$defs']['longField']['anyOf'])->keyBy(fn (array $branch): string => $branch['properties']['type']['const']);
 
-    expect($long->keys()->sort()->values()->all())->toBe(array_keys(app(FieldTypeRegistry::class)->all()))
+    $types = [...array_keys(app(FieldTypeRegistry::class)->all()), ...array_keys(DraftShorthand::TYPE_ALIASES)];
+    sort($types);
+
+    expect($long->keys()->sort()->values()->all())->toBe($types)
         ->and(array_keys($long['decimal']['properties']))->toContain('places', 'min', 'max', 'label', 'translatable', 'fallback');
 });
 
@@ -76,4 +80,13 @@ it('describes the pages section: a title, nothing, or a template, a title and fi
     expect($pages['type'])->toBe('object')
         ->and($pages['propertyNames']['pattern'])->toStartWith('^/')
         ->and($pages['additionalProperties']['anyOf'][2]['properties'])->toHaveKeys(['template', 'title']);
+});
+
+it('accepts children: false and checkbox as a type', function (): void {
+    $schema = draftJsonSchema();
+    $children = $schema['$defs']['template']['properties']['children'] ?? [];
+
+    expect($children['anyOf'][1] ?? null)->toBe(['const' => false])
+        ->and(preg_match('/'.$schema['$defs']['shortField']['pattern'].'/', 'checkbox'))->toBe(1)
+        ->and(collect($schema['$defs']['longField']['anyOf'])->pluck('properties.type.const'))->toContain('checkbox');
 });

@@ -130,7 +130,7 @@ A time of day without a date, such as an opening hour. Stored and read as `HH:MM
 
 ### `toggle`
 
-On or off. Templates read `true` or `false`.
+On or off, for any yes or no value, such as "sold out" or "featured". Editors see a switch. Templates read `true` or `false`, and selectors compare `0` and `1` (`sold_out=0`). Lynx has no `checkbox` type: this is it, and a [draft](/basics/templates-and-fields#drafting-the-schema) reads `checkbox` as `toggle`.
 
 ## Choices
 

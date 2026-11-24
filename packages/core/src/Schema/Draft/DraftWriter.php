@@ -153,6 +153,9 @@ final readonly class DraftWriter
         if (($settings['allow_children'] ?? null) === true && Value::strings($settings['child_templates'] ?? []) !== []) {
             unset($settings['allow_children']);
             $take('child_templates', 'children');
+        } elseif (($settings['allow_children'] ?? null) === false && Value::strings($settings['child_templates'] ?? []) === []) {
+            unset($settings['allow_children'], $settings['child_templates']);
+            $keys['children'] = false;
         }
 
         $take('parent_templates', 'parents');
