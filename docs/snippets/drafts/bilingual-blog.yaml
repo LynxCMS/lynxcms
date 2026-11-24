@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=./draft.schema.json
+#
+# A blog in English (en) and Portuguese (pt). The site needs both languages before it is built.
+
+fields:
+  # The short form: "type[:argument]", then flags and key:value settings.
+  summary: textarea                             # text, textarea and URL fields have a value per language
+  body: textarea:html                           # the argument fills the type's main setting: here, its format
+  published_on: date
+  reading_time: integer min:1 label:"Reading time (minutes)"
+  featured: toggle:switch                       # a yes or no field, shown as a switch
+  level: choice:Beginner,Intermediate,Advanced  # one option; add "multiple" for several
+  topics: page:topic multiple input:checkboxes  # links to topic pages, ticked as checkboxes
+  related_posts: page:post multiple max:3
+  isbn: text:20 translatable:false              # one value in every language
+
+  # The long form: labels per language, translated options, and item fields.
+  category:
+    type: choice
+    label: { en: Category, pt: Categoria }
+    options:
+      News: { pt: Notícias }
+      Guides: { pt: Guias }
+  author_name: text
+  author_role: text
+  authors:
+    type: repeater
+    label: { en: Authors, pt: Autores }
+    fields: [author_name*, author_role]       # "*" makes an item field required
+    max: 4
+  quote: textarea
+  quote_source:
+    type: text
+    translatable: false                       # one value in every language
+    max_length: 120                           # settings sit beside type and label
+  content_blocks:
+    type: matrix
+    label: { en: Content blocks, pt: Blocos de conteúdo }
+    types:
+      - slug: quote
+        label: { en: Quote, pt: Citação }
+        fields: [quote*, quote_source]
+      - slug: aside
+        fields: [summary]
+  posts_per_page: integer min:1 max:50
+
+templates:
+  blog:
+    label: { en: Blog, pt: Blogue }
+    singleton: true                 # one page at most
+    children: [post]                # templates its pages' children may use
+    fields: [title*, summary]
+  post:
+    label: { en: Post, pt: Artigo }
+    parents: [blog]                 # templates its parent may use
+    children: false                 # its pages have no children
+    allowed: [post]                 # templates a page may switch to
+    tabs: { more: More }            # editor tabs besides Content
+    fields:
+      - title*                      # required on this template
+      - summary
+      - { name: published_on, required: true, width: 50 }
+      - { name: reading_time, width: 50 }
+      - body
+      - content_blocks
+      - section: Classification     # a section by its label
+        column: sidebar
+        fields: [category, level, featured, topics]
+      - section: credits            # a section by its key, with a label of its own
+        label: Authors and links
+        tab: more
+        collapsed: true
+        fields: [authors, related_posts]
+      - { name: isbn, tab: more, show_if: category=guides, required_if: level=advanced, description: For guides about a book }
+      - source_url: url             # a field defined in place
+  topics:
+    label: { en: Topics, pt: Temas }
+    children: [topic]
+    fields: [title*]
+  topic:
+    label: { en: Topic, pt: Tema }
+    parents: [topics]
+    children: false
+    fields: [title*, summary]
+  # "settings" takes any other template setting, as schema files write it.
+  blog_settings:
+    label: { en: Blog settings, pt: Definições do blogue }
+    url: false                      # no URL: settings or reusable content
+    singleton: true
+    fields: [title*, posts_per_page]
+
+pages:
+  /blog: Blog                                   # a title; the template is the one named like the last segment
+  /topics: Topics
+  /topics/design: { template: topic, title: Design }
+  /blog/hello-world:
+    template: post
+    title: Hello, world
+    published_on: 2026-12-01                    # required fields need a value

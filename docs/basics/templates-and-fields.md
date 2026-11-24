@@ -323,7 +323,7 @@ php artisan lynx:draft --dry-run     # lists what would change, and changes noth
 php artisan lynx:draft               # builds it, after asking in a terminal
 ```
 
-`--stub` writes a draft of a blog in English and Portuguese that uses every option this section describes, with a comment on each: the short and the long form, labels and options in both languages, a repeater and a matrix, sections and a tab, family rules, a template without a URL, and pages. Labels in a language the site doesn't have are refused, so the site needs both languages first. A new site has one, coded `default`: change its code to `en` and add `pt` in **Settings › Languages**, or change the codes in the draft to your site's.
+`--stub` writes a draft of a blog that uses every option this section describes, with a comment on each: the short and the long form, a repeater and a matrix, sections and a tab, family rules, a template without a URL, and pages. Its labels are in the site's default language, so it builds on any site.
 
 A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or make a translatable field shared, and it can't touch what Lynx or a module owns, such as menus.
 
@@ -354,6 +354,21 @@ pages:
 ```
 
 Pages are created unpublished, after the fields and templates, with the title and the values you give; every other field stays empty. The template defaults to the one named like the path's last segment, and the title to the segment itself (`/about` is titled "About"); a template without a `title` field, such as site settings, gets none. A parent must exist or come earlier in the list. Everything a save would refuse is reported before anything changes: a required field without a value (files can wait until the page is saved), a field the template lacks, a place the family rules refuse, or a second page on a singleton template. A path the site already has is left as it is, so building the draft again creates nothing. `--from-site` doesn't write pages, and the `schema.draft` tool refuses a draft that has them.
+
+### A draft in two languages
+
+Labels, descriptions and choice options can be written in several languages, each under its language's code. A draft refuses a label in a language the site doesn't have, so create the languages before you build it. A new site has one language, coded `default`: in **Settings › Languages**, change its code to `en` and add `pt`, or run this once in `php artisan tinker`:
+
+```php
+lynx()->languages->update('default', ['code' => 'en', 'name' => 'English']);
+lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+```
+
+This is the starting blog with its labels and options in English and Portuguese:
+
+<<< @/snippets/drafts/bilingual-blog.yaml{yaml}
+
+`label: { en: Post, pt: Artigo }` gives a label in each language. A choice option is its default language label, followed by its translations (`News: { pt: Notícias }`), and the stored value is the default language label made URL safe (`news`). [Languages](/basics/languages#adding-a-language) covers adding a language to a site that has content.
 
 Two more options help with an existing site:
 

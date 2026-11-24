@@ -1,15 +1,11 @@
 # yaml-language-server: $schema=./draft.schema.json
 #
-# A bilingual blog, as a draft: its fields, templates and first pages.
+# A blog, as a draft: its fields, templates and first pages.
 # Preview it: php artisan lynx:draft --dry-run
 # Build it:   php artisan lynx:draft
 #
-# Labels and options are in English (en) and Portuguese (pt), so the site needs both languages
-# first. A new site has one, coded "default". In Settings > Languages, change its code to en and
-# add pt, or run in php artisan tinker:
-#   lynx()->languages->update('default', ['code' => 'en', 'name' => 'English']);
-#   lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
-# For other languages, change the codes below to yours.
+# Labels here are in the site's default language. For labels and options in several languages, see
+# https://lynxcms.org/cms/docs/basics/templates-and-fields#a-draft-in-two-languages
 
 fields:
   # The short form: "type[:argument]", then flags and key:value settings.
@@ -23,18 +19,16 @@ fields:
   related_posts: page:post multiple max:3
   isbn: text:20 translatable:false              # one value in every language
 
-  # The long form: labels per language, translated options, and item fields.
+  # The long form: the field as a map of its type, label and settings.
   category:
     type: choice
-    label: { en: Category, pt: Categoria }
-    options:
-      News: { pt: Notícias }
-      Guides: { pt: Guias }
+    label: Category
+    options: [News, Guides]
   author_name: text
   author_role: text
   authors:
     type: repeater
-    label: { en: Authors, pt: Autores }
+    label: Authors
     fields: [author_name*, author_role]       # "*" makes an item field required
     max: 4
   quote: textarea
@@ -44,10 +38,10 @@ fields:
     max_length: 120                           # settings sit beside type and label
   content_blocks:
     type: matrix
-    label: { en: Content blocks, pt: Blocos de conteúdo }
+    label: Content blocks
     types:
       - slug: quote
-        label: { en: Quote, pt: Citação }
+        label: Quote
         fields: [quote*, quote_source]
       - slug: aside
         fields: [summary]
@@ -55,12 +49,11 @@ fields:
 
 templates:
   blog:
-    label: { en: Blog, pt: Blogue }
     singleton: true                 # one page at most
     children: [post]                # templates its pages' children may use
     fields: [title*, summary]
   post:
-    label: { en: Post, pt: Artigo }
+    label: Blog post                # without one, the label is made from the name
     parents: [blog]                 # templates its parent may use
     children: false                 # its pages have no children
     allowed: [post]                 # templates a page may switch to
@@ -83,17 +76,14 @@ templates:
       - { name: isbn, tab: more, show_if: category=guides, required_if: level=advanced, description: For guides about a book }
       - source_url: url             # a field defined in place
   topics:
-    label: { en: Topics, pt: Temas }
     children: [topic]
     fields: [title*]
   topic:
-    label: { en: Topic, pt: Tema }
     parents: [topics]
     children: false
     fields: [title*, summary]
   # "settings" takes any other template setting, as schema files write it.
   blog_settings:
-    label: { en: Blog settings, pt: Definições do blogue }
     url: false                      # no URL: settings or reusable content
     singleton: true
     fields: [title*, posts_per_page]
