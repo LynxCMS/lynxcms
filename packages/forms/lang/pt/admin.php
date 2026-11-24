@@ -121,7 +121,7 @@ return [
         'results' => 'Resultados',
         'preview' => 'Pré-visualizar',
         'empty' => 'Ainda não há formulários.',
-        'empty_help' => 'Dê um nome a um formulário acima para o começar a construir.',
+        'empty_help' => 'Dê um nome a um formulário abaixo para o começar a construir.',
         'import_file' => 'Exportação de formulário (JSON)',
         'import_name' => 'Nome do formulário',
         'name_help' => 'Letras minúsculas, algarismos e hífenes, como contacto. Os modelos e as respostas usam-no.',

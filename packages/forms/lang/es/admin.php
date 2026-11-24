@@ -121,7 +121,7 @@ return [
         'results' => 'Resultados',
         'preview' => 'Vista previa',
         'empty' => 'Aún no hay formularios.',
-        'empty_help' => 'Ponle nombre a un formulario arriba para empezar a crearlo.',
+        'empty_help' => 'Ponle nombre a un formulario abajo para empezar a crearlo.',
         'import_file' => 'Exportación de formulario (JSON)',
         'import_name' => 'Nombre del formulario',
         'name_help' => 'Letras minúsculas, dígitos y guiones, como contacto. Las plantillas y las respuestas lo usan.',
