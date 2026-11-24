@@ -70,6 +70,15 @@ abstract class Form
     }
 
     /**
+     * Whether the people who receive submissions get one mail a day listing the new ones
+     * (lynx:forms:digest) instead of a mail for each.
+     */
+    public function digest(): bool
+    {
+        return false;
+    }
+
+    /**
      * Days a submission is kept, in any status, before the daily purge deletes it with its files
      * (ADR-0147); null keeps them, unless lynx-forms.retention_days sets a default.
      */

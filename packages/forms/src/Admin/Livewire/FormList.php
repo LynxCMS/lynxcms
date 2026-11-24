@@ -12,6 +12,7 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\CreateForm;
+use LynxCms\Forms\Actions\DuplicateForm;
 use LynxCms\Forms\Admin\Livewire\Concerns\ImportsForms;
 use LynxCms\Forms\Builder\PageForm;
 use LynxCms\Forms\Definition\Form;
@@ -46,6 +47,16 @@ final class FormList extends Component
         $page = lynx()->run(CreateForm::class, ['name' => $this->name, 'label' => trim($this->label)])->valueAs(Page::class);
 
         $this->redirectRoute('lynx.admin.pages.edit', ['page' => $page->id]);
+    }
+
+    /** Copies a builder form (forms.duplicate) and opens the copy in the editor. */
+    public function duplicate(string $form): void
+    {
+        abort_unless(app(AdminAccess::class)->allows('forms.manage'), 403);
+        $copy = Value::map(lynx()->run(DuplicateForm::class, ['form' => $form])->value);
+        session()->flash('lynx-notify', ['message' => Value::string(__('lynx-forms::admin.list.duplicated')), 'type' => 'success']);
+
+        $this->redirectRoute('lynx.admin.pages.edit', ['page' => Value::int($copy['page'] ?? 0)]);
     }
 
     public function render(): View

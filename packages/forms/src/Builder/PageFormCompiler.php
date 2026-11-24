@@ -45,6 +45,7 @@ final class PageFormCompiler
             ['success' => $byLanguage(FormSchema::SUCCESS), 'error' => $byLanguage(FormSchema::ERROR), 'auto_reply' => $byLanguage(FormSchema::AUTO_REPLY)],
             $page->templateField(FormSchema::ONCE_PER_USER) !== null && Value::bool($page->getUnformatted(FormSchema::ONCE_PER_USER)),
             $this->retentionDays($page),
+            $page->templateField(FormSchema::DIGEST) !== null && Value::bool($page->getUnformatted(FormSchema::DIGEST)),
         );
     }
 

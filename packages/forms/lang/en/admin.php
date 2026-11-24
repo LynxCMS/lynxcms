@@ -159,6 +159,8 @@ return [
         'imported' => 'Form imported, unpublished. Add its recipients, then publish it.',
         'imported_dropped' => 'Form imported, unpublished. Texts in :languages were left out, as this site has no such language.',
         'export' => 'Export',
+        'duplicate' => 'Duplicate',
+        'duplicated' => 'Copy made, unpublished. Rename it, then publish it.',
     ],
     'personal' => [
         'description' => 'Every submission that holds one email address, for a person who asks for their data or for it to be deleted.',

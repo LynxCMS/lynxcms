@@ -32,4 +32,9 @@ return [
     | for forms that set none of their own. Null keeps them.
     */
     'retention_days' => env('LYNX_FORMS_RETENTION_DAYS'),
+
+    /*
+    | When lynx:forms:digest mails the daily summary of forms that send one, in the app's time zone.
+    */
+    'digest_at' => env('LYNX_FORMS_DIGEST_AT', '08:00'),
 ];
