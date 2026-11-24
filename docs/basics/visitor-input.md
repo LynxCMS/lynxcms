@@ -5,15 +5,20 @@ description: Check what visitors send before it reaches a selector, a view or th
 
 # Visitor Input
 
-Visitors send your site data all the time: words in a search box, a filter in the address (`/courses?category=yoga`), a form. Anything a visitor sends can be anything at all, so check it before you use it. Lynx and Laravel do much of the work. This page shows what they do for you, and the few places where checking is up to your code.
+Any input coming from an HTTP request—query parameters (`/courses?category=yoga`), search terms, or form submissions, should be untrusted. Lynx and Laravel handle transport-level safety (SQL parameter binding, HTML sanitization, output escaping) automatically, while your application code is responsible for validating domain constraints before interpolating user values into Lynx selectors.
 
-## What Lynx checks for you
 
-- **Forms.** The [forms module](/modules/forms) checks every answer against its field: required fields, email addresses, lengths, the file types a `file` field takes, and any Laravel rules you add. It filters spam, and lets each visitor send a form five times in ten minutes.
-- **Rich text.** The HTML of rich text fields is cleaned on every save, whoever sends it (an editor, your code, an import or an AI agent): text markup only, links to safe addresses only, and no scripts, styles or embedded content.
-- **Files.** Image and file fields never accept files a browser or a web server would run, such as `.php`, `.html` or `.svg` ([Images and Files](/basics/images-and-files#adding-fields)).
-- **Values in selectors.** A selector's values reach the database as bound parameters, never as SQL, so `title%=...` can't be turned into a database command.
-- **Printing.** `{{ }}` and `@field` escape what they print, and so do the values `@string` puts in a text.
+## Security Boundaries: What Lynx Handles vs. What You Handle
+
+| Layer | Handled automatically by Lynx / Laravel | Required in your application code |
+| :--- | :--- | :--- |
+| **Database queries** | Selector values are compiled to bound SQL parameters—input cannot execute arbitrary SQL. | Validate input before interpolating into selector strings so visitors cannot inject extra selector clauses (e.g., `, include=unpublished`). |
+| **Forms** | `lynxcms/forms` validates field types, required rules, file MIME/extensions, spam checks, and rate limits (5 submissions / 10 min). | Add domain-specific Laravel validation rules where needed. |
+| **Rich text** | HTML fields are sanitized on every write (admin, code, import, or MCP/AI agent) to strip scripts, styles, and unsafe URIs. | None for standard HTML fields. |
+| **Uploads** | Image and file fields reject executable extensions (`.php`, `.html`, `.svg`, etc.). | None for standard file fields. |
+| **Blade output** | `{{ }}`, `@field`, and `@string` HTML-escape output automatically. | Never pass raw visitor input to `{!! !!}`; use `@js()` when passing values to JavaScript. |
+
+---
 
 ## Reading the query string
 
