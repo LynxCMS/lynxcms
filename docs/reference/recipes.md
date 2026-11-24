@@ -2,11 +2,23 @@
 title: Cookbook
 description: Common tasks and the section of the docs that shows each one.
 order: 5
+pageClass: cookbook
+aside: false
+outline: false
+cookbook:
+  Listing and finding pages: Starters
+  Views: Mains
+  Languages: Sauces
+  Saving and publishing: Mains
+  Templates and fields: Pantry
+  Visitors and accounts: For guests
+  Forms and caching: Preserves
+  Extending the admin: Kitchen tools
 ---
 
 # Cookbook
 
-Each entry below names a task and links to the section that shows its code. The code lives on one page only, so it stays tested and current.
+Each card lists common tasks, and each task links to the section of the docs that shows its code. The code lives on that one page only, so it stays current. Pick a card by what you are making; no recipe here needs more than one page.
 
 ## Listing and finding pages
 

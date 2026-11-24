@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs'
+import { cookbookCards } from './cookbook'
 import { join, relative } from 'node:path'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
@@ -80,6 +81,9 @@ export default defineConfig({
             // A "Copy page" button under each page's title: copy or view the page as Markdown, or open
             // it in ChatGPT or Claude. The .md files come from llmstxt() below.
             md.use(copyOrDownloadAsMarkdownButtons)
+
+            // The Cookbook's sections as recipe cards (cookbook.ts).
+            md.use(cookbookCards)
 
             // Inline code is shown as written: Blade's {{ }} would otherwise be read as Vue.
             const inlineCode = md.renderer.rules.code_inline!
