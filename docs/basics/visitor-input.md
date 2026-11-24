@@ -37,13 +37,75 @@ In a controller, Laravel's validation does the same with rules, such as `'page' 
 
 ## Values in a selector
 
-Once a value is checked, put it in the selector:
+A selector is a small language, and a visitor's text can add conditions of its own: `?category=yoga, include=unpublished` (or `status=unpublished`) would list unpublished pages. Bound parameters keep the database safe, but they can't tell your conditions from the visitor's. Put a visitor's value in a selector only after checking that it is what you expect: a value from your list, a number, a date, or a page name.
+
+The example below filters the courses listed on a `courses` page: `/courses?category=yoga&max_price=200`. It takes three steps.
+
+**1. Check the query string.** Laravel's validator checks a set of values against [rules](https://laravel.com/docs/validation#available-validation-rules). Its `valid()` method returns the values that passed and leaves out the rest, so a value with a comma, an extra condition or an array never gets through. Unlike `$request->validate()`, it doesn't send the visitor back with errors, which suits filters in an address ([Laravel's docs](https://laravel.com/docs/validation#manually-creating-validators)).
+
+**2. Build the selector** from the values that passed, one condition per filter, and list the page's children with it.
+
+Both steps go in a view composer: a class that Laravel runs before it renders a view, to give the view more data ([Laravel's docs](https://laravel.com/docs/views#view-composers)). Lynx renders a `courses` page with the view `templates.courses` and gives it the page as `$page`, so the composer reads `$page` and adds `$courses`:
 
 ```php
-$courses = $page->children($category === null ? 'sort=title' : "category={$category}, sort=title");
+// app/View/Composers/CourseFilters.php
+namespace App\View\Composers;
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+
+final class CourseFilters
+{
+    public function compose(View $view): void
+    {
+        $filters = Validator::make(request()->query(), [
+            'category' => [Rule::in(['yoga', 'pilates', 'nutrition'])],
+            'max_price' => ['integer', 'min:0'],
+            'from' => ['date_format:Y-m-d'],
+            'teacher' => ['string', 'regex:/^[a-z0-9-]+$/'],
+        ])->valid();
+
+        $conditions = array_filter([
+            isset($filters['category']) ? "category={$filters['category']}" : null,
+            isset($filters['max_price']) ? "price<={$filters['max_price']}" : null,
+            isset($filters['from']) ? "starts_on>={$filters['from']}" : null,
+            isset($filters['teacher']) ? "teacher=/teachers/{$filters['teacher']}" : null,
+        ]);
+
+        $page = $view->getData()['page'];
+
+        $view->with('courses', $page->children(implode(', ', [...$conditions, 'sort=title'])));
+    }
+}
 ```
 
-Never put an unchecked value in a selector. A selector is a small language, and a visitor's text can add conditions of its own: `?category=yoga, include=unpublished` (or `status=unpublished`) would list unpublished pages. Bound parameters keep the database safe, but they can't tell your conditions from the visitor's.
+**3. Register the composer** for the template's view, in the `boot()` method of a service provider such as `app/Providers/AppServiceProvider.php`. The view then lists `$courses`:
+
+```php
+use App\View\Composers\CourseFilters;
+use Illuminate\Support\Facades\View;
+
+View::composer('templates.courses', CourseFilters::class);
+```
+
+```blade
+{{-- resources/views/templates/courses.blade.php --}}
+@foreach ($courses as $course)
+    <a href="{{ $course->url }}">@field($course->title)</a>
+@endforeach
+```
+
+Each rule fits one kind of value:
+
+| Value | Rule | Accepts |
+| --- | --- | --- |
+| One of your options | `Rule::in([...])` | Only the listed values. |
+| A number | `integer`, `min:0` | Whole numbers. `numeric` takes decimals. |
+| A date | `date_format:Y-m-d` | Dates such as `2026-03-01`. |
+| A page name | `regex:/^[a-z0-9-]+$/` | Lowercase letters, digits and hyphens, the characters of a page's URL name. |
+
+`valid()` also returns query values that have no rule, such as `?utm_source=`, so build the selector from the keys you listed only, as the example does. A filter that fails its rule is left out, and the visitor sees the list without it. A single value can be checked without the validator, as [Reading the query string](#reading-the-query-string) shows. Words typed into a search box can't be checked against rules like these; quote them instead ([Words in a selector](#words-in-a-selector)). [Filters and pagination](/basics/selectors#filters-and-pagination) adds paging, and the [training site guide](/guides/training-site/front-end#the-catalog) has a complete catalog built this way.
 
 ### Words in a selector
 
