@@ -42,6 +42,8 @@ lynx()->fields->create('downloads', 'files', settings: ['extensions' => 'pdf zip
 
 Editors drop files on the field, then drag them into order (or use the arrow buttons under each file). Each file can be hidden, described in each language and tagged, and each image gets a focus point with a click.
 
+A photo larger than the field's `max_width` and `max_height` is scaled down in the browser before it uploads, so a 20 MB photo from a phone arrives as a file of a few hundred kilobytes and fits the upload limit. JPEG, PNG and WebP files are scaled; animated images and other types are sent as they are. The server checks every file and scales it again if needed, as files stored through `media.store`, MCP clients or the agent don't pass through the browser.
+
 Files are stored with their page, so a page must exist before it can hold them. A required images or files field doesn't block creating a page: the New page screen leaves it out and creates the page unpublished. Editors add the files in the page editor, then publish it.
 
 ## Showing images
