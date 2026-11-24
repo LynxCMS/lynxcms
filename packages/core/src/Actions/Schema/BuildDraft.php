@@ -9,15 +9,15 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
-use LynxCms\Core\Schema\Draft\DraftBuilder;
-use LynxCms\Core\Schema\Draft\DraftCompiler;
 use LynxCms\Core\Schema\Draft\DraftError;
 use LynxCms\Core\Schema\Draft\DraftOptions;
 use LynxCms\Core\Schema\Draft\DraftReader;
+use LynxCms\Core\Schema\Draft\DraftRunner;
+use LynxCms\Core\Support\Value;
 use Override;
 
 /**
- * Builds a draft of templates and fields (ADR-0116) for the MCP server and the agent: the database
+ * Builds a draft of languages, templates and fields (ADR-0116) for the MCP server and the agent: the database
  * schema only, never files, so an agent can't rewrite a site's schema files, views or types. The
  * agent runs it with dry_run first and shows the plan. A draft that leaves fields out of a
  * template the site has is refused unless prune_fields is given. Where schema editing is off,
@@ -29,8 +29,7 @@ final class BuildDraft extends Action
 {
     public function __construct(
         private readonly DraftReader $reader,
-        private readonly DraftCompiler $compiler,
-        private readonly DraftBuilder $builder,
+        private readonly DraftRunner $runner,
     ) {}
 
     public static function name(): string
@@ -51,7 +50,7 @@ final class BuildDraft extends Action
 
     public static function description(): string
     {
-        return 'Build templates and fields from a draft in the short YAML syntax of php artisan lynx:draft. Run it with dry_run first, show the person the plan, and build only once they agree. It adds and changes fields and templates, never deletes them, and writes no files (views, schema files): tell the developer to run lynx:schema:export or lynx:make:view if they want those. A template the site has gets the draft\'s field list: a draft that leaves fields out is refused, and prune_fields removes them, only once the person agrees.';
+        return 'Build languages, templates and fields from a draft in the short YAML syntax of php artisan lynx:draft. Run it with dry_run first, show the person the plan, and build only once they agree. It adds and changes languages, fields and templates, never deletes them, and writes no files (views, schema files): tell the developer to run lynx:schema:export or lynx:make:view if they want those. A template the site has gets the draft\'s field list: a draft that leaves fields out is refused, and prune_fields removes them, only once the person agrees.';
     }
 
     public static function rules(): array
@@ -63,7 +62,8 @@ final class BuildDraft extends Action
     {
         return [
             'draft' => $schema->string()->description(
-                'The draft as YAML: {fields: {name: definition}, templates: {name: {label, url, singleton, children, parents, allowed, tabs, fields}}}. '
+                'The draft as YAML: {languages: {code: {name, default, label, locale, prefix, fallback, active}}, fields: {name: definition}, templates: {name: {label, url, singleton, children, parents, allowed, tabs, fields}}}. '
+                .'languages is optional; the entry with default: true is the site\'s default language and renames it when its code differs; another language can\'t become the default. '
                 .'children is a list of templates, or false for pages that may have no children. A yes or no field is "toggle" ("checkbox" is read as toggle). '
                 .'A field definition is "type[:argument] tokens", e.g. "textarea translatable", "decimal:2 min:0", "choice:Small,Large multiple", "page:course multiple", "text label:\"Button text\"", '
                 .'or an object {type, label, translatable, ...settings}; a repeater lists item fields as {type: repeater, fields: [name, other*]}. '
@@ -81,13 +81,13 @@ final class BuildDraft extends Action
         $options = new DraftOptions(views: false, writeFiles: false, pruneFields: $input->bool('prune_fields'), pages: false);
 
         try {
-            $draft = $this->compiler->compile($this->reader->parse((string) $input->string('draft')));
+            $draft = $this->reader->parse((string) $input->string('draft'));
 
-            if ($draft->pages !== []) {
-                throw new DraftError('schema.draft builds fields and templates only. Leave pages out, and create pages with pages.save once the schema is built.');
+            if (Value::map($draft['pages'] ?? []) !== []) {
+                throw new DraftError('schema.draft builds languages, fields and templates only. Leave pages out, and create pages with pages.save once the schema is built.');
             }
 
-            $result = $this->builder->build($draft, $options);
+            $result = $this->runner->run($draft, $options);
         } catch (DraftError $e) {
             throw ValidationException::withMessages(['draft' => $e->getMessage()]);
         }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\File;
 use LynxCms\Core\Fields\FieldTypeRegistry;
 use LynxCms\Core\Schema\Draft\DraftJsonSchema;
+use LynxCms\Core\Schema\Draft\DraftLanguages;
 use LynxCms\Core\Schema\Draft\DraftShorthand;
 use LynxCms\Core\Schema\Draft\DraftTemplates;
 use Symfony\Component\Yaml\Yaml;
@@ -27,9 +28,16 @@ it('accepts choice options as a list or as a map of labels to their translations
     expect($options['anyOf'][1] ?? null)->toBe(['type' => 'object', 'additionalProperties' => ['type' => ['object', 'null'], 'additionalProperties' => ['type' => 'string']]]);
 });
 
-it('describes a draft as fields, templates and pages, and nothing else', function (): void {
+it('describes a draft as languages, fields, templates and pages, and nothing else', function (): void {
     expect(draftJsonSchema())->toMatchArray(['type' => 'object', 'additionalProperties' => false])
-        ->and(array_keys(draftJsonSchema()['properties']))->toBe(['fields', 'templates', 'pages']);
+        ->and(array_keys(draftJsonSchema()['properties']))->toBe(['languages', 'fields', 'templates', 'pages']);
+});
+
+it('describes a language as a name or a map of the settings a draft accepts', function (): void {
+    $language = draftJsonSchema()['properties']['languages']['additionalProperties']['anyOf'];
+
+    expect($language[0])->toBe(['type' => 'string', 'description' => 'The name.'])
+        ->and(array_keys($language[1]['properties']))->toBe(DraftLanguages::KEYS);
 });
 
 it('lists every registered field type with its settings in the long form', function (): void {

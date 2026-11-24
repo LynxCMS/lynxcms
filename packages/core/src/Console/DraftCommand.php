@@ -9,14 +9,12 @@ use Illuminate\Support\Facades\File;
 use Laravel\Prompts\Elements\Element;
 use LynxCms\Core\Console\Concerns\AsksInTerminal;
 use LynxCms\Core\Console\Concerns\TerminalFeedback;
-use LynxCms\Core\Schema\Draft\CompiledDraft;
-use LynxCms\Core\Schema\Draft\DraftBuilder;
-use LynxCms\Core\Schema\Draft\DraftCompiler;
 use LynxCms\Core\Schema\Draft\DraftError;
 use LynxCms\Core\Schema\Draft\DraftJsonSchema;
 use LynxCms\Core\Schema\Draft\DraftOptions;
 use LynxCms\Core\Schema\Draft\DraftReader;
 use LynxCms\Core\Schema\Draft\DraftResult;
+use LynxCms\Core\Schema\Draft\DraftRunner;
 use LynxCms\Core\Schema\Draft\DraftWriter;
 use LynxCms\Core\Support\Value;
 use Override;
@@ -49,9 +47,9 @@ final class DraftCommand extends Command
         {--json-schema : Write draft.schema.json beside the draft, so editors check and complete it}';
 
     #[Override]
-    protected $description = 'Build templates and fields from a short YAML draft, with starting views';
+    protected $description = 'Build languages, templates and fields from a short YAML draft, with starting views';
 
-    public function handle(DraftReader $reader, DraftCompiler $compiler, DraftBuilder $builder, DraftWriter $writer, DraftJsonSchema $schema): int
+    public function handle(DraftReader $reader, DraftRunner $runner, DraftWriter $writer, DraftJsonSchema $schema): int
     {
         $path = Value::nullableString($this->argument('path')) ?? base_path('lynx/draft.yaml');
 
@@ -64,7 +62,7 @@ final class DraftCommand extends Command
         }
 
         try {
-            return $this->build($builder, $compiler->compile($reader->read($path)), $this->draftOptions());
+            return $this->build($runner, $reader->read($path), $this->draftOptions());
         } catch (DraftError $e) {
             $this->components->error($e->getMessage());
 
@@ -72,15 +70,16 @@ final class DraftCommand extends Command
         }
     }
 
-    private function build(DraftBuilder $builder, CompiledDraft $draft, DraftOptions $options): int
+    /** @param  array<array-key, mixed>  $draft */
+    private function build(DraftRunner $runner, array $draft, DraftOptions $options): int
     {
-        if (! $options->dryRun && $this->canAsk() && ! $this->confirmBuild($builder, $draft, $options)) {
+        if (! $options->dryRun && $this->canAsk() && ! $this->confirmBuild($runner, $draft, $options)) {
             $this->components->warn('Nothing was built.');
 
             return self::FAILURE;
         }
 
-        return $this->report($builder->build($draft, $options), $options);
+        return $this->report($runner->run($draft, $options), $options);
     }
 
     private function draftOptions(): DraftOptions
@@ -120,9 +119,10 @@ final class DraftCommand extends Command
     }
 
     /** The plan in a box, then the question. A plan with errors or nothing to do needs no answer. */
-    private function confirmBuild(DraftBuilder $builder, CompiledDraft $draft, DraftOptions $options): bool
+    /** @param  array<array-key, mixed>  $draft */
+    private function confirmBuild(DraftRunner $runner, array $draft, DraftOptions $options): bool
     {
-        $preview = $builder->build($draft, $options->asDryRun());
+        $preview = $runner->run($draft, $options->asDryRun());
 
         if ($preview->hasErrors() || ! $preview->plan->changesSite()) {
             return true;

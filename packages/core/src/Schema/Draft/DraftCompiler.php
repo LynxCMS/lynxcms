@@ -30,7 +30,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class DraftCompiler
 {
-    public const array KEYS = ['fields', 'templates', 'pages'];
+    public const array KEYS = ['languages', 'fields', 'templates', 'pages'];
 
     /** Template settings that come from the field list, not from the settings themselves. */
     private const array DERIVED_TEMPLATE_SETTINGS = ['sections' => true];
@@ -46,6 +46,8 @@ final readonly class DraftCompiler
     ) {}
 
     /**
+     * The languages section is DraftLanguages' part (DraftRunner), applied before this runs.
+     *
      * @param  array<array-key, mixed>  $draft  the parsed draft.yaml
      *
      * @throws DraftError
@@ -76,12 +78,16 @@ final readonly class DraftCompiler
         return new CompiledDraft($fieldItems, $templateItems, $this->pages->compile(Value::map($draft['pages'] ?? []), $fieldItems, $templateItems));
     }
 
-    /** @param  array<array-key, mixed>  $draft */
-    private function assertKeys(array $draft): void
+    /**
+     * @param  array<array-key, mixed>  $draft
+     *
+     * @throws DraftError
+     */
+    public function assertKeys(array $draft): void
     {
         foreach (array_keys($draft) as $key) {
             if (! in_array($key, self::KEYS, true)) {
-                throw new DraftError("A draft has fields, templates and pages, not [{$key}].".DraftError::suggestion((string) $key, self::KEYS));
+                throw new DraftError("A draft has languages, fields, templates and pages, not [{$key}].".DraftError::suggestion((string) $key, self::KEYS));
             }
         }
     }

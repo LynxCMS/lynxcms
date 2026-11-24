@@ -79,7 +79,7 @@ In `LynxCms\Core`.
 | `Actions\Runner\HookBuilder` | class | Fluent helper returned by Lynx::hook(SavePage::class). |
 | `Actions\Runner\HookRegistry` | class | Before/after hooks on actions, the main extension point for modules. |
 | `Actions\Runner\Input` | class | Validated input of an action: an associative array with typed accessors. |
-| `Actions\Schema\BuildDraft` | class | Builds a draft of templates and fields for the MCP server and the agent: the database schema only, never files, so an agent can't rewrite a site's schema files, views or types. |
+| `Actions\Schema\BuildDraft` | class | Builds a draft of languages, templates and fields for the MCP server and the agent: the database schema only, never files, so an agent can't rewrite a site's schema files, views or types. |
 | `Actions\Search\RebuildSearchIndex` | class | Indexes pages for search again: after upgrading, or after a field's settings change what its values say (a choice label, a matrix type's fields). |
 | `Actions\Strings\SaveStrings` | class | Edits the strings a page's template declares with @string, in one language. |
 | `Actions\Templates\CopySection` | class | Copies a template's section, with its fields and their settings, into other templates. |

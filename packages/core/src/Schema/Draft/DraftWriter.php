@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace LynxCms\Core\Schema\Draft;
 
 use LynxCms\Core\Fields\FieldRegistry;
+use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Field;
+use LynxCms\Core\Models\Language;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Schema\SchemaExporter;
 use LynxCms\Core\Schema\SchemaOwners;
@@ -15,9 +17,9 @@ use LynxCms\Core\Templates\TemplateRegistry;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Writes the site's own schema as a draft (lynx:draft --from-site, ADR-0116): each field in the
- * short form when that form reads back as the same field, in the long form otherwise; templates
- * with their family keys, starred required fields and sections. What Lynx and the modules own is
+ * Writes the site's own schema as a draft (lynx:draft --from-site, ADR-0116): its languages when
+ * it has several, each field in the short form when that form reads back as the same field, in the
+ * long form otherwise; templates with their family keys, starred required fields and sections. What Lynx and the modules own is
  * left out. Building the draft it writes changes nothing.
  *
  * @phpstan-import-type FieldItem from SchemaSync
@@ -41,6 +43,7 @@ final readonly class DraftWriter
         private DraftShorthand $shorthand,
         private DraftValues $values,
         private DraftChoiceOptions $choices,
+        private LanguageRegistry $languageRegistry,
     ) {}
 
     public function write(): string
@@ -49,11 +52,44 @@ final readonly class DraftWriter
         $templates = $this->templates->all()->reject(fn (Template $t): bool => $this->owners->isSystemTemplate((string) $t->name))->sortBy('name');
 
         $draft = [
+            'languages' => $this->languages(),
             'fields' => $fields->mapWithKeys(fn (Field $f): array => [(string) $f->name => $this->field($this->exporter->fieldData($f))])->all(),
             'templates' => $templates->mapWithKeys(fn (Template $t): array => [(string) $t->name => $this->template($t)])->all(),
         ];
 
         return self::HEADER.Yaml::dump(array_filter($draft), self::INLINE_LEVEL, self::INDENT);
+    }
+
+    /**
+     * The site's languages, each with the settings that differ from what a new language gets.
+     * A site with one language gets none: a draft without languages leaves it as it is.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function languages(): array
+    {
+        $languages = $this->languageRegistry->all();
+
+        if ($languages->count() < 2) {
+            return [];
+        }
+
+        $default = $this->languageRegistry->default();
+
+        return $languages->mapWithKeys(function (Language $language) use ($default): array {
+            $isDefault = $language->id === $default->id;
+            $fallback = $language->fallback_id === null ? null : $this->languageRegistry->find($language->fallback_id)?->code;
+
+            return [(string) $language->code => array_filter([
+                'name' => $language->name,
+                'default' => $isDefault ?: null,
+                'label' => $language->label,
+                'locale' => $language->locale,
+                'prefix' => $language->url_prefix === ($isDefault ? '' : $language->code) ? null : $language->url_prefix,
+                'fallback' => $fallback,
+                'active' => $language->is_active ? null : false,
+            ], fn (mixed $value): bool => $value !== null)];
+        })->all();
     }
 
     /**

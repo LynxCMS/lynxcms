@@ -38,10 +38,11 @@ final readonly class DraftJsonSchema
         return [
             '$schema' => self::DIALECT,
             'title' => 'Lynx draft',
-            'description' => 'Templates and fields for php artisan lynx:draft.',
+            'description' => 'Languages, templates and fields for php artisan lynx:draft.',
             'type' => 'object',
             'additionalProperties' => false,
             'properties' => [
+                'languages' => $this->languages(),
                 'fields' => ['type' => 'object', 'additionalProperties' => ['$ref' => '#/$defs/field']],
                 'templates' => ['type' => 'object', 'additionalProperties' => ['$ref' => '#/$defs/template']],
                 'pages' => $this->pages(),
@@ -58,6 +59,32 @@ final readonly class DraftJsonSchema
                 'itemFields' => ['type' => 'array', 'items' => ['anyOf' => [['type' => 'string', 'pattern' => self::ITEM_NAME_PATTERN], ['type' => 'object', 'required' => ['name']]]]],
                 'label' => ['anyOf' => [['type' => 'string'], ['type' => 'object', 'additionalProperties' => ['type' => 'string']]]],
             ],
+        ];
+    }
+
+    /**
+     * Languages by code: a name, or a map of its settings (DraftLanguages).
+     *
+     * @return array<string, mixed>
+     */
+    private function languages(): array
+    {
+        return [
+            'type' => 'object',
+            'description' => 'Languages by code, added or changed before the fields. The entry with default: true is the site\'s default language. A language the draft leaves out stays.',
+            'propertyNames' => ['pattern' => '^[a-z0-9][a-z0-9_-]{0,31}$'],
+            'additionalProperties' => ['anyOf' => [
+                ['type' => 'string', 'description' => 'The name.'],
+                ['type' => 'object', 'additionalProperties' => false, 'properties' => [
+                    'name' => ['type' => 'string'],
+                    'default' => ['type' => 'boolean', 'description' => 'The site\'s default language, renamed to this code when its code differs.'],
+                    'label' => ['type' => 'string', 'description' => 'Short label for the admin\'s language tabs.'],
+                    'locale' => ['type' => 'string', 'description' => 'Locale for Laravel and HTML, such as pt-PT.'],
+                    'prefix' => ['type' => 'string', 'description' => 'URL prefix. A new language gets its code.'],
+                    'fallback' => ['type' => 'string', 'description' => 'The code of the language shown where a value is missing.'],
+                    'active' => ['type' => 'boolean'],
+                ]],
+            ]],
         ];
     }
 
