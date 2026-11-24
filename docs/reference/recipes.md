@@ -28,6 +28,8 @@ Each entry below names a task and links to the section that shows its code. The 
 - [Show an edit link to signed-in editors](/basics/views#showing-an-edit-link-to-editors)
 - [Design the page not found](/basics/views#the-page-not-found)
 - [Read pages in your own routes and controllers](/basics/views#using-your-own-routes)
+- [Give the current page to layouts, components, and Livewire](/getting-started/concepts#page-and-lynx-pages)
+- [Read a page a visitor picked, without showing unpublished pages](/getting-started/concepts#page-and-lynx-pages)
 - [Show responsive images](/basics/images-and-files#showing-images)
 - [Offer a different download in each language](/basics/images-and-files#downloads-per-language)
 - [Share a private file with a temporary link](/basics/images-and-files#temporary-links)

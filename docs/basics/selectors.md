@@ -28,7 +28,13 @@ $latest = lynx()->pages->findOne('template=post, sort=-published_on');
 $count = lynx()->pages->count('template=post');
 ```
 
-Paths are written in the default language, whatever language the request is in. `get()` returns `null` when nothing matches. `find()` returns a `PageArray`, which you can loop, count, filter and join (see [Views](/basics/views#listing-pages)).
+Paths are written in the default language, whatever language the request is in. `get()` returns `null` when nothing matches.
+
+::: warning
+`get()` by id or path returns the page whatever its status, and whether or not the visitor may see it. When a visitor's input picks the page, use `findOne('id=42')` or `get()` with a selector, which leave out unpublished pages and pages the visitor may not see ([`$page` and `lynx()->pages`](/getting-started/concepts#page-and-lynx-pages)).
+:::
+
+`find()` returns a `PageArray`, which you can loop, count, filter and join (see [Views](/basics/views#listing-pages)).
 
 A page also finds its own children, with an optional selector:
 

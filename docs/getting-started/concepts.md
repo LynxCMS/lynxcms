@@ -84,6 +84,28 @@ In a view, you loop over the result with `@foreach`:
 
 A selector reads each value in the visitor's language, and leaves out pages the visitor may not see, such as unpublished ones, so the view doesn't check either. Each selector runs as a single database query, so it stays fast on large sites. [Finding Pages](/basics/selectors) lists everything a selector can do.
 
+### `$page` and `lynx()->pages`
+
+Lynx code uses two names for pages:
+
+| Name | What it is | Where you have it |
+| --- | --- | --- |
+| `$page` | One page: its fields, `url`, `parent()` and `children()`. | In a template's view, as the page the visitor asked for. Anywhere else, as a variable you set from `get()`, `find()` or a loop. |
+| `lynx()->pages` | The page API, for every page on the site: `get()`, `find()`, `findOne()` and `count()` read pages, and `save()`, `move()`, `publish()` and the rest change them. | Everywhere: views, controllers, jobs, Artisan commands and Tinker. |
+
+There is no `lynx()->page`. The page the visitor asked for exists only in the template's view, as `$page`, and code that needs it receives it from there:
+
+- **Layouts and Blade components** take it as an attribute: `<x-layout :page="$page">`.
+- **Livewire components** take its id and use the `UsesLynxPage` trait, whose `$this->page()` loads it again on every Livewire request ([Livewire components](/basics/views#livewire-components)).
+- **Your own routes and controllers** have no current page. They read the pages they need with `lynx()->pages` ([Using your own routes](/basics/views#using-your-own-routes)).
+
+`$page->children()` and `lynx()->pages->find()` take the same selectors and leave out the same pages. `lynx()->pages->get()` by id or path is the exception: it returns the page whatever its status and whoever is looking, so a view can always read a page it knows, such as a settings page. When a visitor's input decides which page to show, use a selector, which leaves out pages they may not see:
+
+```php
+lynx()->pages->get(42);           // page 42, even if unpublished or for members only
+lynx()->pages->findOne('id=42');  // page 42, or null when the visitor may not see it
+```
+
 ## Languages
 
 Every site starts with one language, called the **default language**. You can add more at any time, even to a site that is already live. Adding a language takes one step, and needs no change to the database's structure and no deploy:
