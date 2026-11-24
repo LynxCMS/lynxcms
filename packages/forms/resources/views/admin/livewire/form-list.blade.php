@@ -21,7 +21,7 @@
             </label>
             <label class="grid gap-1 text-sm">
                 <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_name') }}</span>
-                <input type="text" class="blat-input w-48 font-mono" wire:model="importName" placeholder="{{ __('lynx-forms::admin.list.import_name_placeholder') }}">
+                <input type="text" class="blat-input w-48 font-mono" wire:model="importName">
                 @error('importName') <span data-error-for="importName" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
             </label>
             <x-lynx-admin::ui.button type="submit" variant="outline">{{ __('lynx-forms::admin.list.import') }}</x-lynx-admin::ui.button>

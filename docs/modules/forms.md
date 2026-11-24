@@ -81,7 +81,7 @@ php artisan lynx:forms:import contact.form.json --name=contact-2
 
 The file holds the form's name, its title, its messages and every block with its settings, conditions, groups and steps. Recipients, the one answer per account setting and submissions belong to the site they were made on, so they stay behind. The imported form is unpublished: add its recipients, check it in **Preview**, then publish it.
 
-Texts are keyed by language code. Texts in the other site's default language become this site's default language texts, whatever the two codes are, so a form from an `en` site imports into a site whose default is `default`. Texts in a language this site lacks are left out, and the import names those languages. An import is refused when this site has a form with that name: give the copy another with `--name`, or in the **Name** box. A form defined in code travels with the app's code, so only forms built in the admin export.
+Texts are keyed by language code. Texts in the other site's default language become this site's default language texts, whatever the two codes are, so a form from an `en` site imports into a site whose default is `default`. Texts in a language this site lacks are left out, and the import names those languages. An import is refused when this site has a form with that name: give the copy another with `--name`, or in the **Form name** box. A form defined in code travels with the app's code, so only forms built in the admin export.
 
 ## Placing a form
 
