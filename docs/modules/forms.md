@@ -71,7 +71,7 @@ On a page the [page cache](/modules/page-cache) stores, a form keeps the time it
 
 ### Copying a form to another site
 
-You can copy a form built in the admin to another site as a JSON file. **Export**, next to each form in **Forms › Forms**, downloads `contact.form.json`. On the other site, **Import form** above the list takes that file and opens the new form in the page editor. On the command line:
+You can copy a form built in the admin to another site as a JSON file. **Export**, next to each form in **Forms › Forms**, downloads `contact.form.json`. On the other site, open **Import form** above the list and pick that file. It says what the import would create (the form's name, how many fields and steps, and the languages it leaves out) and changes nothing until you choose **Create form**, which opens the new form in the page editor. On the command line:
 
 ```bash
 php artisan lynx:forms:export contact contact.form.json   # without a path, the JSON is printed

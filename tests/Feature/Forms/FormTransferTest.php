@@ -192,7 +192,7 @@ it('downloads a form\'s structure from the forms list, for people who may build 
     $this->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 
-    Livewire::test(FormList::class)->assertSeeHtml('data-form-export="contact"');
+    Livewire::test(FormList::class)->assertSeeHtml('data-form-export="contact"')->assertSeeHtml('wire:ignore.self data-form-import>');
     $response = $this->get(route('lynx.admin.forms.structure', 'contact'))->assertOk();
 
     expect(json_decode($response->streamedContent(), true))->toBe(exported())
@@ -207,18 +207,32 @@ it('downloads a form\'s structure from the forms list, for people who may build 
     Livewire::test(FormList::class)->assertDontSeeHtml('data-form-export')->assertDontSeeHtml('data-form-import');
 });
 
+it('previews an import from the forms list, and creates nothing until asked', function (): void {
+    transferForm();
+    $this->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    $file = exported();
+    $file['title']['fr'] = 'Contactez-nous';
+    $upload = UploadedFile::fake()->createWithContent('contact.form.json', json_encode($file, JSON_THROW_ON_ERROR));
+
+    Livewire::test(FormList::class)->set('importFile', $upload)->assertHasErrors('importName')->assertSet('importPreview', null)
+        ->set('importName', 'contact-copy')->assertHasNoErrors()
+        ->assertSet('importPreview', ['name' => 'contact-copy', 'fields' => 5, 'steps' => 2, 'dropped' => ['fr']])
+        ->assertSeeHtml('data-import-preview')->assertSeeHtml('data-import-dropped');
+
+    expect(lynx()->pages->findOne('template=form, name=contact-copy, include=all'))->toBeNull();
+});
+
 it('imports a form from the forms list and opens it in the editor', function (): void {
     transferForm();
     $this->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
-    $file = UploadedFile::fake()->createWithContent('contact.form.json', json_encode(exported(), JSON_THROW_ON_ERROR));
+    $upload = UploadedFile::fake()->createWithContent('contact.form.json', json_encode(exported(), JSON_THROW_ON_ERROR));
 
-    Livewire::test(FormList::class)->set('importFile', $file)->call('import')->assertHasErrors('importName');
+    $component = Livewire::test(FormList::class)->set('importName', 'contact-copy')->set('importFile', $upload)->call('import')->assertHasNoErrors();
+    $page = lynx()->pages->findOne('template=form, name=contact-copy, include=all');
 
-    $page = fn () => lynx()->pages->findOne('template=form, name=contact-copy, include=all');
-    Livewire::test(FormList::class)->set('importFile', $file)->set('importName', 'contact-copy')->call('import')
-        ->assertHasNoErrors()->assertRedirect(route('lynx.admin.pages.edit', ['page' => $page()?->id]));
-
+    $component->assertRedirect(route('lynx.admin.pages.edit', ['page' => $page?->id]));
     expect(session('lynx-notify')['type'] ?? null)->toBe('success');
 });
 
@@ -226,6 +240,6 @@ it('says a file is not a form export in the forms list', function (): void {
     $this->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 
-    Livewire::test(FormList::class)->set('importFile', UploadedFile::fake()->createWithContent('notes.json', 'not json'))->call('import')
-        ->assertHasErrors('importFile');
+    Livewire::test(FormList::class)->set('importFile', UploadedFile::fake()->createWithContent('notes.json', 'not json'))
+        ->assertHasErrors('importFile')->assertSet('importPreview', null);
 });

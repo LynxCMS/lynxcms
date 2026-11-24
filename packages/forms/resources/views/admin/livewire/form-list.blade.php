@@ -13,19 +13,35 @@
             </label>
             <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
         </form>
-        <form wire:submit="import" class="bg-card flex flex-wrap items-end gap-3 rounded-xl border p-4" data-form-import>
-            <label class="grid gap-1 text-sm">
-                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_file') }}</span>
-                <input type="file" accept="application/json,.json" class="blat-input max-w-sm" wire:model="importFile" @error('importFile') aria-invalid="true" @enderror>
-                @error('importFile') <span data-error-for="importFile" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
-            </label>
-            <label class="grid gap-1 text-sm">
-                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_name') }}</span>
-                <input type="text" class="blat-input w-48 font-mono" wire:model="importName">
-                @error('importName') <span data-error-for="importName" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
-            </label>
-            <x-lynx-admin::ui.button type="submit" variant="outline">{{ __('lynx-forms::admin.list.import') }}</x-lynx-admin::ui.button>
-        </form>
+        {{-- Closed until needed; wire:ignore.self keeps it open while Livewire shows a refusal. --}}
+        <details class="bg-card rounded-xl border" wire:ignore.self data-form-import>
+            <summary class="w-fit cursor-pointer p-4 text-sm font-medium">{{ __('lynx-forms::admin.list.import') }}</summary>
+            <form wire:submit="import" class="flex flex-wrap items-end gap-3 px-4 pb-4">
+                <label class="grid gap-1 text-sm">
+                    <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_file') }}</span>
+                    <input type="file" accept="application/json,.json" class="blat-input max-w-sm" wire:model="importFile" @error('importFile') aria-invalid="true" @enderror>
+                    @error('importFile') <span data-error-for="importFile" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+                </label>
+                <label class="grid gap-1 text-sm">
+                    <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.import_name') }}</span>
+                    <input type="text" class="blat-input w-48 font-mono" wire:model.blur="importName">
+                    @error('importName') <span data-error-for="importName" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
+                </label>
+                @if ($importPreview !== null)
+                    <div class="grid basis-full gap-2 text-sm" data-import-preview>
+                        <p>{{ __('lynx-forms::admin.list.import_preview', [
+                            'name' => $importPreview['name'],
+                            'fields' => trans_choice('lynx-forms::admin.list.import_fields', $importPreview['fields']),
+                            'steps' => trans_choice('lynx-forms::admin.list.import_steps', $importPreview['steps']),
+                        ]) }}</p>
+                        @if ($importPreview['dropped'] !== [])
+                            <p class="text-muted-foreground" data-import-dropped>{{ __('lynx-forms::admin.list.import_left_out', ['languages' => implode(', ', $importPreview['dropped'])]) }}</p>
+                        @endif
+                        <x-lynx-admin::ui.button type="submit" class="w-fit">{{ __('lynx-forms::admin.list.import_submit') }}</x-lynx-admin::ui.button>
+                    </div>
+                @endif
+            </form>
+        </details>
     @endif
 
     <x-lynx-admin::ui.table variant="card">
