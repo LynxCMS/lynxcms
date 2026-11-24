@@ -2,74 +2,54 @@
     zoom: the picture a zoom button opened, shown at full size in the field's one dialog. Its id is
     lower case: HTML lowers the dialog's event listener name, and Livewire ids have capitals.
 --}}
-@php($zoomDialog = 'media-zoom-'.strtolower($this->getId()))
+@php
+    $zoomDialog = 'media-zoom-'.strtolower($this->getId());
+@endphp
 <div class="grid gap-3" x-data="{ zoom: { url: '', name: '' } }">
     @if ($isPerLanguage && count($languages) > 1)
-        {{-- A file per language (ADR-0150): a tab per language shows its files and those for every language. --}}
+        {{-- A file per language (ADR-0150): a tab per language, with its own files and those every language shares. --}}
+        @php
+            $own = array_filter($items, fn ($item) => ($item['language'] ?? '') === $language);
+            $shared = array_filter($items, fn ($item) => ($item['language'] ?? '') === '');
+            $languageLabel = collect($languages)->firstWhere('code', $language)['label'] ?? $language;
+        @endphp
         <div class="flex flex-wrap items-center gap-1" role="group" aria-label="{{ __('lynx-media::admin.languages') }}" data-media-languages>
-            @foreach ([['code' => '', 'label' => __('lynx-media::admin.every_file')], ...$languages] as $tab)
-                @php($hasOwn = $tab['code'] !== '' && collect($items)->contains(fn ($item) => ($item['language'] ?? '') === $tab['code']))
+            @foreach ($languages as $tab)
+                @php
+                    $hasOwn = collect($items)->contains(fn ($item) => ($item['language'] ?? '') === $tab['code']);
+                @endphp
                 <x-lynx-admin::ui.button size="xs" type="button" :variant="$language === $tab['code'] ? 'secondary' : 'ghost'" wire:click="$set('language', {{ Js::from($tab['code']) }})"
                     aria-pressed="{{ $language === $tab['code'] ? 'true' : 'false' }}" data-media-language="{{ $tab['code'] }}">
                     {{ $tab['label'] }}
-                    @if ($tab['code'] !== '')<span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $hasOwn])></span>@endif
+                    <span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $hasOwn])></span>
                 </x-lynx-admin::ui.button>
             @endforeach
         </div>
-        @if ($fallsBackTo !== null)
-            <p class="text-muted-foreground text-sm" data-media-fallback>{{ $fallsBackTo === '' ? __('lynx-media::admin.no_language_file') : __('lynx-media::admin.falls_back_to', ['language' => $fallsBackTo]) }}</p>
-        @endif
+        <section class="grid gap-2" data-media-group="language" aria-label="{{ __('lynx-media::admin.language_files', ['language' => $languageLabel]) }}">
+            <p class="text-sm font-medium">{{ __('lynx-media::admin.language_files', ['language' => $languageLabel]) }}</p>
+            @if ($own !== [])
+                @include('lynx-media::livewire.partials.media-list', ['shown' => $own])
+            @elseif ($fallsBackTo !== null)
+                <p class="text-muted-foreground text-sm" data-media-fallback>{{ match (true) { $shared !== [] => __('lynx-media::admin.uses_shared'), $fallsBackTo === '' => __('lynx-media::admin.no_language_file'), default => __('lynx-media::admin.falls_back_to', ['language' => $fallsBackTo]) } }}</p>
+            @endif
+            @if ($canAdd)
+                @include('lynx-media::livewire.partials.media-upload', ['model' => 'uploads'])
+            @endif
+        </section>
+        <section class="grid gap-2 border-t pt-3" data-media-group="shared" aria-label="{{ __('lynx-media::admin.shared_files') }}">
+            <p class="text-sm font-medium">{{ __('lynx-media::admin.shared_files') }}</p>
+            @if ($shared !== [])
+                @include('lynx-media::livewire.partials.media-list', ['shown' => $shared])
+            @endif
+            @if ($canAddShared)
+                @include('lynx-media::livewire.partials.media-upload', ['model' => 'sharedUploads'])
+            @endif
+        </section>
+    @elseif ($items !== [])
+        @include('lynx-media::livewire.partials.media-list', ['shown' => $items])
     @endif
-    @if ($items !== [])
-        <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4" @unless ($disabled) wire:sort="sort" @endunless>
-            @foreach ($items as $index => $item)
-                @continue(! $this->isShown($item))
-                @php($url = app(\LynxCms\Media\MediaPaths::class)->url((string) $item['file']))
-                <li wire:key="file-{{ $item['key'] }}" wire:sort:item="{{ $item['key'] }}" @class(['bg-card overflow-hidden rounded-md border', 'opacity-50' => ! ($item['enabled'] ?? true)])>
-                    @if ($isImages)
-                        <div @class(['relative aspect-[4/3] bg-muted', 'cursor-grab active:cursor-grabbing' => ! $disabled]) @unless ($disabled) wire:sort:handle title="{{ __('lynx-media::admin.drag') }}" @endunless>
-                            <img src="{{ $url }}" alt="" class="size-full object-cover" style="object-position: {{ $item['focus']['x'] ?? 50 }}% {{ $item['focus']['y'] ?? 50 }}%" loading="lazy">
-                            @php($name = basename((string) $item['file']))
-                            <button type="button" wire:sort:ignore data-media-zoom
-                                    class="bg-background/85 text-foreground hover:bg-background focus-visible:ring-ring absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-md shadow-sm focus-visible:ring-2 focus-visible:outline-none"
-                                    x-on:click="zoom = { url: {{ Js::from($url) }}, name: {{ Js::from($name) }} }; $dispatch('open-dialog-{{ $zoomDialog }}')"
-                                    aria-label="{{ __('lynx-media::admin.zoom', ['file' => $name]) }}" title="{{ __('lynx-media::admin.zoom', ['file' => $name]) }}">
-                                <x-lucide-zoom-in class="size-4" aria-hidden="true" />
-                            </button>
-                        </div>
-                    @else
-                        <div @class(['flex aspect-[4/3] items-center justify-center bg-muted p-3 text-center text-sm font-medium', 'cursor-grab active:cursor-grabbing' => ! $disabled]) @unless ($disabled) wire:sort:handle title="{{ __('lynx-media::admin.drag') }}" @endunless>
-                            {{ strtoupper(pathinfo((string) $item['file'], PATHINFO_EXTENSION)) }}
-                        </div>
-                    @endif
-                    <div class="grid gap-1 p-2 text-xs">
-                        <span class="truncate font-medium" title="{{ basename((string) $item['file']) }}">{{ basename((string) $item['file']) }}</span>
-                        @if ($isPerLanguage)
-                            @php($itemLanguage = collect($languages)->firstWhere('code', $item['language'] ?? ''))
-                            <span class="text-muted-foreground" data-file-language="{{ $item['language'] ?? '' }}">{{ $itemLanguage['label'] ?? __('lynx-media::admin.every_language') }}</span>
-                        @endif
-                        <span class="text-muted-foreground">{{ $isImages ? ($item['width'] ?? 0).' × '.($item['height'] ?? 0).' · ' : '' }}{{ \LynxCms\Core\Support\LocalizedNumber::fileSize((int) ($item['bytes'] ?? 0)) }}</span>
-                        @unless ($disabled)
-                            <span class="flex flex-wrap gap-2">
-                                <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="$set('editing', {{ ($editing === $item['key']) ? 'null' : Js::from($item['key']) }})">{{ __($editing === $item['key'] ? 'lynx-media::admin.close' : 'lynx-media::admin.edit') }}</button>
-                                <button type="button" class="text-primary underline-offset-4 hover:underline" wire:click="toggle({{ $index }})">{{ __(($item['enabled'] ?? true) ? 'lynx-media::admin.hide' : 'lynx-media::admin.show') }}</button>
-                                <button type="button" class="text-destructive underline-offset-4 hover:underline" wire:click="remove({{ $index }})">{{ __('lynx-media::admin.remove') }}</button>
-                                @if (count($items) > 1)
-                                    <span class="ms-auto flex gap-1">
-                                        <button type="button" class="text-muted-foreground hover:text-foreground disabled:opacity-30" wire:click="move({{ $index }}, -1)" @disabled($loop->first) aria-label="{{ __('lynx-media::admin.move_earlier', ['file' => basename((string) $item['file'])]) }}"><x-lucide-arrow-left class="size-3.5" aria-hidden="true" /></button>
-                                        <button type="button" class="text-muted-foreground hover:text-foreground disabled:opacity-30" wire:click="move({{ $index }}, 1)" @disabled($loop->last) aria-label="{{ __('lynx-media::admin.move_later', ['file' => basename((string) $item['file'])]) }}"><x-lucide-arrow-right class="size-3.5" aria-hidden="true" /></button>
-                                    </span>
-                                @endif
-                            </span>
-                        @endunless
-                    </div>
-                </li>
-            @endforeach
-        </ul>
-        @if (! $disabled && count($items) > 1)
-            <p class="text-muted-foreground -mt-1 text-xs">{{ __('lynx-media::admin.drag_hint') }}</p>
-        @endif
 
+    @if ($items !== [])
         @foreach ($items as $index => $item)
             @if ($editing === $item['key'])
                 <div class="bg-card grid gap-4 rounded-md border p-4 sm:grid-cols-2" wire:key="details-{{ $item['key'] }}">
@@ -132,35 +112,11 @@
         </x-lynx-admin::ui.dialog>
     @endif
 
-    @if ($canAdd)
-        {{-- Files dropped here go into the file input, so they upload and are checked as chosen ones are (issue #223). --}}
-        <label data-media-drop
-               class="border-input hover:bg-muted/50 flex cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed p-6 text-center text-sm"
-               x-data="{
-                   dragging: false,
-                   drop(event, multiple) {
-                       this.dragging = false;
-                       const files = [...event.dataTransfer.files].slice(0, multiple ? undefined : 1);
-                       if (files.length === 0) return;
-                       const chosen = new DataTransfer();
-                       files.forEach((file) => chosen.items.add(file));
-                       const input = this.$el.querySelector('input[type=file]');
-                       input.files = chosen.files;
-                       input.dispatchEvent(new Event('change', { bubbles: true }));
-                   },
-               }"
-               x-on:dragover.prevent="dragging = true"
-               x-on:dragleave="if (! $el.contains($event.relatedTarget)) dragging = false"
-               x-on:drop.prevent="drop($event, {{ $multiple ? 'true' : 'false' }})"
-               x-bind:class="dragging && 'border-primary bg-muted/50'">
-            <x-lucide-upload class="size-5 text-muted-foreground" aria-hidden="true" />
-            <span><span class="text-primary font-medium">{{ __($isImages ? 'lynx-media::admin.choose_images' : 'lynx-media::admin.choose_files') }}</span> {{ __('lynx-media::admin.or_drop') }}</span>
-            <span class="text-muted-foreground text-xs">{{ str_replace(',', ' ', $accept) }}</span>
-            <input type="file" class="sr-only" wire:model="uploads" accept="{{ $accept }}" @if ($multiple) multiple @endif>
-            <span wire:loading wire:target="uploads" class="text-muted-foreground text-xs">{{ __('lynx-media::admin.uploading') }}</span>
-        </label>
+    @if ($canAdd && ! ($isPerLanguage && count($languages) > 1))
+        @include('lynx-media::livewire.partials.media-upload', ['model' => 'uploads'])
     @elseif ($pageId === null && ! $disabled)
         <p class="text-muted-foreground text-sm">{{ __($isImages ? 'lynx-media::admin.save_first_images' : 'lynx-media::admin.save_first_files') }}</p>
     @endif
     @error('uploads') <p data-error-for="uploads" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+    @error('sharedUploads') <p data-error-for="sharedUploads" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
 </div>

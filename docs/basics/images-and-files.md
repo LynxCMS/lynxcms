@@ -94,7 +94,7 @@ You can give a page a different image or document in each language, such as a ba
 lynx()->fields->create('hero', 'images', settings: ['max_files' => 1, 'per_language' => true]);
 ```
 
-The field then shows a tab per language in the page editor, beside **All files**. A file uploaded in a language's tab is for that language; one uploaded under **All files** is for every language, and each file's details have a **Language** select to change it. A language's tab lists its own files and the files for every language, and says which language's files visitors see when it has neither.
+The field then shows a tab per language in the page editor. Each tab has two groups, each with its own upload zone: the language's own files, and the files **Shared by every language**, which every tab shows. A file's details have a **Language** select to move it to another language or to the shared files. A tab without files of its own says what visitors see instead.
 
 Templates read the field as before, and get the current language's files. In a template's view, such as `resources/views/templates/home.blade.php`:
 

@@ -135,38 +135,49 @@ function tinyPng(): string
     return base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', true);
 }
 
-it('shows a tab per language in the editor, and an upload in a tab is for its language', function (): void {
+it('shows a tab per language in the editor, with the language\'s files and the shared ones apart', function (): void {
     test()->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
 
     $component = Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures'])
         ->assertSeeHtml('data-media-languages')
-        ->assertSeeHtml('data-media-language="pt"')
+        ->assertSet('language', 'default')
+        ->assertSeeHtml('data-media-group="language"')
+        ->assertSeeHtml('data-media-group="shared"')
+        ->assertDontSeeHtml('data-media-language=""')
         ->set('language', 'pt')
-        ->assertSeeHtml('data-media-fallback')
-        ->set('uploads', [UploadedFile::fake()->createWithContent('guia.pdf', '%PDF-1.4 guia')]);
-
-    expect($component->get('items')[0]['language'])->toBe('pt');
-
-    $component->set('language', '')->set('uploads', [UploadedFile::fake()->createWithContent('terms.pdf', '%PDF-1.4 terms')])
-        ->set('language', 'default')
-        ->assertSeeHtml('data-file-language=""')
-        ->assertDontSeeHtml('data-file-language="pt"');
+        ->set('uploads', [UploadedFile::fake()->createWithContent('guia.pdf', '%PDF-1.4 guia')])
+        ->set('sharedUploads', [UploadedFile::fake()->createWithContent('terms.pdf', '%PDF-1.4 terms')]);
 
     expect(array_column($component->get('items'), 'language'))->toBe(['pt', '']);
+
+    $component->set('language', 'default')->assertSeeHtml('data-media-fallback');
 });
 
-it('says which language a tab without files falls back to', function (): void {
+it('says what visitors see in a tab without files of its own', function (): void {
     test()->actingAs(new GenericUser(['id' => 1]));
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
     saveFiles('brochures', [languageFile('brochures', 'guide-en', 'default')]);
     $items = app(MediaConverter::class)->toForm(alphaPage()->getUnformatted('brochures'));
 
     Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures', 'items' => $items])
+        ->assertDontSeeHtml('data-media-fallback')
         ->set('language', 'pt')
-        ->assertSeeHtml('data-media-fallback')
-        ->set('language', 'default')
-        ->assertDontSeeHtml('data-media-fallback');
+        ->assertSeeHtml('data-media-fallback');
+});
+
+it('sorts a file within its group', function (): void {
+    test()->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    saveFiles('brochures', [languageFile('brochures', 'a-pt', 'pt'), languageFile('brochures', 'shared', null), languageFile('brochures', 'b-pt', 'pt')]);
+    $items = app(MediaConverter::class)->toForm(alphaPage()->getUnformatted('brochures'));
+    [$a, $shared, $b] = array_column($items, 'key');
+
+    $component = Livewire::test(MediaField::class, ['pageId' => test()->alphaId, 'field' => 'brochures', 'items' => $items])
+        ->set('language', 'pt')
+        ->call('sort', $b, 0);
+
+    expect(array_column($component->get('items'), 'key'))->toBe([$b, $a, $shared]);
 });
 
 it('shows no language tabs on a field that is not per language', function (): void {
