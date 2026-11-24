@@ -16,22 +16,21 @@ use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
 use LynxCms\Admin\Fields\FieldFormTabs;
+use LynxCms\Admin\Fields\FieldTemplateOptions;
+use LynxCms\Admin\Livewire\Concerns\DeletesField;
 use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
+use LynxCms\Admin\Livewire\Concerns\EditsFieldAccess;
 use LynxCms\Admin\Livewire\Concerns\EditsFormatters;
 use LynxCms\Admin\Livewire\Concerns\EditsItemDisplay;
 use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
 use LynxCms\Admin\Livewire\Concerns\MakesFieldTranslatable;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
-use LynxCms\Core\Actions\Runner\ActionResult;
-use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Models\Field;
-use LynxCms\Core\Models\Template;
-use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Support\Value;
 
 /**
- * Setup > Fields > New field and Edit field, in tabs: a repeater's or matrix's builder, Preview,
- * Field, and Limits and display. Kinds and settings are in words for people (FieldKinds,
+ * Setup > Fields > New field and Edit field, in tabs (FieldFormTabs): Basics, Settings, Access,
+ * Advanced and Preview, plus a repeater's or matrix's builder and limits. Kinds and settings are in words for people (FieldKinds,
  * SettingLabels); every write goes through fields.create or fields.update, whose errors show by
  * their inputs. Name and type are fixed once the field exists (schema-admin plan); a shared field can be made translatable.
  *
@@ -39,7 +38,9 @@ use LynxCms\Core\Support\Value;
  */
 final class FieldForm extends Component
 {
+    use DeletesField;
     use EditsChoiceOptions;
+    use EditsFieldAccess;
     use EditsFormatters;
     use EditsItemDisplay;
     use EditsItemSettings;
@@ -75,15 +76,6 @@ final class FieldForm extends Component
     /** Only the site's code writes the field, on every template (ADR-0149). */
     public bool $locked = false;
 
-    /** Whether only the roles ticked below see and edit the field (ADR-0151). */
-    public bool $manageAccess = false;
-
-    /** @var list<string> roles that may see the field, when access is managed */
-    public array $viewRoles = [];
-
-    /** @var list<string> roles that may edit (and so see) the field, when access is managed */
-    public array $editRoles = [];
-
     /** @var array<string, mixed> setting name => form value */
     public array $settings = [];
 
@@ -92,14 +84,6 @@ final class FieldForm extends Component
 
     /** What is typed into the Preview tab's input (FieldPreviewInput); never saved. */
     public mixed $previewValue = '';
-
-    /** Showing what deleting the field would remove, waiting for confirmation. */
-    #[Locked]
-    public bool $isConfirmingDelete = false;
-
-    /** @var list<string> the dry run's change lines */
-    #[Locked]
-    public array $deleteSummary = [];
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
     public function boot(AdminAccess $access): void
@@ -124,10 +108,7 @@ final class FieldForm extends Component
             $this->fallback = Value::string($config['fallback'] ?? 'inherit');
             $this->autoload = ($config['autoload'] ?? false) === true;
             $this->locked = ($config['locked'] ?? false) === true;
-            $access = Value::map($config['access'] ?? []);
-            $this->manageAccess = is_array($config['access'] ?? null);
-            $this->viewRoles = Value::strings($access['view'] ?? []);
-            $this->editRoles = Value::strings($access['edit'] ?? []);
+            $this->loadAccess($config);
             $this->settings = app(SchemaForm::class)->toForm($this->definitions(), $config);
             $this->loadChoiceOptions($config);
             $this->formatters = Value::strings($config['formatters'] ?? []);
@@ -168,28 +149,6 @@ final class FieldForm extends Component
         $this->notify(__('lynx-admin::fields.saved'));
     }
 
-    /** A dry run first, so the confirmation can say which templates and values go. */
-    public function confirmDelete(): void
-    {
-        $this->authorizeEditing();
-        $result = lynx()->fields->delete((string) $this->field, dryRun: true);
-        $this->deleteSummary = $result instanceof ActionResult ? array_map(fn (Change $change): string => $change->summary, $result->changes->all()) : [];
-        $this->isConfirmingDelete = true;
-    }
-
-    public function cancelDelete(): void
-    {
-        $this->isConfirmingDelete = false;
-        $this->deleteSummary = [];
-    }
-
-    public function delete(): void
-    {
-        $this->authorizeEditing();
-        lynx()->fields->delete((string) $this->field);
-        $this->redirectRoute('lynx.admin.fields');
-    }
-
     public function render(): View
     {
         $types = lynx()->fields->types();
@@ -221,41 +180,9 @@ final class FieldForm extends Component
             'subfieldChoices' => $this->hasItemBuilder() ? $this->subfieldChoices() : [],
             'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
             'typeUsage' => $this->typeUsage(),
-            'templateOptions' => $this->templateOptions(),
+            'templateOptions' => app(FieldTemplateOptions::class)->all(),
             'accessRoles' => $accessRoles,
         ]);
-    }
-
-    /**
-     * Roles for the Access tab (ADR-0151). Superusers pass every check, so they are left out; a
-     * role without pages.edit can't edit the field, so its Edit box is off.
-     *
-     * @return list<array{name: string, label: string, canEditPages: bool}>
-     */
-    private function accessRoles(): array
-    {
-        return array_values(Role::query()->where('is_superuser', false)->with('grants')->orderBy('label')->get()
-            ->map(fn (Role $role): array => [
-                'name' => (string) $role->name,
-                'label' => (string) $role->label ?: (string) $role->name,
-                'canEditPages' => $role->grants->contains('permission', 'pages.edit'),
-            ])->all());
-    }
-
-    /**
-     * The site's templates, for settings that name templates (SettingFormats::TEMPLATE); those
-     * Lynx and its modules own are left out, as the New page screen leaves them out.
-     *
-     * @return list<array{name: string, label: string}>
-     */
-    private function templateOptions(): array
-    {
-        $owners = app(SchemaOwners::class);
-
-        return array_values(lynx()->templates->all()
-            ->reject(fn (Template $template): bool => $owners->isSystemTemplate((string) $template->name))
-            ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->label])
-            ->sortBy('label')->all());
     }
 
     /**
@@ -313,7 +240,7 @@ final class FieldForm extends Component
             'formatters' => $this->formatters !== [] ? $this->formatters : null,
             'autoload' => $this->autoload ? true : null,
             'locked' => $this->locked ? true : null,
-            'access' => $this->manageAccess ? ['view' => array_values($this->viewRoles), 'edit' => array_values($this->editRoles)] : null,
+            'access' => $this->accessSetting(),
         ];
 
         if ($this->translatable) {
