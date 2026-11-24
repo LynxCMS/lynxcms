@@ -124,7 +124,7 @@ In `LynxCms\Core`.
 | `Fields\Choices\Choice` | class | One chosen option of a choice field: its stable value and its label in the current language. |
 | `Fields\Choices\ChoiceList` | class | The chosen options of a choice field that allows several, in the order of the field's options. |
 | `Fields\DescribesPhpType` | interface | A field type that tells static analysis what templates read: the PHPDoc type of $page-&gt;field for a shared (not translatable) field, as the type presents it, null included when an empty value reads as null. |
-| `Fields\FieldAccess` | class | Field access per role: a field's "access" setting lists the roles that may see it ("view") and the roles that may edit it ("edit"). |
+| `Fields\FieldAccess` | class | Field access per role: a field with an "access" setting is managed, and only the roles it lists may see it ("view") or edit it ("edit"); a role that may edit may also see. |
 | `Fields\FieldRegistry` | class | Read access to field definitions, cached per request. |
 | `Fields\FieldTypeRegistry` | class | Registered field types. |
 | `Fields\FormatterRegistry` | class | Registered text formatters. |

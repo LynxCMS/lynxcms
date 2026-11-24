@@ -80,7 +80,7 @@
     @include('lynx-admin::livewire.partials.field.settings')
 
     <x-lynx-admin::section id="field-advanced" :title="__('lynx-admin::fields.advanced.heading')" remember="field:advanced" collapsed
-        :has-error="$errors->has('settings.autoload') || $errors->has('settings.locked') || $errors->has('settings.access')" body-class="grid gap-3 p-5" data-field-advanced>
+        :has-error="$errors->has('settings.autoload') || $errors->has('settings.locked')" body-class="grid gap-3 p-5" data-field-advanced>
         @if ($name === 'title')
             <p class="text-sm">{{ __('lynx-admin::fields.advanced.always') }}</p>
         @else
@@ -98,30 +98,11 @@
         </label>
         @endunless
         @error('settings.locked') <p data-error-for="settings.locked" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-        @if ($accessRoles !== [])
-            {{-- Field access per role (ADR-0151): no role ticked means every role that may see or edit the page. --}}
-            <div class="grid gap-3 rounded-lg border p-3 text-sm" data-field-access>
-                <div class="grid gap-0.5">
-                    <span class="font-medium">{{ __('lynx-admin::fields.advanced.access') }}</span>
-                    <span class="text-muted-foreground">{{ __('lynx-admin::fields.advanced.access_hint') }}</span>
-                </div>
-                @foreach (['viewRoles' => 'access_view', 'editRoles' => 'access_edit'] as $property => $legend)
-                    <fieldset class="grid gap-1.5">
-                        <legend class="mb-1 font-medium">{{ __('lynx-admin::fields.advanced.'.$legend) }}</legend>
-                        <div class="grid gap-1.5 sm:grid-cols-2">
-                            @foreach ($accessRoles as $role)
-                                <label class="flex cursor-pointer items-center gap-2">
-                                    <input class="blat-checkbox" type="checkbox" value="{{ $role['name'] }}" wire:model="{{ $property }}" data-access-{{ $property === 'viewRoles' ? 'view' : 'edit' }}="{{ $role['name'] }}">
-                                    {{ $role['label'] }}
-                                </label>
-                            @endforeach
-                        </div>
-                    </fieldset>
-                @endforeach
-                @error('settings.access') <p data-error-for="settings.access" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-            </div>
-        @endif
     </x-lynx-admin::section>
+
+    @if ($accessRoles !== [])
+        @include('lynx-admin::livewire.partials.field.access')
+    @endif
 
     @include('lynx-admin::livewire.partials.field.danger')
 </div>

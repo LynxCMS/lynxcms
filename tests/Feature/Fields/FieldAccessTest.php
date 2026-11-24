@@ -34,7 +34,7 @@ beforeEach(function (): void {
     lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
     lynx()->run(AssignRoles::class, ['user' => '2', 'roles' => ['editor-pricing']]);
     lynx()->run(AssignRoles::class, ['user' => '3', 'roles' => ['writer']]);
-    lynx()->fields->update('price', ['settings' => ['access' => ['edit' => ['editor-pricing']]]]);
+    lynx()->fields->update('price', ['settings' => ['access' => ['view' => ['writer'], 'edit' => ['editor-pricing']]]]);
     lynx()->fields->update('summary', ['settings' => ['access' => ['view' => ['editor-pricing']]]]);
 });
 
@@ -122,17 +122,46 @@ it('refuses roles the site lacks', function (): void {
     lynx()->fields->update('price', ['settings' => ['access' => ['edit' => ['nobody']]]]);
 })->throws(ValidationException::class);
 
-it('sets the roles on the field form, which offers every role but superusers', function (): void {
+it('manages access on the field form, a role per row, Edit off for roles that can\'t edit pages', function (): void {
     test()->actingAs(new GenericUser(['id' => 1]));
+    lynx()->run(SaveRole::class, ['name' => 'reader', 'grants' => [['permission' => 'admin.access'], ['permission' => 'pages.view']]]);
 
     Livewire::test(FieldForm::class, ['field' => 'body'])
+        ->assertSet('manageAccess', false)
+        ->assertDontSeeHtml('data-access-table')
+        ->set('manageAccess', true)
         ->assertSeeHtml('data-access-edit="writer"')
+        ->assertSeeHtml('data-access-none')
         ->assertDontSeeHtml('data-access-edit="superuser"')
+        ->assertSeeHtml('data-access-edit="reader" disabled')
         ->set('editRoles', ['writer'])
         ->call('save')
         ->assertHasNoErrors();
 
-    expect(lynx()->fields->get('body')->config()['access'] ?? null)->toBe(['edit' => ['writer']]);
+    expect(lynx()->fields->get('body')->config()['access'] ?? null)->toBe(['view' => [], 'edit' => ['writer']]);
+});
+
+it('lets only superusers see a managed field with no role ticked', function (): void {
+    lynx()->fields->update('body', ['settings' => ['access' => ['view' => [], 'edit' => []]]]);
+    $access = app(FieldAccess::class);
+    $body = lynx()->fields->get('body');
+
+    expect($access->canView($body, Actor::user(2)))->toBeFalse()
+        ->and($access->canView($body, Actor::user(1)))->toBeTrue()
+        ->and($access->isManaged($body))->toBeTrue()
+        ->and($access->isManaged(lynx()->fields->get('title')))->toBeFalse();
+});
+
+it('stops managing a field\'s access on the field form', function (): void {
+    test()->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(FieldForm::class, ['field' => 'price'])
+        ->assertSet('manageAccess', true)
+        ->set('manageAccess', false)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(lynx()->fields->get('price')->config())->not->toHaveKey('access');
 });
 
 it('lets a role publish a draft and restore a revision of a page with a field it may not edit', function (): void {

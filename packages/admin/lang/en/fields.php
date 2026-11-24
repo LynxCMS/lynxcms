@@ -103,10 +103,6 @@ return [
         'autoload_hint' => 'For fields almost every list shows. Others load the first time a template reads them, for all listed pages at once.',
         'locked' => 'Locked',
         'locked_hint' => 'Editors see the value and can\'t change it, on every template. Only the site\'s code fills it, such as an import or a sync with another service.',
-        'access' => 'Access',
-        'access_hint' => 'Superusers always see and edit it. Without a role ticked, every role that may see or edit the page does. Visitors and templates are not affected.',
-        'access_view' => 'Roles that may see it',
-        'access_edit' => 'Roles that may edit it',
     ],
     'delete' => [
         'heading' => 'Delete this field',
@@ -248,5 +244,19 @@ return [
     'readonly' => [
         'module' => 'Managed by the :module module, which depends on it. Change it through that module.',
         'files' => 'Schema changes on this site come from the schema files: edit them in Git and run :command.',
+    ],
+    'access' => [
+        'heading' => 'Access',
+        'manage' => 'Manage access for this field',
+        'manage_help' => 'When on, only the roles ticked below see or edit the field in the admin and through agents. Visitors and templates are not affected.',
+        'roles' => 'Roles that may see or edit it',
+        'roles_help' => 'A role also needs to see or edit the page itself. Edit lets a role see the field too.',
+        'role' => 'Role',
+        'view' => 'View',
+        'edit' => 'Edit',
+        'view_role' => 'View: :role',
+        'edit_role' => 'Edit: :role',
+        'cannot_edit_pages' => 'This role can\'t edit pages.',
+        'none' => 'With no box ticked, only superusers see and edit the field.',
     ],
 ];

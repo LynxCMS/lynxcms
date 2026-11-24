@@ -74,10 +74,13 @@ final class FieldForm extends Component
     /** Only the site's code writes the field, on every template (ADR-0149). */
     public bool $locked = false;
 
-    /** @var list<string> roles that may see the field; empty for every role that may see the page (ADR-0151) */
+    /** Whether only the roles ticked below see and edit the field (ADR-0151). */
+    public bool $manageAccess = false;
+
+    /** @var list<string> roles that may see the field, when access is managed */
     public array $viewRoles = [];
 
-    /** @var list<string> roles that may edit the field; empty for every role that may edit the page */
+    /** @var list<string> roles that may edit (and so see) the field, when access is managed */
     public array $editRoles = [];
 
     /** @var array<string, mixed> setting name => form value */
@@ -118,6 +121,7 @@ final class FieldForm extends Component
             $this->autoload = ($config['autoload'] ?? false) === true;
             $this->locked = ($config['locked'] ?? false) === true;
             $access = Value::map($config['access'] ?? []);
+            $this->manageAccess = is_array($config['access'] ?? null);
             $this->viewRoles = Value::strings($access['view'] ?? []);
             $this->editRoles = Value::strings($access['edit'] ?? []);
             $this->settings = app(SchemaForm::class)->toForm($this->definitions(), $config);
@@ -208,7 +212,12 @@ final class FieldForm extends Component
             'typeUsage' => $this->typeUsage(),
             'templateOptions' => $this->templateOptions(),
             // Superusers pass every check, so only the other roles are offered (ADR-0151).
-            'accessRoles' => Role::query()->where('is_superuser', false)->orderBy('label')->get(['name', 'label'])->map(fn (Role $role): array => ['name' => (string) $role->name, 'label' => (string) $role->label ?: (string) $role->name])->all(),
+            // A role without pages.edit can't edit the field, so its Edit box is off.
+            'accessRoles' => Role::query()->where('is_superuser', false)->with('grants')->orderBy('label')->get()->map(fn (Role $role): array => [
+                'name' => (string) $role->name,
+                'label' => (string) $role->label ?: (string) $role->name,
+                'canEditPages' => $role->grants->contains('permission', 'pages.edit'),
+            ])->all(),
         ]);
     }
 
@@ -298,7 +307,7 @@ final class FieldForm extends Component
             'formatters' => $this->formatters !== [] ? $this->formatters : null,
             'autoload' => $this->autoload ? true : null,
             'locked' => $this->locked ? true : null,
-            'access' => array_filter(['view' => array_values($this->viewRoles), 'edit' => array_values($this->editRoles)]) ?: null,
+            'access' => $this->manageAccess ? ['view' => array_values($this->viewRoles), 'edit' => array_values($this->editRoles)] : null,
         ];
 
         if ($this->translatable) {

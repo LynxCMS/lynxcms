@@ -103,10 +103,6 @@ return [
         'autoload_hint' => 'Para los campos que muestran casi todas las listas. Los demás se cargan la primera vez que una plantilla los lee, para todas las páginas listadas a la vez.',
         'locked' => 'Bloqueado',
         'locked_hint' => 'Los editores ven el valor y no pueden cambiarlo, en todas las plantillas. Solo el código del sitio lo rellena, como una importación o una sincronización con otro servicio.',
-        'access' => 'Acceso',
-        'access_hint' => 'Los superusuarios siempre lo ven y lo editan. Sin un rol marcado, todos los roles que pueden ver o editar la página pueden. Los visitantes y las plantillas no se ven afectados.',
-        'access_view' => 'Roles que pueden verlo',
-        'access_edit' => 'Roles que pueden editarlo',
     ],
     'delete' => [
         'heading' => 'Eliminar este campo',
@@ -248,5 +244,19 @@ return [
     'readonly' => [
         'module' => 'Lo gestiona el módulo :module, que depende de él. Cámbialo a través de ese módulo.',
         'files' => 'Los cambios de esquema de este sitio vienen de los archivos de esquema: edítalos en Git y ejecuta :command.',
+    ],
+    'access' => [
+        'heading' => 'Acceso',
+        'manage' => 'Gestionar el acceso a este campo',
+        'manage_help' => 'Cuando está activado, solo los roles marcados abajo ven o editan el campo en el admin y a través de agentes. Los visitantes y las plantillas no se ven afectados.',
+        'roles' => 'Roles que pueden verlo o editarlo',
+        'roles_help' => 'Un rol también necesita poder ver o editar la página. Editar permite también ver el campo.',
+        'role' => 'Rol',
+        'view' => 'Ver',
+        'edit' => 'Editar',
+        'view_role' => 'Ver: :role',
+        'edit_role' => 'Editar: :role',
+        'cannot_edit_pages' => 'Este rol no puede editar páginas.',
+        'none' => 'Sin ninguna casilla marcada, solo los superusuarios ven y editan el campo.',
     ],
 ];

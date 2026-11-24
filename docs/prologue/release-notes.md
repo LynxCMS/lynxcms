@@ -10,7 +10,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
-- Field access per role: a field can list the roles that may see it and the roles that may edit it (`access` in its settings, **Advanced › Access** in the admin). Other roles don't see the field in the page editor, through agents or in the Finder, or see it read only, and `pages.save` refuses their changes to it. Superusers and the site's code always may, and visitors are not affected. See [Field access per role](/admin/permissions#field-access-per-role).
+- Field access per role: a field can manage which roles see it and which edit it (**Access** on the field's page, or `access` in its settings), with a View and an Edit box per role; with none ticked, only superusers may. Other roles don't see the field in the page editor, through agents or in the Finder, or see it read only, and `pages.save` refuses their changes to it. Superusers and the site's code always may, and visitors are not affected. See [Field access per role](/admin/permissions#field-access-per-role).
 
 ## 0.1.58
 

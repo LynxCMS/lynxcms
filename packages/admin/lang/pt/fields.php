@@ -103,10 +103,6 @@ return [
         'autoload_hint' => 'Para campos que quase todas as listas mostram. Os outros carregam na primeira vez que um modelo os lê, para todas as páginas listadas de uma só vez.',
         'locked' => 'Bloqueado',
         'locked_hint' => 'Os editores veem o valor e não o podem alterar, em todos os modelos. Só o código do site o preenche, como uma importação ou uma sincronização com outro serviço.',
-        'access' => 'Acesso',
-        'access_hint' => 'Os superutilizadores veem-no e editam-no sempre. Sem uma função assinalada, todas as funções que podem ver ou editar a página podem. Os visitantes e os modelos não são afetados.',
-        'access_view' => 'Funções que o podem ver',
-        'access_edit' => 'Funções que o podem editar',
     ],
     'delete' => [
         'heading' => 'Eliminar este campo',
@@ -248,5 +244,19 @@ return [
     'readonly' => [
         'module' => 'Gerido pelo módulo :module, que depende dele. Altere-o através desse módulo.',
         'files' => 'As alterações ao esquema deste site vêm dos ficheiros de esquema: edite-os no Git e execute :command.',
+    ],
+    'access' => [
+        'heading' => 'Acesso',
+        'manage' => 'Gerir o acesso a este campo',
+        'manage_help' => 'Quando ligado, só as funções assinaladas abaixo veem ou editam o campo no admin e através de agentes. Os visitantes e os modelos não são afetados.',
+        'roles' => 'Funções que o podem ver ou editar',
+        'roles_help' => 'Uma função também precisa de poder ver ou editar a própria página. Editar permite também ver o campo.',
+        'role' => 'Função',
+        'view' => 'Ver',
+        'edit' => 'Editar',
+        'view_role' => 'Ver: :role',
+        'edit_role' => 'Editar: :role',
+        'cannot_edit_pages' => 'Esta função não pode editar páginas.',
+        'none' => 'Sem nenhuma caixa assinalada, só os superutilizadores veem e editam o campo.',
     ],
 ];
