@@ -33,6 +33,8 @@ One new table, `lynx_page_references`, which lists every link from a page field 
 - Sort keys, the search index, media folders, and page password caches now update even while `Event::fake()` is on. Tests that faked events to leave the search index out of date need another way, such as deleting its rows.
 - Code that reads every `ReferencesPages` field's value as a list of page ids should skip `TextareaType`, which now implements the interface for rich text links.
 - Code that used the internal `LynxCms\Core\Pages\PageReferences` class: it is renamed `PageLookup`.
+- `update()` on templates, fields and languages refuses keys its action doesn't know, where it used to ignore them. Search your code for camelCase keys such as `'hasUrl'` in `update()` calls and write them in snake_case (`'has_url'`). [Naming](/getting-started/concepts#naming) lists which names use which case.
+- `create()` is new beside `add()` on fields, templates and languages. The docs now use it; `add()` keeps working.
 
 ## From 0.1.54 to 0.1.55
 
