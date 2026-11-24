@@ -10,7 +10,7 @@ use LynxCms\Core\Fields\DescribesPhpType;
 use LynxCms\Core\Models\Field;
 
 /**
- * On/off switch. Shared across languages.
+ * A yes or no value, which the admin shows as one checkbox. Shared across languages.
  *
  * @internal
  */
@@ -23,7 +23,7 @@ final class ToggleType extends BaseFieldType implements DescribesPhpType
 
     public static function description(): string
     {
-        return 'On/off switch, e.g. "Is external course". Shared across languages.';
+        return 'A yes or no value, shown to editors as one checkbox, e.g. "Is external course". Shared across languages. For several options as checkboxes, use choice or page with "input": "checkboxes".';
     }
 
     public function columns(Blueprint $table, array $settings): void

@@ -34,7 +34,7 @@ use LynxCms\Core\Support\Value;
 final readonly class DraftShorthand
 {
     /** The setting a type's argument fills. */
-    /** Other names people write for a type: a yes or no field is a toggle, shown as a switch. */
+    /** Other names people write for a type: a yes or no field is a toggle, which the admin shows as one checkbox. */
     public const array TYPE_ALIASES = ['checkbox' => 'toggle'];
 
     public const array ARGUMENTS = ['text' => 'max_length', 'textarea' => 'format', 'decimal' => 'places', 'choice' => 'options', 'page' => 'templates', 'page_table' => 'templates'];

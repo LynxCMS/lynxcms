@@ -130,7 +130,9 @@ A time of day without a date, such as an opening hour. Stored and read as `HH:MM
 
 ### `toggle`
 
-On or off, for any yes or no value, such as "sold out" or "featured". Editors see a switch. Templates read `true` or `false`, and selectors compare `0` and `1` (`sold_out=0`). Lynx has no `checkbox` type: this is it, and a [draft](/basics/templates-and-fields#drafting-the-schema) reads `checkbox` as `toggle`.
+One yes or no value, such as "sold out" or "featured". Editors see one checkbox labeled "Yes". Templates read `true` or `false`, and selectors compare `0` and `1` (`sold_out=0`). A [draft](/basics/templates-and-fields#drafting-the-schema) also reads `checkbox` as `toggle`.
+
+To let editors tick several options from a list, use a [`choice`](#choice) field with `multiple`, or a [`page`](#page) field with `multiple` for a list of pages such as topics, and set `input` to `checkboxes`.
 
 ## Choices
 
