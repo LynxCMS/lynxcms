@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { defineConfig, type DefaultTheme } from 'vitepress'
-import llmstxt from 'vitepress-plugin-llms'
+import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 
 const DOCS = join(__dirname, '..')
 
@@ -77,6 +77,10 @@ export default defineConfig({
         // PHPStan's config files.
         languageAlias: { neon: 'yaml' },
         config(md) {
+            // A "Copy page" button under each page's title: copy or view the page as Markdown, or open
+            // it in ChatGPT or Claude. The .md files come from llmstxt() below.
+            md.use(copyOrDownloadAsMarkdownButtons)
+
             // Inline code is shown as written: Blade's {{ }} would otherwise be read as Vue.
             const inlineCode = md.renderer.rules.code_inline!
             md.renderer.rules.code_inline = (...args) => inlineCode(...args).replace('<code', '<code v-pre')

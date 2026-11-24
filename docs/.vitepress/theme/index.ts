@@ -1,4 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
+import CopyOrDownloadAsMarkdownButtons from 'vitepress-plugin-llms/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue'
 import { useRoute } from 'vitepress'
 import mediumZoom from 'medium-zoom'
 import { h, nextTick, onMounted, watch } from 'vue'
@@ -20,6 +21,9 @@ export default {
         'home-features-before': () => h(HomeTour),
         'home-features-after': () => h(HomeHighlights),
     }),
+    enhanceApp({ app }) {
+        app.component('CopyOrDownloadAsMarkdownButtons', CopyOrDownloadAsMarkdownButtons)
+    },
     setup() {
         const route = useRoute()
         const zoom = () => mediumZoom(ZOOMABLE, { background: 'var(--vp-c-bg)', margin: 24 })
