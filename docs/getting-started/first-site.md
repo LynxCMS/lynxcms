@@ -42,9 +42,9 @@ You can build fields and templates in the admin, under **Settings › Fields** a
 
 Here is what each call does:
 
-- `fields->add()` creates a field, and the table that stores its values. `translatable: true` gives the field one value per language, which you will use later in this tutorial. The `date` field is shared: a post has one publication date in every language.
+- `fields->create()` creates a field, and the table that stores its values. `translatable: true` gives the field one value per language, which you will use later in this tutorial. The `date` field is shared: a post has one publication date in every language.
 - The `textarea` type with `'format' => 'html'` gives editors a rich text editor, and Lynx cleans the HTML on every save.
-- `templates->add()` creates a template from fields. Marking `title` as required means a post can't be saved without one. `singleton: true` allows only one page on the `blog` template.
+- `templates->create()` creates a template from fields. Marking `title` as required means a post can't be saved without one. `singleton: true` allows only one page on the `blog` template.
 - `templates->update()` sets the **family rules**: blog pages hold posts, and posts live under the blog. The admin follows these rules when an editor adds a page.
 
 Open **Settings › Templates** in the admin to see both templates, and click one to see its fields.

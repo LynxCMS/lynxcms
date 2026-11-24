@@ -4,8 +4,8 @@ import { withBase } from 'vitepress'
 // Calls from "Your First Site" (docs/snippets/first-site/schema.php and pages.php), which
 // tests/Feature/Docs/FirstSiteTutorialTest.php runs, shortened to fit the hero.
 const code = `// Fields and a template, without a migration
-lynx()->fields->add('summary', 'textarea', translatable: true);
-lynx()->templates->add('post', fields: ['title', 'summary']);
+lynx()->fields->create('summary', 'textarea', translatable: true);
+lynx()->templates->create('post', fields: ['title', 'summary']);
 
 // A page, saved by the same action the admin runs
 $post = lynx()->pages->new('post', '/blog');

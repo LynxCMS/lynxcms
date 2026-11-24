@@ -52,10 +52,10 @@ A **template** is a kind of page, such as `post` or `course`. A **field** is one
 You create fields and templates while the site runs, in the admin, in PHP or in YAML files, and Lynx creates the database tables that hold them. You write no migrations (the PHP files Laravel apps use to change the structure of the database):
 
 ```php
-lynx()->fields->add('summary', 'textarea', translatable: true);
-lynx()->fields->add('published_on', 'date');
+lynx()->fields->create('summary', 'textarea', translatable: true);
+lynx()->fields->create('published_on', 'date');
 
-lynx()->templates->add('post', fields: ['title', 'summary', 'published_on']);
+lynx()->templates->create('post', fields: ['title', 'summary', 'published_on']);
 ```
 
 A field is created once and can belong to several templates. The `title` field, for example, belongs to the `home`, `blog` and `post` templates.
@@ -115,7 +115,7 @@ lynx()->pages->findOne('id=42, include=hidden'); // page 42, or null when the vi
 Every site starts with one language, called the **default language**. You can add more at any time, even to a site that is already live. Adding a language takes one step, and needs no change to the database's structure and no deploy:
 
 ```php
-lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
 ```
 
 Each field is either **translatable** or **shared**. A translatable field, such as a title or a body text, has one value per language. A shared field, such as a date or a price, has one value for every language, so you enter it once.

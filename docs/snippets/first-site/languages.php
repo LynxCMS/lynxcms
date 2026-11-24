@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 // #region add-language
 lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'locale' => 'en']);
-lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
 // #endregion add-language
 
 // #region translate

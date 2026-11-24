@@ -13,15 +13,20 @@ You can build the schema in the admin, under **Settings › Fields** and **Setti
 
 ## Creating fields
 
-Create a field with `lynx()->fields->add()`, giving its name and [type](/basics/field-types):
+Create a field with `lynx()->fields->create()`, giving its name and [type](/basics/field-types):
 
 ```php
-lynx()->fields->add('summary', 'textarea', translatable: true);
-lynx()->fields->add('price', 'decimal', settings: ['places' => 2]);
-lynx()->fields->add('related', 'page', settings: ['templates' => ['course']]);
+lynx()->fields->create('summary', 'textarea', translatable: true);
+lynx()->fields->create('price', 'decimal', settings: ['places' => 2]);
+lynx()->fields->create('related', 'page', settings: ['templates' => ['course']]);
 ```
 
-`create()` does the same as `add()`, on fields, templates and languages alike, for code that reads better with Laravel's name for making records: `lynx()->fields->create('summary', 'textarea')`.
+`create()` and `add()` are aliases on fields, templates and languages: both take the same arguments and run the same action. These docs use `create()`, Laravel's name for making records, and code that calls `add()` keeps working:
+
+```php
+lynx()->fields->create('summary', 'textarea'); // the same as:
+lynx()->fields->add('summary', 'textarea');
+```
 
 Field names use lowercase letters, digits and underscores, and start with a letter: they become property names in your templates (`$page->related`). Each field gets its own table, `lynx_f_{name}`, created at once.
 
@@ -40,7 +45,7 @@ A shared field can be made translatable later, as [Making a field translatable](
 A field's label, description and notes (a short hint under the input) are what editors read in the admin. Each can be one text, or one text per language:
 
 ```php
-lynx()->fields->add('role', 'text', translatable: true,
+lynx()->fields->create('role', 'text', translatable: true,
     label: ['en' => 'Role', 'pt' => 'Função'],
     settings: ['notes' => ['en' => 'For example, Direction', 'pt' => 'Por exemplo, Realização']]);
 ```
@@ -76,7 +81,7 @@ If the field is listed in `lynx.sort_keys`, run `php artisan lynx:sort-keys` aft
 Create a template from a list of fields. A field in the list can be a name, or an array that adds options for this template only, such as `required`:
 
 ```php
-lynx()->templates->add('course', label: 'Course', fields: [
+lynx()->templates->create('course', label: 'Course', fields: [
     ['name' => 'title', 'required' => true],
     'summary',
     'price',
@@ -104,7 +109,7 @@ Two options change what a template is for:
 - `singleton: true` allows only one page on the template, such as the site's settings or a blog's index page.
 
 ```php
-lynx()->templates->add('settings', fields: ['footer_text'], hasUrl: false, singleton: true);
+lynx()->templates->create('settings', fields: ['footer_text'], hasUrl: false, singleton: true);
 ```
 
 A page without a URL shows wherever a template puts it, in every language, so its page editor's **Settings** tab asks for one name, the one templates and code find it by, instead of a name and a published switch per language. Its schedule publishes or unpublishes the whole page, and it has no **Hidden** status or old URLs, which only matter for pages with an address.

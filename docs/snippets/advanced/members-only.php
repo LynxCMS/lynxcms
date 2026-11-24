@@ -9,7 +9,7 @@ use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\Visibility\PageVisibility;
 
 // The field, once (or in your schema files):
-lynx()->fields->add('members_only', 'toggle', label: 'Members only');
+lynx()->fields->create('members_only', 'toggle', label: 'Members only');
 lynx()->templates->update('post', ['add' => ['members_only']]);
 
 // #region register

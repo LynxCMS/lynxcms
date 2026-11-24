@@ -23,19 +23,25 @@ const features: Feature[] = [
 lynx()->fields->create('body', 'textarea', translatable: true, settings: ['format' => 'html']);
 lynx()->fields->create('published_on', 'date');
 
-lynx()->templates->create('post', fields: ['title', 'summary', 'body', 'published_on']);`,
+lynx()->templates->create('post', fields: ['title', 'summary', 'body', 'published_on']);
+
+// Later, on the live site: a new field, added to the template.
+lynx()->fields->create('reading_time', 'integer');
+lynx()->templates->update('post', ['add' => ['reading_time']]);`,
         output: {
             label: 'Changes recorded',
             text: `+ Create textarea field summary (translatable)
 + Create textarea field body (translatable)
 + Create date field published_on
-+ Create template post with fields: title, summary, body, published_on`,
++ Create template post with fields: title, summary, body, published_on
++ Create integer field reading_time
++ Update template post; add reading_time`,
         },
     },
     {
         title: 'A language in one step',
         details: "Add a language to a running site without a deploy. A field without a translation shows the next language's value, marked [en] below, and every page gets a URL per language.",
-        code: `lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+        code: `lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
 
 $post = lynx()->pages->get('/blog/hello-world');
 $post->setLanguageName('pt', 'ola-mundo');           // /pt/blogue/ola-mundo

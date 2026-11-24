@@ -20,7 +20,7 @@ Register the type in a service provider. With the admin installed, also tell the
 The type now works like a built-in one:
 
 ```php
-lynx()->fields->add('rating', 'rating', settings: ['max' => 10]);
+lynx()->fields->create('rating', 'rating', settings: ['max' => 10]);
 lynx()->templates->update('post', ['add' => ['rating']]);
 
 $post->rating = 8;  // validated on save: 11 is refused
@@ -136,7 +136,7 @@ $this->app->singleton(IconSet::class);
 $this->app->make(FieldTypeRegistry::class)->register(IconType::class);
 ```
 
-From then on `lynx()->fields->add('badge', 'icon')` works, and so do `pages.save`, selectors, schema sync and content packages.
+From then on `lynx()->fields->create('badge', 'icon')` works, and so do `pages.save`, selectors, schema sync and content packages.
 
 ### 4. The admin input
 

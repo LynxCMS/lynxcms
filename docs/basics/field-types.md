@@ -10,7 +10,7 @@ A field's **type** decides what it stores, how editors fill it in, and what your
 Settings go in the field's settings panel in the admin (**Settings › Fields**), or in the `settings` array in code:
 
 ```php
-lynx()->fields->add('price', 'decimal', settings: ['places' => 2, 'min' => 0]);
+lynx()->fields->create('price', 'decimal', settings: ['places' => 2, 'min' => 0]);
 ```
 
 `lynx()->fields->types()` returns every type with its description and settings, which is also what the MCP server and the AI agent read.
@@ -60,7 +60,7 @@ With `format: html`, editors get a rich text editor, and Lynx cleans the HTML on
 The editor starts with bold, italic, strikethrough, headings, lists, quotes and links. A field that needs more turns them on, in **Settings › Fields** under **Extra tools**, or in code:
 
 ```php
-lynx()->fields->add('body', 'textarea', settings: ['format' => 'html', 'tools' => ['superscript', 'subscript', 'text_align']]);
+lynx()->fields->create('body', 'textarea', settings: ['format' => 'html', 'tools' => ['superscript', 'subscript', 'text_align']]);
 ```
 
 So a chemistry page can write H₂O, and a news page keeps its toolbar short. Turning a tool off hides its button only: text already written with it keeps its markup. Of all styles, the cleaner keeps only a paragraph's or heading's alignment (`style="text-align: center"`), so your site's CSS decides how the rest looks, `<mark>` included.
@@ -146,7 +146,7 @@ One of a fixed list of options, or several with `multiple: true`. Each option ha
 | `default` | The option new pages and new items start with: a value, or a list of values with `multiple`. |
 
 ```php
-lynx()->fields->add('level', 'choice', settings: [
+lynx()->fields->create('level', 'choice', settings: [
     'input' => 'radios',
     'options' => [
         ['value' => 'beginner', 'label' => ['en' => 'Beginner', 'pt' => 'Iniciante']],
@@ -219,9 +219,9 @@ The editor's **References** tab lists the pages that link to the page it edits, 
 One page field can hold a different number of pages, or offer other templates, where it is used. A template's entry, or a block type's entry in a matrix, sets `min`, `max` and `templates` for itself:
 
 ```php
-lynx()->templates->add('landing', fields: ['title', ['name' => 'cards', 'max' => 8]]);
+lynx()->templates->create('landing', fields: ['title', ['name' => 'cards', 'max' => 8]]);
 
-lynx()->fields->add('sections', 'matrix', settings: ['types' => [
+lynx()->fields->create('sections', 'matrix', settings: ['types' => [
     ['slug' => 'row', 'label' => 'Row of four', 'fields' => [['name' => 'cards', 'max' => 4]]],
 ]]);
 ```

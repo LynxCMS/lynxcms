@@ -20,8 +20,8 @@ lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'loca
 Then add languages in the admin under **Settings › Languages** (it needs the `schema.manage` permission), or in code:
 
 ```php
-lynx()->languages->add('pt', 'Português', locale: 'pt-PT', fallback: 'en');
-lynx()->languages->add('pt-br', 'Português (Brasil)', fallback: 'pt');
+lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+lynx()->languages->create('pt-br', 'Português (Brasil)', fallback: 'pt');
 ```
 
 The first line adds Portuguese, written as in Portugal (`pt-PT`), which borrows from English where a text is missing. The second adds Brazilian Portuguese, which borrows from Portuguese first. [Fallback](#fallback) explains how that works.

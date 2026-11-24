@@ -19,9 +19,9 @@ php artisan storage:link
 ## Adding fields
 
 ```php
-lynx()->fields->add('gallery', 'images', settings: ['max_files' => 12, 'tags' => ['hero', 'detail']]);
-lynx()->fields->add('cover', 'images', settings: ['max_files' => 1, 'min_width' => 800]);
-lynx()->fields->add('downloads', 'files', settings: ['extensions' => 'pdf zip']);
+lynx()->fields->create('gallery', 'images', settings: ['max_files' => 12, 'tags' => ['hero', 'detail']]);
+lynx()->fields->create('cover', 'images', settings: ['max_files' => 1, 'min_width' => 800]);
+lynx()->fields->create('downloads', 'files', settings: ['extensions' => 'pdf zip']);
 ```
 
 | Setting | Meaning |
@@ -125,7 +125,7 @@ URLs are downloaded only from public web servers: `http` and `https` on their us
 Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting:
 
 ```php
-lynx()->fields->add('handouts', 'files', settings: ['private' => true]);
+lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
 ```
 
 A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK`, Laravel's `local` disk by default, which the web server never serves), and their URLs point to Lynx: `/lynx-media/{page id}/{file}`. Lynx serves a file only to someone who may open its page:

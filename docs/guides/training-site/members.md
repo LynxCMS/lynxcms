@@ -57,7 +57,7 @@ Each course has a child page on the `materials` template: reading lists, prepara
 Materials pages have a `downloads` field with **Private** on (chapter 2's seeder sets it). Files in a public field have public addresses, which anyone with a link could share. A private field's files live off the public disk, and their links go through Lynx, which asks the materials page's own questions. People who booked get the file. Guests are sent to sign in by the same gate, and other members see what the page is for.
 
 ```php
-lynx()->fields->add('downloads', 'files', label: 'Downloads', settings: ['private' => true, 'extensions' => 'pdf zip mp3 mp4']);
+lynx()->fields->create('downloads', 'files', label: 'Downloads', settings: ['private' => true, 'extensions' => 'pdf zip mp3 mp4']);
 ```
 
 The view lists them like any files, and `$file->url()` gives the private address:

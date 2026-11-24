@@ -16,7 +16,7 @@ You can build the schema by clicking through the admin, under **Settings › Fie
 
 ```php
 lynx()->languages->update('default', ['code' => 'en', 'name' => 'English', 'locale' => 'en-CA']);
-lynx()->languages->add('fr', 'Français', locale: 'fr-CA', fallback: 'en');
+lynx()->languages->create('fr', 'Français', locale: 'fr-CA', fallback: 'en');
 ```
 
 The **code** (`en`, `fr`) is how your code and the admin name a language. The **locale** (`en-CA`, `fr-CA`) tells Laravel and browsers which variant it is, here Canadian English and Canadian French; it formats dates and picks translations. The **fallback** says what visitors see when a French text is missing: the English one. A French visitor never sees an empty heading while a page waits for its translation.
@@ -28,10 +28,10 @@ The default language has no prefix in addresses (`/team/`), and French has its c
 A field is created once and can be used by several templates. The site's text fields are **translatable**: they hold one value per language. Fields such as a date, a phone number or a choice hold one value that both languages share.
 
 ```php
-lynx()->fields->add('summary', 'textarea', translatable: true, label: 'Summary');
-lynx()->fields->add('body', 'textarea', translatable: true, label: 'Text', settings: ['format' => 'html']);
-lynx()->fields->add('photo', 'images', label: 'Photo', settings: ['max_files' => 1]);
-lynx()->fields->add('published_on', 'date', label: 'Published on');
+lynx()->fields->create('summary', 'textarea', translatable: true, label: 'Summary');
+lynx()->fields->create('body', 'textarea', translatable: true, label: 'Text', settings: ['format' => 'html']);
+lynx()->fields->create('photo', 'images', label: 'Photo', settings: ['max_files' => 1]);
+lynx()->fields->create('published_on', 'date', label: 'Published on');
 ```
 
 The first argument is the field's name, which your views use (`$page->summary`). The second is its **type**: `textarea` is longer text, and with `'format' => 'html'` editors get a rich text editor. `images` holds uploaded pictures; `max_files: 1` allows one, so a view reads it as a single image instead of a list. [Field Types](/basics/field-types) lists every type and its settings.
@@ -41,7 +41,7 @@ The first argument is the field's name, which your views use (`$page->summary`).
 A lawyer's role is one of four values. A `choice` field stores the value, and shows each visitor its label in their language:
 
 ```php
-lynx()->fields->add('role', 'choice', label: 'Role', settings: ['input' => 'radios', 'options' => [
+lynx()->fields->create('role', 'choice', label: 'Role', settings: ['input' => 'radios', 'options' => [
     ['value' => 'founding-partner', 'label' => ['en' => 'Founding partner', 'fr' => 'Associé fondateur']],
     ['value' => 'partner', 'label' => ['en' => 'Partner', 'fr' => 'Associé']],
     ['value' => 'associate', 'label' => ['en' => 'Associate', 'fr' => 'Avocat']],
@@ -58,8 +58,8 @@ French job titles agree with the person (*Associé* for a man, *Associée* for a
 Some fields point at other pages. A lawyer works in one office, and a practice area names the lawyers who handle it:
 
 ```php
-lynx()->fields->add('office', 'page', label: 'Office', settings: ['multiple' => false, 'templates' => ['office'], 'input' => 'select']);
-lynx()->fields->add('lawyers', 'page', label: 'Lawyers', settings: ['templates' => ['lawyer']]);
+lynx()->fields->create('office', 'page', label: 'Office', settings: ['multiple' => false, 'templates' => ['office'], 'input' => 'select']);
+lynx()->fields->create('lawyers', 'page', label: 'Lawyers', settings: ['templates' => ['lawyer']]);
 ```
 
 A `page` field stores references to pages. `'templates' => ['office']` limits the choice to office pages, and `'multiple' => false` allows one, so `$lawyer->office` reads as that office page. Without it, the field holds a list.
@@ -75,12 +75,12 @@ $title = ['name' => 'title', 'required' => true];
 $searchable = fn (string $name): array => ['name' => $name, 'searchable' => true];
 
 lynx()->templates->update('home', ['add' => ['summary', 'tagline', 'body', 'highlights']]);
-lynx()->templates->add('team', fields: [$title, 'summary'], label: 'Team', singleton: true);
-lynx()->templates->add('lawyer', fields: [
+lynx()->templates->create('team', fields: [$title, 'summary'], label: 'Team', singleton: true);
+lynx()->templates->create('lawyer', fields: [
     $title, ['name' => 'role', 'required' => true], 'job_title', $searchable('species'),
     'photo', $searchable('summary'), $searchable('body'), $searchable('fun_fact'), 'office',
 ], label: 'Lawyer');
-lynx()->templates->add('post', fields: [
+lynx()->templates->create('post', fields: [
     $title, ['name' => 'category', 'required' => true], ['name' => 'published_on', 'required' => true],
     $searchable('summary'), $searchable('body'), 'practice_areas',
 ], label: 'Post');
