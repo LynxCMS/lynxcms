@@ -41,6 +41,7 @@ final class SettingLabels
         'max_kb' => ['label' => 'max_kb', 'unit' => 'units.kb', 'hint' => 'max_kb_hint'],
         'tags' => ['label' => 'tags', 'hint' => 'tags_hint'],
         'private' => ['label' => 'private', 'hint' => 'private_hint'],
+        'per_language' => ['label' => 'per_language', 'hint' => 'per_language_hint'],
         'min_width' => ['label' => 'min_width', 'unit' => 'units.px'],
         'min_height' => ['label' => 'min_height', 'unit' => 'units.px'],
         'max_width' => ['label' => 'max_width', 'unit' => 'units.px', 'hint' => 'empty_2560'],

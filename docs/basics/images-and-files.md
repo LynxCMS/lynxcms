@@ -86,9 +86,27 @@ Tags group the files of a field. `tagged()` keeps the files with a tag, here in 
 @endforeach
 ```
 
+## A file per language
+
+You can give a page a different image or document in each language, such as a banner with text in it, or a brochure per language. Turn on **A file per language** in the field's settings, or `per_language` in code, once in `php artisan tinker` or a seeder:
+
+```php
+lynx()->fields->create('hero', 'images', settings: ['max_files' => 1, 'per_language' => true]);
+```
+
+The field then shows a tab per language in the page editor. Each tab has two groups, each with its own upload zone: the language's own files, and the files **Shared by every language**, which every tab shows. A file's details have a **Language** select to move it to another language or to the shared files. A tab without files of its own says what visitors see instead.
+
+Templates read the field as before, and get the current language's files. In a template's view, such as `resources/views/templates/home.blade.php`:
+
+```blade
+<x-lynx-image :image="$page->hero" :width="1200" sizes="100vw" />
+```
+
+A language sees its own files and the files for every language, its own first, so `$page->hero` with `max_files: 1` is the Portuguese banner in Portuguese and the shared one elsewhere. A language with neither falls back along its [fallback chain](/basics/languages#fallback), as text does; with the field's `fallback: none`, it shows nothing. `max_files` counts per language. `$page->getUnformatted('hero')` still holds every file, each with its `language`, and selectors can test it: `hero.language=pt`. From code, [`media.store`](#storing-files-from-code) takes a `language`.
+
 ## Downloads per language
 
-For documents in several languages, tag each file with its language's code (`en`, `pt`). `inLanguage()` keeps the files of the current language; when there are none, it tries the next language of the fallback chain, then the files tagged with no language. `withTags()` keeps the files that have every tag given. In a template's view:
+When one list mixes files for several languages and other tags, such as sheets in A4 and Letter, tag each file with its language's code (`en`, `pt`). `inLanguage()` keeps the files of the current language; when there are none, it tries the next language of the fallback chain, then the files tagged with no language. `withTags()` keeps the files that have every tag given. In a template's view:
 
 ```blade
 @php($sheet = $page->downloads->withTags('a4', 'color')->inLanguage()->first())

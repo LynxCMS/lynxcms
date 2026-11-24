@@ -126,3 +126,7 @@ it('reads a toggle\'s argument as its input', function (): void {
 it('reads locked as a setting every field has', function (): void {
     expect(draftField('isbn', 'text locked')['settings'])->toBe(['locked' => true]);
 });
+
+it('reads a file per language on images and files fields', function (): void {
+    expect(draftField('hero', 'images per_language max_files:1')['settings'])->toBe(['per_language' => true, 'max_files' => 1]);
+});

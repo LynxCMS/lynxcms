@@ -341,10 +341,11 @@ Images that belong to the page, sortable, each with a focus point, a description
 | `min_width`, `min_height` | Smaller images are refused. |
 | `max_width`, `max_height` | Larger images are scaled down on upload. Default 2560. |
 | `tags` | Tags editors may choose; empty allows any. |
+| `per_language` | A file per language: templates read the current language's files, with fallback. See [A file per language](/basics/images-and-files#a-file-per-language). |
 
 ### `files`
 
-Documents that belong to the page, such as PDFs, sortable, each with a description per language and tags. Its settings are `max_files`, `extensions` (default `pdf doc docx xls xlsx ppt pptx txt csv zip`), `max_kb` and `tags`, as for images.
+Documents that belong to the page, such as PDFs, sortable, each with a description per language and tags. Its settings are `max_files`, `extensions` (default `pdf doc docx xls xlsx ppt pptx txt csv zip`), `max_kb`, `tags` and `per_language`, as for images.
 
 ## From modules and apps
 
