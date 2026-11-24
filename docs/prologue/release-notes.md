@@ -11,6 +11,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 ## Unreleased
 
 - Drafts: `children: false` makes a template whose pages may have no children, and `lynx:draft --from-site` writes it that way instead of under `settings`. `checkbox` is read as `toggle`, in the short and the long form. The drafting docs list the settings a field can have on a template (`show_if`, `width`, `description` and more) and every template key. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
+- The field form's Preview tab draws the control the page editor uses: one checkbox for a toggle, where it showed a switch, and for choice and page fields the select, radios, checkboxes or search their `input` setting names, with their first options.
 
 ## 0.1.56
 
