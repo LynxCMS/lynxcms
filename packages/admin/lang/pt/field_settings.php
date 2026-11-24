@@ -34,6 +34,8 @@ return [
     'input_select' => 'Um menu',
     'input_radios' => 'Botões de opção',
     'input_checkboxes' => 'Caixas de verificação',
+    'input_checkbox' => 'Uma caixa de verificação',
+    'input_switch' => 'Um interruptor',
     'allowed' => 'Componentes que os editores podem escolher',
     'allowed_hint' => 'Separados por vírgulas. Vazio permite qualquer um.',
     'time' => 'Também uma hora do dia',

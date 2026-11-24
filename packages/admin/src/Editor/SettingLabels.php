@@ -28,7 +28,7 @@ final class SettingLabels
             'code' => 'tool_code', 'code_block' => 'tool_code_block', 'horizontal_rule' => 'tool_horizontal_rule', 'text_align' => 'tool_text_align',
         ]],
         'multiple' => ['label' => 'multiple'],
-        'input' => ['label' => 'input', 'options' => ['search' => 'input_search', 'select' => 'input_select', 'radios' => 'input_radios', 'checkboxes' => 'input_checkboxes']],
+        'input' => ['label' => 'input', 'options' => ['search' => 'input_search', 'select' => 'input_select', 'radios' => 'input_radios', 'checkboxes' => 'input_checkboxes', 'checkbox' => 'input_checkbox', 'switch' => 'input_switch']],
         'allowed' => ['label' => 'allowed', 'hint' => 'allowed_hint'],
         'time' => ['label' => 'time'],
         'seconds' => ['label' => 'seconds'],

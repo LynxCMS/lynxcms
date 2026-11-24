@@ -21,6 +21,8 @@
         @elseif ($type === 'repeater')
             @include('lynx-admin::livewire.partials.items.block-mock', ['title' => __('lynx-admin::fields.preview.new_item'), 'rows' => $itemFields])
             <span class="bg-background inline-flex h-8 w-fit items-center gap-1.5 rounded-md border px-3 font-medium shadow-xs" aria-hidden="true"><x-lucide-plus class="size-4" /> {{ $addText }}</span>
+        @elseif ($type === 'toggle' && ($settings['input'] ?? '') === 'switch')
+            <span class="inline-flex" data-preview-input="switch" inert><x-lynx-admin::ui.switch /></span>
         @elseif ($type === 'toggle')
             {{-- As inputs/toggle draws it: one checkbox labeled Yes. --}}
             <label class="inline-flex items-center gap-2" data-preview-input="checkbox" inert>
