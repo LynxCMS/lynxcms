@@ -21,6 +21,13 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.57 to 0.1.58
+
+No database changes.
+
+- `pages.save` now refuses values for locked fields (`editor: locked` on a template, or `locked` on a field) from people in the admin, MCP clients and the AI agent. If code of yours writes such a field during a web request, such as a webhook's controller, wrap the save in `lynx()->actingAs(Actor::system(), ...)`. Artisan commands, queued jobs and the scheduler write them as before. See [Locked fields](/basics/templates-and-fields#locked-fields).
+- Code that reads `TemplateField::editor()` gets `FieldDisplay::Open` for a locked field: check `isLocked()` instead.
+
 ## From 0.1.56 to 0.1.57
 
 No database changes.

@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.58
+
+Released November 24, 2026. Locked fields that only the site's code writes, kept when drafts are published and revisions restored; the editor's display and locking as separate settings, with fields that open and close and fields that load when opened; and images and files with a file per language. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-57-to-0-1-58).
 
 ### Breaking changes
 
