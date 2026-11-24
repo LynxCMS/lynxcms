@@ -101,6 +101,8 @@ return [
         'always' => 'Always loaded with the page.',
         'autoload' => 'Load with the page',
         'autoload_hint' => 'For fields almost every list shows. Others load the first time a template reads them, for all listed pages at once.',
+        'locked' => 'Locked',
+        'locked_hint' => 'Editors see the value and can\'t change it, on every template. Only the site\'s code fills it, such as an import or a sync with another service.',
     ],
     'delete' => [
         'heading' => 'Delete this field',

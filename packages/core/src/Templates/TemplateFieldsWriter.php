@@ -23,7 +23,7 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class TemplateFieldsWriter
 {
-    private const array PIVOT_KEYS = ['required', 'label', 'show_if', 'required_if', 'description', 'notes', 'allowed_types', 'tab', 'column', 'section', 'searchable', 'editor', 'width', 'placeholder', 'icon', ...UseSettings::KEYS];
+    private const array PIVOT_KEYS = ['required', 'label', 'show_if', 'required_if', 'description', 'notes', 'allowed_types', 'tab', 'column', 'section', 'searchable', 'editor', 'locked', 'lazy', 'width', 'placeholder', 'icon', ...UseSettings::KEYS];
 
     /** Pivot settings editors read, as LocalizedText (ADR-0043), with their maximum length. */
     private const array LOCALIZED_KEYS = ['label' => 255, 'description' => 2000, 'notes' => 500, 'placeholder' => 255];

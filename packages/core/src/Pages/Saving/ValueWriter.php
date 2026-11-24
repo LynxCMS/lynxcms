@@ -24,14 +24,15 @@ use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Field values for pages.save: every changed value normalized and validated by its field type,
- * required fields checked in the default language, then the rows of each changed (field, language)
+ * locked fields refused to all but the site's code (ADR-0149), required fields checked in the
+ * default language, then the rows of each changed (field, language)
  * replaced, with where translations came from (ADR-0016).
  *
  * @internal
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").
@@ -48,6 +49,13 @@ final readonly class ValueWriter
 
             if ($templateField === null) {
                 $errors["values.{$fieldName}"] = Value::string(__('lynx::validation.values.template_no_field', ['template' => $template->name, 'field' => $fieldName]));
+
+                continue;
+            }
+
+            // Only the site's code writes a locked field (ADR-0149).
+            if ($templateField->isLocked() && ! $this->locked->mayWrite()) {
+                $errors["values.{$fieldName}"] = Value::string(__('lynx::validation.values.locked'));
 
                 continue;
             }

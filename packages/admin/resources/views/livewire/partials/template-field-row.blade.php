@@ -48,10 +48,10 @@
             <span class="font-medium">{{ __('lynx-admin::templates.row.in_editor') }}</span>
             <select id="override-{{ $field }}-editor" class="blat-select" wire:model="rows.{{ $field }}.editor">
                 <option value="open">{{ __('lynx-admin::templates.row.open') }}</option>
+                <option value="open_collapsible">{{ __('lynx-admin::templates.row.opt_open_collapsible') }}</option>
                 <option value="collapsed">{{ __('lynx-admin::templates.row.opt_collapsed') }}</option>
                 <option value="collapsed_blank">{{ __('lynx-admin::templates.row.opt_collapsed_blank') }}</option>
                 <option value="collapsed_populated">{{ __('lynx-admin::templates.row.opt_collapsed_populated') }}</option>
-                <option value="locked">{{ __('lynx-admin::templates.row.opt_locked') }}</option>
                 <option value="hidden">{{ __('lynx-admin::templates.row.opt_hidden') }}</option>
             </select>
         </label>
@@ -72,6 +72,9 @@
             <livewire:lynx-admin.icon-picker wire:model="rows.{{ $field }}.icon" :disabled="! $canEdit" wire:key="override-icon-{{ $field }}" />
         </div>
         <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" id="override-{{ $field }}-required" type="checkbox" wire:model="rows.{{ $field }}.required"> {{ __(lynx()->languages->isMultilingual() ? 'lynx-admin::templates.row.required_default' : 'lynx-admin::templates.row.required_check') }}</label>
+        @php($isLockedOnField = lynx()->fields->find($field)?->isLocked() === true)
+        <label class="flex items-center gap-2 text-sm" data-row-locked="{{ $field }}"><input class="blat-checkbox" id="override-{{ $field }}-locked" type="checkbox" wire:model="rows.{{ $field }}.locked" @if ($isLockedOnField) checked disabled @endif> {{ __($isLockedOnField ? 'lynx-admin::templates.row.locked_on_field' : 'lynx-admin::templates.row.locked_check') }}</label>
+        <label class="flex items-center gap-2 text-sm" data-row-lazy="{{ $field }}"><input class="blat-checkbox" id="override-{{ $field }}-lazy" type="checkbox" wire:model="rows.{{ $field }}.lazy"> {{ __('lynx-admin::templates.row.lazy_check') }}</label>
         <label class="flex items-center gap-2 text-sm"><input class="blat-checkbox" id="override-{{ $field }}-searchable" type="checkbox" wire:model="rows.{{ $field }}.searchable"> {{ __($hasUrl ? 'lynx-admin::templates.row.searchable_check' : 'lynx-admin::templates.row.searchable_without_url') }}</label>
     </div>
 </li>

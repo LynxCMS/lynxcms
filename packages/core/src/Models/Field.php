@@ -110,6 +110,15 @@ final class Field extends Model
         return $this->name === self::TITLE || ($this->config()['autoload'] ?? false) === true;
     }
 
+    /**
+     * Whether only the site's code writes this field, on every template that uses it (ADR-0149):
+     * editors, MCP clients and the agent are refused.
+     */
+    public function isLocked(): bool
+    {
+        return ($this->config()['locked'] ?? false) === true;
+    }
+
     /** "inherit" (default) or "none": whether missing values fall back through the language chain. */
     public function fallbackMode(): string
     {

@@ -94,16 +94,22 @@ final readonly class Revisions
 
     /**
      * Stored values as pages.save takes them ({"code": value} for translatable fields), for the
-     * fields the page's template has now; values the revision did not have become null.
+     * fields the page's template has now; values the revision did not have become null. Locked
+     * fields are left out unless asked: the site's code wrote the live value, which publishing a
+     * draft or restoring a revision keeps (ADR-0149).
      *
      * @param  array<string, array<string, mixed>>  $stored  by language code ("*" for untranslated)
      * @return array<string, mixed>
      */
-    public function saveInput(Page $page, array $stored): array
+    public function saveInput(Page $page, array $stored, bool $withLocked = false): array
     {
         $values = [];
 
         foreach ($this->templates->fields($page->templateId) as $name => $templateField) {
+            if ($templateField->isLocked() && ! $withLocked) {
+                continue;
+            }
+
             if (! $templateField->field->isTranslatable()) {
                 $values[$name] = $stored['*'][$name] ?? null;
 

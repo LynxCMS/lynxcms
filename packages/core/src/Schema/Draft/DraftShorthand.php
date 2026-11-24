@@ -40,7 +40,7 @@ final readonly class DraftShorthand
     public const array ARGUMENTS = ['text' => 'max_length', 'textarea' => 'format', 'decimal' => 'places', 'choice' => 'options', 'page' => 'templates', 'page_table' => 'templates', 'toggle' => 'input'];
 
     /** Settings every field accepts beside its type's (CreateField), with how a token value is read. */
-    private const array COMMON_SETTINGS = ['fallback' => 'string', 'autoload' => 'boolean', 'description' => 'string', 'notes' => 'string'];
+    private const array COMMON_SETTINGS = ['fallback' => 'string', 'autoload' => 'boolean', 'locked' => 'boolean', 'description' => 'string', 'notes' => 'string'];
 
     private const string TRANSLATABLE = 'translatable';
 

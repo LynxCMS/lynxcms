@@ -28,7 +28,7 @@ final readonly class EditorForm
     public function editableFields(string $template): array
     {
         return lynx()->templates->fields($template)
-            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && $field->editor()->isEditable())
+            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && $field->isEditable())
             ->all();
     }
 
@@ -40,7 +40,7 @@ final readonly class EditorForm
     public function readOnlyFields(string $template): array
     {
         return lynx()->templates->fields($template)
-            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && ! $field->editor()->isEditable())
+            ->filter(fn (TemplateField $field): bool => $this->inputs->for((string) $field->field->type) !== null && ! $field->isEditable())
             ->all();
     }
 

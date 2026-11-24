@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace LynxCms\Core\Templates;
 
 /**
- * How a template's field shows in the page editor (ADR-0063), its "editor" setting. Locked and
- * hidden fields are written only by code, imports, actions, agents and MCP.
+ * How a template's field shows in the page editor (ADR-0063), its "editor" setting. Whether the
+ * field is locked is a setting of its own (ADR-0149): "locked" here is the older way to say
+ * "open and locked", read as such by TemplateField. Hidden fields are written only by code.
  *
  * @api
  */
 enum FieldDisplay: string
 {
     case Open = 'open';
+    case OpenCollapsible = 'open_collapsible';
     case Collapsed = 'collapsed';
     case CollapsedBlank = 'collapsed_blank';
     case CollapsedPopulated = 'collapsed_populated';
+    /** @deprecated since 0.1.58: the "locked" setting, with "open" (ADR-0149). */
     case Locked = 'locked';
     case Hidden = 'hidden';
 
@@ -38,6 +41,6 @@ enum FieldDisplay: string
 
     public function isCollapsible(): bool
     {
-        return in_array($this, [self::Collapsed, self::CollapsedBlank, self::CollapsedPopulated], true);
+        return in_array($this, [self::OpenCollapsible, self::Collapsed, self::CollapsedBlank, self::CollapsedPopulated], true);
     }
 }

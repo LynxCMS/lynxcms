@@ -70,6 +70,9 @@ final class FieldForm extends Component
     /** Loaded with every page instead of on first read (ADR-0067). */
     public bool $autoload = false;
 
+    /** Only the site's code writes the field, on every template (ADR-0149). */
+    public bool $locked = false;
+
     /** @var array<string, mixed> setting name => form value */
     public array $settings = [];
 
@@ -106,6 +109,7 @@ final class FieldForm extends Component
             $this->notes = LocalizedForm::toForm($config['notes'] ?? null);
             $this->fallback = Value::string($config['fallback'] ?? 'inherit');
             $this->autoload = ($config['autoload'] ?? false) === true;
+            $this->locked = ($config['locked'] ?? false) === true;
             $this->settings = app(SchemaForm::class)->toForm($this->definitions(), $config);
             $this->loadChoiceOptions($config);
             $this->formatters = Value::strings($config['formatters'] ?? []);
@@ -281,6 +285,7 @@ final class FieldForm extends Component
             'notes' => LocalizedForm::fromForm($this->notes),
             'formatters' => $this->formatters !== [] ? $this->formatters : null,
             'autoload' => $this->autoload ? true : null,
+            'locked' => $this->locked ? true : null,
         ];
 
         if ($this->translatable) {

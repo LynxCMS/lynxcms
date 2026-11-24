@@ -6,6 +6,7 @@ namespace LynxCms\Core\Actions\Fields;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
@@ -55,6 +56,7 @@ final class UpdateField extends Action implements RefusesUnknownInput
             'settings' => ['sometimes', 'array'],
             'settings.fallback' => ['sometimes', 'nullable', Rule::in(['inherit', 'none'])],
             'settings.autoload' => ['sometimes', 'nullable', 'boolean'],
+            'settings.locked' => ['sometimes', 'nullable', 'boolean'],
         ];
     }
 
@@ -82,6 +84,7 @@ final class UpdateField extends Action implements RefusesUnknownInput
             // A setting given as null is removed, so it falls back to the type's default again.
             $merged = array_filter(array_merge($field->config(), Value::map($settings)), fn (mixed $value): bool => $value !== null);
             FieldSettings::check($field->fieldType(), $merged);
+            $this->assertLockable($field, $merged);
             $field->settings = $merged;
         }
 
@@ -90,5 +93,26 @@ final class UpdateField extends Action implements RefusesUnknownInput
         $context->changes->updated('field', $field->id, "Update field {$field->name}", $field->toSummary());
 
         return $field;
+    }
+
+    /**
+     * A locked field is written only by code (ADR-0149), so no template may require it: editors
+     * could never fill it.
+     *
+     * @param  array<string, mixed>  $settings
+     */
+    private function assertLockable(Field $field, array $settings): void
+    {
+        if (($settings['locked'] ?? false) !== true) {
+            return;
+        }
+
+        foreach (lynx()->templates->all() as $template) {
+            $use = lynx()->templates->fields($template)->get((string) $field->name);
+
+            if ($use !== null && ($use->required() || $use->requiredIf() !== null)) {
+                throw ValidationException::withMessages(['settings.locked' => Value::string(__('lynx::structure.field.locked_required', ['field' => $field->name, 'template' => $template->name]))]);
+            }
+        }
     }
 }

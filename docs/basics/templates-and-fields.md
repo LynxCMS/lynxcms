@@ -161,7 +161,9 @@ lynx()->templates->update('project', [
 | `collapsed` | section | The section starts closed. The editor remembers each editor's choice per template, and a section with an error always opens. |
 | `tab` | field or section | The tab it appears in; `content` when not set. |
 | `column` | field or section | `main` (default) or `sidebar`. |
-| `editor` | field | How the field shows: `open` (default), `collapsed`, `collapsed_blank` (closed while empty), `collapsed_populated` (closed while filled), `locked` (shown, not editable) or `hidden`. Locked and hidden fields are written only by code, imports, actions and agents, and can't be required. |
+| `editor` | field | How the field shows: `open` (default, can't be closed), `open_collapsible` (open, with a header that closes it), `collapsed`, `collapsed_blank` (closed while empty), `collapsed_populated` (closed while filled) or `hidden` (not shown; code, MCP clients and the agent write it). |
+| `locked` | field | `true` shows the value read only, in whatever way `editor` says: only the site's code changes it. See [Locked fields](#locked-fields). The older `editor: locked` still works, and means open and locked. |
+| `lazy` | field | `true` draws a field that starts closed only once an editor opens it, which keeps pages with big repeaters, matrices or page lists quick to open. Fields on a tab other than Content already load only when their tab is opened. |
 | `width` | field | `25`, `33`, `50`, `66`, `75` or `100` (default): fields sit side by side when there is room. |
 | `placeholder` | field | Text in the empty input, per language like a label. |
 | `icon` | field | A [Lucide](https://lucide.dev/icons) icon shown before the label, such as `calendar`. |
@@ -181,6 +183,47 @@ lynx()->templates->copySection('office', 'address', to: ['event', 'venue']);
 Each template gets the section, its fields with their settings on the original template, and its tab when it doesn't have one. The copies are not linked: changing the section on one template later leaves the others as they are.
 
 A template that already has one of the section's fields is refused, since a field appears on a template once. With `renameConflicts: true` (**Rename fields that clash** in the admin), that template gets a new field instead, a copy of the original named with a prefix: `address_city` for `city`. The prefix defaults to the section's key and `_`, and `prefix:` changes it. New fields start empty, and conditions inside the section follow the new names. If a field with the new name already exists, the copy is refused and you choose another prefix.
+
+## Locked fields
+
+You can fill a field from code, such as a price from a shop or a summary from another service, and keep editors from changing it. A locked field shows its value in the page editor without an input. Only the site's code writes it: Artisan commands, queued jobs, the scheduler, Tinker, and code that runs as the system. People in the admin, MCP clients and the AI agent are refused, and agents see the field marked `locked`.
+
+Lock a field everywhere it is used, on the field's **Advanced** settings or in code, once in `php artisan tinker` or a seeder:
+
+```php
+lynx()->fields->update('stock', ['settings' => ['locked' => true]]);
+```
+
+Or lock it on one template only, with `locked` on the template's field (the **Locked** box on the field's row in **Settings › Templates**):
+
+```php
+lynx()->templates->update('product', ['fields' => [
+    'title',
+    ['name' => 'stock', 'locked' => true, 'editor' => 'collapsed'],
+]]);
+```
+
+A scheduled job, a command or Tinker writes it as any other field, since they run as the command line:
+
+```php
+$product->stock = $shop->stockOf($product->sku);
+$product->save();
+```
+
+Code that runs during a web request, such as a webhook's controller, runs as the visitor or the signed in user. Wrap the save in `actingAs()` so it runs as the system (see [Acting as a user](/deeper/actions-and-hooks#acting-as-a-user)):
+
+```php
+use LynxCms\Contracts\Actions\Actor;
+
+lynx()->actingAs(Actor::system(), function () use ($product, $request): void {
+    $product->stock = $request->integer('stock');
+    $product->save();
+});
+```
+
+Publishing a draft and restoring a revision keep a locked field's live value, so an editor's older draft never puts back a value your code has since replaced. A locked field can't be required, since editors could never fill it; a field a template requires can't be locked until it is optional there.
+
+ProcessWire's Presentation setting inspired `editor`, `locked` and `lazy`.
 
 ## Showing fields only when needed
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'field' => [
+        'locked_required' => 'El campo [:field] es obligatorio en la plantilla [:template], así que no se puede bloquear: los editores nunca podrían rellenarlo. Hazlo opcional allí primero.',
         'missing' => 'El campo [:field] no existe.',
         'create_first' => 'El campo [:field] no existe. Créalo primero con lynx()->fields->add(\':field\', ...) o con la acción fields.create.',
         'problem' => 'Campo [:field]: :problem',
@@ -48,6 +49,9 @@ return [
         'language_max' => 'El campo :attribute en [:language] debe ser un texto de como máximo :max caracteres.',
     ],
     'editor' => [
+        'boolean' => ':setting es true o false.',
+        'lazy' => 'lazy necesita un campo que se pueda cerrar: cerrado, que se cierra, o cerrado cuando está vacío o lleno.',
+        'locked_hidden' => 'un campo oculto no puede estar también bloqueado: oculto ya deja fuera a los editores.',
         'display' => 'editor es uno de estos valores: :values.',
         'width' => 'width es uno de estos valores: :values.',
         'icon' => 'icon es el nombre de un icono de Lucide, como "calendar".',

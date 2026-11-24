@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'field' => [
+        'locked_required' => 'Field [:field] is required on template [:template], so it cannot be locked: editors could never fill it. Make it optional there first.',
         'missing' => 'Field [:field] does not exist.',
         'create_first' => 'Field [:field] does not exist. Create it first with lynx()->fields->add(\':field\', ...) or the fields.create action.',
         'problem' => 'Field [:field]: :problem',
@@ -48,6 +49,9 @@ return [
         'language_max' => 'The :attribute in [:language] must be text of at most :max characters.',
     ],
     'editor' => [
+        'boolean' => ':setting is true or false.',
+        'lazy' => 'lazy needs a field that can be closed: closed, closable, or closed when blank or filled.',
+        'locked_hidden' => 'a hidden field cannot also be locked: hidden already keeps editors out.',
         'display' => 'editor is one of :values.',
         'width' => 'width is one of :values.',
         'icon' => 'icon is a Lucide icon name, such as "calendar".',

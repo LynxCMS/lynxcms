@@ -1642,3 +1642,21 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** Sites with cached pages get a spam check that works. A Cloudflare outage stops form submissions on sites that turned it on. A Content Security Policy must allow `challenges.cloudflare.com`.
 
+## ADR-0149: Locked fields are written only by code; display, locked and loading are separate settings
+
+**Status:** Accepted (changes ADR-0063)
+
+**Context:** Projects fill some fields from code, such as stock from a shop or text from another service, and editors must not change them. ADR-0063 gave a template's field the editor display `locked`, but it only hid the input in the page editor. `pages.save` didn't check it, so MCP clients and the agent wrote the field, and agents weren't told it was locked. Publishing a draft and restoring a revision rewrote every template field, so a value code had replaced on the live page came back from the draft. A field couldn't be locked on every template at once. ProcessWire's Presentation setting combines how a field starts (open, closed, closed when blank or filled), whether it is locked, and whether it loads only when opened; ADR-0063 offered locked as one display among the others, so a locked field couldn't also start closed.
+
+**Decision:**
+
+- **Two settings.** `editor` says how a field shows (`open`, new `open_collapsible`, `collapsed`, `collapsed_blank`, `collapsed_populated`, `hidden`), and `locked` says whether editors may change it. Locked combines with every display but hidden. `editor: locked` still reads, as open and locked; the template admin writes the pair.
+- **Locked on the field or on a template.** A field's own `locked` setting applies on every template; a template's `locked` applies there. `TemplateField::isLocked()` answers for both.
+- **Only code writes a locked field.** `pages.save` refuses a locked field's value unless the actor is the command line or the system (`LockedFields`). People, MCP clients and the agent are refused with a message on the field. Code in a web request, such as a webhook's controller, runs its save in `lynx()->actingAs(Actor::system(), ...)`. Roles that may edit a locked field were considered and left for a later ADR on field access per role. Hidden fields keep ADR-0063's rule: the editor doesn't show them, and code, MCP clients and the agent write them, as projects use them for values agents fill.
+- **Drafts and revisions keep the live value.** `Revisions::saveInput()` leaves locked fields out unless asked, so publishing a draft and restoring a revision keep the live page's value and its origin. Drafts still copy the value, so editors see it.
+- **Agents are told.** `describe_schema` marks locked fields, and `pages.save`'s description says saving them is refused.
+- **A locked field can't be required:** editors could never fill it. Locking a field a template requires is refused, and so is requiring a locked one.
+- **Load when opened (`lazy`).** A field that starts closed renders its value and input only once an editor opens it. Tabs already render their fields only when opened, so `lazy` applies to fields that start closed and is refused on others.
+
+**Consequences:** Code that reads `TemplateField::editor()` gets `open` for a field stored as `locked` and checks `isLocked()` for the rest; `FieldDisplay::Locked` and `editor()` are deprecated. Sites that let agents fill locked fields must run that code as the system. A lazy field's input isn't in the page until it opens, so browser tests open it first.
+

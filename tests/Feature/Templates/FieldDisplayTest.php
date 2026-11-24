@@ -25,8 +25,10 @@ it('reads the editor settings of a template field', function () use ($field): vo
         ->and($field('summary')->placeholder())->toBe('A line')
         ->and(lynx()->language('pt', fn () => $field('summary')->placeholder()))->toBe('Uma linha')
         ->and($field('summary')->icon())->toBe('text')
-        ->and($field('price')->editor())->toBe(FieldDisplay::Locked)
-        ->and($field('price')->editor()->isEditable())->toBeFalse()
+        // The older editor: locked reads as open and locked (ADR-0149).
+        ->and($field('price')->display())->toBe(FieldDisplay::Open)
+        ->and($field('price')->isLocked())->toBeTrue()
+        ->and($field('price')->isEditable())->toBeFalse()
         ->and($field('body')->editor())->toBe(FieldDisplay::Open)
         ->and($field('body')->width())->toBe(100)
         ->and($field('body')->icon())->toBeNull();
