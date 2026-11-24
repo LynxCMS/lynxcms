@@ -1686,3 +1686,20 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
 
+
+## ADR-0152: Image sizes can be made in a queue
+
+**Status:** Accepted (builds on ADR-0046; plan in documentation/plans/image-sizes.md)
+
+**Context:** A size's file is written the first time its URL is printed (ADR-0046), so the first render of a page waits for every new size on it. A gallery printed through `<x-lynx-image>` makes three widths per image, dozens of resizes in one request, after every upload and focus change. Originals are at most 2560 pixels on a side (uploads are scaled down in the browser and by `media.store`), so each resize is quick, but together they can pass the server's time limit. A route that makes sizes when the browser asks (as Glide does) was considered and left out: the owner wants sizes made by the render or by a queue only, and the queue kept off unless a site runs a worker.
+
+**Decision:** `lynx-media.queue_sizes` (`LYNX_MEDIA_QUEUE_SIZES`), false by default.
+
+- **Off:** sizes are made during the render, as before.
+- **On:** `Pageimage::url()` for a size whose file is missing dispatches `MakeImageSize` (unique per file name, one try) and prints a stand-in: the smallest existing size of the same original that keeps its aspect ratio and is at least as large, else the original. Each folder is listed once per request (`SizeQueue`, scoped). A size that can't be made is logged with its page and file, and the page keeps the stand-in.
+- **Crops:** `<x-lynx-image>` with a width and a height adds `object-fit: cover` and the focus point as `object-position`, so a stand-in is cropped by the browser where the size will be.
+- **Code that reads files:** `file()` still makes the size at once. The static site build turns the setting off while it renders, as it copies the files right after.
+- **Page cache:** a page that printed a stand-in sets `LynxCms\Contracts\Pages\PageCache::SKIP` (new, `@api`) on the request, the attribute `@nocache` already set, so the cache stores the render after the jobs ran. The constant lives in contracts so media does not depend on the cache module.
+- **Doctor:** `media-queued-sizes` warns when the setting is on and the queue connection is `sync`.
+
+**Consequences:** With a worker, a page's first render no longer waits for its sizes; its first visitors see heavier images for a moment, and the page reaches the page cache one render later. Without a worker and the setting on, stand-ins stay: correct, only heavier, which the doctor check points at. Making sizes ahead of time (recording the specs each field uses and making them after an upload) waits for a site that needs it.

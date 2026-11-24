@@ -10,6 +10,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 ## Unreleased
 
+- Image sizes in a queue: with `LYNX_MEDIA_QUEUE_SIZES=true` and a queue worker, sizes a page shows for the first time are made by queued jobs, and the page shows the nearest image that exists meanwhile. The page cache stores the page once the sizes are made. Off by default. See [Sizes in a queue](/basics/images-and-files#sizes-in-a-queue).
+- `LynxCms\Contracts\Pages\PageCache::SKIP` names the request attribute that keeps a page out of the page cache, for code that doesn't depend on `lynxcms/cache`.
 - Images larger than an images field's maximum are scaled down in the browser before they upload, so photos from phones fit the upload limit and upload faster. See [Uploading in the admin](/basics/images-and-files#uploading-in-the-admin).
 
 ## 0.1.59

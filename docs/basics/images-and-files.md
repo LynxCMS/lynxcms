@@ -78,6 +78,18 @@ For other markup, an image gives you its sizes directly:
 
 Sizes are made the first time their file or URL is asked for, always from the original, and kept next to it. Calls chain into one file: `$image->size(300, 300, 75)->webp()` is a single WebP file, `photo.300x300-q75.webp`.
 
+### Sizes in a queue
+
+A page that shows many new sizes at once, such as a gallery right after an upload, makes all of them while it renders, so its first visitor waits. With a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) running, you can have a queue make them instead. Set it in `.env`:
+
+```ini
+LYNX_MEDIA_QUEUE_SIZES=true
+```
+
+A size that doesn't exist yet is then made by a queued job, and the page shows the nearest image that exists in the meantime: the smallest larger size of the same picture, or the original. `<x-lynx-image>` with both a width and a height crops that image in the browser at the focus point, so it looks the same, only heavier to load. If you print `$image->size(...)->url()` into an `<img>` of your own, give it `object-fit: cover` for the same result. The page cache doesn't store a page while it shows such an image, and stores it once the sizes are made.
+
+Code that reads a size's file, through `$image->size(...)->file()`, still gets it made at once, and a static site build makes every size while it renders. The setting is off by default. `php artisan lynx:doctor` warns when it is on and the queue connection is `sync`, as each size would then be made during the render all the same.
+
 ## Tags
 
 Tags group the files of a field. `tagged()` keeps the files with a tag, here in a template's view:
