@@ -1,6 +1,5 @@
 {{-- Field access per role (ADR-0151), as ProcessWire's Access tab: managed or not, then a role per row with View and Edit. --}}
-<x-lynx-admin::section id="field-access" :title="__('lynx-admin::fields.access.heading')" remember="field:access" :collapsed="! $manageAccess"
-    :has-error="$errors->has('settings.access')" body-class="grid gap-4 p-5" data-field-access>
+<section class="grid gap-4" aria-label="{{ __('lynx-admin::fields.access.heading') }}" data-field-access>
     <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
         <input class="blat-checkbox mt-0.5" id="field-manage-access" type="checkbox" wire:model.live="manageAccess" data-manage-access>
         <span class="grid gap-0.5"><span class="font-medium">{{ __('lynx-admin::fields.access.manage') }}</span><span class="text-muted-foreground">{{ __('lynx-admin::fields.access.manage_help') }}</span></span>
@@ -38,4 +37,4 @@
         </div>
     @endif
     @error('settings.access') <p data-error-for="settings.access" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-</x-lynx-admin::section>
+</section>

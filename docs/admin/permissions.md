@@ -70,7 +70,7 @@ Running it as the system records the assignment in the activity log. Anyone can 
 
 ## Field access per role
 
-A field can limit which roles see it and which edit it, such as a price only the sales team changes, or internal notes editors don't see. On the field's page in **Settings › Fields**, open **Access**, tick **Manage access for this field**, and tick **View** or **Edit** for each role. **Edit** lets a role see the field too, and it is off for roles that can't edit pages. With no box ticked, only superusers see and edit the field. In code, once in `php artisan tinker` or a seeder:
+A field can limit which roles see it and which edit it, such as a price only the sales team changes, or internal notes editors don't see. On the field's page in **Settings › Fields**, open the **Access** tab, tick **Manage access for this field**, and tick **View** or **Edit** for each role. **Edit** lets a role see the field too, and it is off for roles that can't edit pages. With no box ticked, only superusers see and edit the field. In code, once in `php artisan tinker` or a seeder:
 
 ```php
 lynx()->fields->update('price', ['settings' => ['access' => ['view' => ['editor'], 'edit' => ['sales']]]]);

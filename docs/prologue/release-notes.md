@@ -11,6 +11,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 ## Unreleased
 
 - Field access per role: a field can manage which roles see it and which edit it (**Access** on the field's page, or `access` in its settings), with a View and an Edit box per role; with none ticked, only superusers may. Other roles don't see the field in the page editor, through agents or in the Finder, or see it read only, and `pages.save` refuses their changes to it. Superusers and the site's code always may, and visitors are not affected. See [Field access per role](/admin/permissions#field-access-per-role).
+- The field screen has more tabs: **Basics** (what the field holds, its name, languages, and help), **Settings** (its kind's own settings), **Access**, **Advanced** (loading, locking, and deleting), and **Preview**. A repeater or matrix keeps its builder and **Limits and display** tabs. A tab with an error shows a dot.
+- The field screen's **Preview** tab shows the page editor's own input for text, email, URL, icon, textarea, number, date, and time fields, with the settings the form holds: a rich text field shows the rich text editor with its tools, and a length limit shows the character counter. What is typed there is not saved.
 
 ## 0.1.58
 

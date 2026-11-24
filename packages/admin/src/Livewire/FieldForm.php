@@ -15,6 +15,7 @@ use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
+use LynxCms\Admin\Fields\FieldFormTabs;
 use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
 use LynxCms\Admin\Livewire\Concerns\EditsFormatters;
 use LynxCms\Admin\Livewire\Concerns\EditsItemDisplay;
@@ -89,6 +90,9 @@ final class FieldForm extends Component
     #[Locked]
     public ?string $status = null;
 
+    /** What is typed into the Preview tab's input (FieldPreviewInput); never saved. */
+    public mixed $previewValue = '';
+
     /** Showing what deleting the field would remove, waiting for confirmation. */
     #[Locked]
     public bool $isConfirmingDelete = false;
@@ -139,6 +143,7 @@ final class FieldForm extends Component
         $this->formatters = [];
         $this->resetItemSettings();
         $this->addLabel = LocalizedForm::toForm(null);
+        $this->previewValue = '';
     }
 
     public function save(SchemaForm $form): void
@@ -190,16 +195,22 @@ final class FieldForm extends Component
         $types = lynx()->fields->types();
 
         $kinds = app(FieldKinds::class);
+        $definitions = $this->definitions();
+        $formatters = lynx()->formatters()->forType($this->type);
+        $accessRoles = $this->accessRoles();
+        $shownSettings = $this->hasItemBuilder() ? array_diff_key($definitions, array_flip(self::ITEM_DISPLAY_SETTINGS)) : $definitions;
+        $tabs = new FieldFormTabs($this->hasItemBuilder(), $this->field === null, $shownSettings !== [] || $formatters !== [], $accessRoles !== []);
 
         return view('lynx-admin::livewire.field-form', [
             'title' => $this->field === null ? __('lynx-admin::fields.new') : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
-            'sections' => $this->sections(),
+            'tabs' => $tabs,
+            'sections' => $tabs->all(),
             'kind' => $kinds->for($this->type),
             'kinds' => $this->field === null ? $kinds->grouped(array_keys(app(FieldTypeChoices::class)->for($types))) : [],
             'types' => $types,
             'offeredTypes' => app(FieldTypeChoices::class)->for($types),
-            'definitions' => $this->definitions(),
-            'availableFormatters' => lynx()->formatters()->forType($this->type),
+            'definitions' => $definitions,
+            'availableFormatters' => $formatters,
             // With one language the choice means nothing yet, and it can't be changed later.
             'canTranslate' => $this->isMultilingual() && $this->typeCanTranslate(),
             'canMakeTranslatable' => $this->canMakeTranslatable(),
@@ -211,14 +222,24 @@ final class FieldForm extends Component
             'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
             'typeUsage' => $this->typeUsage(),
             'templateOptions' => $this->templateOptions(),
-            // Superusers pass every check, so only the other roles are offered (ADR-0151).
-            // A role without pages.edit can't edit the field, so its Edit box is off.
-            'accessRoles' => Role::query()->where('is_superuser', false)->with('grants')->orderBy('label')->get()->map(fn (Role $role): array => [
+            'accessRoles' => $accessRoles,
+        ]);
+    }
+
+    /**
+     * Roles for the Access tab (ADR-0151). Superusers pass every check, so they are left out; a
+     * role without pages.edit can't edit the field, so its Edit box is off.
+     *
+     * @return list<array{name: string, label: string, canEditPages: bool}>
+     */
+    private function accessRoles(): array
+    {
+        return array_values(Role::query()->where('is_superuser', false)->with('grants')->orderBy('label')->get()
+            ->map(fn (Role $role): array => [
                 'name' => (string) $role->name,
                 'label' => (string) $role->label ?: (string) $role->name,
                 'canEditPages' => $role->grants->contains('permission', 'pages.edit'),
-            ])->all(),
-        ]);
+            ])->all());
     }
 
     /**
@@ -235,21 +256,6 @@ final class FieldForm extends Component
             ->reject(fn (Template $template): bool => $owners->isSystemTemplate((string) $template->name))
             ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->label])
             ->sortBy('label')->all());
-    }
-
-    /**
-     * The form's tabs, the first one open: a builder's list first on a repeater or matrix that
-     * exists, the Field tab first otherwise.
-     *
-     * @return list<string>
-     */
-    private function sections(): array
-    {
-        if (! $this->hasItemBuilder()) {
-            return ['field', 'preview'];
-        }
-
-        return $this->field === null ? ['field', 'builder', 'preview', 'limits'] : ['builder', 'preview', 'field', 'limits'];
     }
 
     /**

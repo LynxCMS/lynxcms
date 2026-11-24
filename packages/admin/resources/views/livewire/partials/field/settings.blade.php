@@ -1,13 +1,14 @@
 {{--
     The kind's own settings, from its settings schema in words (SettingLabels), then its formatters
-    as switches. A repeater's or matrix's limits are on their own tab (EditsItemDisplay).
+    as switches, on the Settings tab. A repeater's or matrix's limits are on their own tab
+    (EditsItemDisplay). FieldFormTabs leaves the tab out when there is nothing to show.
 --}}
 @php
     $shown = $hasItemBuilder ? array_diff_key($definitions, array_flip(\LynxCms\Admin\Livewire\FieldForm::ITEM_DISPLAY_SETTINGS)) : $definitions;
     $labels = app(\LynxCms\Admin\Editor\SettingLabels::class);
 @endphp
 @if ($shown !== [] || $availableFormatters !== [])
-    <section class="grid gap-5 border-t pt-6" aria-labelledby="field-settings">
+    <section class="grid gap-5" aria-labelledby="field-settings">
         <h2 id="field-settings" class="text-base font-semibold">{{ $kind['label'] }}</h2>
         @foreach ($shown as $setting => $definition)
             @php($words = $labels->for($setting, $definition, $type))
