@@ -21,6 +21,10 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.58 to 0.1.59
+
+No database changes, and nothing to do. Field access applies only to fields whose **Access** tab you turn on (or whose settings have `access`); every other field works as before.
+
 ## From 0.1.57 to 0.1.58
 
 No database changes.
@@ -78,7 +82,7 @@ One new table, for temporary passwords. Sign-in changes on every site, so read t
 
 - Run `php artisan lynx:migrate`.
 - **Two-factor authentication is now required for the admin.** On their next visit, everyone who opens the admin is sent to **Account security** to set it up. It needs Fortify's `TwoFactorAuthenticatable` trait on your user model (see [Your user model](/admin/sign-in#your-user-model)); without it nobody is asked and `lynx:doctor` warns. Add `LYNX_ADMIN_REQUIRE_TWO_FACTOR=false` to your local `.env` to work without it.
-- Remove `LYNX_OPEN_UNTIL_ROLES` from your `.env` files: it no longer does anything. A site where nobody holds a role needs a superuser first: `php artisan lynx:superuser`.
+- Remove `LYNX_OPEN_UNTIL_ROLES` from your `.env` files: it no longer does anything. A site where nobody holds a role needs a superuser first: `php artisan lynx:superuser`. Tests that set `lynx.permissions.open_until_roles` find users without a role refused too: give the user they sign in as a superuser role with `lynx()->run(SaveRole::class, ['name' => 'superuser', 'superuser' => true])`, then `lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']])`.
 - If you set `LYNX_REGISTRATION_ROLE`, remove it and give that role in your own registration code, such as Fortify's `CreateNewUser`, as [People who sign up](/admin/permissions#people-who-sign-up) shows. Existing `guest` roles and their assignments stay and grant nothing.
 - Code that runs `users.invite` must now pass at least one role.
 - After a password change, users signed in on other devices sign in again. Nothing to configure.
