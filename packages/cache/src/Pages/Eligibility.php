@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Cache\Pages;
 
 use Illuminate\Http\Request;
+use LynxCms\Contracts\Pages\PageCache;
 use LynxCms\Core\Pages\Visibility\PageVisibility;
 use LynxCms\Core\Support\Value;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -20,8 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final readonly class Eligibility
 {
-    /** Request attribute templates set (@nocache) to keep a page out of the cache. */
-    public const string OPT_OUT = 'lynx-cache.skip';
+    /** Request attribute templates (@nocache) and other code set to keep a page out of the cache. */
+    public const string OPT_OUT = PageCache::SKIP;
 
     /** Cookies every response carries; any other cookie makes the response personal. */
     private const string XSRF_COOKIE = 'XSRF-TOKEN';

@@ -179,6 +179,7 @@ Only what any guest would see:
 - Anything else a guest sees only for themselves, such as a cart kept in the session, must say so: send the response with `Cache-Control: no-store`, as in `response($view)->header('Cache-Control', 'no-store, private')`.
 - Pages holding the visitor's CSRF token (a form, a Livewire component, a layout printing `@livewireScripts`) are stored with a placeholder that a script refreshes. See [Pages with forms](#pages-with-forms).
 - Only templates listed in `templates`. All of them by default.
+- Not while the page shows images whose sizes a queue is still making ([sizes in a queue](/basics/images-and-files#sizes-in-a-queue)). Code of your own can keep a page out the same way: `request()->attributes->set(LynxCms\Contracts\Pages\PageCache::SKIP, true)`.
 
 With `LYNX_PAGE_CACHE_DEBUG=true`, responses carry `X-Lynx-Cache: HIT`, `MISS`, or `SKIP; reason=...` with why a page was not stored.
 

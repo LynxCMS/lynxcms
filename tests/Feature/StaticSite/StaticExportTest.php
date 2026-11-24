@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -286,7 +287,11 @@ it('writes scripts and styles that the site sends from a route', function (): vo
     File::deleteDirectory($views);
 });
 
-it('writes media at the static address, with the image sizes pages made while rendering', function (): void {
+it('writes media at the static address, with the image sizes pages made while rendering', function (bool $isQueued): void {
+    // Sizes in a queue (lynx-media.queue_sizes) are made during the build all the same.
+    config(['lynx-media.queue_sizes' => $isQueued]);
+    // No worker runs during a build: jobs wait, as on a site with a real queue.
+    Queue::fake();
     $disk = testingPath('disk');
     File::deleteDirectory($disk);
     File::ensureDirectoryExists($disk);
@@ -315,7 +320,8 @@ it('writes media at the static address, with the image sizes pages made while re
     preg_match('#src="/storage/(lynx/[^"]+\.40x30\.jpg)"#', File::get($this->dist.'/photo/index.html'), $match);
     expect($match)->toHaveCount(2)
         ->and(File::exists($this->dist.'/storage/'.$match[1]))->toBeTrue()
-        ->and(Storage::disk('public')->url('x.jpg'))->toBe('http://localhost/storage/x.jpg');
+        ->and(Storage::disk('public')->url('x.jpg'))->toBe('http://localhost/storage/x.jpg')
+        ->and(config('lynx-media.queue_sizes'))->toBe($isQueued);
     File::deleteDirectory($views);
     File::deleteDirectory($disk);
-});
+})->with(['sizes made while rendering' => false, 'sizes in a queue' => true]);

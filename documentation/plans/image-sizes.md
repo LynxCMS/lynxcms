@@ -1,6 +1,6 @@
 # Plan: image sizes in a queue
 
-Status: decided on 2026-11-24. Roadmap item "Image sizes made in a queue instead of on first request". Uploads are scaled down in the browser first (separate PR), which this plan does not depend on.
+Status: built on 2026-11-24 (ADR-0152). Roadmap item "Image sizes made in a queue instead of on first request". Uploads are scaled down in the browser first (separate PR), which this plan does not depend on.
 
 ## Problem
 
@@ -25,7 +25,7 @@ A template asks for a size with `$image->size(800, 600)`, `resize()`, `preset()`
 4. **The next render prints the size.** Once the file exists, `url()` returns its disk URL, as today.
 5. **Page cache.** A page that printed a stand-in is not stored, so the cache never keeps HTML with stand-ins. Media marks the request with the page cache's opt-out attribute; its name moves from `LynxCms\Cache\Pages\Eligibility::OPT_OUT` to `LynxCms\Contracts` so media does not depend on the cache module. The first render after the jobs ran is stored.
 6. **Code that needs the file.** `file()` still writes the size at once, so code that reads the bytes (a PDF, an email attachment, the static site build) always gets them. Only `url()`, `srcset()` and `<x-lynx-image>` queue.
-7. **A worker that is not running.** With the setting on and no worker, pages keep their stand-ins: correct, only heavier. `lynx:doctor` warns when the setting is on and the queue connection is `sync` (each job would then run inside the render, as with the setting off, but one by one through the queue) or when jobs for sizes wait longer than an hour.
+7. **A worker that is not running.** With the setting on and no worker, pages keep their stand-ins: correct, only heavier. `lynx:doctor` warns when the setting is on and the queue connection is `sync` (each job would then run inside the render, as with the setting off). A warning for jobs waiting too long was left out: Lynx can't see every queue driver's backlog.
 
 ## Later, if a site needs it
 
