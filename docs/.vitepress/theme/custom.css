@@ -124,24 +124,11 @@
 }
 
 /* The Cookbook (reference/recipes.md): each section is an index card from a recipe box, built by
-   cookbook.ts. A serif title, a red rule under it, ruled lines the recipes sit on, and a slight tilt that
-   straightens when the pointer reaches it. Colors are tokens, so dark mode gets darker card stock. */
+   cookbook.ts. A rule in the brand color under the title, ruled lines the recipes sit on, and a
+   slight tilt that straightens when the pointer reaches it. Only the docs' own fonts and color
+   tokens, so dark mode follows. */
 .cookbook {
-    --cookbook-card: #fffdf7;
-    --cookbook-rule: rgba(14, 116, 144, 0.13);
-    --cookbook-margin: #d9543f;
-    --cookbook-chip: #f6e7d3;
-    --cookbook-chip-text: #8a4b1c;
-    --cookbook-shadow: 0 1px 2px rgba(60, 40, 20, 0.08), 0 8px 24px -12px rgba(60, 40, 20, 0.25);
-}
-
-.dark .cookbook {
-    --cookbook-card: #29231e;
-    --cookbook-rule: rgba(34, 211, 238, 0.09);
-    --cookbook-margin: #e0745f;
-    --cookbook-chip: #3a2e24;
-    --cookbook-chip-text: #f0c9a0;
-    --cookbook-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    --cookbook-line: 28px;
 }
 
 /* Room for two cards side by side: the page has no outline beside it. */
@@ -150,12 +137,6 @@
     .cookbook .VPDoc .content-container {
         max-width: 1040px;
     }
-}
-
-.cookbook .vp-doc h1 {
-    font-family: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-    font-size: 2.5rem;
-    letter-spacing: -0.01em;
 }
 
 .cookbook .vp-doc > div {
@@ -180,8 +161,8 @@
     padding: 18px 22px 20px;
     border: 1px solid var(--vp-c-border);
     border-radius: 6px;
-    background-color: var(--cookbook-card);
-    box-shadow: var(--cookbook-shadow);
+    background-color: var(--vp-c-bg-elv);
+    box-shadow: var(--vp-shadow-2);
     transform: rotate(-0.4deg);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -218,8 +199,8 @@
 .cookbook .recipe-card-course {
     padding: 2px 10px;
     border-radius: 999px;
-    background: var(--cookbook-chip);
-    color: var(--cookbook-chip-text);
+    background: var(--vp-c-brand-soft);
+    color: var(--vp-c-brand-1);
     font-weight: 600;
 }
 
@@ -232,19 +213,17 @@
     margin: 0 0 14px;
     padding: 0 0 10px;
     border-top: 0;
-    border-bottom: 2px solid var(--cookbook-margin);
-    font-family: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-    font-size: 1.45rem;
+    border-bottom: 2px solid var(--vp-c-brand-1);
+    font-size: 1.3rem;
     line-height: 1.25;
 }
 
 .cookbook .recipe-card ul {
-    --cookbook-line: 28px;
     margin: 0;
     padding: 0;
     list-style: none;
     /* One rule under each line of text, wrapped lines included. */
-    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--cookbook-line) - 1px), var(--cookbook-rule) calc(var(--cookbook-line) - 1px), var(--cookbook-rule) var(--cookbook-line));
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--cookbook-line) - 1px), var(--vp-c-divider) calc(var(--cookbook-line) - 1px), var(--vp-c-divider) var(--cookbook-line));
 }
 
 .cookbook .recipe-card li {
