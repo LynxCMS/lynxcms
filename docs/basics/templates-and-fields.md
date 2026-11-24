@@ -323,6 +323,8 @@ php artisan lynx:draft --dry-run     # lists what would change, and changes noth
 php artisan lynx:draft               # builds it, after asking in a terminal
 ```
 
+`--stub` writes a draft of a blog in English and Portuguese that uses every option this section describes, with a comment on each: the short and the long form, labels and options in both languages, a repeater and a matrix, sections and a tab, family rules, a template without a URL, and pages. Labels in a language the site doesn't have are refused, so the site needs both languages first. A new site has one, coded `default`: change its code to `en` and add `pt` in **Settings › Languages**, or change the codes in the draft to your site's.
+
 A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or make a translatable field shared, and it can't touch what Lynx or a module owns, such as menus.
 
 For a template the site already has, the draft's `fields` list becomes the template's list, in the draft's order. A draft that leaves out a field the template has is refused, and the error names the fields. List them to keep them, or build with `--prune-fields` to take them off the template; the plan then shows `remove field body from template course` for each. The fields and their values stay in the site.

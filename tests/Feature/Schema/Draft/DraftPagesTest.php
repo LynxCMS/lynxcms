@@ -127,3 +127,13 @@ it('builds a page on a template without a URL again without changes', function (
         ->expectsOutputToContain('The site already matches the draft.')
         ->assertSuccessful();
 });
+
+it('reads a date in a page\'s values as that date', function (): void {
+    lynx()->fields->create('starts_on', 'date');
+    $draft = pagesDraft("  /workshops: Workshops\n  /workshops/clay: { template: workshop, title: Clay, price: 40, starts_on: 2026-12-01 }\n");
+    File::put($draft, str_replace('fields: [title*, price*, summary]', 'fields: [title*, price*, summary, starts_on]', File::get($draft)));
+
+    $this->artisan('lynx:draft', ['path' => $draft])->assertSuccessful();
+
+    expect(lynx()->pages->get('/workshops/clay/')?->starts_on?->toDateString())->toBe('2026-12-01');
+});

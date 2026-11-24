@@ -12,6 +12,8 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 
 - Drafts: `children: false` makes a template whose pages may have no children, and `lynx:draft --from-site` writes it that way instead of under `settings`. `checkbox` is read as `toggle`, in the short and the long form. The drafting docs list the settings a field can have on a template (`show_if`, `width`, `description` and more) and every template key. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema).
 - A toggle field's new `input` setting shows it as one checkbox (`checkbox`, the default and what editors saw before) or as a switch (`switch`). In a draft, `toggle:switch`. See [the toggle field](/basics/field-types#toggle).
+- `lynx:draft --stub` writes a bilingual blog (English and Portuguese) that uses every draft option, with a comment on each, in place of the events example. It builds on a site with `en` and `pt`.
+- Fixed: dates in a draft's page values, such as `starts_on: 2026-12-01`, saved today's date. YAML read them as timestamps, which the date field turned into today. Drafts now read them as dates, and a date field refuses a value it can't read as a date instead of saving today.
 - The field form's Preview tab draws the control the page editor uses: one checkbox for a toggle, where it showed a switch, and for choice and page fields the select, radios, checkboxes or search their `input` setting names, with their first options.
 
 ## 0.1.56
