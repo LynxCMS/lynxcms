@@ -8,6 +8,10 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+- Images larger than an images field's maximum are scaled down in the browser before they upload, so photos from phones fit the upload limit and upload faster. See [Uploading in the admin](/basics/images-and-files#uploading-in-the-admin).
+
 ## 0.1.59
 
 Released November 24, 2026. Field access per role: a field can name the roles that see it and the roles that edit it, in the admin, through agents, and in the Finder. The field screen gets more tabs, and its Preview tab shows the page editor's own inputs. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-58-to-0-1-59).
