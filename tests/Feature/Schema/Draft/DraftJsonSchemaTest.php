@@ -50,7 +50,7 @@ it('accepts every short field of the starting draft', function (): void {
     $pattern = '/'.str_replace('/', '\/', draftJsonSchema()['$defs']['shortField']['pattern']).'/u';
     $stub = Yaml::parseFile(__DIR__.'/../../../../packages/core/resources/stubs/draft.yaml');
 
-    foreach ($stub['fields'] as $name => $definition) {
+    foreach (array_filter($stub['fields'], is_string(...)) as $name => $definition) {
         expect(preg_match($pattern, $definition))->toBe(1, "{$name}: {$definition}");
     }
 

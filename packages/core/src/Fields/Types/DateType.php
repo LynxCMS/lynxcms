@@ -66,8 +66,12 @@ final class DateType extends BaseFieldType implements DescribesPhpType
             return null;
         }
 
+        if (! $value instanceof DateTimeInterface && ! is_string($value)) {
+            return $value; // a number or a list is no date: validation names it, where parsing "" gave today
+        }
+
         try {
-            $date = $value instanceof DateTimeInterface ? CarbonImmutable::instance($value) : CarbonImmutable::parse(is_string($value) ? trim($value) : '');
+            $date = $value instanceof DateTimeInterface ? CarbonImmutable::instance($value) : CarbonImmutable::parse(trim($value));
         } catch (Throwable) {
             return $value;
         }

@@ -1,39 +1,98 @@
 # yaml-language-server: $schema=./draft.schema.json
 #
-# A draft of templates and fields. Build it with: php artisan lynx:draft
-# Preview first with: php artisan lynx:draft --dry-run
+# A blog, as a draft: its fields, templates and first pages.
+# Preview it: php artisan lynx:draft --dry-run
+# Build it:   php artisan lynx:draft
 #
-# A field is "type[:argument]" followed by flags and key:value settings:
-#   textarea:html    decimal:2 min:0    choice:Small,Medium,"Extra large" multiple
-# Text, textarea and URL fields get a value per language; add translatable:false for one value in every language.
-# A yes or no field is a toggle, shown as one checkbox, or as a switch with toggle:switch ("checkbox" is read as toggle too).
-# For several options as checkboxes, use choice or page with input:checkboxes.
-# In a template, "name*" makes a field required there, and {name: type} defines it in place.
-# children lists the templates a page's children may use; children: false allows none.
-# Pages are created unpublished, by URL path; required fields other than the title need a value.
+# Labels here are in the site's default language. For labels and options in several languages, see
+# https://lynxcms.org/cms/docs/basics/templates-and-fields#a-draft-in-two-languages
 
 fields:
-  intro: textarea
-  starts_on: date
-  venue: text:120
-  ticket_price: decimal:2 min:0
-  seats: integer min:1
-  sold_out: toggle
-  topics: choice:Design,Development,"Product management" multiple
+  # The short form: "type[:argument]", then flags and key:value settings.
+  summary: textarea                             # text, textarea and URL fields have a value per language
+  body: textarea:html                           # the argument fills the type's main setting: here, its format
+  published_on: date
+  reading_time: integer min:1 label:"Reading time (minutes)"
+  featured: toggle:switch                       # a yes or no field, shown as a switch
+  level: choice:Beginner,Intermediate,Advanced  # one option; add "multiple" for several
+  topics: page:topic multiple input:checkboxes  # links to topic pages, ticked as checkboxes
+  related_posts: page:post multiple max:3
+  isbn: text:20 translatable:false              # one value in every language
+
+  # The long form: the field as a map of its type, label and settings.
+  category:
+    type: choice
+    label: Category
+    options: [News, Guides]
+  author_name: text
+  author_role: text
+  authors:
+    type: repeater
+    label: Authors
+    fields: [author_name*, author_role]       # "*" makes an item field required
+    max: 4
+  quote: textarea
+  quote_source:
+    type: text
+    translatable: false                       # one value in every language
+    max_length: 120                           # settings sit beside type and label
+  content_blocks:
+    type: matrix
+    label: Content blocks
+    types:
+      - slug: quote
+        label: Quote
+        fields: [quote*, quote_source]
+      - slug: aside
+        fields: [summary]
+  posts_per_page: integer min:1 max:50
 
 templates:
-  events:
-    children: [event]
-    fields: [title*, intro]
-  event:
-    parents: [events]
-    children: false
+  blog:
+    singleton: true                 # one page at most
+    children: [post]                # templates its pages' children may use
+    fields: [title*, summary]
+  post:
+    label: Blog post                # without one, the label is made from the name
+    parents: [blog]                 # templates its parent may use
+    children: false                 # its pages have no children
+    allowed: [post]                 # templates a page may switch to
+    tabs: { more: More }            # editor tabs besides Content
     fields:
-      - title*
-      - intro
-      - starts_on*
-      - section: Practical details
-        fields: [venue, ticket_price, seats, sold_out, topics]
+      - title*                      # required on this template
+      - summary
+      - { name: published_on, required: true, width: 50 }
+      - { name: reading_time, width: 50 }
+      - body
+      - content_blocks
+      - section: Classification     # a section by its label
+        column: sidebar
+        fields: [category, level, featured, topics]
+      - section: credits            # a section by its key, with a label of its own
+        label: Authors and links
+        tab: more
+        collapsed: true
+        fields: [authors, related_posts]
+      - { name: isbn, tab: more, show_if: category=guides, required_if: level=advanced, description: For guides about a book }
+      - source_url: url             # a field defined in place
+  topics:
+    children: [topic]
+    fields: [title*]
+  topic:
+    parents: [topics]
+    children: false
+    fields: [title*, summary]
+  # "settings" takes any other template setting, as schema files write it.
+  blog_settings:
+    url: false                      # no URL: settings or reusable content
+    singleton: true
+    fields: [title*, posts_per_page]
 
 pages:
-  /events: Events
+  /blog: Blog                                   # a title; the template is the one named like the last segment
+  /topics: Topics
+  /topics/design: { template: topic, title: Design }
+  /blog/hello-world:
+    template: post
+    title: Hello, world
+    published_on: 2026-12-01                    # required fields need a value

@@ -77,3 +77,11 @@ it('survives a content package round trip', function (): void {
     expect(lynx()->pages->get($id)?->starts_on?->toDateString())->toBe('2026-03-09')
         ->and(lynx()->pages->get($id)?->starts_at?->format('H:i'))->toBe('14:30');
 });
+
+it('refuses a value it can\'t read as a date instead of saving today', function (): void {
+    $page = lynx()->pages->new('course', '/courses/');
+    $page->name = 'timestamp';
+    $page->title = 'Timestamp';
+    $page->starts_on = 1796083200;
+    $page->save();
+})->throws(ValidationException::class);

@@ -230,10 +230,16 @@ it('fails clearly without a draft file', function (): void {
         ->assertFailed();
 });
 
-it('writes a starting draft with --stub', function (): void {
+it('writes a blog with --stub, which builds on a site in one language', function (): void {
     $this->artisan('lynx:draft', ['path' => $this->dir.'/new.yaml', '--stub' => true])->assertSuccessful();
 
-    $this->artisan('lynx:draft', ['path' => $this->dir.'/new.yaml', '--dry-run' => true])->assertSuccessful();
+    $this->artisan('lynx:draft', ['path' => $this->dir.'/new.yaml'])->assertSuccessful();
+
+    expect(lynx()->templates->find('post')?->labels()->toStorage())->toBe('Blog post')
+        ->and(lynx()->templates->find('post')?->allowsChildren())->toBeFalse()
+        ->and(lynx()->fields->find('featured')?->config()['input'] ?? null)->toBe('switch')
+        ->and(lynx()->fields->choices('category')->values())->toBe(['news', 'guides'])
+        ->and(lynx()->pages->findOne('template=post, include=all')?->published_on?->toDateString())->toBe('2026-12-01');
 });
 
 it('writes the site as a draft with --from-site, and refuses to overwrite a draft', function (): void {
