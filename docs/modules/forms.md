@@ -69,6 +69,8 @@ On a page the [page cache](/modules/page-cache) stores, a form keeps the time it
 <x-lynx-island livewire="lynx-form" :with="['form' => 'newsletter']" />
 ```
 
+**Duplicate**, next to each form in **Forms › Forms**, copies it within the site: its fields, messages and settings, recipients included, as an unpublished form named `contact-copy`. The `forms.duplicate` action does the same.
+
 ### Copying a form to another site
 
 You can copy a form built in the admin to another site as a JSON file. **Export**, next to each form in **Forms › Forms**, downloads `contact.form.json`. On the other site, open **Import form** above the list and pick that file. It says what the import would create (the form's name, how many fields and steps, and the languages it leaves out) and changes nothing until you choose **Create form**, which opens the new form in the page editor. On the command line:
@@ -172,7 +174,7 @@ Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a h
 
 ## Who hears about submissions
 
-Each submission is mailed (queued) to the form's `recipients()`. Without them, it goes to the users whose roles grant `forms.view`, superusers included. When nobody holds it, it goes to the addresses in `LYNX_FORMS_NOTIFY`. Files are never attached; they stay on the private disk (`LYNX_FORMS_DISK`, default `local`).
+Each submission is mailed (queued) to the form's `recipients()`. A busy form can send one summary a day instead: the builder's **Mail a daily summary instead of each submission**, or `digest()` returning `true` in code. `lynx:forms:digest` runs daily at `LYNX_FORMS_DIGEST_AT` (08:00, in the app's time zone) and mails how many arrived since the last summary, the first answers of the latest 20, and a link to them in the inbox. Spam is left out. Without them, it goes to the users whose roles grant `forms.view`, superusers included. When nobody holds it, it goes to the addresses in `LYNX_FORMS_NOTIFY`. Files are never attached; they stay on the private disk (`LYNX_FORMS_DISK`, default `local`).
 
 ## Reacting to submissions
 

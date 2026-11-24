@@ -159,6 +159,8 @@ return [
         'imported' => 'Formulário importado, por publicar. Adicione os destinatários e publique-o.',
         'imported_dropped' => 'Formulário importado, por publicar. Os textos em :languages ficaram de fora, porque este site não tem essas línguas.',
         'export' => 'Exportar',
+        'duplicate' => 'Duplicar',
+        'duplicated' => 'Cópia feita, por publicar. Mude-lhe o nome e publique-a.',
     ],
     'personal' => [
         'description' => 'Todas as respostas com um endereço de email, para quem pede os seus dados ou que sejam eliminados.',

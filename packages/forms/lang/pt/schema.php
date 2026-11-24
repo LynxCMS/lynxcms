@@ -53,4 +53,6 @@ return [
     'has the answer' => 'tem a resposta',
     'Delete submissions after (days)' => 'Eliminar respostas após (dias)',
     'Every submission older than this is deleted with its files, whatever its status, by the daily purge. 365 keeps a year. Empty keeps them.' => 'Todas as respostas mais antigas do que isto são eliminadas com os seus ficheiros, qualquer que seja o estado, pela limpeza diária. 365 guarda um ano. Vazio guarda-as.',
+    'Mail a daily summary instead of each submission' => 'Enviar um resumo diário em vez de cada resposta',
+    'For busy forms: the people who receive submissions get one mail a day that lists the new ones.' => 'Para formulários com muitas respostas: quem as recebe tem um email por dia com as novas.',
 ];

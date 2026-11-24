@@ -19,12 +19,15 @@ use LynxCms\Core\Lynx;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Schema\SchemaWording;
+use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\CreateForm;
 use LynxCms\Forms\Actions\DeleteSubmission;
 use LynxCms\Forms\Actions\DeleteSubmissions;
+use LynxCms\Forms\Actions\DuplicateForm;
 use LynxCms\Forms\Actions\ImportForm;
 use LynxCms\Forms\Actions\InstallForms;
 use LynxCms\Forms\Actions\PurgeSubmissions;
+use LynxCms\Forms\Actions\SendDigest;
 use LynxCms\Forms\Actions\SubmitForm;
 use LynxCms\Forms\Actions\UpdateSubmission;
 use LynxCms\Forms\Actions\UpdateSubmissions;
@@ -36,6 +39,7 @@ use LynxCms\Forms\Builder\PageFormValidator;
 use LynxCms\Forms\Console\ExportFormCommand;
 use LynxCms\Forms\Console\ImportFormCommand;
 use LynxCms\Forms\Console\PurgeSubmissionsCommand;
+use LynxCms\Forms\Console\SendDigestCommand;
 use LynxCms\Forms\Events\FormSubmitted;
 use LynxCms\Forms\Fields\OptionsType;
 use LynxCms\Forms\Listeners\NotifyRecipients;
@@ -62,7 +66,7 @@ final class FormsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->make(FieldTypeRegistry::class)->register(OptionsType::class);
-        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class, UpdateSubmissions::class, DeleteSubmissions::class);
+        $this->app->make(ActionRegistry::class)->register(SubmitForm::class, UpdateSubmission::class, DeleteSubmission::class, PurgeSubmissions::class, InstallForms::class, CreateForm::class, ImportForm::class, UpdateSubmissions::class, DeleteSubmissions::class, DuplicateForm::class, SendDigest::class);
         // A form page that would make a broken form is refused, and the save rolled back (ADR-0053).
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(PageFormValidator::class)->check($page));
         $permissions = $this->app->make(PermissionRegistry::class);
@@ -94,7 +98,7 @@ final class FormsServiceProvider extends ServiceProvider
         }
 
         if ($this->app->runningInConsole()) {
-            $this->commands([PurgeSubmissionsCommand::class, ExportFormCommand::class, ImportFormCommand::class]);
+            $this->commands([PurgeSubmissionsCommand::class, ExportFormCommand::class, ImportFormCommand::class, SendDigestCommand::class]);
             $this->publishes([self::ROOT.'/config/lynx-forms.php' => config_path('lynx-forms.php')], 'lynx-forms-config');
             $this->publishes([self::ROOT.'/lang' => $this->app->langPath('vendor/lynx-forms')], 'lynx-forms-lang');
             $this->publishes([self::ROOT.'/resources/views' => resource_path('views/vendor/lynx-forms')], 'lynx-forms-views');
@@ -102,5 +106,6 @@ final class FormsServiceProvider extends ServiceProvider
         }
 
         $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('lynx:forms:purge')->daily()->withoutOverlapping());
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('lynx:forms:digest')->dailyAt(Value::string(config('lynx-forms.digest_at'), '08:00'))->withoutOverlapping());
     }
 }

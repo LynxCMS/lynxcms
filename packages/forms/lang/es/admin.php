@@ -159,6 +159,8 @@ return [
         'imported' => 'Formulario importado, sin publicar. Añada sus destinatarios y publíquelo.',
         'imported_dropped' => 'Formulario importado, sin publicar. Los textos en :languages quedaron fuera, porque este sitio no tiene esos idiomas.',
         'export' => 'Exportar',
+        'duplicate' => 'Duplicar',
+        'duplicated' => 'Copia hecha, sin publicar. Cámbiale el nombre y publícala.',
     ],
     'personal' => [
         'description' => 'Todas las respuestas con una dirección de email, para quien pide sus datos o que se eliminen.',

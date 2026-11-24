@@ -30,6 +30,7 @@
                                 <x-lynx-admin::ui.button size="xs" :href="$row['edit']">{{ __('lynx-forms::admin.list.edit') }}</x-lynx-admin::ui.button>
                             @endif
                             @if ($row['structure'] !== null && $canBuild)
+                                <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="duplicate('{{ $row['key'] }}')" data-form-duplicate="{{ $row['key'] }}">{{ __('lynx-forms::admin.list.duplicate') }}</x-lynx-admin::ui.button>
                                 <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['structure']" data-form-export="{{ $row['key'] }}">{{ __('lynx-forms::admin.list.export') }}</x-lynx-admin::ui.button>
                             @endif
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.results', $row['key'])">{{ __('lynx-forms::admin.list.results') }}</x-lynx-admin::ui.button>

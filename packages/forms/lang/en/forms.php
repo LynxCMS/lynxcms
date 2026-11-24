@@ -27,4 +27,10 @@ return [
         'subject' => 'New submission: :form',
         'open' => 'Open in the admin',
     ],
+    'digest' => [
+        'subject' => '{1} 1 new submission: :form|[2,*] :count new submissions: :form',
+        'intro' => '{1} :form received 1 new submission since the last summary.|[2,*] :form received :count new submissions since the last summary.',
+        'more' => 'And :count more.',
+        'open' => 'Open them in the admin',
+    ],
 ];
