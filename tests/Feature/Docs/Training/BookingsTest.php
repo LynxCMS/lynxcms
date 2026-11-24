@@ -110,3 +110,20 @@ it('says payments are not set up instead of failing, on a copy without Stripe ke
 
     Http::assertNothingSent();
 });
+
+it('refuses to book an unpublished session, which visitors can\'t open', function (): void {
+    lynx()->pages->unpublish($this->session->id);
+
+    $this->post(route('bookings.store', $this->session->id), ['name' => 'Rita', 'email' => 'rita@example.com', 'language' => 'en'])
+        ->assertNotFound();
+
+    expect(Booking::query()->count())->toBe(0);
+    Http::assertNothingSent();
+});
+
+it('books a hidden session, which visitors can still open at its address', function (): void {
+    lynx()->pages->hide($this->session->id);
+
+    $this->post(route('bookings.store', $this->session->id), ['name' => 'Rita', 'email' => 'rita@example.com', 'language' => 'en'])
+        ->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_1');
+});

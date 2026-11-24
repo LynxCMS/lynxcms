@@ -326,12 +326,12 @@ Lynx's route serves every URL your routes leave free, so a controller of your ow
 
 ```php
 Route::get('/news/{name}', function (string $name) {
-    $post = lynx()->pages->findOne("parent=/news/, name={$name}") ?? abort(404);
+    $post = lynx()->pages->findOne("parent=/news/, name={$name}, include=hidden") ?? abort(404);
 
     return view('templates.post', ['page' => $post]);
 })->where('name', '[a-z0-9-]+');
 ```
 
-The `where()` pattern checks the name before it goes into the selector ([Visitor Input](/basics/visitor-input#values-in-a-selector)). `findOne()` leaves out unpublished posts and posts the visitor may not see. `get("/news/{$name}")` would return them too.
+The `where()` pattern checks the name before it goes into the selector ([Visitor Input](/basics/visitor-input#values-in-a-selector)). `findOne()` leaves out unpublished posts and posts the visitor may not see, which `get("/news/{$name}")` would return. `include=hidden` keeps hidden posts, which open at their address as they do on Lynx's own route.
 
 Livewire components on these pages work as described in [Livewire components](#livewire-components).

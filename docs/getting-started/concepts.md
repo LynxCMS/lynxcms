@@ -104,9 +104,11 @@ There is no `lynx()->page`. The page the visitor asked for exists only in the te
 `$page->children()` and `lynx()->pages->find()` take the same selectors and leave out the same pages. `lynx()->pages->get()` by id or path is the exception: it returns the page whatever its status and whoever is looking, so a view can always read a page it knows, such as a settings page. When a visitor's input decides which page to show, use a selector, which leaves out pages they may not see:
 
 ```php
-lynx()->pages->get(42);           // page 42, even if unpublished or for members only
-lynx()->pages->findOne('id=42');  // page 42, or null when the visitor may not see it
+lynx()->pages->get(42);                          // page 42, even if unpublished or for members only
+lynx()->pages->findOne('id=42, include=hidden'); // page 42, or null when the visitor may not open it
 ```
+
+`include=hidden` keeps hidden pages, which stay out of lists but open at their address. Without it, `findOne()` returns `null` for them too.
 
 ## Languages
 

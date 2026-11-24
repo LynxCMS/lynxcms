@@ -24,8 +24,10 @@ final class BookingController
 
     public function store(Request $request, int $session, StripeCheckout $checkout): RedirectResponse
     {
-        $page = lynx()->pages->get($session);
-        abort_unless($page instanceof Page && $page->template()->name === 'session', 404);
+        // A selector leaves out sessions visitors can't open, such as unpublished ones; get() by id
+        // would return them. Hidden sessions stay bookable, as they open at their address.
+        $page = lynx()->pages->findOne("id={$session}, template=session, include=hidden");
+        abort_unless($page instanceof Page, 404);
 
         // This route is the app's, outside Lynx's /pt/ URLs, so the form says the language.
         $buyer = $request->validate([

@@ -35,6 +35,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 - Fixed: with only `lynxcms/core` installed, `lynx:install` warned that no one could open the admin and suggested the admin's command, and `lynx:migrate` left a new site without its default language. `lynx:install` now speaks of the admin only when `lynxcms/admin` is installed, and `lynx:migrate` runs it when Lynx is not installed yet.
 - Fixed: messages of Laravel's rules called every field "value" ("The value field must be an integer."). They name the field by its label now.
 - Fixed: on a site whose `APP_FALLBACK_LOCALE` is a language Lynx has no text in, such as French or Estonian, the admin showed translation keys (`lynx-admin::home.title`). Lynx's wording now reads English there. The app's own translations keep Laravel's rules.
+- Fixed, in the training site starter: its booking route loaded the session with `lynx()->pages->get()`, which returns unpublished pages, so a visitor who guessed an id could book an unpublished session. It now uses a selector, which leaves out sessions visitors can't open. Apps built from the starter make the same change in `BookingController::store()`. See [`$page` and `lynx()->pages`](/getting-started/concepts#page-and-lynx-pages).
 - The translation key `lynx-admin::home.date_format` is gone. An app that translates the admin into another language can delete it.
 
 ## 0.1.55
