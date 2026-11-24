@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { defineConfig, type DefaultTheme } from 'vitepress'
+import llmstxt from 'vitepress-plugin-llms'
 
 const DOCS = join(__dirname, '..')
 
@@ -54,6 +55,17 @@ export default defineConfig({
     // Files in docs/ that are not pages, and drafts in a build.
     srcExclude: ['**/README.md', 'node_modules/**', ...drafts],
     ignoreDeadLinks: [(url) => draftLinks.has(url.replace(/[#?].*$/, '').replace(/\.html$/, ''))],
+
+    // Every page also as Markdown (/basics/views.md), plus llms.txt (an index) and llms-full.txt
+    // (every page in one file) for AI agents and tools. Drafts and snippets stay out.
+    vite: {
+        plugins: [
+            llmstxt({
+                domain: 'https://lynxcms.org',
+                ignoreFiles: ['snippets/**', '**/README.md', ...drafts],
+            }),
+        ],
+    },
 
     head: [
         ['meta', { name: 'theme-color', content: '#0e7490' }],
