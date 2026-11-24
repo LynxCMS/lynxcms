@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'form' => [
+        'name' => 'Usa letras minúsculas, dígitos y guiones, empezando por una letra, como contacto (como máximo :max caracteres).',
         'taken' => 'Ya existe un formulario con el nombre [:form].',
         'no_root' => 'Falta la página de los formularios.',
         'failed' => 'No se pudo crear el formulario.',
@@ -11,6 +12,9 @@ return [
     ],
     'field' => 'El campo [:field] ya existe con otros ajustes; el creador de formularios necesita [:needs].',
     'submission' => 'No existe el envío [:submission].',
+    'import' => [
+        'value' => 'Los campos de tipo [:type] no tienen el ajuste [:value].',
+    ],
     'builder' => [
         'indented' => 'Los bloques con sangría pertenecen a un grupo: añade un grupo encima, o quita la sangría.',
         'nested' => 'Un grupo no puede contener otro grupo ni un paso.',

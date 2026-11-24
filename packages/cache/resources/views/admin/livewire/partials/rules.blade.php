@@ -57,13 +57,13 @@
                             </div>
                             <p class="text-muted-foreground">{{ __('lynx-cache::admin.rules.none_ticked') }}</p>
                         </fieldset>
-                        <details class="grid gap-3 border-t pt-4" wire:ignore.self>
-                            <summary class="w-fit cursor-pointer font-medium">{{ __('lynx-cache::admin.rules.advanced') }}</summary>
-                            <label class="mt-3 flex cursor-pointer items-start gap-3">
+                        <x-lynx-admin::section :id="'cache-rule-'.$name.'-advanced'" :title="__('lynx-cache::admin.rules.advanced')" :remember="'cache-rule:'.$name.':advanced'" collapsed
+                            class="shadow-none" body-class="grid gap-3 p-5" data-rule-advanced="{{ $name }}">
+                            <label class="flex cursor-pointer items-start gap-3">
                                 <input type="checkbox" class="blat-checkbox mt-0.5" wire:model="rules.{{ $name }}.csrf">
                                 <span class="grid gap-0.5"><span class="font-medium">{{ __('lynx-cache::admin.rules.forms') }}</span><span class="text-muted-foreground">{{ __('lynx-cache::admin.rules.forms_help') }}</span></span>
                             </label>
-                        </details>
+                        </x-lynx-admin::section>
                     </div>
                 </li>
             @endforeach

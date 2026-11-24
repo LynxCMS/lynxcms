@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'form' => [
+        'name' => 'Use letras minúsculas, algarismos e hífenes, a começar por uma letra, como contacto (no máximo :max caracteres).',
         'taken' => 'Já existe um formulário com o nome [:form].',
         'no_root' => 'Falta a página dos formulários.',
         'failed' => 'Não foi possível criar o formulário.',
@@ -11,6 +12,9 @@ return [
     ],
     'field' => 'O campo [:field] já existe com outras definições; o construtor de formulários precisa de [:needs].',
     'submission' => 'Não existe a resposta [:submission].',
+    'import' => [
+        'value' => 'Os campos do tipo [:type] não têm a definição [:value].',
+    ],
     'builder' => [
         'indented' => 'Os blocos recuados pertencem a um grupo: adicione um grupo acima, ou retire o recuo.',
         'nested' => 'Um grupo não pode conter outro grupo nem um passo.',

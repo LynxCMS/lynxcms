@@ -1,7 +1,8 @@
 /**
- * A collapsible section of the page editor (template layout). It starts as the template says,
- * then as the editor last left it on this template (remembered in this browser). A section with
- * a validation error always opens, so a collapsed section never hides a problem.
+ * A collapsible section (components/section): the page editor's template sections and the other
+ * screens' sections. It starts as the template or screen says, then as the person last left it
+ * (remembered in this browser). A section with a validation error always opens, so a collapsed
+ * section never hides a problem.
  */
 const STORAGE_PREFIX = 'lynx:section:'
 

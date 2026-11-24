@@ -28,7 +28,7 @@ A form that members answer once each, such as a course survey, returns `true` fr
 
 ## Building forms in the admin
 
-Editors make forms without code. **Forms › Forms** lists them (with the forms defined in code) and their submissions; **New form** asks for a title and a name, then opens the form in the page editor. **Preview** shows the form as visitors will see it, unpublished forms too, and sending there only checks the answers. Each form is a page under a hidden branch that the page tree leaves out; its **Fields** are blocks:
+Editors make forms without code. **Forms › Forms** lists them (with the forms defined in code) and their submissions; **New form** asks for a title and a name, then opens the form in the page editor. The name is the form's key, which templates and submissions use: lowercase letters, digits and dashes, starting with a letter, such as `contact-us`. The admin lowercases what you type, so `Contact` becomes `contact`. **Preview** shows the form as visitors will see it, unpublished forms too, and sending there only checks the answers. Each form is a page under a hidden branch that the page tree leaves out; its **Fields** are blocks:
 
 | Block | Field |
 | --- | --- |
@@ -68,6 +68,20 @@ On a page the [page cache](/modules/page-cache) stores, a form keeps the time it
 ```blade
 <x-lynx-island livewire="lynx-form" :with="['form' => 'newsletter']" />
 ```
+
+### Copying a form to another site
+
+You can copy a form built in the admin to another site as a JSON file. **Export**, next to each form in **Forms › Forms**, downloads `contact.form.json`. On the other site, open **Import form** above the list and pick that file. It says what the import would create (the form's name, how many fields and steps, and the languages it leaves out) and changes nothing until you choose **Create form**, which opens the new form in the page editor. On the command line:
+
+```bash
+php artisan lynx:forms:export contact contact.form.json   # without a path, the JSON is printed
+php artisan lynx:forms:import contact.form.json --dry-run # checks the file, and changes nothing
+php artisan lynx:forms:import contact.form.json --name=contact-2
+```
+
+The file holds the form's name, its title, its messages and every block with its settings, conditions, groups and steps. Recipients, the one answer per account setting and submissions belong to the site they were made on, so they stay behind. The imported form is unpublished: add its recipients, check it in **Preview**, then publish it.
+
+Texts are keyed by language code. Texts in the other site's default language become this site's default language texts, whatever the two codes are, so a form from an `en` site imports into a site whose default is `default`. Texts in a language this site lacks are left out, and the import names those languages. An import is refused when this site has a form with that name: give the copy another with `--name`, or in the **Form name** box. A form defined in code travels with the app's code, so only forms built in the admin export.
 
 ## Placing a form
 
@@ -180,14 +194,14 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 ## Agents
 
-MCP clients and the built-in agent read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
+MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
 
 ## Permissions
 
 | Permission | Allows |
 | --- | --- |
 | `forms.view` | Seeing submissions, marking them read, archived or spam, and notes |
-| `forms.manage` | Deleting submissions |
+| `forms.manage` | Building forms, exporting and importing them, and deleting submissions |
 
 ## Housekeeping
 

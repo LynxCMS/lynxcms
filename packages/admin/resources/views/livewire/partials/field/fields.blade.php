@@ -79,8 +79,8 @@
 
     @include('lynx-admin::livewire.partials.field.settings')
 
-    <details class="{{ $section }} group" wire:ignore.self @error('settings.autoload') open @enderror>
-        <summary class="w-fit cursor-pointer text-base font-semibold">{{ __('lynx-admin::fields.advanced.heading') }}</summary>
+    <x-lynx-admin::section id="field-advanced" :title="__('lynx-admin::fields.advanced.heading')" remember="field:advanced" collapsed
+        :has-error="$errors->has('settings.autoload')" body-class="grid gap-3 p-5" data-field-advanced>
         @if ($name === 'title')
             <p class="text-sm">{{ __('lynx-admin::fields.advanced.always') }}</p>
         @else
@@ -90,7 +90,7 @@
             </label>
         @endif
         @error('settings.autoload') <p data-error-for="settings.autoload" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-    </details>
+    </x-lynx-admin::section>
 
     @include('lynx-admin::livewire.partials.field.danger')
 </div>

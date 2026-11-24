@@ -1598,3 +1598,19 @@ Staying in English: action descriptions, console output, the change summaries th
 - Muting turns the listeners that keep stored data correct into upkeep listeners, which `Event::fake()` does not stop. Listeners that apps register for muted events do not run. `ContentBatchChanged` keeps caches correct.
 - The work ships as separate pull requests, in order: the index (with `PageReferencesChanged` and the `PageLookup` rename), muting events, field addresses with the References tab, the reports screen, and rich text links.
 - A button that removes a reference from the References tab is left out. If it comes, it is a core action (`pages.remove_reference`) that refuses when the referencing page has a draft, is locked, or would break its field's rules, removes one reference at a time, and never applies to rich text or menu items.
+
+## ADR-0146: A builder form's structure travels as JSON, without its site's data
+
+**Status:** Accepted (builds on ADR-0053 and ADR-0116)
+
+**Context:** A complex form, with steps, groups, conditions and translated options, takes time to build in the admin, and agencies want to reuse one on another site. Forms built in the admin are pages under a hidden branch, with their fields as blocks of the `form_fields` matrix, so copying one meant rebuilding it or moving a content package. Code forms already travel with the app's code. Two ways were considered: a `forms` section in drafts (ADR-0116), and an export and import of one form. Drafts build schema in core, and core may not depend on the forms module, so a draft section needed a hook for modules to add sections, which is new public API for one module. Copying a form is also content transfer, where a draft is create-only schema building.
+
+**Decision:** A form exports as JSON and imports as a new form.
+
+- **Format.** `{lynx_form: 1, name, default_language, title, messages: {success, error, auto_reply}, fields: [{type, depth, enabled, values}]}`. Blocks are stored as the matrix holds them, minus their keys. Texts are keyed by language code, without fallback, and `default_language` names the source's default. `lynx_form` is the format's version, and an import refuses another.
+- **Left out.** Recipients, the one answer per account setting and submissions belong to the site. Recipients are addresses, which shouldn't travel by accident.
+- **Import.** `forms.import` (`forms.manage`) runs `forms.create`, then `pages.save` with the fields and messages, so the builder's own checks run and an import is a dry run like any action. The form is unpublished, since it has no recipients yet. A name the site has is refused, and `name` gives another. The source's default language texts become this site's default, and texts in languages this site lacks are dropped and listed in the result, since refusing the whole form for a missing translation helps nobody. A block value its type doesn't show is refused.
+- **Entry points.** **Export** and **Import form** in **Forms › Forms**, `lynx:forms:export` and `lynx:forms:import`, and the action over MCP. `FormExporter` writes the format and is `@api`.
+
+**Consequences:** One file copies a form between sites, and between environments. Drafts stay core-only. A later format change bumps `lynx_form` and keeps reading version 1. Updating a form that exists from a file is not supported: replacing its blocks would turn submissions' fields into orphans, so a copy gets a new name.
+

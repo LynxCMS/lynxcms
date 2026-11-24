@@ -14,6 +14,7 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\FormRegistry;
 use LynxCms\Forms\FormSchema;
+use LynxCms\Forms\Rules\FormName;
 
 /**
  * Creates a form in the builder (ADR-0053): an unpublished page under the hidden forms page,
@@ -44,7 +45,7 @@ final class CreateForm extends Action
     public static function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:64', 'regex:'.FormSchema::NAME_PATTERN],
+            'name' => ['required', 'string', new FormName],
             'label' => ['required'],
         ];
     }

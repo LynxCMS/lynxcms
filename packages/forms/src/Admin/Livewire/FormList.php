@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Admin\Livewire;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\CreateForm;
+use LynxCms\Forms\Admin\Livewire\Concerns\ImportsForms;
 use LynxCms\Forms\Builder\PageForm;
 use LynxCms\Forms\Definition\Form;
 use LynxCms\Forms\FormSchema;
@@ -18,12 +20,15 @@ use LynxCms\Forms\Models\Submission;
 
 /**
  * The Forms tab: forms built in the admin (published or still being built) and forms defined in
- * code, with their submissions, and "New form" for users who may build forms.
+ * code, with their submissions, and "New form", "Import form" and each form's Export for users
+ * who may build forms (ADR-0146).
  *
  * @internal
  */
 final class FormList extends Component
 {
+    use ImportsForms;
+
     public string $name = '';
 
     public string $label = '';
@@ -36,7 +41,9 @@ final class FormList extends Component
     public function create(): void
     {
         abort_unless(app(AdminAccess::class)->allows('forms.manage'), 403);
-        $page = lynx()->run(CreateForm::class, ['name' => trim($this->name), 'label' => trim($this->label)])->valueAs(Page::class);
+        // A name is a key in lowercase: "Contact" is taken as "contact", and the box shows it.
+        $this->name = Str::lower(trim($this->name));
+        $page = lynx()->run(CreateForm::class, ['name' => $this->name, 'label' => trim($this->label)])->valueAs(Page::class);
 
         $this->redirectRoute('lynx.admin.pages.edit', ['page' => $page->id]);
     }
@@ -54,7 +61,7 @@ final class FormList extends Component
     }
 
     /**
-     * @return list<array{key: string, label: string, kind: string, published: bool, edit: string|null}>
+     * @return list<array{key: string, label: string, kind: string, published: bool, edit: string|null, structure: string|null}>
      */
     private function builderRows(): array
     {
@@ -72,6 +79,7 @@ final class FormList extends Component
                     'kind' => 'builder',
                     'published' => ! $page->hasStatus(PageStatus::UNPUBLISHED),
                     'edit' => route('lynx.admin.pages.edit', ['page' => $page->id]),
+                    'structure' => route('lynx.admin.forms.structure', FormSchema::key($page)),
                 ];
             }
         }
@@ -80,7 +88,7 @@ final class FormList extends Component
     }
 
     /**
-     * @return list<array{key: string, label: string, kind: string, published: bool, edit: string|null}>
+     * @return list<array{key: string, label: string, kind: string, published: bool, edit: string|null, structure: string|null}>
      */
     private function codeRows(): array
     {
@@ -88,7 +96,7 @@ final class FormList extends Component
 
         foreach (lynx()->forms()->all() as $key => $form) {
             if (! $form instanceof PageForm && $form instanceof Form) {
-                $rows[] = ['key' => $key, 'label' => $form->text('label')->in(), 'kind' => 'code', 'published' => true, 'edit' => null];
+                $rows[] = ['key' => $key, 'label' => $form->text('label')->in(), 'kind' => 'code', 'published' => true, 'edit' => null, 'structure' => null];
             }
         }
 

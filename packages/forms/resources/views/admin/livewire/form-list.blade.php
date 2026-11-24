@@ -1,20 +1,4 @@
 <div class="space-y-6">
-    @if ($canBuild)
-        <form wire:submit="create" class="bg-card flex flex-wrap items-end gap-3 rounded-xl border p-4">
-            <label class="grid gap-1 text-sm">
-                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.title_label') }}</span>
-                <input type="text" class="blat-input w-56" wire:model="label" placeholder="{{ __('lynx-forms::admin.list.title_placeholder') }}">
-                @error('label') <span data-error-for="label" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
-            </label>
-            <label class="grid gap-1 text-sm">
-                <span class="text-muted-foreground">{{ __('lynx-forms::admin.list.name_label') }}</span>
-                <input type="text" class="blat-input w-48 font-mono" wire:model="name" placeholder="{{ __('lynx-forms::admin.list.name_placeholder') }}">
-                @error('name') <span data-error-for="name" role="alert" class="text-destructive text-xs">{{ $message }}</span> @enderror
-            </label>
-            <x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button>
-        </form>
-    @endif
-
     <x-lynx-admin::ui.table variant="card">
         <x-lynx-admin::ui.table-header>
             <x-lynx-admin::ui.table-row class="hover:bg-transparent">
@@ -43,7 +27,10 @@
                     <x-lynx-admin::ui.table-cell class="px-4 py-2 text-end">
                         <span class="inline-flex gap-2">
                             @if ($row['edit'] !== null && $canBuild)
-                                <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['edit']">{{ __('lynx-forms::admin.list.edit') }}</x-lynx-admin::ui.button>
+                                <x-lynx-admin::ui.button size="xs" :href="$row['edit']">{{ __('lynx-forms::admin.list.edit') }}</x-lynx-admin::ui.button>
+                            @endif
+                            @if ($row['structure'] !== null && $canBuild)
+                                <x-lynx-admin::ui.button variant="outline" size="xs" :href="$row['structure']" data-form-export="{{ $row['key'] }}">{{ __('lynx-forms::admin.list.export') }}</x-lynx-admin::ui.button>
                             @endif
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.results', $row['key'])">{{ __('lynx-forms::admin.list.results') }}</x-lynx-admin::ui.button>
                             <x-lynx-admin::ui.button variant="outline" size="xs" :href="route('lynx.admin.forms.preview', $row['key'])">{{ __('lynx-forms::admin.list.preview') }}</x-lynx-admin::ui.button>
@@ -57,4 +44,51 @@
             @endforelse
         </x-lynx-admin::ui.table-body>
     </x-lynx-admin::ui.table>
+
+    @if ($canBuild)
+        {{-- Stacked as the admin's other create forms (template-form): label, field, help, then the button. --}}
+        <form wire:submit="create" class="bg-card text-card-foreground grid gap-5 rounded-xl border p-5 shadow-sm">
+            <div class="grid gap-1">
+                <label for="form-title" class="text-sm font-medium">{{ __('lynx-forms::admin.list.title_label') }}</label>
+                <input id="form-title" type="text" class="blat-input max-w-sm" wire:model="label" placeholder="{{ __('lynx-forms::admin.list.title_placeholder') }}" @error('label') aria-invalid="true" @enderror>
+                @error('label') <p data-error-for="label" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            </div>
+            <div class="grid gap-1">
+                <label for="form-name" class="text-sm font-medium">{{ __('lynx-forms::admin.list.name_label') }}</label>
+                <input id="form-name" type="text" class="blat-input max-w-sm font-mono" wire:model="name" placeholder="{{ __('lynx-forms::admin.list.name_placeholder') }}" aria-describedby="form-name-help" @error('name') aria-invalid="true" @enderror>
+                <p id="form-name-help" class="lynx-field-help">{{ __('lynx-forms::admin.list.name_help') }}</p>
+                @error('name') <p data-error-for="name" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+            </div>
+            <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.new') }}</x-lynx-admin::ui.button></div>
+        </form>
+        <x-lynx-admin::section id="forms-import" :title="__('lynx-forms::admin.list.import')" remember="forms:import" collapsed
+            :has-error="$errors->has('importFile') || $errors->has('importName')" body-class="p-5" data-form-import>
+            <form wire:submit="import" class="grid gap-5">
+                <div class="grid gap-1">
+                    <label for="import-file" class="text-sm font-medium">{{ __('lynx-forms::admin.list.import_file') }}</label>
+                    <input id="import-file" type="file" accept="application/json,.json" class="blat-input max-w-sm" wire:model="importFile" @error('importFile') aria-invalid="true" @enderror>
+                    @error('importFile') <p data-error-for="importFile" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid gap-1">
+                    <label for="import-name" class="text-sm font-medium">{{ __('lynx-forms::admin.list.import_name') }}</label>
+                    <input id="import-name" type="text" class="blat-input max-w-sm font-mono" wire:model.blur="importName" aria-describedby="import-name-help" @error('importName') aria-invalid="true" @enderror>
+                    <p id="import-name-help" class="lynx-field-help">{{ __('lynx-forms::admin.list.name_help') }}</p>
+                    @error('importName') <p data-error-for="importName" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
+                </div>
+                @if ($importPreview !== null)
+                    <div class="grid gap-3 text-sm" data-import-preview>
+                        <p>{{ __('lynx-forms::admin.list.import_preview', [
+                            'name' => $importPreview['name'],
+                            'fields' => trans_choice('lynx-forms::admin.list.import_fields', $importPreview['fields']),
+                            'steps' => trans_choice('lynx-forms::admin.list.import_steps', $importPreview['steps']),
+                        ]) }}</p>
+                        @if ($importPreview['dropped'] !== [])
+                            <p class="text-muted-foreground" data-import-dropped>{{ __('lynx-forms::admin.list.import_left_out', ['languages' => implode(', ', $importPreview['dropped'])]) }}</p>
+                        @endif
+                        <div><x-lynx-admin::ui.button type="submit">{{ __('lynx-forms::admin.list.import_submit') }}</x-lynx-admin::ui.button></div>
+                    </div>
+                @endif
+            </form>
+        </x-lynx-admin::section>
+    @endif
 </div>
