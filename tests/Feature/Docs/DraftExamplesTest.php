@@ -7,13 +7,13 @@ use LynxCms\Core\Schema\Draft\DraftPaths;
 
 /*
  * "A draft in two languages" in Templates and Fields shows docs/snippets/drafts/bilingual-blog.yaml.
- * It builds on a site in English and Portuguese, and a site without them is told which is missing.
+ * It adds its languages, so it builds on a new site and on one that has Portuguese already.
  */
 
 const BILINGUAL_DRAFT = __DIR__.'/../../../docs/snippets/drafts/bilingual-blog.yaml';
 
 beforeEach(function (): void {
-    courseSite();
+    installLynx();
     $this->dir = testingPath('draft-examples');
     File::deleteDirectory($this->dir);
     File::ensureDirectoryExists($this->dir.'/views');
@@ -24,18 +24,19 @@ beforeEach(function (): void {
 
 afterEach(fn (): bool => File::deleteDirectory($this->dir));
 
-it('builds the bilingual blog on a site in English and Portuguese', function (): void {
-    lynx()->languages->update('default', ['code' => 'en', 'name' => 'English']);
-
+it('builds the bilingual blog on a new site', function (): void {
     $this->artisan('lynx:draft', ['path' => BILINGUAL_DRAFT])->assertSuccessful();
 
     expect(lynx()->templates->find('post')?->labels()->toStorage())->toBe(['en' => 'Post', 'pt' => 'Artigo'])
         ->and(lynx()->fields->choices('category')->values())->toBe(['news', 'guides'])
-        ->and(lynx()->language('pt', fn () => lynx()->fields->choices('category')->labels()))->toContain('Notícias');
+        ->and(lynx()->language('pt', fn () => lynx()->fields->choices('category')->labels()))->toContain('Notícias')
+        ->and(lynx()->languages->default()->code)->toBe('en');
 });
 
-it('refuses the bilingual blog on a site without its languages, naming the missing one', function (): void {
-    $this->artisan('lynx:draft', ['path' => BILINGUAL_DRAFT, '--dry-run' => true])
-        ->expectsOutputToContain('[en]')
-        ->assertFailed();
+it('builds the bilingual blog on a site that has Portuguese already', function (): void {
+    lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'default');
+
+    $this->artisan('lynx:draft', ['path' => BILINGUAL_DRAFT])->assertSuccessful();
+
+    expect(lynx()->languages->find('pt')?->fallback_id)->toBe(lynx()->languages->default()->id);
 });

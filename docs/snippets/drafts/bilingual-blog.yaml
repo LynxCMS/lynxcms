@@ -1,6 +1,10 @@
 # yaml-language-server: $schema=./draft.schema.json
 #
-# A blog in English (en) and Portuguese (pt). The site needs both languages before it is built.
+# A blog in English (en) and Portuguese (pt).
+
+languages:
+  en: { name: English, default: true }          # the site's default language, renamed to en
+  pt: { name: Português, locale: pt-PT, fallback: en }
 
 fields:
   # The short form: "type[:argument]", then flags and key:value settings.

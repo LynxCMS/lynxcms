@@ -325,7 +325,7 @@ php artisan lynx:draft               # builds it, after asking in a terminal
 
 `--stub` writes a draft of a blog that uses every option this section describes, with a comment on each: the short and the long form, a repeater and a matrix, sections and a tab, family rules, a template without a URL, and pages. Its labels are in the site's default language, so it builds on any site.
 
-A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or make a translatable field shared, and it can't touch what Lynx or a module owns, such as menus.
+A build runs in one transaction, through the same actions as the admin, so it all happens or none of it does. Every mistake is reported before anything changes, with the closest name when you mistype one (`decmal` suggests `decimal`). A draft adds and changes languages, fields and templates; it never deletes them. For a field or template the site already has, a label the draft leaves out stays as it is, and so do settings it doesn't name, so building the same draft twice changes nothing. A draft can't change a field's type or make a translatable field shared, and it can't touch what Lynx or a module owns, such as menus.
 
 For a template the site already has, the draft's `fields` list becomes the template's list, in the draft's order. A draft that leaves out a field the template has is refused, and the error names the fields. List them to keep them, or build with `--prune-fields` to take them off the template; the plan then shows `remove field body from template course` for each. The fields and their values stay in the site.
 
@@ -357,22 +357,27 @@ Pages are created unpublished, after the fields and templates, with the title an
 
 ### A draft in two languages
 
-Labels, descriptions and choice options can be written in several languages, each under its language's code. A draft refuses a label in a language the site doesn't have, so create the languages before you build it. A new site has one language, coded `default`: in **Settings › Languages**, change its code to `en` and add `pt`, or run this once in `php artisan tinker`:
+Labels, descriptions and choice options can be written in several languages, each under its language's code. A draft can add those languages too, under `languages`, before the fields that use them:
 
-```php
-lynx()->languages->update('default', ['code' => 'en', 'name' => 'English']);
-lynx()->languages->create('pt', 'Português', locale: 'pt-PT', fallback: 'en');
+```yaml
+languages:
+  en: { name: English, default: true }
+  pt: { name: Português, locale: pt-PT, fallback: en }
 ```
+
+Each language is its code, then its name, or a map of `name`, `label` (the short label on the admin's language tabs), `locale`, `prefix` (the URL prefix, which is the code for a new language), `fallback` (the language shown where a value is missing) and `active`. A new site has one language, coded `default`. The entry marked `default: true` is the site's default language, whatever its code is now, so `en` above renames `default` to `en`, and labels stored under the old code follow. Its URL prefix stays empty, so no URL changes.
+
+A draft adds languages and changes them. It never removes one it leaves out, and it can't make another language the default. Settings an entry leaves out keep the site's values, so `pt: Portuguese` only changes the name of `pt`. On a live site, check the plan with `--dry-run` first: a new language makes its URLs (`/pt/...`) answer, and its pages show the fallback language's text until someone translates them. [Languages](/basics/languages#adding-a-language) covers adding a language to a site that has content.
 
 This is the starting blog with its labels and options in English and Portuguese:
 
 <<< @/snippets/drafts/bilingual-blog.yaml{yaml}
 
-`label: { en: Post, pt: Artigo }` gives a label in each language. A choice option is its default language label, followed by its translations (`News: { pt: Notícias }`), and the stored value is the default language label made URL safe (`news`). [Languages](/basics/languages#adding-a-language) covers adding a language to a site that has content.
+`label: { en: Post, pt: Artigo }` gives a label in each language. A choice option is its default language label, followed by its translations (`News: { pt: Notícias }`), and the stored value is the default language label made URL safe (`news`). A label in a language neither the site nor the draft has is refused.
 
 Two more options help with an existing site:
 
-- `php artisan lynx:draft --from-site` writes the site's own fields and templates as a draft, in the short form wherever it fits. It is a quick way to read a site's schema, and building it changes nothing.
+- `php artisan lynx:draft --from-site` writes the site's own languages (when it has several), fields and templates as a draft, in the short form wherever it fits. It is a quick way to read a site's schema, and building it changes nothing.
 - `php artisan lynx:draft --json-schema` writes `lynx/draft.schema.json`, next to the draft. Editors with a YAML language server (the YAML extension in VS Code, or PhpStorm) then check drafts in that folder as you type, underlining unknown types and keys and suggesting types, settings and template keys, when the draft's first line is `# yaml-language-server: $schema=./draft.schema.json`. A draft written by `--stub` or `--from-site` already starts with it. The short form is one string to the editor, so only its type is checked there; `--dry-run` checks the rest. Run `--json-schema` again after installing a module, for its field types.
 
 An AI agent connected through MCP can build a draft too, with the `schema.draft` tool. It shows you what would change first, needs your agreement (`prune_fields`) to take fields off a template, and it only changes the database: the views, `lynx/schema` and the type files stay yours to update. Where schema editing is off ([On production](/deeper/schema-and-content#on-production)), the tool is refused, as every schema change by an agent is.

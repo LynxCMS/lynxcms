@@ -19,7 +19,7 @@ Set up a site, and read or change its languages, fields and templates.
 | `lynx:languages` | Lists the languages. |
 | `lynx:templates template --json` | Lists the templates with their pages, fields and whether they have a view, the site's first and those Lynx and its modules own (menus, trash, settings) in a second table with their owner; with a template, its fields in order with their type, section and tab. Tables wrap to fit the terminal. |
 | `lynx:fields --unused --json` | Lists the fields with their type and where they are used: templates, and the items of repeaters and matrices, with module fields in a table of their own; `--unused` keeps those nothing uses. With `--json`, each template or field has an `owner`, `null` for the site's. |
-| `lynx:draft path --dry-run --no-views --force-views --prune-fields --stub --from-site --json-schema` | Builds fields, templates and unpublished pages from a short YAML draft, with a starting view for each template with a URL it creates or changes that has none; `--from-site` writes the site's schema as a draft. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema). |
+| `lynx:draft path --dry-run --no-views --force-views --prune-fields --stub --from-site --json-schema` | Builds languages, fields, templates and unpublished pages from a short YAML draft, with a starting view for each template with a URL it creates or changes that has none; `--from-site` writes the site's schema as a draft. See [Drafting the schema](/basics/templates-and-fields#drafting-the-schema). |
 | `lynx:schema:export --path=` | Writes the schema as YAML (default `lynx/schema`). |
 | `lynx:schema:apply --path= --dry-run --force` | Applies schema files; `--force` also deletes what the files lack. |
 

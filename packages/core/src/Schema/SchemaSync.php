@@ -139,6 +139,22 @@ final readonly class SchemaSync
         return $result;
     }
 
+    /**
+     * These languages, inside the caller's transaction and without deletes: a draft's languages
+     * section, applied before its fields and templates are compiled (ADR-0116).
+     *
+     * @param  list<LanguageItem>  $items
+     */
+    public function applyLanguages(array $items): SchemaSyncResult
+    {
+        $result = new SchemaSyncResult;
+        $this->languageSync->apply($items, $result, fn (string $action, array $input) => $this->run($result, $action, $input));
+        $this->runner->flushCaches();
+        $result->applied = ! $result->hasErrors();
+
+        return $result;
+    }
+
     /** The roles in the files, inside the caller's transaction and without deletes. */
     public function applyRoles(string $directory): SchemaSyncResult
     {
