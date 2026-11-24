@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
 use LynxCms\Core\Actions\Runner\Input;
+use LynxCms\Core\Actions\Runner\RefusesUnknownInput;
 use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Fields\FieldSettings;
 use LynxCms\Core\Models\Field;
@@ -21,7 +22,7 @@ use Override;
  *
  * @api
  */
-final class UpdateField extends Action
+final class UpdateField extends Action implements RefusesUnknownInput
 {
     public function __construct(private readonly FieldRegistry $fields) {}
 

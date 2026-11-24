@@ -159,6 +159,24 @@ $result->changes->summary(); // what would be deleted, page by page
 
 [Actions and Hooks](/deeper/actions-and-hooks) shows how to add your own rules to actions, and how to write actions of your own.
 
+## Naming
+
+Names that Lynx gives to PHP code are in camelCase, as in Laravel. Names that are stored, sent to the MCP server, or written in selectors, config and YAML files are in snake_case:
+
+| Where | Case | Example |
+| --- | --- | --- |
+| Named arguments of `lynx()` methods | camelCase | `lynx()->templates->create('post', hasUrl: false)` |
+| Lynx's own page properties and methods | camelCase | `$page->parentId`, `$page->publishedAt`, `$page->children()` |
+| Keys of `update()` and other action input | snake_case | `lynx()->templates->update('post', ['has_url' => false])` |
+| Keys of `settings:` | snake_case | `settings: ['format' => 'html']` |
+| Field names, and the properties you read them with | snake_case | `$page->published_on` |
+| Selectors | snake_case | `published_on>=today, has_parent=/blog, include=hidden` |
+| Config keys and schema files | snake_case | `routes.enabled`, `has_url: false` |
+
+Laravel draws the same line: a model's columns are snake_case properties, such as `$user->first_name`, beside camelCase methods. A page works the same way, so `$page->published_on` (a field) and `$page->publishedAt` (when Lynx first published the page) sit side by side.
+
+`update()` refuses a key it doesn't know, so a camelCase key copied from a named argument fails with a message that names the snake_case key, instead of changing nothing.
+
 ## Nothing is lost by accident
 
 Lynx assumes nobody meant to delete anything until they do it on purpose:

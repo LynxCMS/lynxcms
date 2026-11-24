@@ -140,4 +140,8 @@ return [
         'not_package' => '[:path] is not a Lynx content package (no manifest.json and pages.jsonl).',
         'newer' => 'The package was written by a newer Lynx (format version :version).',
     ],
+    'input' => [
+        'unknown_snake' => 'Unknown key [:key]. Did you mean [:suggestion]? Input keys are written in snake_case.',
+        'unknown' => 'Unknown key [:key]. Known keys: :known.',
+    ],
 ];
