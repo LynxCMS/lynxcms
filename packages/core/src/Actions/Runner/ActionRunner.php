@@ -89,7 +89,11 @@ final class ActionRunner
     {
         $outer = $this->depth === 0;
 
+        // Permissions first (ADR-0033), before validation: an actor who may not run the action
+        // learns nothing from its validation messages, such as whether a name is taken. Nested
+        // actions were authorized with their outer action.
         if ($outer) {
+            $this->container->make(Authorizer::class)->authorizeAction($this->actor(), $action::permission(), $action::name());
             $this->changes = new ChangeSet;
             $this->events->clear();
             $this->dryRun = $dryRun;
@@ -115,14 +119,13 @@ final class ActionRunner
         );
 
         $connection = $this->db->connection();
+        $level = $connection->transactionLevel();
         $this->depth++;
-        $connection->beginTransaction();
 
         try {
-            // Permissions first (ADR-0033); nested actions were authorized with their outer action.
-            if ($outer) {
-                $this->container->make(Authorizer::class)->authorizeAction($context->actor, $action::permission(), $action::name());
-            }
+            // Inside the try: when the transaction fails to start, depth must go back down, or every
+            // later action in a long-lived process would count as nested and skip its checks.
+            $connection->beginTransaction();
 
             // At any depth: a module's action may create fields inside (ADR-0117).
             if ($action::changesSchema()) {
@@ -145,7 +148,10 @@ final class ActionRunner
                 $connection->commit();
             }
         } catch (Throwable $e) {
-            $connection->rollBack();
+            if ($connection->transactionLevel() > $level) {
+                $connection->rollBack();
+            }
+
             $this->depth--;
 
             if ($outer) {
