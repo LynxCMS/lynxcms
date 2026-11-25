@@ -57,6 +57,7 @@ use LynxCms\Core\Pages\PageGates;
 use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PathResolver;
 use LynxCms\Core\Pages\RootPage;
+use LynxCms\Core\Pages\Saving\SavingPage;
 use LynxCms\Core\Pages\SettingsPages;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Pages\UnknownFields;
@@ -151,6 +152,7 @@ final class LynxServiceProvider extends ServiceProvider
     {
         $this->registerTinkerCaster();
         $this->app->scoped(UnknownFields::class);
+        $this->app->scoped(SavingPage::class);
         // Regional languages (pt-PT) also read the bare language's strings and files (lang/pt.json, lang/pt/*.php).
         $this->app->extend('translation.loader', RegionalLoader::widen(...));
         // Page gates and visibility rules (ADR-0062): registered by modules at boot.
