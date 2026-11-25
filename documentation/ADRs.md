@@ -1681,7 +1681,7 @@ Staying in English: action descriptions, console output, the change summaries th
 - **Writes.** `pages.save` refuses a field's value from an actor whose roles may not edit it, with a message on the field; its other fields save. MCP clients and the agent are judged by their user's roles, or the anonymous role. Publishing a draft and restoring a revision leave such fields out, so they keep their live value and the rest publishes.
 - **The admin.** The page editor leaves out a field the editor's role may not see, and shows read only a field it may see but not edit. The Finder doesn't offer fields a role may not see. The field form has an Access tab: a **Manage access for this field** checkbox, then a table with a row per role (superusers left out) and View and Edit columns; Edit is off for roles without `pages.edit`.
 - **Agents.** `get_page` and the page results of actions leave out fields the actor may not see; `describe_schema` leaves them out and marks `editable: false` on those it may not edit.
-- **Not visitors.** Templates read every field, so field access changes nothing on the site's pages. Selectors in code are not filtered by it either.
+- **Not visitors.** Templates read every field, so field access changes nothing on the site's pages. Selectors in code are not filtered by it either; selectors from agents and the Finder are, since ADR-0153.
 - Role names are checked when saved; deleting a role leaves its name in a field's list, where it matches nobody.
 
 **Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
@@ -1703,3 +1703,18 @@ Staying in English: action descriptions, console output, the change summaries th
 - **Doctor:** `media-queued-sizes` warns when the setting is on and the queue connection is `sync`.
 
 **Consequences:** With a worker, a page's first render no longer waits for its sizes; its first visitors see heavier images for a moment, and the page reaches the page cache one render later. Without a worker and the setting on, stand-ins stay: correct, only heavier, which the doctor check points at. Making sizes ahead of time (recording the specs each field uses and making them after an upload) waits for a site that needs it.
+
+
+## ADR-0153: Selectors from outside the site's code run under a policy
+
+**Status:** Accepted (changes ADR-0151 for agents and the Finder; from the core security review, documentation/reports/security-review-core-2026-11-25.md, M1 and M3)
+
+**Context:** A selector can filter and sort on any field and name `include`, `status` and the `has_` terms. That is right for selectors a developer writes. Two other sources were found to leak content. An agent with `pages.view` whose role may not view a field (ADR-0151) could still filter and sort by it in `find_pages`: `salary>50000` or `sort=salary` tell the value through the total and the order, and `search*=` does the same when the field is indexed. An app that takes a whole selector from a visitor, as the selectors page showed, could be asked for unpublished pages (`include=all`) or for a field no template prints, one letter at a time (`notes^=a`). A per-field check inside the compiler was considered; checking the parsed selector before it compiles keeps the compiler as it is and covers clauses, OR groups, `sort=`, `join=` and page references in one place.
+
+**Decision:** `LynxCms\Core\Query\SelectorPolicy` (`@api`), passed as `policy:` to `PageFinder::find()` and `lynx()->pages->find()`. It is checked against the parsed selector, and a refusal throws `SelectorException`, as an invalid selector does. A policy holds a field check (every part of `a|b` and every segment of `related.price` that names a field), terms it refuses, and caps on clauses, values and `start=`.
+
+- `SelectorPolicy::forActor($actor)`: refuses fields the actor's role may not view, and `search` while such a field is indexed. Null when every field is open to the actor, so most sites pay nothing. The agent toolkit's `findPages` and the Finder's searches use it.
+- `SelectorPolicy::forVisitors($fields)`: only the fields named (`search` when listed), no `include`, `join`, `status` or `has_` terms, at most 10 clauses, 20 values and `start=1000` by default.
+- Selectors the site's own code writes run without a policy, as before.
+
+**Consequences:** A restricted role can no longer find pages by a field it may not view, through agents or the Finder. Apps that pass a visitor's selector have one argument to make it safe, and the docs show it. A visitor's words inside the app's own selector are still the app's to escape (Visitor Input); the parked plan for bindings in selectors covers that case.
