@@ -41,7 +41,7 @@ function storeImage(string $field = 'gallery', int $width = 1600, int $height = 
 it('stores an upload in the page\'s folder and scales it to the field\'s maximum', function (): void {
     $entry = storeImage();
 
-    expect($entry['file'])->toMatch('/^'.test()->alphaId.'\/set-photo-[a-z0-9]{6}\.jpg$/')
+    expect($entry['file'])->toMatch('/^'.test()->alphaId.'\/set-photo-[a-z0-9]{16}\.jpg$/')
         ->and($entry)->toMatchArray(['width' => 1000, 'height' => 563, 'mime' => 'image/jpeg'])
         ->and(Storage::disk('public')->exists('lynx/'.$entry['file']))->toBeTrue();
 });

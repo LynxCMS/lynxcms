@@ -52,7 +52,7 @@ function saveFiles(string $field, array $items): void
 
 function fileStem(?Pagefile $file): ?string
 {
-    return $file === null ? null : (string) preg_replace('/-[a-z0-9]{6}\.(png|pdf)$/', '', $file->name());
+    return $file === null ? null : (string) preg_replace('/-[a-z0-9]{16}\.(png|pdf)$/', '', $file->name());
 }
 
 /** @return list<string|null> */

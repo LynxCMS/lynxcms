@@ -160,7 +160,17 @@ URLs are downloaded only from public web servers: `http` and `https` on their us
 
 ## Private files
 
-Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
+Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. This holds from the moment a file is uploaded, whatever the page's status: the web server sends files on the public disk without asking Lynx, so an unpublished page's files are kept only by their names, which end in 16 random characters.
+
+Fields never accept extensions a browser would run as part of the site: HTML, SVG, JavaScript, every XML type (such as `gpx`, `kml` or `rss`), server scripts, and extensions with no known type, which a web server sends without one. Zip a file of such a type to offer it for download. As a second guard, have the web server send the public media folder (`storage/app/public/lynx`, served as `/storage/lynx`) with `X-Content-Type-Options: nosniff` and `Content-Security-Policy: sandbox`. With nginx:
+
+```nginx
+location /storage/lynx/ {
+    add_header X-Content-Type-Options nosniff always;
+    add_header Content-Security-Policy sandbox always;
+}
+```
+ For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
 
 ```php
 lynx()->fields->create('handouts', 'files', settings: ['private' => true]);

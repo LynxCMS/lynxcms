@@ -48,7 +48,7 @@ it('downloads a file from a public web server', function (): void {
 
     $entry = download('https://cdn.example/files/notes.txt');
 
-    expect($entry['file'])->toMatch('/^'.test()->alphaId.'\/notes-[a-z0-9]{6}\.txt$/')
+    expect($entry['file'])->toMatch('/^'.test()->alphaId.'\/notes-[a-z0-9]{16}\.txt$/')
         ->and(Storage::disk('public')->get('lynx/'.$entry['file']))->toBe('Course notes');
 });
 

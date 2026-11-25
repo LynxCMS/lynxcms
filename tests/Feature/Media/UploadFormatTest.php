@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Core\Fields\FieldRegistry;
+use LynxCms\Core\Support\Tables;
 use LynxCms\Media\Actions\StoreMedia;
 
 /*
@@ -47,3 +50,25 @@ it('refuses a picture of a type the field does not store, whatever its name', fu
 
     storeUpload($bmp, 'photo.png');
 })->throws(ValidationException::class);
+
+it('refuses extensions a browser would run or guess, in a field\'s settings', function (string $extension): void {
+    lynx()->fields->add('maps', 'files', settings: ['extensions' => "pdf {$extension}"]);
+})->with(['html', 'gpx', 'kml', 'rss', 'xslt', 'mhtml', 'shtm', 'cfm', 'unknownext'])->throws(ValidationException::class);
+
+it('accepts the usual document and media extensions', function (): void {
+    lynx()->fields->add('papers', 'files', settings: ['extensions' => 'pdf doc docx xls xlsx ppt pptx txt csv zip mp4 mp3 epub odt json md']);
+
+    expect(lynx()->fields->get('papers')->fieldType()->extensions(lynx()->fields->get('papers')->config()))->toContain('pdf', 'epub', 'md');
+});
+
+it('drops a refused extension an older setting still lists', function (): void {
+    lynx()->fields->add('maps', 'files', settings: ['extensions' => 'pdf']);
+    DB::table(Tables::FIELDS)->where('name', 'maps')->update(['settings' => json_encode(['extensions' => 'pdf gpx'])]);
+    app(FieldRegistry::class)->flush();
+
+    expect(lynx()->fields->get('maps')->fieldType()->extensions(lynx()->fields->get('maps')->config()))->toBe(['pdf']);
+});
+
+it('names stored files with a random suffix of 16 characters', function (): void {
+    expect(storeUpload(jpeg(20, 10), 'Team Photo.jpg')['file'])->toMatch('/^\d+\/team-photo-[a-z0-9]{16}\.jpg$/');
+});
