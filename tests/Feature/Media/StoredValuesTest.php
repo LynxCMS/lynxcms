@@ -113,3 +113,25 @@ it('refuses an upload to a field the editor may not edit, or that is locked', fu
     'no access' => [['access' => ['edit' => []]]],
     'locked' => [['locked' => true]],
 ])->throws(ValidationException::class);
+
+it('reads only newly added files from the disk, and keeps the stored facts of the others', function (): void {
+    $entry = storedFor($this->alphaId, 'gallery', jpeg(400, 300), 'photo.jpg');
+    saveAsEditor($this->alphaId, 'gallery', $entry);
+    // Gone from the disk: a later save must not need it, nor take the value's word for it.
+    Storage::disk('public')->delete('lynx/'.$entry['file']);
+    app()->forgetScopedInstances(); // a new request
+
+    saveAsEditor($this->alphaId, 'gallery', ['width' => 9000, 'height' => 9000, 'bytes' => 1] + $entry);
+
+    $values = array_first(lynx()->pages->get($this->alphaId)->rawValuesOf('gallery'))[0]['values'];
+    expect([$values['width'], $values['height'], $values['bytes']])->toBe([400, 300, $entry['bytes']]);
+});
+
+it('checks as a picture a file the page holds in a files field before it goes in an images field', function (): void {
+    lynx()->fields->update('downloads', ['settings' => ['extensions' => 'pdf jpg']]);
+    $entry = storedFor($this->alphaId, 'downloads', 'not a picture', 'fake.jpg');
+    saveAsEditor($this->alphaId, 'downloads', $entry);
+    app()->forgetScopedInstances();
+
+    saveAsEditor($this->alphaId, 'gallery', ['width' => 4, 'height' => 4] + $entry);
+})->throws(ValidationException::class);
