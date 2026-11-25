@@ -20,7 +20,7 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class DraftValues
 {
-    private const string PLAIN = '/^[^\s",]+$/';
+    private const string PLAIN = '/^[^\s",]+$/D';
 
     public function __construct(private DraftShorthand $shorthand) {}
 

@@ -49,7 +49,7 @@ final class SavePageCacheRules extends Action
             'templates.*.cache' => ['boolean'],
             'templates.*.lifetime' => ['nullable', 'integer', 'min:0'],
             'templates.*.parameters' => ['nullable', 'array'],
-            'templates.*.parameters.*' => ['string', 'regex:/^[A-Za-z0-9_.\-\[\]]+$/'],
+            'templates.*.parameters.*' => ['string', 'regex:/^[A-Za-z0-9_.\-\[\]]+$/D'],
             'templates.*.clear' => ['nullable', 'array'],
             'templates.*.clear.*' => ['string', Rule::in(PageCacheSchema::SCOPES)],
             'templates.*.csrf' => ['nullable', Rule::in(['skip', TokenRefresh::REFRESH])],

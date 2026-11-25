@@ -113,7 +113,7 @@ final class PageTree extends Component
         $this->root = $root;
         $this->sortable = $sortable;
         $this->presenter = $presenter !== null && is_subclass_of($presenter, TreePresenter::class) ? $presenter : null;
-        $this->events = $events !== null && preg_match('/^[a-z][a-z0-9-]*$/', $events) === 1 ? $events : null;
+        $this->events = $events !== null && preg_match('/^[a-z][a-z0-9-]*$/D', $events) === 1 ? $events : null;
         $this->perPage = max(1, $perPage ?? Value::int(config('lynx-admin.tree.per_page'), 20));
         $this->expanded = $this->expanded !== [] ? $this->expanded : (Value::ints(session($this->sessionKey())) ?: [(int) $this->rootPage()->id]);
         $this->remember();

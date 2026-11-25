@@ -104,7 +104,7 @@ final class StringScanner
 
         $key = $values[0];
 
-        if (preg_match('/^[a-z0-9][a-z0-9_.\-]{0,127}$/i', $key) !== 1) {
+        if (preg_match('/^[a-z0-9][a-z0-9_.\-]{0,127}$/iD', $key) !== 1) {
             $report->errors[] = "{$view}: [{$key}] is not a valid key (letters, digits, dots, dashes, underscores).";
 
             return;

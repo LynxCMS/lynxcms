@@ -26,7 +26,7 @@ final readonly class DraftLanguages
     public const array KEYS = ['name', 'default', 'label', 'locale', 'prefix', 'fallback', 'active'];
 
     /** The codes languages.create accepts. */
-    private const string CODE_PATTERN = '/^[a-z0-9][a-z0-9_-]{0,31}$/';
+    private const string CODE_PATTERN = '/^[a-z0-9][a-z0-9_-]{0,31}$/D';
 
     public function __construct(private LanguageRegistry $languages) {}
 

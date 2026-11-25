@@ -48,7 +48,7 @@ final class SaveRole extends Action
     public static function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'name' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
             'label' => ['nullable', 'string', 'max:255'],
             'superuser' => ['sometimes', 'boolean'],
             'grants' => ['sometimes', 'array'],

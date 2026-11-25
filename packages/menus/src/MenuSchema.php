@@ -55,7 +55,7 @@ final class MenuSchema
     public const int MAX_LIMIT = 100;
 
     /** Menu names are short slugs such as "top" or "footer-legal". */
-    public const string NAME_PATTERN = '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/';
+    public const string NAME_PATTERN = '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/D';
 
     /**
      * Fields to create: name => [type, translatable, label, settings].

@@ -70,9 +70,9 @@ final class UpdateTemplate extends Action implements RefusesUnknownInput
             'allow_children' => ['sometimes', 'boolean'],
             'tabs' => ['sometimes', 'array'],
             'child_templates' => ['sometimes', 'array'],
-            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
             'parent_templates' => ['sometimes', 'array'],
-            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
         ];
     }
 

@@ -56,12 +56,12 @@ final class UpdateLanguage extends Action implements RefusesUnknownInput
     {
         return [
             'language' => ['required'],
-            'code' => ['sometimes', 'string', 'regex:/^[a-z0-9][a-z0-9_-]{0,31}$/'],
+            'code' => ['sometimes', 'string', 'regex:/^[a-z0-9][a-z0-9_-]{0,31}$/D'],
             'name' => ['sometimes', 'string', 'max:255'],
             'label' => ['sometimes', 'nullable', 'string', 'max:32'],
             'locale' => ['sometimes', 'nullable', 'string', 'max:32'],
             'fallback' => ['sometimes', 'nullable', 'string'],
-            'prefix' => ['sometimes', 'nullable', 'string', 'regex:/^[a-z0-9-]*$/'],
+            'prefix' => ['sometimes', 'nullable', 'string', 'regex:/^[a-z0-9-]*$/D'],
             'active' => ['sometimes', 'boolean'],
             'provider_codes' => ['sometimes', 'nullable', 'array'],
         ];

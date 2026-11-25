@@ -60,7 +60,7 @@ final readonly class FieldListInput
     {
         $key = Value::string($spec['section']);
 
-        if (preg_match('/^[a-z][a-z0-9_-]{0,63}$/', $key) !== 1) {
+        if (preg_match('/^[a-z][a-z0-9_-]{0,63}$/D', $key) !== 1) {
             throw ValidationException::withMessages(['fields' => Value::string(__('lynx::structure.section.key', ['section' => $key]))]);
         }
 

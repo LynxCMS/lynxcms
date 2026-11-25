@@ -58,7 +58,7 @@ final class LayoutRules
             $tab = Value::map($tab);
             $key = Value::string($tab['key'] ?? '');
 
-            if (preg_match('/^[a-z][a-z0-9_-]{0,63}$/', $key) !== 1 || in_array($key, [...self::RESERVED_TABS, ...$keys], true)) {
+            if (preg_match('/^[a-z][a-z0-9_-]{0,63}$/D', $key) !== 1 || in_array($key, [...self::RESERVED_TABS, ...$keys], true)) {
                 throw ValidationException::withMessages(['tabs' => Value::string(__('lynx::structure.layout.tab_key', ['tab' => $key, 'reserved' => implode(', ', self::RESERVED_TABS)]))]);
             }
 

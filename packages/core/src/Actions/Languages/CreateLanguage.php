@@ -58,12 +58,12 @@ final class CreateLanguage extends Action
     {
         return [
             'uuid' => ['nullable', 'uuid', Rule::unique(Tables::LANGUAGES, 'uuid')],
-            'code' => ['required', 'string', 'regex:/^[a-z0-9][a-z0-9_-]{0,31}$/', Rule::unique(Tables::LANGUAGES, 'code')],
+            'code' => ['required', 'string', 'regex:/^[a-z0-9][a-z0-9_-]{0,31}$/D', Rule::unique(Tables::LANGUAGES, 'code')],
             'name' => ['required', 'string', 'max:255'],
             'label' => ['nullable', 'string', 'max:32'],
             'locale' => ['nullable', 'string', 'max:32'],
             'fallback' => ['nullable', 'string'],
-            'prefix' => ['nullable', 'string', 'regex:/^[a-z0-9-]*$/', Rule::unique(Tables::LANGUAGES, 'url_prefix')],
+            'prefix' => ['nullable', 'string', 'regex:/^[a-z0-9-]*$/D', Rule::unique(Tables::LANGUAGES, 'url_prefix')],
             'active' => ['sometimes', 'boolean'],
             'provider_codes' => ['nullable', 'array'],
         ];

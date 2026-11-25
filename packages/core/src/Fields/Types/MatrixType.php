@@ -43,7 +43,7 @@ final class MatrixType extends ItemFieldType
     {
         return [
             'types' => [new FilledList(Value::string(__('lynx::structure.items.no_types')))],
-            'types.*.slug' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/', 'distinct'],
+            'types.*.slug' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D', 'distinct'],
             'types.*.label' => ['sometimes', 'nullable', ...LocalizedText::rules()],
             'types.*.item_label' => ['sometimes', 'nullable', 'string', 'max:255'],
         ] + ItemSettingsRules::fields('types.*.fields') + ItemSettingsRules::limits();

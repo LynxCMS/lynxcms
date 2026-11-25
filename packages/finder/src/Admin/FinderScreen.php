@@ -115,7 +115,7 @@ final class FinderScreen extends Component
             return;
         }
 
-        if (preg_match('/^groups\.(\d+)\.conditions\.(\d+)\.subject$/', $key, $match) === 1) {
+        if (preg_match('/^groups\.(\d+)\.conditions\.(\d+)\.subject$/D', $key, $match) === 1) {
             $subject = app(ConditionCatalog::class)->find(Value::string($value));
             $operator = $subject?->kind->operators()[0]->value ?? '';
             $this->changeGroup((int) $match[1], fn (ConditionGroup $group): ConditionGroup => $this->replaceCondition($group, (int) $match[2], new Condition(Value::string($value), $operator)));
