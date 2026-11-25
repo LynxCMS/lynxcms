@@ -152,6 +152,8 @@ The entry goes in the new file's `values`, next to its description. A field with
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
+An images field stores JPEG, PNG, GIF, WebP, and AVIF files, recognized from their contents before anything decodes them, so a file named `photo.png` that holds something else is refused. On a server that uses ImageMagick (`IMAGE_DRIVER=imagick`), also limit ImageMagick's coders in its `policy.xml` to the raster formats you use, as its project recommends.
+
 When an editor, an MCP client or the agent saves a page, each file its media fields name must be stored in that page's folder (a draft may name the files of the page it belongs to), with an extension the field allows. An images field takes only pictures. The file's size, type and dimensions are read from the file itself, whatever the value says. Superusers and your own code (Artisan commands, jobs, seeders) can save any value, so an import can keep the names another site gave its files.
 
 URLs are downloaded only from public web servers: `http` and `https` on their usual ports, from hosts whose addresses are on the internet, never the server's own network or a cloud's metadata address. Redirects get the same checks, and the download stops once it passes the field's size limit. To download from a host of your own network, such as an asset server, add it to `downloads.allowed_hosts` in `config/lynx-media.php`. `LYNX_MEDIA_URL_DOWNLOADS=false` turns URL downloads off.
