@@ -93,7 +93,7 @@ final class ActionRunner
         // learns nothing from its validation messages, such as whether a name is taken. Nested
         // actions were authorized with their outer action.
         if ($outer) {
-            $this->container->make(Authorizer::class)->authorizeAction($this->actor(), $action::permission(), $action::name());
+            $this->authorizeOuter($action);
             $this->changes = new ChangeSet;
             $this->events->clear();
             $this->dryRun = $dryRun;
@@ -175,6 +175,23 @@ final class ActionRunner
         }
 
         return new ActionResult($action, $value, $changes, $context->dryRun);
+    }
+
+    /**
+     * A refused action leaves the caches as a failed one does: emptied, so a page object the caller
+     * changed before saving is read again from the database, not from memory.
+     *
+     * @param  class-string<Action>  $action
+     */
+    private function authorizeOuter(string $action): void
+    {
+        try {
+            $this->container->make(Authorizer::class)->authorizeAction($this->actor(), $action::permission(), $action::name());
+        } catch (Throwable $e) {
+            $this->flushCaches();
+
+            throw $e;
+        }
     }
 
     /**
