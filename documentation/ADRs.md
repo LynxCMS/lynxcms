@@ -1660,6 +1660,8 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** Code that reads `TemplateField::editor()` gets `open` for a field stored as `locked` and checks `isLocked()` for the rest; `FieldDisplay::Locked` and `editor()` are deprecated. Sites that let agents fill locked fields must run that code as the system. A lazy field's input isn't in the page until it opens, so browser tests open it first.
 
+**Amended 2026-11-25:** only superusers lock or unlock a field, on the field or on a template's row; `fields.update` and `templates.update` refuse other actors (core security review, L4).
+
 ## ADR-0150: Images and files can have a file per language
 
 **Status:** Accepted (builds on ADR-0046 and ADR-0049)
@@ -1684,8 +1686,9 @@ Staying in English: action descriptions, console output, the change summaries th
 - **Not visitors.** Templates read every field, so field access changes nothing on the site's pages. Selectors in code are not filtered by it either; selectors from agents and the Finder are, since ADR-0153.
 - Role names are checked when saved; deleting a role leaves its name in a field's list, where it matches nobody.
 
-**Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
+**Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out, and since ADR-0153 agents and the Finder refuse it. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
 
+**Amended 2026-11-25:** only superusers change a field's `access`; `fields.update` refuses other actors, and the field form leaves the Access tab out for them (core security review, L4).
 
 ## ADR-0152: Image sizes can be made in a queue
 

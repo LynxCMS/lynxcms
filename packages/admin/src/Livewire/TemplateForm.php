@@ -149,6 +149,8 @@ final class TemplateForm extends Component
             'available' => $this->addableFields($fields),
             'fieldInfo' => $fields->mapWithKeys(fn (Field $field): array => [$field->name => ['label' => $field->label, 'type' => $field->type]])->all(),
             'canEdit' => $this->canEdit(),
+            // Only superusers lock or unlock a field on a template (fields.update and templates.update refuse others).
+            'canLock' => app(AdminAccess::class)->isSuperuser(),
             'owner' => $this->template === null ? null : app(SchemaOwners::class)->ownerOfTemplate($this->template),
             ...$this->usage(),
         ]);

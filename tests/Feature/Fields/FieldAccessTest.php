@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\FieldForm;
 use LynxCms\Admin\Livewire\PageEditor;
+use LynxCms\Admin\Livewire\TemplateForm;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Pages\PublishDraft;
@@ -17,6 +18,7 @@ use LynxCms\Core\Actions\Roles\AssignRoles;
 use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Actions\Runner\ActionRunner;
+use LynxCms\Core\Actions\Templates\UpdateTemplate;
 use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Fields\FieldAccess;
 use LynxCms\Core\Pages\Page;
@@ -215,4 +217,43 @@ it('leaves the Access tab and the lock out of the field form for roles that are 
         ->assertHasNoErrors();
 
     expect(lynx()->fields->get('price')->config()['access'])->toBe($access);
+});
+
+function schemaEditor(): Actor
+{
+    lynx()->run(SaveRole::class, ['name' => 'schema-editor', 'grants' => [['permission' => 'admin.access'], ['permission' => 'schema.manage']]]);
+    lynx()->run(AssignRoles::class, ['user' => '4', 'roles' => ['schema-editor']]);
+
+    return Actor::user(4);
+}
+
+it('lets only superusers lock or unlock a field on one template', function (array $change): void {
+    lynx()->templates->update('course', ['add' => [['name' => 'summary', 'locked' => true]]]);
+
+    app(ActionRunner::class)->actingAs(schemaEditor(), fn (): ActionResult => lynx()->run(UpdateTemplate::class, ['template' => 'course', ...$change]));
+})->with([
+    'unlocked' => [['add' => [['name' => 'summary', 'locked' => false]]]],
+    'dropped from the full field list' => [['fields' => [['name' => 'title', 'required' => true], 'summary', 'body', 'price', 'related']]],
+    'another field locked' => [['add' => [['name' => 'body', 'locked' => true]]]],
+])->throws(AuthorizationException::class);
+
+it('lets other roles with schema.manage change a template without touching its locks', function (): void {
+    lynx()->templates->update('course', ['add' => [['name' => 'summary', 'locked' => true]]]);
+
+    app(ActionRunner::class)->actingAs(schemaEditor(), fn (): ActionResult => lynx()->run(UpdateTemplate::class, ['template' => 'course', 'add' => [['name' => 'summary', 'locked' => true, 'label' => 'Short text'], ['name' => 'body', 'searchable' => true]]]));
+
+    expect(lynx()->templates->fields('course')['summary']->isLocked())->toBeTrue();
+});
+
+it('shows the Locked box of a template\'s field row read only to roles that are not superusers', function (): void {
+    schemaEditor();
+    test()->actingAs(new GenericUser(['id' => 4]));
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertSeeHtml('id="override-summary-locked" type="checkbox" wire:model="rows.summary.locked"  disabled');
+
+    test()->actingAs(new GenericUser(['id' => 1]));
+
+    Livewire::test(TemplateForm::class, ['template' => 'course'])
+        ->assertDontSeeHtml('wire:model="rows.summary.locked"  disabled');
 });
