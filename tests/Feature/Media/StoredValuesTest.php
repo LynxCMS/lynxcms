@@ -104,3 +104,12 @@ it('lets an editor duplicate a page with files, which the copy gets in its own f
 
     expect(lynx()->pages->get((int) $copy->id)?->gallery->first()?->file())->toStartWith($copy->id.'/');
 });
+
+it('refuses an upload to a field the editor may not edit, or that is locked', function (array $settings): void {
+    lynx()->fields->update('gallery', ['settings' => $settings]);
+
+    app(ActionRunner::class)->actingAs(Actor::user(5), fn (): mixed => storedFor($this->alphaId, 'gallery', jpeg(40, 30), 'photo.jpg'));
+})->with([
+    'no access' => [['access' => ['edit' => []]]],
+    'locked' => [['locked' => true]],
+])->throws(ValidationException::class);
