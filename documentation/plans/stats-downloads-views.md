@@ -1,6 +1,12 @@
 # lynx-homepage: download counts, page views and a decayed Popular sort
 
-Status: proposed on 2026-11-25 for lynx-homepage, waiting for the owner's review. Kept with Lynx's plans because it may become a `lynxcms/stats` module.
+Status: built on 2026-11-25 in lynx-homepage (LynxCMS/lynx-corporate-starter#4). Kept with Lynx's plans because it may become a `lynxcms/stats` module.
+
+Changes while building:
+
+- **No WAL.** The demo's hourly reset runs `migrate:fresh`, which empties the SQLite file; that breaks WAL's side files under open connections (the reset test failed with "database is locked"). Only `busy_timeout` 5000 is set.
+- **No limiter on the download route.** Counting once per link already bounds it, and the links come from the gated form, so a per-address limiter would only add an address to the cache.
+- **A seeder bug fixed on the way.** `SavePageCacheRules` replaces every stored rule, and `SearchAndBookmarksSeeder` saved only the search rule after `SiteFeaturesSeeder`, so the home and download rules were lost. Both now save one shared list.
 
 ## Context
 
