@@ -7,6 +7,7 @@ namespace LynxCms\Core\View;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Pages\Page;
+use LynxCms\Core\Support\SiteRoot;
 
 /**
  * Alternate-language links for a page: one per active language the page is published in, plus
@@ -49,7 +50,7 @@ final readonly class HreflangBuilder
 
     private function absolute(string $path): string
     {
-        return rtrim(url('/'), '/').$path;
+        return SiteRoot::url().$path;
     }
 
     private function tag(Language $language): string

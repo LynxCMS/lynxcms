@@ -19,6 +19,7 @@ use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\PathResolver;
 use LynxCms\Core\Pages\Publication;
 use LynxCms\Core\Pages\UniqueNames;
+use LynxCms\Core\Support\SiteRoot;
 use LynxCms\Core\Support\Value;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -206,6 +207,6 @@ final readonly class PageController
     {
         $query = $request->getQueryString();
 
-        return redirect()->away(rtrim(url('/'), '/').$url.($query ? '?'.$query : ''), 301);
+        return redirect()->away(SiteRoot::url().$url.($query ? '?'.$query : ''), 301);
     }
 }
