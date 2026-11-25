@@ -61,7 +61,7 @@ final class CreateLanguage extends Action
             'code' => ['required', 'string', 'regex:/^[a-z0-9][a-z0-9_-]{0,31}$/D', Rule::unique(Tables::LANGUAGES, 'code')],
             'name' => ['required', 'string', 'max:255'],
             'label' => ['nullable', 'string', 'max:32'],
-            'locale' => ['nullable', 'string', 'max:32'],
+            'locale' => ['nullable', 'string', 'max:32', 'regex:'.Language::LOCALE_PATTERN],
             'fallback' => ['nullable', 'string'],
             'prefix' => ['nullable', 'string', 'regex:/^[a-z0-9-]*$/D', Rule::unique(Tables::LANGUAGES, 'url_prefix')],
             'active' => ['sometimes', 'boolean'],

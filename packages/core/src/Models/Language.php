@@ -29,6 +29,12 @@ use Override;
  */
 final class Language extends Model
 {
+    /**
+     * A locale such as "pt", "pt-PT", "pt_BR" or "zh-Hant-TW". Laravel builds translation file
+     * paths from it, so nothing else is accepted.
+     */
+    public const string LOCALE_PATTERN = '/^[A-Za-z]{2,3}(?:[_-][A-Za-z0-9]{2,8})*$/D';
+
     #[Override]
     protected $table = Tables::LANGUAGES;
 
