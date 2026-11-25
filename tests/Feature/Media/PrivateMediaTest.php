@@ -253,3 +253,38 @@ it('offers the Private setting in the admin\'s field form, and moves the files w
 
     Storage::disk('local')->assertExists('lynx/'.$brochure['file']);
 });
+
+it('stops serving a private file to visitors once the page no longer shows it', function (string $change): void {
+    $entry = privateFile('handouts', 'notes.pdf', '%PDF private');
+    $url = coursePage()->handouts->first()->url();
+    $page = coursePage();
+    $page->handouts = match ($change) {
+        'removed' => [],
+        'hidden' => [['enabled' => false, 'values' => $entry]],
+    };
+    $page->save();
+
+    $this->get($url)->assertNotFound();
+})->with(['removed', 'hidden']);
+
+it('serves visitors no file only a draft names, and staff every file', function (): void {
+    $entry = lynx()->run(StoreMedia::class, ['page' => test()->course->id, 'field' => 'handouts', 'base64' => base64_encode('%PDF draft'), 'filename' => 'draft.pdf'])->value;
+    lynx()->pages->saveDraft(coursePage(), ['handouts' => [['values' => $entry]]]);
+    $url = route('lynx.media', ['page' => test()->course->id, 'file' => basename($entry['file'])]);
+
+    $this->get($url)->assertNotFound();
+
+    lynx()->run(SaveRole::class, ['name' => 'viewer', 'grants' => [['permission' => 'pages.view']]]);
+    lynx()->run(AssignRoles::class, ['user' => '3', 'roles' => ['viewer']]);
+    $this->actingAs(new GenericUser(['id' => 3]))->get($url)->assertOk();
+});
+
+it('serves visitors the sizes of the images the page shows', function (): void {
+    privateFile('slides', 'slide.jpg', jpeg(800, 600));
+    $url = coursePage()->slides->first()->size(200, 200)->url();
+    $page = coursePage();
+    $page->slides = [];
+    $page->save();
+
+    $this->get($url)->assertNotFound();
+});

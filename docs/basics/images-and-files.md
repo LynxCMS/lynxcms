@@ -169,7 +169,7 @@ lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
 A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK`, Laravel's `local` disk by default, which the web server never serves), and their URLs point to Lynx: `/lynx-media/{page id}/{file}`. Lynx serves a file only to someone who may open its page:
 
 - staff whose roles let them view the page, in the admin or on the site;
-- visitors, when the page is published, no page gate answers instead and the [visibility rules](/deeper/visibility) allow it.
+- visitors, when the page is published, no page gate answers instead, the [visibility rules](/deeper/visibility) allow it, and the page shows the file. A file an editor removed or hid, or one only a draft holds, is for staff only, and so are the sizes made from it.
 
 A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Images, video, audio, PDFs and plain text open in the browser, sandboxed; other files download. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
 
