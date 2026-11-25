@@ -288,3 +288,10 @@ it('serves visitors the sizes of the images the page shows', function (): void {
 
     $this->get($url)->assertNotFound();
 });
+
+it('answers 404 for names that start with a dot', function (): void {
+    privateFile('handouts', 'notes.pdf', '%PDF private');
+
+    $this->get('/lynx-media/'.test()->course->id.'/..')->assertNotFound();
+    $this->get('/lynx-media/'.test()->course->id.'/.hidden')->assertNotFound();
+});
