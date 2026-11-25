@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Contracts\Actions\Actor;
+use LynxCms\Core\Actions\Pages\DuplicatePage;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageStatus;
@@ -138,3 +143,60 @@ it('puts a prefix before the copy\'s title in every language, not its children\'
         ->and((string) $copy->getLanguageValue('pt', 'title'))->toBe('[Copy] Alfa')
         ->and((string) lynx()->pages->get('/courses/alpha-copy/week-1/')->title)->toBe('Week-1');
 });
+
+/** A role that may see and create pages in /courses/ only, or only with the templates given. */
+function courseCopier(array $grant = []): Actor
+{
+    $courses = (int) lynx()->pages->get('/courses/')->id;
+    $scope = $grant === [] ? ['branches' => [$courses]] : $grant;
+    lynx()->run(SaveRole::class, ['name' => 'copier', 'grants' => [
+        ['permission' => 'pages.view', ...$scope],
+        ['permission' => 'pages.create', ...$scope],
+    ]]);
+    lynx()->run(AssignRoles::class, ['user' => '7', 'roles' => ['copier']]);
+
+    return Actor::user(7);
+}
+
+function archiveBranch(): Page
+{
+    $archive = lynx()->pages->new('courses', '/');
+    $archive->name = 'archive';
+    $archive->title = 'Archive';
+    $archive->save();
+    addLesson('/archive/', 'old');
+
+    return $archive;
+}
+
+it('lets a role copy pages inside the branch its grants name', function (): void {
+    $copy = lynx()->actingAs(courseCopier(), fn (): mixed => lynx()->run(DuplicatePage::class, ['page' => '/courses/alpha/'])->value);
+
+    expect($copy)->toBeInstanceOf(Page::class);
+});
+
+it('refuses to copy a page the role may not see', function (): void {
+    archiveBranch();
+
+    lynx()->actingAs(courseCopier(), fn (): mixed => lynx()->run(DuplicatePage::class, ['page' => '/archive/old/', 'parent' => '/courses/']));
+})->throws(AuthorizationException::class);
+
+it('refuses to copy a page under a parent outside the role\'s branch', function (): void {
+    archiveBranch();
+
+    lynx()->actingAs(courseCopier(), fn (): mixed => lynx()->run(DuplicatePage::class, ['page' => '/courses/alpha/', 'parent' => '/archive/']));
+})->throws(AuthorizationException::class);
+
+it('refuses to copy a branch holding a page the role may not see', function (): void {
+    $hidden = lynx()->pages->new('courses', '/courses/alpha/');
+    $hidden->name = 'hidden';
+    $hidden->title = 'Hidden';
+    $hidden->save();
+    $copier = courseCopier(['templates' => ['course']]);
+
+    lynx()->actingAs($copier, fn (): mixed => lynx()->run(DuplicatePage::class, ['page' => '/courses/alpha/', 'children' => true]));
+})->throws(AuthorizationException::class);
+
+it('refuses to copy a page whose template the role may not create', function (): void {
+    lynx()->actingAs(courseCopier(['templates' => ['courses']]), fn (): mixed => lynx()->run(DuplicatePage::class, ['page' => '/courses/alpha/']));
+})->throws(AuthorizationException::class);
