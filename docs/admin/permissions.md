@@ -79,6 +79,8 @@ lynx()->fields->update('internal_notes', ['settings' => ['access' => ['view' => 
 
 A field without `access` is open to every role that may see or edit the page, as before. `null` stops managing it.
 
+Only superusers change a field's access. Other roles with `schema.manage` don't see the **Access** tab, and `fields.update` refuses their changes to `access`, so they can't open a field to themselves.
+
 A role that may not see a field doesn't find it in the page editor, in `get_page` or in the schema agents read, and the [Finder](/modules/finder) doesn't offer it. A role that may see a field but not edit it sees the value read only, and `pages.save` refuses its changes to that field while its other fields save. Superusers always see and edit every field, and so does the site's own code: Artisan commands, queued jobs, the scheduler and code that runs as the system. Field access governs the admin, `pages.save` and agents. It doesn't change what visitors see: a template that prints a field prints it. To keep a field from every role and fill it from code, [lock it](/basics/templates-and-fields#locked-fields) instead. ProcessWire's Access tab inspired this setting.
 
 ## Checking permissions

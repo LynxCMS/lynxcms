@@ -188,7 +188,7 @@ A template that already has one of the section's fields is refused, since a fiel
 
 You can fill a field from code, such as a price from a shop or a summary from another service, and keep editors from changing it. A locked field shows its value in the page editor without an input. Only the site's code writes it: Artisan commands, queued jobs, the scheduler, Tinker, and code that runs as the system. People in the admin, MCP clients and the AI agent are refused, and agents see the field marked `locked`.
 
-Lock a field everywhere it is used, on the field's **Advanced** tab or in code, once in `php artisan tinker` or a seeder:
+Lock a field everywhere it is used, on the field's **Advanced** tab or in code, once in `php artisan tinker` or a seeder. Only superusers lock or unlock a field this way:
 
 ```php
 lynx()->fields->update('stock', ['settings' => ['locked' => true]]);

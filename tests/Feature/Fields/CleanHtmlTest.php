@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Fields\CleanHtmlValues;
+use LynxCms\Core\Actions\Fields\UpdateField;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Support\Tables;
@@ -78,4 +79,20 @@ it('runs from the command line, dry run first', function (): void {
 
     $this->artisan('lynx:clean-html')->expectsOutputToContain('Cleaned 2 value(s)')->assertSuccessful();
     expect(storedValues('body'))->toBe(['<p>Hi</p>', '<p>Hi</p>']);
+});
+
+it('cleans a field\'s stored values when its format changes to html', function (): void {
+    storedBeforeSanitizer();
+
+    lynx()->fields->update('summary', ['settings' => ['format' => 'html']]);
+
+    expect(storedValues('summary'))->toBe(['', '']);
+});
+
+it('leaves stored values alone on a dry run of the format change', function (): void {
+    storedBeforeSanitizer();
+
+    lynx()->run(UpdateField::class, ['field' => 'summary', 'settings' => ['format' => 'html']], dryRun: true);
+
+    expect(storedValues('summary'))->toBe(['<script>kept</script>', '<script>kept</script>']);
 });

@@ -9,6 +9,7 @@ return [
         'page' => 'You do not have permission [:permission] (:label) on page [:page].',
         'action' => 'You do not have permission [:permissions] needed by [:action].',
         'superusers' => 'Only superusers may run [:action].',
+        'field_protection' => 'Only superusers may change the [:setting] setting of field [:field].',
     ],
     'last_superuser' => 'This would remove the last superuser. Give another user a superuser role first.',
     'schema_editing' => '[:action] changes the schema, and schema editing is turned off on this site (lynx.schema_editing): its schema comes from files. Change lynx/schema and run php artisan lynx:schema:apply.',

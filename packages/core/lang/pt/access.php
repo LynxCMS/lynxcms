@@ -9,6 +9,7 @@ return [
         'page' => 'Não tem a permissão [:permission] (:label) na página [:page].',
         'action' => 'Não tem a permissão [:permissions], de que [:action] precisa.',
         'superusers' => 'Só os superutilizadores podem executar [:action].',
+        'field_protection' => 'Só os superutilizadores podem alterar a definição [:setting] do campo [:field].',
     ],
     'last_superuser' => 'Isto removeria o último superutilizador. Dê primeiro uma função de superutilizador a outra pessoa.',
     'schema_editing' => '[:action] altera o esquema, e a edição do esquema está desligada neste site (lynx.schema_editing): o esquema vem de ficheiros. Altere lynx/schema e execute php artisan lynx:schema:apply.',
