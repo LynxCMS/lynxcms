@@ -83,6 +83,7 @@ return [
         'url' => 'Escreva um endereço que comece por https://.',
         'url_or_path' => 'Escreva um endereço que comece por https:// ou um caminho que comece por /.',
         'page_template' => 'Escolha páginas que usem :templates: [:page] usa :template.',
+        'page_not_viewable' => 'Escolha páginas que pode ver: a página :id não é uma delas.',
         'pages_max' => 'Escolha no máximo :count página.|Escolha no máximo :count páginas.',
         'pages_min' => 'Escolha pelo menos :count página.|Escolha pelo menos :count páginas.',
     ],

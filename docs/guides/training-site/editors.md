@@ -21,7 +21,7 @@ The layout only changes the editor. Values, selectors and schema files stay the 
 
 <<< @/snippets/training/database/seeders/AtlasEditorsSeeder.php#roles{php}
 
-A grant can be limited to **branches** of the tree (a page and everything under it) and to **templates**. The course manager may create pages under `/courses/`, but only courses and sessions; editing the About page or writing news is refused, in the admin, through the API and for an AI agent acting for them alike. The admin's page tree shows each person only the pages they may work on.
+A grant can be limited to **branches** of the tree (a page and everything under it) and to **templates**. The course manager may create pages under `/courses/`, but only courses and sessions; editing the About page or writing news is refused, in the admin, through the API and for an AI agent acting for them alike. They may view the locations, as a session must name one: a page field only takes pages its editor may view. The admin's page tree shows each person only the pages they may work on.
 
 Give staff their roles under **Access › Users**, where superusers also invite new staff by email. Roles are schema: `lynx:schema:export` writes them with the branches as paths, so they move between environments.
 

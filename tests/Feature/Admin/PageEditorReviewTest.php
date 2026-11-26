@@ -84,7 +84,7 @@ it('builds entries from a pages.save values input, page references as titles', f
     expect(array_map(fn (ReviewEntry $entry): array => [$entry->label, $entry->language, $entry->type], $entries))
         ->toBe([['Title', 'Português', 'text'], ['Related', null, 'page']])
         ->and($entries[1]->before)->toBe([])
-        ->and($entries[1]->after)->toBe([['id' => $other->id, 'title' => 'Alpha']]);
+        ->and($entries[1]->after)->toBe([['id' => $other->id, 'title' => 'Alpha', 'hidden' => false]]);
 });
 
 it('guards unsaved edits and saves with the keyboard only where Save is offered', function (): void {

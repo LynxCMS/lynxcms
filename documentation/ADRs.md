@@ -1721,3 +1721,13 @@ Staying in English: action descriptions, console output, the change summaries th
 - Selectors the site's own code writes run without a policy, as before.
 
 **Consequences:** A restricted role can no longer find pages by a field it may not view, through agents or the Finder. Apps that pass a visitor's selector have one argument to make it safe, and the docs show it. A visitor's words inside the app's own selector are still the app's to escape (Visitor Input); the parked plan for bindings in selectors covers that case.
+
+## ADR-0154: A save adds references only to pages the actor may view
+
+**Status:** Accepted (extends ADR-0095; from the admin security review, documentation/reports/security-review-admin-2026-11-25.md, M1)
+
+**Context:** A page field holds page ids, and a rich text field holds links whose `data-page` names a page (ADR-0145). The admin turns both into titles and addresses: in its inputs, in "Review changes", in the page picker once saved. `pages.save` checked only how many ids a value has and, with a "templates" setting, which templates they use. An editor limited to one branch could put any id into the form and read the title of a page outside the branch, unpublished and trashed ones included; a missing title told that the id did not exist, so ids could be walked. MCP clients and the API reach the same save.
+
+**Decision:** `ReferenceChecks` (formerly `ReferenceTemplates`) refuses a save that adds, to a page field, a page subfield of a repeater or matrix, or a rich text link, a page outside the actor's `pages.view` scope, a page that does not exist included. The error names the id only. Pages the field already holds are kept, as for templates, so a role narrowed later never blocks an unrelated save. Actors whose `pages.view` has no limit (superusers, the console, the system, a role with an unlimited grant) skip the check, and no stored value is read for them. The admin also resolves titles only for pages the user may view, wherever ids come from the browser: other ids show as "Page #N (outside your access)".
+
+**Consequences:** A role that must reference pages outside the branch it edits needs `pages.view` on them; the training guide's course manager now views `/locations/`, as a session names one. The admin's page pickers already offered only viewable pages, so editors see no change there. A saved reference to a page outside the editor's view, kept from someone with wider access, still shows its title in the page picker, as before.

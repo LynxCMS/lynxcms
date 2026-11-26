@@ -6,12 +6,14 @@
 @else
 @switch($type)
     @case('page')
-        {{-- Prepared by FieldViews as [id, title] pairs; a null title means the page no longer exists. --}}
+        {{-- Prepared by FieldViews as [id, title, hidden]: a hidden page is one the user may not view, and otherwise a null title means the page no longer exists. --}}
         <ul class="flex flex-wrap gap-x-4 gap-y-1">
             @foreach ((array) $value as $reference)
                 <li>
                     @if ($reference['title'] !== null)
                         <a href="{{ route('lynx.admin.pages.edit', $reference['id']) }}" class="text-primary font-medium underline-offset-4 hover:underline">{{ $reference['title'] }}</a>
+                    @elseif ($reference['hidden'] ?? false)
+                        <span class="text-muted-foreground text-sm">{{ __('lynx-admin::editor.value.hidden_page', ['id' => $reference['id']]) }}</span>
                     @else
                         <span class="text-muted-foreground text-sm">{{ __('lynx-admin::editor.value.missing_page', ['id' => $reference['id']]) }}</span>
                     @endif
