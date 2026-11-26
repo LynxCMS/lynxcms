@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Admin\Editor;
 
+use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Actions\InstallLynx;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\Page;
@@ -60,6 +61,31 @@ final class TemplateChoices
 
         return array_key_first($counts)
             ?? (isset($choices[InstallLynx::SIMPLE_PAGE_TEMPLATE]) ? InstallLynx::SIMPLE_PAGE_TEMPLATE : array_key_first($choices));
+    }
+
+    /**
+     * Whether the user may open the New page screen under $parent, which shows its title and
+     * address: when some offered template fits there, they must be allowed to create one of them;
+     * when none does, they must hold pages.create on the parent, to be told so.
+     */
+    public function mayCreateUnder(Page $parent, AdminAccess $access): bool
+    {
+        return $this->for($parent) === [] ? $access->allows('pages.create', $parent) : $this->creatable($parent, $access) !== [];
+    }
+
+    /**
+     * Templates the signed-in user may create a page with under $parent: those for() offers there
+     * that a pages.create grant covers.
+     *
+     * @return array<string, string> template name => label
+     */
+    public function creatable(Page $parent, AdminAccess $access): array
+    {
+        return array_filter(
+            $this->for($parent),
+            fn (string $label, string $name): bool => $access->allows('pages.create', $parent, lynx()->templates->get($name)),
+            ARRAY_FILTER_USE_BOTH,
+        );
     }
 
     private function isOffered(Template $template): bool

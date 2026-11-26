@@ -54,22 +54,31 @@ final class PageCreator extends Component
         $access->authorizeScreen();
     }
 
-    public function mount(int $parentId, TemplateChoices $choices): void
+    public function mount(int $parentId): void
     {
         $this->parentId = $parentId;
-        $this->template = (string) $choices->preferred($this->parent(), $choices->for($this->parent()));
+        // The screen shows the parent's title and address: only to those who may create under it.
+        abort_unless(app(TemplateChoices::class)->mayCreateUnder($this->parent(), $this->access), 403);
+        $this->template = (string) app(TemplateChoices::class)->preferred($this->parent(), $this->choices());
         $this->resetValues();
     }
 
-    /** A different template asks for different fields; values of fields both share are kept. */
+    /**
+     * A different template asks for different fields; values of fields both share are kept. A
+     * template outside the choices goes back to the preferred one before its fields render.
+     */
     public function updatedTemplate(): void
     {
+        if (! array_key_exists($this->template, $this->choices())) {
+            $this->template = (string) app(TemplateChoices::class)->preferred($this->parent(), $this->choices());
+        }
+
         $this->resetValues();
     }
 
-    public function create(TemplateChoices $choices, EditorForm $form): void
+    public function create(EditorForm $form): void
     {
-        if (! array_key_exists($this->template, $choices->for($this->parent()))) {
+        if (! array_key_exists($this->template, $this->choices())) {
             throw ValidationException::withMessages(['template' => __('lynx-admin::pages.create.invalid_template')]);
         }
 
@@ -85,11 +94,11 @@ final class PageCreator extends Component
         $this->redirectRoute('lynx.admin.pages.edit', ['page' => $page->id]);
     }
 
-    public function render(TemplateChoices $choices, EditorForm $form): View
+    public function render(EditorForm $form): View
     {
         return view('lynx-admin::livewire.page-creator', [
             'parentTitle' => (new DefaultPresenter)->title($this->parent()),
-            'choices' => $choices->for($this->parent()),
+            'choices' => $this->choices(),
             ...$this->visibleFields($form),
             'inputs' => app(FieldInputs::class),
             'isSuperuser' => $this->access->isSuperuser(),
@@ -146,6 +155,12 @@ final class PageCreator extends Component
             && ($field->name === 'title' || ($states[$field->name]['required'] ?? false) || in_array($field->name, $watched, true));
 
         return ['fields' => array_values(array_filter((new FieldViews)->blank($form->fieldsForNewPage($this->template)), $isAsked)), 'states' => $states];
+    }
+
+    /** @return array<string, string> the templates the user may create under the parent */
+    private function choices(): array
+    {
+        return app(TemplateChoices::class)->creatable($this->parent(), $this->access);
     }
 
     private function parent(): Page
