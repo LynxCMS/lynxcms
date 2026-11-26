@@ -21,6 +21,16 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.59 to 0.1.60
+
+No database changes.
+
+- A role must hold `pages.view` on the pages its fields reference. Saves that add a reference to another page are refused with a validation error. The admin's page pickers already offered only those pages; check roles used by code, MCP clients or the API.
+- Roles with only `forms.view` can no longer archive submissions, mark them spam or write notes. Give `forms.manage` to roles that should.
+- Forms in code whose date questions took other text than `Y-m-d` now refuse it.
+- Set `livewire.temporary_file_upload.rules` to the largest file your forms take, as described in [Forms](/modules/forms).
+- Make sure `APP_URL` is the site's address: redirects and hreflang links are built from it.
+
 ## From 0.1.58 to 0.1.59
 
 No database changes, and nothing to do. Field access applies only to fields whose **Access** tab you turn on (or whose settings have `access`); every other field works as before.

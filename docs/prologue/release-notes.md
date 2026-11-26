@@ -8,11 +8,31 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.60
+
+Released November 26, 2026. Security fixes from reviews of the core, media, admin and forms packages, image sizes in a queue, and images scaled down in the browser before they upload. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-59-to-0-1-60).
+
+### Breaking changes
+
+- The constructors of `UpdateTemplate`, `UpdateField` and `DuplicatePage` take one more argument. Laravel's container builds them as before; code that builds one with `new` resolves it with `app()` instead.
+- `AdminAssets::NAME` and `FormSchema::NAME_PATTERN` end with the `D` modifier, so a name with a trailing line break no longer matches.
+- `FormComponent::_startUpload()` declares a `void` return type. A component that extends `FormComponent` and overrides it declares `void` too.
+- `pages.save` refuses a newly added page reference (a page field, a page subfield or a rich text link) to a page the actor may not view, or one that does not exist. Pages a field already holds are kept.
+- A date question in a form takes only `Y-m-d`, as a date input sends it.
+- `forms.view` reads submissions and marks them read or new. Marking them archived or spam, and writing notes, need `forms.manage`.
+
+### Changes
 
 - Image sizes in a queue: with `LYNX_MEDIA_QUEUE_SIZES=true` and a queue worker, sizes a page shows for the first time are made by queued jobs, and the page shows the nearest image that exists meanwhile. The page cache stores the page once the sizes are made. Off by default. See [Sizes in a queue](/basics/images-and-files#sizes-in-a-queue).
 - `LynxCms\Contracts\Pages\PageCache::SKIP` names the request attribute that keeps a page out of the page cache, for code that doesn't depend on `lynxcms/cache`.
 - Images larger than an images field's maximum are scaled down in the browser before they upload, so photos from phones fit the upload limit and upload faster. See [Uploading in the admin](/basics/images-and-files#uploading-in-the-admin).
+- Selectors from outside the site's code run under a policy (ADR-0153): `SelectorPolicy::forVisitors($fields)` for a selector a visitor sends, passed as `policy:` to `lynx()->pages->find()`, and `forActor()` for agents, the Finder, the admin's search box and its page pickers, which use only fields the actor may view. See [Selectors](/basics/selectors).
+- Only superusers change a field's access or lock, or lock a field on a template.
+- Redirects and hreflang links are built from `APP_URL`.
+- Media: values accept only files the page itself stores; visitors get only private files the live page shows; uploads are refused for fields the actor may not edit; image types are checked from the file's header; more extensions browsers run are refused.
+- Admin: the New page screen opens only for users who may create under the parent; trash and delete warnings name only pages the user may view; account security actions ask for the password again once its confirmation expired; admin and sign-in screens refuse framing by other sites.
+- Forms: uploads start only for a form's own file questions, a file's content must fit its name, references to submissions work on PostgreSQL, and the inbox search treats `%` and `_` as written.
+- The training guide's course manager may view `/locations/`, as a session names one.
 
 ## 0.1.59
 
