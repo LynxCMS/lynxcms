@@ -46,7 +46,7 @@
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ $field->type }}{{ $field->isTranslatable() && lynx()->languages->isMultilingual() ? ', '.__('lynx-admin::fields.list.translatable') : '' }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="whitespace-normal px-4 py-2 text-muted-foreground">{{ implode(', ', $usedBy[$field->name] ?? []) ?: __('lynx-admin::fields.list.no_template') }}</x-lynx-admin::ui.table-cell>
                         <x-lynx-admin::ui.table-cell class="px-4 py-2 text-end">
-                            <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="openDuplicate('{{ $field->name }}')" aria-label="{{ __('lynx-admin::fields.duplicate.named', ['field' => $field->name]) }}" title="{{ __('lynx-admin::fields.duplicate.title') }}"><x-lucide-copy aria-hidden="true" /></x-lynx-admin::ui.button>
+                            <x-lynx-admin::ui.button variant="ghost" size="icon-sm" type="button" wire:click="openDuplicate({{ Js::from($field->name) }})" aria-label="{{ __('lynx-admin::fields.duplicate.named', ['field' => $field->name]) }}" title="{{ __('lynx-admin::fields.duplicate.title') }}"><x-lucide-copy aria-hidden="true" /></x-lynx-admin::ui.button>
                         </x-lynx-admin::ui.table-cell>
                     </x-lynx-admin::ui.table-row>
                 @empty

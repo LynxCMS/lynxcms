@@ -55,7 +55,7 @@
                 @foreach ($languages as $language)
                     @php($state = $field->values[$language['code']])
                     <x-lynx-admin::ui.tabs-trigger :value="$language['code']"
-                            x-on:dblclick="$dispatch('lynx-editor-language', '{{ $language['code'] }}')"
+                            x-on:dblclick="$dispatch('lynx-editor-language', {{ Js::from($language['code']) }})"
                             :title="$state->isOwn ? __('lynx-admin::editor.field.filled') : ($state->fallsBackTo ? __('lynx-admin::editor.field.falls_back_to', ['language' => $state->fallsBackTo]) : __('lynx-admin::editor.field.empty'))">
                         {{ $language['label'] }}
                         <span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $state->isOwn, 'is-fallback' => $state->fallsBackTo !== null])></span>
@@ -65,7 +65,7 @@
         @endif
 
         @foreach ($field->values as $code => $state)
-            <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
+            <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === @js($code)" @if (! $loop->first) x-cloak @endif>
                 @if ($input)
                     {{-- The fallback value shows as the placeholder while this language is empty, else the template's placeholder. --}}
                     @include($input, [
@@ -84,10 +84,10 @@
                         <p class="lynx-hint text-muted-foreground text-sm mt-1">{{ __('lynx-admin::editor.field.empty_hint', ['language' => $state->fallsBackTo]) }}</p>
                     @endif
                     @if (($field->settings['formatters'] ?? []) !== [] && trim((string) ($current[$code] ?? '')) !== '')
-                        {{-- What visitors see: the field's format and formatters (ADR-0031), cleaned by core. --}}
+                        {{-- What visitors see: the field's format and formatters (ADR-0031). The value is unsaved input, which core cleans only on save, so it is cleaned here. --}}
                         <details class="mt-2 text-sm">
                             <summary class="cursor-pointer text-muted-foreground">{{ __('lynx-admin::editor.field.preview') }}</summary>
-                            <div class="lynx-preview mt-2">{!! lynx()->formatters()->render(lynx()->fields->get($field->name), $current[$code], $code) !!}</div>
+                            <div class="lynx-preview mt-2">{!! app(\LynxCms\Core\Fields\HtmlCleaner::class)->clean(lynx()->formatters()->render(lynx()->fields->get($field->name), $current[$code], $code)) !!}</div>
                         </details>
                     @endif
                 @elseif ($state->isOwn)

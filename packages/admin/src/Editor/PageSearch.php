@@ -8,12 +8,14 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Query\PageFinder;
+use LynxCms\Core\Query\SelectorException;
+use LynxCms\Core\Query\SelectorPolicy;
 
 /**
  * Finds pages for the admin's pickers (page reference fields, the link dialog, the menu editor):
  * pages the user may view, published or not. Titles holding the text come first, anywhere in a
  * word; then pages whose search index holds every word (ADR-0054), so text in searchable fields
- * finds pages too.
+ * finds pages too, unless the index holds a field the user may not view (ADR-0153).
  *
  * @internal
  */
@@ -53,8 +55,13 @@ final readonly class PageSearch
         return new PageArray([...$byTitle->all(), ...array_slice(array_values($more), 0, $left)]);
     }
 
+    /** Empty when the selector names a field the user may not view, or searches an index holding one. */
     private function select(string $selector): PageArray
     {
-        return app(PageFinder::class)->find($selector, scope: $this->access->viewScope());
+        try {
+            return app(PageFinder::class)->find($selector, scope: $this->access->viewScope(), policy: SelectorPolicy::forActor($this->access->actor()));
+        } catch (SelectorException) {
+            return new PageArray([]);
+        }
     }
 }

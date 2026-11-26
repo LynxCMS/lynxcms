@@ -118,6 +118,7 @@ return [
     ],
     'value' => [
         'missing_page' => 'Falta la página n.º :id',
+        'hidden_page' => 'Página n.º :id (fuera de tu acceso)',
         'yes' => 'Sí',
         'no' => 'No',
     ],

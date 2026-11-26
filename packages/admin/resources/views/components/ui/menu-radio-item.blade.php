@@ -5,7 +5,7 @@
 ])
 
 @php
-    $jsVal = \Illuminate\Support\Js::from((string) $value)->toHtml();
+    $jsVal = Js::from((string) $value)->toHtml();
     $clickExpr = 'radioValue = '.$jsVal.($closeOnSelect ? '; closeMenu()' : '');
 @endphp
 

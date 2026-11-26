@@ -41,7 +41,7 @@
         <div class="bg-muted/50 flex flex-wrap items-center gap-2 border-b px-5 py-3 text-sm" role="toolbar" aria-label="{{ trans_choice('lynx-admin::children.selected', count($selected)) }}">
             <span class="me-2 font-medium">{{ trans_choice('lynx-admin::children.selected', count($selected)) }}</span>
             @foreach (['publish', 'unpublish', 'hide', 'show'] as $action)
-                <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="bulk('{{ $action }}')">{{ __('lynx-admin::children.'.$action) }}</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="bulk({{ Js::from($action) }})">{{ __('lynx-admin::children.'.$action) }}</x-lynx-admin::ui.button>
             @endforeach
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" wire:click="chooseParent">{{ __('lynx-admin::children.move') }}</x-lynx-admin::ui.button>
             <x-lynx-admin::ui.button size="sm" variant="outline" type="button" class="hover:text-destructive" wire:click="confirmTrash({{ Js::from($selected) }})">{{ __('lynx-admin::children.trash') }}</x-lynx-admin::ui.button>

@@ -17,9 +17,9 @@
     @endphp
     <nav class="flex gap-5 overflow-x-auto border-b" aria-label="{{ __('lynx-admin::fields.tabs.label') }}">
         @foreach ($sections as $section)
-            <button type="button" data-field-tab="{{ $section }}" x-on:click="section = '{{ $section }}'"
+            <button type="button" data-field-tab="{{ $section }}" x-on:click="section = @js($section)"
                     class="text-muted-foreground relative -mb-px inline-flex shrink-0 items-center gap-1.5 border-b-2 whitespace-nowrap border-transparent pb-2.5 text-sm font-medium hover:text-foreground"
-                    x-bind:class="section === '{{ $section }}' && 'border-primary! text-foreground'" x-bind:aria-current="section === '{{ $section }}' ? 'page' : 'false'">
+                    x-bind:class="section === @js($section) && 'border-primary! text-foreground'" x-bind:aria-current="section === @js($section) ? 'page' : 'false'">
                 {{ $tabLabels[$section] }}
                 @if ($section === 'builder')<span class="bg-muted rounded-full px-1.5 text-xs tabular-nums">{{ $type === 'matrix' ? count($itemTypes) : count($itemFields) }}</span>@endif
                 @if (in_array($section, $errorTabs, true))<span class="bg-destructive size-1.5 rounded-full" aria-label="{{ __('lynx-admin::fields.tabs.has_errors') }}"></span>@endif

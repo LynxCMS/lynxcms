@@ -11,6 +11,7 @@ use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Auth\TwoFactorRequirement;
 use LynxCms\Admin\Auth\TwoFactorState;
 use LynxCms\Admin\Livewire\Concerns\ChangesPassword;
+use LynxCms\Admin\Livewire\Concerns\ConfirmsPasswordAgain;
 use LynxCms\Admin\Livewire\Concerns\ManagesPasskeys;
 use LynxCms\Admin\Livewire\Concerns\ManagesTwoFactor;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -25,6 +26,7 @@ use LynxCms\Admin\Livewire\Concerns\Notifies;
 final class AccountSecurity extends Component
 {
     use ChangesPassword;
+    use ConfirmsPasswordAgain;
     use ManagesPasskeys;
     use ManagesTwoFactor;
     use Notifies;

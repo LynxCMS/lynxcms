@@ -192,6 +192,23 @@ it('lets branch limited editors trash, unlock and empty only their own pages', f
         ->and($result['denied'])->toBe([(int) lynx()->pages->find('has_parent='.trashRoot().', include=all, name%=news')->first()?->id]);
 });
 
+it('counts a branch the actor may not delete as denied, without its locked pages', function (): void {
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    lynx()->run(SaveRole::class, ['name' => 'course-cleaner', 'grants' => [['permission' => 'pages.delete', 'branches' => [(int) at('/courses/')?->id]]]]);
+    lynx()->run(AssignRoles::class, ['user' => '5', 'roles' => ['course-cleaner']]);
+    $topic = lynx()->pages->new('courses', '/');
+    $topic->name = 'news';
+    $topic->title = 'News';
+    $topic->save();
+    lynx()->pages->trash('/news/');
+    lynx()->pages->setStatus($topic->id, add: ['locked']);
+
+    $result = lynx()->actingAs(Actor::user(5), fn (): mixed => lynx()->run(EmptyTrash::class)->value);
+
+    expect($result['blocked'])->toBe([])
+        ->and($result['denied'])->toBe([(int) $topic->id]);
+});
+
 it('previews trashing without moving anything', function (): void {
     $result = lynx()->pages->trash('/courses/alpha/', dryRun: true);
 

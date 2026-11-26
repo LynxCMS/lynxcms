@@ -55,7 +55,14 @@ trait ChangesPages
      */
     public function confirmTrash(array $ids): void
     {
-        $this->trashing = array_values(array_map(fn (Page $page): int => (int) $page->id, array_map($this->changeablePage(...), Value::ints($ids))));
+        $pages = array_map($this->changeablePage(...), Value::ints($ids));
+
+        // The warning names pages elsewhere: only for pages the user may trash (a dry run asks).
+        foreach ($pages as $page) {
+            lynx()->run(TrashPage::class, ['page' => (int) $page->id], dryRun: true);
+        }
+
+        $this->trashing = array_values(array_map(fn (Page $page): int => (int) $page->id, $pages));
         $this->trashReferences = ReferenceWarning::for($this->trashing);
         $this->trashConfirming();
     }

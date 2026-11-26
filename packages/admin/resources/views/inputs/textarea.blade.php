@@ -4,20 +4,20 @@
     <div
         class="lynx-richtext"
         wire:ignore
-        x-data="lynxRichText($wire.$entangle('{{ $model }}', {{ ($live ?? false) ? 'true' : 'false' }}), {{ $disabled ? 'true' : 'false' }}, @js(trim(strip_tags($placeholder))), 'field-{{ $field->name }}', @js(['pageId' => $field->pageId, 'language' => $code]))"
+        x-data="lynxRichText($wire.$entangle(@js($model), {{ ($live ?? false) ? 'true' : 'false' }}), {{ $disabled ? 'true' : 'false' }}, @js(trim(strip_tags($placeholder))), @js('field-'.$field->name), @js(['pageId' => $field->pageId, 'language' => $code]))"
     >
         @unless ($disabled)
             <div class="lynx-richtext-toolbar" role="toolbar" aria-label="{{ __('lynx-admin::inputs.rich_text.toolbar', ['field' => $field->label]) }}">
                 @foreach (['bold' => ['B', 'bold'], 'italic' => ['I', 'italic'], 'strike' => ['S', 'strike'], 'h2' => ['H2', 'heading'], 'h3' => ['H3', 'subheading'], 'bulletList' => ['•', 'bullet_list'], 'orderedList' => ['1.', 'numbered_list'], 'blockquote' => ['❝', 'quote']] as $tool => [$text, $labelKey])
                     @php($label = __('lynx-admin::inputs.rich_text.'.$labelKey))
-                    <button type="button" :disabled="isSource" @click="run('{{ $tool }}')" :aria-pressed="active.{{ $tool }} ? 'true' : 'false'" aria-label="{{ $label }}" title="{{ $label }}" data-richtext-tool="{{ $tool }}">{{ $text }}</button>
+                    <button type="button" :disabled="isSource" @click="run(@js($tool))" :aria-pressed="active.{{ $tool }} ? 'true' : 'false'" aria-label="{{ $label }}" title="{{ $label }}" data-richtext-tool="{{ $tool }}">{{ $text }}</button>
                 @endforeach
                 <button type="button" @click="link()" :disabled="isSource" :aria-pressed="active.link ? 'true' : 'false'" aria-label="{{ __('lynx-admin::inputs.rich_text.link') }}" title="{{ __('lynx-admin::inputs.rich_text.link') }}">{{ __('lynx-admin::inputs.rich_text.link') }}</button>
                 {{-- The extra tools the field turns on (its "tools" setting). --}}
                 @if ($extraButtons !== [])<span class="lynx-richtext-separator" aria-hidden="true"></span>@endif
                 @foreach ($extraButtons as $button)
                     @php($label = __($button['label']))
-                    <button type="button" :disabled="isSource" @click="run('{{ $button['tool'] }}')" :aria-pressed="active.{{ $button['tool'] }} ? 'true' : 'false'" aria-label="{{ $label }}" title="{{ $label }}" data-richtext-tool="{{ $button['tool'] }}"><x-dynamic-component :component="$button['icon']" class="size-4" aria-hidden="true" /></button>
+                    <button type="button" :disabled="isSource" @click="run(@js($button['tool']))" :aria-pressed="active.{{ $button['tool'] }} ? 'true' : 'false'" aria-label="{{ $label }}" title="{{ $label }}" data-richtext-tool="{{ $button['tool'] }}"><x-dynamic-component :component="$button['icon']" class="size-4" aria-hidden="true" /></button>
                 @endforeach
                 <span class="lynx-richtext-separator" aria-hidden="true"></span>
                 <button type="button" @click="undo()" aria-label="{{ __('lynx-admin::inputs.rich_text.undo') }}" title="{{ __('lynx-admin::inputs.rich_text.undo') }}">↶</button>

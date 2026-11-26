@@ -54,7 +54,7 @@
                         {{-- A filter's hint shows on hover and focus, and describes the button to screen readers. --}}
                         <x-lynx-admin::ui.tooltip :delay="300" wire:key="tree-filter-{{ $item['key'] }}">
                             <x-lynx-admin::ui.tooltip-trigger>
-                                <button type="button" wire:click="filterBy('{{ $item['key'] }}')" aria-pressed="{{ $filter === $item['key'] ? 'true' : 'false' }}"
+                                <button type="button" wire:click="filterBy(@js($item['key']))" aria-pressed="{{ $filter === $item['key'] ? 'true' : 'false' }}"
                                         @if ($item['key'] !== '') data-tree-filter="{{ $item['key'] }}" data-filter-count="{{ $item['count'] }}" @endif
                                         class="group text-muted-foreground hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background aria-pressed:border-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-3 text-sm">
                                     {{ $item['label'] }}

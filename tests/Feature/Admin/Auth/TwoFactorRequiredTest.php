@@ -82,6 +82,7 @@ it('asks for the own password before two-factor authentication', function (): vo
 it('keeps two-factor authentication on while it is required', function (): void {
     turnOnTwoFactor($this->ana);
     $this->actingAs($this->ana->fresh());
+    session(['auth.password_confirmed_at' => time()]);
 
     Livewire::test(AccountSecurity::class)->assertDontSee('Turn off')->call('disableTwoFactor')->assertHasErrors('two_factor');
 

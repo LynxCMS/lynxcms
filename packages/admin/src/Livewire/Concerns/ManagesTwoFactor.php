@@ -17,7 +17,8 @@ use LynxCms\Admin\Auth\TwoFactorState;
 /**
  * Account security: two-factor authentication through Fortify's actions. Enabling shows a QR
  * code and needs a code from the authenticator app before it counts; recovery codes show once
- * it is confirmed or when regenerated.
+ * it is confirmed or when regenerated. Each action needs a recent password confirmation
+ * (ConfirmsPasswordAgain).
  *
  * @internal
  */
@@ -45,6 +46,10 @@ trait ManagesTwoFactor
 
     public function enableTwoFactor(EnableTwoFactorAuthentication $enable): void
     {
+        if (! $this->hasRecentPassword()) {
+            return;
+        }
+
         $enable($this->twoFactorUser());
         $this->isSettingUpTwoFactor = true;
         $this->recoveryCodes = [];
@@ -52,6 +57,10 @@ trait ManagesTwoFactor
 
     public function confirmTwoFactor(ConfirmTwoFactorAuthentication $confirm): void
     {
+        if (! $this->hasRecentPassword()) {
+            return;
+        }
+
         $user = $this->twoFactorUser();
         $this->resetErrorBag('code');
 
@@ -70,6 +79,10 @@ trait ManagesTwoFactor
 
     public function regenerateRecoveryCodes(GenerateNewRecoveryCodes $generate): void
     {
+        if (! $this->hasRecentPassword()) {
+            return;
+        }
+
         $user = $this->twoFactorUser();
         $generate($user);
         $this->recoveryCodes = TwoFactorState::recoveryCodes($user->refresh());
@@ -78,6 +91,10 @@ trait ManagesTwoFactor
     /** Cancels a setup, or turns it off; never turns it off while the admin requires it (ADR-0128). */
     public function disableTwoFactor(DisableTwoFactorAuthentication $disable): void
     {
+        if (! $this->hasRecentPassword()) {
+            return;
+        }
+
         $user = $this->twoFactorUser();
 
         if (TwoFactorState::isEnabled($user) && TwoFactorRequirement::applies()) {

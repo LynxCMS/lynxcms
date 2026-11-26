@@ -33,7 +33,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked, private FieldAccess $access, private SavingPage $saving) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceChecks $references, private ValueOrigins $origins, private LockedFields $locked, private FieldAccess $access, private SavingPage $saving) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").

@@ -83,6 +83,7 @@ return [
         'url' => 'Enter an address starting with https://.',
         'url_or_path' => 'Enter an address starting with https:// or a path starting with /.',
         'page_template' => 'Pick pages that use :templates: [:page] uses :template.',
+        'page_not_viewable' => 'Pick pages you may view: page :id is not one of them.',
         'pages_max' => 'Pick at most :count page.|Pick at most :count pages.',
         'pages_min' => 'Pick at least :count page.|Pick at least :count pages.',
     ],

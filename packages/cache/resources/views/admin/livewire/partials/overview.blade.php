@@ -44,7 +44,7 @@
                             <td class="text-muted-foreground px-4 py-3">{{ __($rules[$name]['cache'] ? 'lynx-cache::admin.overview.cached' : 'lynx-cache::admin.overview.not_cached') }}</td>
                             <td class="px-4 py-3 text-right tabular-nums" data-template-stored="{{ $name }}" data-count="{{ $count }}">{{ \LynxCms\Core\Support\LocalizedNumber::format($count) }}</td>
                             <td class="px-4 py-2 text-right">
-                                @if ($count > 0)<x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="clearTemplate('{{ $name }}')">{{ __('lynx-cache::admin.overview.clear') }}</x-lynx-admin::ui.button>@endif
+                                @if ($count > 0)<x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="clearTemplate({{ Js::from($name) }})">{{ __('lynx-cache::admin.overview.clear') }}</x-lynx-admin::ui.button>@endif
                             </td>
                         </tr>
                     @endforeach

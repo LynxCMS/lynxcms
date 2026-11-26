@@ -127,13 +127,14 @@ it('shows core errors for a missing title or a name already taken', function ():
 it('refuses a template the screen does not offer', function (): void {
     lynx()->menus()->create('top', 'Top');
 
+    // A template outside the choices goes back to the preferred one before its fields render.
     Livewire::test(PageCreator::class, ['parentId' => coursesId()])
         ->set('template', 'menu-item')
+        ->assertSet('template', 'course')
         ->set('values.title.default', 'Sneaky')
-        ->call('create')
-        ->assertHasErrors('template');
+        ->call('create');
 
-    expect(lynx()->pages->findOne('name=sneaky, include=all'))->toBeNull();
+    expect(lynx()->pages->findOne('template=menu-item, name=sneaky, include=all'))->toBeNull();
 });
 
 it('creates a page whose template has no title, such as site settings, from the name typed', function (): void {
