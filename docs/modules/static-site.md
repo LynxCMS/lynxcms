@@ -26,7 +26,7 @@ The command reports what it wrote, the pages it left out and the pages that need
 
 - Every published page whose template has URLs, hidden pages included, in every language it is live in, as `{path}/index.html`. Hosts then answer both `/about` and `/about/`.
 - Pages render as a visitor who is not signed in sees them, also when you export from the admin: your session and account never reach the pages. Unpublished pages, pages behind a [page password](/modules/page-passwords) and pages your visibility rules keep for members are left out, and so is anything a page answers with other than a normal page.
-- `/sitemap.xml` and its parts and `/robots.txt`, when those modules are installed, and any address added to `paths`.
+- `/sitemap.xml` and its parts and `/robots.txt`, when those modules are installed, and any address added to `paths`. These files are written as the site sends them, with full addresses, as a sitemap needs. A file of your own that holds HTML for the browser, such as cards a script shows, should link from the site root (`/news/q3`), so it works on any host.
 - `404.html`, the site's own not found page. GitHub Pages, Netlify and Cloudflare Pages send it for unknown addresses.
 - Everything in `public/`, copied after the pages render so the image sizes they made are included: built assets, media, icons. PHP entry points, `.htaccess` and the page cache's folder are left out, and so are the media files of pages a guest could not open: unpublished, in the trash, or kept from guests by a visibility rule. Other files your app keeps on the public disk are copied; add their folders to `exclude` if they are not for publishing. A file in `public/` wins over a route at the same address, as on the live site.
 - Scripts, styles and icons that pages load from this site through a route rather than a file in `public/`, such as Livewire's script.
@@ -60,7 +60,7 @@ The export is what the site sends, without the server behind it. These don't wor
 
 - Forms that post to the site, and Livewire components. Use a form service, or a form written in Alpine or plain JavaScript that posts elsewhere.
 - [Islands](/modules/page-cache#islands), which PHP fills in after the page loads.
-- Query strings. A static host answers `/news?page=2` with `/news`, so paginated listings show their first page only.
+- Query strings. A static host answers `/news?page=2` with `/news`, so paginated listings show their first page only. To keep sorting and paging, add a route that answers with the list's data (each order's ids and each item's HTML) to `paths`, and have a script on the list show the order and page the address asks for.
 - Page passwords, search on the server and anything else decided per request.
 
 Alpine and plain JavaScript work as on the live site.
@@ -164,6 +164,6 @@ The export makes the image sizes the templates ask for while it renders, so they
 | `relative_links` | `true` (`LYNX_STATIC_RELATIVE_LINKS`) | Links, scripts, styles and images from the site's root, so the export works on any host; `false` keeps full addresses. |
 | `environment` | `production` (`LYNX_STATIC_ENVIRONMENT`) | Environment pages render in, without debug; `null` keeps the app's own. |
 | `paths` | `['/sitemap.xml', '/robots.txt']` | Other addresses to export, written as the files they answer with. |
-| `exclude` | PHP entry points, `.htaccess`, `hot`, `fonts-manifest.dev.json`, `lynx-cache` | Paths in `public/` that are not copied (patterns). |
+| `exclude` | PHP entry points, `.htaccess`, `hot`, `fonts-manifest.dev.json`, `lynx-cache` and its leftover `lynx-cache.trash-*` folders | Paths in `public/` that are not copied (patterns). |
 | `redirects.file` | `true` | Write `_redirects`. |
 | `redirects.pages` | `true` | Write a page at each old address. |

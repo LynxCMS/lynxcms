@@ -30,6 +30,8 @@ beforeEach(function (): void {
     File::put($this->public.'/.htaccess', 'RewriteEngine On');
     File::ensureDirectoryExists($this->public.'/lynx-cache/localhost');
     File::put($this->public.'/lynx-cache/localhost/index.html', 'cached');
+    File::ensureDirectoryExists($this->public.'/lynx-cache.trash-Ab12Cd34/localhost');
+    File::put($this->public.'/lynx-cache.trash-Ab12Cd34/localhost/index.html', 'old');
     app()->usePublicPath($this->public);
     config(['lynx-static.path' => $this->dist, 'lynx-static.url' => 'https://static.example']);
 
@@ -117,7 +119,8 @@ it('copies the public files, without PHP entry points or the page cache', functi
     expect(File::get($this->dist.'/build/app.css'))->toBe('body{}')
         ->and(File::exists($this->dist.'/index.php'))->toBeFalse()
         ->and(File::exists($this->dist.'/.htaccess'))->toBeFalse()
-        ->and(File::exists($this->dist.'/lynx-cache'))->toBeFalse();
+        ->and(File::exists($this->dist.'/lynx-cache'))->toBeFalse()
+        ->and(File::exists($this->dist.'/lynx-cache.trash-Ab12Cd34'))->toBeFalse();
 });
 
 it('writes the not found page, the sitemap and robots.txt for the static address', function (): void {

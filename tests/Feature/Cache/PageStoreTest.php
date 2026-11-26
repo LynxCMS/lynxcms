@@ -61,6 +61,17 @@ it('writes plain HTML files a web server can send as they are', function (): voi
         ->and($html)->toEndWith("<!-- lynx-cache 100 200 -->\n");
 });
 
+it('clears folders an earlier flush left behind', function (): void {
+    $leftover = testingPath('lynx-cache').'.trash-Ab12Cd34';
+    File::ensureDirectoryExists($leftover.'/localhost');
+    $store = app(FilePageStore::class);
+    $store->put(new CacheAddress('localhost', 'news'), new CachedPage('<p>News</p>', createdAt: 100, expiresAt: null));
+
+    $store->flush();
+
+    expect(File::isDirectory($leftover))->toBeFalse();
+});
+
 it('moves the generation on when everything is flushed', function (PageStore $store): void {
     $generation = app(Generation::class)->current();
 
