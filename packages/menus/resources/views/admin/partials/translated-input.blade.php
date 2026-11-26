@@ -8,7 +8,7 @@
         </x-lynx-admin::ui.tabs-list>
     @endif
     @foreach ($languages as $index => $language)
-        <div role="tabpanel" :id="$id('blat-tabpanel', @js($language['code']))" :aria-labelledby="$id('blat-tab', @js($language['code']))" x-show="tab === '{{ $language['code'] }}'" @if ($index !== 0) x-cloak @endif>
+        <div role="tabpanel" :id="$id('blat-tabpanel', @js($language['code']))" :aria-labelledby="$id('blat-tab', @js($language['code']))" x-show="tab === @js($language['code'])" @if ($index !== 0) x-cloak @endif>
         <input
             type="text"
             id="{{ $id }}-{{ $language['code'] }}"

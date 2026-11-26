@@ -128,7 +128,7 @@
                         </x-lynx-admin::ui.dropdown-menu-trigger>
                         <x-lynx-admin::ui.dropdown-menu-content align="end" class="min-w-52" data-save-menu>
                             @foreach ($followUps as $followUp)
-                                <x-lynx-admin::ui.dropdown-menu-item wire:click="publish('{{ $followUp->value }}')" data-publish-then="{{ $followUp->value }}">
+                                <x-lynx-admin::ui.dropdown-menu-item wire:click="publish({{ Js::from($followUp->value) }})" data-publish-then="{{ $followUp->value }}">
                                     <x-lynx-admin::ui.icon :name="$icons[$followUp->value]" aria-hidden="true" />{{ __('lynx-admin::editor.then.'.$verb.'.'.$followUp->value) }}
                                 </x-lynx-admin::ui.dropdown-menu-item>
                             @endforeach

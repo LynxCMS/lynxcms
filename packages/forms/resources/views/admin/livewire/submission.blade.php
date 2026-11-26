@@ -19,7 +19,7 @@
             <x-lynx-admin::ui.badge :variant="$submission->status === 'new' ? 'default' : 'secondary'">{{ __('lynx-forms::admin.status.'.$submission->status) }}</x-lynx-admin::ui.badge>
             @foreach (['read' => __('lynx-forms::admin.submission.mark_read'), 'archived' => __('lynx-forms::admin.submission.archive'), 'spam' => __('lynx-forms::admin.submission.spam'), 'new' => __('lynx-forms::admin.submission.mark_new')] as $value => $label)
                 @if ($submission->status !== $value)
-                    <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="setStatus('{{ $value }}')">{{ $label }}</x-lynx-admin::ui.button>
+                    <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="setStatus({{ Js::from($value) }})">{{ $label }}</x-lynx-admin::ui.button>
                 @endif
             @endforeach
             @if ($canDelete)

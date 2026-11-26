@@ -36,7 +36,7 @@
                             <td class="px-4 py-2 text-right whitespace-nowrap">
                                 <x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="view({{ $entry->id }})" :aria-expanded="$viewing === $entry->id ? 'true' : 'false'">{{ __($viewing === $entry->id ? 'lynx-cache::admin.fragments.hide' : 'lynx-cache::admin.fragments.view') }}</x-lynx-admin::ui.button>
                                 <x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="clear({{ $entry->id }})">{{ __('lynx-cache::admin.fragments.clear') }}</x-lynx-admin::ui.button>
-                                <x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="clearName('{{ $entry->name }}')" title="{{ __('lynx-cache::admin.fragments.every_language') }}">{{ __('lynx-cache::admin.fragments.clear_name', ['name' => $entry->name]) }}</x-lynx-admin::ui.button>
+                                <x-lynx-admin::ui.button type="button" variant="ghost" size="sm" wire:click="clearName({{ Js::from($entry->name) }})" title="{{ __('lynx-cache::admin.fragments.every_language') }}">{{ __('lynx-cache::admin.fragments.clear_name', ['name' => $entry->name]) }}</x-lynx-admin::ui.button>
                             </td>
                         </tr>
                         @if ($viewing === $entry->id)

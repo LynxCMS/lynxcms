@@ -26,7 +26,7 @@
                 @foreach (\LynxCms\Admin\Editor\LocalizedForm::languages() as $language)
                     @php($state = $states[$language['code']] ?? new \LynxCms\Admin\Editor\LanguageValue(null, false))
                     <x-lynx-admin::ui.tabs-trigger :value="$language['code']"
-                            x-on:dblclick="$dispatch('lynx-editor-language', '{{ $language['code'] }}')"
+                            x-on:dblclick="$dispatch('lynx-editor-language', {{ Js::from($language['code']) }})"
                             :title="$state->isOwn ? __('lynx-admin::editor.field.filled') : ($state->fallsBackTo ? __('lynx-admin::editor.field.falls_back_to', ['language' => $state->fallsBackTo]) : __('lynx-admin::editor.field.empty'))">
                         {{ $language['label'] }}
                         <span aria-hidden="true" @class(['lynx-tab-state', 'is-filled' => $state->isOwn, 'is-fallback' => $state->fallsBackTo !== null])></span>
@@ -34,7 +34,7 @@
                 @endforeach
             </x-lynx-admin::ui.tabs-list>
             @foreach ($codes as $code)
-                <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === '{{ $code }}'" @if (! $loop->first) x-cloak @endif>
+                <div role="tabpanel" :id="$id('blat-tabpanel', @js($code))" :aria-labelledby="$id('blat-tab', @js($code))" x-show="tab === @js($code)" @if (! $loop->first) x-cloak @endif>
                     @include($input, ['field' => $view, 'code' => $code, 'model' => $model.'.'.$code, 'placeholder' => '', 'disabled' => $disabled, 'live' => false, 'value' => $values[$code] ?? null, 'readOnly' => $readOnly($values[$code] ?? null)])
                 </div>
             @endforeach

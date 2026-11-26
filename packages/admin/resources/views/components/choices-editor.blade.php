@@ -6,7 +6,7 @@
 @php($languages = \LynxCms\Admin\Editor\LocalizedForm::languages())
 <div data-options-editor class="grid gap-2"
      x-data="{
-        rows: $wire.entangle('{{ $model }}'),
+        rows: $wire.entangle({{ Js::from($model) }}),
         tab: {{ Js::from($languages[0]['code'] ?? 'default') }},
         add() { this.rows = [...(this.rows || []), { value: '', label: Object.fromEntries({{ Js::from(array_column($languages, 'code')) }}.map(c => [c, ''])), isDefault: false }] },
         toggleDefault(i) {
@@ -19,8 +19,8 @@
     @if (count($languages) > 1)
         <div class="flex flex-wrap gap-1" role="tablist" aria-label="{{ __('lynx-admin::fields.choices.language') }}">
             @foreach ($languages as $language)
-                <button type="button" role="tab" class="text-xxs rounded px-1.5 py-0.5" :class="tab === '{{ $language['code'] }}' ? 'bg-accent font-semibold' : 'text-muted-foreground'"
-                        x-on:click="tab = '{{ $language['code'] }}'" :aria-selected="tab === '{{ $language['code'] }}'">{{ $language['label'] }}</button>
+                <button type="button" role="tab" class="text-xxs rounded px-1.5 py-0.5" :class="tab === @js($language['code']) ? 'bg-accent font-semibold' : 'text-muted-foreground'"
+                        x-on:click="tab = @js($language['code'])" :aria-selected="tab === @js($language['code'])">{{ $language['label'] }}</button>
             @endforeach
         </div>
     @endif
@@ -28,7 +28,7 @@
         <div class="flex flex-wrap items-center gap-2">
             <input type="text" class="blat-input w-36 font-mono text-xs" x-model="row.value" placeholder="{{ __('lynx-admin::fields.choices.from_label') }}" aria-label="{{ __('lynx-admin::fields.choices.value') }}" @disabled($disabled)>
             @foreach ($languages as $language)
-                <input type="text" class="blat-input min-w-0 flex-1" x-show="tab === '{{ $language['code'] }}'" x-model="row.label['{{ $language['code'] }}']"
+                <input type="text" class="blat-input min-w-0 flex-1" x-show="tab === @js($language['code'])" x-model="row.label[@js($language['code'])]"
                        placeholder="{{ __('lynx-admin::fields.choices.label', ['language' => $language['label']]) }}" aria-label="{{ __('lynx-admin::fields.choices.label', ['language' => $language['label']]) }}" @disabled($disabled)>
             @endforeach
             @if ($defaultable)
