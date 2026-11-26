@@ -191,7 +191,8 @@ final class FormValidator
             'textarea' => ['string', 'max:'.($field->max ?? self::TEXTAREA_MAX)],
             'email' => ['string', 'email', 'max:'.self::TEXT_MAX],
             'number' => array_filter(['numeric', $field->max === null ? null : 'max:'.$field->max]),
-            'date' => ['date'],
+            // As a date input sends it: results compare dates as text.
+            'date' => ['date_format:Y-m-d'],
             'select', 'radio' => [Rule::in(array_keys($field->options))],
             'checkboxes' => ['array'],
             'file' => ['array', 'max:'.$field->maxFiles],
