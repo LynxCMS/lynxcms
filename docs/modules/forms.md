@@ -176,7 +176,9 @@ Labels, help, options, step titles and the success and error messages come from 
 
 ### Spam
 
-Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a hidden field and a timing check. A caught bot sees the usual thanks, and nothing is stored or mailed. Each visitor may send a form 5 times in 10 minutes (`LYNX_FORMS_RATE_ATTEMPTS`, `LYNX_FORMS_RATE_DECAY`).
+Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a hidden field and a timing check. A caught bot sees the usual thanks, and nothing is stored or mailed. Each visitor may send a form 5 times in 10 minutes (`LYNX_FORMS_RATE_ATTEMPTS`, `LYNX_FORMS_RATE_DECAY`). The limit counts per IP address as Laravel sees it. Behind a load balancer or a CDN, tell Laravel which proxies to trust ([Configuring trusted proxies](https://laravel.com/docs/requests#configuring-trusted-proxies)): without that, every visitor has the proxy's address and five submissions close the form for everyone, and with every proxy trusted, visitors can claim any address and the limit stops nobody.
+
+A form with an auto-reply mails the address a visitor types, which may be someone else's. The mail holds only the form's title and your text, never the visitor's answers. If strangers start getting these mails, turn Turnstile on.
 
 [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) adds a check that a visitor is a person, which most people pass without a puzzle. It is off until the site has a site key and a secret key, from a free Cloudflare account. Put them in `.env`:
 
@@ -227,7 +229,7 @@ MCP clients and the built-in agent can import a form export with `forms_import`,
 
 | Permission | Allows |
 | --- | --- |
-| `forms.view` | Seeing submissions, marking them read, archived or spam, and notes |
+| `forms.view` | Seeing submissions, marking them read, archived or spam, and notes. The daily purge deletes spam and archived submissions once they are old enough, so this permission can lead to deletion. |
 | `forms.manage` | Building forms, exporting and importing them, and deleting submissions |
 
 ## Housekeeping

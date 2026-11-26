@@ -7,7 +7,7 @@ return [
         'manage' => 'Manage menus',
     ],
     'forms' => [
-        'view' => 'See and sort form submissions',
+        'view' => 'See and sort form submissions (sorted as spam or archived, they are purged later)',
         'manage' => 'Build forms and delete submissions',
     ],
     'seo' => [

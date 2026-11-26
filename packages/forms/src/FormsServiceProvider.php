@@ -71,7 +71,7 @@ final class FormsServiceProvider extends ServiceProvider
         // A form page that would make a broken form is refused, and the save rolled back (ADR-0053).
         $this->app->make(HookRegistry::class)->after(SavePage::class, fn (mixed $page) => app(PageFormValidator::class)->check($page));
         $permissions = $this->app->make(PermissionRegistry::class);
-        $permissions->register('forms.view', 'See and sort form submissions');
+        $permissions->register('forms.view', 'See and sort form submissions (sorted as spam or archived, they are purged later)');
         $permissions->register('forms.manage', 'Build forms and delete submissions', requires: ['forms.view']);
         // Forms are pages under /_forms/: building forms covers the page actions there.
         $permissions->delegate(FormSchema::ROOT_TEMPLATE, 'forms.manage');

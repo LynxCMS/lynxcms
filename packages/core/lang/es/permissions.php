@@ -7,7 +7,7 @@ return [
         'manage' => 'Gestionar los menús',
     ],
     'forms' => [
-        'view' => 'Ver y clasificar los envíos de formularios',
+        'view' => 'Ver y clasificar los envíos de formularios (los marcados como spam o archivados se borran más tarde)',
         'manage' => 'Crear formularios y eliminar envíos',
     ],
     'seo' => [
