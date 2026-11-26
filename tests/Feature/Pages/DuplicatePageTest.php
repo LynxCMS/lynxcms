@@ -60,6 +60,17 @@ it('copies the page next to it, unpublished, with its values in every language',
         ->and(childNamesOf())->toBe(['alpha', 'beta']);
 });
 
+it('copies a page whose template requires a text field', function (): void {
+    // A textarea can link to pages (rich text), so its references are rewritten in the second
+    // save; the first save must already carry it, or a required one is refused.
+    lynx()->templates->update('course', ['fields' => [['name' => 'title', 'required' => true], ['name' => 'summary', 'required' => true], 'body', 'price', 'related']]);
+
+    $copy = lynx()->pages->get((int) lynx()->pages->duplicate('/courses/alpha/')->id);
+
+    expect((string) $copy->summary)->toBe('An intro')
+        ->and((string) $copy->getLanguageValue('pt', 'summary'))->toBe('Uma introdução');
+});
+
 it('numbers further copies', function (): void {
     lynx()->pages->duplicate('/courses/alpha/');
 

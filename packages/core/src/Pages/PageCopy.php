@@ -52,7 +52,7 @@ final readonly class PageCopy
      */
     public function create(Page $page, int $parentId, bool $isUnpublished, ?string $titlePrefix = null): array
     {
-        $values = array_diff_key($this->values($page), $this->later($page));
+        $values = array_diff_key($this->values($page), $this->waitsForCopy($page));
 
         if ($titlePrefix !== null && $titlePrefix !== '' && array_key_exists('title', $values)) {
             $values['title'] = $this->prefixed($values['title'], $titlePrefix);
@@ -99,6 +99,23 @@ final readonly class PageCopy
         }
 
         return $values;
+    }
+
+    /**
+     * Fields the first save leaves out: those a new page cannot take, page tables and fields with
+     * files. A field that only names pages, such as a page field or a textarea whose rich text
+     * links to pages, goes in the first save as it is, pointing at the originals, so a required
+     * one is there; finish() points it at the copies.
+     *
+     * @return array<string, TemplateField>
+     */
+    private function waitsForCopy(Page $page): array
+    {
+        return array_filter($this->later($page), function (TemplateField $templateField): bool {
+            $type = $templateField->field->fieldType();
+
+            return $type instanceof NeedsSavedPage || $type instanceof CarriesFiles || $type instanceof PageTableType;
+        });
     }
 
     /**
