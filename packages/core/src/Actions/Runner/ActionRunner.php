@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace LynxCms\Core\Actions\Runner;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\DatabaseTransactionsManager;
 use Illuminate\Database\DetectsConcurrencyErrors;
-use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Schema\SchemaEditing;
 use LynxCms\Core\Support\Flushable;
-use LynxCms\Core\Support\Value;
 use Throwable;
 
 /**
@@ -43,9 +40,7 @@ final class ActionRunner
 
     private readonly EventQueue $events;
 
-    private ?Actor $actor = null;
-
-    private bool $isServingRequest = false;
+    private readonly CurrentActor $actors;
 
     public function __construct(
         private readonly Container $container,
@@ -53,6 +48,7 @@ final class ActionRunner
         private readonly DatabaseManager $db,
     ) {
         $this->events = new EventQueue($container);
+        $this->actors = new CurrentActor($container);
     }
 
     /**
@@ -89,21 +85,17 @@ final class ActionRunner
     {
         $outer = $this->depth === 0;
 
+        // Permissions first (ADR-0033), before validation: an actor who may not run the action
+        // learns nothing from its validation messages, such as whether a name is taken. Nested
+        // actions were authorized with their outer action.
         if ($outer) {
+            $this->authorizeOuter($action);
             $this->changes = new ChangeSet;
             $this->events->clear();
             $this->dryRun = $dryRun;
         }
 
-        $data = $input instanceof Input ? $input->all() : $input;
-
-        if (is_subclass_of($action, RefusesUnknownInput::class)) {
-            UnknownInput::refuse($data, $action::rules());
-        }
-
-        // Validated values win, but recursively: rules for some nested keys ("settings.description")
-        // must not drop their siblings ("settings.format") that the action validates itself.
-        $input = new Input(Value::map(array_replace_recursive($data, Validator::make($data, $action::rules())->validate())));
+        $input = ValidatedInput::for($action, $input);
 
         $context = new ActionContext(
             action: $action,
@@ -115,14 +107,13 @@ final class ActionRunner
         );
 
         $connection = $this->db->connection();
+        $level = $connection->transactionLevel();
         $this->depth++;
-        $connection->beginTransaction();
 
         try {
-            // Permissions first (ADR-0033); nested actions were authorized with their outer action.
-            if ($outer) {
-                $this->container->make(Authorizer::class)->authorizeAction($context->actor, $action::permission(), $action::name());
-            }
+            // Inside the try: when the transaction fails to start, depth must go back down, or every
+            // later action in a long-lived process would count as nested and skip its checks.
+            $connection->beginTransaction();
 
             // At any depth: a module's action may create fields inside (ADR-0117).
             if ($action::changesSchema()) {
@@ -145,7 +136,10 @@ final class ActionRunner
                 $connection->commit();
             }
         } catch (Throwable $e) {
-            $connection->rollBack();
+            if ($connection->transactionLevel() > $level) {
+                $connection->rollBack();
+            }
+
             $this->depth--;
 
             if ($outer) {
@@ -172,6 +166,23 @@ final class ActionRunner
     }
 
     /**
+     * A refused action leaves the caches as a failed one does: emptied, so a page object the caller
+     * changed before saving is read again from the database, not from memory.
+     *
+     * @param  class-string<Action>  $action
+     */
+    private function authorizeOuter(string $action): void
+    {
+        try {
+            $this->container->make(Authorizer::class)->authorizeAction($this->actor(), $action::permission(), $action::name());
+        } catch (Throwable $e) {
+            $this->flushCaches();
+
+            throw $e;
+        }
+    }
+
+    /**
      * Whether the transaction an action opens now is the outermost one, by the rule Laravel's
      * transaction manager keeps (a test's own transaction does not count).
      */
@@ -193,30 +204,12 @@ final class ActionRunner
      */
     public function actingAs(Actor $actor, Closure $callback): mixed
     {
-        $previous = $this->actor;
-        $this->actor = $actor;
-
-        try {
-            return $callback();
-        } finally {
-            $this->actor = $previous;
-        }
+        return $this->actors->actingAs($actor, $callback);
     }
 
     public function actor(): Actor
     {
-        if ($this->actor !== null) {
-            return $this->actor;
-        }
-
-        $auth = $this->container->make(AuthFactory::class);
-        $id = $auth->guard()->id();
-
-        if ($id !== null) {
-            return Actor::user($id);
-        }
-
-        return $this->container->runningInConsole() && ! $this->isServingRequest ? Actor::cli() : Actor::guest();
+        return $this->actors->resolve();
     }
 
     /**
@@ -230,14 +223,7 @@ final class ActionRunner
      */
     public function servingRequest(Closure $callback): mixed
     {
-        $previous = $this->isServingRequest;
-        $this->isServingRequest = true;
-
-        try {
-            return $callback();
-        } finally {
-            $this->isServingRequest = $previous;
-        }
+        return $this->actors->servingRequest($callback);
     }
 
     public function queueEvent(object $event): void

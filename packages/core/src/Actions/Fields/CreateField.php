@@ -69,7 +69,7 @@ final class CreateField extends Action
     {
         return [
             'uuid' => ['nullable', 'uuid', Rule::unique(Tables::FIELDS, 'uuid')],
-            'name' => ['bail', 'required', 'string', 'regex:/^[a-z][a-z0-9_]*$/', Rule::unique(Tables::FIELDS, 'name'),
+            'name' => ['bail', 'required', 'string', 'regex:/^[a-z][a-z0-9_]*$/D', Rule::unique(Tables::FIELDS, 'name'),
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (in_array($value, self::RESERVED, true)) {
                         $fail(Value::string(__('lynx::structure.field.reserved', ['name' => $value])));

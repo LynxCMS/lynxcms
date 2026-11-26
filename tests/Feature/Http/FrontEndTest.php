@@ -87,3 +87,16 @@ it('redirects a path written in another language to the page in the URL language
     $this->get('/cursos/navegando-entrega-8')->assertRedirect('http://localhost/courses/delivery-8');
     $this->get('/pt/cursos/nothing-here')->assertNotFound();
 });
+
+it('builds redirects and hreflang links from the site\'s address, whatever Host the request names', function (): void {
+    $page = lynx()->pages->get('/courses/delivery-8');
+    $page->setLanguageName('pt', 'guia-entrega');
+    $page->save();
+    $forged = ['Host' => 'evil.example'];
+
+    $this->get('http://evil.example/pt/cursos/navegando-entrega-8', $forged)->assertRedirect('http://localhost/pt/cursos/guia-entrega');
+    $this->get('http://evil.example/default/courses/delivery-8', $forged)->assertRedirect('http://localhost/courses/delivery-8');
+    $this->get('http://evil.example/pt/cursos/guia-entrega', $forged)
+        ->assertSee('hreflang="x-default" href="http://localhost/courses/delivery-8"', false)
+        ->assertDontSee('hreflang="pt-PT" href="http://evil.example', false);
+});

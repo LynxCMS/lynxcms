@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Laravel\Ai\Tools\Request;
 use LynxCms\Ai\Tools\ReadTool;
 use LynxCms\Contracts\Actions\Actor;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
+use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Agents\AgentToolkit;
 use LynxCms\Core\Agents\PageHistory;
 use LynxCms\Core\Lynx;
@@ -76,4 +79,14 @@ it('lists revisions and whether a draft exists, so agents can restore one', func
 
     $names = array_keys(app(AgentToolkit::class)->writeTools());
     expect($names)->toContain('pages_restore_revision', 'pages_save_draft', 'pages_publish_draft');
+});
+
+it('lists only the linking pages the actor may view', function (): void {
+    linkedCourse();
+    lynx()->run(SaveRole::class, ['name' => 'course-reader', 'grants' => [['permission' => 'pages.view', 'templates' => ['course']]]]);
+    lynx()->run(AssignRoles::class, ['user' => '8', 'roles' => ['course-reader']]);
+
+    $report = app(ActionRunner::class)->actingAs(Actor::mcp(8), fn (): ?array => app(PageHistory::class)->for('/courses/alpha-2'));
+
+    expect(array_column($report['linked_from'] ?? [], 'template'))->toBe(['course']);
 });

@@ -23,7 +23,7 @@ final class DraftTemplates
 
     private const array SECTION_KEYS = ['tab', 'column', 'collapsed'];
 
-    private const string SECTION_KEY_PATTERN = '/^[a-z][a-z0-9_-]{0,63}$/';
+    private const string SECTION_KEY_PATTERN = '/^[a-z][a-z0-9_-]{0,63}$/D';
 
     /** @var array<string, mixed> fields defined in place, by name */
     private array $inline = [];

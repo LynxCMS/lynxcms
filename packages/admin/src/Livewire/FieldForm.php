@@ -157,8 +157,9 @@ final class FieldForm extends Component
         $definitions = $this->definitions();
         $formatters = lynx()->formatters()->forType($this->type);
         $accessRoles = $this->accessRoles();
+        $canProtect = $this->canProtect();
         $shownSettings = $this->hasItemBuilder() ? array_diff_key($definitions, array_flip(self::ITEM_DISPLAY_SETTINGS)) : $definitions;
-        $tabs = new FieldFormTabs($this->hasItemBuilder(), $this->field === null, $shownSettings !== [] || $formatters !== [], $accessRoles !== []);
+        $tabs = new FieldFormTabs($this->hasItemBuilder(), $this->field === null, $shownSettings !== [] || $formatters !== [], $accessRoles !== [] && $canProtect);
 
         return view('lynx-admin::livewire.field-form', [
             'title' => $this->field === null ? __('lynx-admin::fields.new') : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
@@ -182,6 +183,7 @@ final class FieldForm extends Component
             'typeUsage' => $this->typeUsage(),
             'templateOptions' => app(FieldTemplateOptions::class)->all(),
             'accessRoles' => $accessRoles,
+            'canProtect' => $canProtect,
         ]);
     }
 
@@ -204,6 +206,12 @@ final class FieldForm extends Component
         $owners = app(SchemaOwners::class);
 
         return $this->field === null ? $owners->isEditingEnabled() : $owners->canEditField($this->field);
+    }
+
+    /** Only superusers change who may see and edit a field, or lock it for the site's code. */
+    private function canProtect(): bool
+    {
+        return app(AdminAccess::class)->isSuperuser();
     }
 
     /** Read only screens refuse writes on the server too, whatever the browser sends. */
@@ -242,6 +250,11 @@ final class FieldForm extends Component
             'locked' => $this->locked ? true : null,
             'access' => $this->accessSetting(),
         ];
+
+        // fields.update refuses changes to these from anyone but a superuser; others leave them as stored.
+        if (! $this->canProtect()) {
+            unset($settings['access'], $settings['locked']);
+        }
 
         if ($this->translatable) {
             $settings['fallback'] = $this->fallback === 'none' ? 'none' : null;

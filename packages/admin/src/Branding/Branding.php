@@ -25,9 +25,9 @@ final readonly class Branding
     public const string FOLDER = 'lynx-admin';
 
     /** A stored logo's file name: its hash keeps old copies out of browser caches. */
-    public const string LOGO_FILE = '/^logo-[a-f0-9]{16}\.(png|jpg|webp|svg)$/';
+    public const string LOGO_FILE = '/^logo-[a-f0-9]{16}\.(png|jpg|webp|svg)$/D';
 
-    public const string HEX = '/^#[0-9a-fA-F]{6}$/';
+    public const string HEX = '/^#[0-9a-fA-F]{6}$/D';
 
     /** The name the admin goes by until the site sets its own. */
     public const string DEFAULT_NAME = 'Lynx';

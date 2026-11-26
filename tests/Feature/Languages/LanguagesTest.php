@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
+use LynxCms\Core\Actions\Languages\UpdateLanguage;
 use LynxCms\Core\Events\LanguageUpdated;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Models\Language;
@@ -138,3 +139,19 @@ it('follows a changed fallback in the same request', function (): void {
 
     expect($codes())->toBe(['es', 'pt', 'default']);
 });
+
+it('refuses a locale that is not one, as Laravel builds file paths from it', function (string $locale): void {
+    lynx()->languages->add('fr', 'Français', locale: $locale);
+})->with(['../../x', 'pt/PT', "pt\n"])->throws(ValidationException::class);
+
+it('accepts locales with a region or a script', function (string $locale): void {
+    lynx()->languages->add('fr', 'Français', locale: $locale);
+
+    expect(lynx()->languages->find('fr')?->locale)->toBe($locale);
+})->with(['fr', 'fr-CA', 'pt_BR', 'zh-Hant-TW']);
+
+it('refuses a locale that is not one when a language changes', function (): void {
+    lynx()->languages->add('fr', 'Français');
+
+    lynx()->run(UpdateLanguage::class, ['code' => 'fr', 'locale' => '../lang']);
+})->throws(ValidationException::class);

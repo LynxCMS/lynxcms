@@ -21,9 +21,9 @@ use LynxCms\Core\Models\Field;
 final class TimeType extends BaseFieldType implements DescribesPhpType
 {
     /** "9:05", "9h05", "9.05", optionally with seconds. */
-    private const string WRITTEN = '/^(\d{1,2})\s*[:h.]\s*(\d{2})(?:\s*[:.]\s*(\d{2}))?$/i';
+    private const string WRITTEN = '/^(\d{1,2})\s*[:h.]\s*(\d{2})(?:\s*[:.]\s*(\d{2}))?$/iD';
 
-    private const string STORED = '/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/';
+    private const string STORED = '/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/D';
 
     public static function name(): string
     {

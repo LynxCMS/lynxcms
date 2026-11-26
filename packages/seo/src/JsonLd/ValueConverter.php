@@ -124,7 +124,7 @@ final readonly class ValueConverter
         $written = $value instanceof Choice ? $value->value : $this->plain($value);
         $member = SchemaTypes::ENUMS[$property][strtolower($written)] ?? $written;
 
-        return preg_match('/^[A-Z][A-Za-z]+$/', $member) === 1 ? self::SCHEMA_ORG.$member : null;
+        return preg_match('/^[A-Z][A-Za-z]+$/D', $member) === 1 ? self::SCHEMA_ORG.$member : null;
     }
 
     /** @return list<string> */

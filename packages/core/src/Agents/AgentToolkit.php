@@ -25,6 +25,7 @@ use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Query\PageFinder;
+use LynxCms\Core\Query\SelectorPolicy;
 use LynxCms\Core\Strings\PageStrings;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateField;
@@ -185,7 +186,7 @@ final readonly class AgentToolkit
         $default = $limit === null ? Value::int(config('lynx.agents.default_limit', 25), 25) : $cap;
 
         $run = function () use ($selector, $cap, $default, $scope): array {
-            $pages = app(PageFinder::class)->find($selector, maxLimit: $cap, defaultLimit: $default, scope: $scope);
+            $pages = app(PageFinder::class)->find($selector, maxLimit: $cap, defaultLimit: $default, scope: $scope, policy: SelectorPolicy::forActor($this->runner->actor()));
 
             return [
                 'total' => $pages->total(),

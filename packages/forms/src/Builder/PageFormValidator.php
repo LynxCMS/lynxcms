@@ -22,7 +22,7 @@ use LynxCms\Forms\FormSchema;
  */
 final readonly class PageFormValidator
 {
-    private const string FIELD_NAME = '/^[a-z][a-z0-9_]*$/';
+    private const string FIELD_NAME = '/^[a-z][a-z0-9_]*$/D';
 
     private const array CHOICE_TYPES = ['select', 'radio', 'checkboxes'];
 

@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 273 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 274 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -174,6 +174,7 @@ In `LynxCms\Core`.
 | `Permissions\PermissionRegistry` | class | The permissions roles can grant. |
 | `Permissions\RoleAssignment` | class | A host app user holding a role. |
 | `Query\SelectorException` | class | Thrown for a selector Lynx cannot read; its message says what is wrong. |
+| `Query\SelectorPolicy` | class | Limits on a selector that comes from outside the site's code, checked before it compiles: which fields it may filter, sort or load, which terms it may use, and how much it may ask for. |
 | `Schema\SchemaEditing` | class | Who may change the schema. |
 | `Schema\SchemaOwners` | class | Which templates and fields belong to Lynx or a module rather than to the site. |
 | `Schema\SchemaWording` | class | Where a module keeps translations of the labels it installs. |

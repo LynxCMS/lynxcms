@@ -17,7 +17,7 @@ use InvalidArgumentException;
 final class AdminAssets
 {
     /** A stylesheet's name: lowercase letters, digits and dashes. */
-    public const string NAME = '/^[a-z0-9][a-z0-9-]{0,63}$/';
+    public const string NAME = '/^[a-z0-9][a-z0-9-]{0,63}$/D';
 
     /** @var array<string, string> path by name */
     private array $stylesheets = [];

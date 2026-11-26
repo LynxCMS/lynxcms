@@ -18,7 +18,7 @@ use LynxCms\Core\Support\Value;
  */
 final class ChoiceOptions
 {
-    public const string VALUE_PATTERN = '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/';
+    public const string VALUE_PATTERN = '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/D';
 
     /**
      * An option's value: the one given, or one made from its label in the default language.

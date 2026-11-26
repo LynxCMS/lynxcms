@@ -133,17 +133,17 @@ final readonly class ConditionWriter
 
     private function numeric(string $value): ?string
     {
-        return preg_match('/^-?\d+(\.\d+)?$/', $value) === 1 ? $value : null;
+        return preg_match('/^-?\d+(\.\d+)?$/D', $value) === 1 ? $value : null;
     }
 
     private function digits(string $value): ?string
     {
-        return preg_match('/^\d{1,6}$/', $value) === 1 ? $value : null;
+        return preg_match('/^\d{1,6}$/D', $value) === 1 ? $value : null;
     }
 
     private function day(string $value): ?CarbonImmutable
     {
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) !== 1) {
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value) !== 1) {
             return null;
         }
 

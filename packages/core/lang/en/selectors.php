@@ -34,4 +34,11 @@ return [
     'subfield_list' => 'Subfield [:field] holds a list: use = or !=.',
     'no_subfield' => 'Field [:field] has no subfield [:subfield].',
     'search' => 'Search the index with search*="words".',
+    'policy' => [
+        'term' => '[:term] is not allowed in this selector.',
+        'field' => 'Field [:field] cannot be used in this selector.',
+        'clauses' => 'This selector has too many parts: at most :max.',
+        'values' => 'This selector has too many values: at most :max.',
+        'start' => 'start= can be at most :max here.',
+    ],
 ];

@@ -221,6 +221,8 @@ lynx()->actingAs(Actor::system(), function () use ($product, $request): void {
 });
 ```
 
+Only superusers lock or unlock a field, everywhere or on one template. Other roles with `schema.manage` see the **Locked** boxes read only, and `fields.update` and `templates.update` refuse their changes to them, so they can't unlock a field and then write it.
+
 Publishing a draft and restoring a revision keep a locked field's live value, so an editor's older draft never puts back a value your code has since replaced. A locked field can't be required, since editors could never fill it; a field a template requires can't be locked until it is optional there.
 
 ProcessWire's Presentation setting inspired `editor`, `locked` and `lazy`.

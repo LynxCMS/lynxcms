@@ -35,7 +35,7 @@ final class FieldFocus
 
         return [
             'field' => $field,
-            'item' => preg_match('/^[0-9A-Z]{26}$/', $item) === 1 ? $item : null,
+            'item' => preg_match('/^[0-9A-Z]{26}$/D', $item) === 1 ? $item : null,
             'language' => $code === '' ? null : app(LanguageRegistry::class)->find($code)?->code,
             'tab' => TemplateLayout::for($page->template())->tabOf($field),
         ];

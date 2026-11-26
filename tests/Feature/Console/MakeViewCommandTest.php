@@ -182,3 +182,18 @@ it('writes no block views with --no-blocks', function (): void {
 it('refuses an unknown template', function (): void {
     $this->artisan('lynx:make:view', ['template' => 'nope'])->assertFailed();
 });
+
+it('keeps labels inside the comments it writes, whatever they hold', function (): void {
+    $label = "Course --}} @php echo 'hacked'; @endphp {{-- \n {{ \$x }}";
+    lynx()->templates->update('course', ['label' => $label]);
+    lynx()->fields->add('blocks', 'matrix', settings: ['types' => [['slug' => 'quote', 'label' => $label, 'fields' => [['name' => 'summary']]]]]);
+    lynx()->templates->update('course', ['add' => ['blocks']]);
+
+    $this->artisan('lynx:make:view', ['template' => 'course'])->assertSuccessful();
+
+    foreach ([madeView('course'), madeBlockView('blocks', 'quote')] as $view) {
+        expect(substr_count($view, '--}}'))->toBe(substr_count($view, '{{--'))
+            ->and($view)->not->toContain('@php')
+            ->and($view)->not->toContain('{{ $x }}');
+    }
+});

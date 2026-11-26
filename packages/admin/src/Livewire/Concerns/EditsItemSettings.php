@@ -254,7 +254,7 @@ trait EditsItemSettings
             return $this->itemFields;
         }
 
-        if (preg_match('/^types\.(\d+)$/', $list, $match) === 1 && isset($this->itemTypes[(int) $match[1]])) {
+        if (preg_match('/^types\.(\d+)$/D', $list, $match) === 1 && isset($this->itemTypes[(int) $match[1]])) {
             return $this->itemTypes[(int) $match[1]]['fields'];
         }
 
@@ -268,7 +268,7 @@ trait EditsItemSettings
     {
         if ($list === 'fields') {
             $this->itemFields = $fields;
-        } elseif (preg_match('/^types\.(\d+)$/', $list, $match) === 1 && isset($this->itemTypes[(int) $match[1]])) {
+        } elseif (preg_match('/^types\.(\d+)$/D', $list, $match) === 1 && isset($this->itemTypes[(int) $match[1]])) {
             $this->itemTypes[(int) $match[1]]['fields'] = $fields;
         }
     }

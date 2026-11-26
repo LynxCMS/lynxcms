@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Http\Request;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Pages\PageUrl;
+use LynxCms\Core\Support\SiteRoot;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -37,7 +38,7 @@ final readonly class RedirectDefaultLocale
             $target = PageUrl::of('', implode('/', $segments));
             $query = $request->getQueryString();
 
-            return redirect()->away(rtrim(url('/'), '/').$target.($query ? '?'.$query : ''), 301);
+            return redirect()->away(SiteRoot::url().$target.($query ? '?'.$query : ''), 301);
         }
 
         return $next($request);

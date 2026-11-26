@@ -19,7 +19,7 @@ final class EditorSettings
 
     public const int FULL_WIDTH = 100;
 
-    private const string ICON_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+    private const string ICON_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/D';
 
     /**
      * @param  array<string, mixed>  $settings  the template field's settings

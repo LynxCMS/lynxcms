@@ -5,7 +5,21 @@ description: The settings that make rendered pages fast on a production server, 
 
 # Deployment
 
-A few settings outside Lynx decide much of how fast a server renders pages. With the four below and Lynx 0.1.30, the corporate starter's home page renders in less than 40% of the time it took before, and the server takes six times as many requests a second. This page shows those settings, then how many visitors a small server can take.
+A few settings outside Lynx decide much of how fast a server renders pages. With the four below and Lynx 0.1.30, the corporate starter's home page renders in less than 40% of the time it took before, and the server takes six times as many requests a second. This page shows the site's address first, then those settings, then how many visitors a small server can take.
+
+## Site address
+
+Set `APP_URL` in `.env` to the address visitors use, such as `https://www.example.com`. Lynx builds the absolute URLs it sends from it: the 301 redirects from old paths and the `hreflang` links in each page's head.
+
+Laravel builds other absolute URLs, such as the address of Livewire's script, from the `Host` header of each request. A request with a forged header gets those URLs with the forged host, and a shared cache in front of the site could keep that response. Tell Laravel which hosts are yours, in `bootstrap/app.php`:
+
+```php
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->trustHosts(at: ['example.com'], subdomains: true);
+})
+```
+
+Requests for any other host then answer 400. [Laravel's documentation](https://laravel.com/docs/requests#configuring-trusted-hosts) has the details.
 
 ## Performance
 

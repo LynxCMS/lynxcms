@@ -63,7 +63,7 @@ final class CopySection extends Action
             'to' => ['required', 'array', 'min:1'],
             'to.*' => ['string', 'distinct', 'different:template', Rule::exists(Tables::TEMPLATES, 'name')],
             'rename_conflicts' => ['sometimes', 'boolean'],
-            'prefix' => ['sometimes', 'string', 'regex:/^[a-z][a-z0-9_]*$/'],
+            'prefix' => ['sometimes', 'string', 'regex:/^[a-z][a-z0-9_]*$/D'],
         ];
     }
 

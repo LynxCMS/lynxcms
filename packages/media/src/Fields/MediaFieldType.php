@@ -83,7 +83,7 @@ abstract class MediaFieldType extends ItemFieldType implements HasItemProperties
     {
         return [
             'max_files' => ['sometimes', 'integer', 'min:0'],
-            'extensions' => ['sometimes', 'string', 'regex:/^[a-z0-9 ]+$/', FileTypes::rule()],
+            'extensions' => ['sometimes', 'string', 'regex:/^[a-z0-9 ]+$/D', FileTypes::rule()],
             'max_kb' => ['sometimes', 'integer', 'min:1'],
             'tags' => ['sometimes', 'array'],
             'tags.*' => ['string', 'max:64'],
@@ -178,7 +178,7 @@ abstract class MediaFieldType extends ItemFieldType implements HasItemProperties
         $key = Value::string($raw['key'] ?? '');
 
         return [
-            'key' => preg_match('/^[0-9A-Z]{26}$/', $key) === 1 ? $key : (string) Str::ulid(),
+            'key' => preg_match('/^[0-9A-Z]{26}$/D', $key) === 1 ? $key : (string) Str::ulid(),
             'type' => null,
             'enabled' => (bool) ($raw['enabled'] ?? true),
             'depth' => 0,
