@@ -13,6 +13,7 @@ Every `lynxcms/*` package shares one version number, and only classes marked `@a
 ### Changes
 
 - Strings in matrix block views (`templates/fields/{field}/{type}.blade.php`) are now the strings of every template that offers those blocks, so editors can change them in the admin. Before, only the template's view and the views it includes were read.
+- `lynx:install` after `lynx:import --with-schema`, the documented way to start a new environment, no longer fails with "Another page under the same parent already uses the name [not-found]". It now chooses the not-found page the package brought.
 - Duplicating a page whose template requires a text field, such as a required summary, no longer fails with "Summary is required in the default language". Fields that only name pages, page fields and rich text, now go in the copy's first save.
 - A page cache flush also deletes `lynx-cache.trash-*` folders an earlier flush left in `public/`, and a static export leaves them out. An app with a published `config/lynx-static.php` adds `'lynx-cache.trash-*'` to its `exclude` list.
 - The static site docs say that files in `paths` are written as the site sends them, and how a listing keeps sorting and paging on a static host.
