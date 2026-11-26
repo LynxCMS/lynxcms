@@ -18,7 +18,7 @@ No SQL injection, stored XSS, mail injection or CSV injection was found. Nothing
 | L2 | Low | A file's type is checked by its name only | `Definition/FormValidator.php:153` |
 | L3 | Low | The submission limit counts per IP address as Laravel sees it, and only on sending | `Livewire/Concerns/GuardsSubmissions.php:82` |
 | L4 | Low | The auto-reply mails any address a visitor types | `Listeners/NotifyRecipients.php:61` |
-| L5 | Low | `forms.view` can mark any submission as spam, which the daily purge later deletes | `Actions/UpdateSubmissions.php:37` |
+| L5 | `forms.view` reads submissions and marks them read or new. Marking them archived or spam, which the purge deletes later, and writing notes need `forms.manage`, in `UpdateSubmission`, `UpdateSubmissions` and the admin, which shows those controls only to `forms.manage`. `Submission::PURGED_STATUSES` names the statuses the purge deletes. |
 
 ## Findings
 

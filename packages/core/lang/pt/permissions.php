@@ -7,7 +7,7 @@ return [
         'manage' => 'Gerir menus',
     ],
     'forms' => [
-        'view' => 'Ver e ordenar respostas a formulários (as marcadas como spam ou arquivadas são apagadas mais tarde)',
+        'view' => 'Ver respostas a formulários e marcá-las como lidas',
         'manage' => 'Criar formulários e eliminar respostas',
     ],
     'seo' => [

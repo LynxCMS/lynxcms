@@ -81,7 +81,7 @@ final class SubmissionView extends Component
             'lines' => app(SubmissionPresenter::class)->lines($submission),
             'form' => lynx()->forms()->get($submission->form),
             'page' => $submission->page_id === null ? null : lynx()->pages->get($submission->page_id),
-            'canDelete' => app(AdminAccess::class)->allows('forms.manage'),
+            'canManage' => app(AdminAccess::class)->allows('forms.manage'),
         ]);
     }
 

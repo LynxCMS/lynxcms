@@ -18,11 +18,11 @@
         <div class="flex flex-wrap items-center gap-2">
             <x-lynx-admin::ui.badge :variant="$submission->status === 'new' ? 'default' : 'secondary'">{{ __('lynx-forms::admin.status.'.$submission->status) }}</x-lynx-admin::ui.badge>
             @foreach (['read' => __('lynx-forms::admin.submission.mark_read'), 'archived' => __('lynx-forms::admin.submission.archive'), 'spam' => __('lynx-forms::admin.submission.spam'), 'new' => __('lynx-forms::admin.submission.mark_new')] as $value => $label)
-                @if ($submission->status !== $value)
+                @if ($submission->status !== $value && ($canManage || ! in_array($value, \LynxCms\Forms\Models\Submission::PURGED_STATUSES, true)))
                     <x-lynx-admin::ui.button variant="outline" size="sm" wire:click="setStatus({{ Js::from($value) }})">{{ $label }}</x-lynx-admin::ui.button>
                 @endif
             @endforeach
-            @if ($canDelete)
+            @if ($canManage)
                 <span x-data="{ confirming: false }" class="flex items-center gap-2">
                     <x-lynx-admin::ui.button variant="outline" size="sm" x-show="! confirming" x-on:click="confirming = true">{{ __('lynx-forms::admin.submission.delete') }}</x-lynx-admin::ui.button>
                     <span x-show="confirming" x-cloak class="flex items-center gap-2 text-sm">
@@ -60,9 +60,16 @@
         @endif
     </section>
 
+    @if ($canManage)
     <section class="grid gap-2">
         <label for="submission-notes" class="font-medium">{{ __('lynx-forms::admin.submission.notes') }}</label>
         <textarea id="submission-notes" rows="3" class="blat-textarea" wire:model="notes" placeholder="{{ __('lynx-forms::admin.submission.notes_placeholder') }}"></textarea>
         <div><x-lynx-admin::ui.button size="sm" wire:click="saveNotes">{{ __('lynx-forms::admin.submission.save_notes') }}</x-lynx-admin::ui.button></div>
     </section>
+    @elseif ($submission->notes)
+    <section class="grid gap-2">
+        <h2 class="font-medium">{{ __('lynx-forms::admin.submission.notes') }}</h2>
+        <p class="whitespace-pre-wrap text-sm">{{ $submission->notes }}</p>
+    </section>
+    @endif
 </div>
