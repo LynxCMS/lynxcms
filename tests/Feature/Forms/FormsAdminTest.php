@@ -112,3 +112,8 @@ it('exports a form\'s submissions as CSV', function (): void {
 
     expect($csv)->toContain('Project type')->toContain('Ana Lima')->toContain('Rui Costa');
 });
+
+it('answers 404 for a submission address that is not a uuid', function (): void {
+    $this->get(route('lynx.admin.forms.show', 'not-a-uuid'))->assertNotFound();
+    $this->get(route('lynx.admin.forms.file', ['submission' => 'not-a-uuid', 'file' => 1]))->assertNotFound();
+});

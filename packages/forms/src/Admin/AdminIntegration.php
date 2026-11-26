@@ -71,8 +71,8 @@ final class AdminIntegration
             Route::get('forms/export/{form}', ExportSubmissions::class)->name('forms.export');
             Route::get('forms/structure/{form}', DownloadFormStructure::class)->name('forms.structure');
             Route::get('forms/results/{form}', ShowFormResults::class)->name('forms.results');
-            Route::get('forms/{submission}', ShowSubmission::class)->name('forms.show');
-            Route::get('forms/{submission}/files/{file}', DownloadSubmissionFile::class)->name('forms.file');
+            Route::get('forms/{submission}', ShowSubmission::class)->whereUuid('submission')->name('forms.show');
+            Route::get('forms/{submission}/files/{file}', DownloadSubmissionFile::class)->whereUuid('submission')->whereNumber('file')->name('forms.file');
         });
     }
 

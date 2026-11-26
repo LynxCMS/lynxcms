@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Forms\Actions;
 
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
@@ -19,7 +20,14 @@ trait ResolvesSubmissions
     {
         $reference = Value::string($reference);
 
-        return Submission::query()->where('uuid', $reference)->orWhere('id', ctype_digit($reference) ? (int) $reference : 0)->first()
+        // PostgreSQL's uuid column refuses text that is no uuid, so each kind of reference has its own query.
+        $submission = match (true) {
+            Str::isUuid($reference) => Submission::query()->where('uuid', $reference)->first(),
+            ctype_digit($reference) => Submission::query()->find((int) $reference),
+            default => null,
+        };
+
+        return $submission
             ?? throw ValidationException::withMessages(['submission' => Value::string(__('lynx-forms::validation.submission', ['submission' => $reference]))]);
     }
 }
