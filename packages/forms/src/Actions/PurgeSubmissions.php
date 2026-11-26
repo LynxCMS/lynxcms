@@ -61,7 +61,7 @@ final class PurgeSubmissions extends Action
     private function purgeOld(Input $input, ActionContext $context): int
     {
         $days = $input->int('older_than_days') ?? Value::int(config('lynx-forms.purge_after_days'), 180);
-        $old = Submission::query()->whereIn('status', ['spam', 'archived'])->where('created_at', '<', now()->subDays($days))->get();
+        $old = Submission::query()->whereIn('status', Submission::PURGED_STATUSES)->where('created_at', '<', now()->subDays($days))->get();
 
         if ($old->isEmpty()) {
             return 0;

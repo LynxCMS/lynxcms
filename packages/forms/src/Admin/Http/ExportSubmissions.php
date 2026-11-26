@@ -31,6 +31,7 @@ final readonly class ExportSubmissions
     public function __invoke(Request $request, string $form): StreamedResponse
     {
         abort_unless($this->access->allows('forms.view'), 403);
+        abort_if(lynx()->forms()->get($form) === null && ! Submission::query()->where('form', $form)->exists(), 404);
         $columns = $this->columns($form);
         $filter = SubmissionFilter::fromArray(['show' => 'all', ...$request->query(), 'form' => $form]);
 

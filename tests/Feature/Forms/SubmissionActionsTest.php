@@ -63,3 +63,13 @@ it('purges old spam and archived submissions only', function (): void {
 
     expect(Submission::query()->pluck('status')->all())->toBe(['new'])->and(Storage::disk('local')->allFiles())->toBe([]);
 });
+
+it('finds a submission by its id as well as its uuid', function (): void {
+    lynx()->run(UpdateSubmission::class, ['submission' => (string) $this->submission->id, 'status' => 'read']);
+
+    expect($this->submission->fresh()?->status)->toBe('read');
+});
+
+it('says a reference that is neither a uuid nor an id names no submission', function (): void {
+    lynx()->run(UpdateSubmission::class, ['submission' => 'not-a-submission', 'status' => 'read']);
+})->throws(ValidationException::class);

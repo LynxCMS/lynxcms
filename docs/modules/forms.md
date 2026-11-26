@@ -22,6 +22,8 @@ lynx()->forms()->register(QuoteForm::class);
 
 Field types: `text`, `email`, `tel`, `textarea`, `select`, `radio`, `checkboxes`, `checkbox`, `number`, `date`, `file` and `group`. `showIf('subject', 'press', 'other')` asks a field only when another has one of some values; `showWhen('guests', '>=', 50)` compares (`=`, `!=`, `<`, `<=`, `>`, `>=`), and `showWhen('newsletter', '=', true)` follows a tick box (an untouched box counts as unticked). Hidden fields are neither checked nor stored, so a required field is only required while it shows. `rules()` adds Laravel rules, and `messages()` words a rule's message per language. A `file` field takes the types `extensions()` lists; without them, it takes documents, images, spreadsheets, presentations and zip files (`FormField::DEFAULT_EXTENSIONS`), and `extensions(['*'])` takes any file. Staff open what visitors upload, so keep the list short.
 
+Uploads go through Livewire, which keeps each file in a temporary folder until the form is sent. A form starts an upload only for its own `file` fields, and only for files whose type, size and count the field takes. Livewire's own limit applies on top, 12 MB a file by default: set `livewire.temporary_file_upload.rules` (in `config/livewire.php`) to the largest file your forms take, such as `['required', 'file', 'max:10240']`.
+
 Forms can also say what visitors read after sending (`successMessage()`), when sending fails (`errorMessage()`), and a confirmation mailed to the `replyTo()` address (`autoReply()`). That address is whatever the visitor typed, so anyone can make your site send its confirmation to someone else; keep the confirmation short, with nothing in it you would not send a stranger.
 
 A form that members answer once each, such as a course survey, returns `true` from `oncePerUser()`. Guests see "Sign in to answer this form" with a link to your `login` route instead of the form, and a member who already answered is told so. `forms.submit` refuses both, whoever calls it. In the builder, the same is the form's **Signed-in visitors only, one answer each** setting. It needs visitor accounts: a sign-in of your own for visitors, or users your app already has. On a site without one, only people who sign in to the admin could answer. To limit a survey to some members, such as those who booked a course, place it on a page only they can open (see [Page Access](/deeper/visibility)).
@@ -174,7 +176,9 @@ Labels, help, options, step titles and the success and error messages come from 
 
 ### Spam
 
-Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a hidden field and a timing check. A caught bot sees the usual thanks, and nothing is stored or mailed. Each visitor may send a form 5 times in 10 minutes (`LYNX_FORMS_RATE_ATTEMPTS`, `LYNX_FORMS_RATE_DECAY`).
+Spatie's [laravel-honeypot](https://github.com/spatie/laravel-honeypot) adds a hidden field and a timing check. A caught bot sees the usual thanks, and nothing is stored or mailed. Each visitor may send a form 5 times in 10 minutes (`LYNX_FORMS_RATE_ATTEMPTS`, `LYNX_FORMS_RATE_DECAY`). The limit counts per IP address as Laravel sees it. Behind a load balancer or a CDN, tell Laravel which proxies to trust ([Configuring trusted proxies](https://laravel.com/docs/requests#configuring-trusted-proxies)): without that, every visitor has the proxy's address and five submissions close the form for everyone, and with every proxy trusted, visitors can claim any address and the limit stops nobody.
+
+A form with an auto-reply mails the address a visitor types, which may be someone else's. The mail holds only the form's title and your text, never the visitor's answers. If strangers start getting these mails, turn Turnstile on.
 
 [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) adds a check that a visitor is a person, which most people pass without a puzzle. It is off until the site has a site key and a secret key, from a free Cloudflare account. Put them in `.env`:
 
@@ -205,7 +209,7 @@ When a signed-in visitor sends a form, such as a member answering a survey, the 
 
 **Forms** in the sidebar shows how many submissions are new. The inbox lists them newest first, 25, 50 or 100 to a page. You can filter by status (new and read, archived, spam), form and when they arrived (the last 7 or 30 days, this month, last month, or between two dates), and search any answer. Opening a submission marks it read. It shows the answers as the form asked them, with links to the files, the page and language it came from, and the team's notes.
 
-Tick submissions to mark them read, archived or spam, or to delete them. The box in the table's header ticks the whole page; then **Select all** takes every submission the filters match, on every page. Submissions that arrive after that stay out of it. **Delete** first says how many submissions and files would go, and needs `forms.manage`. A deleted submission can't be brought back.
+Tick submissions to mark them read, archived or spam, or to delete them. The box in the table's header ticks the whole page; then **Select all** takes every submission the filters match, on every page. Submissions that arrive after that stay out of it. Marking them archived or spam needs `forms.manage`, as the purge deletes those later. **Delete** first says how many submissions and files would go, and needs `forms.manage` too. A deleted submission can't be brought back.
 
 Each form exports to CSV, with the inbox's filters, where answers that start like a formula (`=`, `+`, `-`, `@`) get a leading quote so spreadsheets show them as text.
 
@@ -219,14 +223,14 @@ In code, `app(\LynxCms\Forms\PersonalData::class)->export('ana@example.com')` re
 
 ## Agents
 
-MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`, or many at once with `forms_update_submissions` (a list, or every submission a filter matches). `forms_delete_submissions` deletes many, after a dry run; it needs `forms.manage`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
+MCP clients and the built-in agent can import a form export with `forms_import`, which needs `forms.manage`. They read submissions with `list_submissions` (filter by form, status and date) and `get_submission`, sum a form's answers up with `summarize_form` (optionally for one page), and sort submissions with `forms_update_submission`, or many at once with `forms_update_submissions` (a list, or every submission a filter matches). Marking them read or new needs `forms.view`; archived, spam and notes need `forms.manage`. `forms_delete_submissions` deletes many, after a dry run; it needs `forms.manage`. Ask "summarize this week's quote requests", "how did the yoga course survey go?", or "mark the obvious spam". The read tools need `forms.view`.
 
 ## Permissions
 
 | Permission | Allows |
 | --- | --- |
-| `forms.view` | Seeing submissions, marking them read, archived or spam, and notes |
-| `forms.manage` | Building forms, exporting and importing them, and deleting submissions |
+| `forms.view` | Seeing submissions and their notes, and marking them read or new |
+| `forms.manage` | Building forms, exporting and importing them, marking submissions archived or spam (which the purge deletes later), notes, and deleting submissions |
 
 ## Housekeeping
 

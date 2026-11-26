@@ -39,7 +39,7 @@ final readonly class SubmissionFilter
      */
     public static function fromArray(array $input): self
     {
-        $date = fn (string $key): ?CarbonImmutable => is_string($input[$key] ?? null) && $input[$key] !== '' ? CarbonImmutable::parse($input[$key]) : null;
+        $date = fn (string $key): ?CarbonImmutable => self::day($input[$key] ?? null);
         $show = Value::string($input['show'] ?? 'open');
 
         return new self(
@@ -51,6 +51,19 @@ final readonly class SubmissionFilter
             upTo: isset($input['up_to']) ? Value::int($input['up_to']) : null,
             email: trim(Value::string($input['email'] ?? '')),
         );
+    }
+
+    /** A Y-m-d day, or null for anything else: the request's query reaches here as typed. */
+    private static function day(mixed $value): ?CarbonImmutable
+    {
+        if (! is_string($value) || preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value) !== 1) {
+            return null;
+        }
+
+        $day = CarbonImmutable::createFromFormat('!Y-m-d', $value);
+
+        // 2026-02-30 reads as 2 March: only a day that reads back the same is one.
+        return $day instanceof CarbonImmutable && $day->format('Y-m-d') === $value ? $day : null;
     }
 
     /** @return array<string, string|int> the filter as fromArray() reads it, without empty values */
@@ -123,11 +136,12 @@ final readonly class SubmissionFilter
             return $query;
         }
 
-        // Answers are JSON: match the text as typed and as JSON escapes it (ã → ã).
+        // Answers are JSON: match the text as typed and as JSON escapes it (ã → ã), with LIKE's wildcards escaped.
+        $like = fn (string $text): string => '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $text).'%';
         $escaped = mb_strtolower(trim(Value::string(json_encode($search)), '"'));
 
         return $query->where(fn (Builder $q) => $q
-            ->whereRaw('LOWER(CAST(data AS TEXT)) LIKE ?', ['%'.$search.'%'])
-            ->orWhereRaw('LOWER(CAST(data AS TEXT)) LIKE ?', ['%'.$escaped.'%']));
+            ->whereRaw("LOWER(CAST(data AS TEXT)) LIKE ? ESCAPE '!'", [$like($search)])
+            ->orWhereRaw("LOWER(CAST(data AS TEXT)) LIKE ? ESCAPE '!'", [$like($escaped)]));
     }
 }

@@ -7,7 +7,7 @@ return [
         'manage' => 'Gerir menus',
     ],
     'forms' => [
-        'view' => 'Ver e ordenar respostas a formulários',
+        'view' => 'Ver respostas a formulários e marcá-las como lidas',
         'manage' => 'Criar formulários e eliminar respostas',
     ],
     'seo' => [

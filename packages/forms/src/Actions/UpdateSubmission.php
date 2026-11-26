@@ -27,7 +27,7 @@ final class UpdateSubmission extends Action
 
     public static function description(): string
     {
-        return 'Mark a form submission as new, read, archived or spam, and keep notes on it.';
+        return 'Mark a form submission as new, read, archived or spam, and keep notes on it. Archived and spam, which the purge deletes later, and notes need forms.manage.';
     }
 
     public static function permission(): string
@@ -56,6 +56,11 @@ final class UpdateSubmission extends Action
     public function handle(Input $input, ActionContext $context): Submission
     {
         $submission = $this->submission($input->get('submission'));
+
+        // forms.view reads and marks read or new; what leads to the purge, and the team's notes, need forms.manage.
+        if (in_array($input->get('status'), Submission::PURGED_STATUSES, true) || $input->has('notes')) {
+            $context->authorize('forms.manage');
+        }
 
         if ($input->has('status')) {
             $submission->status = (string) $input->string('status');

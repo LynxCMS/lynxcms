@@ -29,7 +29,7 @@ final class UpdateSubmissions extends Action
 
     public static function description(): string
     {
-        return 'Mark many form submissions as new, read, archived or spam: a list of uuids, or every submission a filter matches. Returns how many changed.';
+        return 'Mark many form submissions as new, read, archived or spam: a list of uuids, or every submission a filter matches. Returns how many changed. Archived and spam, which the purge deletes later, need forms.manage.';
     }
 
     public static function permission(): string
@@ -51,6 +51,11 @@ final class UpdateSubmissions extends Action
     public function handle(Input $input, ActionContext $context): int
     {
         $status = (string) $input->string('status');
+
+        // Archived and spam submissions are purged later: only forms.manage may send them there.
+        if (in_array($status, Submission::PURGED_STATUSES, true)) {
+            $context->authorize('forms.manage');
+        }
         $reader = $context->actor->kind.($context->actor->id !== null ? ':'.$context->actor->id : '');
         $count = 0;
 

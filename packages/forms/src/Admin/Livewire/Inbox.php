@@ -107,7 +107,7 @@ final class Inbox extends Component
             'pages' => $this->pageLinks($lastPage),
             'hasAny' => $total > 0 || Submission::query()->exists(),
             'isPageSelected' => $this->isPageSelected(),
-            'canDelete' => app(AdminAccess::class)->allows('forms.manage'),
+            'canManage' => app(AdminAccess::class)->allows('forms.manage'),
             'exportQuery' => array_diff_key($this->filter()->toArray(), ['form' => true]),
         ]);
     }

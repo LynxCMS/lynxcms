@@ -150,7 +150,8 @@ final class FormValidator
 
         match ($field->type) {
             'checkboxes' => $rules[$key.'.*'] = [Rule::in(array_keys($field->options))],
-            'file' => $rules[$key.'.*'] = array_filter(['file', 'max:'.$field->maxKb, $field->allowedExtensions() === null ? null : 'extensions:'.implode(',', $field->allowedExtensions())]),
+            // The name's extension, and content that fits it (ContentMatchesExtension); any file when the question takes any.
+            'file' => $rules[$key.'.*'] = ['file', 'max:'.$field->maxKb, ...($field->allowedExtensions() === null ? [] : ['extensions:'.implode(',', $field->allowedExtensions()), new ContentMatchesExtension])],
             'group' => $this->describeRows($field, $key, $rules, $messages, $attributes),
             default => null,
         };
@@ -190,7 +191,8 @@ final class FormValidator
             'textarea' => ['string', 'max:'.($field->max ?? self::TEXTAREA_MAX)],
             'email' => ['string', 'email', 'max:'.self::TEXT_MAX],
             'number' => array_filter(['numeric', $field->max === null ? null : 'max:'.$field->max]),
-            'date' => ['date'],
+            // As a date input sends it: results compare dates as text.
+            'date' => ['date_format:Y-m-d'],
             'select', 'radio' => [Rule::in(array_keys($field->options))],
             'checkboxes' => ['array'],
             'file' => ['array', 'max:'.$field->maxFiles],

@@ -7,7 +7,7 @@ return [
         'manage' => 'Gestionar los menús',
     ],
     'forms' => [
-        'view' => 'Ver y clasificar los envíos de formularios',
+        'view' => 'Ver los envíos de formularios y marcarlos como leídos',
         'manage' => 'Crear formularios y eliminar envíos',
     ],
     'seo' => [

@@ -8,7 +8,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use LynxCms\Core\Actions\Runner\ActionRunner;
 use LynxCms\Core\Livewire\UsesLynxPage;
 use LynxCms\Core\Support\Value;
@@ -18,6 +17,7 @@ use LynxCms\Forms\Definition\FormField;
 use LynxCms\Forms\Definition\FormValidator;
 use LynxCms\Forms\Livewire\Concerns\EditsRows;
 use LynxCms\Forms\Livewire\Concerns\GuardsSubmissions;
+use LynxCms\Forms\Livewire\Concerns\GuardsUploads;
 use LynxCms\Forms\Livewire\Concerns\NarrowsChoices;
 use LynxCms\Forms\Models\Submission;
 use LynxCms\Forms\OncePerUser;
@@ -37,9 +37,9 @@ class FormComponent extends Component
 {
     use EditsRows;
     use GuardsSubmissions;
+    use GuardsUploads;
     use NarrowsChoices;
     use UsesLynxPage;
-    use WithFileUploads;
 
     #[Locked]
     public string $form = '';
