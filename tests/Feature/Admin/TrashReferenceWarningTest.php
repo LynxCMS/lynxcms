@@ -6,6 +6,8 @@ use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
 use LynxCms\Admin\Livewire\PageChildren;
 use LynxCms\Admin\Livewire\PageTree;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Pages\Page;
 
 /*
@@ -83,4 +85,43 @@ it('leaves out pages that are trashed together', function (): void {
     Livewire::test(PageChildren::class, ['pageId' => (int) lynx()->pages->get('/courses/')->id])
         ->call('confirmTrash', [(int) $alpha->id, (int) $beta->id])
         ->assertDontSeeHtml('data-referenced-by=');
+});
+
+/**
+ * @param  list<string>  $permissions  granted on /courses/ only
+ */
+function coursesOnlyEditor(array $permissions): void
+{
+    $courses = (int) lynx()->pages->get('/courses/')->id;
+    lynx()->run(AssignRoles::class, ['user' => '1', 'roles' => ['superuser']]);
+    lynx()->run(SaveRole::class, ['name' => 'courses-only', 'grants' => [
+        ['permission' => 'admin.access'],
+        ...array_map(fn (string $permission): array => ['permission' => $permission, 'branches' => [$courses]], $permissions),
+    ]]);
+    lynx()->run(AssignRoles::class, ['user' => '6', 'roles' => ['courses-only']]);
+    test()->actingAs(new GenericUser(['id' => 6]));
+}
+
+it('counts referencing pages outside the user\'s view without naming them', function (): void {
+    lynx()->templates->add('topic', fields: [['name' => 'title', 'required' => true], 'related']);
+    $news = lynx()->pages->new('topic', '/');
+    $news->name = 'news';
+    $news->title = 'Newsroom';
+    $news->related = [(int) $this->courses['alpha']->id];
+    $news->save();
+    coursesOnlyEditor(['pages.view', 'pages.delete']);
+
+    Livewire::test(PageChildren::class, ['pageId' => (int) lynx()->pages->get('/courses/')->id])
+        ->call('confirmTrash', [(int) $this->courses['alpha']->id])
+        ->assertSeeHtml('data-referenced-by="1"')
+        ->assertDontSeeHtml('data-referencing-page="'.$news->id.'"')
+        ->assertDontSee('Newsroom');
+});
+
+it('refuses the trash confirmation to a user who may not trash the pages', function (): void {
+    coursesOnlyEditor(['pages.view', 'pages.edit']);
+
+    Livewire::test(PageChildren::class, ['pageId' => (int) lynx()->pages->get('/courses/')->id])
+        ->call('confirmTrash', [(int) $this->courses['alpha']->id])
+        ->assertForbidden();
 });
