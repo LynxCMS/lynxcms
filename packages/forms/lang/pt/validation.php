@@ -12,6 +12,7 @@ return [
     ],
     'field' => 'O campo [:field] já existe com outras definições; o construtor de formulários precisa de [:needs].',
     'submission' => 'Não existe a resposta [:submission].',
+    'file_content' => 'O conteúdo do ficheiro não corresponde à extensão .:extension.',
     'import' => [
         'value' => 'Os campos do tipo [:type] não têm a definição [:value].',
     ],

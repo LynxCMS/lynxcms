@@ -60,3 +60,33 @@ it('takes any file when the question says so', function (): void {
     expect(apply(['anything' => [UploadedFile::fake()->create('setup.exe', 10)]])->value)->not->toBeNull()
         ->and(FormField::file('anything')->extensions(['*'])->allowedExtensions())->toBeNull();
 });
+
+/** A file named $name holding $content, its type read from the bytes as for a real upload. */
+function realUpload(string $name, string $content): UploadedFile
+{
+    $path = testingPath('uploads/'.$name);
+    @mkdir(dirname($path), recursive: true);
+    file_put_contents($path, $content);
+
+    return new UploadedFile($path, $name, test: true);
+}
+
+it('refuses a file whose content does not fit its name', function (string $content): void {
+    expect(fn (): ActionResult => apply(['cv' => [realUpload('invoice.pdf', $content)]]))->toThrow(ValidationException::class);
+})->with([
+    'a Windows program' => ['MZ'.str_repeat("\0", 200)],
+    'a web page' => ['<html><body>Hi</body></html>'],
+    'a shell script' => ["#!/bin/sh\necho hi\n"],
+]);
+
+it('takes files whose content fits their name', function (string $name, string $content): void {
+    expect(apply(['cv' => [realUpload($name, $content)]])->value)->not->toBeNull();
+})->with([
+    'a PDF' => ['cv.pdf', "%PDF-1.4\n%".str_repeat('a', 100)],
+    'a CSV' => ['grades.csv', "name,grade\nAna,18\n"],
+    'a Word file, read as a zip' => ['cv.docx', "PK\x03\x04".str_repeat("\0", 100)],
+]);
+
+it('takes any content when the question takes any file', function (): void {
+    expect(apply(['anything' => [realUpload('invoice.pdf', 'MZ'.str_repeat("\0", 200))]])->value)->not->toBeNull();
+});
