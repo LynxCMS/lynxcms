@@ -152,11 +152,25 @@ The entry goes in the new file's `values`, next to its description. A field with
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
+An images field stores JPEG, PNG, GIF, WebP, and AVIF files, recognized from their contents before anything decodes them, so a file named `photo.png` that holds something else is refused. On a server that uses ImageMagick (`IMAGE_DRIVER=imagick`), also limit ImageMagick's coders in its `policy.xml` to the raster formats you use, as its project recommends.
+
+When an editor, an MCP client or the agent saves a page, each file its media fields name must be stored in that page's folder (a draft may name the files of the page it belongs to), with an extension the field allows. An images field takes only pictures. The file's size, type and dimensions are read from the file itself, whatever the value says. Superusers and your own code (Artisan commands, jobs, seeders) can save any value, so an import can keep the names another site gave its files.
+
 URLs are downloaded only from public web servers: `http` and `https` on their usual ports, from hosts whose addresses are on the internet, never the server's own network or a cloud's metadata address. Redirects get the same checks, and the download stops once it passes the field's size limit. To download from a host of your own network, such as an asset server, add it to `downloads.allowed_hosts` in `config/lynx-media.php`. `LYNX_MEDIA_URL_DOWNLOADS=false` turns URL downloads off.
 
 ## Private files
 
-Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
+Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. This holds from the moment a file is uploaded, whatever the page's status: the web server sends files on the public disk without asking Lynx, so an unpublished page's files are kept only by their names, which end in 16 random characters.
+
+Fields never accept extensions a browser would run as part of the site: HTML, SVG, JavaScript, every XML type (such as `gpx`, `kml` or `rss`), server scripts, and extensions with no known type, which a web server sends without one. Zip a file of such a type to offer it for download. As a second guard, have the web server send the public media folder (`storage/app/public/lynx`, served as `/storage/lynx`) with `X-Content-Type-Options: nosniff` and `Content-Security-Policy: sandbox`. With nginx:
+
+```nginx
+location /storage/lynx/ {
+    add_header X-Content-Type-Options nosniff always;
+    add_header Content-Security-Policy sandbox always;
+}
+```
+ For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
 
 ```php
 lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
@@ -165,7 +179,7 @@ lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
 A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK`, Laravel's `local` disk by default, which the web server never serves), and their URLs point to Lynx: `/lynx-media/{page id}/{file}`. Lynx serves a file only to someone who may open its page:
 
 - staff whose roles let them view the page, in the admin or on the site;
-- visitors, when the page is published, no page gate answers instead and the [visibility rules](/deeper/visibility) allow it.
+- visitors, when the page is published, no page gate answers instead, the [visibility rules](/deeper/visibility) allow it, and the page shows the file. A file an editor removed or hid, or one only a draft holds, is for staff only, and so are the sizes made from it.
 
 A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Images, video, audio, PDFs and plain text open in the browser, sandboxed; other files download. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
 

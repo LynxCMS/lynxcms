@@ -25,6 +25,7 @@ use LynxCms\Core\Search\Engines\SqliteSearchEngine;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Forms\FormsFiles;
+use LynxCms\Media\Fields\StoredFileCheck;
 use LynxCms\Media\MovePrivateMedia;
 use LynxCms\Media\Remote\MediaReferences;
 use LynxCms\Menus\Menus;
@@ -140,6 +141,8 @@ arch('only actions write page data')
         ClearOnChange::class,
         // Only defers forgetting the cached SEO settings until the action's transaction commits.
         SiteSettings::class,
+        // Only reads: the file entries a page stores, so a save reads the disk only for files it adds.
+        StoredFileCheck::class,
         // Reads which files a field's values name, and defers deleting moved files to the commit.
         MovePrivateMedia::class,
         // Reads which files pages' media values name, for lynx:media:pull.
