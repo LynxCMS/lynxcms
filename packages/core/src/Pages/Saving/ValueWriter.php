@@ -33,7 +33,7 @@ use LynxCms\Core\Templates\TemplateRegistry;
  */
 final readonly class ValueWriter
 {
-    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked, private FieldAccess $access) {}
+    public function __construct(private TemplateRegistry $templates, private LanguageRegistry $languages, private ReferenceTemplates $references, private ValueOrigins $origins, private LockedFields $locked, private FieldAccess $access, private SavingPage $saving) {}
 
     /**
      * The values to store, and errors keyed like the input ("values.price").
@@ -41,6 +41,14 @@ final readonly class ValueWriter
      * @return array{0: array<string, array<int, mixed>>, 1: array<string, string>}
      */
     public function prepare(Page $page, Template $template, Language $default): array
+    {
+        return $this->saving->during($page, fn (): array => $this->check($page, $template, $default));
+    }
+
+    /**
+     * @return array{0: array<string, array<int, mixed>>, 1: array<string, string>}
+     */
+    private function check(Page $page, Template $template, Language $default): array
     {
         $values = $page->rawValues();
         $errors = [];
