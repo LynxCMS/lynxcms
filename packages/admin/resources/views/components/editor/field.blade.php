@@ -84,10 +84,10 @@
                         <p class="lynx-hint text-muted-foreground text-sm mt-1">{{ __('lynx-admin::editor.field.empty_hint', ['language' => $state->fallsBackTo]) }}</p>
                     @endif
                     @if (($field->settings['formatters'] ?? []) !== [] && trim((string) ($current[$code] ?? '')) !== '')
-                        {{-- What visitors see: the field's format and formatters (ADR-0031), cleaned by core. --}}
+                        {{-- What visitors see: the field's format and formatters (ADR-0031). The value is unsaved input, which core cleans only on save, so it is cleaned here. --}}
                         <details class="mt-2 text-sm">
                             <summary class="cursor-pointer text-muted-foreground">{{ __('lynx-admin::editor.field.preview') }}</summary>
-                            <div class="lynx-preview mt-2">{!! lynx()->formatters()->render(lynx()->fields->get($field->name), $current[$code], $code) !!}</div>
+                            <div class="lynx-preview mt-2">{!! app(\LynxCms\Core\Fields\HtmlCleaner::class)->clean(lynx()->formatters()->render(lynx()->fields->get($field->name), $current[$code], $code)) !!}</div>
                         </details>
                     @endif
                 @elseif ($state->isOwn)

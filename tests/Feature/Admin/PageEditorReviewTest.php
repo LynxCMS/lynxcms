@@ -105,6 +105,16 @@ it('previews formatted output under fields that have formatters', function (): v
         ->assertSeeHtml('A “smart” – summary');
 });
 
+it('cleans the preview of a rich text field whose formatters add no markup', function (): void {
+    lynx()->fields->update('body', ['settings' => ['formatters' => ['smartypants']]]);
+
+    reviewEditor(reviewPage())
+        ->set('values.body.default', '<p>Hi</p><script>alert(1)</script><img src="x" onerror="alert(2)">')
+        ->assertSeeHtml('<p>Hi</p>')
+        ->assertDontSeeHtml('<script>alert(1)</script>')
+        ->assertDontSeeHtml('onerror="alert(2)"');
+});
+
 it('reviews what the draft changes on the live page, saved or not', function (): void {
     $page = reviewPage();
     lynx()->pages->saveDraft($page->id, ['title' => ['pt' => 'Guia revisto']]);
