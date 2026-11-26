@@ -16,6 +16,9 @@ use Illuminate\Support\Str;
  */
 final readonly class FilePageStore implements PageStore
 {
+    /** What a flushed folder is renamed to, beside the folder, before it is deleted. */
+    public const string TRASH = '.trash-';
+
     public function __construct(private Filesystem $files, private Generation $generation, private string $root) {}
 
     public function get(CacheAddress $address): ?CachedPage
@@ -46,14 +49,23 @@ final readonly class FilePageStore implements PageStore
     {
         $this->generation->bump();
 
-        if (! is_dir($this->root)) {
-            return;
+        // Renaming first empties the folder at once; deleting a large tree takes a while.
+        if (is_dir($this->root)) {
+            $this->files->moveDirectory($this->root, $this->root.self::TRASH.Str::random(8));
         }
 
-        // Renaming first empties the folder at once; deleting a large tree takes a while.
-        $trash = $this->root.'.trash-'.Str::random(8);
-        $this->files->moveDirectory($this->root, $trash);
-        $this->files->deleteDirectory($trash);
+        $this->emptyTrash();
+    }
+
+    /**
+     * Deletes this flush's folder and any an earlier one left: a page written into the folder
+     * while it was being deleted can make the delete fail, and the folder then stays in public/.
+     */
+    private function emptyTrash(): void
+    {
+        foreach (glob($this->root.self::TRASH.'*', GLOB_ONLYDIR) ?: [] as $trash) {
+            $this->files->deleteDirectory($trash);
+        }
     }
 
     private function pathOf(CacheAddress $address): string
