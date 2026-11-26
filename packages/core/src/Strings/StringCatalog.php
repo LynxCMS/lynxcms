@@ -7,20 +7,22 @@ namespace LynxCms\Core\Strings;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\Cache;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\View\BlockViews;
 use Throwable;
 
 /**
- * The strings each template declares (ADR-0047): its view and every view it pulls in, scanned and
- * cached until one of those files changes.
+ * The strings each template declares (ADR-0047): its view, the views of the matrix blocks it offers
+ * (the ones @matrix renders), and every view those pull in, scanned and cached until one of those
+ * files changes, a block view appears, or the template's matrix fields change.
  *
  * @internal
  */
 final class StringCatalog
 {
     /** Bump when the scanner or the cached shape changes, so cached scans are made again. */
-    private const string CACHE_PREFIX = 'lynx-strings:v5:';
+    private const string CACHE_PREFIX = 'lynx-strings:v6:';
 
-    /** @var array<string, array{files: array<string, int>, definitions: list<StringDefinition>, errors: list<string>}> */
+    /** @var array<string, array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}> */
     private array $memo = [];
 
     public function __construct(private readonly StringScanner $scanner, private readonly Factory $views) {}
@@ -125,38 +127,66 @@ final class StringCatalog
     }
 
     /**
-     * @return array{files: array<string, int>, definitions: list<StringDefinition>, errors: list<string>}
+     * @return array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}
      */
     private function entry(string $template): array
     {
         $view = $this->viewName($template);
+        // Resolved here, not kept: BlockViews reads the templates, a service scoped to one request.
+        $blocks = app(BlockViews::class)->forTemplate($template);
+        // The block types are part of the key, so a scan is made again when the schema changes.
+        $key = $this->cacheKey($view).':'.md5(json_encode($blocks, JSON_THROW_ON_ERROR));
 
-        if (isset($this->memo[$view]) && $this->isFresh($this->memo[$view]['files'])) {
-            return $this->memo[$view];
+        if (isset($this->memo[$key]) && $this->isFresh($this->memo[$key])) {
+            return $this->memo[$key];
         }
 
-        $cached = Cache::get($this->cacheKey($view));
+        $cached = Cache::get($key);
 
-        if (is_array($cached) && $this->isFresh(Value::array($cached['files'] ?? []))) {
-            return $this->memo[$view] = $this->fromCache($cached);
+        if (is_array($cached) && $this->isFresh($entry = $this->fromCache($cached))) {
+            return $this->memo[$key] = $entry;
         }
 
-        $entry = ['files' => [], 'definitions' => [], 'errors' => []];
+        $entry = ['files' => [], 'absent' => [], 'definitions' => [], 'errors' => []];
         $this->collect($view, $entry);
+        $this->collectBlocks($blocks, $entry);
         // Plain arrays only: objects come back incomplete under cache.serializable_classes = false.
-        Cache::forever($this->cacheKey($view), [...$entry, 'definitions' => array_map(fn (StringDefinition $definition): array => $definition->toArray(), $entry['definitions'])]);
+        Cache::forever($key, [...$entry, 'definitions' => array_map(fn (StringDefinition $definition): array => $definition->toArray(), $entry['definitions'])]);
 
-        return $this->memo[$view] = $entry;
+        return $this->memo[$key] = $entry;
+    }
+
+    /**
+     * Scans the view each block type renders with: the first of its candidates that exists. The
+     * candidates before it are kept as absent, so creating one of them scans again.
+     *
+     * @param  list<list<string>>  $blocks
+     * @param  array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}  $entry
+     */
+    private function collectBlocks(array $blocks, array &$entry): void
+    {
+        foreach ($blocks as $candidates) {
+            foreach ($candidates as $candidate) {
+                if ($this->views->exists($candidate)) {
+                    $this->collect($candidate, $entry);
+
+                    continue 2;
+                }
+
+                $entry['absent'][] = $candidate;
+            }
+        }
     }
 
     /**
      * @param  array<array-key, mixed>  $cached
-     * @return array{files: array<string, int>, definitions: list<StringDefinition>, errors: list<string>}
+     * @return array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}
      */
     private function fromCache(array $cached): array
     {
         return [
             'files' => array_map(Value::int(...), Value::map($cached['files'] ?? [])),
+            'absent' => Value::strings($cached['absent'] ?? []),
             'definitions' => array_map(fn (mixed $definition): StringDefinition => StringDefinition::fromArray(Value::array($definition)), Value::list($cached['definitions'] ?? [])),
             'errors' => Value::strings($cached['errors'] ?? []),
         ];
@@ -174,7 +204,7 @@ final class StringCatalog
     }
 
     /**
-     * @param  array{files: array<string, int>, definitions: list<StringDefinition>, errors: list<string>}  $entry
+     * @param  array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}  $entry
      */
     private function collect(string $view, array &$entry): void
     {
@@ -199,10 +229,20 @@ final class StringCatalog
     }
 
     /**
-     * @param  array<array-key, mixed>  $files  path => modification time when scanned
+     * Whether no scanned file changed and no block view that was missing has appeared.
+     *
+     * @param  array{files: array<string, int>, absent: list<string>, definitions: list<StringDefinition>, errors: list<string>}  $entry
      */
-    private function isFresh(array $files): bool
+    private function isFresh(array $entry): bool
     {
+        foreach ($entry['absent'] as $view) {
+            if ($this->views->exists($view)) {
+                return false;
+            }
+        }
+
+        $files = $entry['files'];
+
         foreach ($files as $path => $mtime) {
             clearstatcache(true, (string) $path);
 
