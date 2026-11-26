@@ -1722,6 +1722,8 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** A restricted role can no longer find pages by a field it may not view, through agents or the Finder. Apps that pass a visitor's selector have one argument to make it safe, and the docs show it. A visitor's words inside the app's own selector are still the app's to escape (Visitor Input); the parked plan for bindings in selectors covers that case.
 
+**Amended 2026-11-26:** the admin's search box and page pickers run under `forActor()` too (admin security review, L4). While the index holds a field the user may not view, their plain text searches titles only.
+
 ## ADR-0154: A save adds references only to pages the actor may view
 
 **Status:** Accepted (extends ADR-0095; from the admin security review, documentation/reports/security-review-admin-2026-11-25.md, M1)
