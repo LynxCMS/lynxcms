@@ -8,7 +8,6 @@ use Illuminate\Contracts\View\Factory;
 use LynxCms\Core\Pages\Items\Item;
 use LynxCms\Core\Pages\Items\ItemList;
 use LynxCms\Core\Pages\Page;
-use LynxCms\Core\Support\Value;
 
 /**
  * Renders matrix blocks with a view per type (ADR-0045), like ProcessWire's render files:
@@ -20,7 +19,7 @@ use LynxCms\Core\Support\Value;
  */
 final readonly class MatrixRenderer
 {
-    public function __construct(private Factory $views) {}
+    public function __construct(private Factory $views, private BlockViews $blockViews) {}
 
     public function render(ItemList|Item|null $items, ?Page $page = null): string
     {
@@ -42,9 +41,8 @@ final readonly class MatrixRenderer
 
     public function item(Item $block, ?Page $page = null, ?object $loop = null): string
     {
-        $base = Value::string(config('lynx.views_path', 'templates'), 'templates').'.fields.'.$block->field();
         $type = (string) $block->type();
-        $candidates = $page instanceof Page ? ["{$base}.{$page->template()->name}.{$type}", "{$base}.{$type}"] : ["{$base}.{$type}"];
+        $candidates = $this->blockViews->candidates($block->field(), $page instanceof Page ? (string) $page->template()->name : null, $type);
 
         foreach ($candidates as $view) {
             if ($this->views->exists($view)) {
