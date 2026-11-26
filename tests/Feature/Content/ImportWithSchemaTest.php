@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use LynxCms\Core\Models\Language;
+use LynxCms\Core\Models\Setting;
+use LynxCms\Core\Pages\NotFoundPage;
 use LynxCms\Core\Permissions\Role;
 use LynxCms\Core\Support\Tables;
 
@@ -72,4 +74,17 @@ it('stops with the schema errors and writes nothing', function (): void {
 
     expect(Language::query()->count())->toBe(0)
         ->and(DB::table(Tables::PAGES)->count())->toBe(0);
+});
+
+it('installs after an import, adopting the not-found page the package brought', function (): void {
+    // After an import the not-found page exists, but the setting that chooses it is not in
+    // packages, so lynx:install must find the page instead of creating a second one.
+    installLynx();
+    $notFound = lynx()->pages->findOne('template=not-found, include=all');
+    Setting::query()->whereKey(NotFoundPage::SETTING)->delete();
+
+    $this->artisan('lynx:install', ['--no-interaction' => true])->assertSuccessful();
+
+    expect(app(NotFoundPage::class)->id())->toBe((int) $notFound?->id)
+        ->and(lynx()->pages->count('template=not-found, include=all'))->toBe(1);
 });

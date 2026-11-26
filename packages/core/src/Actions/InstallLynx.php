@@ -118,6 +118,18 @@ final class InstallLynx extends Action
             return false;
         }
 
+        // A site set up from a content package has the page, but not the setting that chooses it:
+        // settings are not in packages. Adopt that page, so installing after an import adds nothing.
+        $existing = $this->templates->find(self::NOT_FOUND_TEMPLATE) === null
+            ? null
+            : lynx()->pages->findOne('template='.self::NOT_FOUND_TEMPLATE.', parent='.$this->root->id().', include=all');
+
+        if ($existing instanceof Page) {
+            $context->run(SetNotFoundPage::class, ['page' => $existing->id]);
+
+            return true;
+        }
+
         if ($this->templates->find(self::NOT_FOUND_TEMPLATE) === null) {
             $context->run(CreateTemplate::class, ['name' => self::NOT_FOUND_TEMPLATE, 'label' => 'Page not found', 'fields' => [['name' => 'title', 'required' => true]]]);
         }
