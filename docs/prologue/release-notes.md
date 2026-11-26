@@ -8,6 +8,13 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## Unreleased
+
+### Changes
+
+- A page cache flush also deletes `lynx-cache.trash-*` folders an earlier flush left in `public/`, and a static export leaves them out. An app with a published `config/lynx-static.php` adds `'lynx-cache.trash-*'` to its `exclude` list.
+- The static site docs say that files in `paths` are written as the site sends them, and how a listing keeps sorting and paging on a static host.
+
 ## 0.1.60
 
 Released November 26, 2026. Security fixes from reviews of the core, media, admin and forms packages, image sizes in a queue, and images scaled down in the browser before they upload. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-59-to-0-1-60).
