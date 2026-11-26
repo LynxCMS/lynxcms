@@ -21,6 +21,13 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.60 to 0.1.61
+
+No database changes.
+
+- An app with a published `config/lynx-static.php` adds `'lynx-cache.trash-*'` to its `exclude` list, so a static export leaves out page cache folders a flush left behind.
+- Texts in matrix block views now show in the admin. Check that the keys of their `@string` calls don't clash with the keys of the templates that offer those blocks: `php artisan lynx:strings:scan` reports keys declared twice with different texts.
+
 ## From 0.1.59 to 0.1.60
 
 No database changes.

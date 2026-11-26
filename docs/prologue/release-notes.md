@@ -8,7 +8,9 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
-## Unreleased
+## 0.1.61
+
+Released November 26, 2026. Fixes found while building a site from a draft and deploying it from a content package: duplicating pages with a required text field, installing after an import, and editing the texts in matrix block views. No database changes and no breaking changes. See the [upgrade guide](/prologue/upgrade#from-0-1-60-to-0-1-61).
 
 ### Changes
 
