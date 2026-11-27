@@ -53,7 +53,12 @@ return [
     'progress' => ':done de :total alterações feitas',
     'progress_label' => 'Progresso da aprovação',
     'failed_steps' => '{1} 1 alteração falhou, :done feitas. Aprove novamente para a repetir.|[2,*] :count alterações falharam, :done feitas. Aprove novamente para as repetir.',
-    'failed_step' => 'Alteração :number: :error',
+    'steps' => [
+        'step' => 'Alteração :number',
+        'pending' => 'Em espera',
+        'done' => 'Feita',
+        'failed' => 'Falhou',
+    ],
     'review' => [
         'title' => 'Aprovar faz estas alterações:',
         'open' => 'Rever alterações',

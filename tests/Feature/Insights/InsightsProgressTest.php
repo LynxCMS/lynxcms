@@ -46,14 +46,6 @@ it('does not refresh when nothing is approving', function (): void {
     Livewire::test(InsightsScreen::class)->assertDontSeeHtml('wire:poll');
 });
 
-it('lists the steps that failed, with their errors', function (): void {
-    lynx()->run(ApproveInsight::class, ['insight' => $this->insight->id]);
-
-    Livewire::test(InsightsScreen::class)
-        ->assertSeeHtml('data-insight-failed-step="1"')
-        ->assertDontSeeHtml('data-insight-failed-step="0"');
-});
-
 it('approves again only what is left', function (): void {
     lynx()->run(ApproveInsight::class, ['insight' => $this->insight->id]);
     Bus::fake();
@@ -61,4 +53,19 @@ it('approves again only what is left', function (): void {
     Livewire::test(InsightsScreen::class)->call('approve', $this->insight->id);
 
     expect(StoredInsight::query()->findOrFail($this->insight->id)->steps)->toBe([['status' => 'done'], ['status' => 'pending']]);
+});
+
+it('lists each page of an approving plan with how far it got', function (): void {
+    $this->insight->update(['state' => 'approving', 'steps' => [['status' => 'done'], ['status' => 'pending']]]);
+
+    Livewire::test(InsightsScreen::class)
+        ->assertSeeHtml('data-insight-step="0" data-step-status="done" data-step-page="'.$this->alpha->id.'"')
+        ->assertSeeHtml('data-insight-step="1" data-step-status="pending" data-step-page="'.$this->beta->id.'"');
+});
+
+it('lists the page of a failed step with its error', function (): void {
+    lynx()->run(ApproveInsight::class, ['insight' => $this->insight->id]);
+
+    Livewire::test(InsightsScreen::class)
+        ->assertSeeHtml('data-insight-step="1" data-step-status="failed" data-step-page="'.$this->beta->id.'"');
 });

@@ -53,7 +53,12 @@ return [
     'progress' => ':done of :total changes made',
     'progress_label' => 'Approval progress',
     'failed_steps' => '{1} 1 change failed, :done made. Approve again to retry it.|[2,*] :count changes failed, :done made. Approve again to retry them.',
-    'failed_step' => 'Change :number: :error',
+    'steps' => [
+        'step' => 'Change :number',
+        'pending' => 'Waiting',
+        'done' => 'Done',
+        'failed' => 'Failed',
+    ],
     'review' => [
         'title' => 'Approving makes these changes:',
         'open' => 'Review changes',

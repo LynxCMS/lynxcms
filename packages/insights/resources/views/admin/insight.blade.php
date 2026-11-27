@@ -1,5 +1,9 @@
 {{-- One insight on the Insights screen: its wording, evidence and pages, and, while open, the review and the decisions. --}}
 @php($isOpen = $insight->state === \LynxCms\Insights\InsightState::Open)
+@php($steps = $insight->steps ?? [])
+@php($failed = \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED))
+{{-- While an approval runs, or after a step failed, the step list names the pages instead. --}}
+@php($showsSteps = $insight->state === \LynxCms\Insights\InsightState::Approving || ($isOpen && $failed > 0))
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="insight-{{ $insight->id }}" wire:key="insight-{{ $insight->id }}" data-insight="{{ $insight->id }}" data-insight-state="{{ $insight->state->value }}">
     <div class="mb-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="insight-{{ $insight->id }}" class="text-base font-semibold">{{ $insight->title }}</h2>
@@ -21,7 +25,7 @@
         </dl>
     @endif
 
-    @if ($links !== [])
+    @if ($links !== [] && ! $showsSteps)
         @php($first = array_slice($links, 0, 6))
         @php($rest = array_slice($links, 6))
         <div class="mb-4 text-sm" data-insight-pages>
@@ -44,30 +48,20 @@
         </div>
     @endif
 
-    @php($steps = $insight->steps ?? [])
     @if ($insight->state === \LynxCms\Insights\InsightState::Approving)
         @php($done = count($steps) - count(\LynxCms\Insights\PlanSteps::pending($steps)))
-        <div class="mb-1 grid gap-2 text-sm" role="status" data-insight-progress="{{ $done }}/{{ count($steps) }}">
+        <div class="mb-3 grid gap-2 text-sm" role="status" data-insight-progress="{{ $done }}/{{ count($steps) }}">
             <p>{{ __('lynx-insights::admin.progress', ['done' => \LynxCms\Core\Support\LocalizedNumber::format($done), 'total' => \LynxCms\Core\Support\LocalizedNumber::format(count($steps))]) }}</p>
             <div class="bg-muted h-2 overflow-hidden rounded-full" role="progressbar" aria-valuemin="0" aria-valuemax="{{ count($steps) }}" aria-valuenow="{{ $done }}" aria-label="{{ __('lynx-insights::admin.progress_label') }}">
                 <div class="bg-primary h-full rounded-full transition-all" style="width: {{ count($steps) > 0 ? round($done / count($steps) * 100) : 0 }}%"></div>
             </div>
         </div>
-    @endif
-
-    @if ($isOpen && \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED) > 0)
-        <x-lynx-admin::ui.alert variant="destructive" class="mb-4" data-insight-failed>
-            <x-lynx-admin::ui.alert-title>{{ trans_choice('lynx-insights::admin.failed_steps', \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED), ['count' => \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED), 'done' => \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::DONE)]) }}</x-lynx-admin::ui.alert-title>
-            <x-lynx-admin::ui.alert-description>
-                <ul class="grid list-disc gap-1 ps-5">
-                    @foreach ($steps as $index => $step)
-                        @if ($step['status'] === \LynxCms\Insights\PlanSteps::FAILED)
-                            <li data-insight-failed-step="{{ $index }}">{{ __('lynx-insights::admin.failed_step', ['number' => $index + 1, 'error' => $step['error'] ?? '']) }}</li>
-                        @endif
-                    @endforeach
-                </ul>
-            </x-lynx-admin::ui.alert-description>
+        @include('lynx-insights::admin.steps', ['steps' => $steps, 'insight' => $insight, 'links' => $links])
+    @elseif ($isOpen && $failed > 0)
+        <x-lynx-admin::ui.alert variant="destructive" class="mb-3" data-insight-failed>
+            <x-lynx-admin::ui.alert-title>{{ trans_choice('lynx-insights::admin.failed_steps', $failed, ['count' => $failed, 'done' => \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::DONE)]) }}</x-lynx-admin::ui.alert-title>
         </x-lynx-admin::ui.alert>
+        @include('lynx-insights::admin.steps', ['steps' => $steps, 'insight' => $insight, 'links' => $links])
     @endif
 
     @if ($isOpen && $reviewing === $insight->id)
