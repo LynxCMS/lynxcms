@@ -3,9 +3,12 @@
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="insight-{{ $insight->id }}" wire:key="insight-{{ $insight->id }}" data-insight="{{ $insight->id }}" data-insight-state="{{ $insight->state->value }}">
     <div class="mb-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="insight-{{ $insight->id }}" class="text-base font-semibold">{{ $insight->title }}</h2>
-        @unless ($isOpen)
-            <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-insights::admin.state.'.$insight->state->value) }}</x-lynx-admin::ui.badge>
-        @endunless
+        <span class="flex flex-wrap gap-2">
+            <x-lynx-admin::ui.badge variant="outline" data-insight-source>{{ $labels[$insight->source] ?? $insight->source }}</x-lynx-admin::ui.badge>
+            @unless ($isOpen)
+                <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-insights::admin.state.'.$insight->state->value) }}</x-lynx-admin::ui.badge>
+            @endunless
+        </span>
     </div>
     <p class="text-muted-foreground text-sm mb-4">{{ $insight->reason }}</p>
 
@@ -19,11 +22,26 @@
     @endif
 
     @if ($links !== [])
-        <p class="mb-4 flex flex-wrap gap-x-3 gap-y-1 text-sm" data-insight-pages>
-            @foreach ($links as $link)
-                <a href="{{ route('lynx.admin.pages.edit', $link['id']) }}" class="text-primary underline-offset-4 hover:underline" data-insight-page="{{ $link['id'] }}">{{ $link['title'] }}</a>
-            @endforeach
-        </p>
+        @php($first = array_slice($links, 0, 6))
+        @php($rest = array_slice($links, 6))
+        <div class="mb-4 text-sm" data-insight-pages>
+            <p class="text-muted-foreground mb-1">{{ trans_choice('lynx-insights::admin.pages', count($links), ['count' => \LynxCms\Core\Support\LocalizedNumber::format(count($links))]) }}</p>
+            <p class="flex flex-wrap gap-x-3 gap-y-1">
+                @foreach ($first as $link)
+                    <a href="{{ route('lynx.admin.pages.edit', $link['id']) }}" class="text-primary underline-offset-4 hover:underline" data-insight-page="{{ $link['id'] }}">{{ $link['title'] }}</a>
+                @endforeach
+            </p>
+            @if ($rest !== [])
+                <details class="mt-1" wire:key="insight-pages-{{ $insight->id }}">
+                    <summary class="text-muted-foreground w-fit cursor-pointer hover:text-foreground">{{ trans_choice('lynx-insights::admin.more_pages', count($rest), ['count' => \LynxCms\Core\Support\LocalizedNumber::format(count($rest))]) }}</summary>
+                    <p class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                        @foreach ($rest as $link)
+                            <a href="{{ route('lynx.admin.pages.edit', $link['id']) }}" class="text-primary underline-offset-4 hover:underline" data-insight-page="{{ $link['id'] }}">{{ $link['title'] }}</a>
+                        @endforeach
+                    </p>
+                </details>
+            @endif
+        </div>
     @endif
 
     @if ($isOpen && $reviewing === $insight->id)

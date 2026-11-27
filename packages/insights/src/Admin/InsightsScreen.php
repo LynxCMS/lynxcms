@@ -6,6 +6,7 @@ namespace LynxCms\Insights\Admin;
 
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
@@ -18,9 +19,10 @@ use LynxCms\Insights\Actions\GenerateInsights;
 use LynxCms\Insights\Models\InsightReport;
 
 /**
- * The Insights screen (ADR-0155): the latest report, heaviest insight first, and the earlier
- * reports. With insights.review, an editor reviews an insight's plan as a dry run, then approves,
- * dismisses or archives it, or writes a report now. Each runs through the insights actions, so
+ * The Insights screen (ADR-0155): one report's insights, heaviest first, found by a search and
+ * filtered by state (open by default), source and report, all kept in the address. With
+ * insights.review, an editor reviews an insight's plan as a dry run, then approves, dismisses or
+ * archives it, or writes a report now. Each runs through the insights actions, so
  * approving needs the permissions of every action in the plan.
  *
  * @internal
@@ -31,6 +33,19 @@ final class InsightsScreen extends Component
 
     /** The last notice, for screen readers and tests (Notifies). */
     public ?string $status = null;
+
+    #[Url(except: '')]
+    public string $search = '';
+
+    #[Url(except: 'open')]
+    public string $state = 'open';
+
+    #[Url(except: '')]
+    public string $source = '';
+
+    /** The report shown; the latest when null or unknown. */
+    #[Url(except: null)]
+    public ?int $report = null;
 
     /** The insight whose plan is under review. */
     #[Locked]
@@ -53,6 +68,11 @@ final class InsightsScreen extends Component
         $changes = lynx()->run(ApproveInsight::class, ['insight' => $insight], dryRun: true)->changes->all();
         $this->preview = array_values(array_map(fn (Change $change): string => $change->summary, array_filter($changes, fn (Change $change): bool => $change->subject !== 'insight')));
         $this->reviewing = $insight;
+    }
+
+    public function clearFilters(): void
+    {
+        $this->reset('search', 'state', 'source');
     }
 
     public function closeReview(): void
@@ -79,6 +99,7 @@ final class InsightsScreen extends Component
     public function generate(): void
     {
         $this->closeReview();
+        $this->report = null;
         $report = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class);
         $count = $report->insights()->count();
         $this->notify(trans_choice('lynx-insights::admin.generated', $count, ['count' => $count]));
@@ -86,14 +107,19 @@ final class InsightsScreen extends Component
 
     public function render(ReportView $view, AdminAccess $access): View
     {
-        $latest = $view->latest();
-        $insights = $latest instanceof InsightReport ? $view->insights($latest) : [];
+        $report = $view->report($this->report);
+        $filter = new InsightFilter($this->state, $this->source, $this->search);
+        $shown = $report instanceof InsightReport ? $view->shown($report, $filter) : ['insights' => [], 'pages' => []];
 
         return view('lynx-insights::admin.screen', [
-            'report' => $latest,
-            'insights' => $insights,
-            'pages' => $view->pages($insights),
-            'earlier' => $latest instanceof InsightReport ? $view->earlier($latest) : [],
+            'shownReport' => $report,
+            'insights' => $shown['insights'],
+            'pages' => $shown['pages'],
+            'filter' => $filter,
+            'reports' => $report instanceof InsightReport ? $view->reports() : [],
+            'counts' => $report instanceof InsightReport ? $view->counts($report) : [],
+            'sources' => $report instanceof InsightReport ? $view->sources($report) : [],
+            'labels' => $view->labels(),
             'canReview' => $access->allows('insights.review'),
         ]);
     }

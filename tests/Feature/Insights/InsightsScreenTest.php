@@ -13,12 +13,13 @@ use LynxCms\Insights\Admin\InsightsScreen;
 use LynxCms\Insights\Insight;
 use LynxCms\Insights\InsightSourceRegistry;
 use LynxCms\Insights\InsightState;
+use LynxCms\Insights\Models\InsightReport;
 use LynxCms\Insights\Models\StoredInsight;
 use LynxCms\Tests\Fixtures\Insights\FixedSource;
 
 /*
- * The Insights screen (InsightsScreen): the latest report, heaviest first, with review, approve,
- * archive and dismiss for insights.review, and the number of open insights on the home screen.
+ * The Insights screen (InsightsScreen): the latest report's open insights, heaviest first, with
+ * review, approve, archive and dismiss for insights.review, and the number of open insights on the home screen.
  */
 
 beforeEach(function (): void {
@@ -101,7 +102,9 @@ it('archives and dismisses insights', function (string $method, InsightState $st
     lynx()->run(GenerateInsights::class);
     $insight = insightNamed('Read beta');
 
-    Livewire::test(InsightsScreen::class)->call($method, $insight->id)->assertSeeHtml('data-insight-state="'.$state->value.'"');
+    Livewire::test(InsightsScreen::class)->call($method, $insight->id)
+        ->assertDontSeeHtml('data-insight="'.$insight->id.'"')
+        ->set('state', $state->value)->assertSeeHtml('data-insight-state="'.$state->value.'"');
 
     expect($insight->fresh()?->state)->toBe($state);
 })->with([
@@ -119,11 +122,11 @@ it('offers no decisions to users who may only view insights', function (): void 
         ->assertDontSeeHtml('data-insights-generate');
 });
 
-it('lists earlier reports with how their insights were decided', function (): void {
-    lynx()->run(GenerateInsights::class);
+it('offers the earlier reports to choose from', function (): void {
+    $first = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class);
     lynx()->run(GenerateInsights::class);
 
-    Livewire::test(InsightsScreen::class)->assertSeeHtml('data-insights-count="superseded"');
+    Livewire::test(InsightsScreen::class)->assertSeeHtml('<option value="'.$first->id.'"');
 });
 
 it('shows the open insights on the home screen', function (): void {
