@@ -36,6 +36,8 @@ final class Navigation
      * $visible: shown only when it returns true, e.g. for screens some users may not open.
      * $icon: a Lucide icon name (https://lucide.dev/icons), e.g. "folder-tree".
      * $badge: a count or short text beside the label, e.g. new form submissions; 0 and null hide it.
+     *   A Livewire screen that changes it updates the sidebar without a reload:
+     *   $this->dispatch('lynx-nav-badge', route: 'lynx.admin.forms', value: 3).
      * $group: the key of a group the item belongs to, e.g. Navigation::SETTINGS; an unknown
      * group puts the item outside groups.
      * $shortcut: the letter that, after "g", opens the screen from the keyboard (shortcuts.js).

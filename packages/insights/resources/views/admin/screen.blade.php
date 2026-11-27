@@ -1,5 +1,5 @@
 {{-- The Insights screen (InsightsScreen): a report's insights, found by a search and filtered by state, source and report. --}}
-<div class="grid grid-cols-1 gap-6" data-insights @if ($isRunning) wire:poll.3s @endif>
+<div class="grid grid-cols-1 gap-6" data-insights @if ($isRunning) wire:poll.3s="refreshBadge" @endif>
     @if ($shownReport === null)
         <x-lynx-admin::empty-state icon="lightbulb" :title="__('lynx-insights::admin.empty.title')" :help="__('lynx-insights::admin.empty.help')" data-insights-empty>
             @if ($canReview)

@@ -134,3 +134,17 @@ it('shows the open insights on the home screen', function (): void {
 
     $this->get('/lynx')->assertOk()->assertSee('data-home-stat="insights"', false);
 });
+
+it('tells the sidebar the new count of open insights after a decision', function (): void {
+    lynx()->run(GenerateInsights::class);
+
+    Livewire::test(InsightsScreen::class)->call('dismiss', insightNamed('Read beta')->id)
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.insights', value: 1);
+});
+
+it('lets the sidebar update its count without a reload', function (): void {
+    lynx()->run(GenerateInsights::class);
+
+    $this->get('/lynx/insights')->assertSee('data-nav-badge="lynx.admin.insights"', false)
+        ->assertSee('lynx-nav-badge.window', false);
+});

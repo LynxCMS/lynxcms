@@ -12,6 +12,7 @@ use LynxCms\Admin\Livewire\Concerns\Notifies;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Actions\DeleteSubmission;
 use LynxCms\Forms\Actions\UpdateSubmission;
+use LynxCms\Forms\Admin\Livewire\Concerns\RefreshesUnreadCount;
 use LynxCms\Forms\Models\Submission;
 use LynxCms\Forms\SubmissionPresenter;
 
@@ -24,6 +25,7 @@ use LynxCms\Forms\SubmissionPresenter;
 final class SubmissionView extends Component
 {
     use Notifies;
+    use RefreshesUnreadCount;
 
     #[Locked]
     public string $uuid = '';
@@ -45,6 +47,7 @@ final class SubmissionView extends Component
 
         if ($submission->status === 'new') {
             lynx()->run(UpdateSubmission::class, ['submission' => $uuid, 'status' => 'read']);
+            $this->refreshUnreadCount();
         }
     }
 
@@ -57,6 +60,7 @@ final class SubmissionView extends Component
     public function setStatus(string $status): void
     {
         lynx()->run(UpdateSubmission::class, ['submission' => $this->uuid, 'status' => $status]);
+        $this->refreshUnreadCount();
         $this->notify(match ($status) {
             'archived' => Value::string(__('lynx-forms::admin.submission.archived')),
             'spam' => Value::string(__('lynx-forms::admin.submission.spam_done')),

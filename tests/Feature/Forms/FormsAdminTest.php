@@ -132,3 +132,12 @@ it('searches answers for % and _ as written, not as wildcards', function (): voi
         ->and(SubmissionFilter::fromArray(['show' => 'all', 'search' => '_'])->query()->count())->toBe(0)
         ->and(SubmissionFilter::fromArray(['show' => 'all', 'search' => 'ana'])->query()->count())->toBe(1);
 });
+
+it('tells the sidebar the new count when a submission is opened or marked new', function (): void {
+    $unread = Submission::query()->where('status', 'new')->count();
+
+    Livewire::test(SubmissionView::class, ['uuid' => $this->ana->uuid])
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.forms', value: $unread - 1)
+        ->call('setStatus', 'new')
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.forms', value: $unread);
+});
