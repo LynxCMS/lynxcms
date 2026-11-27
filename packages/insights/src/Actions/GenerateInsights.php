@@ -119,7 +119,7 @@ final class GenerateInsights extends Action
     {
         $fingerprint = $insight->fingerprint($source);
 
-        if ($this->history->isQuiet($fingerprint, $insight->weight)) {
+        if ($this->history->isQuiet($fingerprint, $insight->weight) || $this->history->isApproving($fingerprint)) {
             return;
         }
 

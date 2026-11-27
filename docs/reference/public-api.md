@@ -305,7 +305,7 @@ In `LynxCms\Insights`.
 
 | Name | Kind | What it is |
 | --- | --- | --- |
-| `Actions\ApproveInsight` | class | Makes the change an insight suggests: its whole plan, in order, as the person approving. |
+| `Actions\ApproveInsight` | class | Makes the change an insight suggests, as the person approving. |
 | `Actions\ArchiveInsight` | class | Archive an open insight. |
 | `Actions\DismissInsight` | class | Dismiss an open insight. |
 | `Actions\GenerateInsights` | class | Writes a report: every source suggests changes for the period, and the insights are stored in one report. |

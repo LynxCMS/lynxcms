@@ -89,6 +89,7 @@ The module and its screen are called Insights, since most sites run them without
 ## ADRs
 
 - **ADR-0155: Insights are reports of planned actions, approved as a whole.** The module, decisions 1 to 4 and 6 to 8, and how other modules add sources.
+- **ADR-0157: An approved plan runs on the queue, a step at a time.** Amends decision 2: each step is a queued job in its own transaction, and the insight shows its progress.
 - **ADR-0156: Page metrics come through a contract.** Decision 5; Lynx stores no metrics.
 
 ## Pull requests
@@ -97,6 +98,7 @@ One at a time, each after the previous merges.
 
 1. Module skeleton and engine: contract, tables, `InsightSource` API, the four actions, the event, command, schedule, `MissingTranslations` (the first real source, which drives the tests), ADR-0155. Storage and public API, so a pull request. `split.yml`, the install picker (`ModuleCatalog`) and the README wait for PR 2, once editors have a screen, and the `LynxCMS/insights` repository must exist before `split.yml` lists it.
 2. Admin screen, home count, wording; `split.yml`, `ModuleCatalog`, README.
+2b. Approval on the queue (ADR-0157): a job per step, progress on the screen, failed steps kept for another approval.
 3. The other sources without metrics, and `MissingDescriptions` in seo.
 4. Metric sources, with the `PageMetrics` contract and ADR-0156.
 5. The AI source.

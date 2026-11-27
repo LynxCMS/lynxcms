@@ -21,9 +21,9 @@ use LynxCms\Insights\Models\StoredInsight;
 use LynxCms\Tests\Fixtures\Insights\FixedSource;
 
 /*
- * insights.approve runs an insight's whole plan as the person approving (ADR-0155): their
- * permissions apply to every step, a page changed since the report stops it, and a plan that
- * deletes anything is refused.
+ * insights.approve runs an insight's plan as the person approving (ADR-0155, ADR-0157): their
+ * permissions apply to every step, a page changed since the report stops it, and its review (a
+ * dry run) refuses a plan that deletes anything. ApprovalQueueTest covers the steps' jobs.
  */
 
 beforeEach(function (): void {
@@ -103,13 +103,13 @@ it('runs each step with the approver\'s permissions', function (): void {
         ->and($insight->fresh()?->state)->toBe(InsightState::Open);
 });
 
-it('refuses a plan that deletes', function (): void {
+it('refuses a plan that deletes when reviewed', function (): void {
     $this->source->insights = [new Insight('Remove alpha', 'Nobody reads it.', pages: [$this->alpha->id], plan: [
         ['action' => 'pages.delete', 'arguments' => ['page' => $this->alpha->id]],
     ])];
     $insight = reportedInsight();
 
-    expect(fn (): ActionResult => lynx()->run(ApproveInsight::class, ['insight' => $insight->id]))->toThrow(ValidationException::class)
+    expect(fn (): ActionResult => lynx()->run(ApproveInsight::class, ['insight' => $insight->id], dryRun: true))->toThrow(ValidationException::class)
         ->and(lynx()->pages->get($this->alpha->id))->not->toBeNull();
 });
 

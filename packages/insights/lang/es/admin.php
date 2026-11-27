@@ -44,11 +44,16 @@ return [
     'more_pages' => '{1} Mostrar 1 página más|[2,*] Mostrar :count páginas más',
     'state' => [
         'open' => 'Abierta',
+        'approving' => 'Aprobando',
         'approved' => 'Aprobada',
         'dismissed' => 'Descartada',
         'archived' => 'Archivada',
         'superseded' => 'Reemplazada',
     ],
+    'progress' => ':done de :total cambios hechos',
+    'progress_label' => 'Progreso de la aprobación',
+    'failed_steps' => '{1} 1 cambio falló, :done hechos. Apruebe de nuevo para repetirlo.|[2,*] :count cambios fallaron, :done hechos. Apruebe de nuevo para repetirlos.',
+    'failed_step' => 'Cambio :number: :error',
     'review' => [
         'title' => 'Aprobar hace estos cambios:',
         'open' => 'Revisar cambios',
@@ -57,7 +62,7 @@ return [
     'approve' => 'Aprobar',
     'archive' => 'Archivar',
     'dismiss' => 'Descartar',
-    'approved' => 'Sugerencia aprobada. Sus cambios se guardaron.',
+    'approving' => 'Aprobación iniciada. Los cambios se hacen uno a uno, y esta página muestra el progreso.',
     'archived' => 'Sugerencia archivada. El próximo informe la trae de vuelta con nuevos datos.',
     'dismissed' => 'Sugerencia descartada.',
 ];

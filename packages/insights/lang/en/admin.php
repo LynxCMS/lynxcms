@@ -44,11 +44,16 @@ return [
     'more_pages' => '{1} Show 1 more page|[2,*] Show :count more pages',
     'state' => [
         'open' => 'Open',
+        'approving' => 'Approving',
         'approved' => 'Approved',
         'dismissed' => 'Dismissed',
         'archived' => 'Archived',
         'superseded' => 'Replaced',
     ],
+    'progress' => ':done of :total changes made',
+    'progress_label' => 'Approval progress',
+    'failed_steps' => '{1} 1 change failed, :done made. Approve again to retry it.|[2,*] :count changes failed, :done made. Approve again to retry them.',
+    'failed_step' => 'Change :number: :error',
     'review' => [
         'title' => 'Approving makes these changes:',
         'open' => 'Review changes',
@@ -57,7 +62,7 @@ return [
     'approve' => 'Approve',
     'archive' => 'Archive',
     'dismiss' => 'Dismiss',
-    'approved' => 'Insight approved. Its changes are saved.',
+    'approving' => 'Approval started. The changes are made one at a time, and this page shows how far they got.',
     'archived' => 'Insight archived. The next report brings it back with new evidence.',
     'dismissed' => 'Insight dismissed.',
 ];

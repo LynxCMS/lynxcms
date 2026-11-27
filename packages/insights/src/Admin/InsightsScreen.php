@@ -83,7 +83,7 @@ final class InsightsScreen extends Component
 
     public function approve(int $insight): void
     {
-        $this->decide(ApproveInsight::class, $insight, 'approved');
+        $this->decide(ApproveInsight::class, $insight, 'approving');
     }
 
     public function dismiss(int $insight): void
@@ -120,6 +120,7 @@ final class InsightsScreen extends Component
             'counts' => $report instanceof InsightReport ? $view->counts($report) : [],
             'sources' => $report instanceof InsightReport ? $view->sources($report) : [],
             'labels' => $view->labels(),
+            'isApproving' => $report instanceof InsightReport && $view->isApproving($report),
             'canReview' => $access->allows('insights.review'),
         ]);
     }

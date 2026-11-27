@@ -29,6 +29,7 @@ use Override;
  * @property list<array{label: InsightText, value: string|int|float}> $evidence
  * @property list<array{action: string, arguments: array<string, mixed>}> $plan
  * @property array<int|string, string|null> $basis page id => when it was last changed
+ * @property list<array{status: string, error?: string}>|null $steps each plan step's outcome once approved (ADR-0157)
  * @property float $weight
  * @property InsightState $state
  * @property int|null $carried_from
@@ -117,6 +118,7 @@ final class StoredInsight extends Model
             'pages' => 'array',
             'plan' => 'array',
             'basis' => 'array',
+            'steps' => 'array',
             'weight' => 'float',
             'state' => InsightState::class,
             'carried_from' => 'integer',

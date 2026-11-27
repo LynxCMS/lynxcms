@@ -157,6 +157,8 @@ arch('only actions write page data')
         // Only reads: when pages last changed, which pages have a language, and links to them.
         PageBasis::class,
         'LynxCms\Insights\Sources',
+        // Only queues an approval's steps once the approval commits (ADR-0157).
+        'LynxCms\Insights\Actions',
     ]);
 
 arch('no debugging calls')
@@ -206,7 +208,7 @@ arch('insights work without the AI SDK')
     ->not->toUse(['Laravel\Ai', 'LynxCms\Ai']);
 
 arch('insights work without Livewire or the admin, except their screen')
-    ->expect(['LynxCms\Insights\Actions', 'LynxCms\Insights\Console', 'LynxCms\Insights\Models', 'LynxCms\Insights\Sources', Insight::class, InsightSourceRegistry::class, InsightText::class])
+    ->expect(['LynxCms\Insights\Actions', 'LynxCms\Insights\Console', 'LynxCms\Insights\Jobs', 'LynxCms\Insights\Models', 'LynxCms\Insights\Sources', Insight::class, InsightSourceRegistry::class, InsightText::class])
     ->not->toUse(['Livewire', 'LynxCms\Admin']);
 
 arch('insight actions are final and extend the base action')
