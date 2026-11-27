@@ -11,4 +11,7 @@ return [
 
     // The days a dismissed insight is not reported again, unless its weight doubles.
     'quiet_days' => 180,
+
+    // The minutes a running insight may go without progress before lynx:doctor warns about it.
+    'stuck_minutes' => 30,
 ];

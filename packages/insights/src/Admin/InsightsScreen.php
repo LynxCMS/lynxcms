@@ -10,12 +10,12 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use LynxCms\Admin\AdminAccess;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
-use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Support\Value;
 use LynxCms\Insights\Actions\ApproveInsight;
 use LynxCms\Insights\Actions\ArchiveInsight;
 use LynxCms\Insights\Actions\DismissInsight;
 use LynxCms\Insights\Actions\GenerateInsights;
+use LynxCms\Insights\Actions\StopInsight;
 use LynxCms\Insights\Models\InsightReport;
 
 /**
@@ -51,22 +51,17 @@ final class InsightsScreen extends Component
     #[Locked]
     public ?int $reviewing = null;
 
-    /** @var list<string> what approving the reviewed insight would change */
-    #[Locked]
-    public array $preview = [];
-
     /** Every request, updates included: they reach /livewire/update, outside the admin's routes and their gate. */
     public function boot(AdminAccess $access): void
     {
         $access->authorizeScreen('insights.view');
     }
 
-    /** Approving as a dry run: lists what the plan would change, and refuses as approving would. */
+    /** Approving as a dry run: refuses as approving would; the view then lists the plan's steps. */
     public function review(int $insight): void
     {
         $this->closeReview();
-        $changes = lynx()->run(ApproveInsight::class, ['insight' => $insight], dryRun: true)->changes->all();
-        $this->preview = array_values(array_map(fn (Change $change): string => $change->summary, array_filter($changes, fn (Change $change): bool => $change->subject !== 'insight')));
+        lynx()->run(ApproveInsight::class, ['insight' => $insight], dryRun: true);
         $this->reviewing = $insight;
     }
 
@@ -78,17 +73,21 @@ final class InsightsScreen extends Component
     public function closeReview(): void
     {
         $this->reviewing = null;
-        $this->preview = [];
     }
 
     public function approve(int $insight): void
     {
-        $this->decide(ApproveInsight::class, $insight, 'approved');
+        $this->decide(ApproveInsight::class, $insight, 'started');
     }
 
     public function dismiss(int $insight): void
     {
         $this->decide(DismissInsight::class, $insight, 'dismissed');
+    }
+
+    public function stop(int $insight): void
+    {
+        $this->decide(StopInsight::class, $insight, 'stopped');
     }
 
     public function archive(int $insight): void
@@ -120,12 +119,15 @@ final class InsightsScreen extends Component
             'counts' => $report instanceof InsightReport ? $view->counts($report) : [],
             'sources' => $report instanceof InsightReport ? $view->sources($report) : [],
             'labels' => $view->labels(),
+            'isRunning' => $report instanceof InsightReport && $view->isRunning($report),
             'canReview' => $access->allows('insights.review'),
+            // A failed step's stack trace can show paths and pieces of arguments: superusers only.
+            'showsTraces' => $access->isSuperuser(),
         ]);
     }
 
     /**
-     * @param  class-string<ApproveInsight|DismissInsight|ArchiveInsight>  $action
+     * @param  class-string<ApproveInsight|DismissInsight|ArchiveInsight|StopInsight>  $action
      */
     private function decide(string $action, int $insight, string $done): void
     {

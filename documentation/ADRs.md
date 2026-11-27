@@ -1736,7 +1736,7 @@ Staying in English: action descriptions, console output, the change summaries th
 
 ## ADR-0155: Insights are reports of planned actions, approved as a whole
 
-**Status:** Accepted (plan: documentation/plans/insights.md)
+**Status:** Accepted (plan: documentation/plans/insights.md). Amended by ADR-0157: a plan's steps run on the queue, each in its own transaction.
 
 **Context:** Nothing in Lynx looks at a site on its own and proposes work. Owners want a report every period (30 days by default) of suggested changes, each with its evidence, that an editor approves, dismisses or archives, and nothing changes without an approval. Some suggestions come from plain queries (pages missing a language), some from metrics, some from an AI agent, and developers want to add their own for a project. A suggestion approved weeks after it was written must not land on a page edited since, and must not let a suggestion's author do what the approver may not.
 
@@ -1751,3 +1751,25 @@ Staying in English: action descriptions, console output, the change summaries th
 - Laravel AI's tool approvals were considered for the approval step. They resume the conversation with the model after a decision, so approving would ask the model again and keep a conversation open for the whole period. Replaying recorded action calls (ADR-0020) runs what the editor reviewed, without the model.
 
 **Consequences:** Every source, whoever wrote it, is equally safe to install: it can only propose plans that run as the approver, after a fresh dry run in the admin. The `@api` contract (`InsightSource`, `Insight`, `InsightPeriod`, `InsightSourceRegistry`, `InsightState`, `InsightsReported`) is a promise from 1.0, so it stays small: kinds are strings and evidence is label and value. A step that fails undoes the whole plan and leaves the insight open, with the error shown to the editor.
+
+## ADR-0157: An approved plan runs on the queue, a step at a time
+
+**Status:** Accepted. Amends ADR-0155, where a plan ran as a whole in one transaction.
+
+**Context:** A plan's steps can each take seconds: `pages.translate` makes one provider call per page, so the 20 steps of a missing translations plan can run past PHP's time limit in the editor's request. When it does, the transaction rolls back and the insight can never be approved from the admin. A site's own source can return longer plans still.
+
+**Decision:**
+
+- `insights.approve` checks what it checked before (the insight is open, has a plan, its pages are unchanged, the approver has every step's permission), marks the insight `running`, and queues one job per step in a Laravel job batch, dispatched after its transaction commits. Its dry run still runs the whole plan nested, so Review changes lists every change and refuses a plan that deletes.
+- Each job runs `insights.apply_step` as the approver. That action runs the step nested inside `insights.run_step`, which refuses a step whose changes delete anything, so a failed or refused step rolls back alone and is recorded with its error. Both actions are kept out of MCP and the agent's tools.
+- An insight keeps the outcome of each step (`steps`: pending, done or failed). The step that finishes last decides the insight: approved when every step is done, otherwise open again with the failed steps listed and its pages' basis taken afresh, so approving again runs only the steps that did not finish.
+- A step that fails for a reason outside Lynx (a provider that cannot be reached, a timeout) is tried three times, 30 seconds and then 2 minutes apart, before it counts as failed; a refused step (validation, permissions) fails at once. A job that gives up for another reason, such as a lost database connection, marks its step failed, so an insight never stays running. The sync queue tries once and keeps the error, so an approval never fails the editor's request.
+- A failed step keeps its error, the exception's class, when it failed, after how many tries and its stack trace, cut to 8 KB. The screen opens them in a dialog; the trace only for superusers, since a trace shows file paths and pieces of arguments. The whole trace is in the site's log.
+- `insights.stop` ends a running approval: the steps done stay done, the waiting ones are marked stopped and their jobs do nothing, and the insight is open again. A step already running finishes.
+- Review changes (the dry run) covers only the steps an approval would run, and lists each in the reader's language from the plan itself. The actions' change summaries stay in English for developers (ADR-0141).
+- `lynx:doctor` warns about an insight running with no progress for `lynx-insights.stuck_minutes` (30): the one case the step list cannot show, a worker that died without `failed()`, or no worker at all.
+- An insight that is running is not reported again by a new report. The screen shows its progress and each step with its page and outcome, and refreshes until the steps end.
+- Laravel's own batches carry the jobs. A dedicated progress package was considered and left out: the insight's steps already say how far a plan got, and Lynx's tables keep the `lynx_` prefix.
+
+**Consequences:** An approval is all or nothing in its checks and step by step in its effects: when a step fails, the steps before it stay done. The steps the built-in sources plan write drafts, which an editor still publishes. A site with the `sync` queue runs the steps in the request, after the approval commits, so a timeout keeps the steps already done and the editor approves again for the rest; such a site needs a queue worker for long plans.
+

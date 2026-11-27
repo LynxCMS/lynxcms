@@ -55,9 +55,7 @@ final readonly class ReportView
     {
         $query = $report->insights()->orderByDesc('weight')->orderBy('id');
 
-        if ($filter->state !== InsightFilter::ALL) {
-            $query->where('state', $filter->state);
-        }
+        $query->whereIn('state', $filter->covers());
 
         if ($filter->source !== '') {
             $query->where('source', $filter->source);
@@ -83,6 +81,10 @@ final readonly class ReportView
             $counts[(string) $state] = Value::int($total);
         }
 
+        // Running insights count as open, which is where the screen lists them.
+        $counts[InsightState::Open->value] = ($counts[InsightState::Open->value] ?? 0) + ($counts[InsightState::Running->value] ?? 0);
+        unset($counts[InsightState::Running->value]);
+
         return $counts;
     }
 
@@ -105,6 +107,11 @@ final readonly class ReportView
         }
 
         return $labels;
+    }
+
+    public function isRunning(InsightReport $report): bool
+    {
+        return $report->insights()->where('state', InsightState::Running->value)->exists();
     }
 
     public function openCount(): int
