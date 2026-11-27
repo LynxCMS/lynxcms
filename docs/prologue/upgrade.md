@@ -21,6 +21,13 @@ After `composer update`, Composer lists any Lynx package with database changes w
 
 To go back to the previous version on a live site, restore that database backup. Don't roll Lynx's migrations back with `migrate:rollback` there: dropping its tables drops the content in them, and the tables each field keeps (`lynx_f_*`) belong to no migration, so a rollback can't bring the site back to how it was. Rolling back works in development, where `migrate:refresh` may take Lynx's migrations with the app's.
 
+## From 0.1.61 to 0.1.62
+
+No database changes, unless you install Insights.
+
+- To try [Insights](/modules/insights), run `composer require lynxcms/insights` and `php artisan lynx:migrate`. Approving an insight's plan needs a queue worker.
+- Nothing else needs a change.
+
 ## From 0.1.60 to 0.1.61
 
 No database changes.

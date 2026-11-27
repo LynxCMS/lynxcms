@@ -8,6 +8,25 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.62
+
+Released November 27, 2026. Adds Insights, a module that suggests changes every month for editors to approve, and a contract for page metrics. No breaking changes. Sites that install Insights run `lynx:migrate`; others have no database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-61-to-0-1-62).
+
+### Insights
+
+- **New module, `lynxcms/insights`.** [Insights](/modules/insights) writes a report of suggested changes on a schedule (`LYNX_INSIGHTS_SCHEDULE`) or on request (`lynx:insights`). Each insight shows its reason, the numbers it rests on and its pages, and often a plan of actions. Editors review it, then approve, archive or dismiss it on the Insights screen, and the sidebar and home screen show how many are open.
+- **Five sources:** missing translations (with a plan that translates the most linked pages into their drafts, when a translation provider is set), stale drafts, broken links, missing descriptions (from the SEO module), and neglected popular pages (with page metrics).
+- **Approving runs on the queue**, a job per step, with a progress bar and the state of each page. Steps that fail for a reason outside Lynx are tried three times; a failed step keeps its error, shown in a dialog, and approving again runs only the steps that did not finish. **Stop** ends a running approval. `lynx:doctor` warns about an insight that stopped making progress.
+- **Insights reads in each editor's language:** titles, reasons and evidence are stored as translation keys, and Review changes describes each step from the plan.
+- Sites add their own sources with `InsightSourceRegistry::add()`. See [Writing your own source](/modules/insights#writing-your-own-source).
+- ADR-0155, ADR-0156 and ADR-0157.
+
+### Other changes
+
+- **`LynxCms\Contracts\Metrics\PageMetrics`** lets a site give Lynx its page view counts. Lynx stores no visitor data and binds nothing by default. See [Page metrics](/modules/insights#page-metrics).
+- The admin has BlatUI's presence dot (`x-lynx-admin::ui.presence`), with theme colors.
+- Each module with an admin screen shows a screenshot in its README.
+
 ## 0.1.61
 
 Released November 26, 2026. Fixes found while building a site from a draft and deploying it from a content package: duplicating pages with a required text field, installing after an import, and editing the texts in matrix block views. No database changes and no breaking changes. See the [upgrade guide](/prologue/upgrade#from-0-1-60-to-0-1-61).
