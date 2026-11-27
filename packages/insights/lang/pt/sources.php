@@ -7,9 +7,11 @@ return [
         'label' => 'Traduções em falta',
         'title' => '{1} 1 página não tem versão em :language|[2,*] :count páginas não têm versão em :language',
         'reason' => 'Quem lê em :language vê estas páginas na língua de recurso. O plano traduz as :shown mais ligadas para os seus rascunhos, para rever antes de publicar.',
+        'reason_views' => 'Quem lê em :language vê estas páginas na língua de recurso. O plano traduz as :shown mais vistas para os seus rascunhos, para rever antes de publicar.',
         'evidence' => [
             'pages' => 'Páginas sem versão em :language',
             'links' => 'Ligações para as páginas do plano',
+            'views' => 'Visualizações das páginas do plano, últimos :days dias',
         ],
     ],
     'stale_drafts' => [
@@ -28,6 +30,15 @@ return [
         'evidence' => [
             'links' => 'Ligações para páginas que os visitantes não podem abrir',
             'targets' => 'Páginas ligadas',
+        ],
+    ],
+    'neglected_pages' => [
+        'label' => 'Páginas populares esquecidas',
+        'title' => '{1} 1 página popular não foi alterada em :months meses|[2,*] :count páginas populares não foram alteradas em :months meses',
+        'reason' => 'Estas páginas estão entre as mais vistas dos últimos :days dias, e ninguém as alterou em :months meses. Confirme que o que dizem ainda é verdade.',
+        'evidence' => [
+            'views' => 'Visualizações nos últimos :days dias',
+            'months' => 'Meses sem alterações',
         ],
     ],
 ];

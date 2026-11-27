@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 286 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 287 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -22,6 +22,7 @@ In `LynxCms\Contracts`.
 | `Fields\FieldType` | interface | A field type owns its storage, its value conversion and its validation. |
 | `Fields\FormatContext` | class | What a formatter knows about the value it formats. |
 | `Fields\Formatter` | interface | A text formatter: attached to text fields in an ordered list, run when a template outputs the value, never on the stored value. |
+| `Metrics\PageMetrics` | interface | Counts of what visitors did on pages, kept by the site or a module. |
 | `Pages\PageCache` | class | What code that renders a page can tell the page cache (lynxcms/cache), without depending on it. |
 | `Translation\TranslationProvider` | interface | Machine translation behind one interface: a model through laravel/ai, DeepL, a local model. |
 

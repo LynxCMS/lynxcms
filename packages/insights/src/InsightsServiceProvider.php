@@ -23,6 +23,7 @@ use LynxCms\Insights\Console\InsightsCommand;
 use LynxCms\Insights\Doctor\StuckInsights;
 use LynxCms\Insights\Sources\BrokenLinks;
 use LynxCms\Insights\Sources\MissingTranslations;
+use LynxCms\Insights\Sources\NeglectedPopularPages;
 use LynxCms\Insights\Sources\StaleDrafts;
 use Override;
 
@@ -49,7 +50,7 @@ final class InsightsServiceProvider extends ServiceProvider
         $permissions = $this->app->make(PermissionRegistry::class);
         $permissions->register('insights.view', 'View insight reports', requires: ['pages.view']);
         $permissions->register('insights.review', 'Approve, dismiss and archive insights, and write reports', requires: ['insights.view']);
-        $this->app->make(InsightSourceRegistry::class)->add(MissingTranslations::class, StaleDrafts::class, BrokenLinks::class);
+        $this->app->make(InsightSourceRegistry::class)->add(MissingTranslations::class, StaleDrafts::class, BrokenLinks::class, NeglectedPopularPages::class);
         $this->app->make(DoctorChecks::class)->add(StuckInsights::class);
         $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
         $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-insights');

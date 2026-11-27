@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Insights\Sources;
 
 use Illuminate\Support\Facades\DB;
+use LynxCms\Contracts\Metrics\PageMetrics;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Models\Language;
 use LynxCms\Core\Query\PageFinder;
@@ -18,7 +19,8 @@ use LynxCms\Insights\InsightText;
 
 /**
  * Published pages with no version in an active language: one insight per language, about the
- * pages most linked to from other pages (the page references index, ADR-0145). With a translation
+ * pages most viewed when the site has page metrics (ADR-0156), else the most linked to from other
+ * pages (the page references index, ADR-0145). With a translation
  * provider, its plan translates them into their drafts, for an editor to review and publish.
  *
  * @internal
@@ -38,6 +40,7 @@ final readonly class MissingTranslations implements InsightSource
         private PageFinder $finder,
         private TranslationProviders $providers,
         private InboundLinks $links,
+        private Metrics $metrics,
     ) {}
 
     public function key(): string
@@ -52,6 +55,7 @@ final readonly class MissingTranslations implements InsightSource
 
     public function insights(InsightPeriod $period): array
     {
+        $metrics = $this->metrics->available();
         $default = $this->languages->default();
         $published = $this->finder->ids('include=hidden');
         $insights = [];
@@ -60,7 +64,7 @@ final readonly class MissingTranslations implements InsightSource
             $missing = $language->id === $default->id ? [] : $this->untranslated($published, $language);
 
             if ($missing !== []) {
-                $insights[] = $this->insight($language, $missing);
+                $insights[] = $this->insight($language, $missing, $metrics, $period);
             }
         }
 
@@ -70,23 +74,27 @@ final readonly class MissingTranslations implements InsightSource
     /**
      * @param  list<int>  $missing
      */
-    private function insight(Language $language, array $missing): Insight
+    private function insight(Language $language, array $missing, ?PageMetrics $metrics, InsightPeriod $period): Insight
     {
-        $links = $this->links->counts($missing);
-        $pages = array_slice($this->links->sort($missing, $links), 0, self::PAGES);
-        $linked = array_sum(array_map(fn (int $page): int => $links[$page] ?? 0, $pages));
+        // Ranked by views when the site has metrics, else by the pages linking to them.
+        $counts = $metrics instanceof PageMetrics ? $metrics->totals($missing, PageMetrics::VIEW, $period->days()) : $this->links->counts($missing);
+        $pages = array_slice($this->links->sort($missing, $counts), 0, self::PAGES);
+        $ranked = array_sum(array_map(fn (int $page): int => $counts[$page] ?? 0, $pages));
         $replace = ['count' => count($missing), 'language' => $language->name];
+        $rankLabel = $metrics instanceof PageMetrics
+            ? new InsightText(self::KEY.'.evidence.views', ['days' => $period->days()])
+            : new InsightText(self::KEY.'.evidence.links');
 
         return new Insight(
             title: new InsightText(self::KEY.'.title', $replace, count($missing)),
-            reason: new InsightText(self::KEY.'.reason', $replace + ['shown' => count($pages)]),
+            reason: new InsightText(self::KEY.($metrics instanceof PageMetrics ? '.reason_views' : '.reason'), $replace + ['shown' => count($pages)]),
             pages: $pages,
             plan: $this->plan($language, $pages),
             evidence: [
                 ['label' => new InsightText(self::KEY.'.evidence.pages', $replace), 'value' => count($missing)],
-                ['label' => new InsightText(self::KEY.'.evidence.links'), 'value' => $linked],
+                ['label' => $rankLabel, 'value' => $ranked],
             ],
-            weight: (float) (count($missing) + $linked),
+            weight: (float) (count($missing) + $ranked),
             subject: $language->code,
         );
     }

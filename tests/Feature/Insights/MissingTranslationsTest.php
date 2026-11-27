@@ -13,6 +13,7 @@ use LynxCms\Insights\Actions\GenerateInsights;
 use LynxCms\Insights\InsightPeriod;
 use LynxCms\Insights\Models\InsightReport;
 use LynxCms\Insights\Sources\InboundLinks;
+use LynxCms\Insights\Sources\Metrics;
 use LynxCms\Insights\Sources\MissingTranslations;
 use LynxCms\Tests\Fixtures\FakeTranslationProvider;
 
@@ -79,7 +80,7 @@ it('reports nothing when every page has every language', function (): void {
 });
 
 it('only informs without a translation provider', function (): void {
-    $source = new MissingTranslations(app(LanguageRegistry::class), app(PageFinder::class), new TranslationProviders(new Container), app(InboundLinks::class));
+    $source = new MissingTranslations(app(LanguageRegistry::class), app(PageFinder::class), new TranslationProviders(new Container), app(InboundLinks::class), app(Metrics::class));
 
     expect($source->insights(InsightPeriod::lastDays(30))[0]->plan)->toBe([]);
 });
