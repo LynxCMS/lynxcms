@@ -47,6 +47,10 @@ return [
     'finder' => [
         'share' => 'Compartir búsquedas guardadas en Buscar páginas',
     ],
+    'insights' => [
+        'view' => 'Ver informes de sugerencias',
+        'review' => 'Aprobar, descartar y archivar sugerencias, y escribir informes',
+    ],
     'agent' => [
         'use' => 'Usar el agente integrado y aprobar sus planes',
     ],
