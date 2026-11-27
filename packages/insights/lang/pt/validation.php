@@ -9,5 +9,6 @@ return [
     'changed' => 'A página [:page] mudou desde este relatório. O próximo relatório volta a verificá-la.',
     'destructive' => 'O plano desta sugestão apagaria conteúdo, por isso não pode ser aprovado aqui.',
     'step_ran' => 'Este passo do plano já foi executado, ou a sugestão não está a ser aprovada.',
+    'not_running' => 'Esta sugestão não está em curso.',
     'no_step' => 'O plano da sugestão não tem esse passo.',
 ];

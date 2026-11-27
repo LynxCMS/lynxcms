@@ -3,7 +3,8 @@
 @php($steps = $insight->steps ?? [])
 @php($failed = \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED))
 {{-- While an approval runs, or after a step failed, the step list names the pages instead. --}}
-@php($showsSteps = $insight->state === \LynxCms\Insights\InsightState::Running || ($isOpen && $failed > 0))
+@php($unfinished = $failed + \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::STOPPED))
+@php($showsSteps = $insight->state === \LynxCms\Insights\InsightState::Running || ($isOpen && $unfinished > 0))
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="insight-{{ $insight->id }}" wire:key="insight-{{ $insight->id }}" data-insight="{{ $insight->id }}" data-insight-state="{{ $insight->state->value }}">
     <div class="mb-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="insight-{{ $insight->id }}" class="text-base font-semibold">{{ $insight->title }}</h2>
@@ -60,20 +61,35 @@
                 <div class="bg-primary h-full rounded-full transition-all" style="width: {{ count($steps) > 0 ? round($done / count($steps) * 100) : 0 }}%"></div>
             </div>
         </div>
+        @if ($canReview)
+            <div class="mb-4">
+                <x-lynx-admin::ui.button variant="outline" type="button" wire:click="stop({{ $insight->id }})" data-insight-stop>{{ __('lynx-insights::admin.stop') }}</x-lynx-admin::ui.button>
+            </div>
+        @endif
         @include('lynx-insights::admin.steps', ['steps' => $steps, 'insight' => $insight, 'links' => $links])
-    @elseif ($isOpen && $failed > 0)
-        <x-lynx-admin::ui.alert variant="destructive" class="mb-3" data-insight-failed>
-            <x-lynx-admin::ui.alert-title>{{ trans_choice('lynx-insights::admin.failed_steps', $failed, ['count' => $failed, 'done' => \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::DONE)]) }}</x-lynx-admin::ui.alert-title>
+    @elseif ($isOpen && $unfinished > 0)
+        <x-lynx-admin::ui.alert :variant="$failed > 0 ? 'destructive' : 'default'" class="mb-3" data-insight-unfinished>
+            <x-lynx-admin::ui.alert-title>{{ trans_choice('lynx-insights::admin.unfinished', $unfinished, ['count' => \LynxCms\Core\Support\LocalizedNumber::format($unfinished), 'done' => \LynxCms\Core\Support\LocalizedNumber::format(\LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::DONE)), 'total' => \LynxCms\Core\Support\LocalizedNumber::format(count($steps))]) }}</x-lynx-admin::ui.alert-title>
         </x-lynx-admin::ui.alert>
         @include('lynx-insights::admin.steps', ['steps' => $steps, 'insight' => $insight, 'links' => $links])
     @endif
 
     @if ($isOpen && $reviewing === $insight->id)
+        @php($titles = array_column($links, 'title', 'id'))
+        @php($wording = app(\LynxCms\Insights\Admin\StepWording::class))
+        {{-- Only what approving runs: the steps done before stay done. --}}
+        @php($remaining = array_intersect_key($insight->plan, array_flip(\LynxCms\Insights\PlanSteps::pending(\LynxCms\Insights\PlanSteps::forApproval($insight->steps, count($insight->plan))))))
         <div class="bg-muted mb-4 rounded-lg p-4 text-sm" role="status" data-insight-review>
-            <p class="mb-2 font-medium">{{ __('lynx-insights::admin.review.title') }}</p>
+            <p class="mb-2 font-medium">{{ trans_choice('lynx-insights::admin.review.title', count($remaining), ['count' => \LynxCms\Core\Support\LocalizedNumber::format(count($remaining))]) }}</p>
             <ul class="grid list-disc gap-1 ps-5">
-                @foreach ($preview as $summary)
-                    <li>{{ $summary }}</li>
+                @foreach ($remaining as $index => $step)
+                    @php($page = is_int($step['arguments']['page'] ?? null) ? $step['arguments']['page'] : (is_int($step['arguments']['id'] ?? null) ? $step['arguments']['id'] : null))
+                    <li data-review-step="{{ $index }}" data-review-action="{{ $step['action'] }}" data-review-page="{{ $page }}">
+                        @if ($page !== null && isset($titles[$page]))
+                            <span class="font-medium">{{ $titles[$page] }}</span>:
+                        @endif
+                        {{ $wording->describe($step) }}
+                    </li>
                 @endforeach
             </ul>
         </div>

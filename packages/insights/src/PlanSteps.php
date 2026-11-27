@@ -8,7 +8,8 @@ use Illuminate\Support\Str;
 
 /**
  * The outcome of each step of an approved plan (ADR-0157), kept on the insight in the plan's
- * order: pending until its job ran, then done, or failed with its error.
+ * order: pending until its job ran, then done, or failed with its error; stopped when an editor
+ * stopped the approval before it ran.
  *
  * A failed step also keeps the exception's class, its trace (cut to TRACE_LIMIT bytes, shown only to
  * superusers), when it failed and after how many tries.
@@ -24,6 +25,8 @@ final class PlanSteps
     public const string DONE = 'done';
 
     public const string FAILED = 'failed';
+
+    public const string STOPPED = 'stopped';
 
     /** The bytes of a stack trace a failed step keeps; the whole trace is in the site's log. */
     public const int TRACE_LIMIT = 8000;

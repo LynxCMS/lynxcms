@@ -52,12 +52,13 @@ return [
     ],
     'progress' => ':done de :total cambios hechos',
     'progress_label' => 'Progreso de la aprobación',
-    'failed_steps' => '{1} 1 cambio falló, :done hechos. Apruebe de nuevo para repetirlo.|[2,*] :count cambios fallaron, :done hechos. Apruebe de nuevo para repetirlos.',
+    'unfinished' => '{1} :done de :total cambios hechos. Apruebe de nuevo para hacer el último.|[2,*] :done de :total cambios hechos. Apruebe de nuevo para hacer los otros :count.',
     'steps' => [
         'step' => 'Cambio :number',
         'pending' => 'En espera',
         'done' => 'Hecho',
         'failed' => 'Falló',
+        'stopped' => 'Detenido',
     ],
     'details' => [
         'open' => 'Detalles',
@@ -71,8 +72,15 @@ return [
         'trace_hidden' => 'El stack trace se muestra a los superusuarios, y está en el registro del sitio.',
         'close' => 'Cerrar',
     ],
+    'stop' => 'Detener',
+    'stopped' => 'Sugerencia detenida. Los cambios hechos se mantienen. Apruébela de nuevo para hacer el resto.',
+    'plan' => [
+        'translate' => 'Traducir a :language, en su borrador',
+        'save' => 'Cambiar :fields',
+        'other' => 'Ejecutar :action',
+    ],
     'review' => [
-        'title' => 'Aprobar hace estos cambios:',
+        'title' => '{1} Aprobar hace 1 cambio:|[2,*] Aprobar hace :count cambios:',
         'open' => 'Revisar cambios',
         'close' => 'Cerrar revisión',
     ],

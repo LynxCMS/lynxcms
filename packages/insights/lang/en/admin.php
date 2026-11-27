@@ -52,12 +52,13 @@ return [
     ],
     'progress' => ':done of :total changes made',
     'progress_label' => 'Approval progress',
-    'failed_steps' => '{1} 1 change failed, :done made. Approve again to retry it.|[2,*] :count changes failed, :done made. Approve again to retry them.',
+    'unfinished' => '{1} :done of :total changes made. Approve again to make the last one.|[2,*] :done of :total changes made. Approve again to make the other :count.',
     'steps' => [
         'step' => 'Change :number',
         'pending' => 'Waiting',
         'done' => 'Done',
         'failed' => 'Failed',
+        'stopped' => 'Stopped',
     ],
     'details' => [
         'open' => 'Details',
@@ -71,8 +72,15 @@ return [
         'trace_hidden' => 'The stack trace is shown to superusers, and is in the site\'s log.',
         'close' => 'Close',
     ],
+    'stop' => 'Stop',
+    'stopped' => 'Insight stopped. The changes made stay. Approve it again to make the rest.',
+    'plan' => [
+        'translate' => 'Translate into :language, in its draft',
+        'save' => 'Change :fields',
+        'other' => 'Run :action',
+    ],
     'review' => [
-        'title' => 'Approving makes these changes:',
+        'title' => '{1} Approving makes 1 change:|[2,*] Approving makes :count changes:',
         'open' => 'Review changes',
         'close' => 'Close review',
     ],

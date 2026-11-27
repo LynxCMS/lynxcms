@@ -69,7 +69,9 @@ final class ApproveInsight extends Action
     {
         $insight = $this->openInsight($input->get('insight'));
         $this->assertRunnable($insight);
-        $steps = array_map(fn (array $step): array => [$this->plans->action($step['action']), $step['arguments']], $insight->plan);
+        // Only the steps an approval runs: those done before stay done.
+        $remaining = PlanSteps::pending(PlanSteps::forApproval($insight->steps, count($insight->plan)));
+        $steps = array_map(fn (int $index): array => [$this->plans->action($insight->plan[$index]['action']), $insight->plan[$index]['arguments']], $remaining);
 
         foreach ($steps as [$action]) {
             $this->authorizer->authorizeAction($context->actor, $action::permission(), $action::name());

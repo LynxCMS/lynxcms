@@ -4,7 +4,7 @@
     @foreach ($steps as $index => $step)
         @php($arguments = $insight->plan[$index]['arguments'] ?? [])
         @php($page = is_int($arguments['page'] ?? null) ? $arguments['page'] : (is_int($arguments['id'] ?? null) ? $arguments['id'] : null))
-        @php($icon = ['done' => 'circle-check', 'failed' => 'circle-x'][$step['status']] ?? 'clock')
+        @php($icon = ['done' => 'circle-check', 'failed' => 'circle-x', 'stopped' => 'circle-slash'][$step['status']] ?? 'clock')
         <li class="flex items-start gap-3 px-3 py-2" wire:key="insight-{{ $insight->id }}-step-{{ $index }}" data-insight-step="{{ $index }}" data-step-status="{{ $step['status'] }}" data-step-page="{{ $page }}">
             <x-lynx-admin::ui.icon :name="$icon" @class(['mt-0.5 size-4 shrink-0', 'text-primary' => $step['status'] === 'done', 'text-destructive' => $step['status'] === 'failed', 'text-muted-foreground' => $step['status'] === 'pending']) aria-hidden="true" />
             <span class="min-w-0 flex-1">

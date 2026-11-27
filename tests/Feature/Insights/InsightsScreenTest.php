@@ -89,9 +89,9 @@ it('reviews a plan as a dry run, then approves it', function (): void {
 
     $screen = Livewire::test(InsightsScreen::class)->call('review', $insight->id)
         ->assertSet('reviewing', $insight->id)
-        ->assertSeeHtml('data-insight-review');
-    expect($screen->get('preview'))->not->toBeEmpty()
-        ->and(lynx()->pages->get($this->alpha->id)?->price)->toBeNull();
+        ->assertSeeHtml('data-insight-review')
+        ->assertSeeHtml('data-review-step="0" data-review-action="pages.save" data-review-page="'.$this->alpha->id.'"');
+    expect(lynx()->pages->get($this->alpha->id)?->price)->toBeNull();
 
     $screen->call('approve', $insight->id)->assertSet('reviewing', null);
     expect(lynx()->pages->get($this->alpha->id)?->price)->toBe(40)
