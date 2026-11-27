@@ -8,6 +8,7 @@
     },
     "suggest": {
         "lynxcms/admin": "Adds the SEO screens and previews to the Livewire admin.",
+        "lynxcms/insights": "Reports published pages without a description for search engines.",
         "lynxcms/media": "Adds share images (og:image) per page and a default one."
     },
     "autoload": {

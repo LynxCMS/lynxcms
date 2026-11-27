@@ -62,9 +62,9 @@ Registered by the module when the admin is installed, as the cache module does (
 Each weighs its pages by the number of pages linking to them (the page references index, ADR-0145), so sites without metrics still see the most linked pages first.
 
 - `MissingTranslations`: published pages with no translation in an active language. Plan: `pages.translate` for that language when a translation provider is bound, else information only.
-- `StaleDrafts`: drafts nobody saved for 30 days. Information only: discarding a draft loses work, so it stays the editor's decision in the editor.
-- `LinksToHiddenPages`: published pages whose rich text or page fields point at an unpublished or trashed page. Information only, with the links.
-- `MissingDescriptions` (registered by `packages/seo`): published pages without a meta description.
+- `StaleDrafts`: drafts nobody saved during the report's period (30 days by default). Information only: discarding a draft loses work, so it stays the editor's decision in the editor.
+- `BrokenLinks`: published pages whose rich text or page fields point at a page visitors cannot open (unpublished, in the trash, or deleted), from the page references report. Information only. Named for the admin's broken links report: "hidden" is a page status in Lynx, for pages visitors can open.
+- `MissingDescriptions` (registered by `packages/seo` when Insights is installed): published, indexable pages with SEO fields whose description falls back to the site's default, because the page and every field in `lynx-seo.description_fields` are empty in the default language. Information only until the Insights Agent can write descriptions.
 
 ### With metrics
 
