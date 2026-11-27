@@ -1,7 +1,8 @@
 # Copies every package in packages/ into its read-only repository (LynxCMS/core, LynxCMS/admin...),
 # with its history, on each push to main and each tag, so Packagist can list them one by one.
 # Needs SPLIT_TOKEN: a fine-grained token for the LynxCMS organization with Contents read and
-# write on the package repositories only.
+# write on the package repositories and the starter repositories only (starter.yml and
+# starter-meeting-rooms.yml push the starter apps with it).
 # A new package needs its repository created first and added to the token's repository access.
 # The admin's built assets are not committed here (ADR-0071): this workflow builds them from the
 # whole monorepo and commits them on top of the admin split, so Composer installs get them.
