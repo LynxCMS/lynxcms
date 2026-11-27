@@ -5,6 +5,8 @@
 
 Insights for Lynx CMS: a report every period of suggested changes, each with its evidence and a plan that editors approve, dismiss or archive. With `lynxcms/admin`, the reports are on the Insights screen, and the home screen shows the number of open insights. Without it, `lynx:insights` writes a report and the MCP server's tools decide on its insights.
 
+![The Insights screen in the Lynx admin, with an insight about pages missing a translation](screenshots/insights.png)
+
 ## Installing
 
 ```bash

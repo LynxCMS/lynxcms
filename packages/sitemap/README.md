@@ -5,6 +5,8 @@
 
 XML sitemaps for Lynx CMS: every published page in every language, split into parts past a limit set in config or the admin.
 
+![The sitemap screen in the Lynx admin](screenshots/sitemap.png)
+
 ## Installing
 
 ```bash

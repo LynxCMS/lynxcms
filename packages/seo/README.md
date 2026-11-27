@@ -5,6 +5,8 @@
 
 SEO for Lynx CMS: meta and social tags, canonical links, robots rules and robots.txt, per template SEO fields.
 
+![The SEO screen in the Lynx admin](screenshots/seo.png)
+
 ## Installing
 
 ```bash

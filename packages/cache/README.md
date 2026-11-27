@@ -5,6 +5,8 @@
 
 Page cache for Lynx CMS: guest pages stored as HTML, served by the web server or before Laravel's session starts, and cleared when content changes.
 
+![The page cache screen in the Lynx admin](screenshots/page-cache.png)
+
 ## Installing
 
 ```bash

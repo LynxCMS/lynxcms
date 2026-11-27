@@ -5,6 +5,8 @@
 
 Page Finder for the Lynx CMS admin: search every page by its fields, template, status and dates, with conditions grouped by all and any.
 
+![The Find pages screen in the Lynx admin, with its conditions and results](screenshots/find-pages.png)
+
 ## Installing
 
 ```bash
