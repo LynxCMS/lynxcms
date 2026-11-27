@@ -82,6 +82,24 @@ The module and its screen are called Insights, since most sites run them without
 - Tests use laravel/ai's fakes (`InsightsAgent::fake()` with structured responses), so no test calls a provider.
 - laravel/ai's tool approvals (`Approvable`, pending approvals) were considered for the approval step. They resume the conversation with the model after a decision, so approving would ask the model again and keep a conversation open for 30 days. Replaying recorded action calls (ADR-0020) runs exactly what the editor reviewed, without the model, and is kept.
 
+## Database backup before an approval (after the backup module)
+
+Waits for a backup module (`lynxcms/backup`, not planned in detail yet) that makes database backups. Content packages (ADR-0040) are not enough: they leave out activity, revisions, users and roles. Until then, nothing here is built.
+
+- **Contract in `lynxcms/contracts`:** `DatabaseBackups` (`@api`): `isAvailable(): bool`, `create(string $reason, Actor $actor): BackupReference` and `latest(): ?BackupReference` (id, when, size, a URL to its admin screen). The backup module binds it. Insights depends only on the contract, so it stays free of the module, as it is of laravel/ai.
+- **The question:** with a binding, Approve opens a dialog before anything runs: "Back up the database before these 20 changes?", with **Back up and approve**, **Approve without a backup** and **Cancel**. It names the latest backup and its age, so an editor who backed up ten minutes ago can skip it. Without a binding, no dialog; the review says the site has no database backups, as `lynx:migrate` asks.
+- **Setting:** `lynx-insights.backup`: `ask` (default), `always` (no dialog, always backs up) or `never` (no dialog).
+- **Action input:** `insights.approve` takes `backup` (bool). Its default comes from the setting: with `ask`, true when the binding is available. So MCP clients, the agent and `lynx:insights` get the same protection without a dialog, and can turn it off explicitly.
+- **Order:** the backup runs first, on the queue, chained before the steps' batch (`Bus::chain([BackUpDatabase, Bus::batch($steps)])`). The insight shows "Backing up the database" before the step list. A failed backup runs no step: the insight is open again with the error, in the same details dialog as a failed step. A worker that dies mid-backup leaves the chain to the queue's retry, as a step.
+- **Record:** the insight keeps the backup's reference (a `backup` column, json). Its card and the step details link to it, so an editor who regrets an approval finds the backup that came right before it. Restoring stays in the backup module, never in Insights.
+- **Who may back up:** the backup runs as the system, not as the approver: it only adds a file, and a reviewer without `backups.create` should still be protected. To keep storage in check, an approval reuses a backup newer than `lynx-insights.backup_reuse_minutes` (10) instead of making another, and says so in the dialog.
+
+Open questions for that PR:
+
+1. Whether plans that only write drafts (the missing translations plan) ask at all, or skip the question by default, since publishing is still a separate step.
+2. Whether the same contract and dialog serve other bulk changes: `lynx:import`, Page Finder's bulk actions and `lynx:schema:apply --force`. If so, the dialog belongs in the admin package, not in Insights.
+3. The backup module's own ADR decides the format, storage disk, retention and how a backup of a large PostgreSQL or MySQL database stays consistent.
+
 ## lynx-homepage
 
 - Requires the module, binds `PageMetrics` to `App\Stats\PageStats`, and schedules a monthly report. Its seeded history (`stats:fake-history`) gives the demo a first report.
