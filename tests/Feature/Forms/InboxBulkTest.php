@@ -130,3 +130,10 @@ it('exports what the inbox shows', function (): void {
 
     expect(substr_count(trim($csv), "\n"))->toBe(2);
 });
+
+it('tells the sidebar the new count of unread submissions after a bulk action', function (): void {
+    inboxRows(3);
+
+    Livewire::test(Inbox::class)->call('togglePage')->call('markSelected', 'read')
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.forms', value: 0);
+});

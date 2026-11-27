@@ -20,6 +20,8 @@ use LynxCms\Forms\SubmissionFilter;
  */
 trait ActsOnSubmissions
 {
+    use RefreshesUnreadCount;
+
     /** @var list<string> uuids */
     public array $selected = [];
 
@@ -67,6 +69,7 @@ trait ActsOnSubmissions
     {
         $count = Value::int(lynx()->run(UpdateSubmissions::class, [...$this->selection(), 'status' => $status])->value);
         $this->clearSelection();
+        $this->refreshUnreadCount();
         $this->notify(trans_choice('lynx-forms::admin.inbox.updated', $count));
     }
 
@@ -81,6 +84,7 @@ trait ActsOnSubmissions
     {
         $count = Value::int(Value::map(lynx()->run(DeleteSubmissions::class, $this->selection())->value)['submissions'] ?? 0);
         $this->clearSelection();
+        $this->refreshUnreadCount();
         $this->notify(trans_choice('lynx-forms::admin.inbox.deleted', $count));
     }
 

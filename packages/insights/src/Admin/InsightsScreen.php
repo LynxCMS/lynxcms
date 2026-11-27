@@ -102,6 +102,7 @@ final class InsightsScreen extends Component
         $report = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class);
         $count = $report->insights()->count();
         $this->notify(trans_choice('lynx-insights::admin.generated', $count, ['count' => $count]));
+        $this->refreshBadge();
     }
 
     public function render(ReportView $view, AdminAccess $access): View
@@ -134,5 +135,15 @@ final class InsightsScreen extends Component
         lynx()->run($action, ['insight' => $insight]);
         $this->closeReview();
         $this->notify(Value::string(__('lynx-insights::admin.'.$done)));
+        $this->refreshBadge();
+    }
+
+    /**
+     * The sidebar's count of open insights, drawn with the page, follows the screen's changes, and
+     * the 3-second refresh while an insight runs, whose steps may reopen it.
+     */
+    public function refreshBadge(): void
+    {
+        $this->dispatch('lynx-nav-badge', route: 'lynx.admin.insights', value: app(ReportView::class)->openCount());
     }
 }

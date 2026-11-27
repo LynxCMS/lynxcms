@@ -43,7 +43,7 @@ it('shows a running insight\'s progress and refreshes until it ends', function (
         ->assertSeeHtml('data-insight-progress="0/2"')
         ->assertSeeHtml('data-insight-running')
         ->assertSeeHtml('data-slot="presence"')
-        ->assertSeeHtml('wire:poll');
+        ->assertSeeHtml('wire:poll.3s="refreshBadge"');
 });
 
 it('does not refresh when nothing is running', function (): void {
