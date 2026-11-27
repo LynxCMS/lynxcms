@@ -121,6 +121,7 @@ It runs a list of checks and prints OK for each that passes, or what it found an
 - **Pages behind routes:** a page whose URL a route of the app or a module answers first, so visitors never see it, such as a page at `/lynx` behind the admin. Rename the page, or move the route; `lynx:admin-path` moves the admin.
 - **Two-factor** (with `lynxcms/admin`): the admin requires two-factor authentication, but it can't be set up, because the user model lacks Fortify's `TwoFactorAuthenticatable` or the app's Fortify has the feature off. Nobody is asked for it then.
 - **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
+- **Running insights** (with `lynxcms/insights`): an approved insight with no progress for `lynx-insights.stuck_minutes` (30), because no queue worker runs its steps or a worker died mid-step.
 
 Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.
 

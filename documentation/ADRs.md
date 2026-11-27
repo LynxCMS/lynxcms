@@ -1767,6 +1767,7 @@ Staying in English: action descriptions, console output, the change summaries th
 - A failed step keeps its error, the exception's class, when it failed, after how many tries and its stack trace, cut to 8 KB. The screen opens them in a dialog; the trace only for superusers, since a trace shows file paths and pieces of arguments. The whole trace is in the site's log.
 - `insights.stop` ends a running approval: the steps done stay done, the waiting ones are marked stopped and their jobs do nothing, and the insight is open again. A step already running finishes.
 - Review changes (the dry run) covers only the steps an approval would run, and lists each in the reader's language from the plan itself. The actions' change summaries stay in English for developers (ADR-0141).
+- `lynx:doctor` warns about an insight running with no progress for `lynx-insights.stuck_minutes` (30): the one case the step list cannot show, a worker that died without `failed()`, or no worker at all.
 - An insight that is running is not reported again by a new report. The screen shows its progress and each step with its page and outcome, and refreshes until the steps end.
 - Laravel's own batches carry the jobs. A dedicated progress package was considered and left out: the insight's steps already say how far a plan got, and Lynx's tables keep the `lynx_` prefix.
 

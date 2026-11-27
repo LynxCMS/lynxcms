@@ -8,6 +8,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use LynxCms\Admin\Navigation;
 use LynxCms\Core\Actions\ActionRegistry;
+use LynxCms\Core\Doctor\DoctorChecks;
 use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Support\Value;
 use LynxCms\Insights\Actions\ApplyInsightStep;
@@ -19,6 +20,7 @@ use LynxCms\Insights\Actions\RunInsightStep;
 use LynxCms\Insights\Actions\StopInsight;
 use LynxCms\Insights\Admin\AdminIntegration;
 use LynxCms\Insights\Console\InsightsCommand;
+use LynxCms\Insights\Doctor\StuckInsights;
 use LynxCms\Insights\Sources\MissingTranslations;
 use Override;
 
@@ -46,6 +48,7 @@ final class InsightsServiceProvider extends ServiceProvider
         $permissions->register('insights.view', 'View insight reports', requires: ['pages.view']);
         $permissions->register('insights.review', 'Approve, dismiss and archive insights, and write reports', requires: ['insights.view']);
         $this->app->make(InsightSourceRegistry::class)->add(MissingTranslations::class);
+        $this->app->make(DoctorChecks::class)->add(StuckInsights::class);
         $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
         $this->loadTranslationsFrom(self::ROOT.'/lang', 'lynx-insights');
         $this->loadViewsFrom(self::ROOT.'/resources/views', 'lynx-insights');
