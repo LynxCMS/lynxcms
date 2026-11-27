@@ -11,6 +11,7 @@ use LynxCms\Insights\Insight;
 use LynxCms\Insights\InsightSourceRegistry;
 use LynxCms\Insights\InsightsReported;
 use LynxCms\Insights\InsightState;
+use LynxCms\Insights\InsightText;
 use LynxCms\Insights\Models\InsightReport;
 use LynxCms\Insights\Models\StoredInsight;
 use LynxCms\Tests\Fixtures\Insights\FixedSource;
@@ -41,7 +42,13 @@ function generateInsights(array $input = []): InsightReport
 /** @return list<string> */
 function openTitles(InsightReport $report): array
 {
-    return $report->insights()->where('state', InsightState::Open->value)->orderByDesc('weight')->pluck('title')->all();
+    return $report->insights()->where('state', InsightState::Open->value)->orderByDesc('weight')->get()
+        ->map(fn (StoredInsight $insight): string => $insight->title->translate())->values()->all();
+}
+
+function insightTitled(InsightReport $report, string $title): StoredInsight
+{
+    return $report->insights()->get()->sole(fn (StoredInsight $insight): bool => $insight->title->translate() === $title);
 }
 
 it('stores the insights of every source in one report, heaviest first', function (): void {
@@ -61,7 +68,7 @@ it('gives sources the period of the report', function (): void {
 });
 
 it('records when each page was last changed', function (): void {
-    $insight = generateInsights()->insights()->where('title', 'Shorten alpha')->sole();
+    $insight = insightTitled(generateInsights(), 'Shorten alpha');
 
     expect(array_keys($insight->basis))->toBe([$this->alpha->id]);
 });
@@ -89,22 +96,22 @@ it('announces the report after it is stored', function (): void {
 });
 
 it('replaces the open insights of the earlier report', function (): void {
-    $first = generateInsights()->insights()->where('title', 'Expand beta')->sole();
-    $second = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $first = insightTitled(generateInsights(), 'Expand beta');
+    $second = insightTitled(generateInsights(), 'Expand beta');
 
     expect($first->fresh()?->state)->toBe(InsightState::Superseded)
         ->and($second->carried_from)->toBe($first->id);
 });
 
 it('keeps a dismissed insight quiet', function (): void {
-    $insight = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $insight = insightTitled(generateInsights(), 'Expand beta');
     lynx()->run(DismissInsight::class, ['insight' => $insight->id]);
 
     expect(openTitles(generateInsights()))->toBe(['Shorten alpha']);
 });
 
 it('reports a dismissed insight again once its weight doubled', function (): void {
-    $insight = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $insight = insightTitled(generateInsights(), 'Expand beta');
     lynx()->run(DismissInsight::class, ['insight' => $insight->id]);
     $this->source->insights[1] = new Insight('Expand beta', 'Read by twice as many.', pages: [$this->beta->id], weight: 10.0);
 
@@ -113,7 +120,7 @@ it('reports a dismissed insight again once its weight doubled', function (): voi
 
 it('reports a dismissed insight again after the quiet days', function (): void {
     config(['lynx-insights.quiet_days' => 30]);
-    $insight = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $insight = insightTitled(generateInsights(), 'Expand beta');
     lynx()->run(DismissInsight::class, ['insight' => $insight->id]);
     Carbon::setTestNow(now()->addDays(31));
 
@@ -121,14 +128,14 @@ it('reports a dismissed insight again after the quiet days', function (): void {
 });
 
 it('brings an archived insight back with fresh evidence', function (): void {
-    $insight = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $insight = insightTitled(generateInsights(), 'Expand beta');
     lynx()->run(ArchiveInsight::class, ['insight' => $insight->id]);
     $this->source->insights[1] = new Insight('Expand beta', 'Read by more.', pages: [$this->beta->id], evidence: [['label' => 'Views', 'value' => 900]], weight: 6.0);
 
-    $again = generateInsights()->insights()->where('title', 'Expand beta')->sole();
+    $again = insightTitled(generateInsights(), 'Expand beta');
 
     expect($again->carried_from)->toBe($insight->id)
-        ->and($again->evidence)->toBe([['label' => 'Views', 'value' => 900]])
+        ->and($again->evidence)->toEqual([['label' => new InsightText('Views'), 'value' => 900]])
         ->and($insight->fresh()?->state)->toBe(InsightState::Archived);
 });
 

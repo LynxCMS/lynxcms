@@ -30,8 +30,8 @@ return new class extends Migration
             $table->string('source', 64);
             $table->string('fingerprint', 40);
             $table->string('kind', 32);
-            $table->string('title');
-            $table->text('reason');
+            $table->json('title');
+            $table->json('reason');
             $table->json('pages');
             $table->json('evidence');
             $table->json('plan');

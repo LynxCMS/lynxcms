@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 284 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 285 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -314,6 +314,7 @@ In `LynxCms\Insights`.
 | `InsightSource` | interface | Something that reads the site and suggests changes, as a doctor check reports problems. |
 | `InsightSourceRegistry` | class | The insight sources a report runs, added by modules and apps from their service providers. |
 | `InsightState` | enum | Where an insight stands. |
+| `InsightText` | class | Wording of an insight, kept as a translation key and its replacements, so a report written in one language reads in each editor's own. |
 | `InsightsReported` | class | Fired once a report is stored, after its transaction commits; never on a dry run. |
 
 ## lynxcms/media

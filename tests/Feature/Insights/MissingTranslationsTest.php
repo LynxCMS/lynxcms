@@ -90,3 +90,13 @@ it('translates the pages into their drafts once approved', function (): void {
     expect($this->provider->calls)->not->toBeEmpty()
         ->and(lynx()->pages->draft($this->alpha->id)?->getLanguageValue('pt', 'title'))->toBe('[pt-PT] Alpha');
 });
+
+it('stores its wording as keys, shown in the reader\'s language', function (string $locale): void {
+    $insight = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class)->insights()->where('source', 'missing-translations')->sole();
+    app()->setLocale($locale);
+    $replace = ['count' => 3, 'language' => 'Português'];
+
+    expect($insight->title->translate())->toBe(trans_choice('lynx-insights::sources.missing_translations.title', 3, $replace, $locale))
+        ->and((string) $insight->reason)->toBe(__('lynx-insights::sources.missing_translations.reason', $replace + ['shown' => 3], $locale))
+        ->and((string) $insight->evidence[1]['label'])->toBe(__('lynx-insights::sources.missing_translations.evidence.links', [], $locale));
+})->with(['en', 'pt', 'es']);

@@ -14,6 +14,7 @@ use LynxCms\Core\Translation\TranslationProviders;
 use LynxCms\Insights\Insight;
 use LynxCms\Insights\InsightPeriod;
 use LynxCms\Insights\InsightSource;
+use LynxCms\Insights\InsightText;
 
 /**
  * Published pages with no version in an active language: one insight per language, about the
@@ -26,6 +27,8 @@ final readonly class MissingTranslations implements InsightSource
 {
     /** The pages one insight names and translates, most linked first. */
     public const int PAGES = 20;
+
+    private const string KEY = 'lynx-insights::sources.missing_translations';
 
     /** Ids per query, below every driver's limit on bound values. */
     private const int CHUNK = 500;
@@ -43,7 +46,7 @@ final readonly class MissingTranslations implements InsightSource
 
     public function label(): string
     {
-        return Value::string(__('lynx-insights::sources.missing_translations.label'));
+        return Value::string(__(self::KEY.'.label'));
     }
 
     public function insights(InsightPeriod $period): array
@@ -75,13 +78,13 @@ final readonly class MissingTranslations implements InsightSource
         $replace = ['count' => count($missing), 'language' => $language->name];
 
         return new Insight(
-            title: trans_choice('lynx-insights::sources.missing_translations.title', count($missing), $replace),
-            reason: Value::string(__('lynx-insights::sources.missing_translations.reason', $replace + ['shown' => count($pages)])),
+            title: new InsightText(self::KEY.'.title', $replace, count($missing)),
+            reason: new InsightText(self::KEY.'.reason', $replace + ['shown' => count($pages)]),
             pages: $pages,
             plan: $this->plan($language, $pages),
             evidence: [
-                ['label' => Value::string(__('lynx-insights::sources.missing_translations.evidence.pages', $replace)), 'value' => count($missing)],
-                ['label' => Value::string(__('lynx-insights::sources.missing_translations.evidence.links')), 'value' => $linked],
+                ['label' => new InsightText(self::KEY.'.evidence.pages', $replace), 'value' => count($missing)],
+                ['label' => new InsightText(self::KEY.'.evidence.links'), 'value' => $linked],
             ],
             weight: (float) (count($missing) + $linked),
             subject: $language->code,
