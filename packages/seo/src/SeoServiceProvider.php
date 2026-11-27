@@ -20,6 +20,7 @@ use LynxCms\Core\Permissions\PermissionRegistry;
 use LynxCms\Core\Schema\SchemaOwners;
 use LynxCms\Core\Schema\SchemaWording;
 use LynxCms\Core\Support\Value;
+use LynxCms\Insights\InsightSourceRegistry;
 use LynxCms\Seo\Actions\DisableSeo;
 use LynxCms\Seo\Actions\EnableSeo;
 use LynxCms\Seo\Actions\InstallSeo;
@@ -28,6 +29,7 @@ use LynxCms\Seo\Actions\UnmapTemplate;
 use LynxCms\Seo\Admin\AdminIntegration;
 use LynxCms\Seo\Agents\InspectSeoTool;
 use LynxCms\Seo\Http\RobotsController;
+use LynxCms\Seo\Insights\MissingDescriptions;
 use LynxCms\Seo\JsonLd\JsonLd;
 use LynxCms\Seo\JsonLd\MappingValidator;
 use LynxCms\Seo\Support\SiteSettings;
@@ -66,6 +68,8 @@ final class SeoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(self::ROOT.'/database/migrations');
+        // Only resolved when lynxcms/insights is installed: without it the class is never loaded.
+        $this->callAfterResolving(InsightSourceRegistry::class, fn (InsightSourceRegistry $sources) => $sources->add(MissingDescriptions::class));
         $this->app->make(ActionRegistry::class)->register(InstallSeo::class, EnableSeo::class, DisableSeo::class, MapTemplate::class, UnmapTemplate::class);
         $permissions = $this->app->make(PermissionRegistry::class);
         $permissions->register('seo.manage', 'Manage SEO settings', requires: ['pages.view']);

@@ -12,4 +12,22 @@ return [
             'links' => 'Links to the pages in the plan',
         ],
     ],
+    'stale_drafts' => [
+        'label' => 'Stale drafts',
+        'title' => '{1} 1 draft was not saved in :days days|[2,*] :count drafts were not saved in :days days',
+        'reason' => 'Changes in a draft stay out of the live page until someone publishes them. Open each page to publish its draft, keep working on it, or discard it.',
+        'evidence' => [
+            'drafts' => 'Drafts not saved in the period',
+            'oldest' => 'Days since the oldest was saved',
+        ],
+    ],
+    'broken_links' => [
+        'label' => 'Broken links',
+        'title' => '{1} 1 published page links to a page visitors cannot open|[2,*] :count published pages link to pages visitors cannot open',
+        'reason' => 'These pages have :links links to :targets pages that are unpublished, in the trash, or deleted. Visitors who follow them get a page not found. Publish the linked page or change the link.',
+        'evidence' => [
+            'links' => 'Links to pages visitors cannot open',
+            'targets' => 'Pages linked to',
+        ],
+    ],
 ];

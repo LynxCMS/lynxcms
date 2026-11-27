@@ -37,6 +37,7 @@ final readonly class MissingTranslations implements InsightSource
         private LanguageRegistry $languages,
         private PageFinder $finder,
         private TranslationProviders $providers,
+        private InboundLinks $links,
     ) {}
 
     public function key(): string
@@ -71,9 +72,8 @@ final readonly class MissingTranslations implements InsightSource
      */
     private function insight(Language $language, array $missing): Insight
     {
-        $links = $this->inboundLinks($missing);
-        usort($missing, fn (int $a, int $b): int => [$links[$b] ?? 0, $a] <=> [$links[$a] ?? 0, $b]);
-        $pages = array_slice($missing, 0, self::PAGES);
+        $links = $this->links->counts($missing);
+        $pages = array_slice($this->links->sort($missing, $links), 0, self::PAGES);
         $linked = array_sum(array_map(fn (int $page): int => $links[$page] ?? 0, $pages));
         $replace = ['count' => count($missing), 'language' => $language->name];
 
@@ -119,27 +119,5 @@ final readonly class MissingTranslations implements InsightSource
         }
 
         return array_values(array_diff($pages, $named));
-    }
-
-    /**
-     * How many other pages link to each page.
-     *
-     * @param  list<int>  $pages
-     * @return array<int, int>
-     */
-    private function inboundLinks(array $pages): array
-    {
-        $links = [];
-
-        foreach (array_chunk($pages, self::CHUNK) as $chunk) {
-            $rows = DB::table(Tables::PAGE_REFERENCES)->whereIn('linked_page_id', $chunk)->whereColumn('page_id', '!=', 'linked_page_id')
-                ->groupBy('linked_page_id')->selectRaw('linked_page_id, count(distinct page_id) as total')->pluck('total', 'linked_page_id')->all();
-
-            foreach ($rows as $page => $total) {
-                $links[(int) $page] = Value::int($total);
-            }
-        }
-
-        return $links;
     }
 }
