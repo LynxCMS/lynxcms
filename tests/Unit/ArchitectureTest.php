@@ -26,6 +26,9 @@ use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Forms\FormsFiles;
 use LynxCms\Insights\Actions\ResolvesInsights;
+use LynxCms\Insights\Insight;
+use LynxCms\Insights\InsightSourceRegistry;
+use LynxCms\Insights\InsightText;
 use LynxCms\Insights\PageBasis;
 use LynxCms\Media\Fields\StoredFileCheck;
 use LynxCms\Media\MovePrivateMedia;
@@ -198,9 +201,13 @@ arch('the core does not depend on insights')
     ->expect('LynxCms\Core')
     ->not->toUse('LynxCms\Insights');
 
-arch('insights work without Livewire, the admin or the AI SDK')
+arch('insights work without the AI SDK')
     ->expect('LynxCms\Insights')
-    ->not->toUse(['Livewire', 'LynxCms\Admin', 'Laravel\Ai', 'LynxCms\Ai']);
+    ->not->toUse(['Laravel\Ai', 'LynxCms\Ai']);
+
+arch('insights work without Livewire or the admin, except their screen')
+    ->expect(['LynxCms\Insights\Actions', 'LynxCms\Insights\Console', 'LynxCms\Insights\Models', 'LynxCms\Insights\Sources', Insight::class, InsightSourceRegistry::class, InsightText::class])
+    ->not->toUse(['Livewire', 'LynxCms\Admin']);
 
 arch('insight actions are final and extend the base action')
     ->expect('LynxCms\Insights\Actions')
