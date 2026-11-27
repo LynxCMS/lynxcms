@@ -18,6 +18,7 @@ use LynxCms\Core\LynxServiceProvider;
 use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Finder\FinderServiceProvider;
 use LynxCms\Forms\FormsServiceProvider;
+use LynxCms\Insights\InsightsServiceProvider;
 use LynxCms\Mcp\McpServiceProvider;
 use LynxCms\Media\MediaServiceProvider;
 use LynxCms\Menus\MenusServiceProvider;
@@ -76,6 +77,7 @@ abstract class TestCase extends Orchestra
             SitemapServiceProvider::class,
             PagePasswordServiceProvider::class,
             FinderServiceProvider::class,
+            InsightsServiceProvider::class,
             CacheServiceProvider::class,
             StaticSiteServiceProvider::class,
             WorkbenchServiceProvider::class,

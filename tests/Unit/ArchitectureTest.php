@@ -25,6 +25,8 @@ use LynxCms\Core\Search\Engines\SqliteSearchEngine;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Forms\FormsFiles;
+use LynxCms\Insights\Actions\ResolvesInsights;
+use LynxCms\Insights\PageBasis;
 use LynxCms\Media\Fields\StoredFileCheck;
 use LynxCms\Media\MovePrivateMedia;
 use LynxCms\Media\Remote\MediaReferences;
@@ -149,6 +151,9 @@ arch('only actions write page data')
         MediaReferences::class,
         // Only defers writing and deleting the admin's logo files until the action commits.
         SaveBranding::class,
+        // Only reads: when pages last changed, which pages have a language, and links to them.
+        PageBasis::class,
+        'LynxCms\Insights\Sources',
     ]);
 
 arch('no debugging calls')
@@ -188,3 +193,18 @@ arch('static export actions are final and extend the base action')
     ->classes()
     ->toBeFinal()
     ->toExtend(Action::class);
+
+arch('the core does not depend on insights')
+    ->expect('LynxCms\Core')
+    ->not->toUse('LynxCms\Insights');
+
+arch('insights work without Livewire, the admin or the AI SDK')
+    ->expect('LynxCms\Insights')
+    ->not->toUse(['Livewire', 'LynxCms\Admin', 'Laravel\Ai', 'LynxCms\Ai']);
+
+arch('insight actions are final and extend the base action')
+    ->expect('LynxCms\Insights\Actions')
+    ->classes()
+    ->toBeFinal()
+    ->toExtend(Action::class)
+    ->ignoring(ResolvesInsights::class);

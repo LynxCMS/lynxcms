@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 274 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 284 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -298,6 +298,23 @@ In `LynxCms\Forms`.
 | `SubmissionFilter` | class | Which submissions the inbox shows and its bulk actions and export act on: a form, a status ("open" is new and read, "all" every status), text in the answers, a date range, an email address that is a whole answer (for a person's data), and the newest id when the selection was made, so a submission that arrives later is left alone. |
 | `Transfer\FormExporter` | class | A builder form's structure as data, for JSON: its name, title, messages and the blocks of its fields, with texts keyed by language code and the code of the site's default language, so another site can key them by its own. |
 | `Transfer\FormTransferError` | class | A form that can't be exported: one the site lacks, or one defined in code, which travels with the app's code instead. |
+
+## lynxcms/insights
+
+In `LynxCms\Insights`.
+
+| Name | Kind | What it is |
+| --- | --- | --- |
+| `Actions\ApproveInsight` | class | Makes the change an insight suggests: its whole plan, in order, as the person approving. |
+| `Actions\ArchiveInsight` | class | Archive an open insight. |
+| `Actions\DismissInsight` | class | Dismiss an open insight. |
+| `Actions\GenerateInsights` | class | Writes a report: every source suggests changes for the period, and the insights are stored in one report. |
+| `Insight` | class | One suggested change and why. |
+| `InsightPeriod` | class | The days a report looks back over, ending when it is written. |
+| `InsightSource` | interface | Something that reads the site and suggests changes, as a doctor check reports problems. |
+| `InsightSourceRegistry` | class | The insight sources a report runs, added by modules and apps from their service providers. |
+| `InsightState` | enum | Where an insight stands. |
+| `InsightsReported` | class | Fired once a report is stored, after its transaction commits; never on a dry run. |
 
 ## lynxcms/media
 

@@ -1,0 +1,20 @@
+{
+    "name": "lynxcms/insights",
+    "description": "Insights for Lynx CMS: a report every period of suggested changes, each with its evidence and a plan that editors approve, dismiss or archive.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/core": "self.version"
+    },
+    "suggest": {
+        "lynxcms/admin": "Adds the Insights screen and the count of open insights on the admin home."
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Insights\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Insights\\InsightsServiceProvider"]
+        }
+    }
+}
