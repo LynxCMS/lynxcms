@@ -123,7 +123,7 @@ One at a time, each after the previous merges.
 4. Metric sources, with the `PageMetrics` contract and ADR-0156.
 5. The AI source.
 6. lynx-homepage: the module and the `PageMetrics` binding.
-7. Docs: a page under Modules (insights, its sources, the metrics contract, the AI source and its cost) and a guide chapter on writing an insight source in a project module, with a tested snippet in `docs/snippets`.
+7. Docs: a page under Modules (insights, its sources, the metrics contract, the AI source and its cost) and a guide chapter on writing an insight source in a project module, with a tested snippet in `docs/snippets`. Built as `docs/modules/insights.md`, whose "Writing your own source" section holds the tested snippet (`UndatedPosts`, on the blog of Your First Site): the guides each build one site, so a lone chapter had no guide to belong to.
 
 ## Tests to write first
 
