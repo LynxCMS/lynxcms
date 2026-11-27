@@ -26,7 +26,7 @@ Later steps reuse the report: schema insights (step 2) and languages worth addin
 2. **An insight carries a plan, never a result.** A plan is a list of action calls (action name and arguments). Approving runs the whole plan through `ActionRunner`, acting as the approver, so the approver's permissions, validation and hooks apply as for any write. There is no partial approval. An insight may have no plan (information only).
 3. **The preview is computed at review time.** "Review changes" runs the plan as a dry run when the editor opens it, so the editor sees what would change now, never a stored change list from 30 days ago.
 4. **An insight records what it was based on.** Its basis is the `modified` time of each page it names and, for schema insights later, a hash of the templates and fields involved. Approving refuses when the basis changed ("Page [x] changed since this report"); the insight stays open and the next report recomputes it.
-5. **Metrics come through a contract.** `LynxCms\Contracts\Metrics\PageMetrics` (`@api`, in contracts) with `totals(list<int> $ids, string $event, int $days): array<int, int>` and `daily(...)`. Nothing binds it by default; sources that need metrics are skipped when it is unbound. lynx-homepage binds its `App\Stats\PageStats`, which proves the contract before a stats module exists.
+5. **Metrics come through a contract.** `LynxCms\Contracts\Metrics\PageMetrics` (`@api`, in contracts) with `totals(list<int> $ids, string $event, int $days): array<int, int>`, `top(string $event, int $days, int $limit)` and `since()` (ADR-0156; `daily()` waits until a source needs it). Nothing binds it by default; sources that need metrics are skipped when it is unbound. lynx-homepage binds its `App\Stats\PageStats`, which proves the contract before a stats module exists.
 6. **Dismissed insights stay quiet.** Each insight has a fingerprint (source key, kind and the sorted ids of its subjects). A dismissed fingerprint is not reported again for `lynx-insights.quiet_days` (180 by default), unless the source's weight for it has doubled since.
 7. **No evidence, no insight.** Metric sources run only when the site has `lynx-insights.min_days` of data (14), and each insight lists the numbers it rests on. A report with nothing to suggest says so.
 8. **No notifications.** The admin home shows the number of open insights. Email can come later as a listener on the report's event.
@@ -68,8 +68,8 @@ Each weighs its pages by the number of pages linking to them (the page reference
 
 ### With metrics
 
-- `UntranslatedPopularPages`: `MissingTranslations` weighted by views instead of links, used in its place when `PageMetrics` is bound.
-- `NeglectedPopularPages`: pages in the top 20 by views that nobody modified in 12 months. Information only; the evidence shows views and the last change.
+- `MissingTranslations` ranks by views instead of links when `PageMetrics` is bound with enough data. It stays one source with one key, so decisions on its insights carry over when a site adds metrics (the plan first had a separate `UntranslatedPopularPages`).
+- `NeglectedPopularPages`: published pages in the top 20 by views over the period that nobody modified in `lynx-insights.neglected_months` (12). Information only; the evidence shows views and the last change.
 
 ### Insights Agent (AI, on laravel/ai)
 

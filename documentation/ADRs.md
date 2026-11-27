@@ -1752,6 +1752,20 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** Every source, whoever wrote it, is equally safe to install: it can only propose plans that run as the approver, after a fresh dry run in the admin. The `@api` contract (`InsightSource`, `Insight`, `InsightPeriod`, `InsightSourceRegistry`, `InsightState`, `InsightsReported`) is a promise from 1.0, so it stays small: kinds are strings and evidence is label and value. A step that fails undoes the whole plan and leaves the insight open, with the error shown to the editor.
 
+## ADR-0156: Page metrics come through a contract
+
+**Status:** Accepted (plan: documentation/plans/insights.md, decision 5).
+
+**Context:** Some insights need to know what visitors do: a missing translation matters more on a page many people read, and a popular page nobody edited in a year is worth a look. Lynx counts nothing about visitors, and sites count in different ways (their own tables, an analytics service, server logs). Storing metrics in Lynx would mean storing visits, a privacy and storage choice each site should make for itself.
+
+**Decision:**
+
+- `LynxCms\Contracts\Metrics\PageMetrics` (`@api`) in `lynxcms/contracts`: `totals(pageIds, event, days)`, `top(event, days, limit)` and `since()`, the first day with a count. `PageMetrics::VIEW` names the one event every implementation counts. A `daily()` series is left out until a feature needs one.
+- Nothing binds it by default. A site or a module binds it to its counts; lynx-homepage's `App\Stats\PageStats` is the first.
+- Insights' sources use metrics only when the contract is bound and its data reaches back `lynx-insights.min_days` (14) days, and list the numbers they rest on. With metrics, the missing translations source ranks pages by views instead of links and keeps its key, so decisions made on its insights carry over. Neglected popular pages, the most viewed pages nobody changed in `lynx-insights.neglected_months` (12), needs metrics and reports nothing without them.
+
+**Consequences:** Lynx keeps no visitor data. A site with metrics gets better ranked insights by binding one interface; a site without them loses nothing it had. A future stats module would implement the same contract.
+
 ## ADR-0157: An approved plan runs on the queue, a step at a time
 
 **Status:** Accepted. Amends ADR-0155, where a plan ran as a whole in one transaction.
