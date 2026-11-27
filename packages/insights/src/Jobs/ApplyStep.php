@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Core\Actions\Runner\ActionResult;
 use LynxCms\Insights\Actions\ApplyInsightStep;
+use LynxCms\Insights\PlanSteps;
 use Throwable;
 
 /**
@@ -50,7 +51,7 @@ final class ApplyStep implements ShouldQueue
         try {
             // The sync queue never tries again, so its one try keeps the error.
             $retry = ! $this->job instanceof SyncJob && $this->attempts() < $this->tries;
-            $input = ['insight' => $this->insight, 'step' => $this->step, 'retry' => $retry];
+            $input = ['insight' => $this->insight, 'step' => $this->step, 'retry' => $retry, 'try' => $this->attempts()];
             lynx()->actingAs($this->actor, fn (): ActionResult => lynx()->run(ApplyInsightStep::class, $input));
         } catch (ValidationException) {
             // The step already ran: a retried job, or a newer approval of the same insight.
@@ -61,7 +62,14 @@ final class ApplyStep implements ShouldQueue
     /** The job gave up: the step is marked failed by the system, since it only records the outcome. */
     public function failed(Throwable $exception): void
     {
-        $input = ['insight' => $this->insight, 'step' => $this->step, 'failure' => Str::limit($exception->getMessage(), 2000)];
+        $input = [
+            'insight' => $this->insight,
+            'step' => $this->step,
+            'failure' => Str::limit($exception->getMessage(), 2000),
+            'exception' => $exception::class,
+            'trace' => Str::limit($exception->getTraceAsString(), PlanSteps::TRACE_LIMIT),
+            'try' => max(1, $this->attempts()),
+        ];
 
         try {
             lynx()->actingAs(Actor::system(), fn (): ActionResult => lynx()->run(ApplyInsightStep::class, $input));

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
+use LynxCms\Core\Actions\Roles\AssignRoles;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Insights\Actions\ApproveInsight;
 use LynxCms\Insights\Actions\GenerateInsights;
 use LynxCms\Insights\Admin\InsightsScreen;
@@ -70,4 +72,29 @@ it('lists the page of a failed step with its error', function (): void {
 
     Livewire::test(InsightsScreen::class)
         ->assertSeeHtml('data-insight-step="1" data-step-status="failed" data-step-page="'.$this->beta->id.'"');
+});
+
+it('opens the details of a failed step, with its trace for superusers', function (): void {
+    $this->insight->update(['state' => 'open', 'steps' => [
+        ['status' => 'done'],
+        ['status' => 'failed', 'error' => 'Timed out', 'exception' => 'RuntimeException', 'trace' => '#0 /app/Provider.php(12)', 'failed_at' => '2026-11-27T10:00:00+00:00', 'tries' => 3],
+    ]]);
+
+    Livewire::test(InsightsScreen::class)
+        ->assertSeeHtml('data-step-details="1"')
+        ->assertSeeHtml('data-step-trace');
+});
+
+it('keeps the trace from editors who are not superusers', function (): void {
+    $this->insight->update(['state' => 'open', 'steps' => [
+        ['status' => 'done'],
+        ['status' => 'failed', 'error' => 'Timed out', 'exception' => 'RuntimeException', 'trace' => '#0 /app/Provider.php(12)', 'failed_at' => '2026-11-27T10:00:00+00:00', 'tries' => 3],
+    ]]);
+    lynx()->run(SaveRole::class, ['name' => 'reviewer', 'grants' => array_map(fn (string $name): array => ['permission' => $name], ['admin.access', 'pages.view', 'insights.view', 'insights.review'])]);
+    lynx()->run(AssignRoles::class, ['user' => '5', 'roles' => ['reviewer']]);
+    $this->actingAs(new GenericUser(['id' => 5]));
+
+    Livewire::test(InsightsScreen::class)
+        ->assertSeeHtml('data-step-details="1"')
+        ->assertDontSeeHtml('/app/Provider.php');
 });

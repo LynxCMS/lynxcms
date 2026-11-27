@@ -17,7 +17,12 @@
                     <span class="text-destructive block" data-step-error>{{ $step['error'] }}</span>
                 @endif
             </span>
-            <span class="text-muted-foreground shrink-0">{{ __('lynx-insights::admin.steps.'.$step['status']) }}</span>
+            <span class="text-muted-foreground flex shrink-0 items-center gap-3">
+                @if ($step['status'] === 'failed')
+                    @include('lynx-insights::admin.step-details', ['step' => $step, 'index' => $index, 'action' => $insight->plan[$index] ?? [], 'title' => $page !== null ? ($titles[$page] ?? null) : null])
+                @endif
+                {{ __('lynx-insights::admin.steps.'.$step['status']) }}
+            </span>
         </li>
     @endforeach
 </ol>

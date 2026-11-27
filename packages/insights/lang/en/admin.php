@@ -59,6 +59,18 @@ return [
         'done' => 'Done',
         'failed' => 'Failed',
     ],
+    'details' => [
+        'open' => 'Details',
+        'description' => 'Change :number of the plan failed. The other changes are not affected.',
+        'error' => 'Error',
+        'exception' => 'Exception',
+        'failed_at' => 'Failed',
+        'tries' => 'Tries',
+        'action' => 'Action',
+        'trace' => 'Stack trace',
+        'trace_hidden' => 'The stack trace is shown to superusers, and is in the site\'s log.',
+        'close' => 'Close',
+    ],
     'review' => [
         'title' => 'Approving makes these changes:',
         'open' => 'Review changes',

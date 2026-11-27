@@ -61,6 +61,9 @@ final class ApplyInsightStep extends Action
             'step' => ['required', 'integer', 'min:0'],
             'retry' => ['sometimes', 'boolean'],
             'failure' => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'exception' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'trace' => ['sometimes', 'nullable', 'string', 'max:'.(PlanSteps::TRACE_LIMIT + 3)],
+            'try' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 
@@ -71,6 +74,9 @@ final class ApplyInsightStep extends Action
             'step' => $schema->integer()->description('The step\'s place in the plan, from 0.')->required(),
             'retry' => $schema->boolean()->description('Throw an error from outside Lynx instead of failing the step, so the job tries again.'),
             'failure' => $schema->string()->description('Mark the step failed with this error, without running it.'),
+            'exception' => $schema->string()->description('With failure: the class of the exception that ended the job.'),
+            'trace' => $schema->string()->description('With failure: its stack trace.'),
+            'try' => $schema->integer()->description('Which try of the job this is, from 1.'),
         ];
     }
 
@@ -86,7 +92,10 @@ final class ApplyInsightStep extends Action
         }
 
         $failure = $input->string('failure');
-        $steps[$index] = $failure !== null ? ['status' => PlanSteps::FAILED, 'error' => $failure] : $this->run($insight, $index, $context, $input->bool('retry'));
+        $tries = $input->int('try') ?? 1;
+        $steps[$index] = $failure !== null
+            ? PlanSteps::failure($failure, $input->string('exception') ?? '', $input->string('trace') ?? '', $tries)
+            : $this->run($insight, $index, $context, $input->bool('retry'), $tries);
         $insight->steps = $steps;
         $context->changes->updated('insight', $insight->id, "Run step {$index} of insight {$insight->title}: {$steps[$index]['status']}");
 
@@ -94,18 +103,19 @@ final class ApplyInsightStep extends Action
     }
 
     /**
-     * @return array{status: string, error?: string}
+     * @return array{status: string, error?: string, exception?: string, trace?: string, failed_at?: string, tries?: int}
      */
-    private function run(StoredInsight $insight, int $index, ActionContext $context, bool $retry): array
+    private function run(StoredInsight $insight, int $index, ActionContext $context, bool $retry, int $tries): array
     {
         try {
             $context->run(RunInsightStep::class, ['insight' => $insight->id, 'step' => $index]);
 
             return ['status' => PlanSteps::DONE];
         } catch (ValidationException $e) {
-            return ['status' => PlanSteps::FAILED, 'error' => (string) $e->validator->errors()->first()];
+            // Refused: every message says why, and the trace would only point at the validator.
+            return PlanSteps::failure(implode(' ', Value::strings($e->validator->errors()->all())), $e::class, '', $tries);
         } catch (AuthorizationException $e) {
-            return ['status' => PlanSteps::FAILED, 'error' => $e->getMessage()];
+            return PlanSteps::failure($e->getMessage(), $e::class, '', $tries);
         } catch (Throwable $e) {
             if ($retry) {
                 throw $e;
@@ -113,14 +123,13 @@ final class ApplyInsightStep extends Action
 
             // Kept on the insight for the editor, and reported for whoever reads the logs.
             report($e);
-            $error = $e->getMessage();
 
-            return ['status' => PlanSteps::FAILED, 'error' => $error];
+            return PlanSteps::failure($e->getMessage(), $e::class, $e->getTraceAsString(), $tries);
         }
     }
 
     /**
-     * @param  list<array{status: string, error?: string}>  $steps
+     * @param  list<array{status: string, error?: string, exception?: string, trace?: string, failed_at?: string, tries?: int}>  $steps
      */
     private function finish(StoredInsight $insight, array $steps, ActionContext $context): StoredInsight
     {

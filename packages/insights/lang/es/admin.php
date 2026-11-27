@@ -59,6 +59,18 @@ return [
         'done' => 'Hecho',
         'failed' => 'Falló',
     ],
+    'details' => [
+        'open' => 'Detalles',
+        'description' => 'El cambio :number del plan falló. Los demás cambios no se ven afectados.',
+        'error' => 'Error',
+        'exception' => 'Excepción',
+        'failed_at' => 'Falló',
+        'tries' => 'Intentos',
+        'action' => 'Acción',
+        'trace' => 'Stack trace',
+        'trace_hidden' => 'El stack trace se muestra a los superusuarios, y está en el registro del sitio.',
+        'close' => 'Cerrar',
+    ],
     'review' => [
         'title' => 'Aprobar hace estos cambios:',
         'open' => 'Revisar cambios',

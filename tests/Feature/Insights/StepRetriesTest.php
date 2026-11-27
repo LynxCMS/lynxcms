@@ -59,14 +59,16 @@ it('fails the step on its last try', function (): void {
 
     applyStep(retry: false);
 
-    expect($this->insight->fresh()?->steps)->toBe([['status' => 'failed', 'error' => 'cURL error 28: Operation timed out']])
+    expect($this->insight->fresh()?->steps[0]['status'] ?? null)->toBe('failed')
+        ->and($this->insight->fresh()?->steps[0]['error'] ?? null)->toBe('cURL error 28: Operation timed out')
         ->and($this->insight->fresh()?->state)->toBe(InsightState::Open);
 });
 
 it('marks the step failed when its job gives up', function (): void {
     new ApplyStep($this->insight->id, 0, Actor::system())->failed(new RuntimeException('Lost connection to the queue'));
 
-    expect($this->insight->fresh()?->steps)->toBe([['status' => 'failed', 'error' => 'Lost connection to the queue']])
+    expect($this->insight->fresh()?->steps[0]['error'] ?? null)->toBe('Lost connection to the queue')
+        ->and($this->insight->fresh()?->steps[0]['exception'] ?? null)->toBe(RuntimeException::class)
         ->and($this->insight->fresh()?->state)->toBe(InsightState::Open);
 });
 
@@ -83,5 +85,18 @@ it('fails the step instead of the request on the sync queue', function (): void 
 
     lynx()->run(ApproveInsight::class, ['insight' => $this->insight->id]);
 
-    expect($this->insight->fresh()?->steps)->toBe([['status' => 'failed', 'error' => 'cURL error 28: Operation timed out']]);
+    expect($this->insight->fresh()?->steps[0]['error'] ?? null)->toBe('cURL error 28: Operation timed out');
+});
+
+it('keeps what the editor needs to know about a failure', function (): void {
+    $this->provider->failures = 1;
+
+    lynx()->run(ApplyInsightStep::class, ['insight' => $this->insight->id, 'step' => 0, 'try' => 3]);
+    $step = $this->insight->fresh()?->steps[0] ?? [];
+
+    expect($step['exception'] ?? null)->toBe(RuntimeException::class)
+        ->and($step['trace'] ?? '')->toContain('#0 ')
+        ->and(strlen($step['trace'] ?? ''))->toBeLessThanOrEqual(8003)
+        ->and($step['tries'] ?? null)->toBe(3)
+        ->and($step['failed_at'] ?? null)->not->toBeNull();
 });

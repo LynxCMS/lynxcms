@@ -59,6 +59,18 @@ return [
         'done' => 'Feita',
         'failed' => 'Falhou',
     ],
+    'details' => [
+        'open' => 'Detalhes',
+        'description' => 'A alteração :number do plano falhou. As outras alterações não são afetadas.',
+        'error' => 'Erro',
+        'exception' => 'Exceção',
+        'failed_at' => 'Falhou',
+        'tries' => 'Tentativas',
+        'action' => 'Ação',
+        'trace' => 'Stack trace',
+        'trace_hidden' => 'O stack trace é mostrado a superutilizadores, e está no registo do site.',
+        'close' => 'Fechar',
+    ],
     'review' => [
         'title' => 'Aprovar faz estas alterações:',
         'open' => 'Rever alterações',

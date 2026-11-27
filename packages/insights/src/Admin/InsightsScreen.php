@@ -122,6 +122,8 @@ final class InsightsScreen extends Component
             'labels' => $view->labels(),
             'isRunning' => $report instanceof InsightReport && $view->isRunning($report),
             'canReview' => $access->allows('insights.review'),
+            // A failed step's stack trace can show paths and pieces of arguments: superusers only.
+            'showsTraces' => $access->isSuperuser(),
         ]);
     }
 
