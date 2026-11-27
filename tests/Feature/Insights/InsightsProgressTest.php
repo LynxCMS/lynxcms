@@ -15,7 +15,7 @@ use LynxCms\Insights\Models\StoredInsight;
 use LynxCms\Tests\Fixtures\Insights\FixedSource;
 
 /*
- * An approval in progress on the Insights screen (ADR-0157): the approving insight shows how many
+ * An approval in progress on the Insights screen (ADR-0157): the running insight shows how many
  * of its steps ran and the screen refreshes until they end; afterwards the steps that failed are
  * listed with their errors, for another approval.
  */
@@ -33,16 +33,18 @@ beforeEach(function (): void {
     $this->insight = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class)->insights()->firstOrFail();
 });
 
-it('shows an approving insight\'s progress and refreshes until it ends', function (): void {
+it('shows a running insight\'s progress and refreshes until it ends', function (): void {
     Bus::fake();
 
     Livewire::test(InsightsScreen::class)->call('approve', $this->insight->id)
         ->assertSet('state', 'open')
         ->assertSeeHtml('data-insight-progress="0/2"')
+        ->assertSeeHtml('data-insight-running')
+        ->assertSeeHtml('data-slot="presence"')
         ->assertSeeHtml('wire:poll');
 });
 
-it('does not refresh when nothing is approving', function (): void {
+it('does not refresh when nothing is running', function (): void {
     Livewire::test(InsightsScreen::class)->assertDontSeeHtml('wire:poll');
 });
 
@@ -55,8 +57,8 @@ it('approves again only what is left', function (): void {
     expect(StoredInsight::query()->findOrFail($this->insight->id)->steps)->toBe([['status' => 'done'], ['status' => 'pending']]);
 });
 
-it('lists each page of an approving plan with how far it got', function (): void {
-    $this->insight->update(['state' => 'approving', 'steps' => [['status' => 'done'], ['status' => 'pending']]]);
+it('lists each page of a running plan with how far it got', function (): void {
+    $this->insight->update(['state' => 'running', 'steps' => [['status' => 'done'], ['status' => 'pending']]]);
 
     Livewire::test(InsightsScreen::class)
         ->assertSeeHtml('data-insight-step="0" data-step-status="done" data-step-page="'.$this->alpha->id.'"')

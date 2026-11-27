@@ -44,7 +44,7 @@ return [
     'more_pages' => '{1} Show 1 more page|[2,*] Show :count more pages',
     'state' => [
         'open' => 'Open',
-        'approving' => 'Approving',
+        'running' => 'Running',
         'approved' => 'Approved',
         'dismissed' => 'Dismissed',
         'archived' => 'Archived',
@@ -67,7 +67,7 @@ return [
     'approve' => 'Approve',
     'archive' => 'Archive',
     'dismiss' => 'Dismiss',
-    'approving' => 'Approval started. The changes are made one at a time, and this page shows how far they got.',
+    'started' => 'Approval started. The changes are made one at a time, and this page shows how far they got.',
     'archived' => 'Insight archived. The next report brings it back with new evidence.',
     'dismissed' => 'Insight dismissed.',
 ];

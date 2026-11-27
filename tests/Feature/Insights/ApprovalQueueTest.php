@@ -43,14 +43,14 @@ function savePrice(int $page, mixed $price): array
     return ['action' => 'pages.save', 'arguments' => ['id' => $page, 'values' => ['price' => $price]]];
 }
 
-it('queues a job per step in one batch and marks the insight approving', function (): void {
+it('queues a job per step in one batch and marks the insight running', function (): void {
     Bus::fake();
     $insight = plannedInsight([savePrice($this->alpha->id, 40), savePrice($this->beta->id, 50)]);
 
     lynx()->run(ApproveInsight::class, ['insight' => $insight->id]);
 
     Bus::assertBatched(fn (PendingBatch $batch): bool => $batch->jobs->count() === 2);
-    expect($insight->fresh()?->state)->toBe(InsightState::Approving)
+    expect($insight->fresh()?->state)->toBe(InsightState::Running)
         ->and(array_column($insight->fresh()?->steps ?? [], 'status'))->toBe(['pending', 'pending'])
         ->and(lynx()->pages->get($this->alpha->id)?->price)->toBeNull();
 });
@@ -115,7 +115,7 @@ it('runs a step only once', function (): void {
     lynx()->run(ApplyInsightStep::class, ['insight' => $insight->id, 'step' => 0]);
 })->throws(ValidationException::class);
 
-it('leaves an insight that is approving out of the next report', function (): void {
+it('leaves an insight that is running out of the next report', function (): void {
     Bus::fake();
     $insight = plannedInsight([savePrice($this->alpha->id, 40)], pages: [$this->alpha->id]);
     lynx()->run(ApproveInsight::class, ['insight' => $insight->id]);
@@ -123,7 +123,7 @@ it('leaves an insight that is approving out of the next report', function (): vo
     $report = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class);
 
     expect($report->insights()->count())->toBe(0)
-        ->and($insight->fresh()?->state)->toBe(InsightState::Approving);
+        ->and($insight->fresh()?->state)->toBe(InsightState::Running);
 });
 
 it('keeps the step actions out of the MCP server and the agent', function (): void {

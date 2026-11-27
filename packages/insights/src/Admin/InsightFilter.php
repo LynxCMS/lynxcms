@@ -8,8 +8,8 @@ use LynxCms\Insights\InsightState;
 
 /**
  * The Insights screen's filters, checked: a state that is not one of the states shows open
- * insights, so a link someone edited by hand still shows a list. Open includes the insights being
- * approved, which have no option of their own: they are open until their steps end.
+ * insights, so a link someone edited by hand still shows a list. Open includes the running insights,
+ * which have no option of their own: they are open until their steps end.
  *
  * @internal
  */
@@ -30,7 +30,7 @@ final readonly class InsightFilter
     /** @return list<string> the states the filter offers, open first, then all */
     public static function states(): array
     {
-        $states = array_filter(InsightState::cases(), fn (InsightState $state): bool => $state !== InsightState::Approving);
+        $states = array_filter(InsightState::cases(), fn (InsightState $state): bool => $state !== InsightState::Running);
 
         return [...array_values(array_map(fn (InsightState $state): string => $state->value, $states)), self::ALL];
     }
@@ -40,7 +40,7 @@ final readonly class InsightFilter
     {
         return match ($this->state) {
             self::ALL => array_map(fn (InsightState $state): string => $state->value, InsightState::cases()),
-            InsightState::Open->value => [InsightState::Open->value, InsightState::Approving->value],
+            InsightState::Open->value => [InsightState::Open->value, InsightState::Running->value],
             default => [$this->state],
         };
     }

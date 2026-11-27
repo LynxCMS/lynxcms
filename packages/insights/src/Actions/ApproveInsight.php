@@ -24,7 +24,7 @@ use LynxCms\Insights\PlanSteps;
  * Makes the change an insight suggests (ADR-0155, ADR-0157), as the person approving. Every step's
  * action needs that person's permission, as if they ran it themselves, and it is refused when a
  * page the insight is about changed since the report. The steps then run on the queue, a job per
- * step, and the insight is approving until the last one ends; a step that deletes anything is
+ * step, and the insight is running until the last one ends; a step that deletes anything is
  * refused. A dry run runs the whole plan at once instead, so it lists every change and refuses a
  * plan that deletes. Approving again after a step failed runs only the steps not done.
  *
@@ -99,12 +99,12 @@ final class ApproveInsight extends Action
     private function queue(StoredInsight $insight, ActionContext $context): StoredInsight
     {
         $steps = PlanSteps::forApproval($insight->steps, count($insight->plan));
-        $insight->update(['state' => InsightState::Approving, 'steps' => $steps]);
+        $insight->update(['state' => InsightState::Running, 'steps' => $steps]);
         $context->changes->updated('insight', $insight->id, "Approve insight {$insight->title}: ".count(PlanSteps::pending($steps)).' step(s) queued');
         $jobs = array_map(fn (int $index): ApplyStep => new ApplyStep($insight->id, $index, $context->actor), PlanSteps::pending($steps));
         $name = "Insight {$insight->id}";
 
-        // After the commit: a job must find the insight approving, and the sync queue runs it at once.
+        // After the commit: a job must find the insight running, and the sync queue runs it at once.
         DB::afterCommit(fn () => Bus::batch($jobs)->name($name)->allowFailures()->dispatch());
 
         return $insight;

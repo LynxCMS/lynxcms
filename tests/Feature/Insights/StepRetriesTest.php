@@ -19,7 +19,7 @@ use LynxCms\Tests\Fixtures\Insights\FixedSource;
 /*
  * A step that fails for a reason outside Lynx, such as a translation provider that cannot be
  * reached, is tried again by its job before it counts as failed (ADR-0157); a refused step fails
- * at once. A job that gives up marks its step failed, so the insight never stays approving.
+ * at once. A job that gives up marks its step failed, so the insight never stays running.
  */
 
 beforeEach(function (): void {
@@ -32,8 +32,8 @@ beforeEach(function (): void {
         ['action' => 'pages.translate', 'arguments' => ['page' => $this->alpha->id, 'to' => 'pt', 'draft' => true]],
     ])]));
     $insight = lynx()->run(GenerateInsights::class)->valueAs(InsightReport::class)->insights()->firstOrFail();
-    // Approving without its jobs: the tests run them one attempt at a time.
-    $insight->update(['state' => InsightState::Approving, 'steps' => [['status' => PlanSteps::PENDING]]]);
+    // Running without its jobs: the tests run them one attempt at a time.
+    $insight->update(['state' => InsightState::Running, 'steps' => [['status' => PlanSteps::PENDING]]]);
     $this->insight = $insight;
 });
 
@@ -47,7 +47,7 @@ it('leaves the step pending for another try when the provider cannot be reached'
 
     expect(fn () => applyStep(retry: true))->toThrow(RuntimeException::class)
         ->and($this->insight->fresh()?->steps)->toBe([['status' => 'pending']])
-        ->and($this->insight->fresh()?->state)->toBe(InsightState::Approving);
+        ->and($this->insight->fresh()?->state)->toBe(InsightState::Running);
 
     applyStep(retry: true);
 

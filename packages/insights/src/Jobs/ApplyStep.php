@@ -21,7 +21,7 @@ use Throwable;
  * provider that cannot be reached, is tried again after 30 seconds, then after 2 minutes; the last
  * try keeps the error on the step. When the job gives up for any other reason (the worker's
  * timeout, a lost database connection), failed() marks the step failed, so the insight does not
- * stay approving.
+ * stay running.
  *
  * @internal
  */

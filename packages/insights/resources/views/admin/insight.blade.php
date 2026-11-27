@@ -3,15 +3,19 @@
 @php($steps = $insight->steps ?? [])
 @php($failed = \LynxCms\Insights\PlanSteps::count($steps, \LynxCms\Insights\PlanSteps::FAILED))
 {{-- While an approval runs, or after a step failed, the step list names the pages instead. --}}
-@php($showsSteps = $insight->state === \LynxCms\Insights\InsightState::Approving || ($isOpen && $failed > 0))
+@php($showsSteps = $insight->state === \LynxCms\Insights\InsightState::Running || ($isOpen && $failed > 0))
 <section class="bg-card text-card-foreground rounded-xl border shadow-sm p-5" aria-labelledby="insight-{{ $insight->id }}" wire:key="insight-{{ $insight->id }}" data-insight="{{ $insight->id }}" data-insight-state="{{ $insight->state->value }}">
     <div class="mb-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 id="insight-{{ $insight->id }}" class="text-base font-semibold">{{ $insight->title }}</h2>
         <span class="flex flex-wrap gap-2">
             <x-lynx-admin::ui.badge variant="outline" data-insight-source>{{ $labels[$insight->source] ?? $insight->source }}</x-lynx-admin::ui.badge>
-            @unless ($isOpen)
+            @if ($insight->state === \LynxCms\Insights\InsightState::Running)
+                <x-lynx-admin::ui.badge variant="secondary" data-insight-running>
+                    <x-lynx-admin::ui.presence status="online" size="sm" pulse :label="__('lynx-insights::admin.state.running')" show-label label-class="text-xs" />
+                </x-lynx-admin::ui.badge>
+            @elseif (! $isOpen)
                 <x-lynx-admin::ui.badge variant="secondary">{{ __('lynx-insights::admin.state.'.$insight->state->value) }}</x-lynx-admin::ui.badge>
-            @endunless
+            @endif
         </span>
     </div>
     <p class="text-muted-foreground text-sm mb-4">{{ $insight->reason }}</p>
@@ -48,7 +52,7 @@
         </div>
     @endif
 
-    @if ($insight->state === \LynxCms\Insights\InsightState::Approving)
+    @if ($insight->state === \LynxCms\Insights\InsightState::Running)
         @php($done = count($steps) - count(\LynxCms\Insights\PlanSteps::pending($steps)))
         <div class="mb-3 grid gap-2 text-sm" role="status" data-insight-progress="{{ $done }}/{{ count($steps) }}">
             <p>{{ __('lynx-insights::admin.progress', ['done' => \LynxCms\Core\Support\LocalizedNumber::format($done), 'total' => \LynxCms\Core\Support\LocalizedNumber::format(count($steps))]) }}</p>

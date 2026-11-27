@@ -18,7 +18,7 @@ use LynxCms\Insights\PlanSteps;
 use Throwable;
 
 /**
- * Runs one pending step of an approving insight and keeps its outcome (ADR-0157). The step runs
+ * Runs one pending step of a running insight and keeps its outcome (ADR-0157). The step runs
  * nested in insights.run_step, so when it fails only its own writes roll back and the error is
  * kept. A refused step (validation, permissions) fails at once; any other error, such as a
  * provider that cannot be reached, is thrown while `retry` is true, so the job tries again and the
@@ -41,7 +41,7 @@ final class ApplyInsightStep extends Action
 
     public static function description(): string
     {
-        return 'Run one pending step of an approving insight and keep its outcome.';
+        return 'Run one pending step of a running insight and keep its outcome.';
     }
 
     public static function permission(): string
@@ -81,7 +81,7 @@ final class ApplyInsightStep extends Action
         $index = Value::int($input->int('step'));
         $steps = $insight->steps ?? [];
 
-        if (! $insight instanceof StoredInsight || $insight->state !== InsightState::Approving || ($steps[$index]['status'] ?? null) !== PlanSteps::PENDING) {
+        if (! $insight instanceof StoredInsight || $insight->state !== InsightState::Running || ($steps[$index]['status'] ?? null) !== PlanSteps::PENDING) {
             throw ValidationException::withMessages(['step' => Value::string(__('lynx-insights::validation.step_ran'))]);
         }
 

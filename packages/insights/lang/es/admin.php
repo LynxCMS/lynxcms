@@ -44,7 +44,7 @@ return [
     'more_pages' => '{1} Mostrar 1 página más|[2,*] Mostrar :count páginas más',
     'state' => [
         'open' => 'Abierta',
-        'approving' => 'Aprobando',
+        'running' => 'En curso',
         'approved' => 'Aprobada',
         'dismissed' => 'Descartada',
         'archived' => 'Archivada',
@@ -67,7 +67,7 @@ return [
     'approve' => 'Aprobar',
     'archive' => 'Archivar',
     'dismiss' => 'Descartar',
-    'approving' => 'Aprobación iniciada. Los cambios se hacen uno a uno, y esta página muestra el progreso.',
+    'started' => 'Aprobación iniciada. Los cambios se hacen uno a uno, y esta página muestra el progreso.',
     'archived' => 'Sugerencia archivada. El próximo informe la trae de vuelta con nuevos datos.',
     'dismissed' => 'Sugerencia descartada.',
 ];

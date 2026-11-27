@@ -32,10 +32,10 @@ final readonly class InsightHistory
         return $dismissed instanceof StoredInsight && ($dismissed->weight <= 0 || $weight < 2 * $dismissed->weight);
     }
 
-    /** Being approved: its steps are still running (ADR-0157), so a report leaves it out. */
-    public function isApproving(string $fingerprint): bool
+    /** Running: its approved steps are still running (ADR-0157), so a report leaves it out. */
+    public function isRunning(string $fingerprint): bool
     {
-        return StoredInsight::query()->where('fingerprint', $fingerprint)->where('state', InsightState::Approving->value)->exists();
+        return StoredInsight::query()->where('fingerprint', $fingerprint)->where('state', InsightState::Running->value)->exists();
     }
 
     /** The latest open or archived insight with this fingerprint in an earlier report. */
