@@ -86,6 +86,7 @@ This repository is a monorepo: every package lives in `packages/`, and changes a
 | `lynxcms/media` | Images and files on pages, with sizes made on demand, private files and expiring links. |
 | `lynxcms/forms` | Forms defined in code or built in the admin, rendered with Livewire, with submissions, results and exports in the admin. |
 | `lynxcms/finder` | Find pages in the admin by their fields, template, status and dates, save searches, change the pages found together and export them. |
+| `lynxcms/insights` | Reports of suggested changes, such as pages missing a translation, each with its evidence and a plan of actions that an editor reviews and approves in the admin. |
 | `lynxcms/seo` | Meta and social tags, canonical links, JSON-LD and `robots.txt`. |
 | `lynxcms/sitemap` | XML sitemaps for every language. |
 | `lynxcms/page-password` | Password protected pages and branches. |
