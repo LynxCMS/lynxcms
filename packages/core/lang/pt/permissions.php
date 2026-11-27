@@ -47,6 +47,10 @@ return [
     'finder' => [
         'share' => 'Partilhar pesquisas guardadas em Procurar páginas',
     ],
+    'insights' => [
+        'view' => 'Ver relatórios de sugestões',
+        'review' => 'Aprovar, dispensar e arquivar sugestões, e escrever relatórios',
+    ],
     'agent' => [
         'use' => 'Usar o agente integrado e aprovar os seus planos',
     ],

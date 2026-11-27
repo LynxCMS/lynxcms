@@ -47,6 +47,10 @@ return [
     'finder' => [
         'share' => 'Share saved searches in Find pages',
     ],
+    'insights' => [
+        'view' => 'View insight reports',
+        'review' => 'Approve, dismiss and archive insights, and write reports',
+    ],
     'agent' => [
         'use' => 'Use the built-in agent and approve its plans',
     ],
