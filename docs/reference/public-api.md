@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 287 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 295 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -18,6 +18,12 @@ In `LynxCms\Contracts`.
 | `Actions\Action` | interface | A single write operation. |
 | `Actions\ActionHalted` | class | Thrown by a before-hook to stop an action. |
 | `Actions\Actor` | class | Who performed an action: a logged-in user, a visitor who is not signed in, the CLI, an MCP client, the built-in AI agent or the system (queued jobs, scheduled tasks, code that asks for it). |
+| `Backups\BackupCompleted` | class | Fired when a database backup is on every disk. |
+| `Backups\BackupFailed` | class | Fired when a database backup fails. |
+| `Backups\BackupReference` | class | A finished database backup: one zip, at the same path on each of its disks. |
+| `Backups\BackupStarted` | class | Fired when a database backup starts. |
+| `Backups\CouldNotBackUp` | class | A database backup could not be made: the driver is not supported, or the dump or a disk failed. |
+| `Backups\DatabaseBackups` | interface | Database backups, made by a module (lynxcms/backup). |
 | `Fields\Comparison` | enum | How selectors compare a field's stored "data" column: as text (with %=, ^=, $=), as integers or decimals, as booleans, as dates ("today", "-7 days", "2026-01-01"), or not at all. |
 | `Fields\FieldType` | interface | A field type owns its storage, its value conversion and its validation. |
 | `Fields\FormatContext` | class | What a formatter knows about the value it formats. |
@@ -246,6 +252,15 @@ In `LynxCms\Ai`.
 | --- | --- | --- |
 | `AgentRun` | class | The result of $lynx-&gt;ai()-&gt;ask(): the agent's answer and the plan of recorded actions. |
 | `LynxAi` | class | lynx()-&gt;ai(): ask the built-in agent to do something in plain language. |
+
+## lynxcms/backup
+
+In `LynxCms\Backup`.
+
+| Name | Kind | What it is |
+| --- | --- | --- |
+| `Actions\CreateBackup` | class | Queue a database backup. |
+| `Actions\DeleteBackup` | class | Delete a backup: its zip on every disk, and its row. |
 
 ## lynxcms/cache
 

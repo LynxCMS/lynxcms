@@ -25,7 +25,7 @@ final readonly class PageCacheServer
             $request->getHost(),
             $request->getPathInfo(),
             Value::string($request->server->get('QUERY_STRING')),
-            $request->cookies->all(),
+            Value::map($request->cookies->all()),
         );
     }
 

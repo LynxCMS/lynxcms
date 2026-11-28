@@ -13,6 +13,7 @@ use Livewire\LivewireManager;
 use Livewire\LivewireServiceProvider;
 use LynxCms\Admin\AdminServiceProvider;
 use LynxCms\Ai\AiServiceProvider;
+use LynxCms\Backup\BackupServiceProvider;
 use LynxCms\Cache\CacheServiceProvider;
 use LynxCms\Core\LynxServiceProvider;
 use LynxCms\Core\Permissions\Authorizer;
@@ -78,6 +79,8 @@ abstract class TestCase extends Orchestra
             PagePasswordServiceProvider::class,
             FinderServiceProvider::class,
             InsightsServiceProvider::class,
+            \Spatie\Backup\BackupServiceProvider::class,
+            BackupServiceProvider::class,
             CacheServiceProvider::class,
             StaticSiteServiceProvider::class,
             WorkbenchServiceProvider::class,

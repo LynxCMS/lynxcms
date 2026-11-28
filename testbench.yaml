@@ -21,6 +21,8 @@ providers:
   - LynxCms\PagePassword\PagePasswordServiceProvider
   - LynxCms\Finder\FinderServiceProvider
   - LynxCms\Insights\InsightsServiceProvider
+  - Spatie\Backup\BackupServiceProvider
+  - LynxCms\Backup\BackupServiceProvider
   - LynxCms\Cache\CacheServiceProvider
   - LynxCms\StaticSite\StaticSiteServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider

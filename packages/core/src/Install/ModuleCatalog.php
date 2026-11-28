@@ -29,6 +29,7 @@ final readonly class ModuleCatalog
         'page-password' => 'Page passwords: pages and branches behind a password',
         'finder' => 'Page Finder: search every page by its fields in the admin',
         'insights' => 'Insights: reports of suggested changes that editors approve',
+        'backup' => 'Backups: daily database backups, with files on request',
         'static-site' => 'Static site: export the site as HTML files',
     ];
 

@@ -23,6 +23,8 @@
         "league/commonmark": "^2.8",
         "livewire/livewire": "^4.4.8",
         "mallardduck/blade-lucide-icons": "^2.0",
+        "spatie/db-dumper": "^4.1.1",
+        "spatie/laravel-backup": "^10.4",
         "spatie/laravel-honeypot": "^4.7",
         "symfony/html-sanitizer": "^8.1",
         "symfony/yaml": "^7.4|^8.0"
@@ -51,6 +53,7 @@
         "lynxcms/cache": "self.version",
         "lynxcms/finder": "self.version",
         "lynxcms/insights": "self.version",
+        "lynxcms/backup": "self.version",
         "lynxcms/static-site": "self.version"
     },
     "autoload": {
@@ -69,6 +72,7 @@
             "LynxCms\\Cache\\": "packages/cache/src/",
             "LynxCms\\Finder\\": "packages/finder/src/",
             "LynxCms\\Insights\\": "packages/insights/src/",
+            "LynxCms\\Backup\\": "packages/backup/src/",
             "LynxCms\\StaticSite\\": "packages/static-site/src/"
         },
         "files": [
@@ -101,6 +105,7 @@
                 "LynxCms\\Cache\\CacheServiceProvider",
                 "LynxCms\\Finder\\FinderServiceProvider",
                 "LynxCms\\Insights\\InsightsServiceProvider",
+                "LynxCms\\Backup\\BackupServiceProvider",
                 "LynxCms\\StaticSite\\StaticSiteServiceProvider"
             ],
             "aliases": {
