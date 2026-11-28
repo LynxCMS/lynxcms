@@ -49,6 +49,21 @@ A new report replaces the open insights of the one before. An insight reported a
 | Broken links | Published pages linking to a page visitors cannot open: unpublished, in the trash or deleted. | None. |
 | Missing descriptions | Published pages whose description for search engines falls back to the site's default. Comes with [SEO](/modules/seo). | None. |
 | Neglected popular pages | Among the 20 most viewed pages, those nobody changed in 12 months. Needs [page metrics](#page-metrics). | None. |
+| Insights Agent | Whatever a model finds the site could use, up to 5 suggestions. Needs `lynxcms/ai`, and is off until turned on: see [the Insights Agent](#the-insights-agent). | Planned by the built-in agent when the change can be made with actions. |
+
+## The Insights Agent
+
+With [`lynxcms/ai`](/ai/) installed, an AI model can review the site too. The **Insights Agent** reads the site with the same read tools as the [built-in agent](/ai/#the-built-in-agent), starting from the 50 most viewed pages (or the most linked, without [page metrics](#page-metrics)), and suggests up to 5 changes, each with its reason, its pages and the numbers it rests on. For each change, the built-in agent then works out a plan, which is checked and rolled back as in a dry run, so nothing changes until an editor approves.
+
+It sends page text to your AI provider and uses its credits, so it is off until you turn it on in `.env`:
+
+```ini
+LYNX_INSIGHTS_AGENT=true
+# Optional: a cheaper model for the analysis than the built-in agent's.
+LYNX_INSIGHTS_AGENT_MODEL=
+```
+
+It runs once per report, writes in the site's default language, and never suggests deleting content. A suggestion whose plan fails, deletes, or depends on a page created along the way stays information only. Text on your pages is treated as content to review: the agent cannot write, and every plan runs only after an editor reviews it, with that editor's permissions.
 
 ## Reviewing insights
 
@@ -161,3 +176,7 @@ Publish the configuration with `php artisan vendor:publish --tag=lynx-insights-c
 | `min_days` | 14 | The days of page metrics needed before sources use them. |
 | `neglected_months` | 12 | The months a popular page goes unchanged before it counts as neglected. |
 | `stuck_minutes` | 30 | The minutes a running insight may go without progress before `lynx:doctor` warns. |
+| `ai.enabled` | `LYNX_INSIGHTS_AGENT` (false) | Whether the Insights Agent runs. |
+| `ai.max` | 5 | The most suggestions it makes per report. |
+| `ai.pages` | 50 | The pages it starts from. |
+| `ai.provider`, `ai.model` | `LYNX_INSIGHTS_AGENT_PROVIDER`, `LYNX_INSIGHTS_AGENT_MODEL` | Its provider and model; empty uses `lynx.ai`'s. |
