@@ -44,6 +44,7 @@ Move content between sites, and keep copies of it.
 | `lynx:export path --with-files` | Writes a content package (a directory or a `.zip`). Media files stay out unless `--with-files` asks for them, as a large site's media can take long to copy; machines can [download them from production](/deeper/live-site#media-from-production) instead. |
 | `lynx:import path --with-schema --prune --without-events --dry-run` | Imports a content package. `--without-events` mutes the events of each page; listeners get one `ContentBatchChanged` at the end. |
 | `lynx:backup` | Writes a content backup, files included, and keeps the newest ones. Content only: back up the database as well. |
+| `lynx:backup:database --reason=` | Backs up the database to the backup disks: SQLite as a copy of its file, PostgreSQL with `pg_dump`. Scheduled daily at 02:00 unless `LYNX_BACKUP_SCHEDULE` says otherwise. Needs `lynxcms/backup`. |
 
 ## Upkeep
 
