@@ -8,6 +8,9 @@
         "laravel/prompts": "^0.3.23",
         "lynxcms/core": "self.version"
     },
+    "suggest": {
+        "lynxcms/insights": "Adds the Insights Agent, an insight source that asks a model what the site could use (off by default)."
+    },
     "autoload": {
         "psr-4": { "LynxCms\\Ai\\": "src/" }
     },

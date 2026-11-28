@@ -18,6 +18,17 @@ return [
     // The months a popular page goes unchanged before it counts as neglected.
     'neglected_months' => 12,
 
+    // The Insights Agent (with lynxcms/ai): it sends page text to the AI provider and uses its
+    // credits, so it is off unless turned on. At most `max` insights a report, starting from the
+    // `pages` most viewed (or most linked) pages; provider and model default to lynx.ai's.
+    'ai' => [
+        'enabled' => env('LYNX_INSIGHTS_AGENT', false),
+        'max' => 5,
+        'pages' => 50,
+        'provider' => env('LYNX_INSIGHTS_AGENT_PROVIDER'),
+        'model' => env('LYNX_INSIGHTS_AGENT_MODEL'),
+    ],
+
     // The minutes a running insight may go without progress before lynx:doctor warns about it.
     'stuck_minutes' => 30,
 ];
