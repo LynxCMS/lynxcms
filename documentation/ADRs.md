@@ -1789,7 +1789,7 @@ Staying in English: action descriptions, console output, the change summaries th
 
 ## ADR-0158: Database backups come from a module on spatie/laravel-backup
 
-**Status:** Proposed (plan: documentation/plans/backup.md).
+**Status:** Accepted (plan: documentation/plans/backup.md).
 
 **Context:** Content packages (ADR-0040) back up pages, not the database: activity, revisions, drafts, users, roles and the app's tables are left out. Owners need scheduled database backups they can see and copy off the server, `lynx:migrate` only asks whether the database is backed up, and Insights wants a backup before an approval runs (ADR-0157's plan).
 
@@ -1798,7 +1798,8 @@ Staying in English: action descriptions, console output, the change summaries th
 - A free module, `lynxcms/backup`, wraps `spatie/laravel-backup` for dumps, archives, disks, retention and events, instead of Lynx writing its own.
 - `DatabaseBackups` and `BackupReference` (`@api`, in `lynxcms/contracts`) are what other code uses: `create()` makes a backup in the calling process, `latest()` and `all()` list them, and `BackupStarted`, `BackupCompleted` and `BackupFailed` report on them. Modules order their work themselves and only watch the events.
 - A `lynx_backups` table records why and by whom each backup was made. `backup.manage`, a superuser permission by default, makes and deletes backups; downloads need a password confirmation.
-- Backups run daily once the module is installed, keep Spatie's retention, and go to a disk outside `public`. Restoring is a command-line task only, after a safety backup and a typed confirmation.
+- Backups run daily once the module is installed, keep Spatie's retention, and go to a disk outside `public`. Restoring is a command-line task only, after a safety backup and a typed confirmation, built on `stefanzweifel/laravel-backup-restore`.
+- The database is backed up by default; owners can include files with one switch. SQLite backs up with `VACUUM INTO` by default (a database file, no binary, writes not blocked) and restores by replacing the file; where `sqlite3` is installed, owners can choose Spatie's SQL dump instead.
 
-**Consequences:** Every Lynx site can get database backups by installing one module, and other modules ask for one through a contract without depending on it. A backup holds password hashes and two-factor secrets, so it is guarded like a superuser action. Hosts need the dump binary for their database, which `lynx:doctor` checks.
+**Consequences:** Every Lynx site can get database backups by installing one module, and other modules ask for one through a contract without depending on it. A backup holds password hashes and two-factor secrets, so it is guarded like a superuser action. MySQL and PostgreSQL hosts need their dump binary, which `lynx:doctor` checks. SQLite needs none by default, at the cost of a small dumper and restore Lynx maintains itself.
 
