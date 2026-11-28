@@ -9,7 +9,9 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Backup\Actions\FinishBackup;
+use LynxCms\Backup\BackupStatus;
 use LynxCms\Backup\LynxBackups;
+use LynxCms\Backup\Models\StoredBackup;
 use LynxCms\Contracts\Actions\Actor;
 use LynxCms\Contracts\Backups\BackupReference;
 use LynxCms\Contracts\Backups\CouldNotBackUp;
@@ -18,8 +20,8 @@ use Throwable;
 
 /**
  * Makes a backup that backup.create queued, as whoever asked for it. It is tried once: a failed
- * backup is recorded, and the owner asks again. When the worker gives up on it (its timeout, a
- * lost connection), failed() records the failure, so the backup does not stay queued.
+ * backup is recorded, and the owner asks again. A second try of the same job (the queue's
+ * retry_after ran out during a long dump) finds the backup running and does nothing.
  *
  * @internal
  */
@@ -44,8 +46,17 @@ final class MakeBackup implements ShouldQueue
         }
     }
 
+    /**
+     * The queue gave up before the backup started: record why. A running backup is left alone,
+     * since the queue also gives up when a long dump outlasts its retry_after and the job is handed
+     * out again; that backup still ends on its own, and lynx:doctor reports one that never does.
+     */
     public function failed(Throwable $exception): void
     {
+        if (StoredBackup::query()->find($this->backup)?->status !== BackupStatus::Queued) {
+            return;
+        }
+
         try {
             lynx()->actingAs(Actor::system(), fn (): ActionResult => lynx()->run(FinishBackup::class, [
                 'backup' => $this->backup,

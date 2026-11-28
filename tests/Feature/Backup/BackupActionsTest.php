@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Backup\Actions\CreateBackup;
 use LynxCms\Backup\Actions\DeleteBackup;
+use LynxCms\Backup\Actions\StartBackup;
 use LynxCms\Backup\BackupStatus;
 use LynxCms\Backup\Jobs\MakeBackup;
 use LynxCms\Backup\Models\StoredBackup;
@@ -82,6 +83,17 @@ it('marks a queued backup failed when its job gives up', function (): void {
 
     expect($backup->fresh()?->status)->toBe(BackupStatus::Failed)
         ->and($backup->fresh()?->error)->toBe('The worker timed out.');
+});
+
+it('leaves a running backup alone when the queue gives up on a second try', function (): void {
+    Bus::fake();
+    $backup = queueBackup();
+    // The first try is still dumping when the queue's retry_after runs out and hands the job out again.
+    lynx()->run(StartBackup::class, ['backup' => $backup->id]);
+
+    new MakeBackup($backup->id, Actor::cli())->failed(new RuntimeException('Attempted too many times.'));
+
+    expect($backup->fresh()?->status)->toBe(BackupStatus::Running);
 });
 
 it('deletes a backup and its file', function (): void {
