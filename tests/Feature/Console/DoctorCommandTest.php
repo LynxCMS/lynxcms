@@ -22,6 +22,8 @@ beforeEach(function (): void {
     courseSite();
     // The media package's storage link check depends on the machine; its own test covers it.
     config(['filesystems.links' => []]);
+    // The backup checks want a recent backup, two disks and a password; their own test covers them.
+    config(['lynx-backup.schedule' => '', 'lynx-backup.disks' => ['local', 'offsite'], 'lynx-backup.password' => 'secret']);
     $views = testingPath('doctor-views');
     File::ensureDirectoryExists($views.'/templates');
     File::put($views.'/templates/courses.blade.php', 'Courses');

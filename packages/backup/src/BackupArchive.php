@@ -39,7 +39,7 @@ final readonly class BackupArchive
     /** Spatie's time format, before the id; its cleanup reads the time from the file's date. */
     private const string FILENAME_FORMAT = 'Y-m-d-H-i-s';
 
-    public function __construct(private Filesystems $filesystems) {}
+    public function __construct(private Filesystems $filesystems, private BackupSettings $settings) {}
 
     public function connection(): string
     {
@@ -60,7 +60,7 @@ final readonly class BackupArchive
             return self::POSTGRES;
         }
 
-        return Value::string(config('lynx-backup.sqlite_format')) === 'dump' ? self::SQLITE_DUMP : self::SQLITE_COPY;
+        return $this->settings->sqliteFormat() === BackupSettings::DUMP ? self::SQLITE_DUMP : self::SQLITE_COPY;
     }
 
     /** @return list<string> */
@@ -71,7 +71,7 @@ final readonly class BackupArchive
 
     public function includesFiles(): bool
     {
-        return Value::bool(config('lynx-backup.include_files'));
+        return $this->settings->includesFiles();
     }
 
     /**
@@ -127,7 +127,8 @@ final readonly class BackupArchive
         }
     }
 
-    private function driver(): string
+    /** The connection's driver, as Laravel names it ("sqlite", "pgsql"). */
+    public function driver(): string
     {
         return Value::string(config("database.connections.{$this->connection()}.driver"));
     }
