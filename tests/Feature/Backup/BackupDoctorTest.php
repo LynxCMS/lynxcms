@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use LynxCms\Backup\Actions\CreateBackup;
 use LynxCms\Backup\Actions\SaveBackupSettings;
 use LynxCms\Backup\Doctor\BackupHealth;
 use LynxCms\Backup\DumpBinaries;
@@ -96,4 +98,16 @@ it('reports a database Lynx cannot back up', function (): void {
     config(['database.connections.backup_site' => ['driver' => 'sqlsrv', 'database' => 'site']]);
 
     expect(app(BackupHealth::class)->run()[0]->severity)->toBe(Severity::Error);
+});
+
+it('warns about a backup queued or running for more than 30 minutes', function (): void {
+    app(DatabaseBackups::class)->create('Nightly');
+    Bus::fake();
+    lynx()->run(CreateBackup::class, ['reason' => 'From the admin']);
+
+    expect(backupFindings())->toBe([]);
+
+    $this->travel(31)->minutes();
+
+    expect(collect(backupFindings())->filter(fn (string $message): bool => str_contains($message, 'queue')))->toHaveCount(1);
 });

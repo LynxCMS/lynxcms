@@ -16,8 +16,9 @@ use LynxCms\Core\Support\Value;
 
 /**
  * What puts the database backups at risk (ADR-0158): a database Lynx cannot back up, a missing
- * dump binary, a failed latest backup, no finished backup in a day while they are scheduled, one
- * disk only, and zips without a password. Each problem is one finding.
+ * dump binary, a backup stuck on the queue, a failed latest backup, no finished backup in a day
+ * while they are scheduled, one disk only, and zips without a password. Each problem is one
+ * finding.
  *
  * @internal
  */
@@ -25,6 +26,9 @@ final readonly class BackupHealth implements Check
 {
     /** A daily backup that runs a little late still counts. */
     private const int MAX_AGE_HOURS = 26;
+
+    /** A backup queued or running this long has no worker, or its worker died. */
+    private const int STUCK_MINUTES = 30;
 
     public function __construct(private BackupArchive $archive, private DumpBinaries $binaries) {}
 
@@ -46,6 +50,7 @@ final readonly class BackupHealth implements Check
 
         return array_values(array_filter([
             $this->missingBinary(),
+            $this->stuck(),
             $this->failedLatest() ?? $this->tooOld(),
             $this->oneDisk(),
             $this->noPassword(),
@@ -67,6 +72,22 @@ final readonly class BackupHealth implements Check
         return new Finding(Severity::Error, "Backups need {$binary}, which this server does not have.", $binary === 'sqlite3'
             ? 'Install sqlite3, or back up SQLite as a copy of the database file in Settings > Backups.'
             : 'Install the PostgreSQL client tools, or set the folder that has pg_dump as dump.dump_binary_path on the connection.');
+    }
+
+    private function stuck(): ?Finding
+    {
+        $ids = StoredBackup::query()
+            ->whereIn('status', [BackupStatus::Queued, BackupStatus::Running])
+            ->where('updated_at', '<', Carbon::now()->subMinutes(self::STUCK_MINUTES))
+            ->orderBy('id')
+            ->pluck('id')
+            ->all();
+
+        if ($ids === []) {
+            return null;
+        }
+
+        return new Finding(Severity::Warning, count($ids).' backup(s) queued or running for more than '.self::STUCK_MINUTES.' minutes: #'.implode(', #', Value::ints($ids)).'.', 'Check that a queue worker runs (php artisan queue:work) and read failed_jobs. lynx:backup:database backs up without the queue.');
     }
 
     private function failedLatest(): ?Finding
