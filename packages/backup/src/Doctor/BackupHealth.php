@@ -8,17 +8,19 @@ use Illuminate\Support\Carbon;
 use LynxCms\Backup\BackupArchive;
 use LynxCms\Backup\BackupStatus;
 use LynxCms\Backup\DumpBinaries;
+use LynxCms\Backup\FreeSpace;
 use LynxCms\Backup\Models\StoredBackup;
 use LynxCms\Core\Doctor\Check;
 use LynxCms\Core\Doctor\Finding;
 use LynxCms\Core\Doctor\Severity;
+use LynxCms\Core\Support\LocalizedNumber;
 use LynxCms\Core\Support\Value;
 
 /**
  * What puts the database backups at risk (ADR-0158): a database Lynx cannot back up, a missing
  * dump binary, a backup stuck on the queue, a failed latest backup, no finished backup in a day
- * while they are scheduled, one disk only, and zips without a password. Each problem is one
- * finding.
+ * while they are scheduled, one disk only, too little free space, the cache in the backed-up
+ * database, and zips without a password. Each problem is one finding.
  *
  * @internal
  */
@@ -30,7 +32,7 @@ final readonly class BackupHealth implements Check
     /** A backup queued or running this long has no worker, or its worker died. */
     private const int STUCK_MINUTES = 30;
 
-    public function __construct(private BackupArchive $archive, private DumpBinaries $binaries) {}
+    public function __construct(private BackupArchive $archive, private DumpBinaries $binaries, private FreeSpace $space) {}
 
     public function key(): string
     {
@@ -53,6 +55,8 @@ final readonly class BackupHealth implements Check
             $this->stuck(),
             $this->failedLatest() ?? $this->tooOld(),
             $this->oneDisk(),
+            $this->lowSpace(),
+            $this->cacheInDatabase(),
             $this->noPassword(),
         ]));
     }
@@ -123,6 +127,46 @@ final readonly class BackupHealth implements Check
         }
 
         return new Finding(Severity::Warning, 'Backups go to one disk only: a server that fails takes them with it.', 'Add an off-site disk: LYNX_BACKUP_DISKS=local,s3.');
+    }
+
+    /** Room for two more zips the size of the last one, on each local disk. */
+    private function lowSpace(): ?Finding
+    {
+        $size = Value::int(StoredBackup::query()->where('status', BackupStatus::Done)->latest()->latest('id')->value('size'));
+
+        if ($size === 0) {
+            return null;
+        }
+
+        $low = array_values(array_filter($this->archive->disks(), function (string $disk) use ($size): bool {
+            $free = $this->space->on($disk);
+
+            return $free !== null && $free < 2 * $size;
+        }));
+
+        if ($low === []) {
+            return null;
+        }
+
+        return new Finding(Severity::Warning, 'Less free space than two more backups ('.LocalizedNumber::fileSize(2 * $size).') on: '.implode(', ', $low).'.', 'Free space on the disk, move backups to a larger disk (LYNX_BACKUP_DISKS), or keep fewer (backup.cleanup in config/backup.php).');
+    }
+
+    /** A cache in the backed-up database goes into every backup, and is often most of it. */
+    private function cacheInDatabase(): ?Finding
+    {
+        $store = Value::string(config('cache.default'));
+
+        if (Value::string(config("cache.stores.{$store}.driver")) !== 'database') {
+            return null;
+        }
+
+        $connection = Value::string(config("cache.stores.{$store}.connection")) ?: Value::string(config('database.default'));
+
+        if ($connection !== $this->archive->connection()) {
+            return null;
+        }
+
+        return new Finding(Severity::Warning, 'The cache is stored in the database that is backed up, so every backup carries it.', 'Set CACHE_STORE=file, or redis where the server has it.');
     }
 
     private function noPassword(): ?Finding

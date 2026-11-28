@@ -8,10 +8,12 @@ use LynxCms\Backup\Actions\CreateBackup;
 use LynxCms\Backup\Actions\SaveBackupSettings;
 use LynxCms\Backup\Doctor\BackupHealth;
 use LynxCms\Backup\DumpBinaries;
+use LynxCms\Backup\FreeSpace;
 use LynxCms\Contracts\Backups\DatabaseBackups;
 use LynxCms\Core\Doctor\Finding;
 use LynxCms\Core\Doctor\Severity;
 use LynxCms\Tests\Fixtures\Backup\FixedBinaries;
+use LynxCms\Tests\Fixtures\Backup\FixedFreeSpace;
 
 /*
  * lynx:doctor reports what puts backups at risk (ADR-0158): no recent backup while they are
@@ -22,7 +24,8 @@ beforeEach(function (): void {
     installLynx();
     backupSite();
     app()->instance(DumpBinaries::class, new FixedBinaries(['sqlite3', 'pg_dump']));
-    config(['lynx-backup.disks' => ['backups', 'offsite'], 'lynx-backup.password' => 'secret']);
+    config(['lynx-backup.disks' => ['backups', 'offsite'], 'lynx-backup.password' => 'secret', 'cache.default' => 'array']);
+    app()->instance(FreeSpace::class, new FixedFreeSpace(10 * 1024 ** 3));
     Storage::fake('offsite');
 });
 
@@ -110,4 +113,25 @@ it('warns about a backup queued or running for more than 30 minutes', function (
     $this->travel(31)->minutes();
 
     expect(collect(backupFindings())->filter(fn (string $message): bool => str_contains($message, 'queue')))->toHaveCount(1);
+});
+
+it('warns when a local backup disk has less room than two more zips', function (): void {
+    $backup = app(DatabaseBackups::class)->create('Nightly');
+    app()->instance(FreeSpace::class, new FixedFreeSpace(2 * $backup->size - 1));
+
+    expect(collect(backupFindings())->filter(fn (string $message): bool => str_contains($message, 'free')))->toHaveCount(1);
+});
+
+it('says nothing about room on a disk it cannot measure', function (): void {
+    app(DatabaseBackups::class)->create('Nightly');
+    app()->instance(FreeSpace::class, new FixedFreeSpace(null));
+
+    expect(backupFindings())->toBe([]);
+});
+
+it('warns when the cache is stored in the database it backs up', function (): void {
+    app(DatabaseBackups::class)->create('Nightly');
+    config(['cache.default' => 'database', 'cache.stores.database.connection' => 'backup_site']);
+
+    expect(collect(backupFindings())->filter(fn (string $message): bool => str_contains($message, 'cache')))->toHaveCount(1);
 });

@@ -25,7 +25,7 @@ Three features need a real database backup:
 9. **Where backups go:** the `local` disk under `backups/`, which Laravel keeps outside `public`. The docs recommend a second, off-site disk (`LYNX_BACKUP_DISKS=local,s3`). An archive password (`LYNX_BACKUP_PASSWORD`) encrypts the zip; `lynx:doctor` warns while backups go to one disk only or have no password.
 10. **Admin:** Settings > Backups lists the backups with size, age, reason and who asked, shows the schedule and the disks, and has **Back up now** (queued, with the progress dot used for running insights). Superusers can download a backup after confirming their password. There is no restore button.
 11. **Restore from the command line only:** `lynx:backup:restore {id}` puts the site in maintenance mode, makes a safety backup first, asks the operator to type the database's name, restores, and runs `lynx:migrate`. Restoring from a browser would let one stolen session replace the whole database. It builds on `stefanzweifel/laravel-backup-restore` (`^2.1`, Laravel 13, released 2026-10-24), which reads Spatie's archives, decrypts them and imports PostgreSQL with `psql` and an SQLite `dump` through PDO. Lynx calls only those two importers. An SQLite `copy` is restored by Lynx: the archive's database file replaces the live one (after the safety backup), and the `-wal` and `-shm` files are removed first. The command reads the format from the archive, so a site can switch formats and still restore older backups. Restoring files from an archive that has them is a separate `--files` option.
-12. **`lynx:doctor` checks:** no successful backup in the last 26 hours while scheduled; the dump binary for the connection missing (`pg_dump` for PostgreSQL, `sqlite3` when SQLite uses `dump`); one disk only; no archive password.
+12. **`lynx:doctor` checks:** no successful backup in the last 26 hours while scheduled; a backup queued or running for more than 30 minutes (no queue worker); the latest backup failed; the dump binary for the connection missing (`pg_dump` for PostgreSQL, `sqlite3` when SQLite uses `dump`); one disk only; less free space on a local disk than two more zips; the cache stored in the backed-up database; no archive password.
 13. **Integrations:** `lynx:migrate` offers "Back up the database now?" when the module is installed, and runs `create()` before migrating. Insights asks before an approval, as its plan says.
 
 ## Pull requests
@@ -34,7 +34,7 @@ Three features need a real database backup:
 2. The admin screen and the doctor checks.
 3. Restore from the command line.
 4. `lynx:migrate` and Insights use it.
-5. Docs: a page under Modules and the upgrade notes.
+5. Docs: a page under Modules and the upgrade notes. It says how much the retention keeps (about 35 zips with Spatie's default strategy) and the disk that takes, recommends a file or Redis cache store (on the Arcturus demo, the database cache store was 51 of 68 MB), and says `queue:work` must run for Back up now.
 
 ## Tests to write first
 
