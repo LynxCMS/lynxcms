@@ -48,12 +48,15 @@ final readonly class PageHistory
                 'url' => $old->url(),
                 'redirects' => $old->isRedirecting,
             ], lynx()->pages->redirects($page)),
-            'linked_from' => lynx()->pages->backlinks($page)->map(fn (Page $linking): array => [
-                'id' => $linking->id,
-                'path' => $this->url($linking),
-                'title' => Value::string($linking->get('title')),
-                'template' => $linking->template()->name,
-            ]),
+            // Only the linking pages the actor may view: the others' paths and titles are not theirs to read.
+            'linked_from' => lynx()->pages->backlinks($page)
+                ->filter(fn (Page $linking): bool => $this->authorizer->allows($this->runner->actor(), 'pages.view', $linking))
+                ->map(fn (Page $linking): array => [
+                    'id' => $linking->id,
+                    'path' => $this->url($linking),
+                    'title' => Value::string($linking->get('title')),
+                    'template' => $linking->template()->name,
+                ]),
             'activity' => array_map($this->entry(...), lynx()->pages->activity($page, $activityLimit)),
             // Saved versions of the values (ADR-0038), newest first: pages_restore_revision takes an id.
             'revisions' => array_map(fn (array $revision): array => [

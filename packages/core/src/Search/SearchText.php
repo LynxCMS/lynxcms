@@ -142,6 +142,6 @@ final readonly class SearchText
 
         $reduced = self::fold($reducer->reduce($token));
 
-        return $reduced === self::fold($token) || preg_match('/^[\p{L}\p{N}]+$/u', $reduced) !== 1 ? null : $reduced;
+        return $reduced === self::fold($token) || preg_match('/^[\p{L}\p{N}]+$/uD', $reduced) !== 1 ? null : $reduced;
     }
 }

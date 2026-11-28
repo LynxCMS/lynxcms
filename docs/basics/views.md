@@ -213,7 +213,7 @@ Use them for text that rarely changes and belongs to the template rather than to
 <footer>@string('footer.note', '© Example Studio', scope: 'site')</footer>
 ```
 
-Once you add a `@string` to a template (in `resources/views/templates`), editors can change it in the admin right away. They edit it per language in the page's Texts tab, or under Site texts for strings with `scope: 'site'`, which every page shares. Strings in views under a layouts folder are site strings unless they say `scope: 'page'`, so a layout's footer note is one text for the whole site.
+Once you add a `@string` to a template (in `resources/views/templates`), editors can change it in the admin right away. Lynx reads the template's view, the views it includes, and the [block views](#matrix-blocks) of the matrix fields it has, for the block types it offers. They edit it per language in the page's Texts tab, or under Site texts for strings with `scope: 'site'`, which every page shares. Strings in views under a layouts folder are site strings unless they say `scope: 'page'`, so a layout's footer note is one text for the whole site.
 
 A `@string` can also be set to hold a default value per language: `@string('hero.title', ['en' => 'We make films', 'pt' => 'Fazemos filmes'])`.
 

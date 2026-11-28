@@ -69,7 +69,7 @@ final class CreateField extends Action
     {
         return [
             'uuid' => ['nullable', 'uuid', Rule::unique(Tables::FIELDS, 'uuid')],
-            'name' => ['bail', 'required', 'string', 'regex:/^[a-z][a-z0-9_]*$/', Rule::unique(Tables::FIELDS, 'name'),
+            'name' => ['bail', 'required', 'string', 'regex:/^[a-z][a-z0-9_]*$/D', Rule::unique(Tables::FIELDS, 'name'),
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (in_array($value, self::RESERVED, true)) {
                         $fail(Value::string(__('lynx::structure.field.reserved', ['name' => $value])));
@@ -96,6 +96,11 @@ final class CreateField extends Action
             'settings.fallback' => ['sometimes', Rule::in(['inherit', 'none'])],
             'settings.autoload' => ['sometimes', 'boolean'],
             'settings.locked' => ['sometimes', 'boolean'],
+            'settings.access' => ['sometimes', 'nullable', 'array:view,edit'],
+            'settings.access.view' => ['sometimes', 'nullable', 'array'],
+            'settings.access.view.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
+            'settings.access.edit' => ['sometimes', 'nullable', 'array'],
+            'settings.access.edit.*' => ['string', Rule::exists(Tables::ROLES, 'name')],
             'settings.description' => ['sometimes', 'nullable', ...LocalizedText::rules(2000)],
             'settings.notes' => ['sometimes', 'nullable', ...LocalizedText::rules(500)],
         ];

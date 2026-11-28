@@ -13,6 +13,7 @@ use LynxCms\Forms\Actions\SubmitForm;
 use LynxCms\Forms\Admin\Livewire\Inbox;
 use LynxCms\Forms\Admin\Livewire\SubmissionView;
 use LynxCms\Forms\Models\Submission;
+use LynxCms\Forms\SubmissionFilter;
 use LynxCms\Tests\Fixtures\Forms\QuoteForm;
 
 beforeEach(function (): void {
@@ -111,4 +112,32 @@ it('exports a form\'s submissions as CSV', function (): void {
     $csv = $this->get(route('lynx.admin.forms.export', 'quote'))->assertOk()->streamedContent();
 
     expect($csv)->toContain('Project type')->toContain('Ana Lima')->toContain('Rui Costa');
+});
+
+it('answers 404 for a submission address that is not a uuid', function (): void {
+    $this->get(route('lynx.admin.forms.show', 'not-a-uuid'))->assertNotFound();
+    $this->get(route('lynx.admin.forms.file', ['submission' => 'not-a-uuid', 'file' => 1]))->assertNotFound();
+});
+
+it('ignores dates in an export address that are not dates', function (): void {
+    $this->get(route('lynx.admin.forms.export', ['form' => 'quote', 'from' => 'x', 'to' => '2026-13-45']))->assertOk();
+});
+
+it('answers 404 for an export of a form that does not exist and has no submissions', function (): void {
+    $this->get(route('lynx.admin.forms.export', 'no-such-form'))->assertNotFound();
+});
+
+it('searches answers for % and _ as written, not as wildcards', function (): void {
+    expect(SubmissionFilter::fromArray(['show' => 'all', 'search' => '%'])->query()->count())->toBe(0)
+        ->and(SubmissionFilter::fromArray(['show' => 'all', 'search' => '_'])->query()->count())->toBe(0)
+        ->and(SubmissionFilter::fromArray(['show' => 'all', 'search' => 'ana'])->query()->count())->toBe(1);
+});
+
+it('tells the sidebar the new count when a submission is opened or marked new', function (): void {
+    $unread = Submission::query()->where('status', 'new')->count();
+
+    Livewire::test(SubmissionView::class, ['uuid' => $this->ana->uuid])
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.forms', value: $unread - 1)
+        ->call('setStatus', 'new')
+        ->assertDispatched('lynx-nav-badge', route: 'lynx.admin.forms', value: $unread);
 });

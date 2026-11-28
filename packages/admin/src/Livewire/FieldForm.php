@@ -15,21 +15,22 @@ use LynxCms\Admin\Editor\FieldUsage;
 use LynxCms\Admin\Editor\LocalizedForm;
 use LynxCms\Admin\Editor\SchemaForm;
 use LynxCms\Admin\Editor\SchemaOwners;
+use LynxCms\Admin\Fields\FieldFormTabs;
+use LynxCms\Admin\Fields\FieldTemplateOptions;
+use LynxCms\Admin\Livewire\Concerns\DeletesField;
 use LynxCms\Admin\Livewire\Concerns\EditsChoiceOptions;
+use LynxCms\Admin\Livewire\Concerns\EditsFieldAccess;
 use LynxCms\Admin\Livewire\Concerns\EditsFormatters;
 use LynxCms\Admin\Livewire\Concerns\EditsItemDisplay;
 use LynxCms\Admin\Livewire\Concerns\EditsItemSettings;
 use LynxCms\Admin\Livewire\Concerns\MakesFieldTranslatable;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
-use LynxCms\Core\Actions\Runner\ActionResult;
-use LynxCms\Core\Actions\Runner\Change;
 use LynxCms\Core\Models\Field;
-use LynxCms\Core\Models\Template;
 use LynxCms\Core\Support\Value;
 
 /**
- * Setup > Fields > New field and Edit field, in tabs: a repeater's or matrix's builder, Preview,
- * Field, and Limits and display. Kinds and settings are in words for people (FieldKinds,
+ * Setup > Fields > New field and Edit field, in tabs (FieldFormTabs): Basics, Settings, Access,
+ * Advanced and Preview, plus a repeater's or matrix's builder and limits. Kinds and settings are in words for people (FieldKinds,
  * SettingLabels); every write goes through fields.create or fields.update, whose errors show by
  * their inputs. Name and type are fixed once the field exists (schema-admin plan); a shared field can be made translatable.
  *
@@ -37,7 +38,9 @@ use LynxCms\Core\Support\Value;
  */
 final class FieldForm extends Component
 {
+    use DeletesField;
     use EditsChoiceOptions;
+    use EditsFieldAccess;
     use EditsFormatters;
     use EditsItemDisplay;
     use EditsItemSettings;
@@ -79,13 +82,8 @@ final class FieldForm extends Component
     #[Locked]
     public ?string $status = null;
 
-    /** Showing what deleting the field would remove, waiting for confirmation. */
-    #[Locked]
-    public bool $isConfirmingDelete = false;
-
-    /** @var list<string> the dry run's change lines */
-    #[Locked]
-    public array $deleteSummary = [];
+    /** What is typed into the Preview tab's input (FieldPreviewInput); never saved. */
+    public mixed $previewValue = '';
 
     /** Runs on mount and on every Livewire update, so the gate also guards /livewire/update. */
     public function boot(AdminAccess $access): void
@@ -110,6 +108,7 @@ final class FieldForm extends Component
             $this->fallback = Value::string($config['fallback'] ?? 'inherit');
             $this->autoload = ($config['autoload'] ?? false) === true;
             $this->locked = ($config['locked'] ?? false) === true;
+            $this->loadAccess($config);
             $this->settings = app(SchemaForm::class)->toForm($this->definitions(), $config);
             $this->loadChoiceOptions($config);
             $this->formatters = Value::strings($config['formatters'] ?? []);
@@ -125,6 +124,7 @@ final class FieldForm extends Component
         $this->formatters = [];
         $this->resetItemSettings();
         $this->addLabel = LocalizedForm::toForm(null);
+        $this->previewValue = '';
     }
 
     public function save(SchemaForm $form): void
@@ -149,43 +149,28 @@ final class FieldForm extends Component
         $this->notify(__('lynx-admin::fields.saved'));
     }
 
-    /** A dry run first, so the confirmation can say which templates and values go. */
-    public function confirmDelete(): void
-    {
-        $this->authorizeEditing();
-        $result = lynx()->fields->delete((string) $this->field, dryRun: true);
-        $this->deleteSummary = $result instanceof ActionResult ? array_map(fn (Change $change): string => $change->summary, $result->changes->all()) : [];
-        $this->isConfirmingDelete = true;
-    }
-
-    public function cancelDelete(): void
-    {
-        $this->isConfirmingDelete = false;
-        $this->deleteSummary = [];
-    }
-
-    public function delete(): void
-    {
-        $this->authorizeEditing();
-        lynx()->fields->delete((string) $this->field);
-        $this->redirectRoute('lynx.admin.fields');
-    }
-
     public function render(): View
     {
         $types = lynx()->fields->types();
 
         $kinds = app(FieldKinds::class);
+        $definitions = $this->definitions();
+        $formatters = lynx()->formatters()->forType($this->type);
+        $accessRoles = $this->accessRoles();
+        $canProtect = $this->canProtect();
+        $shownSettings = $this->hasItemBuilder() ? array_diff_key($definitions, array_flip(self::ITEM_DISPLAY_SETTINGS)) : $definitions;
+        $tabs = new FieldFormTabs($this->hasItemBuilder(), $this->field === null, $shownSettings !== [] || $formatters !== [], $accessRoles !== [] && $canProtect);
 
         return view('lynx-admin::livewire.field-form', [
             'title' => $this->field === null ? __('lynx-admin::fields.new') : (LocalizedForm::fromForm($this->label) === null ? $this->field : Value::string(collect($this->label)->filter()->first())),
-            'sections' => $this->sections(),
+            'tabs' => $tabs,
+            'sections' => $tabs->all(),
             'kind' => $kinds->for($this->type),
             'kinds' => $this->field === null ? $kinds->grouped(array_keys(app(FieldTypeChoices::class)->for($types))) : [],
             'types' => $types,
             'offeredTypes' => app(FieldTypeChoices::class)->for($types),
-            'definitions' => $this->definitions(),
-            'availableFormatters' => lynx()->formatters()->forType($this->type),
+            'definitions' => $definitions,
+            'availableFormatters' => $formatters,
             // With one language the choice means nothing yet, and it can't be changed later.
             'canTranslate' => $this->isMultilingual() && $this->typeCanTranslate(),
             'canMakeTranslatable' => $this->canMakeTranslatable(),
@@ -196,39 +181,10 @@ final class FieldForm extends Component
             'subfieldChoices' => $this->hasItemBuilder() ? $this->subfieldChoices() : [],
             'subfieldTypes' => $this->hasItemBuilder() ? $this->subfieldTypes() : [],
             'typeUsage' => $this->typeUsage(),
-            'templateOptions' => $this->templateOptions(),
+            'templateOptions' => app(FieldTemplateOptions::class)->all(),
+            'accessRoles' => $accessRoles,
+            'canProtect' => $canProtect,
         ]);
-    }
-
-    /**
-     * The site's templates, for settings that name templates (SettingFormats::TEMPLATE); those
-     * Lynx and its modules own are left out, as the New page screen leaves them out.
-     *
-     * @return list<array{name: string, label: string}>
-     */
-    private function templateOptions(): array
-    {
-        $owners = app(SchemaOwners::class);
-
-        return array_values(lynx()->templates->all()
-            ->reject(fn (Template $template): bool => $owners->isSystemTemplate((string) $template->name))
-            ->map(fn (Template $template): array => ['name' => (string) $template->name, 'label' => $template->label])
-            ->sortBy('label')->all());
-    }
-
-    /**
-     * The form's tabs, the first one open: a builder's list first on a repeater or matrix that
-     * exists, the Field tab first otherwise.
-     *
-     * @return list<string>
-     */
-    private function sections(): array
-    {
-        if (! $this->hasItemBuilder()) {
-            return ['field', 'preview'];
-        }
-
-        return $this->field === null ? ['field', 'builder', 'preview', 'limits'] : ['builder', 'preview', 'field', 'limits'];
     }
 
     /**
@@ -250,6 +206,12 @@ final class FieldForm extends Component
         $owners = app(SchemaOwners::class);
 
         return $this->field === null ? $owners->isEditingEnabled() : $owners->canEditField($this->field);
+    }
+
+    /** Only superusers change who may see and edit a field, or lock it for the site's code. */
+    private function canProtect(): bool
+    {
+        return app(AdminAccess::class)->isSuperuser();
     }
 
     /** Read only screens refuse writes on the server too, whatever the browser sends. */
@@ -286,7 +248,13 @@ final class FieldForm extends Component
             'formatters' => $this->formatters !== [] ? $this->formatters : null,
             'autoload' => $this->autoload ? true : null,
             'locked' => $this->locked ? true : null,
+            'access' => $this->accessSetting(),
         ];
+
+        // fields.update refuses changes to these from anyone but a superuser; others leave them as stored.
+        if (! $this->canProtect()) {
+            unset($settings['access'], $settings['locked']);
+        }
 
         if ($this->translatable) {
             $settings['fallback'] = $this->fallback === 'none' ? 'none' : null;

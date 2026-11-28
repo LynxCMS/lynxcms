@@ -61,6 +61,7 @@ final class AtlasEditorsSeeder extends Seeder
         lynx()->run(SaveRole::class, ['name' => 'course-manager', 'label' => 'Course manager', 'grants' => [
             ['permission' => 'admin.access'],
             $grant('pages.view', '/courses/'),
+            $grant('pages.view', '/locations/'),
             $grant('pages.edit', '/courses/'),
             $grant('pages.create', '/courses/', ['course', 'session']),
             $grant('pages.publish', '/courses/'),

@@ -13,7 +13,10 @@
         </p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
-        <x-lynx-admin::ui.button variant="ghost" :href="route('lynx.admin.fields')">{{ __($field === null ? 'lynx-admin::fields.header.cancel' : 'lynx-admin::fields.header.all') }}</x-lynx-admin::ui.button>
+        {{-- The breadcrumb leads back to the field list, so an existing field needs no button for it. --}}
+        @if ($field === null)
+            <x-lynx-admin::ui.button variant="ghost" :href="route('lynx.admin.fields')">{{ __('lynx-admin::fields.header.cancel') }}</x-lynx-admin::ui.button>
+        @endif
         @if ($canEdit)
             <x-lynx-admin::ui.button type="submit" form="field-form">{{ __($field === null ? 'lynx-admin::fields.header.create' : 'lynx-admin::fields.header.save') }}</x-lynx-admin::ui.button>
         @endif

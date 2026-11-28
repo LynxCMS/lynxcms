@@ -17,9 +17,10 @@
     @if ($confirmingDelete === null)
         <div class="flex flex-wrap items-center gap-2">
             <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="markSelected('read')">{{ __('lynx-forms::admin.inbox.mark_read') }}</x-lynx-admin::ui.button>
-            <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="markSelected('archived')">{{ __('lynx-forms::admin.inbox.archive') }}</x-lynx-admin::ui.button>
-            <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="markSelected('spam')">{{ __('lynx-forms::admin.inbox.mark_spam') }}</x-lynx-admin::ui.button>
-            @if ($canDelete)
+            {{-- Archived and spam submissions are purged later, so they need forms.manage, as delete does. --}}
+            @if ($canManage)
+                <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="markSelected('archived')">{{ __('lynx-forms::admin.inbox.archive') }}</x-lynx-admin::ui.button>
+                <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="markSelected('spam')">{{ __('lynx-forms::admin.inbox.mark_spam') }}</x-lynx-admin::ui.button>
                 <x-lynx-admin::ui.button variant="outline" size="xs" type="button" wire:click="confirmDelete" class="text-destructive hover:text-destructive" data-inbox-delete>{{ __('lynx-forms::admin.inbox.delete') }}</x-lynx-admin::ui.button>
             @endif
         </div>

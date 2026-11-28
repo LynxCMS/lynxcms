@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'required',
         'locked' => 'Set by the site, not editable here.',
+        'restricted' => 'Your role can see this field but not change it.',
         'loading' => 'Loading…',
         'translatable' => 'translatable',
         'searchable' => 'searchable',
@@ -117,6 +118,7 @@ return [
     ],
     'value' => [
         'missing_page' => 'Missing page #:id',
+        'hidden_page' => 'Page #:id (outside your access)',
         'yes' => 'Yes',
         'no' => 'No',
     ],

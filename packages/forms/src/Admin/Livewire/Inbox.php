@@ -107,7 +107,7 @@ final class Inbox extends Component
             'pages' => $this->pageLinks($lastPage),
             'hasAny' => $total > 0 || Submission::query()->exists(),
             'isPageSelected' => $this->isPageSelected(),
-            'canDelete' => app(AdminAccess::class)->allows('forms.manage'),
+            'canManage' => app(AdminAccess::class)->allows('forms.manage'),
             'exportQuery' => array_diff_key($this->filter()->toArray(), ['form' => true]),
         ]);
     }
@@ -151,7 +151,7 @@ final class Inbox extends Component
     private function dates(): array
     {
         $now = CarbonImmutable::now();
-        $date = fn (string $value): ?CarbonImmutable => preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1 ? CarbonImmutable::parse($value) : null;
+        $date = fn (string $value): ?CarbonImmutable => preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value) === 1 ? CarbonImmutable::parse($value) : null;
 
         return match ($this->period) {
             '7_days' => [$now->subDays(6)->startOfDay(), null],

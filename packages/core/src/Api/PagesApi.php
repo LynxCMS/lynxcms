@@ -36,6 +36,7 @@ use LynxCms\Core\Pages\TranslationStates;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Query\Backlinks;
 use LynxCms\Core\Query\PageFinder;
+use LynxCms\Core\Query\SelectorPolicy;
 use LynxCms\Core\Support\Value;
 use LynxCms\Core\Templates\TemplateRegistry;
 use UnexpectedValueException;
@@ -99,14 +100,15 @@ final readonly class PagesApi
     }
 
     /**
-     * Find pages. Pass $maxLimit when the selector comes from outside your code (a search box,
-     * an API, an agent) so it cannot ask for every page at once.
+     * Find pages. When the selector comes from outside your code (a search box, an API), pass
+     * $maxLimit so it cannot ask for every page at once, and a $policy such as
+     * SelectorPolicy::forVisitors() so it cannot reach unpublished pages or fields you don't show.
      *
      * @param  list<string>  $with  page-reference fields to eager load
      */
-    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null): PageArray
+    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null, ?SelectorPolicy $policy = null): PageArray
     {
-        return $this->finder->find($selector, $with, $maxLimit, $defaultLimit);
+        return $this->finder->find($selector, $with, $maxLimit, $defaultLimit, policy: $policy);
     }
 
     public function findOne(string $selector): ?Page

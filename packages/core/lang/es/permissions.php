@@ -7,7 +7,7 @@ return [
         'manage' => 'Gestionar los menús',
     ],
     'forms' => [
-        'view' => 'Ver y clasificar los envíos de formularios',
+        'view' => 'Ver los envíos de formularios y marcarlos como leídos',
         'manage' => 'Crear formularios y eliminar envíos',
     ],
     'seo' => [
@@ -46,6 +46,10 @@ return [
     ],
     'finder' => [
         'share' => 'Compartir búsquedas guardadas en Buscar páginas',
+    ],
+    'insights' => [
+        'view' => 'Ver informes de sugerencias',
+        'review' => 'Aprobar, descartar y archivar sugerencias, y escribir informes',
     ],
     'agent' => [
         'use' => 'Usar el agente integrado y aprobar sus planes',

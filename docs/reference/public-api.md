@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 271 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 287 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -22,6 +22,8 @@ In `LynxCms\Contracts`.
 | `Fields\FieldType` | interface | A field type owns its storage, its value conversion and its validation. |
 | `Fields\FormatContext` | class | What a formatter knows about the value it formats. |
 | `Fields\Formatter` | interface | A text formatter: attached to text fields in an ordered list, run when a template outputs the value, never on the stored value. |
+| `Metrics\PageMetrics` | interface | Counts of what visitors did on pages, kept by the site or a module. |
+| `Pages\PageCache` | class | What code that renders a page can tell the page cache (lynxcms/cache), without depending on it. |
 | `Translation\TranslationProvider` | interface | Machine translation behind one interface: a model through laravel/ai, DeepL, a local model. |
 
 ## lynxcms/core
@@ -124,6 +126,7 @@ In `LynxCms\Core`.
 | `Fields\Choices\Choice` | class | One chosen option of a choice field: its stable value and its label in the current language. |
 | `Fields\Choices\ChoiceList` | class | The chosen options of a choice field that allows several, in the order of the field's options. |
 | `Fields\DescribesPhpType` | interface | A field type that tells static analysis what templates read: the PHPDoc type of $page-&gt;field for a shared (not translatable) field, as the type presents it, null included when an empty value reads as null. |
+| `Fields\FieldAccess` | class | Field access per role: a field with an "access" setting is managed, and only the roles it lists may see it ("view") or edit it ("edit"); a role that may edit may also see. |
 | `Fields\FieldRegistry` | class | Read access to field definitions, cached per request. |
 | `Fields\FieldTypeRegistry` | class | Registered field types. |
 | `Fields\FormatterRegistry` | class | Registered text formatters. |
@@ -172,6 +175,7 @@ In `LynxCms\Core`.
 | `Permissions\PermissionRegistry` | class | The permissions roles can grant. |
 | `Permissions\RoleAssignment` | class | A host app user holding a role. |
 | `Query\SelectorException` | class | Thrown for a selector Lynx cannot read; its message says what is wrong. |
+| `Query\SelectorPolicy` | class | Limits on a selector that comes from outside the site's code, checked before it compiles: which fields it may filter, sort or load, which terms it may use, and how much it may ask for. |
 | `Schema\SchemaEditing` | class | Who may change the schema. |
 | `Schema\SchemaOwners` | class | Which templates and fields belong to Lynx or a module rather than to the site. |
 | `Schema\SchemaWording` | class | Where a module keeps translations of the labels it installs. |
@@ -295,6 +299,25 @@ In `LynxCms\Forms`.
 | `SubmissionFilter` | class | Which submissions the inbox shows and its bulk actions and export act on: a form, a status ("open" is new and read, "all" every status), text in the answers, a date range, an email address that is a whole answer (for a person's data), and the newest id when the selection was made, so a submission that arrives later is left alone. |
 | `Transfer\FormExporter` | class | A builder form's structure as data, for JSON: its name, title, messages and the blocks of its fields, with texts keyed by language code and the code of the site's default language, so another site can key them by its own. |
 | `Transfer\FormTransferError` | class | A form that can't be exported: one the site lacks, or one defined in code, which travels with the app's code instead. |
+
+## lynxcms/insights
+
+In `LynxCms\Insights`.
+
+| Name | Kind | What it is |
+| --- | --- | --- |
+| `Actions\ApproveInsight` | class | Makes the change an insight suggests, as the person approving. |
+| `Actions\ArchiveInsight` | class | Archive an open insight. |
+| `Actions\DismissInsight` | class | Dismiss an open insight. |
+| `Actions\GenerateInsights` | class | Writes a report: every source suggests changes for the period, and the insights are stored in one report. |
+| `Actions\StopInsight` | class | Stops a running approval: the steps done stay done, the waiting ones are marked stopped, so their jobs do nothing when they run, and the insight is open again with its pages' basis taken afresh. |
+| `Insight` | class | One suggested change and why. |
+| `InsightPeriod` | class | The days a report looks back over, ending when it is written. |
+| `InsightSource` | interface | Something that reads the site and suggests changes, as a doctor check reports problems. |
+| `InsightSourceRegistry` | class | The insight sources a report runs, added by modules and apps from their service providers. |
+| `InsightState` | enum | Where an insight stands. |
+| `InsightText` | class | Wording of an insight, kept as a translation key and its replacements, so a report written in one language reads in each editor's own. |
+| `InsightsReported` | class | Fired once a report is stored, after its transaction commits; never on a dry run. |
 
 ## lynxcms/media
 

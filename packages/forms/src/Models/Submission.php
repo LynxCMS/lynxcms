@@ -43,6 +43,9 @@ final class Submission extends Model
 {
     public const array STATUSES = ['new', 'read', 'archived', 'spam'];
 
+    /** Statuses the purge deletes once old enough (PurgeSubmissions): setting one needs forms.manage. */
+    public const array PURGED_STATUSES = ['archived', 'spam'];
+
     #[Override]
     protected $table = FormsTables::SUBMISSIONS;
 

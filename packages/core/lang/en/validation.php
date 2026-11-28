@@ -70,6 +70,7 @@ return [
         'unique_used' => 'A unique page\'s name must not be used anywhere else, but [:name] is already used by :page.',
     ],
     'values' => [
+        'no_access' => 'Your role may not change this field.',
         'locked' => 'This field is locked: only the site\'s code changes it.',
         'required' => ':field is required.',
         'required_default' => ':field is required in the default language.',
@@ -82,6 +83,7 @@ return [
         'url' => 'Enter an address starting with https://.',
         'url_or_path' => 'Enter an address starting with https:// or a path starting with /.',
         'page_template' => 'Pick pages that use :templates: [:page] uses :template.',
+        'page_not_viewable' => 'Pick pages you may view: page :id is not one of them.',
         'pages_max' => 'Pick at most :count page.|Pick at most :count pages.',
         'pages_min' => 'Pick at least :count page.|Pick at least :count pages.',
     ],

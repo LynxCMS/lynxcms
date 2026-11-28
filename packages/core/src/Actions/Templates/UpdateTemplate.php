@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Actions\Templates;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Actions\Runner\ActionContext;
@@ -12,8 +13,10 @@ use LynxCms\Core\Actions\Runner\RefusesUnknownInput;
 use LynxCms\Core\Events\TemplateUpdated;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\References\PageReferenceIndex;
+use LynxCms\Core\Permissions\Authorizer;
 use LynxCms\Core\Support\LocalizedText;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\Templates\FieldDisplay;
 use LynxCms\Core\Templates\Layout\FieldListInput;
 use LynxCms\Core\Templates\Layout\LayoutRules;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
@@ -32,6 +35,7 @@ final class UpdateTemplate extends Action implements RefusesUnknownInput
         private readonly TemplateRegistry $templates,
         private readonly TemplateFieldsWriter $writer,
         private readonly PageReferenceIndex $references,
+        private readonly Authorizer $authorizer,
     ) {}
 
     public static function name(): string
@@ -70,9 +74,9 @@ final class UpdateTemplate extends Action implements RefusesUnknownInput
             'allow_children' => ['sometimes', 'boolean'],
             'tabs' => ['sometimes', 'array'],
             'child_templates' => ['sometimes', 'array'],
-            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
             'parent_templates' => ['sometimes', 'array'],
-            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
         ];
     }
 
@@ -127,6 +131,7 @@ final class UpdateTemplate extends Action implements RefusesUnknownInput
             }
         }
 
+        $this->authorizeLocks($before, $fields, $context);
         $settings['sections'] = $sections;
         $settings = array_filter($settings, fn (mixed $value, string $key): bool => ! in_array($key, ['sections', 'tabs'], true) || $value !== [], ARRAY_FILTER_USE_BOTH);
         LayoutRules::assert($fields, $settings);
@@ -158,5 +163,24 @@ final class UpdateTemplate extends Action implements RefusesUnknownInput
             ]);
 
         return $template;
+    }
+
+    /**
+     * Only superusers lock or unlock a field on this template (ADR-0149), as on the field itself:
+     * a role with schema.manage could otherwise unlock a field and then write it. Rows that keep
+     * their lock, and fields removed from the template, need nothing.
+     *
+     * @param  array<string, array<string, mixed>>  $before
+     * @param  array<string, array<string, mixed>>  $after
+     */
+    private function authorizeLocks(array $before, array $after, ActionContext $context): void
+    {
+        $isLocked = fn (array $row): bool => ($row['locked'] ?? false) === true || Value::string($row['editor'] ?? '') === FieldDisplay::Locked->value;
+
+        foreach ($after as $name => $row) {
+            if ($isLocked($row) !== (isset($before[$name]) && $isLocked($before[$name])) && ! $this->authorizer->isSuperuser($context->actor)) {
+                throw new AuthorizationException(Value::string(__('lynx::access.denied.field_protection', ['field' => $name, 'setting' => 'locked'])));
+            }
+        }
     }
 }

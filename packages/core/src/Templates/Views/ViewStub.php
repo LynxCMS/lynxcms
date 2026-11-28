@@ -25,7 +25,7 @@ final readonly class ViewStub
     /** @param  string|null  $layout  a Blade component such as "layouts.site", given $page */
     public function for(Template $template, ?string $layout = null, bool $allTabs = false): string
     {
-        $lines = ['{{-- '.$template->labels()->in().' ('.$template->name.'): written by lynx:make:view, yours to change. --}}'];
+        $lines = ['{{-- '.BladeComment::text($template->labels()->in()).' ('.$template->name.'): written by lynx:make:view, yours to change. --}}'];
         $section = null;
         $elsewhere = [];
 
@@ -42,7 +42,7 @@ final readonly class ViewStub
 
             if ($label !== null && $label !== $section) {
                 $lines[] = '';
-                $lines[] = '{{-- '.$label.' --}}';
+                $lines[] = '{{-- '.BladeComment::text($label).' --}}';
             }
 
             $section = $label ?? $section;

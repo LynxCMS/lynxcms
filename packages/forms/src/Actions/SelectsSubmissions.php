@@ -7,6 +7,7 @@ namespace LynxCms\Forms\Actions;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\JsonSchema\Types\Type;
+use Illuminate\Support\Str;
 use LynxCms\Core\Actions\Runner\Input;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
@@ -54,9 +55,11 @@ trait SelectsSubmissions
     {
         if ($input->has('submissions')) {
             $references = Value::strings($input->get('submissions'));
-            $ids = array_map(intval(...), array_filter($references, ctype_digit(...)));
+            // PostgreSQL's uuid column refuses text that is no uuid: uuids and ids are compared apart.
+            $uuids = array_values(array_filter($references, Str::isUuid(...)));
+            $ids = array_map(intval(...), array_values(array_filter($references, ctype_digit(...))));
 
-            return Submission::query()->where(fn (Builder $q) => $q->whereIn('uuid', $references)->orWhereIn('id', $ids));
+            return Submission::query()->where(fn (Builder $q) => $q->whereIn('uuid', $uuids)->orWhereIn('id', $ids));
         }
 
         return SubmissionFilter::fromArray(Value::map($input->get('filter')))->query();

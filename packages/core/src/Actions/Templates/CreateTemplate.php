@@ -57,7 +57,7 @@ final class CreateTemplate extends Action
     {
         return [
             'uuid' => ['nullable', 'uuid', Rule::unique(Tables::TEMPLATES, 'uuid')],
-            'name' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/', Rule::unique(Tables::TEMPLATES, 'name')],
+            'name' => ['required', 'string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D', Rule::unique(Tables::TEMPLATES, 'name')],
             'label' => ['nullable', ...LocalizedText::rules()],
             'from' => ['nullable', 'string'],
             'fields' => ['sometimes', 'array'],
@@ -68,9 +68,9 @@ final class CreateTemplate extends Action
             'allow_children' => ['sometimes', 'boolean'],
             'tabs' => ['sometimes', 'array'],
             'child_templates' => ['sometimes', 'array'],
-            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'child_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
             'parent_templates' => ['sometimes', 'array'],
-            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/'],
+            'parent_templates.*' => ['string', 'regex:/^[a-z][a-z0-9_-]{0,63}$/D'],
         ];
     }
 

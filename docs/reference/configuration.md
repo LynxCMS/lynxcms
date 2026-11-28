@@ -105,6 +105,7 @@ Comes with `lynxcms/media`; publish it with `php artisan vendor:publish --tag=ly
 | `downloads.enabled` | `true` (`LYNX_MEDIA_URL_DOWNLOADS`) | Let `media.store` download files from URLs. |
 | `downloads.allowed_hosts` | `[]` | Hosts trusted for downloads on any address and port, such as your own asset server. |
 | `quality` | `82` (`LYNX_MEDIA_QUALITY`) | JPEG and WebP quality of image sizes. |
+| `queue_sizes` | `false` (`LYNX_MEDIA_QUEUE_SIZES`) | Make image sizes in queued jobs instead of during the render. See [Sizes in a queue](/basics/images-and-files#sizes-in-a-queue). |
 | `presets` | `thumb`, `card`, `hero` | Named sizes for `$image->preset('card')`. |
 | `prune_after_hours` | `24` | Age before `lynx:media:prune` deletes files nothing uses. |
 

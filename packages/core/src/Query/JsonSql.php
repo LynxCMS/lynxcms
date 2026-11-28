@@ -89,7 +89,7 @@ final class JsonSql
         self::assertKey($key);
         $alias = self::ELEMENT;
 
-        if ($language !== null && preg_match('/^[A-Za-z0-9_-]+$/', $language) !== 1) {
+        if ($language !== null && preg_match('/^[A-Za-z0-9_-]+$/D', $language) !== 1) {
             throw new SelectorException(Value::string(__('lynx::selectors.language_code', ['language' => $language])));
         }
 
@@ -119,7 +119,7 @@ final class JsonSql
 
     private static function assertKey(string $key): void
     {
-        if (preg_match('/^[a-z][a-z0-9_]*$/', $key) !== 1) {
+        if (preg_match('/^[a-z][a-z0-9_]*$/D', $key) !== 1) {
             throw new SelectorException(Value::string(__('lynx::selectors.field_name', ['field' => $key])));
         }
     }

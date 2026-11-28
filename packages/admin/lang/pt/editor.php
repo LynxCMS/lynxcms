@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'obrigatório',
         'locked' => 'Definido pelo site, não editável aqui.',
+        'restricted' => 'A sua função pode ver este campo, mas não o pode alterar.',
         'loading' => 'A carregar…',
         'translatable' => 'traduzível',
         'searchable' => 'pesquisável',
@@ -117,6 +118,7 @@ return [
     ],
     'value' => [
         'missing_page' => 'Página #:id em falta',
+        'hidden_page' => 'Página #:id (fora do seu acesso)',
         'yes' => 'Sim',
         'no' => 'Não',
     ],

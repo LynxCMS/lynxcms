@@ -124,7 +124,8 @@ final readonly class AdminAccess
         return array_map(fn (string $permission): bool => $this->allows($permission, $page), $actions);
     }
 
-    private function actor(): Actor
+    /** Who the admin acts as: the signed-in user, as the action runner sees them. */
+    public function actor(): Actor
     {
         return $this->runner->actor();
     }

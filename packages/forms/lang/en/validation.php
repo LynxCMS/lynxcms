@@ -12,6 +12,7 @@ return [
     ],
     'field' => 'Field [:field] exists with other settings; the form builder needs [:needs].',
     'submission' => 'There is no submission [:submission].',
+    'file_content' => "The file's content does not fit its .:extension name.",
     'import' => [
         'value' => 'Fields of type [:type] have no setting [:value].',
     ],

@@ -13,6 +13,8 @@ import { registerShortcuts } from './shortcuts.js'
 import { lynxPasskeyRegister, lynxPasskeyVerify } from './passkeys.js'
 import { keepFieldErrorsLinked } from './field-errors.js'
 import { lynxNotices } from './notices.js'
+import { lynxUploadZone } from './upload-zone.js'
+import { shrinkImage } from './image-shrink.js'
 import { TOOLS, TOOL_EXTENSIONS } from './rich-text-tools.js'
 
 /** Block tags that start a new line in the HTML view, so the markup reads one block per line. */
@@ -307,9 +309,13 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('lynxPasskeyRegister', lynxPasskeyRegister)
     window.Alpine.data('lynxPasskeyVerify', lynxPasskeyVerify)
     window.Alpine.data('lynxNotices', lynxNotices)
+    window.Alpine.data('lynxUploadZone', lynxUploadZone)
 })
 
 /** A field name made from a label, as the New field screen suggests it: "Opening hours" becomes "opening_hours". */
+// Scales an image file down before uploading; modules' upload screens may use it too.
+window.lynxShrinkImage = shrinkImage
+
 window.lynxFieldName = (label) => String(label ?? '')
     .normalize('NFD').replace(/\p{Diacritic}/gu, '')
     .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')

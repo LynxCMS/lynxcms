@@ -230,11 +230,20 @@ Without `sort`, pages come in the order editors gave them among their siblings (
 
 ### Selectors from visitors
 
-Some apps take a whole selector from a request, such as an API that lets its clients filter pages. In the controller, give it a cap, so a client can't ask for every page at once:
+Some apps take a whole selector from a request, such as an API that lets its clients filter pages. In the controller, give it a cap, so a client can't ask for every page at once, and a policy that names the fields the client may use:
 
 ```php
-lynx()->pages->find($request->string('q'), maxLimit: 50, defaultLimit: 20);
+use LynxCms\Core\Query\SelectorPolicy;
+
+lynx()->pages->find(
+    $request->string('q'),
+    maxLimit: 50,
+    defaultLimit: 20,
+    policy: SelectorPolicy::forVisitors(['title', 'price', 'category']),
+);
 ```
+
+`SelectorPolicy::forVisitors()` refuses `include`, `join`, `status`, and the `has_` terms, so the selector only finds published pages. It refuses any field you didn't name, in a condition, in `sort`, or through a page reference (`author.email`). This matters even for fields no template prints: `notes^=a`, then `notes^=b`, would read a value one letter at a time from whether a page is found. It also caps the work a selector asks for: 10 conditions, 20 values, and `start=1000` by default. Add `search` to the list to allow `search*=`. A refused selector throws a `SelectorException`, which your controller can turn into a 422 response.
 
 The usual case is different: your selector, with a visitor's words in it. Never paste those words in as they come, as in `"template=post, title%={$request->q}"`: a visitor could add conditions of their own, such as `include=unpublished` or `status=unpublished` to list unpublished pages. Check them against what you expect (a known category name, digits for an id) before they go in. For free text, remove double quotes and put the text inside double quotes: inside them, commas, pipes and single quotes are plain text. [Visitor Input](/basics/visitor-input#words-in-a-selector) shows the whole step.
 

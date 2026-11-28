@@ -62,7 +62,7 @@ final class PageTableType extends BaseFieldType implements DescribesPhpType, Nee
 
     public function rules(array $settings): array
     {
-        // Its templates are checked on save for the pages being added (ReferenceTemplates, ADR-0095).
+        // Its templates are checked on save for the pages being added (ReferenceChecks, ADR-0095).
         return ['nullable', 'array'];
     }
 }

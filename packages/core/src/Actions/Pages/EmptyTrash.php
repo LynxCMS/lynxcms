@@ -66,18 +66,20 @@ final class EmptyTrash extends Action
 
         foreach ($this->branches($input->int('page')) as $top) {
             $ids = Value::ints(DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $top)->pluck('descendant_id')->all());
-            $locked = $this->locked($ids);
 
-            if ($locked !== []) {
-                $result['blocked'][] = ['page' => $top, 'locked' => $locked];
-
-                continue;
-            }
-
+            // Authorized first: a branch the actor may not delete is only counted, its locked pages unnamed.
             try {
                 $context->authorizePages('pages.delete', $ids);
             } catch (AuthorizationException) {
                 $result['denied'][] = $top;
+
+                continue;
+            }
+
+            $locked = $this->locked($ids);
+
+            if ($locked !== []) {
+                $result['blocked'][] = ['page' => $top, 'locked' => $locked];
 
                 continue;
             }

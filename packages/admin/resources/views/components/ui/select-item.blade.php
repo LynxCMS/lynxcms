@@ -8,7 +8,7 @@
 
 @php
     $indicator = in_array($indicator, ['check', 'checkbox', 'radio'], true) ? $indicator : 'check';
-    $jsVal = \Illuminate\Support\Js::from((string) $value)->toHtml();
+    $jsVal = Js::from((string) $value)->toHtml();
 @endphp
 
 <div

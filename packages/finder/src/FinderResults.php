@@ -9,11 +9,13 @@ use LynxCms\Admin\Tree\TreeFilters;
 use LynxCms\Core\Pages\Page;
 use LynxCms\Core\Pages\PageArray;
 use LynxCms\Core\Query\PageFinder;
+use LynxCms\Core\Query\SelectorPolicy;
 use LynxCms\Finder\Search\FinderQuery;
 
 /**
  * Runs a finder search over the pages the page tree's filters cover (every status, without the
- * trash, system pages and module branches) and only those the current user may view.
+ * trash, system pages and module branches) and only those the current user may view, with only
+ * the fields the user may view (SelectorPolicy::forActor).
  *
  * @internal
  */
@@ -47,6 +49,7 @@ final readonly class FinderResults
     {
         $scope = $this->access->viewScope();
 
-        return app(PageFinder::class)->find(new TreeFilters($scope)->within($terms), scope: $scope);
+        // The catalog leaves out fields the user may not view; a saved search shared by someone else may still name one.
+        return app(PageFinder::class)->find(new TreeFilters($scope)->within($terms), scope: $scope, policy: SelectorPolicy::forActor($this->access->actor()));
     }
 }

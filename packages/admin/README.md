@@ -5,6 +5,8 @@
 
 Livewire admin for Lynx CMS. It calls the same API and actions as every other caller and never touches the database directly. The first screen is the page tree at `/lynx/pages`.
 
+![The page tree in the Lynx admin](screenshots/pages.png)
+
 ## Installing
 
 ```bash

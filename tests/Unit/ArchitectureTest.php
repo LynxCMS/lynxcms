@@ -25,6 +25,12 @@ use LynxCms\Core\Search\Engines\SqliteSearchEngine;
 use LynxCms\Core\Templates\TemplateFieldsWriter;
 use LynxCms\Core\Templates\TemplateRegistry;
 use LynxCms\Forms\FormsFiles;
+use LynxCms\Insights\Actions\ResolvesInsights;
+use LynxCms\Insights\Insight;
+use LynxCms\Insights\InsightSourceRegistry;
+use LynxCms\Insights\InsightText;
+use LynxCms\Insights\PageBasis;
+use LynxCms\Media\Fields\StoredFileCheck;
 use LynxCms\Media\MovePrivateMedia;
 use LynxCms\Media\Remote\MediaReferences;
 use LynxCms\Menus\Menus;
@@ -140,12 +146,19 @@ arch('only actions write page data')
         ClearOnChange::class,
         // Only defers forgetting the cached SEO settings until the action's transaction commits.
         SiteSettings::class,
+        // Only reads: the file entries a page stores, so a save reads the disk only for files it adds.
+        StoredFileCheck::class,
         // Reads which files a field's values name, and defers deleting moved files to the commit.
         MovePrivateMedia::class,
         // Reads which files pages' media values name, for lynx:media:pull.
         MediaReferences::class,
         // Only defers writing and deleting the admin's logo files until the action commits.
         SaveBranding::class,
+        // Only reads: when pages last changed, which pages have a language, and links to them.
+        PageBasis::class,
+        'LynxCms\Insights\Sources',
+        // Only queues an approval's steps once the approval commits (ADR-0157).
+        'LynxCms\Insights\Actions',
     ]);
 
 arch('no debugging calls')
@@ -185,3 +198,22 @@ arch('static export actions are final and extend the base action')
     ->classes()
     ->toBeFinal()
     ->toExtend(Action::class);
+
+arch('the core does not depend on insights')
+    ->expect('LynxCms\Core')
+    ->not->toUse('LynxCms\Insights');
+
+arch('insights work without the AI SDK')
+    ->expect('LynxCms\Insights')
+    ->not->toUse(['Laravel\Ai', 'LynxCms\Ai']);
+
+arch('insights work without Livewire or the admin, except their screen')
+    ->expect(['LynxCms\Insights\Actions', 'LynxCms\Insights\Console', 'LynxCms\Insights\Jobs', 'LynxCms\Insights\Models', 'LynxCms\Insights\Sources', Insight::class, InsightSourceRegistry::class, InsightText::class])
+    ->not->toUse(['Livewire', 'LynxCms\Admin']);
+
+arch('insight actions are final and extend the base action')
+    ->expect('LynxCms\Insights\Actions')
+    ->classes()
+    ->toBeFinal()
+    ->toExtend(Action::class)
+    ->ignoring(ResolvesInsights::class);

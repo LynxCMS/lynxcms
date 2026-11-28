@@ -34,4 +34,11 @@ return [
     'subfield_list' => 'O subcampo [:field] contém uma lista: use = ou !=.',
     'no_subfield' => 'O campo [:field] não tem o subcampo [:subfield].',
     'search' => 'Pesquise o índice com search*="palavras".',
+    'policy' => [
+        'term' => '[:term] não é permitido neste seletor.',
+        'field' => 'O campo [:field] não pode ser usado neste seletor.',
+        'clauses' => 'Este seletor tem demasiadas partes: no máximo :max.',
+        'values' => 'Este seletor tem demasiados valores: no máximo :max.',
+        'start' => 'start= pode ser no máximo :max aqui.',
+    ],
 ];

@@ -23,7 +23,7 @@ final readonly class BlockViewStub
     {
         $matrixType = $matrix->fieldType();
         $config = $matrix->config();
-        $label = $matrixType instanceof MatrixType ? $matrixType->typeLabel($config, $type) : $type;
+        $label = BladeComment::text($matrixType instanceof MatrixType ? $matrixType->typeLabel($config, $type) : $type);
         $lines = ["{{-- {$label} block of {$matrix->name} (\$block, \$page, \$loop): written by lynx:make:view, yours to change. --}}"];
 
         foreach ($matrixType instanceof MatrixType ? $matrixType->subfields($config, $type) : [] as $subfield) {

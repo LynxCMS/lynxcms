@@ -47,10 +47,10 @@
                             <label for="branding-{{ $field }}" class="text-sm font-medium">{{ $label }}</label>
                             <div class="flex items-center gap-2">
                                 <input type="color" aria-label="{{ __('lynx-admin::general.branding.pick', ['color' => $label]) }}" class="h-9 w-11 shrink-0 cursor-pointer rounded-md border bg-transparent p-1"
-                                       x-bind:value="$wire.{{ $field }} || @js($fallback ?? ($mode === 'dark' ? '#111111' : '#ffffff'))" x-on:change="$wire.set('{{ $field }}', $event.target.value)">
+                                       x-bind:value="$wire.{{ $field }} || @js($fallback ?? ($mode === 'dark' ? '#111111' : '#ffffff'))" x-on:change="$wire.set(@js($field), $event.target.value)">
                                 <input id="branding-{{ $field }}" type="text" class="blat-input w-32 font-mono" wire:model.live.debounce.400ms="{{ $field }}" placeholder="{{ $fallback ?? __('lynx-admin::general.branding.default_placeholder') }}" maxlength="7" @error($field) aria-invalid="true" @enderror>
                                 @if ($this->{$field} !== '')
-                                    <button type="button" class="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline" wire:click="$set('{{ $field }}', '')">{{ __($mode === 'dark' ? 'lynx-admin::general.branding.same_as_light' : 'lynx-admin::general.branding.default') }}</button>
+                                    <button type="button" class="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline" wire:click="$set(@js($field), '')">{{ __($mode === 'dark' ? 'lynx-admin::general.branding.same_as_light' : 'lynx-admin::general.branding.default') }}</button>
                                 @endif
                             </div>
                             <p class="lynx-field-help">{{ __('lynx-admin::general.branding.'.$colour.'_help') }}</p>

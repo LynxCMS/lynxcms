@@ -1,17 +1,38 @@
-{{-- The Preview tab: the field as editors see it in the page editor, from what the form holds now. --}}
+{{--
+    The Preview tab: the field as editors see it in the page editor, from what the form holds now.
+    Plain inputs are the page editor's own (FieldPreviewInput), so a rich text field shows its
+    editor and tools; the key changes with the settings, so the rich text editor starts again.
+--}}
 @php
     $shownLabel = collect($label)->filter()->first() ?: ($name !== '' ? Str::headline($name) : __('lynx-admin::fields.preview.label'));
     $shownHelp = collect($description)->filter()->first();
     $shownNote = collect($notes)->filter()->first();
     $addText = collect($addLabel)->filter()->first() ?: __('lynx-admin::fields.preview.add');
     $choices = app(\LynxCms\Admin\Editor\FieldPreviewChoices::class)->for($type, $settings);
+    $previewInput = app(\LynxCms\Admin\Fields\FieldPreviewInput::class);
+    $inputView = $previewInput->view($type);
 @endphp
 <div class="grid max-w-2xl gap-3" data-field-preview>
     <p class="text-muted-foreground text-sm">{{ __('lynx-admin::fields.preview.intro') }}</p>
     <div class="grid gap-2 rounded-lg border border-dashed p-4 text-sm">
-        <span class="font-medium">{{ $shownLabel }}</span>
+        {{-- The inputs name themselves after this label (aria-labelledby="field-{name}"). --}}
+        <span class="font-medium" id="field-preview-{{ $name !== '' ? $name : 'field' }}">{{ $shownLabel }}</span>
         @if ($shownHelp)<span class="text-muted-foreground">{{ $shownHelp }}</span>@endif
-        @if ($type === 'matrix')
+        @if ($inputView !== null)
+            <div wire:key="preview-{{ $type }}-{{ md5((string) json_encode($settings)) }}" data-preview-input="{{ $type }}">
+                @include($inputView, [
+                    'field' => $previewInput->field($name, $shownLabel, $type, $settings, null),
+                    'code' => lynx()->languages->default()->code,
+                    'model' => \LynxCms\Admin\Fields\FieldPreviewInput::MODEL,
+                    'placeholder' => '',
+                    'disabled' => false,
+                    'live' => false,
+                    'value' => $previewValue,
+                    'readOnly' => null,
+                    'page' => null,
+                ])
+            </div>
+        @elseif ($type === 'matrix')
             @forelse ($itemTypes as $blockType)
                 @include('lynx-admin::livewire.partials.items.block-mock', ['title' => collect($blockType['label'])->filter()->first() ?: ($blockType['slug'] ?: __('lynx-admin::fields.preview.new_block_type')), 'rows' => $blockType['fields']])
             @empty

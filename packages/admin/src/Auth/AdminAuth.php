@@ -20,6 +20,7 @@ use LynxCms\Admin\Admin;
 use LynxCms\Admin\AdminPath;
 use LynxCms\Admin\Http\InvitationController;
 use LynxCms\Admin\Http\NewPasswordController;
+use LynxCms\Admin\Http\SendAdminHeaders;
 use LynxCms\Admin\Http\UseAdminLocale;
 use LynxCms\Core\Actions\ActionRegistry;
 use LynxCms\Core\Support\Value;
@@ -103,7 +104,7 @@ final class AdminAuth
         $prefix = AdminPath::current();
         config([
             'fortify.prefix' => $prefix,
-            'fortify.middleware' => [...Value::strings(config('fortify.middleware', ['web'])), UseAdminLocale::class],
+            'fortify.middleware' => [...Value::strings(config('fortify.middleware', ['web'])), UseAdminLocale::class, SendAdminHeaders::class],
             'fortify.home' => "/{$prefix}/pages",
             'fortify.views' => true,
             'fortify.lowercase_usernames' => true,
@@ -187,7 +188,7 @@ final class AdminAuth
             Route::get('account/new-password', [NewPasswordController::class, 'show'])->name('account.new-password');
             Route::post('account/new-password', [NewPasswordController::class, 'store'])->name('account.new-password.save');
         });
-        Route::middleware(['web', 'guest', UseAdminLocale::class])->prefix(AdminPath::current())->name('lynx.admin.')->group(function (): void {
+        Route::middleware(['web', 'guest', UseAdminLocale::class, SendAdminHeaders::class])->prefix(AdminPath::current())->name('lynx.admin.')->group(function (): void {
             Route::get('invitation/{token}', [InvitationController::class, 'show'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation');
             Route::post('invitation', [InvitationController::class, 'store'])->middleware('throttle:'.self::LOGIN_ATTEMPTS_PER_MINUTE.',1')->name('invitation.accept');
         });

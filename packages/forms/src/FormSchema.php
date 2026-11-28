@@ -67,7 +67,7 @@ final class FormSchema
     public const string AUTO_REPLY = 'form_auto_reply';
 
     /** Form names, which are also their keys: "contact", "newsletter-signup". */
-    public const string NAME_PATTERN = '/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/';
+    public const string NAME_PATTERN = '/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/D';
 
     /** Block types that are form fields, as opposed to "step". */
     public const array FIELD_TYPES = ['text', 'email', 'tel', 'textarea', 'number', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'file', 'group'];

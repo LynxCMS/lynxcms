@@ -5,6 +5,8 @@
 
 Password-protected pages for Lynx CMS (pagePassword): a password set on a page locks it and the pages below it for visitors.
 
+![The page passwords screen in the Lynx admin](screenshots/page-passwords.png)
+
 ## Installing
 
 ```bash

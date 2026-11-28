@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use LynxCms\Core\Actions\Fields\CreateField;
+use LynxCms\Core\Actions\Languages\CreateLanguage;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Actions\Runner\ActionResult;
+use LynxCms\Core\Actions\Templates\CreateTemplate;
 use LynxCms\Core\Lynx;
 use LynxCms\Core\Support\Tables;
 
@@ -120,3 +123,12 @@ it('says why a reserved name is refused', function (): void {
     expect(fn () => lynx()->fields->add('status', 'choice'))
         ->toThrow(ValidationException::class, 'The name "status" is reserved, because pages and selectors already use it. Choose another name.');
 });
+
+it('refuses names that end in a newline, from any caller', function (string $action, array $input): void {
+    lynx()->run($action, $input);
+})->with([
+    'field' => [CreateField::class, ['name' => "notes\n", 'type' => 'text']],
+    'template' => [CreateTemplate::class, ['name' => "post\n"]],
+    'language' => [CreateLanguage::class, ['code' => "fr\n", 'name' => 'Français']],
+    'role' => [SaveRole::class, ['name' => "writer\n"]],
+])->throws(ValidationException::class);

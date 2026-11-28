@@ -4,7 +4,7 @@
     <x-lynx-admin::ui.tabs :value="$report" wire:key="reports-{{ $report }}">
         <x-lynx-admin::ui.tabs-list variant="underline" aria-label="{{ __('lynx-admin::page_references.reports') }}">
             @foreach (\LynxCms\Admin\Livewire\PageReferencesScreen::REPORTS as $key)
-                <x-lynx-admin::ui.tabs-trigger :value="$key" :panel="false" wire:click="show('{{ $key }}')" data-report-tab="{{ $key }}">{{ __('lynx-admin::page_references.'.$key.'.title') }}</x-lynx-admin::ui.tabs-trigger>
+                <x-lynx-admin::ui.tabs-trigger :value="$key" :panel="false" wire:click="show({{ Js::from($key) }})" data-report-tab="{{ $key }}">{{ __('lynx-admin::page_references.'.$key.'.title') }}</x-lynx-admin::ui.tabs-trigger>
             @endforeach
         </x-lynx-admin::ui.tabs-list>
     </x-lynx-admin::ui.tabs>

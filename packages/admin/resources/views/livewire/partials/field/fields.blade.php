@@ -1,4 +1,4 @@
-{{-- The Field tab: what the field holds, its name, languages and help, its kind's settings, then Advanced and Delete. --}}
+{{-- The Basics tab: what the field holds, its name, languages and help. --}}
 @php($section = 'grid gap-5 border-t pt-6 first:border-t-0 first:pt-0')
 <div class="grid max-w-3xl gap-8">
     @include('lynx-admin::livewire.partials.field.kind')
@@ -76,29 +76,4 @@
             </div>
         </div>
     </section>
-
-    @include('lynx-admin::livewire.partials.field.settings')
-
-    <x-lynx-admin::section id="field-advanced" :title="__('lynx-admin::fields.advanced.heading')" remember="field:advanced" collapsed
-        :has-error="$errors->has('settings.autoload') || $errors->has('settings.locked')" body-class="grid gap-3 p-5" data-field-advanced>
-        @if ($name === 'title')
-            <p class="text-sm">{{ __('lynx-admin::fields.advanced.always') }}</p>
-        @else
-            <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm">
-                <input class="blat-checkbox mt-0.5" id="field-autoload" type="checkbox" wire:model="autoload">
-                <span class="grid gap-0.5"><span class="font-medium">{{ __('lynx-admin::fields.advanced.autoload') }}</span><span class="text-muted-foreground">{{ __('lynx-admin::fields.advanced.autoload_hint') }}</span></span>
-            </label>
-        @endif
-        @error('settings.autoload') <p data-error-for="settings.autoload" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-        {{-- The title is required on every template, so it can't be locked (ADR-0149). --}}
-        @unless ($name === 'title')
-        <label class="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm" data-field-locked>
-            <input class="blat-checkbox mt-0.5" id="field-locked" type="checkbox" wire:model="locked">
-            <span class="grid gap-0.5"><span class="font-medium">{{ __('lynx-admin::fields.advanced.locked') }}</span><span class="text-muted-foreground">{{ __('lynx-admin::fields.advanced.locked_hint') }}</span></span>
-        </label>
-        @endunless
-        @error('settings.locked') <p data-error-for="settings.locked" role="alert" class="text-destructive text-sm">{{ $message }}</p> @enderror
-    </x-lynx-admin::section>
-
-    @include('lynx-admin::livewire.partials.field.danger')
 </div>

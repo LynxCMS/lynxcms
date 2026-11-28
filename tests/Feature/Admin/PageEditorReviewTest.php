@@ -84,7 +84,7 @@ it('builds entries from a pages.save values input, page references as titles', f
     expect(array_map(fn (ReviewEntry $entry): array => [$entry->label, $entry->language, $entry->type], $entries))
         ->toBe([['Title', 'Português', 'text'], ['Related', null, 'page']])
         ->and($entries[1]->before)->toBe([])
-        ->and($entries[1]->after)->toBe([['id' => $other->id, 'title' => 'Alpha']]);
+        ->and($entries[1]->after)->toBe([['id' => $other->id, 'title' => 'Alpha', 'hidden' => false]]);
 });
 
 it('guards unsaved edits and saves with the keyboard only where Save is offered', function (): void {
@@ -103,6 +103,16 @@ it('previews formatted output under fields that have formatters', function (): v
         ->set('values.summary.default', 'A "smart" -- summary')
         ->assertSee('Preview')
         ->assertSeeHtml('A “smart” – summary');
+});
+
+it('cleans the preview of a rich text field whose formatters add no markup', function (): void {
+    lynx()->fields->update('body', ['settings' => ['formatters' => ['smartypants']]]);
+
+    reviewEditor(reviewPage())
+        ->set('values.body.default', '<p>Hi</p><script>alert(1)</script><img src="x" onerror="alert(2)">')
+        ->assertSeeHtml('<p>Hi</p>')
+        ->assertDontSeeHtml('<script>alert(1)</script>')
+        ->assertDontSeeHtml('onerror="alert(2)"');
 });
 
 it('reviews what the draft changes on the live page, saved or not', function (): void {

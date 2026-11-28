@@ -34,7 +34,7 @@
         "pestphp/pest": "^4.1|^5.0",
         "pestphp/pest-plugin-browser": "^5.2",
         "pestphp/pest-plugin-laravel": "^4.0|^5.0",
-        "rector/rector": "^2.8.4"
+        "rector/rector": "~2.8.4"
     },
     "replace": {
         "lynxcms/contracts": "self.version",
@@ -50,6 +50,7 @@
         "lynxcms/page-password": "self.version",
         "lynxcms/cache": "self.version",
         "lynxcms/finder": "self.version",
+        "lynxcms/insights": "self.version",
         "lynxcms/static-site": "self.version"
     },
     "autoload": {
@@ -67,6 +68,7 @@
             "LynxCms\\PagePassword\\": "packages/page-password/src/",
             "LynxCms\\Cache\\": "packages/cache/src/",
             "LynxCms\\Finder\\": "packages/finder/src/",
+            "LynxCms\\Insights\\": "packages/insights/src/",
             "LynxCms\\StaticSite\\": "packages/static-site/src/"
         },
         "files": [
@@ -98,6 +100,7 @@
                 "LynxCms\\PagePassword\\PagePasswordServiceProvider",
                 "LynxCms\\Cache\\CacheServiceProvider",
                 "LynxCms\\Finder\\FinderServiceProvider",
+                "LynxCms\\Insights\\InsightsServiceProvider",
                 "LynxCms\\StaticSite\\StaticSiteServiceProvider"
             ],
             "aliases": {

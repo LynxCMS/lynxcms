@@ -84,6 +84,7 @@ Each needs its module.
 | `lynx:sitemap --clear --warm` | Lists the sitemap's parts; `--clear` drops the cached files, `--warm` builds them all now. Needs `lynxcms/sitemap`. |
 | `lynx:page-cache --clear --prune --warm --stats --compile` | Drops every stored page, drops expired ones (scheduled every minute), stores every public page now, counts them per template, or writes the settings `serve.php` reads. Needs `lynxcms/cache`. |
 | `lynx:page-cache:server nginx` | Prints web server rules (nginx, apache or caddy) that send stored pages without PHP. Needs `lynxcms/cache`. |
+| `lynx:insights --days= --dry-run` | Writes an insights report: the changes each insight source suggests for the period, for editors to approve. `--dry-run` lists them without storing a report. Scheduled when `LYNX_INSIGHTS_SCHEDULE` is `monthly` or a cron expression. Needs `lynxcms/insights`. |
 | `lynx:static --path= --url= --zip` | Exports the site as static files, to host without PHP. See [Static site export](/modules/static-site). Needs `lynxcms/static-site`. |
 
 ## AI and MCP
@@ -120,6 +121,7 @@ It runs a list of checks and prints OK for each that passes, or what it found an
 - **Pages behind routes:** a page whose URL a route of the app or a module answers first, so visitors never see it, such as a page at `/lynx` behind the admin. Rename the page, or move the route; `lynx:admin-path` moves the admin.
 - **Two-factor** (with `lynxcms/admin`): the admin requires two-factor authentication, but it can't be set up, because the user model lacks Fortify's `TwoFactorAuthenticatable` or the app's Fortify has the feature off. Nobody is asked for it then.
 - **Storage link** (with `lynxcms/media`): the public media disk has no `storage:link`, so images and files are broken links.
+- **Running insights** (with `lynxcms/insights`): an approved insight with no progress for `lynx-insights.stuck_minutes` (30), because no queue worker runs its steps or a worker died mid-step.
 
 Warnings are worth a look; errors break something visitors or editors rely on. The command fails (exit code 1) only on an error, so a deploy script can run it after each release and stop on one. `--json` prints the report as JSON, for scripts and AI agents.
 

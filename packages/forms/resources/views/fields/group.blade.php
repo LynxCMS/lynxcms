@@ -10,11 +10,11 @@
                         @include('lynx-forms::fields.field', ['field' => $subfield, 'path' => 'data.'.$field->name.'.'.$index.'.'.$subfield->name])
                     @endforeach
                 </div>
-                <button type="button" class="lynx-form-button is-link" wire:click="removeRow('{{ $field->name }}', {{ $index }})">{{ __('lynx-forms::forms.remove') }}</button>
+                <button type="button" class="lynx-form-button is-link" wire:click="removeRow(@js($field->name), {{ $index }})">{{ __('lynx-forms::forms.remove') }}</button>
             </div>
         @endforeach
     </div>
     @if ($this->canAddRow($field))
-        <button type="button" class="lynx-form-button is-secondary" wire:click="addRow('{{ $field->name }}')">+ {{ __('lynx-forms::forms.add_row') }}</button>
+        <button type="button" class="lynx-form-button is-secondary" wire:click="addRow(@js($field->name))">+ {{ __('lynx-forms::forms.add_row') }}</button>
     @endif
 </fieldset>

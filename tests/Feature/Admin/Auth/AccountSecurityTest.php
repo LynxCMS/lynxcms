@@ -17,6 +17,8 @@ beforeEach(function (): void {
     courseSite();
     $this->user = User::query()->forceCreate(['name' => 'Ana Lima', 'email' => 'ana@example.com', 'password' => Hash::make('correct horse')]);
     $this->actingAs($this->user);
+    // The screen opened after the password was confirmed (password.confirm).
+    session(['auth.password_confirmed_at' => time()]);
 });
 
 /** The current code of the user's authenticator app. */
@@ -31,6 +33,7 @@ it('adds the two-factor columns and the passkeys table', function (): void {
 });
 
 it('asks for the password before showing the account security screen', function (): void {
+    session()->forget('auth.password_confirmed_at');
     $this->get('/lynx/account/security')->assertRedirect('/lynx/user/confirm-password');
     $this->withSession(['auth.password_confirmed_at' => time()])->get('/lynx/account/security')
         ->assertOk()->assertSeeLivewire(AccountSecurity::class)->assertSee('Two-factor authentication')->assertSee('Passkeys');

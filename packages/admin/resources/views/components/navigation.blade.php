@@ -44,9 +44,17 @@
                     @endif
                     <span>{{ $entry['label'] }}</span>
                 </x-lynx-admin::ui.sidebar-menu-button>
-                @php($badge = $entry['badge'] !== null ? ($entry['badge'])() : null)
-                @if ($badge !== null && $badge !== 0 && $badge !== '')
-                    <x-lynx-admin::ui.sidebar-menu-badge>{{ $badge }}</x-lynx-admin::ui.sidebar-menu-badge>
+                @if ($entry['badge'] !== null)
+                    @php($badge = ($entry['badge'])())
+                    {{-- A screen updates it without a reload: $this->dispatch('lynx-nav-badge', route: '...', value: 3). 0, null and '' hide it. --}}
+                    <x-lynx-admin::ui.sidebar-menu-badge
+                        data-nav-badge="{{ $entry['route'] }}"
+                        x-data="{ value: {{ Js::from($badge) }} }"
+                        x-on:lynx-nav-badge.window="if ($event.detail.route === {{ Js::from($entry['route']) }}) value = $event.detail.value"
+                        x-show="value !== null && value !== 0 && value !== ''"
+                        x-text="value"
+                        @style(['display: none' => $badge === null || $badge === 0 || $badge === ''])
+                    >{{ $badge }}</x-lynx-admin::ui.sidebar-menu-badge>
                 @endif
             </x-lynx-admin::ui.sidebar-menu-item>
         @endif

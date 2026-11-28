@@ -60,8 +60,9 @@ final readonly class PageChoices
 
     /**
      * Pages of the allowed templates the user may view, by title, then chosen pages the list does
-     * not offer (another template, or past the limit), so saving keeps them. Excluded pages, such as
-     * the page being edited, are left out unless already chosen.
+     * not offer (another template, or past the limit), so saving keeps them. A chosen page the user
+     * may not view shows its id only, as the browser can choose any id. Excluded pages, such as the
+     * page being edited, are left out unless already chosen.
      *
      * @param  array<array-key, mixed>  $settings
      * @param  list<int>  $chosen
@@ -77,8 +78,14 @@ final readonly class PageChoices
         $options = app(PageFinder::class)->find($selector, scope: $this->access->viewScope())->map($this->option(...));
         $missing = array_values(array_diff($chosen, array_column($options, 'id')));
 
-        if ($missing !== []) {
-            array_push($options, ...lynx()->pages->find('id='.implode('|', $missing).', include=all')->map($this->option(...)));
+        $viewable = $this->access->viewable($missing);
+
+        if ($viewable !== []) {
+            array_push($options, ...lynx()->pages->find('id='.implode('|', $viewable).', include=all')->map($this->option(...)));
+        }
+
+        foreach (array_diff($missing, $viewable) as $id) {
+            $options[] = ['id' => $id, 'title' => Value::string(__('lynx-admin::editor.value.hidden_page', ['id' => $id]))];
         }
 
         return $options;

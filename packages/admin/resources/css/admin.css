@@ -21,6 +21,8 @@
 @source "../../../static-site/resources/views/admin";
 /* The Page Finder screen. */
 @source "../../../finder/resources/views/admin";
+/* The Insights screen. */
+@source "../../../insights/resources/views/admin";
 
 /*
  * BlatUI tokens, presets and @theme mapping (ADR-0034). Colours come only from these tokens

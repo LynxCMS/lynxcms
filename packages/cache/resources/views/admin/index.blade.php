@@ -17,9 +17,9 @@
 
         <nav class="flex gap-5 overflow-x-auto border-b" aria-label="{{ __('lynx-cache::admin.sections') }}">
             @foreach ($tabs as $tab => $label)
-                <button type="button" data-cache-tab="{{ $tab }}" x-on:click="section = '{{ $tab }}'"
+                <button type="button" data-cache-tab="{{ $tab }}" x-on:click="section = @js($tab)"
                         class="text-muted-foreground -mb-px shrink-0 border-b-2 border-transparent pb-2.5 text-sm font-medium whitespace-nowrap hover:text-foreground"
-                        x-bind:class="section === '{{ $tab }}' && 'border-primary! text-foreground'" x-bind:aria-current="section === '{{ $tab }}' ? 'page' : 'false'">{{ $label }}</button>
+                        x-bind:class="section === @js($tab) && 'border-primary! text-foreground'" x-bind:aria-current="section === @js($tab) ? 'page' : 'false'">{{ $label }}</button>
             @endforeach
         </nav>
 

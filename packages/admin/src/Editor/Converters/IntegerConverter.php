@@ -28,7 +28,7 @@ final class IntegerConverter implements FormConverter
         return match (true) {
             $value === '' || $value === null => null,
             is_int($value) => $value,
-            is_string($value) && preg_match('/^-?\d+$/', $value) === 1 => (int) $value,
+            is_string($value) && preg_match('/^-?\d+$/D', $value) === 1 => (int) $value,
             default => $value,
         };
     }

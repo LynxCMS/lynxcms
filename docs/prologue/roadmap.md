@@ -41,10 +41,6 @@ A text changed once for every page of a template (all courses), between the site
 - Repeaters inside repeaters. Items use depth for nesting today.
 - Sorting pages by a repeater or matrix subfield.
 
-## Forms
-
-- Cloudflare Turnstile as an extra spam check.
-
 ## Media
 
 - A central media library, shared by pages, next to the per page files.

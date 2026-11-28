@@ -12,6 +12,7 @@ return [
     ],
     'field' => 'El campo [:field] ya existe con otros ajustes; el creador de formularios necesita [:needs].',
     'submission' => 'No existe el envío [:submission].',
+    'file_content' => 'El contenido del archivo no corresponde a la extensión .:extension.',
     'import' => [
         'value' => 'Los campos de tipo [:type] no tienen el ajuste [:value].',
     ],

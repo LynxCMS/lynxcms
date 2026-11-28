@@ -1,4 +1,4 @@
-{{-- Deleting a field, on its Field tab: a dry run says what goes first (FieldForm::confirmDelete). --}}
+{{-- Deleting a field, on its Advanced tab: a dry run says what goes first (FieldForm::confirmDelete). --}}
 @if ($canEdit && $field !== null)
     <section class="border-destructive/40 grid gap-3 rounded-lg border p-4" aria-labelledby="field-delete" @if ($isConfirmingDelete) role="alert" @endif>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3">

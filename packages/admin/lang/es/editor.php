@@ -92,6 +92,7 @@ return [
     'field' => [
         'required' => 'obligatorio',
         'locked' => 'Lo define el sitio; no se puede editar aquí.',
+        'restricted' => 'Tu rol puede ver este campo, pero no cambiarlo.',
         'loading' => 'Cargando…',
         'translatable' => 'traducible',
         'searchable' => 'buscable',
@@ -117,6 +118,7 @@ return [
     ],
     'value' => [
         'missing_page' => 'Falta la página n.º :id',
+        'hidden_page' => 'Página n.º :id (fuera de tu acceso)',
         'yes' => 'Sí',
         'no' => 'No',
     ],

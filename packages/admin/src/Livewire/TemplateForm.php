@@ -15,12 +15,11 @@ use LynxCms\Admin\Livewire\Concerns\CopiesSections;
 use LynxCms\Admin\Livewire\Concerns\EditsTemplateLayout;
 use LynxCms\Admin\Livewire\Concerns\ManagesTemplateFamily;
 use LynxCms\Admin\Livewire\Concerns\Notifies;
+use LynxCms\Admin\Templates\TemplateFieldRow;
 use LynxCms\Core\Models\Field;
 use LynxCms\Core\Models\Template;
 use LynxCms\Core\Pages\TemplateUsage;
 use LynxCms\Core\Support\Value;
-use LynxCms\Core\Templates\EditorSettings;
-use LynxCms\Core\Templates\FieldDisplay;
 use LynxCms\Core\Templates\TemplateField;
 
 /**
@@ -36,14 +35,6 @@ final class TemplateForm extends Component
     use EditsTemplateLayout;
     use ManagesTemplateFamily;
     use Notifies;
-
-    private const array OVERRIDES = ['show_if', 'required_if', 'icon'];
-
-    /** Overrides editors read, per language (ADR-0043). */
-    private const array LOCALIZED_OVERRIDES = ['label', 'description', 'notes', 'placeholder'];
-
-    /** Yes or no overrides, stored only when set. */
-    private const array FLAGS = ['required', 'searchable'];
 
     /** Pages listed under Pages; the count covers the rest. */
     private const int PAGES_LISTED = 50;
@@ -118,7 +109,7 @@ final class TemplateForm extends Component
 
         $this->order[] = $this->newField;
         $this->placeNewField($this->newField);
-        $this->rows[$this->newField] = $this->row([]);
+        $this->rows[$this->newField] = TemplateFieldRow::toForm([]);
         $this->removed = array_values(array_diff($this->removed, [$this->newField]));
         $this->newField = '';
     }
@@ -149,6 +140,8 @@ final class TemplateForm extends Component
             'available' => $this->addableFields($fields),
             'fieldInfo' => $fields->mapWithKeys(fn (Field $field): array => [$field->name => ['label' => $field->label, 'type' => $field->type]])->all(),
             'canEdit' => $this->canEdit(),
+            // Only superusers lock or unlock a field on a template (fields.update and templates.update refuse others).
+            'canLock' => app(AdminAccess::class)->isSuperuser(),
             'owner' => $this->template === null ? null : app(SchemaOwners::class)->ownerOfTemplate($this->template),
             ...$this->usage(),
         ]);
@@ -207,33 +200,9 @@ final class TemplateForm extends Component
     {
         $fields = lynx()->templates->fields((string) $this->template);
         $this->order = array_values(array_map(Value::string(...), $fields->keys()->all()));
-        $this->rows = $fields->map(fn (TemplateField $field): array => $this->row($field->settings))->all();
+        $this->rows = $fields->map(fn (TemplateField $field): array => TemplateFieldRow::toForm($field->settings))->all();
         $this->loadLayout(lynx()->templates->get((string) $this->template));
         $this->removed = [];
-    }
-
-    /**
-     * @param  array<string, mixed>  $settings
-     * @return array{label: array<string, string>, description: array<string, string>, notes: array<string, string>, placeholder: array<string, string>, required: bool, searchable: bool, show_if: string, required_if: string, icon: string, editor: string, width: string}
-     */
-    private function row(array $settings): array
-    {
-        return [
-            'label' => LocalizedForm::toForm($settings['label'] ?? null),
-            'description' => LocalizedForm::toForm($settings['description'] ?? null),
-            'notes' => LocalizedForm::toForm($settings['notes'] ?? null),
-            'placeholder' => LocalizedForm::toForm($settings['placeholder'] ?? null),
-            'required' => (bool) ($settings['required'] ?? false),
-            'searchable' => (bool) ($settings['searchable'] ?? false),
-            'show_if' => Value::string($settings['show_if'] ?? ''),
-            'required_if' => Value::string($settings['required_if'] ?? ''),
-            'icon' => Value::string($settings['icon'] ?? ''),
-            // The older editor: locked is open and locked (ADR-0149).
-            'editor' => Value::string($settings['editor'] ?? '') === FieldDisplay::Locked->value ? FieldDisplay::Open->value : Value::string($settings['editor'] ?? FieldDisplay::Open->value),
-            'locked' => ($settings['locked'] ?? false) === true || Value::string($settings['editor'] ?? '') === FieldDisplay::Locked->value,
-            'lazy' => ($settings['lazy'] ?? false) === true,
-            'width' => (string) Value::int($settings['width'] ?? EditorSettings::FULL_WIDTH),
-        ];
     }
 
     /**
@@ -243,51 +212,6 @@ final class TemplateForm extends Component
      */
     private function settingsOf(string $name): array
     {
-        $row = Value::map($this->rows[$name] ?? []);
-        $settings = [];
-
-        foreach (self::OVERRIDES as $key) {
-            $value = trim(Value::string($row[$key] ?? ''));
-
-            if ($value !== '') {
-                $settings[$key] = $value;
-            }
-        }
-
-        foreach (self::LOCALIZED_OVERRIDES as $key) {
-            $value = LocalizedForm::fromForm(Value::array($row[$key] ?? []));
-
-            if ($value !== null) {
-                $settings[$key] = $value;
-            }
-        }
-
-        foreach (self::FLAGS as $flag) {
-            if ((bool) ($row[$flag] ?? false)) {
-                $settings[$flag] = true;
-            }
-        }
-
-        return $settings + $this->editorSettingsOf($row);
-    }
-
-    /**
-     * How the field shows in the page editor (ADR-0063), whether it is locked and loads when
-     * opened (ADR-0149), left out at the defaults.
-     *
-     * @param  array<string, mixed>  $row
-     * @return array<string, mixed>
-     */
-    private function editorSettingsOf(array $row): array
-    {
-        $editor = Value::string($row['editor'] ?? '');
-        $width = Value::int($row['width'] ?? EditorSettings::FULL_WIDTH);
-
-        return array_filter([
-            'editor' => in_array($editor, ['', FieldDisplay::Open->value], true) ? null : $editor,
-            'locked' => ($row['locked'] ?? false) === true ? true : null,
-            'lazy' => ($row['lazy'] ?? false) === true ? true : null,
-            'width' => $width === EditorSettings::FULL_WIDTH ? null : $width,
-        ], fn (mixed $value): bool => $value !== null);
+        return TemplateFieldRow::fromForm(Value::map($this->rows[$name] ?? []));
     }
 }

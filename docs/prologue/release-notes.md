@@ -8,6 +8,71 @@ order: 1
 
 Every `lynxcms/*` package shares one version number, and only classes marked `@api` are public API. The [upgrade guide](/prologue/upgrade) lists what to do between releases.
 
+## 0.1.62
+
+Released November 27, 2026. Adds Insights, a module that suggests changes every month for editors to approve, and a contract for page metrics. No breaking changes. Sites that install Insights run `lynx:migrate`; others have no database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-61-to-0-1-62).
+
+### Insights
+
+- **New module, `lynxcms/insights`.** [Insights](/modules/insights) writes a report of suggested changes on a schedule (`LYNX_INSIGHTS_SCHEDULE`) or on request (`lynx:insights`). Each insight shows its reason, the numbers it rests on and its pages, and often a plan of actions. Editors review it, then approve, archive or dismiss it on the Insights screen, and the sidebar and home screen show how many are open.
+- **Five sources:** missing translations (with a plan that translates the most linked pages into their drafts, when a translation provider is set), stale drafts, broken links, missing descriptions (from the SEO module), and neglected popular pages (with page metrics).
+- **Approving runs on the queue**, a job per step, with a progress bar and the state of each page. Steps that fail for a reason outside Lynx are tried three times; a failed step keeps its error, shown in a dialog, and approving again runs only the steps that did not finish. **Stop** ends a running approval. `lynx:doctor` warns about an insight that stopped making progress.
+- **Insights reads in each editor's language:** titles, reasons and evidence are stored as translation keys, and Review changes describes each step from the plan.
+- Sites add their own sources with `InsightSourceRegistry::add()`. See [Writing your own source](/modules/insights#writing-your-own-source).
+- ADR-0155, ADR-0156 and ADR-0157.
+
+### Other changes
+
+- **`LynxCms\Contracts\Metrics\PageMetrics`** lets a site give Lynx its page view counts. Lynx stores no visitor data and binds nothing by default. See [Page metrics](/modules/insights#page-metrics).
+- The admin has BlatUI's presence dot (`x-lynx-admin::ui.presence`), with theme colors.
+- Each module with an admin screen shows a screenshot in its README.
+
+## 0.1.61
+
+Released November 26, 2026. Fixes found while building a site from a draft and deploying it from a content package: duplicating pages with a required text field, installing after an import, and editing the texts in matrix block views. No database changes and no breaking changes. See the [upgrade guide](/prologue/upgrade#from-0-1-60-to-0-1-61).
+
+### Changes
+
+- Strings in matrix block views (`templates/fields/{field}/{type}.blade.php`) are now the strings of every template that offers those blocks, so editors can change them in the admin. Before, only the template's view and the views it includes were read.
+- `lynx:install` after `lynx:import --with-schema`, the documented way to start a new environment, no longer fails with "Another page under the same parent already uses the name [not-found]". It now chooses the not-found page the package brought.
+- Duplicating a page whose template requires a text field, such as a required summary, no longer fails with "Summary is required in the default language". Fields that only name pages, page fields and rich text, now go in the copy's first save.
+- A page cache flush also deletes `lynx-cache.trash-*` folders an earlier flush left in `public/`, and a static export leaves them out. An app with a published `config/lynx-static.php` adds `'lynx-cache.trash-*'` to its `exclude` list.
+- The static site docs say that files in `paths` are written as the site sends them, and how a listing keeps sorting and paging on a static host.
+
+## 0.1.60
+
+Released November 26, 2026. Security fixes from reviews of the core, media, admin and forms packages, image sizes in a queue, and images scaled down in the browser before they upload. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-59-to-0-1-60).
+
+### Breaking changes
+
+- The constructors of `UpdateTemplate`, `UpdateField` and `DuplicatePage` take one more argument. Laravel's container builds them as before; code that builds one with `new` resolves it with `app()` instead.
+- `AdminAssets::NAME` and `FormSchema::NAME_PATTERN` end with the `D` modifier, so a name with a trailing line break no longer matches.
+- `FormComponent::_startUpload()` declares a `void` return type. A component that extends `FormComponent` and overrides it declares `void` too.
+- `pages.save` refuses a newly added page reference (a page field, a page subfield or a rich text link) to a page the actor may not view, or one that does not exist. Pages a field already holds are kept.
+- A date question in a form takes only `Y-m-d`, as a date input sends it.
+- `forms.view` reads submissions and marks them read or new. Marking them archived or spam, and writing notes, need `forms.manage`.
+
+### Changes
+
+- Image sizes in a queue: with `LYNX_MEDIA_QUEUE_SIZES=true` and a queue worker, sizes a page shows for the first time are made by queued jobs, and the page shows the nearest image that exists meanwhile. The page cache stores the page once the sizes are made. Off by default. See [Sizes in a queue](/basics/images-and-files#sizes-in-a-queue).
+- `LynxCms\Contracts\Pages\PageCache::SKIP` names the request attribute that keeps a page out of the page cache, for code that doesn't depend on `lynxcms/cache`.
+- Images larger than an images field's maximum are scaled down in the browser before they upload, so photos from phones fit the upload limit and upload faster. See [Uploading in the admin](/basics/images-and-files#uploading-in-the-admin).
+- Selectors from outside the site's code run under a policy (ADR-0153): `SelectorPolicy::forVisitors($fields)` for a selector a visitor sends, passed as `policy:` to `lynx()->pages->find()`, and `forActor()` for agents, the Finder, the admin's search box and its page pickers, which use only fields the actor may view. See [Selectors](/basics/selectors).
+- Only superusers change a field's access or lock, or lock a field on a template.
+- Redirects and hreflang links are built from `APP_URL`.
+- Media: values accept only files the page itself stores; visitors get only private files the live page shows; uploads are refused for fields the actor may not edit; image types are checked from the file's header; more extensions browsers run are refused.
+- Admin: the New page screen opens only for users who may create under the parent; trash and delete warnings name only pages the user may view; account security actions ask for the password again once its confirmation expired; admin and sign-in screens refuse framing by other sites.
+- Forms: uploads start only for a form's own file questions, a file's content must fit its name, references to submissions work on PostgreSQL, and the inbox search treats `%` and `_` as written.
+- The training guide's course manager may view `/locations/`, as a session names one.
+
+## 0.1.59
+
+Released November 24, 2026. Field access per role: a field can name the roles that see it and the roles that edit it, in the admin, through agents, and in the Finder. The field screen gets more tabs, and its Preview tab shows the page editor's own inputs. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-58-to-0-1-59).
+
+- Field access per role: a field can manage which roles see it and which edit it (**Access** on the field's page, or `access` in its settings), with a View and an Edit box per role; with none ticked, only superusers may. Other roles don't see the field in the page editor, through agents or in the Finder, or see it read only, and `pages.save` refuses their changes to it. Superusers and the site's code always may, and visitors are not affected. See [Field access per role](/admin/permissions#field-access-per-role).
+- The field screen has more tabs: **Basics** (what the field holds, its name, languages, and help), **Settings** (its kind's own settings), **Access**, **Advanced** (loading, locking, and deleting), and **Preview**. A repeater or matrix keeps its builder and **Limits and display** tabs. A tab with an error shows a dot.
+- The field screen's **Preview** tab shows the page editor's own input for text, email, URL, icon, textarea, number, date, and time fields, with the settings the form holds: a rich text field shows the rich text editor with its tools, and a length limit shows the character counter. What is typed there is not saved.
+
 ## 0.1.58
 
 Released November 24, 2026. Locked fields that only the site's code writes, kept when drafts are published and revisions restored; the editor's display and locking as separate settings, with fields that open and close and fields that load when opened; and images and files with a file per language. No database changes. See the [upgrade guide](/prologue/upgrade#from-0-1-57-to-0-1-58).

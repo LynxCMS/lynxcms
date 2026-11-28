@@ -27,6 +27,6 @@ final class PageIdSanitizer implements AttributeSanitizerInterface
 
     public function sanitizeAttribute(string $element, string $attribute, string $value, HtmlSanitizerConfig $config): ?string
     {
-        return preg_match('/^[1-9][0-9]{0,18}$/', $value) === 1 ? $value : null;
+        return preg_match('/^[1-9][0-9]{0,18}$/D', $value) === 1 ? $value : null;
     }
 }

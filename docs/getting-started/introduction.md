@@ -31,6 +31,7 @@ Editors who run a site every day need to change many pages at once and to recove
 - **Old URLs keep working.** When an editor renames or moves a page, its old URLs redirect to the new address in every language. ([Publishing](/basics/publishing))
 - **Content survives template changes.** Switching a page to another template keeps the values of fields the new template lacks. Switching back brings them back. ([Templates and Fields](/basics/templates-and-fields))
 - **Drafts and revisions.** An editor prepares changes in a draft, previews it at the page's own URL and publishes it now or on a schedule. Every save becomes a revision that can be compared and restored. ([Publishing](/basics/publishing))
+- **Suggestions with a plan.** [Insights](/modules/insights) looks at the site every month and suggests changes, such as translating the most linked pages missing a language. Editors review each suggestion, then approve it, archive it or dismiss it.
 - **Searches across the whole site.** The [Page Finder](/modules/finder) finds pages by what they hold, such as courses tagged AI that cost less than 50. Editors can save a search, change every page it finds in one step and export the results as CSV.
 - **Permissions by section.** A role can be limited to a branch of the tree (a page and the pages below it). Each team then edits only its own section of the site. ([Permissions](/admin/permissions))
 - **A history for every page.** Each page lists who changed it, when and in which language. Changes made by code, scheduled publishing and AI tools appear there too.
@@ -94,6 +95,7 @@ Only `lynxcms/core` is required. Add the others when a site needs them. Each one
 | `lynxcms/menus` | Menus that editors build, and the `<x-lynx-menu>` component. |
 | `lynxcms/media` | Image and file fields, with resizing and focus points. |
 | `lynxcms/finder` | A screen in the admin that finds pages by their fields, saves searches, changes the pages found and exports them. |
+| `lynxcms/insights` | Monthly reports of changes the site could use, such as pages missing a translation, which editors review and approve in the admin. |
 | `lynxcms/forms` | Forms defined in PHP or built in the admin, with an inbox for submissions. |
 | `lynxcms/seo` | Titles, descriptions, social cards and structured data for each page. |
 | `lynxcms/sitemap` | An XML sitemap with every language. |

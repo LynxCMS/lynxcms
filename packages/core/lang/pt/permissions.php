@@ -7,7 +7,7 @@ return [
         'manage' => 'Gerir menus',
     ],
     'forms' => [
-        'view' => 'Ver e ordenar respostas a formulários',
+        'view' => 'Ver respostas a formulários e marcá-las como lidas',
         'manage' => 'Criar formulários e eliminar respostas',
     ],
     'seo' => [
@@ -46,6 +46,10 @@ return [
     ],
     'finder' => [
         'share' => 'Partilhar pesquisas guardadas em Procurar páginas',
+    ],
+    'insights' => [
+        'view' => 'Ver relatórios de sugestões',
+        'review' => 'Aprovar, dispensar e arquivar sugestões, e escrever relatórios',
     ],
     'agent' => [
         'use' => 'Usar o agente integrado e aprovar os seus planos',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LynxCms\Forms\Agents;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Str;
 use LynxCms\Core\Agents\AgentReadTool;
 use LynxCms\Core\Support\Value;
 use LynxCms\Forms\Models\Submission;
@@ -42,7 +43,9 @@ final class GetSubmissionTool extends AgentReadTool
 
     public function handle(array $arguments): mixed
     {
-        $submission = Submission::query()->with('files')->where('uuid', Value::string($arguments['submission'] ?? ''))->first();
+        $reference = Value::string($arguments['submission'] ?? '');
+        // PostgreSQL's uuid column refuses text that is no uuid.
+        $submission = Str::isUuid($reference) ? Submission::query()->with('files')->where('uuid', $reference)->first() : null;
 
         if (! $submission instanceof Submission) {
             return ['error' => 'There is no such submission.'];

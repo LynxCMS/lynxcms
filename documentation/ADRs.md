@@ -1660,6 +1660,8 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** Code that reads `TemplateField::editor()` gets `open` for a field stored as `locked` and checks `isLocked()` for the rest; `FieldDisplay::Locked` and `editor()` are deprecated. Sites that let agents fill locked fields must run that code as the system. A lazy field's input isn't in the page until it opens, so browser tests open it first.
 
+**Amended 2026-11-25:** only superusers lock or unlock a field, on the field or on a template's row; `fields.update` and `templates.update` refuse other actors (core security review, L4).
+
 ## ADR-0150: Images and files can have a file per language
 
 **Status:** Accepted (builds on ADR-0046 and ADR-0049)
@@ -1669,4 +1671,119 @@ Staying in English: action descriptions, console output, the change summaries th
 **Decision:** A field setting, `per_language`. Each file then has a `language` value, a code the site has or none for every language, stored with its other values, so no table changes. When the field is read, a language gets its own files and the files for every language, its own first; with neither, the files of the next language along its fallback chain, or none when the field's `fallback` is `none`. A single-file field returns the first. `max_files` counts per language. The editor shows a tab per language, as translatable text does. Each tab has two groups with their own upload zones: the language's own files, and the files shared by every language, shown in every tab. A tab named for no language (All files) was tried first and left out: it read as a language, and hid where shared files go. Each file's details have a Language select, and a tab without files of its own says what visitors see. `media.store` takes a `language`, and selectors test it (`hero.language=pt`). `inLanguage()` keeps ADR-0046's rule for tagged lists, reading a file's `language` as well as its tags.
 
 **Consequences:** A banner per language is one field and no template code. Turning the setting on keeps existing files for every language, so nothing changes until an editor assigns languages. `getUnformatted()`, exports and content packages keep every file. A file per language and a description per language are separate: a Portuguese file still has a description in each language.
+
+## ADR-0151: A field names the roles that may see it and the roles that may edit it
+
+**Status:** Accepted (builds on ADR-0033 and ADR-0149)
+
+**Context:** Roles grant permissions such as `pages.edit`, limited to templates and branches (ADR-0033), so a role edits every field of the pages it may edit. Projects need finer rules: a price only sales changes, internal notes editors shouldn't see. ADR-0149 locked fields for everyone but code and left roles for later. ProcessWire sets this on the field, in its Access tab. Two places were considered: on the field, a list of roles; or on the role, a list of fields in its `pages.edit` grant beside templates and branches. The grant fits the permission model, but answering "who may edit this field" means reading every role; the field answers it at once and leaves roles as they are.
+
+**Decision:** A field setting, `access: {view: [roles], edit: [roles]}`. A field with the setting manages its access: only the roles it lists see or edit it, and with none listed, only superusers. A field without it is open to every role that may see or edit the page. A role that may edit a field may also see it. Superusers and the site's code (the console and the system) always may. A first version read an empty list as every role; it was changed before release to follow ProcessWire, where managing access is a choice of its own and an empty table means superusers only, which reads more plainly than an empty list meaning everyone.
+
+- **Writes.** `pages.save` refuses a field's value from an actor whose roles may not edit it, with a message on the field; its other fields save. MCP clients and the agent are judged by their user's roles, or the anonymous role. Publishing a draft and restoring a revision leave such fields out, so they keep their live value and the rest publishes.
+- **The admin.** The page editor leaves out a field the editor's role may not see, and shows read only a field it may see but not edit. The Finder doesn't offer fields a role may not see. The field form has an Access tab: a **Manage access for this field** checkbox, then a table with a row per role (superusers left out) and View and Edit columns; Edit is off for roles without `pages.edit`.
+- **Agents.** `get_page` and the page results of actions leave out fields the actor may not see; `describe_schema` leaves them out and marks `editable: false` on those it may not edit.
+- **Not visitors.** Templates read every field, so field access changes nothing on the site's pages. Selectors in code are not filtered by it either; selectors from agents and the Finder are, since ADR-0153.
+- Role names are checked when saved; deleting a role leaves its name in a field's list, where it matches nobody.
+
+**Consequences:** One field answers who sees and edits it. A role restricted from a field can still find pages by it with a selector in code it writes, which only developers do; the admin's own searches leave the field out, and since ADR-0153 agents and the Finder refuse it. Settings per template (a field open on one template, restricted on another) were left out until a project needs them.
+
+**Amended 2026-11-25:** only superusers change a field's `access`; `fields.update` refuses other actors, and the field form leaves the Access tab out for them (core security review, L4).
+
+## ADR-0152: Image sizes can be made in a queue
+
+**Status:** Accepted (builds on ADR-0046; plan in documentation/plans/image-sizes.md)
+
+**Context:** A size's file is written the first time its URL is printed (ADR-0046), so the first render of a page waits for every new size on it. A gallery printed through `<x-lynx-image>` makes three widths per image, dozens of resizes in one request, after every upload and focus change. Originals are at most 2560 pixels on a side (uploads are scaled down in the browser and by `media.store`), so each resize is quick, but together they can pass the server's time limit. A route that makes sizes when the browser asks (as Glide does) was considered and left out: the owner wants sizes made by the render or by a queue only, and the queue kept off unless a site runs a worker.
+
+**Decision:** `lynx-media.queue_sizes` (`LYNX_MEDIA_QUEUE_SIZES`), false by default.
+
+- **Off:** sizes are made during the render, as before.
+- **On:** `Pageimage::url()` for a size whose file is missing dispatches `MakeImageSize` (unique per file name, one try) and prints a stand-in: the smallest existing size of the same original that keeps its aspect ratio and is at least as large, else the original. Each folder is listed once per request (`SizeQueue`, scoped). A size that can't be made is logged with its page and file, and the page keeps the stand-in.
+- **Crops:** `<x-lynx-image>` with a width and a height adds `object-fit: cover` and the focus point as `object-position`, so a stand-in is cropped by the browser where the size will be.
+- **Code that reads files:** `file()` still makes the size at once. The static site build turns the setting off while it renders, as it copies the files right after.
+- **Page cache:** a page that printed a stand-in sets `LynxCms\Contracts\Pages\PageCache::SKIP` (new, `@api`) on the request, the attribute `@nocache` already set, so the cache stores the render after the jobs ran. The constant lives in contracts so media does not depend on the cache module.
+- **Doctor:** `media-queued-sizes` warns when the setting is on and the queue connection is `sync`.
+
+**Consequences:** With a worker, a page's first render no longer waits for its sizes; its first visitors see heavier images for a moment, and the page reaches the page cache one render later. Without a worker and the setting on, stand-ins stay: correct, only heavier, which the doctor check points at. Making sizes ahead of time (recording the specs each field uses and making them after an upload) waits for a site that needs it.
+
+
+## ADR-0153: Selectors from outside the site's code run under a policy
+
+**Status:** Accepted (changes ADR-0151 for agents and the Finder; from the core security review, documentation/reports/security-review-core-2026-11-25.md, M1 and M3)
+
+**Context:** A selector can filter and sort on any field and name `include`, `status` and the `has_` terms. That is right for selectors a developer writes. Two other sources were found to leak content. An agent with `pages.view` whose role may not view a field (ADR-0151) could still filter and sort by it in `find_pages`: `salary>50000` or `sort=salary` tell the value through the total and the order, and `search*=` does the same when the field is indexed. An app that takes a whole selector from a visitor, as the selectors page showed, could be asked for unpublished pages (`include=all`) or for a field no template prints, one letter at a time (`notes^=a`). A per-field check inside the compiler was considered; checking the parsed selector before it compiles keeps the compiler as it is and covers clauses, OR groups, `sort=`, `join=` and page references in one place.
+
+**Decision:** `LynxCms\Core\Query\SelectorPolicy` (`@api`), passed as `policy:` to `PageFinder::find()` and `lynx()->pages->find()`. It is checked against the parsed selector, and a refusal throws `SelectorException`, as an invalid selector does. A policy holds a field check (every part of `a|b` and every segment of `related.price` that names a field), terms it refuses, and caps on clauses, values and `start=`.
+
+- `SelectorPolicy::forActor($actor)`: refuses fields the actor's role may not view, and `search` while such a field is indexed. Null when every field is open to the actor, so most sites pay nothing. The agent toolkit's `findPages` and the Finder's searches use it.
+- `SelectorPolicy::forVisitors($fields)`: only the fields named (`search` when listed), no `include`, `join`, `status` or `has_` terms, at most 10 clauses, 20 values and `start=1000` by default.
+- Selectors the site's own code writes run without a policy, as before.
+
+**Consequences:** A restricted role can no longer find pages by a field it may not view, through agents or the Finder. Apps that pass a visitor's selector have one argument to make it safe, and the docs show it. A visitor's words inside the app's own selector are still the app's to escape (Visitor Input); the parked plan for bindings in selectors covers that case.
+
+**Amended 2026-11-26:** the admin's search box and page pickers run under `forActor()` too (admin security review, L4). While the index holds a field the user may not view, their plain text searches titles only.
+
+## ADR-0154: A save adds references only to pages the actor may view
+
+**Status:** Accepted (extends ADR-0095; from the admin security review, documentation/reports/security-review-admin-2026-11-25.md, M1)
+
+**Context:** A page field holds page ids, and a rich text field holds links whose `data-page` names a page (ADR-0145). The admin turns both into titles and addresses: in its inputs, in "Review changes", in the page picker once saved. `pages.save` checked only how many ids a value has and, with a "templates" setting, which templates they use. An editor limited to one branch could put any id into the form and read the title of a page outside the branch, unpublished and trashed ones included; a missing title told that the id did not exist, so ids could be walked. MCP clients and the API reach the same save.
+
+**Decision:** `ReferenceChecks` (formerly `ReferenceTemplates`) refuses a save that adds, to a page field, a page subfield of a repeater or matrix, or a rich text link, a page outside the actor's `pages.view` scope, a page that does not exist included. The error names the id only. Pages the field already holds are kept, as for templates, so a role narrowed later never blocks an unrelated save. Actors whose `pages.view` has no limit (superusers, the console, the system, a role with an unlimited grant) skip the check, and no stored value is read for them. The admin also resolves titles only for pages the user may view, wherever ids come from the browser: other ids show as "Page #N (outside your access)".
+
+**Consequences:** A role that must reference pages outside the branch it edits needs `pages.view` on them; the training guide's course manager now views `/locations/`, as a session names one. The admin's page pickers already offered only viewable pages, so editors see no change there. A saved reference to a page outside the editor's view, kept from someone with wider access, still shows its title in the page picker, as before.
+
+## ADR-0155: Insights are reports of planned actions, approved as a whole
+
+**Status:** Accepted (plan: documentation/plans/insights.md). Amended by ADR-0157: a plan's steps run on the queue, each in its own transaction.
+
+**Context:** Nothing in Lynx looks at a site on its own and proposes work. Owners want a report every period (30 days by default) of suggested changes, each with its evidence, that an editor approves, dismisses or archives, and nothing changes without an approval. Some suggestions come from plain queries (pages missing a language), some from metrics, some from an AI agent, and developers want to add their own for a project. A suggestion approved weeks after it was written must not land on a page edited since, and must not let a suggestion's author do what the approver may not.
+
+**Decision:** A free module, `lynxcms/insights`, so core gains nothing and sites opt in.
+
+- An insight source (`LynxCms\Insights\InsightSource`, `@api`) reads the site and returns `Insight`s (`@api`): title, reason, the pages it is about, evidence, a weight and a plan. Its title, reason and evidence labels are stored as translation keys with their replacements (`InsightText`), so each editor reads a report in their own language, whatever language the scheduler wrote it in. Modules and apps register sources with `InsightSourceRegistry::add()`. A source only reads, like a doctor check (ADR-0109). The engine needs no AI; an AI source is one source among others, registered only when `lynxcms/ai` is installed.
+- A plan is a list of action calls, never a stored result. `insights.approve` runs the whole plan, in order, inside its own transaction. Nested actions skip the action-level permission check (ADR-0033), so approve checks every step's permission for the approver first; page-level checks run inside each action as usual. A plan that would delete anything is refused and rolled back. There is no partial approval.
+- An insight records when each of its pages last changed (its basis). Approve refuses when one changed since; the next report recomputes it.
+- A fingerprint (the source, the kind and the insight's subject, else its pages, else its title) identifies the same suggestion across reports. A dismissed fingerprint is not reported again for `lynx-insights.quiet_days` (180), unless its weight doubled. An insight reported again links to the open or archived one it replaces (`carried_from`), and a new report supersedes the open insights of earlier ones, so only the latest report has open insights.
+- A source that throws, or an insight whose plan names an unknown action, is listed in the report's failures; the rest of the report is kept.
+- `insights.generate`, `insights.approve`, `insights.dismiss` and `insights.archive` are actions, so MCP clients and the agent get them; `insights.view` and `insights.review` are permissions. `lynx:insights` writes a report, and `lynx-insights.schedule` (null, `monthly` or a cron expression) schedules it. `InsightsReported` fires after a report commits; the only notice in the admin is a count of open insights.
+- Laravel AI's tool approvals were considered for the approval step. They resume the conversation with the model after a decision, so approving would ask the model again and keep a conversation open for the whole period. Replaying recorded action calls (ADR-0020) runs what the editor reviewed, without the model.
+
+**Consequences:** Every source, whoever wrote it, is equally safe to install: it can only propose plans that run as the approver, after a fresh dry run in the admin. The `@api` contract (`InsightSource`, `Insight`, `InsightPeriod`, `InsightSourceRegistry`, `InsightState`, `InsightsReported`) is a promise from 1.0, so it stays small: kinds are strings and evidence is label and value. A step that fails undoes the whole plan and leaves the insight open, with the error shown to the editor.
+
+## ADR-0156: Page metrics come through a contract
+
+**Status:** Accepted (plan: documentation/plans/insights.md, decision 5).
+
+**Context:** Some insights need to know what visitors do: a missing translation matters more on a page many people read, and a popular page nobody edited in a year is worth a look. Lynx counts nothing about visitors, and sites count in different ways (their own tables, an analytics service, server logs). Storing metrics in Lynx would mean storing visits, a privacy and storage choice each site should make for itself.
+
+**Decision:**
+
+- `LynxCms\Contracts\Metrics\PageMetrics` (`@api`) in `lynxcms/contracts`: `totals(pageIds, event, days)`, `top(event, days, limit)` and `since()`, the first day with a count. `PageMetrics::VIEW` names the one event every implementation counts. A `daily()` series is left out until a feature needs one.
+- Nothing binds it by default. A site or a module binds it to its counts; lynx-homepage's `App\Stats\PageStats` is the first.
+- Insights' sources use metrics only when the contract is bound and its data reaches back `lynx-insights.min_days` (14) days, and list the numbers they rest on. With metrics, the missing translations source ranks pages by views instead of links and keeps its key, so decisions made on its insights carry over. Neglected popular pages, the most viewed pages nobody changed in `lynx-insights.neglected_months` (12), needs metrics and reports nothing without them.
+
+**Consequences:** Lynx keeps no visitor data. A site with metrics gets better ranked insights by binding one interface; a site without them loses nothing it had. A future stats module would implement the same contract.
+
+## ADR-0157: An approved plan runs on the queue, a step at a time
+
+**Status:** Accepted. Amends ADR-0155, where a plan ran as a whole in one transaction.
+
+**Context:** A plan's steps can each take seconds: `pages.translate` makes one provider call per page, so the 20 steps of a missing translations plan can run past PHP's time limit in the editor's request. When it does, the transaction rolls back and the insight can never be approved from the admin. A site's own source can return longer plans still.
+
+**Decision:**
+
+- `insights.approve` checks what it checked before (the insight is open, has a plan, its pages are unchanged, the approver has every step's permission), marks the insight `running`, and queues one job per step in a Laravel job batch, dispatched after its transaction commits. Its dry run still runs the whole plan nested, so Review changes lists every change and refuses a plan that deletes.
+- Each job runs `insights.apply_step` as the approver. That action runs the step nested inside `insights.run_step`, which refuses a step whose changes delete anything, so a failed or refused step rolls back alone and is recorded with its error. Both actions are kept out of MCP and the agent's tools.
+- An insight keeps the outcome of each step (`steps`: pending, done or failed). The step that finishes last decides the insight: approved when every step is done, otherwise open again with the failed steps listed and its pages' basis taken afresh, so approving again runs only the steps that did not finish.
+- A step that fails for a reason outside Lynx (a provider that cannot be reached, a timeout) is tried three times, 30 seconds and then 2 minutes apart, before it counts as failed; a refused step (validation, permissions) fails at once. A job that gives up for another reason, such as a lost database connection, marks its step failed, so an insight never stays running. The sync queue tries once and keeps the error, so an approval never fails the editor's request.
+- A failed step keeps its error, the exception's class, when it failed, after how many tries and its stack trace, cut to 8 KB. The screen opens them in a dialog; the trace only for superusers, since a trace shows file paths and pieces of arguments. The whole trace is in the site's log.
+- `insights.stop` ends a running approval: the steps done stay done, the waiting ones are marked stopped and their jobs do nothing, and the insight is open again. A step already running finishes.
+- Review changes (the dry run) covers only the steps an approval would run, and lists each in the reader's language from the plan itself. The actions' change summaries stay in English for developers (ADR-0141).
+- `lynx:doctor` warns about an insight running with no progress for `lynx-insights.stuck_minutes` (30): the one case the step list cannot show, a worker that died without `failed()`, or no worker at all.
+- An insight that is running is not reported again by a new report. The screen shows its progress and each step with its page and outcome, and refreshes until the steps end.
+- Laravel's own batches carry the jobs. A dedicated progress package was considered and left out: the insight's steps already say how far a plan got, and Lynx's tables keep the `lynx_` prefix.
+
+**Consequences:** An approval is all or nothing in its checks and step by step in its effects: when a step fails, the steps before it stay done. The steps the built-in sources plan write drafts, which an editor still publishes. A site with the `sync` queue runs the steps in the request, after the approval commits, so a timeout keeps the steps already done and the editor approves again for the rest; such a site needs a queue worker for long plans.
 

@@ -83,7 +83,7 @@
                 @endif
                 @foreach ($flags as $flag => [$label, $help])
                     <label class="flex items-center gap-2 text-sm" wire:key="status-{{ $flag }}">
-                        <input class="blat-checkbox" type="checkbox" wire:click="toggleStatus('{{ $flag }}')" @checked($page->hasStatus(\LynxCms\Core\Pages\PageStatus::NAMES[$flag]))
+                        <input class="blat-checkbox" type="checkbox" wire:click="toggleStatus(@js($flag))" @checked($page->hasStatus(\LynxCms\Core\Pages\PageStatus::NAMES[$flag]))
                                @disabled($page->hasStatus(\LynxCms\Core\Pages\PageStatus::LOCKED) && $flag !== 'locked')>
                         <span><span class="font-medium">{{ $label }}:</span> <span class="text-muted-foreground">{{ $help }}</span></span>
                     </label>

@@ -28,6 +28,7 @@ final readonly class ModuleCatalog
         'cache' => 'Page cache: whole pages served from a cache',
         'page-password' => 'Page passwords: pages and branches behind a password',
         'finder' => 'Page Finder: search every page by its fields in the admin',
+        'insights' => 'Insights: reports of suggested changes that editors approve',
         'static-site' => 'Static site: export the site as HTML files',
     ];
 

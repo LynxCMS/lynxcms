@@ -166,7 +166,7 @@ final class ItemNormalizer
             return (string) Str::ulid();
         }
 
-        if (! is_string($key) || preg_match('/^[0-9A-Z]{26}$/', $key) !== 1) {
+        if (! is_string($key) || preg_match('/^[0-9A-Z]{26}$/D', $key) !== 1) {
             $this->error("{$index}.key", Value::string(__('lynx::validation.items.key')));
 
             return (string) Str::ulid();

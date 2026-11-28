@@ -18,12 +18,14 @@ use LynxCms\Core\Pages\PageLoader;
 use LynxCms\Core\Pages\Trash;
 use LynxCms\Core\Support\Tables;
 use LynxCms\Core\Support\Value;
+use LynxCms\Core\Templates\TemplateRegistry;
 
 /**
  * Copies a page with its values in every language, its template strings and, when asked, every
  * page below it. The copy goes under the same parent (or another), named as the original or, when
- * a sibling has that name, "name-copy"; it starts unpublished. Every page is created with
- * pages.save, which checks the user's permissions and the template rules for each one.
+ * a sibling has that name, "name-copy"; it starts unpublished. The actor must be able to view every
+ * page copied and to create pages of their templates under the new parent; the copies are made with
+ * pages.save, nested, which checks the template rules but not permissions again.
  *
  * @api
  */
@@ -36,6 +38,7 @@ final class DuplicatePage extends Action
         private readonly PageLoader $loader,
         private readonly Trash $trash,
         private readonly Drafts $drafts,
+        private readonly TemplateRegistry $templates,
     ) {}
 
     public static function name(): string
@@ -79,6 +82,7 @@ final class DuplicatePage extends Action
         $this->assertCopyable($page);
         $parent = $input->get('parent') === null ? (int) $page->parentId : (int) $this->resolvePageReference($input->get('parent'), 'parent')->id;
         $this->assertCanGoUnder($page, $parent, $input->bool('children'));
+        $this->authorizeCopy($context, $page, $parent, $input->bool('children'));
 
         /** @var array<int, int> $copies original id => copy id */
         $copies = [];
@@ -119,6 +123,25 @@ final class DuplicatePage extends Action
         }
 
         return $copyId;
+    }
+
+    /**
+     * The nested pages.save runs skip permission checks, so this action checks them itself: view
+     * on every page copied, and create under the new parent for each template among them.
+     */
+    private function authorizeCopy(ActionContext $context, Page $page, int $parentId, bool $withChildren): void
+    {
+        $ids = $withChildren
+            ? array_values(array_map(Value::int(...), DB::table(Tables::PAGE_CLOSURE)->where('ancestor_id', $page->id)->pluck('descendant_id')->all()))
+            : [(int) $page->id];
+        $context->authorizePages('pages.view', $ids);
+
+        $parent = $this->loader->find($parentId);
+        $templateIds = DB::table(Tables::PAGES)->whereIn('id', $ids)->distinct()->pluck('template_id')->all();
+
+        foreach ($templateIds as $templateId) {
+            $context->authorize('pages.create', $parent, $this->templates->get(Value::int($templateId)));
+        }
     }
 
     private function assertCopyable(Page $page): void

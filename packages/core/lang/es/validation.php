@@ -70,6 +70,7 @@ return [
         'unique_used' => 'El nombre de una página única no puede usarse en otro sitio, pero [:name] ya lo usa :page.',
     ],
     'values' => [
+        'no_access' => 'Tu rol no puede cambiar este campo.',
         'locked' => 'Este campo está bloqueado: solo el código del sitio lo cambia.',
         'required' => 'Rellena el campo :field.',
         'required_default' => 'Rellena el campo :field en el idioma predeterminado.',
@@ -82,6 +83,7 @@ return [
         'url' => 'Escribe una dirección que empiece por https://.',
         'url_or_path' => 'Escribe una dirección que empiece por https:// o una ruta que empiece por /.',
         'page_template' => 'Elige páginas que usen :templates: [:page] usa :template.',
+        'page_not_viewable' => 'Elige páginas que puedas ver: la página :id no es una de ellas.',
         'pages_max' => 'Elige como máximo :count página.|Elige como máximo :count páginas.',
         'pages_min' => 'Elige al menos :count página.|Elige al menos :count páginas.',
     ],

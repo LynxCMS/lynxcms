@@ -17,7 +17,7 @@ final class LinkRules
     public const array SCHEMES = ['http', 'https', 'mailto', 'tel'];
 
     /** Browser keywords or a frame name. */
-    private const string TARGET_PATTERN = '/^(?:_blank|_self|_parent|_top|[A-Za-z][A-Za-z0-9_-]{0,63})$/';
+    private const string TARGET_PATTERN = '/^(?:_blank|_self|_parent|_top|[A-Za-z][A-Za-z0-9_-]{0,63})$/D';
 
     /**
      * Relative URLs, fragments and allowed schemes pass. Browsers ignore whitespace and control

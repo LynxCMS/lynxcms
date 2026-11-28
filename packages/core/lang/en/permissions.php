@@ -7,7 +7,7 @@ return [
         'manage' => 'Manage menus',
     ],
     'forms' => [
-        'view' => 'See and sort form submissions',
+        'view' => 'See form submissions and mark them read',
         'manage' => 'Build forms and delete submissions',
     ],
     'seo' => [
@@ -46,6 +46,10 @@ return [
     ],
     'finder' => [
         'share' => 'Share saved searches in Find pages',
+    ],
+    'insights' => [
+        'view' => 'View insight reports',
+        'review' => 'Approve, dismiss and archive insights, and write reports',
     ],
     'agent' => [
         'use' => 'Use the built-in agent and approve its plans',

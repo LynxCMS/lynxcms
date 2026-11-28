@@ -13,7 +13,8 @@ use LynxCms\Core\Support\Value;
 
 /**
  * Account security: the user's passkeys. Adding one is a browser ceremony (resources/js/passkeys.js)
- * that posts to Fortify; this lists and removes them.
+ * that posts to Fortify; this lists and removes them. Removing one needs a recent password
+ * confirmation (ConfirmsPasswordAgain).
  *
  * @internal
  */
@@ -21,6 +22,10 @@ trait ManagesPasskeys
 {
     public function deletePasskey(int $id, DeletePasskey $delete): void
     {
+        if (! $this->hasRecentPassword()) {
+            return;
+        }
+
         $user = $this->passkeyUser() ?? abort(404);
         $passkey = Passkey::query()->whereKey($id)->where('user_id', $user->getAuthIdentifier())->first() ?? abort(404);
         $delete($user, $passkey);

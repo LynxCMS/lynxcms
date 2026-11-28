@@ -42,6 +42,8 @@ lynx()->fields->create('downloads', 'files', settings: ['extensions' => 'pdf zip
 
 Editors drop files on the field, then drag them into order (or use the arrow buttons under each file). Each file can be hidden, described in each language and tagged, and each image gets a focus point with a click.
 
+A photo larger than the field's `max_width` and `max_height` is scaled down in the browser before it uploads, so a 20 MB photo from a phone arrives as a file of a few hundred kilobytes and fits the upload limit. JPEG, PNG and WebP files are scaled; animated images and other types are sent as they are. The server checks every file and scales it again if needed, as files stored through `media.store`, MCP clients or the agent don't pass through the browser.
+
 Files are stored with their page, so a page must exist before it can hold them. A required images or files field doesn't block creating a page: the New page screen leaves it out and creates the page unpublished. Editors add the files in the page editor, then publish it.
 
 ## Showing images
@@ -75,6 +77,18 @@ For other markup, an image gives you its sizes directly:
 ```
 
 Sizes are made the first time their file or URL is asked for, always from the original, and kept next to it. Calls chain into one file: `$image->size(300, 300, 75)->webp()` is a single WebP file, `photo.300x300-q75.webp`.
+
+### Sizes in a queue
+
+A page that shows many new sizes at once, such as a gallery right after an upload, makes all of them while it renders, so its first visitor waits. With a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) running, you can have a queue make them instead. Set it in `.env`:
+
+```ini
+LYNX_MEDIA_QUEUE_SIZES=true
+```
+
+A size that doesn't exist yet is then made by a queued job, and the page shows the nearest image that exists in the meantime: the smallest larger size of the same picture, or the original. `<x-lynx-image>` with both a width and a height crops that image in the browser at the focus point, so it looks the same, only heavier to load. If you print `$image->size(...)->url()` into an `<img>` of your own, give it `object-fit: cover` for the same result. The page cache doesn't store a page while it shows such an image, and stores it once the sizes are made.
+
+Code that reads a size's file, through `$image->size(...)->file()`, still gets it made at once, and a static site build makes every size while it renders. The setting is off by default. `php artisan lynx:doctor` warns when it is on and the queue connection is `sync`, as each size would then be made during the render all the same.
 
 ## Tags
 
@@ -138,11 +152,25 @@ The entry goes in the new file's `values`, next to its description. A field with
 
 `media.store` is also a tool of the MCP server and the AI agent, which can pass a URL or the file's contents.
 
+An images field stores JPEG, PNG, GIF, WebP, and AVIF files, recognized from their contents before anything decodes them, so a file named `photo.png` that holds something else is refused. On a server that uses ImageMagick (`IMAGE_DRIVER=imagick`), also limit ImageMagick's coders in its `policy.xml` to the raster formats you use, as its project recommends.
+
+When an editor, an MCP client or the agent saves a page, each file its media fields name must be stored in that page's folder (a draft may name the files of the page it belongs to), with an extension the field allows. An images field takes only pictures. The file's size, type and dimensions are read from the file itself, whatever the value says. Superusers and your own code (Artisan commands, jobs, seeders) can save any value, so an import can keep the names another site gave its files.
+
 URLs are downloaded only from public web servers: `http` and `https` on their usual ports, from hosts whose addresses are on the internet, never the server's own network or a cloud's metadata address. Redirects get the same checks, and the download stops once it passes the field's size limit. To download from a host of your own network, such as an asset server, add it to `downloads.allowed_hosts` in `config/lynx-media.php`. `LYNX_MEDIA_URL_DOWNLOADS=false` turns URL downloads off.
 
 ## Private files
 
-Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
+Files on the public disk have public addresses: anyone with a link can download them, even when the page they belong to is behind a password or open only to members. This holds from the moment a file is uploaded, whatever the page's status: the web server sends files on the public disk without asking Lynx, so an unpublished page's files are kept only by their names, which end in 16 random characters.
+
+Fields never accept extensions a browser would run as part of the site: HTML, SVG, JavaScript, every XML type (such as `gpx`, `kml` or `rss`), server scripts, and extensions with no known type, which a web server sends without one. Zip a file of such a type to offer it for download. As a second guard, have the web server send the public media folder (`storage/app/public/lynx`, served as `/storage/lynx`) with `X-Content-Type-Options: nosniff` and `Content-Security-Policy: sandbox`. With nginx:
+
+```nginx
+location /storage/lynx/ {
+    add_header X-Content-Type-Options nosniff always;
+    add_header Content-Security-Policy sandbox always;
+}
+```
+ For files that must follow the page, such as paid course materials, turn on the field's **Private** setting. In code, create the field once, like the fields above:
 
 ```php
 lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
@@ -151,7 +179,7 @@ lynx()->fields->create('handouts', 'files', settings: ['private' => true]);
 A private field's files are stored on the private disk (`LYNX_MEDIA_PRIVATE_DISK`, Laravel's `local` disk by default, which the web server never serves), and their URLs point to Lynx: `/lynx-media/{page id}/{file}`. Lynx serves a file only to someone who may open its page:
 
 - staff whose roles let them view the page, in the admin or on the site;
-- visitors, when the page is published, no page gate answers instead and the [visibility rules](/deeper/visibility) allow it.
+- visitors, when the page is published, no page gate answers instead, the [visibility rules](/deeper/visibility) allow it, and the page shows the file. A file an editor removed or hid, or one only a draft holds, is for staff only, and so are the sizes made from it.
 
 A gate's answer is the file's answer, so a page behind a password shows its password form, and a members-only page sends guests to sign in. Responses are marked `private` and `noindex`, so shared caches and search engines keep no copy. Images, video, audio, PDFs and plain text open in the browser, sandboxed; other files download. Templates need no change: `$file->url()` gives the right address, and image sizes of private images are made and served the same way.
 

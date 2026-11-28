@@ -6,6 +6,7 @@ use Illuminate\Auth\GenericUser;
 use Livewire\Livewire;
 use LynxCms\Admin\Editor\FieldKinds;
 use LynxCms\Admin\Livewire\FieldForm;
+use LynxCms\Core\Actions\Roles\SaveRole;
 use LynxCms\Core\Support\Value;
 
 /*
@@ -58,12 +59,23 @@ it('puts a repeater\'s sections in tabs', function (): void {
         ->assertSeeHtml('data-item-limits');
 });
 
-it('gives other fields a Field and a Preview tab only', function (): void {
+it('gives other fields Basics, Settings, Advanced, and Preview tabs, without a builder', function (): void {
     Livewire::test(FieldForm::class, ['field' => 'summary'])
         ->assertSeeHtml('data-field-tab="field"')
+        ->assertSeeHtml('data-field-tab="settings"')
+        ->assertSeeHtml('data-field-tab="advanced"')
         ->assertSeeHtml('data-field-tab="preview"')
         ->assertDontSeeHtml('data-field-tab="builder"')
         ->assertDontSeeHtml('data-item-limits');
+});
+
+it('gives a field an Access tab with a row per role but superusers', function (): void {
+    lynx()->run(SaveRole::class, ['name' => 'writer', 'grants' => [['permission' => 'admin.access']]]);
+
+    Livewire::test(FieldForm::class, ['field' => 'summary'])
+        ->assertSeeHtml('data-field-tab="access"')
+        ->set('manageAccess', true)
+        ->assertSeeHtml('data-access-view="writer"');
 });
 
 it('keeps the limits out of the generic settings', function (): void {
@@ -120,3 +132,27 @@ it('keeps a kind that has no languages shared, whatever the choice', function ()
 
     expect(lynx()->fields->get('seats')->isTranslatable())->toBeFalse();
 });
+
+it('previews a rich text field with the page editor\'s rich text editor and the field\'s tools', function (): void {
+    lynx()->fields->update('summary', ['settings' => ['format' => 'html', 'tools' => ['underline']]]);
+
+    Livewire::test(FieldForm::class, ['field' => 'summary'])
+        ->assertSeeHtml('data-preview-input="textarea"')
+        ->assertSeeHtml('data-richtext-tool="bold"')
+        ->assertSeeHtml('data-richtext-tool="underline"');
+});
+
+it('previews a plain text field with its input, counting characters when it has a limit', function (): void {
+    Livewire::test(FieldForm::class, ['field' => 'summary'])
+        ->set('settings.format', 'plain')
+        ->set('settings.max_length', '120')
+        ->assertSeeHtml('data-preview-input="textarea"')
+        ->assertDontSeeHtml('data-richtext-tool="bold"')
+        ->assertSeeHtml('data-char-max="120"');
+});
+
+it('previews a new field of each plain type with the page editor\'s input', function (string $type): void {
+    Livewire::test(FieldForm::class)
+        ->set('type', $type)
+        ->assertSeeHtml('data-preview-input="'.$type.'"');
+})->with(['text', 'email', 'url', 'icon', 'textarea', 'integer', 'decimal', 'date', 'time']);

@@ -31,7 +31,7 @@ beforeEach(function (): void {
 /** @return list<string> the files' names without the random suffix */
 function sheetNames(MediaList $files): array
 {
-    return array_map(fn (Pagefile $file): string => (string) preg_replace('/-[a-z0-9]{6}\.pdf$/', '', $file->name()), $files->all());
+    return array_map(fn (Pagefile $file): string => (string) preg_replace('/-[a-z0-9]{16}\.pdf$/', '', $file->name()), $files->all());
 }
 
 function sheets(): MediaList

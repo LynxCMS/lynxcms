@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LynxCms\Core\Query;
 
+use LynxCms\Core\Fields\FieldRegistry;
 use LynxCms\Core\Languages\LanguageContext;
 use LynxCms\Core\Languages\LanguageRegistry;
 use LynxCms\Core\Pages\Page;
@@ -29,6 +30,7 @@ final readonly class PageFinder
         private LanguageContext $context,
         private LanguageRegistry $languages,
         private PageVisibility $visibility,
+        private FieldRegistry $fields,
     ) {}
 
     /**
@@ -37,10 +39,11 @@ final readonly class PageFinder
      *                              from agents or visitors; also the limit when the selector has none
      * @param  int|null  $defaultLimit  limit when the selector has none (capped by $maxLimit)
      * @param  PageScope|null  $scope  only pages these grants cover; results and total both respect it
+     * @param  SelectorPolicy|null  $policy  limits for a selector from outside the site's code, checked before it runs
      */
-    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null, ?PageScope $scope = null): PageArray
+    public function find(string $selector, array $with = [], ?int $maxLimit = null, ?int $defaultLimit = null, ?PageScope $scope = null, ?SelectorPolicy $policy = null): PageArray
     {
-        $compiled = $this->compile($selector);
+        $compiled = $this->compile($selector, $policy);
         $scope?->apply($compiled->query);
         $scope?->apply($compiled->countQuery);
         $query = $compiled->query;
@@ -126,9 +129,10 @@ final readonly class PageFinder
         return $result;
     }
 
-    public function compile(string $selector): CompiledSelector
+    public function compile(string $selector, ?SelectorPolicy $policy = null): CompiledSelector
     {
         $parsed = $this->parser->parseSelector($selector);
+        $policy?->check($parsed, $this->fields);
         $clauses = $parsed->clauses;
         $chain = $this->context->chainIds();
 

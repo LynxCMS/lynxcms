@@ -27,7 +27,7 @@ final class FormRegistry
         foreach ($forms as $form) {
             $form = is_string($form) ? app($form) : $form;
 
-            if (! $form instanceof Form || preg_match('/^[a-z][a-z0-9_-]{0,63}$/', $form->key()) !== 1) {
+            if (! $form instanceof Form || preg_match('/^[a-z][a-z0-9_-]{0,63}$/D', $form->key()) !== 1) {
                 throw new InvalidArgumentException('Forms need a key of lowercase letters, digits, dashes and underscores.');
             }
 

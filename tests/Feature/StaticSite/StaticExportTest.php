@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -29,6 +30,8 @@ beforeEach(function (): void {
     File::put($this->public.'/.htaccess', 'RewriteEngine On');
     File::ensureDirectoryExists($this->public.'/lynx-cache/localhost');
     File::put($this->public.'/lynx-cache/localhost/index.html', 'cached');
+    File::ensureDirectoryExists($this->public.'/lynx-cache.trash-Ab12Cd34/localhost');
+    File::put($this->public.'/lynx-cache.trash-Ab12Cd34/localhost/index.html', 'old');
     app()->usePublicPath($this->public);
     config(['lynx-static.path' => $this->dist, 'lynx-static.url' => 'https://static.example']);
 
@@ -116,7 +119,8 @@ it('copies the public files, without PHP entry points or the page cache', functi
     expect(File::get($this->dist.'/build/app.css'))->toBe('body{}')
         ->and(File::exists($this->dist.'/index.php'))->toBeFalse()
         ->and(File::exists($this->dist.'/.htaccess'))->toBeFalse()
-        ->and(File::exists($this->dist.'/lynx-cache'))->toBeFalse();
+        ->and(File::exists($this->dist.'/lynx-cache'))->toBeFalse()
+        ->and(File::exists($this->dist.'/lynx-cache.trash-Ab12Cd34'))->toBeFalse();
 });
 
 it('writes the not found page, the sitemap and robots.txt for the static address', function (): void {
@@ -286,7 +290,11 @@ it('writes scripts and styles that the site sends from a route', function (): vo
     File::deleteDirectory($views);
 });
 
-it('writes media at the static address, with the image sizes pages made while rendering', function (): void {
+it('writes media at the static address, with the image sizes pages made while rendering', function (bool $isQueued): void {
+    // Sizes in a queue (lynx-media.queue_sizes) are made during the build all the same.
+    config(['lynx-media.queue_sizes' => $isQueued]);
+    // No worker runs during a build: jobs wait, as on a site with a real queue.
+    Queue::fake();
     $disk = testingPath('disk');
     File::deleteDirectory($disk);
     File::ensureDirectoryExists($disk);
@@ -315,7 +323,8 @@ it('writes media at the static address, with the image sizes pages made while re
     preg_match('#src="/storage/(lynx/[^"]+\.40x30\.jpg)"#', File::get($this->dist.'/photo/index.html'), $match);
     expect($match)->toHaveCount(2)
         ->and(File::exists($this->dist.'/storage/'.$match[1]))->toBeTrue()
-        ->and(Storage::disk('public')->url('x.jpg'))->toBe('http://localhost/storage/x.jpg');
+        ->and(Storage::disk('public')->url('x.jpg'))->toBe('http://localhost/storage/x.jpg')
+        ->and(config('lynx-media.queue_sizes'))->toBe($isQueued);
     File::deleteDirectory($views);
     File::deleteDirectory($disk);
-});
+})->with(['sizes made while rendering' => false, 'sizes in a queue' => true]);

@@ -43,6 +43,11 @@ it('reads one submission\'s answers', function (): void {
         ->assertOk()->assertSee('Cameras')->assertSee('Livestream')->assertSee('ana@example.com');
 });
 
+it('says there is no such submission for a reference that is not a uuid', function (): void {
+    LynxServer::tool(new ModuleReadTool(GetSubmissionTool::class), ['submission' => '42'])
+        ->assertOk()->assertSee('There is no such submission.');
+});
+
 it('refuses clients whose user may not see submissions', function (): void {
     DB::table('users')->insert(['id' => 3, 'name' => 'Editor', 'email' => 'editor@example.com', 'password' => 'x']);
     lynx()->run(SaveRole::class, ['name' => 'editor', 'grants' => [['permission' => 'pages.view']]]);

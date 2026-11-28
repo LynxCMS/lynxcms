@@ -9,6 +9,7 @@ return [
         'page' => 'No tienes el permiso [:permission] (:label) en la página [:page].',
         'action' => 'No tienes el permiso [:permissions], que [:action] necesita.',
         'superusers' => 'Solo los superusuarios pueden ejecutar [:action].',
+        'field_protection' => 'Solo los superusuarios pueden cambiar el ajuste [:setting] del campo [:field].',
     ],
     'last_superuser' => 'Esto quitaría al último superusuario. Da primero un rol de superusuario a otra persona.',
     'schema_editing' => '[:action] cambia el esquema, y la edición del esquema está desactivada en este sitio (lynx.schema_editing): el esquema viene de archivos. Cambia lynx/schema y ejecuta php artisan lynx:schema:apply.',
