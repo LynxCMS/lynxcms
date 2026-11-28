@@ -7,7 +7,7 @@ description: Every class marked @api, the code apps and modules may rely on.
 
 Classes marked `@api` are the ones apps and modules may rely on. From 1.0 on, a minor release does not change them in a way that breaks code that uses them ([Versioning](/prologue/versioning)). Every other class is `@internal`: Lynx's own packages use it, and it may change in any release. Your IDE shows the marker on each class's docblock.
 
-This page lists the 295 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
+This page lists the 296 `@api` classes, interfaces, traits and enums by package. It is written from the code by `composer docs:api`, and a test fails when it falls behind.
 
 ## lynxcms/contracts
 
@@ -261,6 +261,7 @@ In `LynxCms\Backup`.
 | --- | --- | --- |
 | `Actions\CreateBackup` | class | Queue a database backup. |
 | `Actions\DeleteBackup` | class | Delete a backup: its zip on every disk, and its row. |
+| `Actions\SaveBackupSettings` | class | Save how backups are made: whether files go into each zip, and for SQLite a copy of the database file (no binary needed) or an SQL dump (needs sqlite3). |
 
 ## lynxcms/cache
 

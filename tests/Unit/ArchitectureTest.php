@@ -9,6 +9,9 @@ use LynxCms\Admin\Navigation;
 use LynxCms\Ai\AgentRun;
 use LynxCms\Ai\LynxAi;
 use LynxCms\Backup\Actions\FindsBackups;
+use LynxCms\Backup\BackupArchive;
+use LynxCms\Backup\BackupSettings;
+use LynxCms\Backup\LynxBackups;
 use LynxCms\Cache\Pages\ClearOnChange;
 use LynxCms\Core\Actions\Action;
 use LynxCms\Core\Fields\FieldSchemaManager;
@@ -218,9 +221,13 @@ arch('the core does not depend on the backup module')
     ->expect('LynxCms\Core')
     ->not->toUse('LynxCms\Backup');
 
-arch('backups work without Livewire, the admin or the AI SDK')
+arch('backups work without the AI SDK')
     ->expect('LynxCms\Backup')
-    ->not->toUse(['Livewire', 'LynxCms\Admin', 'Laravel\Ai', 'LynxCms\Ai']);
+    ->not->toUse(['Laravel\Ai', 'LynxCms\Ai']);
+
+arch('backups work without Livewire or the admin, except their screen')
+    ->expect(['LynxCms\Backup\Actions', 'LynxCms\Backup\Console', 'LynxCms\Backup\Doctor', 'LynxCms\Backup\Dumpers', 'LynxCms\Backup\Jobs', 'LynxCms\Backup\Models', BackupArchive::class, LynxBackups::class, BackupSettings::class])
+    ->not->toUse(['Livewire', 'LynxCms\Admin']);
 
 arch('backup actions are final and extend the base action')
     ->expect('LynxCms\Backup\Actions')

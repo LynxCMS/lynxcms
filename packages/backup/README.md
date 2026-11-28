@@ -5,6 +5,8 @@
 
 Database backups for Lynx CMS, on [spatie/laravel-backup](https://github.com/spatie/laravel-backup). Once installed, the scheduler backs up the database every day at 02:00 to the `local` disk, and `lynx:backup:database` makes a backup now. SQLite is copied with `VACUUM INTO`, so it needs no `sqlite3` binary; PostgreSQL needs `pg_dump`. Other modules ask for a backup through `DatabaseBackups` in `lynxcms/contracts`.
 
+![The Backups screen in the Lynx admin, with daily backups and one made from the admin](screenshots/backups.png)
+
 ## Installing
 
 ```bash
