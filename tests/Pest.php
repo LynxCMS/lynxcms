@@ -21,6 +21,7 @@ pest()->extend(AdminPathTestCase::class)->in('AdminPath');
 pest()->extend(TestCase::class)->in('Browser');
 
 require_once __DIR__.'/Browser/BrowserHelpers.php';
+require_once __DIR__.'/Feature/Backup/BackupHelpers.php';
 
 /**
  * A folder under storage/framework/testing for this test process only, so parallel runs do not

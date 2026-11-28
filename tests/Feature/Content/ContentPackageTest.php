@@ -131,7 +131,7 @@ it('backs up to a zip, keeps the newest ones, and restores from it', function ()
 });
 
 it('schedules backups when configured', function (): void {
-    expect(collect(app(Schedule::class)->events())->contains(fn ($event): bool => str_contains((string) $event->command, 'lynx:backup')))->toBeFalse();
+    expect(collect(app(Schedule::class)->events())->contains(fn ($event): bool => preg_match('/lynx:backup(\s|$)/', (string) $event->command) === 1))->toBeFalse();
 });
 
 it('recreates pages as exported, leaving out field defaults', function (): void {

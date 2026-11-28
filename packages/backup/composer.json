@@ -1,0 +1,20 @@
+{
+    "name": "lynxcms/backup",
+    "description": "Database backups for Lynx CMS on spatie/laravel-backup: scheduled SQLite and PostgreSQL backups, files on request, and a contract other modules use.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "lynxcms/contracts": "self.version",
+        "lynxcms/core": "self.version",
+        "spatie/db-dumper": "^4.1.1",
+        "spatie/laravel-backup": "^10.4"
+    },
+    "autoload": {
+        "psr-4": { "LynxCms\\Backup\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["LynxCms\\Backup\\BackupServiceProvider"]
+        }
+    }
+}
