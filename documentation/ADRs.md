@@ -1787,3 +1787,18 @@ Staying in English: action descriptions, console output, the change summaries th
 
 **Consequences:** An approval is all or nothing in its checks and step by step in its effects: when a step fails, the steps before it stay done. The steps the built-in sources plan write drafts, which an editor still publishes. A site with the `sync` queue runs the steps in the request, after the approval commits, so a timeout keeps the steps already done and the editor approves again for the rest; such a site needs a queue worker for long plans.
 
+## ADR-0158: Database backups come from a module on spatie/laravel-backup
+
+**Status:** Proposed (plan: documentation/plans/backup.md).
+
+**Context:** Content packages (ADR-0040) back up pages, not the database: activity, revisions, drafts, users, roles and the app's tables are left out. Owners need scheduled database backups they can see and copy off the server, `lynx:migrate` only asks whether the database is backed up, and Insights wants a backup before an approval runs (ADR-0157's plan).
+
+**Decision:**
+
+- A free module, `lynxcms/backup`, wraps `spatie/laravel-backup` for dumps, archives, disks, retention and events, instead of Lynx writing its own.
+- `DatabaseBackups` and `BackupReference` (`@api`, in `lynxcms/contracts`) are what other code uses: `create()` makes a backup in the calling process, `latest()` and `all()` list them, and `BackupStarted`, `BackupCompleted` and `BackupFailed` report on them. Modules order their work themselves and only watch the events.
+- A `lynx_backups` table records why and by whom each backup was made. `backup.manage`, a superuser permission by default, makes and deletes backups; downloads need a password confirmation.
+- Backups run daily once the module is installed, keep Spatie's retention, and go to a disk outside `public`. Restoring is a command-line task only, after a safety backup and a typed confirmation.
+
+**Consequences:** Every Lynx site can get database backups by installing one module, and other modules ask for one through a contract without depending on it. A backup holds password hashes and two-factor secrets, so it is guarded like a superuser action. Hosts need the dump binary for their database, which `lynx:doctor` checks.
+

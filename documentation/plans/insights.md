@@ -85,7 +85,7 @@ The module and its screen are called Insights, since most sites run them without
 
 ## Database backup before an approval (after the backup module)
 
-Waits for a backup module (`lynxcms/backup`, not planned in detail yet) that makes database backups. Content packages (ADR-0040) are not enough: they leave out activity, revisions, users and roles. Until then, nothing here is built.
+Waits for the backup module (`lynxcms/backup`, planned in `documentation/plans/backup.md`, ADR-0158) that makes database backups. Content packages (ADR-0040) are not enough: they leave out activity, revisions, users and roles. Until then, nothing here is built.
 
 - **The backup module owns the backup:** its queued job, format, storage and retention. It fires `BackupStarted`, `BackupCompleted` and `BackupFailed` (with the backup's reference and the reason it was made) for anyone who watches: notifications, the activity log, the Insights card.
 - **Contract in `lynxcms/contracts`:** `DatabaseBackups` (`@api`): `isAvailable(): bool`, `create(string $reason): BackupReference` (makes the backup in the calling process, meant for a queued job, and fires the module's events) and `latest(): ?BackupReference` (id, when, size, a URL to its admin screen). The backup module binds it. Insights depends only on the contract, so it stays free of the module, as it is of laravel/ai.
